@@ -1,0 +1,23 @@
+{
+  "Scm": {
+    "Type": "PlasticScm",
+    "ChangeId": "86195",
+    "Branch": "Aux2",
+    "Repo": "rust_reboot",
+    "Comment": "Merge from parachute",
+    "Author": "jarryd",
+    "Date": "18/08/2023 05:51:23",
+    "Items": "C Assets\\Prefabs\\Misc\\Parachute\\Parachute.cs \r\n C Assets\\Prefabs\\Misc\\Parachute\\parachute.backpack.deployed.prefab \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-Parachute.cs \r\n A Assets\\Prefabs\\Misc\\Parachute\\parachute.anim.controller \r\n A Assets\\Prefabs\\Misc\\Parachute\\parachute.anim.controller.meta \r\n A Assets\\Prefabs\\Misc\\Parachute\\Parachute_Canopy_rigged.fbx \r\n A Assets\\Prefabs\\Misc\\Parachute\\Parachute_Canopy_rigged.fbx.meta \r\n A Assets\\Prefabs\\Misc\\Parachute\\ParachuteWearable.cs \r\n A Assets\\Prefabs\\Misc\\Parachute\\ParachuteWearable.cs.meta"
+  },
+  "Build": {
+    "Id": "517",
+    "Number": "517",
+    "Tag": "jenkins-RustServerAux02-517",
+    "Url": "https://build.facepunch.com/job/RustServerAux02/517/",
+    "Name": "RustServerAux02",
+    "Node": "Win4"
+  },
+  "Date": 1692336873,
+  "DateString": "18 08 2023",
+  "TimeString": "05:34"
+}
