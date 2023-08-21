@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86261",
+    "ChangeId": "86262",
     "Branch": "main",
     "Repo": "rust_reboot",
     "Comment": "",
     "Author": "BillBorman",
-    "Date": "21/08/2023 09:58:23",
-    "Items": "C Assets\\Content\\Structures\\Harbor\\Tugboat\\Models\\tugboat_a_convex_COL.fbx"
+    "Date": "21/08/2023 10:43:28",
+    "Items": "C Assets\\Scripts\\Game\\TriggerHurtNotChild.cs \r\n C Assets\\Content\\Vehicles\\Boats\\Tugboat\\Tugboat.prefab"
   },
   "Build": {
-    "Id": "4991",
-    "Number": "4991",
-    "Tag": "jenkins-RustServer-4991",
-    "Url": "https://build.facepunch.com/job/RustServer/4991/",
+    "Id": "4992",
+    "Number": "4992",
+    "Tag": "jenkins-RustServer-4992",
+    "Url": "https://build.facepunch.com/job/RustServer/4992/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1692608350,
+  "Date": 1692612362,
   "DateString": "21 08 2023",
-  "TimeString": "08:59"
+  "TimeString": "10:06"
 }
