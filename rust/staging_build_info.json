@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86263",
+    "ChangeId": "86290",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Comment only",
+    "Comment": "Fixed RMB firing attack heli rockets when not in gunner view",
     "Author": "BillBorman",
-    "Date": "21/08/2023 11:08:03",
-    "Items": "C Assets\\Scripts\\Game\\TriggerHurtNotChild.cs"
+    "Date": "21/08/2023 22:18:21",
+    "Items": "C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\AttackHelicopter.cs"
   },
   "Build": {
-    "Id": "4993",
-    "Number": "4993",
-    "Tag": "jenkins-RustServer-4993",
-    "Url": "https://build.facepunch.com/job/RustServer/4993/",
+    "Id": "4994",
+    "Number": "4994",
+    "Tag": "jenkins-RustServer-4994",
+    "Url": "https://build.facepunch.com/job/RustServer/4994/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1692616941,
+  "Date": 1692652733,
   "DateString": "21 08 2023",
-  "TimeString": "11:22"
+  "TimeString": "21:18"
 }
