@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86217",
+    "ChangeId": "86244",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "",
+    "Comment": "Don't show ammo value on the attack heli monitor UI preview, since it's not actually set",
     "Author": "BillBorman",
-    "Date": "18/08/2023 11:28:07",
-    "Items": "C Assets\\Scripts\\UI\\Crosshair.cs \r\n C Assets\\Scripts\\Entity\\BaseEntity\\BaseEntity.Client.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\AttackHelicopter.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\AttackHelicopterRockets.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\AttackHeliDriverSeat.cs \r\n C Assets\\Prefabs\\Vehicle\\Seats\\AttackHeliDriver.prefab \r\n C Assets\\Content\\UI\\GameUI\\GameUI.Hud.Crosshair.prefab \r\n A Assets\\Content\\UI\\GameUI\\Crosshairs\\default.png \r\n A Assets\\Content\\UI\\GameUI\\Crosshairs\\default.png.meta \r\n A Assets\\Content\\UI\\GameUI\\AttackHeli\\LoRes\\ah_diamond_highvelocity_sml.png \r\n A Assets\\Content\\UI\\GameUI\\AttackHeli\\LoRes\\ah_diamond_highvelocity_sml.png.meta \r\n A Assets\\Content\\UI\\GameUI\\AttackHeli\\LoRes\\ah_diamond_incendiary_sml.png \r\n A Assets\\Content\\UI\\GameUI\\AttackHeli\\LoRes\\ah_diamond_incendiary_sml.png.meta \r\n A Assets\\Content\\UI\\GameUI\\AttackHeli\\LoRes\\ah_diamond_rocket_sml.png \r\n A Assets\\Content\\UI\\GameUI\\AttackHeli\\LoRes\\ah_diamond_rocket_sml.png.meta \r\n A Assets\\Content\\UI\\GameUI\\AttackHeli\\LoRes\\out_of_ammo_sml.png \r\n A Assets\\Content\\UI\\GameUI\\AttackHeli\\LoRes\\out_of_ammo_sml.png.meta"
+    "Date": "21/08/2023 00:30:56",
+    "Items": "C Assets\\Content\\Vehicles\\AttackHelicopter\\UI.AttackHeliMonitor.prefab"
   },
   "Build": {
-    "Id": "4987",
-    "Number": "4987",
-    "Tag": "jenkins-RustServer-4987",
-    "Url": "https://build.facepunch.com/job/RustServer/4987/",
+    "Id": "4988",
+    "Number": "4988",
+    "Tag": "jenkins-RustServer-4988",
+    "Url": "https://build.facepunch.com/job/RustServer/4988/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1692359762,
-  "DateString": "18 08 2023",
-  "TimeString": "11:56"
+  "Date": 1692574290,
+  "DateString": "20 08 2023",
+  "TimeString": "23:31"
 }
