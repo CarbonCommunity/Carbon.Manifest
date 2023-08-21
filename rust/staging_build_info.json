@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86253",
+    "ChangeId": "86261",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Reinstate my custom-shader-based fix for the attack heli gunner UI because some gun components clip through even at a minimum distance",
+    "Comment": "",
     "Author": "BillBorman",
-    "Date": "21/08/2023 04:42:29",
-    "Items": "C Assets\\Content\\UI\\GameUI\\AttackHeli\\HiRes\\ah_crt_hdr.mat \r\n C Assets\\Content\\Vehicles\\AttackHelicopter\\UI.Dialog.AttackHeli.prefab \r\n A Assets\\TextMesh Pro\\Resources\\Shaders\\TMP_SDF NoZTest.shader \r\n A Assets\\TextMesh Pro\\Resources\\Shaders\\TMP_SDF NoZTest.shader.meta \r\n A Assets\\Content\\UI\\Fonts\\RobotoMono-Regular SDF NoZTest.asset \r\n A Assets\\Content\\UI\\Fonts\\RobotoMono-Regular SDF NoZTest.asset.meta \r\n A Assets\\Content\\UI\\UI.AdditiveNoZTest.shader \r\n A Assets\\Content\\UI\\UI.AdditiveNoZTest.shader.meta \r\n A Assets\\Content\\UI\\UI.AlphaClearNoZTest.mat \r\n A Assets\\Content\\UI\\UI.AlphaClearNoZTest.mat.meta \r\n A Assets\\Content\\UI\\UI.AlphaClearNoZTest.shader \r\n A Assets\\Content\\UI\\UI.AlphaClearNoZTest.shader.meta \r\n A Assets\\Content\\UI\\UI.NoZTest 1.shader \r\n A Assets\\Content\\UI\\UI.NoZTest 1.shader.meta \r\n A Assets\\Content\\UI\\UI.NoZTest.mat \r\n A Assets\\Content\\UI\\UI.NoZTest.mat.meta \r\n A Assets\\Content\\UI\\UI.NoZTest.shader \r\n A Assets\\Content\\UI\\UI.NoZTest.shader.meta"
+    "Date": "21/08/2023 09:58:23",
+    "Items": "C Assets\\Content\\Structures\\Harbor\\Tugboat\\Models\\tugboat_a_convex_COL.fbx"
   },
   "Build": {
-    "Id": "4990",
-    "Number": "4990",
-    "Tag": "jenkins-RustServer-4990",
-    "Url": "https://build.facepunch.com/job/RustServer/4990/",
+    "Id": "4991",
+    "Number": "4991",
+    "Tag": "jenkins-RustServer-4991",
+    "Url": "https://build.facepunch.com/job/RustServer/4991/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1692589386,
+  "Date": 1692608350,
   "DateString": "21 08 2023",
-  "TimeString": "03:43"
+  "TimeString": "08:59"
 }
