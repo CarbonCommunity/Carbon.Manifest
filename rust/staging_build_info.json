@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86290",
+    "ChangeId": "86295",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Fixed RMB firing attack heli rockets when not in gunner view",
-    "Author": "BillBorman",
-    "Date": "21/08/2023 22:18:21",
-    "Items": "C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\AttackHelicopter.cs"
+    "Comment": "Merge from hab_lighting_fx. Hot Air balloon lighting and FX update.",
+    "Author": "petur",
+    "Date": "22/08/2023 00:33:48",
+    "Items": "C Assets\\Scenes\\Test\\ParticleTestMap.unity \r\n C Assets\\Prefabs\\Deployable\\Hot Air Balloon\\models\\Materials\\balloon.mat \r\n C Assets\\Prefabs\\Deployable\\Hot Air Balloon\\HotAirBalloon.prefab \r\n A Assets\\Prefabs\\Deployable\\Hot Air Balloon\\textures\\hot_air_balloon_emissive.tga \r\n A Assets\\Prefabs\\Deployable\\Hot Air Balloon\\textures\\hot_air_balloon_emissive.tga.meta \r\n A Assets\\Prefabs\\Deployable\\Hot Air Balloon\\Effects \r\n A Assets\\Prefabs\\Deployable\\Hot Air Balloon\\Effects.meta \r\n A Assets\\Prefabs\\Deployable\\Hot Air Balloon\\Effects\\hab-burner-cone.mat \r\n A Assets\\Prefabs\\Deployable\\Hot Air Balloon\\Effects\\hab-burner-cone.mat.meta \r\n A Assets\\Prefabs\\Deployable\\Hot Air Balloon\\Effects\\hab_burner_flame.mat \r\n A Assets\\Prefabs\\Deployable\\Hot Air Balloon\\Effects\\hab_burner_flame.mat.meta"
   },
   "Build": {
-    "Id": "4994",
-    "Number": "4994",
-    "Tag": "jenkins-RustServer-4994",
-    "Url": "https://build.facepunch.com/job/RustServer/4994/",
+    "Id": "4995",
+    "Number": "4995",
+    "Tag": "jenkins-RustServer-4995",
+    "Url": "https://build.facepunch.com/job/RustServer/4995/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1692652733,
+  "Date": 1692660873,
   "DateString": "21 08 2023",
-  "TimeString": "21:18"
+  "TimeString": "23:34"
 }
