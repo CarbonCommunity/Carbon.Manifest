@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86352",
+    "ChangeId": "86365",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "subtracking 86336 weapon_racks. Server error startup issues - IndexOutOfRangeException: Index was outside the bounds of the array.",
-    "Author": "alistair",
-    "Date": "22/08/2023 16:04:32",
-    "Items": "C Assets\\Prefabs\\Deployable\\Gun_Rack\\Models\\LargeWideWallRack.fbx \r\n C Assets\\Prefabs\\Deployable\\Gun_Rack\\Models\\LargeWideWallRack_GIBs.fbx \r\n C Assets\\Prefabs\\Deployable\\Gun_Rack\\WeaponRackLight.prefab \r\n C Assets\\Prefabs\\Deployable\\Gun_Rack\\WeaponRackLightDouble.prefab \r\n C Assets\\Prefabs\\Deployable\\WeaponRacks\\weaponrack_wide.deployed.prefab"
+    "Comment": "Increased Patrol Helicopter texture resolution 16x from 512x512 to 2048x2048. Increased Patrol Heli rockets resolution a lesser amount, from 512 to 1024.",
+    "Author": "BillBorman",
+    "Date": "22/08/2023 22:43:40",
+    "Items": "C Assets\\Prefabs\\NPC\\Patrol Helicopter\\Materials\\w_patrol_helicopter_body_DIF.tga.meta \r\n C Assets\\Prefabs\\NPC\\Patrol Helicopter\\Materials\\w_patrol_helicopter_body_NRM.tga.meta \r\n C Assets\\Prefabs\\NPC\\Patrol Helicopter\\Materials\\w_patrol_helicopter_body_spec.tga.meta \r\n C Assets\\Prefabs\\NPC\\Patrol Helicopter\\Materials\\w_patrol_helicopter_gun_DIF.tga.meta \r\n C Assets\\Prefabs\\NPC\\Patrol Helicopter\\Materials\\w_patrol_helicopter_gun_NRM.tga.meta \r\n C Assets\\Prefabs\\NPC\\Patrol Helicopter\\Materials\\w_patrol_helicopter_interior_DIF.tga.meta \r\n C Assets\\Prefabs\\NPC\\Patrol Helicopter\\Materials\\w_patrol_helicopter_interior_NRM.tga.meta \r\n C Assets\\Prefabs\\NPC\\Patrol Helicopter\\Materials\\w_patrol_helicopter_interior_spec.tga.meta \r\n C Assets\\Prefabs\\NPC\\Patrol Helicopter\\Materials\\w_patrol_helicopter_rockets_DIF.tga.meta \r\n C Assets\\Prefabs\\NPC\\Patrol Helicopter\\Materials\\w_patrol_helicopter_rockets_NRM.tga.meta"
   },
   "Build": {
-    "Id": "5000",
-    "Number": "5000",
-    "Tag": "jenkins-RustServer-5000",
-    "Url": "https://build.facepunch.com/job/RustServer/5000/",
+    "Id": "5001",
+    "Number": "5001",
+    "Tag": "jenkins-RustServer-5001",
+    "Url": "https://build.facepunch.com/job/RustServer/5001/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1692716705,
+  "Date": 1692740646,
   "DateString": "22 08 2023",
-  "TimeString": "15:05"
+  "TimeString": "21:44"
 }
