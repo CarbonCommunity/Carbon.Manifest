@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86295",
+    "ChangeId": "86297",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Merge from hab_lighting_fx. Hot Air balloon lighting and FX update.",
-    "Author": "petur",
-    "Date": "22/08/2023 00:33:48",
-    "Items": "C Assets\\Scenes\\Test\\ParticleTestMap.unity \r\n C Assets\\Prefabs\\Deployable\\Hot Air Balloon\\models\\Materials\\balloon.mat \r\n C Assets\\Prefabs\\Deployable\\Hot Air Balloon\\HotAirBalloon.prefab \r\n A Assets\\Prefabs\\Deployable\\Hot Air Balloon\\textures\\hot_air_balloon_emissive.tga \r\n A Assets\\Prefabs\\Deployable\\Hot Air Balloon\\textures\\hot_air_balloon_emissive.tga.meta \r\n A Assets\\Prefabs\\Deployable\\Hot Air Balloon\\Effects \r\n A Assets\\Prefabs\\Deployable\\Hot Air Balloon\\Effects.meta \r\n A Assets\\Prefabs\\Deployable\\Hot Air Balloon\\Effects\\hab-burner-cone.mat \r\n A Assets\\Prefabs\\Deployable\\Hot Air Balloon\\Effects\\hab-burner-cone.mat.meta \r\n A Assets\\Prefabs\\Deployable\\Hot Air Balloon\\Effects\\hab_burner_flame.mat \r\n A Assets\\Prefabs\\Deployable\\Hot Air Balloon\\Effects\\hab_burner_flame.mat.meta"
+    "Comment": "Merge ConvexDeployables -> Main",
+    "Author": "BillBorman",
+    "Date": "22/08/2023 00:41:04",
+    "Items": "C Assets\\Prefabs\\Deployable\\BBQ\\BBQ.Deployed.prefab \r\n C Assets\\Prefabs\\Deployable\\BBQ\\BBQ_COL.fbx \r\n C Assets\\Prefabs\\Deployable\\BBQ\\BBQ_COL.fbx.meta"
   },
   "Build": {
-    "Id": "4995",
-    "Number": "4995",
-    "Tag": "jenkins-RustServer-4995",
-    "Url": "https://build.facepunch.com/job/RustServer/4995/",
+    "Id": "4996",
+    "Number": "4996",
+    "Tag": "jenkins-RustServer-4996",
+    "Url": "https://build.facepunch.com/job/RustServer/4996/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1692660873,
-  "DateString": "21 08 2023",
-  "TimeString": "23:34"
+  "Date": 1692668926,
+  "DateString": "22 08 2023",
+  "TimeString": "01:48"
 }
