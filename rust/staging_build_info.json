@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86365",
+    "ChangeId": "86366",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Increased Patrol Helicopter texture resolution 16x from 512x512 to 2048x2048. Increased Patrol Heli rockets resolution a lesser amount, from 512 to 1024.",
+    "Comment": "Increased texture resolution on the specular textures as well, from the original 32x32 to 1024x1024. There is detail in the alpha channel",
     "Author": "BillBorman",
-    "Date": "22/08/2023 22:43:40",
-    "Items": "C Assets\\Prefabs\\NPC\\Patrol Helicopter\\Materials\\w_patrol_helicopter_body_DIF.tga.meta \r\n C Assets\\Prefabs\\NPC\\Patrol Helicopter\\Materials\\w_patrol_helicopter_body_NRM.tga.meta \r\n C Assets\\Prefabs\\NPC\\Patrol Helicopter\\Materials\\w_patrol_helicopter_body_spec.tga.meta \r\n C Assets\\Prefabs\\NPC\\Patrol Helicopter\\Materials\\w_patrol_helicopter_gun_DIF.tga.meta \r\n C Assets\\Prefabs\\NPC\\Patrol Helicopter\\Materials\\w_patrol_helicopter_gun_NRM.tga.meta \r\n C Assets\\Prefabs\\NPC\\Patrol Helicopter\\Materials\\w_patrol_helicopter_interior_DIF.tga.meta \r\n C Assets\\Prefabs\\NPC\\Patrol Helicopter\\Materials\\w_patrol_helicopter_interior_NRM.tga.meta \r\n C Assets\\Prefabs\\NPC\\Patrol Helicopter\\Materials\\w_patrol_helicopter_interior_spec.tga.meta \r\n C Assets\\Prefabs\\NPC\\Patrol Helicopter\\Materials\\w_patrol_helicopter_rockets_DIF.tga.meta \r\n C Assets\\Prefabs\\NPC\\Patrol Helicopter\\Materials\\w_patrol_helicopter_rockets_NRM.tga.meta"
+    "Date": "22/08/2023 22:53:24",
+    "Items": "C Assets\\Prefabs\\NPC\\Patrol Helicopter\\Materials\\w_patrol_helicopter_body_spec.tga.meta \r\n C Assets\\Prefabs\\NPC\\Patrol Helicopter\\Materials\\w_patrol_helicopter_interior_spec.tga.meta \r\n C Assets\\Prefabs\\NPC\\Patrol Helicopter\\Materials\\w_patrol_helicopter_rockets_spec.tga.meta"
   },
   "Build": {
-    "Id": "5001",
-    "Number": "5001",
-    "Tag": "jenkins-RustServer-5001",
-    "Url": "https://build.facepunch.com/job/RustServer/5001/",
+    "Id": "5002",
+    "Number": "5002",
+    "Tag": "jenkins-RustServer-5002",
+    "Url": "https://build.facepunch.com/job/RustServer/5002/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1692740646,
+  "Date": 1692745543,
   "DateString": "22 08 2023",
-  "TimeString": "21:44"
+  "TimeString": "23:05"
 }
