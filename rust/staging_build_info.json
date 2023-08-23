@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86366",
+    "ChangeId": "86387",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Increased texture resolution on the specular textures as well, from the original 32x32 to 1024x1024. There is detail in the alpha channel",
-    "Author": "BillBorman",
-    "Date": "22/08/2023 22:53:24",
-    "Items": "C Assets\\Prefabs\\NPC\\Patrol Helicopter\\Materials\\w_patrol_helicopter_body_spec.tga.meta \r\n C Assets\\Prefabs\\NPC\\Patrol Helicopter\\Materials\\w_patrol_helicopter_interior_spec.tga.meta \r\n C Assets\\Prefabs\\NPC\\Patrol Helicopter\\Materials\\w_patrol_helicopter_rockets_spec.tga.meta"
+    "Comment": "Merge from parachute (fixes, sam site targeting)",
+    "Author": "jarryd",
+    "Date": "23/08/2023 02:39:50",
+    "Items": "C Assets\\Scripts\\Entity\\Misc\\SupplyDrop.cs \r\n C Assets\\Prefabs\\Deployable\\Locker\\Locker.cs \r\n C Assets\\Prefabs\\Misc\\Parachute\\parachute.prefab \r\n C Assets\\Prefabs\\Misc\\Parachute\\Parachute.cs \r\n C Assets\\Prefabs\\Misc\\Parachute\\ParachuteUnpacked.prefab \r\n C Assets\\Prefabs\\Misc\\Supply Drop\\supply_drop.prefab \r\n C Assets\\Prefabs\\Clothes\\Suit.Hazmat\\hazmat_suit.prefab \r\n A Assets\\Prefabs\\Misc\\Supply Drop\\parachute_supplydrop.prefab \r\n A Assets\\Prefabs\\Misc\\Supply Drop\\parachute_supplydrop.prefab.meta"
   },
   "Build": {
-    "Id": "5002",
-    "Number": "5002",
-    "Tag": "jenkins-RustServer-5002",
-    "Url": "https://build.facepunch.com/job/RustServer/5002/",
+    "Id": "5003",
+    "Number": "5003",
+    "Tag": "jenkins-RustServer-5003",
+    "Url": "https://build.facepunch.com/job/RustServer/5003/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1692745543,
-  "DateString": "22 08 2023",
-  "TimeString": "23:05"
+  "Date": 1692754819,
+  "DateString": "23 08 2023",
+  "TimeString": "01:40"
 }
