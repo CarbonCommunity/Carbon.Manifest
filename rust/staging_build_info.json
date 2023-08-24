@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86474",
+    "ChangeId": "86483",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Added boat position to boatdriftinfo convar",
+    "Comment": "Client compile fix",
     "Author": "BillBorman",
-    "Date": "24/08/2023 03:39:25",
-    "Items": "C Assets\\Scripts\\ConsoleCommands\\vehicle.cs"
+    "Date": "24/08/2023 06:06:42",
+    "Items": "C Assets\\Scripts\\Entity\\Vehicle\\Boat\\BaseBoat.cs"
   },
   "Build": {
-    "Id": "5014",
-    "Number": "5014",
-    "Tag": "jenkins-RustServer-5014",
-    "Url": "https://build.facepunch.com/job/RustServer/5014/",
+    "Id": "5015",
+    "Number": "5015",
+    "Tag": "jenkins-RustServer-5015",
+    "Url": "https://build.facepunch.com/job/RustServer/5015/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1692844946,
+  "Date": 1692857541,
   "DateString": "24 08 2023",
-  "TimeString": "02:42"
+  "TimeString": "06:12"
 }
