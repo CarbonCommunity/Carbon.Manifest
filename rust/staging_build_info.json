@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86495",
+    "ChangeId": "86497",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "",
-    "Author": "alistair",
-    "Date": "24/08/2023 09:03:11",
-    "Items": "C Assets\\Prefabs\\Vehicle\\Seats\\TugboatDriver.prefab"
+    "Comment": "Attack heli now shows damage FX on the rocket pod texture too",
+    "Author": "BillBorman",
+    "Date": "24/08/2023 09:32:10",
+    "Items": "C Assets\\Content\\Vehicles\\AttackHelicopter\\AttackHelicopter.entity.prefab"
   },
   "Build": {
-    "Id": "5016",
-    "Number": "5016",
-    "Tag": "jenkins-RustServer-5016",
-    "Url": "https://build.facepunch.com/job/RustServer/5016/",
+    "Id": "5017",
+    "Number": "5017",
+    "Tag": "jenkins-RustServer-5017",
+    "Url": "https://build.facepunch.com/job/RustServer/5017/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1692864214,
+  "Date": 1692868831,
   "DateString": "24 08 2023",
-  "TimeString": "08:03"
+  "TimeString": "09:20"
 }
