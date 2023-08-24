@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86483",
+    "ChangeId": "86495",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Client compile fix",
-    "Author": "BillBorman",
-    "Date": "24/08/2023 06:06:42",
-    "Items": "C Assets\\Scripts\\Entity\\Vehicle\\Boat\\BaseBoat.cs"
+    "Comment": "",
+    "Author": "alistair",
+    "Date": "24/08/2023 09:03:11",
+    "Items": "C Assets\\Prefabs\\Vehicle\\Seats\\TugboatDriver.prefab"
   },
   "Build": {
-    "Id": "5015",
-    "Number": "5015",
-    "Tag": "jenkins-RustServer-5015",
-    "Url": "https://build.facepunch.com/job/RustServer/5015/",
+    "Id": "5016",
+    "Number": "5016",
+    "Tag": "jenkins-RustServer-5016",
+    "Url": "https://build.facepunch.com/job/RustServer/5016/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1692857541,
+  "Date": 1692864214,
   "DateString": "24 08 2023",
-  "TimeString": "06:12"
+  "TimeString": "08:03"
 }
