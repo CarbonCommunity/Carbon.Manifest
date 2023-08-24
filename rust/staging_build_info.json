@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86389",
+    "ChangeId": "86474",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Fixed TimedExplosive throwing a server error if it's missing an explosion effect (occurred when a flare times out)",
-    "Author": "jarryd",
-    "Date": "23/08/2023 02:59:59",
-    "Items": "C Assets\\Scripts\\Entity\\TimedExplosive.cs"
+    "Comment": "Added boat position to boatdriftinfo convar",
+    "Author": "BillBorman",
+    "Date": "24/08/2023 03:39:25",
+    "Items": "C Assets\\Scripts\\ConsoleCommands\\vehicle.cs"
   },
   "Build": {
-    "Id": "5004",
-    "Number": "5004",
-    "Tag": "jenkins-RustServer-5004",
-    "Url": "https://build.facepunch.com/job/RustServer/5004/",
+    "Id": "5014",
+    "Number": "5014",
+    "Tag": "jenkins-RustServer-5014",
+    "Url": "https://build.facepunch.com/job/RustServer/5014/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1692760161,
-  "DateString": "23 08 2023",
-  "TimeString": "03:09"
+  "Date": 1692844946,
+  "DateString": "24 08 2023",
+  "TimeString": "02:42"
 }
