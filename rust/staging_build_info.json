@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86560",
+    "ChangeId": "86564",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "merge from chinook_ground_fx_fix",
-    "Author": "alistair",
-    "Date": "25/08/2023 09:09:32",
-    "Items": "C Assets\\Prefabs\\NPC\\CH47\\ch47scientists.entity.prefab \r\n C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\CH47Helicopter.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\BaseHelicopter.cs"
+    "Comment": "Don't serialize forceAcceptAmmo on attack heli turret",
+    "Author": "BillBorman",
+    "Date": "25/08/2023 10:26:58",
+    "Items": "C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\AttackHelicopterTurret.cs"
   },
   "Build": {
-    "Id": "5023",
-    "Number": "5023",
-    "Tag": "jenkins-RustServer-5023",
-    "Url": "https://build.facepunch.com/job/RustServer/5023/",
+    "Id": "5024",
+    "Number": "5024",
+    "Tag": "jenkins-RustServer-5024",
+    "Url": "https://build.facepunch.com/job/RustServer/5024/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1692951031,
+  "Date": 1692956188,
   "DateString": "25 08 2023",
-  "TimeString": "08:10"
+  "TimeString": "09:36"
 }
