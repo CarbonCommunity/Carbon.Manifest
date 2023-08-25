@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86536",
+    "ChangeId": "86537",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Reduced attack heli turret upward gun movement range, due to barrel clipping for some weapons",
+    "Comment": "Attack heli: Fixed gunner interaction being possible from driver seat",
     "Author": "BillBorman",
-    "Date": "25/08/2023 03:25:39",
-    "Items": "C Assets\\Content\\Vehicles\\AttackHelicopter\\AttackHelicopter.entity.prefab"
+    "Date": "25/08/2023 03:33:57",
+    "Items": "C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\AttackHelicopter.cs"
   },
   "Build": {
-    "Id": "5019",
-    "Number": "5019",
-    "Tag": "jenkins-RustServer-5019",
-    "Url": "https://build.facepunch.com/job/RustServer/5019/",
+    "Id": "5020",
+    "Number": "5020",
+    "Tag": "jenkins-RustServer-5020",
+    "Url": "https://build.facepunch.com/job/RustServer/5020/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1692930372,
+  "Date": 1692934657,
   "DateString": "25 08 2023",
-  "TimeString": "02:26"
+  "TimeString": "03:37"
 }
