@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86537",
+    "ChangeId": "86549",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Attack heli: Fixed gunner interaction being possible from driver seat",
+    "Comment": "Fixed tugboats not drifting if they had deployables or doors.\r\nTugboats now also check On state and don't drift if engine is on (though this was already very  unlikely to ever happen).",
     "Author": "BillBorman",
-    "Date": "25/08/2023 03:33:57",
-    "Items": "C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\AttackHelicopter.cs"
+    "Date": "25/08/2023 05:43:20",
+    "Items": "C Assets\\Scripts\\Entity\\Vehicle\\Boat\\BaseBoat.cs"
   },
   "Build": {
-    "Id": "5020",
-    "Number": "5020",
-    "Tag": "jenkins-RustServer-5020",
-    "Url": "https://build.facepunch.com/job/RustServer/5020/",
+    "Id": "5021",
+    "Number": "5021",
+    "Tag": "jenkins-RustServer-5021",
+    "Url": "https://build.facepunch.com/job/RustServer/5021/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1692934657,
+  "Date": 1692939151,
   "DateString": "25 08 2023",
-  "TimeString": "03:37"
+  "TimeString": "04:52"
 }
