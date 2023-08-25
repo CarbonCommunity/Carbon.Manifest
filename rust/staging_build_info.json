@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86557",
+    "ChangeId": "86560",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "",
-    "Author": "andre",
-    "Date": "25/08/2023 07:54:40",
-    "Items": "C Assets\\Scripts\\Entity\\Player\\BasePlayer-Projectile.cs"
+    "Comment": "merge from chinook_ground_fx_fix",
+    "Author": "alistair",
+    "Date": "25/08/2023 09:09:32",
+    "Items": "C Assets\\Prefabs\\NPC\\CH47\\ch47scientists.entity.prefab \r\n C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\CH47Helicopter.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\BaseHelicopter.cs"
   },
   "Build": {
-    "Id": "5022",
-    "Number": "5022",
-    "Tag": "jenkins-RustServer-5022",
-    "Url": "https://build.facepunch.com/job/RustServer/5022/",
+    "Id": "5023",
+    "Number": "5023",
+    "Tag": "jenkins-RustServer-5023",
+    "Url": "https://build.facepunch.com/job/RustServer/5023/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1692946505,
+  "Date": 1692951031,
   "DateString": "25 08 2023",
-  "TimeString": "06:55"
+  "TimeString": "08:10"
 }
