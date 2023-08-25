@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86549",
+    "ChangeId": "86557",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Fixed tugboats not drifting if they had deployables or doors.\r\nTugboats now also check On state and don't drift if engine is on (though this was already very  unlikely to ever happen).",
-    "Author": "BillBorman",
-    "Date": "25/08/2023 05:43:20",
-    "Items": "C Assets\\Scripts\\Entity\\Vehicle\\Boat\\BaseBoat.cs"
+    "Comment": "",
+    "Author": "andre",
+    "Date": "25/08/2023 07:54:40",
+    "Items": "C Assets\\Scripts\\Entity\\Player\\BasePlayer-Projectile.cs"
   },
   "Build": {
-    "Id": "5021",
-    "Number": "5021",
-    "Tag": "jenkins-RustServer-5021",
-    "Url": "https://build.facepunch.com/job/RustServer/5021/",
+    "Id": "5022",
+    "Number": "5022",
+    "Tag": "jenkins-RustServer-5022",
+    "Url": "https://build.facepunch.com/job/RustServer/5022/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1692939151,
+  "Date": 1692946505,
   "DateString": "25 08 2023",
-  "TimeString": "04:52"
+  "TimeString": "06:55"
 }
