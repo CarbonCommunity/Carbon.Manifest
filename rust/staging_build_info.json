@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86525",
+    "ChangeId": "86536",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Fixed first person spectating not properly hiding the head section of the player model when mounted to a mountable set to First Person with Arms",
-    "Author": "jarryd",
-    "Date": "25/08/2023 00:32:37",
-    "Items": "C Assets\\Scripts\\Entity\\Player\\BasePlayer-Client.ViewMode.cs"
+    "Comment": "Reduced attack heli turret upward gun movement range, due to barrel clipping for some weapons",
+    "Author": "BillBorman",
+    "Date": "25/08/2023 03:25:39",
+    "Items": "C Assets\\Content\\Vehicles\\AttackHelicopter\\AttackHelicopter.entity.prefab"
   },
   "Build": {
-    "Id": "5018",
-    "Number": "5018",
-    "Tag": "jenkins-RustServer-5018",
-    "Url": "https://build.facepunch.com/job/RustServer/5018/",
+    "Id": "5019",
+    "Number": "5019",
+    "Tag": "jenkins-RustServer-5019",
+    "Url": "https://build.facepunch.com/job/RustServer/5019/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1692920003,
-  "DateString": "24 08 2023",
-  "TimeString": "23:33"
+  "Date": 1692930372,
+  "DateString": "25 08 2023",
+  "TimeString": "02:26"
 }
