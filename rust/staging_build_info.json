@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86497",
+    "ChangeId": "86525",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Attack heli now shows damage FX on the rocket pod texture too",
-    "Author": "BillBorman",
-    "Date": "24/08/2023 09:32:10",
-    "Items": "C Assets\\Content\\Vehicles\\AttackHelicopter\\AttackHelicopter.entity.prefab"
+    "Comment": "Fixed first person spectating not properly hiding the head section of the player model when mounted to a mountable set to First Person with Arms",
+    "Author": "jarryd",
+    "Date": "25/08/2023 00:32:37",
+    "Items": "C Assets\\Scripts\\Entity\\Player\\BasePlayer-Client.ViewMode.cs"
   },
   "Build": {
-    "Id": "5017",
-    "Number": "5017",
-    "Tag": "jenkins-RustServer-5017",
-    "Url": "https://build.facepunch.com/job/RustServer/5017/",
+    "Id": "5018",
+    "Number": "5018",
+    "Tag": "jenkins-RustServer-5018",
+    "Url": "https://build.facepunch.com/job/RustServer/5018/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1692868831,
+  "Date": 1692920003,
   "DateString": "24 08 2023",
-  "TimeString": "09:20"
+  "TimeString": "23:33"
 }
