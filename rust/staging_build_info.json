@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86610",
+    "ChangeId": "86625",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Set good values for buoyancy requiredSubmergedFraction for all boats. Helps with buoyancy system setting Sleep only when it should.",
-    "Author": "BillBorman",
-    "Date": "28/08/2023 05:03:45",
-    "Items": "C Assets\\Content\\Vehicles\\Boats\\RHIB\\RHIB.prefab \r\n C Assets\\Content\\Vehicles\\Boats\\Rowboat\\Rowboat.prefab \r\n C Assets\\Content\\Vehicles\\Boats\\Tugboat\\Tugboat.prefab \r\n C Assets\\Content\\Vehicles\\Submarine\\SubmarineDuo.entity.prefab \r\n C Assets\\Content\\Vehicles\\Submarine\\SubmarineSolo.entity.prefab \r\n C Assets\\Scripts\\Entity\\Vehicle\\Boat\\Buoyancy.cs"
+    "Comment": "merge from parachute",
+    "Author": "alistair",
+    "Date": "28/08/2023 09:59:29",
+    "Items": "C Assets\\Scenes\\Prefabs\\UI\\UI.Ingame.LootPanels.unity \r\n C Assets\\Editor\\Rust\\Tools\\RustEditor.Loadout.cs \r\n C Assets\\Generated\\ConsoleSystem.cs \r\n C Assets\\Prefabs\\Clothes\\ninja_suit\\ninja_suit_female.prefab \r\n C Assets\\Prefabs\\Clothes\\ninja_suit\\Suit.ninja_male.prefab \r\n C Assets\\Prefabs\\Clothes\\Suit.Hazmat\\Nomad\\hazmat_suit_nomadsuit.prefab \r\n C Assets\\Prefabs\\Clothes\\Suit.Hazmat\\Nomad\\model\\nomad_hazmat.fbx \r\n C Assets\\Prefabs\\Deployable\\Locker\\locker.campermodule.prefab \r\n C Assets\\Prefabs\\Deployable\\Locker\\locker.deployed.prefab \r\n C Assets\\Prefabs\\Deployable\\Locker\\Locker.cs \r\n C Assets\\Prefabs\\Misc\\Halloween\\Surgeon_Outfit\\Surgeon_Outfit.female.prefab \r\n C Assets\\Prefabs\\Misc\\Halloween\\Surgeon_Outfit\\Surgeon_Outfit.prefab \r\n C Assets\\Prefabs\\Misc\\Easter\\Egg_Suit\\Egg.Suit.prefab \r\n C Assets\\Prefabs\\Misc\\XMas\\sled\\SledSeat.cs \r\n C Assets\\Prefabs\\Misc\\Parachute\\parachute.prefab \r\n C Assets\\Prefabs\\Misc\\Parachute\\parachute.backpack.deployed.prefab \r\n C Assets\\Prefabs\\Misc\\Parachute\\Parachute.cs \r\n C Assets\\Prefabs\\Misc\\Parachute\\parachute.item.prefab \r\n C Assets\\Prefabs\\Vehicle\\Seats\\ParachuteSeat.prefab \r\n C Assets\\bundled\\Prefabs\\ui\\lootpanels\\lootpanel.locker.prefab \r\n C Assets\\bundled\\Prefabs\\ui\\lootpanels\\lootpanel.player_corpse.prefab \r\n C Assets\\Content\\Player\\Animations\\PlayerAnimation.controller \r\n C Assets\\Content\\Player\\Animations\\unarmed\\RustPlayer@skydiving_parachute_open.fbx \r\n C Assets\\Content\\Player\\Animations\\unarmed\\RustPlayer@skydiving_parachute_open.fbx.meta \r\n C Assets\\Content\\UI\\GameUI\\GameUI.Inventory.prefab \r\n C Assets\\Scripts\\ConsoleCommands\\debug.cs \r\n C Assets\\Scripts\\Client\\FirstPersonSpectatorMode.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-ClientCycle.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-Client.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-Parachute.cs \r\n C Assets\\Scripts\\Entity\\Player\\Components\\PlayerInventory.cs \r\n A Assets\\Content\\UI\\backpack-icon.png \r\n A Assets\\Content\\UI\\backpack-icon.png.meta"
   },
   "Build": {
-    "Id": "5026",
-    "Number": "5026",
-    "Tag": "jenkins-RustServer-5026",
-    "Url": "https://build.facepunch.com/job/RustServer/5026/",
+    "Id": "5027",
+    "Number": "5027",
+    "Tag": "jenkins-RustServer-5027",
+    "Url": "https://build.facepunch.com/job/RustServer/5027/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1693196347,
+  "Date": 1693213203,
   "DateString": "28 08 2023",
-  "TimeString": "04:19"
+  "TimeString": "09:00"
 }
