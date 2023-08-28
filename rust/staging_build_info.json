@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86604",
+    "ChangeId": "86610",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Fixed several bugs with the tugboat shore drift collision check",
+    "Comment": "Set good values for buoyancy requiredSubmergedFraction for all boats. Helps with buoyancy system setting Sleep only when it should.",
     "Author": "BillBorman",
-    "Date": "28/08/2023 04:10:01",
-    "Items": "C Assets\\Scripts\\Entity\\Vehicle\\Boat\\BaseBoat.cs"
+    "Date": "28/08/2023 05:03:45",
+    "Items": "C Assets\\Content\\Vehicles\\Boats\\RHIB\\RHIB.prefab \r\n C Assets\\Content\\Vehicles\\Boats\\Rowboat\\Rowboat.prefab \r\n C Assets\\Content\\Vehicles\\Boats\\Tugboat\\Tugboat.prefab \r\n C Assets\\Content\\Vehicles\\Submarine\\SubmarineDuo.entity.prefab \r\n C Assets\\Content\\Vehicles\\Submarine\\SubmarineSolo.entity.prefab \r\n C Assets\\Scripts\\Entity\\Vehicle\\Boat\\Buoyancy.cs"
   },
   "Build": {
-    "Id": "5025",
-    "Number": "5025",
-    "Tag": "jenkins-RustServer-5025",
-    "Url": "https://build.facepunch.com/job/RustServer/5025/",
+    "Id": "5026",
+    "Number": "5026",
+    "Tag": "jenkins-RustServer-5026",
+    "Url": "https://build.facepunch.com/job/RustServer/5026/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1693192247,
+  "Date": 1693196347,
   "DateString": "28 08 2023",
-  "TimeString": "03:10"
+  "TimeString": "04:19"
 }
