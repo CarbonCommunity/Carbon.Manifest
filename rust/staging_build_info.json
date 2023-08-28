@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86668",
+    "ChangeId": "86673",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Clan Table - fixed not all colliders being on Deployed layer",
+    "Comment": "Converted StandingWeaponRack to use all convex colliders",
     "Author": "BillBorman",
-    "Date": "28/08/2023 21:15:12",
-    "Items": "C Assets\\Prefabs\\Deployable\\Clan Table\\clantable.deployed.prefab"
+    "Date": "28/08/2023 22:16:09",
+    "Items": "C Assets\\Prefabs\\Deployable\\Gun_Rack\\StandingWeaponRack.prefab"
   },
   "Build": {
-    "Id": "5031",
-    "Number": "5031",
-    "Tag": "jenkins-RustServer-5031",
-    "Url": "https://build.facepunch.com/job/RustServer/5031/",
+    "Id": "5032",
+    "Number": "5032",
+    "Tag": "jenkins-RustServer-5032",
+    "Url": "https://build.facepunch.com/job/RustServer/5032/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1693253753,
+  "Date": 1693257801,
   "DateString": "28 08 2023",
-  "TimeString": "20:15"
+  "TimeString": "21:23"
 }
