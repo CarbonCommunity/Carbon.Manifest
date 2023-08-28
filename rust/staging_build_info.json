@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86646",
+    "ChangeId": "86668",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "2021 server NavMeshAgent tests",
-    "Author": "andre",
-    "Date": "28/08/2023 15:17:19",
-    "Items": "C Assets\\Rust.Ai\\Npc\\BaseNpc.Server.cs \r\n C Assets\\Rust.Ai\\BaseNavigator.cs"
+    "Comment": "Clan Table - fixed not all colliders being on Deployed layer",
+    "Author": "BillBorman",
+    "Date": "28/08/2023 21:15:12",
+    "Items": "C Assets\\Prefabs\\Deployable\\Clan Table\\clantable.deployed.prefab"
   },
   "Build": {
-    "Id": "5030",
-    "Number": "5030",
-    "Tag": "jenkins-RustServer-5030",
-    "Url": "https://build.facepunch.com/job/RustServer/5030/",
+    "Id": "5031",
+    "Number": "5031",
+    "Tag": "jenkins-RustServer-5031",
+    "Url": "https://build.facepunch.com/job/RustServer/5031/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1693232282,
+  "Date": 1693253753,
   "DateString": "28 08 2023",
-  "TimeString": "14:18"
+  "TimeString": "20:15"
 }
