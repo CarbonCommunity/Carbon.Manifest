@@ -1,1 +1,5 @@
-connection failure
+{
+	"Version": "0.2023.3235.2820-MinimalUnix",
+	"Protocol": "2023.08.03.3",
+	"Platform": "Linux"
+}
