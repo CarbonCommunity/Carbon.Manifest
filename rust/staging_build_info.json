@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86564",
+    "ChangeId": "86604",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Don't serialize forceAcceptAmmo on attack heli turret",
+    "Comment": "Fixed several bugs with the tugboat shore drift collision check",
     "Author": "BillBorman",
-    "Date": "25/08/2023 10:26:58",
-    "Items": "C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\AttackHelicopterTurret.cs"
+    "Date": "28/08/2023 04:10:01",
+    "Items": "C Assets\\Scripts\\Entity\\Vehicle\\Boat\\BaseBoat.cs"
   },
   "Build": {
-    "Id": "5024",
-    "Number": "5024",
-    "Tag": "jenkins-RustServer-5024",
-    "Url": "https://build.facepunch.com/job/RustServer/5024/",
+    "Id": "5025",
+    "Number": "5025",
+    "Tag": "jenkins-RustServer-5025",
+    "Url": "https://build.facepunch.com/job/RustServer/5025/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1692956188,
-  "DateString": "25 08 2023",
-  "TimeString": "09:36"
+  "Date": 1693192247,
+  "DateString": "28 08 2023",
+  "TimeString": "03:10"
 }
