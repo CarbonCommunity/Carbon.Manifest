@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86704",
+    "ChangeId": "86710",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "A bit more nuance to the ground control system for helis",
-    "Author": "BillBorman",
-    "Date": "29/08/2023 05:20:34",
-    "Items": "C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\BaseHelicopter.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\PlayerHelicopter.cs"
+    "Comment": "Merge from parachute",
+    "Author": "jarryd",
+    "Date": "29/08/2023 06:12:26",
+    "Items": "C Assets\\Generated\\ConsoleSystem.cs \r\n C Assets\\Scripts\\ConsoleCommands\\debug.cs \r\n C Assets\\Scripts\\ConsoleCommands\\server.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-Parachute.cs \r\n C Assets\\Scripts\\Entity\\Player\\Components\\PlayerInventory.cs"
   },
   "Build": {
-    "Id": "5037",
-    "Number": "5037",
-    "Tag": "jenkins-RustServer-5037",
-    "Url": "https://build.facepunch.com/job/RustServer/5037/",
+    "Id": "5038",
+    "Number": "5038",
+    "Tag": "jenkins-RustServer-5038",
+    "Url": "https://build.facepunch.com/job/RustServer/5038/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1693285373,
+  "Date": 1693289158,
   "DateString": "29 08 2023",
-  "TimeString": "05:02"
+  "TimeString": "06:05"
 }
