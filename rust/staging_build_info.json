@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86700",
+    "ChangeId": "86704",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Fixed being able to ground-control attack heli while engine is off",
+    "Comment": "A bit more nuance to the ground control system for helis",
     "Author": "BillBorman",
-    "Date": "29/08/2023 04:48:57",
-    "Items": "C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\BaseHelicopter.cs"
+    "Date": "29/08/2023 05:20:34",
+    "Items": "C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\BaseHelicopter.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\PlayerHelicopter.cs"
   },
   "Build": {
-    "Id": "5036",
-    "Number": "5036",
-    "Tag": "jenkins-RustServer-5036",
-    "Url": "https://build.facepunch.com/job/RustServer/5036/",
+    "Id": "5037",
+    "Number": "5037",
+    "Tag": "jenkins-RustServer-5037",
+    "Url": "https://build.facepunch.com/job/RustServer/5037/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1693281574,
+  "Date": 1693285373,
   "DateString": "29 08 2023",
-  "TimeString": "03:59"
+  "TimeString": "05:02"
 }
