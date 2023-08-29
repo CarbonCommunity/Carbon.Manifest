@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86710",
+    "ChangeId": "86723",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Merge from parachute",
-    "Author": "jarryd",
-    "Date": "29/08/2023 06:12:26",
-    "Items": "C Assets\\Generated\\ConsoleSystem.cs \r\n C Assets\\Scripts\\ConsoleCommands\\debug.cs \r\n C Assets\\Scripts\\ConsoleCommands\\server.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-Parachute.cs \r\n C Assets\\Scripts\\Entity\\Player\\Components\\PlayerInventory.cs"
+    "Comment": "~ Fixed CLIENT / SERVER compile issues in BaseProjectile and LockOnLauncher",
+    "Author": "andre",
+    "Date": "29/08/2023 09:32:42",
+    "Items": "C Assets\\Scripts\\Entity\\BaseEntity\\HeldEntity\\BaseProjectile.cs \r\n C Assets\\Scripts\\Entity\\BaseEntity\\HeldEntity\\LockOnLauncher.cs"
   },
   "Build": {
-    "Id": "5038",
-    "Number": "5038",
-    "Tag": "jenkins-RustServer-5038",
-    "Url": "https://build.facepunch.com/job/RustServer/5038/",
+    "Id": "5040",
+    "Number": "5040",
+    "Tag": "jenkins-RustServer-5040",
+    "Url": "https://build.facepunch.com/job/RustServer/5040/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1693289158,
+  "Date": 1693299184,
   "DateString": "29 08 2023",
-  "TimeString": "06:05"
+  "TimeString": "08:53"
 }
