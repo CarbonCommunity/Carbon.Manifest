@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86723",
+    "ChangeId": "86728",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "~ Fixed CLIENT / SERVER compile issues in BaseProjectile and LockOnLauncher",
-    "Author": "andre",
-    "Date": "29/08/2023 09:32:42",
-    "Items": "C Assets\\Scripts\\Entity\\BaseEntity\\HeldEntity\\BaseProjectile.cs \r\n C Assets\\Scripts\\Entity\\BaseEntity\\HeldEntity\\LockOnLauncher.cs"
+    "Comment": "Fix for dof_squeeze and dof_barrel not working; convars now admin",
+    "Author": "diogo",
+    "Date": "29/08/2023 10:40:01",
+    "Items": "C Assets\\Generated\\ConsoleSystem.cs \r\n C Assets\\Content\\Image Effects\\postfx_volumes\\submarine_dof.asset \r\n C Assets\\Content\\Image Effects\\postfx_volumes\\main_base.asset \r\n C Assets\\Scripts\\ConsoleCommands\\graphics.cs"
   },
   "Build": {
-    "Id": "5040",
-    "Number": "5040",
-    "Tag": "jenkins-RustServer-5040",
-    "Url": "https://build.facepunch.com/job/RustServer/5040/",
+    "Id": "5041",
+    "Number": "5041",
+    "Tag": "jenkins-RustServer-5041",
+    "Url": "https://build.facepunch.com/job/RustServer/5041/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1693299184,
+  "Date": 1693304577,
   "DateString": "29 08 2023",
-  "TimeString": "08:53"
+  "TimeString": "10:22"
 }
