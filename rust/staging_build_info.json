@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86728",
+    "ChangeId": "86736",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Fix for dof_squeeze and dof_barrel not working; convars now admin",
-    "Author": "diogo",
-    "Date": "29/08/2023 10:40:01",
-    "Items": "C Assets\\Generated\\ConsoleSystem.cs \r\n C Assets\\Content\\Image Effects\\postfx_volumes\\submarine_dof.asset \r\n C Assets\\Content\\Image Effects\\postfx_volumes\\main_base.asset \r\n C Assets\\Scripts\\ConsoleCommands\\graphics.cs"
+    "Comment": "merge from global_networked_bases",
+    "Author": "alistair",
+    "Date": "29/08/2023 13:18:02",
+    "Items": "C Assets\\Scripts\\Rendering\\Instancing\\Schedulers\\DrawCallManager.cs"
   },
   "Build": {
-    "Id": "5041",
-    "Number": "5041",
-    "Tag": "jenkins-RustServer-5041",
-    "Url": "https://build.facepunch.com/job/RustServer/5041/",
+    "Id": "5043",
+    "Number": "5043",
+    "Tag": "jenkins-RustServer-5043",
+    "Url": "https://build.facepunch.com/job/RustServer/5043/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1693304577,
+  "Date": 1693312067,
   "DateString": "29 08 2023",
-  "TimeString": "10:22"
+  "TimeString": "12:27"
 }
