@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86697",
+    "ChangeId": "86700",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Autohover is now a convar. Removed the built-in input trigger for it, but it can now be bound instead.",
+    "Comment": "Fixed being able to ground-control attack heli while engine is off",
     "Author": "BillBorman",
-    "Date": "29/08/2023 03:32:01",
-    "Items": "C Assets\\Generated\\ConsoleSystem.cs \r\n C Assets\\Scripts\\ConsoleCommands\\vehicle.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\BaseHelicopter.cs"
+    "Date": "29/08/2023 04:48:57",
+    "Items": "C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\BaseHelicopter.cs"
   },
   "Build": {
-    "Id": "5035",
-    "Number": "5035",
-    "Tag": "jenkins-RustServer-5035",
-    "Url": "https://build.facepunch.com/job/RustServer/5035/",
+    "Id": "5036",
+    "Number": "5036",
+    "Tag": "jenkins-RustServer-5036",
+    "Url": "https://build.facepunch.com/job/RustServer/5036/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1693277709,
+  "Date": 1693281574,
   "DateString": "29 08 2023",
-  "TimeString": "02:55"
+  "TimeString": "03:59"
 }
