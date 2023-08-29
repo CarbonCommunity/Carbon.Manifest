@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86673",
+    "ChangeId": "86687",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Converted StandingWeaponRack to use all convex colliders",
+    "Comment": "Don't include Vehicle_Large by default in the StaticSolid layer mask. It's solid but not static.",
     "Author": "BillBorman",
-    "Date": "28/08/2023 22:16:09",
-    "Items": "C Assets\\Prefabs\\Deployable\\Gun_Rack\\StandingWeaponRack.prefab"
+    "Date": "29/08/2023 01:35:20",
+    "Items": "C Assets\\Plugins\\Rust.Global\\Defines.cs \r\n C Assets\\Scripts\\Game\\TriggerParent.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-Parachute.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Boat\\RHIBAIController.cs"
   },
   "Build": {
-    "Id": "5032",
-    "Number": "5032",
-    "Tag": "jenkins-RustServer-5032",
-    "Url": "https://build.facepunch.com/job/RustServer/5032/",
+    "Id": "5033",
+    "Number": "5033",
+    "Tag": "jenkins-RustServer-5033",
+    "Url": "https://build.facepunch.com/job/RustServer/5033/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1693257801,
-  "DateString": "28 08 2023",
-  "TimeString": "21:23"
+  "Date": 1693269351,
+  "DateString": "29 08 2023",
+  "TimeString": "00:35"
 }
