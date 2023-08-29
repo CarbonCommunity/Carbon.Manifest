@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86691",
+    "ChangeId": "86697",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Merge from parachute",
-    "Author": "jarryd",
-    "Date": "29/08/2023 02:30:21",
-    "Items": "C Assets\\Prefabs\\Misc\\Parachute\\parachute.prefab \r\n C Assets\\bundled\\Prefabs\\ui\\lootpanels\\lootpanel.locker.prefab \r\n C Assets\\Scripts\\ConsoleCommands\\debug.cs \r\n C Assets\\Scripts\\UI\\Inventory\\UIInventory.cs"
+    "Comment": "Autohover is now a convar. Removed the built-in input trigger for it, but it can now be bound instead.",
+    "Author": "BillBorman",
+    "Date": "29/08/2023 03:32:01",
+    "Items": "C Assets\\Generated\\ConsoleSystem.cs \r\n C Assets\\Scripts\\ConsoleCommands\\vehicle.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\BaseHelicopter.cs"
   },
   "Build": {
-    "Id": "5034",
-    "Number": "5034",
-    "Tag": "jenkins-RustServer-5034",
-    "Url": "https://build.facepunch.com/job/RustServer/5034/",
+    "Id": "5035",
+    "Number": "5035",
+    "Tag": "jenkins-RustServer-5035",
+    "Url": "https://build.facepunch.com/job/RustServer/5035/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1693273261,
+  "Date": 1693277709,
   "DateString": "29 08 2023",
-  "TimeString": "01:41"
+  "TimeString": "02:55"
 }
