@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "85883",
-    "Branch": "release",
+    "ChangeId": "86817",
+    "Branch": "experimental/release",
     "Repo": "rust_reboot",
-    "Comment": "",
-    "Author": "alistair",
-    "Date": "11/08/2023 18:31:43",
-    "Items": "C Assets\\Generated\\ConsoleSystem.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-Server.cs \r\n C Assets\\Scripts\\ConsoleCommands\\global.cs"
+    "Comment": "~ Server experimental-release upload files",
+    "Author": "andre",
+    "Date": "30/08/2023 12:40:28",
+    "Items": "A Steamworks\\rust_ds_experimental-release-debug.vdf \r\n A Steamworks\\rust_ds_experimental-release.vdf"
   },
   "Build": {
-    "Id": "527",
-    "Number": "527",
-    "Tag": "jenkins-RustReleaseServer-527",
-    "Url": "https://build.facepunch.com/job/RustReleaseServer/527/",
-    "Name": "RustReleaseServer",
+    "Id": "2",
+    "Number": "2",
+    "Tag": "jenkins-RustReleaseServer2021-2",
+    "Url": "https://build.facepunch.com/job/RustReleaseServer2021/2/",
+    "Name": "RustReleaseServer2021",
     "Node": "Win4"
   },
-  "Date": 1691775161,
-  "DateString": "11 08 2023",
-  "TimeString": "17:32"
+  "Date": 1693396956,
+  "DateString": "30 08 2023",
+  "TimeString": "12:02"
 }
