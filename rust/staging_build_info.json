@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86797",
+    "ChangeId": "86839",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "network++",
+    "Comment": "merge from Attack Helicopter (hand position fixes)",
     "Author": "alistair",
-    "Date": "30/08/2023 08:54:36",
-    "Items": "C Assets\\Plugins\\Rust.Global\\Protocol.cs"
+    "Date": "30/08/2023 16:16:47",
+    "Items": "C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\PlayerHelicopter.cs"
   },
   "Build": {
-    "Id": "5046",
-    "Number": "5046",
-    "Tag": "jenkins-RustServer-5046",
-    "Url": "https://build.facepunch.com/job/RustServer/5046/",
+    "Id": "5049",
+    "Number": "5049",
+    "Tag": "jenkins-RustServer-5049",
+    "Url": "https://build.facepunch.com/job/RustServer/5049/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1693382102,
+  "Date": 1693408640,
   "DateString": "30 08 2023",
-  "TimeString": "07:55"
+  "TimeString": "15:17"
 }
