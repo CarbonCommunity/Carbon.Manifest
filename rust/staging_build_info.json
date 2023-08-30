@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86757",
+    "ChangeId": "86761",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Merge HAB Armor Damage -> Main",
+    "Comment": "Merge HAB shared damage -> Main. Had to disable HAB armour damage texture again for now.",
     "Author": "BillBorman",
-    "Date": "29/08/2023 23:50:58",
-    "Items": "C Assets\\Prefabs\\Deployable\\Hot Air Balloon\\models\\Materials\\basket.mat \r\n C Assets\\Prefabs\\Deployable\\Hot Air Balloon\\models\\Materials\\HAB_armor_chainlink_A.mat \r\n C Assets\\Prefabs\\Deployable\\Hot Air Balloon\\models\\Materials\\HAB_armor_chainlink_B.mat \r\n C Assets\\Prefabs\\Deployable\\Hot Air Balloon\\models\\Materials\\HAB_armor_T1_LOD3.mat \r\n C Assets\\Prefabs\\Deployable\\Hot Air Balloon\\models\\Materials\\HAB_armor_wood.mat \r\n C Assets\\Prefabs\\Deployable\\Hot Air Balloon\\HotAirBalloon_armor_T1.prefab \r\n C Assets\\Prefabs\\Deployable\\Hot Air Balloon\\HotAirBalloonEquipment.cs \r\n A Assets\\Content\\Textures\\Generic\\chainlink_fence\\chainlink_fence_damage_mask.tga \r\n A Assets\\Content\\Textures\\Generic\\chainlink_fence\\chainlink_fence_damage_mask.tga.meta \r\n A Assets\\Content\\Textures\\Generic\\wood_planks_a\\wood_planks_a_damage_mask.tga \r\n A Assets\\Content\\Textures\\Generic\\wood_planks_a\\wood_planks_a_damage_mask.tga.meta"
+    "Date": "30/08/2023 00:23:23",
+    "Items": "C Assets\\Prefabs\\Deployable\\Hot Air Balloon\\HotAirBalloon.cs \r\n C Assets\\Prefabs\\Deployable\\Hot Air Balloon\\models\\Materials\\balloon.mat \r\n C Assets\\Prefabs\\Deployable\\Hot Air Balloon\\HotAirBalloon_armor_T1.prefab \r\n C Assets\\Prefabs\\Deployable\\Hot Air Balloon\\HotAirBalloonArmor.cs \r\n C Assets\\Prefabs\\Deployable\\Hot Air Balloon\\HotAirBalloonEquipment.cs"
   },
   "Build": {
-    "Id": "5044",
-    "Number": "5044",
-    "Tag": "jenkins-RustServer-5044",
-    "Url": "https://build.facepunch.com/job/RustServer/5044/",
+    "Id": "5045",
+    "Number": "5045",
+    "Tag": "jenkins-RustServer-5045",
+    "Url": "https://build.facepunch.com/job/RustServer/5045/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1693349494,
-  "DateString": "29 08 2023",
-  "TimeString": "22:51"
+  "Date": 1693353965,
+  "DateString": "30 08 2023",
+  "TimeString": "00:06"
 }
