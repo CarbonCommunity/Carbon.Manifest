@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86736",
+    "ChangeId": "86757",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "merge from global_networked_bases",
-    "Author": "alistair",
-    "Date": "29/08/2023 13:18:02",
-    "Items": "C Assets\\Scripts\\Rendering\\Instancing\\Schedulers\\DrawCallManager.cs"
+    "Comment": "Merge HAB Armor Damage -> Main",
+    "Author": "BillBorman",
+    "Date": "29/08/2023 23:50:58",
+    "Items": "C Assets\\Prefabs\\Deployable\\Hot Air Balloon\\models\\Materials\\basket.mat \r\n C Assets\\Prefabs\\Deployable\\Hot Air Balloon\\models\\Materials\\HAB_armor_chainlink_A.mat \r\n C Assets\\Prefabs\\Deployable\\Hot Air Balloon\\models\\Materials\\HAB_armor_chainlink_B.mat \r\n C Assets\\Prefabs\\Deployable\\Hot Air Balloon\\models\\Materials\\HAB_armor_T1_LOD3.mat \r\n C Assets\\Prefabs\\Deployable\\Hot Air Balloon\\models\\Materials\\HAB_armor_wood.mat \r\n C Assets\\Prefabs\\Deployable\\Hot Air Balloon\\HotAirBalloon_armor_T1.prefab \r\n C Assets\\Prefabs\\Deployable\\Hot Air Balloon\\HotAirBalloonEquipment.cs \r\n A Assets\\Content\\Textures\\Generic\\chainlink_fence\\chainlink_fence_damage_mask.tga \r\n A Assets\\Content\\Textures\\Generic\\chainlink_fence\\chainlink_fence_damage_mask.tga.meta \r\n A Assets\\Content\\Textures\\Generic\\wood_planks_a\\wood_planks_a_damage_mask.tga \r\n A Assets\\Content\\Textures\\Generic\\wood_planks_a\\wood_planks_a_damage_mask.tga.meta"
   },
   "Build": {
-    "Id": "5043",
-    "Number": "5043",
-    "Tag": "jenkins-RustServer-5043",
-    "Url": "https://build.facepunch.com/job/RustServer/5043/",
+    "Id": "5044",
+    "Number": "5044",
+    "Tag": "jenkins-RustServer-5044",
+    "Url": "https://build.facepunch.com/job/RustServer/5044/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1693312067,
+  "Date": 1693349494,
   "DateString": "29 08 2023",
-  "TimeString": "12:27"
+  "TimeString": "22:51"
 }
