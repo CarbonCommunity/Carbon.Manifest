@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86853",
+    "ChangeId": "86935",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "merge from patrolheli_water_fixes",
+    "Comment": "merge from hq-shadow-fix",
     "Author": "alistair",
-    "Date": "30/08/2023 19:21:04",
-    "Items": "C Assets\\Scripts\\Entity\\Misc\\PatrolHelicopter\\PatrolHelicopterAI.cs"
+    "Date": "31/08/2023 12:01:19",
+    "Items": "C Assets\\Third Party\\NGSS\\UnityShadowLibrary.cginc"
   },
   "Build": {
-    "Id": "5051",
-    "Number": "5051",
-    "Tag": "jenkins-RustServer-5051",
-    "Url": "https://build.facepunch.com/job/RustServer/5051/",
+    "Id": "5055",
+    "Number": "5055",
+    "Tag": "jenkins-RustServer-5055",
+    "Url": "https://build.facepunch.com/job/RustServer/5055/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1693419821,
-  "DateString": "30 08 2023",
-  "TimeString": "18:23"
+  "Date": 1693479702,
+  "DateString": "31 08 2023",
+  "TimeString": "11:01"
 }
