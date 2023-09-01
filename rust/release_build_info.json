@@ -10,14 +10,14 @@
     "Items": "A Steamworks\\rust_ds_experimental-release-debug.vdf \r\n A Steamworks\\rust_ds_experimental-release.vdf"
   },
   "Build": {
-    "Id": "2",
-    "Number": "2",
-    "Tag": "jenkins-RustReleaseServer2021-2",
-    "Url": "https://build.facepunch.com/job/RustReleaseServer2021/2/",
+    "Id": "3",
+    "Number": "3",
+    "Tag": "jenkins-RustReleaseServer2021-3",
+    "Url": "https://build.facepunch.com/job/RustReleaseServer2021/3/",
     "Name": "RustReleaseServer2021",
     "Node": "Win4"
   },
-  "Date": 1693396956,
-  "DateString": "30 08 2023",
-  "TimeString": "12:02"
+  "Date": 1693465035,
+  "DateString": "31 08 2023",
+  "TimeString": "06:57"
 }
