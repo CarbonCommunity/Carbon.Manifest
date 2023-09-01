@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "87025",
+    "ChangeId": "87029",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "fixed flickering mesh in fbx for the wall rack",
-    "Author": "TomButters2",
-    "Date": "01/09/2023 14:28:20",
-    "Items": "C Assets\\Prefabs\\Deployable\\Gun_Rack\\Models\\LargeHorizontalWallRack.fbx"
+    "Comment": "merge from global_networked_bases",
+    "Author": "alistair",
+    "Date": "01/09/2023 15:48:58",
+    "Items": "C protobuf\\proto\\Messages.proto \r\n C protobuf\\proto\\Render.proto \r\n C Assets\\Third Party\\VolumetricLightBeam\\Scripts\\Utils.cs \r\n C Assets\\Plugins\\Facepunch.Network\\Connection.cs \r\n C Assets\\Plugins\\Rust.Data\\generated\\ProtocolBuffers.cs \r\n C Assets\\Plugins\\Rust.Data\\generated\\ProtocolBuffers.Serializer.cs \r\n C Assets\\Generated\\ConsoleSystem.cs \r\n C Assets\\bundled\\Prefabs\\world\\renderer_entity.prefab \r\n C Assets\\bundled\\Prefabs\\ui\\GameUI.prefab \r\n C Assets\\Content\\Shaders\\Include\\Instancing.cginc \r\n C Assets\\Content\\Shaders\\Standard\\Include\\StandardBlendLayer.cginc \r\n C Assets\\Content\\Shaders\\Standard\\Include\\UnityStandardCore.cginc \r\n C Assets\\Content\\Shaders\\Standard\\Include\\UnityStandardShadow.cginc \r\n C Assets\\Content\\UI\\MenuUI\\MenuUI.Options.prefab \r\n C Assets\\Scripts\\Rendering\\Instancing\\Components\\InstancedScheduler.cs \r\n C Assets\\Scripts\\Rendering\\Instancing\\GPUBuffer.cs \r\n C Assets\\Scripts\\Rendering\\Instancing\\InstancingUtil.cs \r\n C Assets\\Scripts\\Rendering\\Instancing\\RenderUpdate.cs \r\n C Assets\\Scripts\\Rendering\\Instancing\\InstancedEntityData.cs \r\n C Assets\\Scripts\\Rendering\\Instancing\\Schedulers\\DrawCallManager.cs \r\n C Assets\\Scripts\\Rendering\\Instancing\\Schedulers\\CellMeshAllocator.cs \r\n C Assets\\Scripts\\Rendering\\Instancing\\Schedulers\\VirtualPrefabScheduler.cs \r\n C Assets\\Scripts\\Rendering\\Instancing\\Schedulers\\VirtualMeshScheduler.cs \r\n C Assets\\Scripts\\Rendering\\Instancing\\Schedulers\\VirtualEntityScheduler.cs \r\n C Assets\\Scripts\\Procedural\\Common\\World.cs \r\n C Assets\\Scripts\\Server\\ServerMgr.Networking.cs \r\n C Assets\\Scripts\\Server\\ServerMgr.cs \r\n C Assets\\Scripts\\ConsoleCommands\\net.cs \r\n C Assets\\Scripts\\ConsoleCommands\\render.cs \r\n C Assets\\Scripts\\Game\\Bootstrap\\Bootstrap.cs \r\n C Assets\\Scripts\\Game\\LOD\\TreeManager.cs \r\n C Assets\\Scripts\\Client\\Client.Connection.cs \r\n C Assets\\Scripts\\Entity\\BuildingBlock\\BuildingBlock.Highlight.cs \r\n C Assets\\Scripts\\Entity\\BuildingBlock\\BuildingBlock.Grades.cs \r\n C Assets\\Scripts\\Entity\\Global\\GlobalNetworkHandler.Server.cs \r\n A Assets\\Scripts\\Rendering\\Instancing\\Config\\InstancedPrefabConfig.cs.meta \r\n A Assets\\Scripts\\Rendering\\Instancing\\Culling\\MeshOverrideData.cs \r\n A Assets\\Scripts\\Rendering\\Instancing\\Culling\\MeshOverrideData.cs.meta \r\n D Assets\\Scripts\\Rendering\\Instancing\\Config\\InstancedMeshConfig.cs.meta \r\n M Assets\\Scripts\\Rendering\\Instancing\\Config\\InstancedPrefabConfig.cs"
   },
   "Build": {
-    "Id": "5062",
-    "Number": "5062",
-    "Tag": "jenkins-RustServer-5062",
-    "Url": "https://build.facepunch.com/job/RustServer/5062/",
+    "Id": "5063",
+    "Number": "5063",
+    "Tag": "jenkins-RustServer-5063",
+    "Url": "https://build.facepunch.com/job/RustServer/5063/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1693578055,
+  "Date": 1693584472,
   "DateString": "1 09 2023",
-  "TimeString": "14:20"
+  "TimeString": "16:07"
 }
