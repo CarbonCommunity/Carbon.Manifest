@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86980",
+    "ChangeId": "87000",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Removed bottom collider on T2 workbench to restore previous broken legacy behaviour (allows placing a small wood box underneath that clips through the shelf)",
-    "Author": "BillBorman",
-    "Date": "01/09/2023 01:09:17",
-    "Items": "C Assets\\Prefabs\\Deployable\\Tier 2 Workbench\\workbench2.deployed.prefab"
+    "Comment": "merge from parachute",
+    "Author": "alistair",
+    "Date": "01/09/2023 08:34:49",
+    "Items": "C Assets\\Prefabs\\Misc\\Parachute\\parachute.prefab \r\n C Assets\\Prefabs\\Misc\\Parachute\\Parachute_Canopy_rigged.fbx \r\n C Assets\\Prefabs\\Misc\\Parachute\\Parachute_Canopy_rigged.fbx.meta \r\n C Assets\\Prefabs\\Misc\\Parachute\\Parachute_Canopy.FBX \r\n C Assets\\Prefabs\\Misc\\Parachute\\parachute.backpack.deployed.prefab \r\n C Assets\\Prefabs\\Misc\\Parachute\\parachute.backpack.prefab \r\n C Assets\\Prefabs\\Misc\\Parachute\\Parachute.cs \r\n C Assets\\Prefabs\\Misc\\Parachute\\parachute.item.prefab \r\n C Assets\\Prefabs\\Misc\\Parachute\\ParachuteBackpack.fbx \r\n C Assets\\Prefabs\\Misc\\Parachute\\ParachuteUnpacked.cs \r\n C Assets\\Prefabs\\Misc\\Parachute\\ParachuteUnpacked.prefab \r\n C Assets\\Content\\Player\\Animations\\unarmed\\RustPlayer@skydiving_parachute_open.fbx \r\n C Assets\\Content\\UI\\GameUI\\GameUI.Inventory.prefab \r\n C Assets\\Scripts\\UI\\Inventory\\UIInventory.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-ClientCycle.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-ClientLocal.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-Parachute.cs \r\n A Assets\\Prefabs\\Misc\\Parachute\\Parachute_Canopy_gibs.fbx \r\n A Assets\\Prefabs\\Misc\\Parachute\\Parachute_Canopy_gibs.fbx.meta \r\n A Assets\\Prefabs\\Misc\\Parachute\\Parachute_unpacked.fbx \r\n A Assets\\Prefabs\\Misc\\Parachute\\Parachute_unpacked.fbx.meta \r\n A Assets\\Prefabs\\Misc\\Parachute\\ParachuteUnpacked.icon.png \r\n A Assets\\Prefabs\\Misc\\Parachute\\ParachuteUnpacked.icon.png.meta \r\n A Assets\\Content\\UI\\backpack-icon2.png \r\n A Assets\\Content\\UI\\backpack-icon2.png.meta \r\n D Assets\\Content\\Player\\Animations\\unarmed\\RustPlayer@skydiving_parachute.fbx \r\n D Assets\\Content\\Player\\Animations\\unarmed\\RustPlayer@skydiving_parachute.fbx.meta"
   },
   "Build": {
-    "Id": "5058",
-    "Number": "5058",
-    "Tag": "jenkins-RustServer-5058",
-    "Url": "https://build.facepunch.com/job/RustServer/5058/",
+    "Id": "5059",
+    "Number": "5059",
+    "Tag": "jenkins-RustServer-5059",
+    "Url": "https://build.facepunch.com/job/RustServer/5059/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1693528569,
+  "Date": 1693553715,
   "DateString": "1 09 2023",
-  "TimeString": "00:36"
+  "TimeString": "07:35"
 }
