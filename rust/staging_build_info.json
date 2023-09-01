@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "86939",
+    "ChangeId": "86967",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "",
-    "Author": "andre",
-    "Date": "31/08/2023 12:59:22",
-    "Items": "C Assets\\Scripts\\Server\\EACServer.cs"
+    "Comment": "Merge Attack Helicopter -> Main",
+    "Author": "BillBorman",
+    "Date": "01/09/2023 00:00:39",
+    "Items": "C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\AttackHelicopterTurret.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\AttackHelicopter.cs"
   },
   "Build": {
-    "Id": "5056",
-    "Number": "5056",
-    "Tag": "jenkins-RustServer-5056",
-    "Url": "https://build.facepunch.com/job/RustServer/5056/",
+    "Id": "5057",
+    "Number": "5057",
+    "Tag": "jenkins-RustServer-5057",
+    "Url": "https://build.facepunch.com/job/RustServer/5057/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1693486307,
+  "Date": 1693522865,
   "DateString": "31 08 2023",
-  "TimeString": "12:51"
+  "TimeString": "23:01"
 }
