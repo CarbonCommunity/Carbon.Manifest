@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "87055",
+    "ChangeId": "87058",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "merge from parachute",
+    "Comment": "merge from HomingMissileLauncher",
     "Author": "alistair",
-    "Date": "02/09/2023 10:42:55",
-    "Items": "C Assets\\Prefabs\\Misc\\Parachute\\Materials\\Parachute_Canopy.mat \r\n C Assets\\Prefabs\\Misc\\Parachute\\Materials\\ParachuteCanopy_AO.tga \r\n C Assets\\Prefabs\\Misc\\Parachute\\Materials\\ParachuteCanopy_Diffuse.tga \r\n C Assets\\Prefabs\\Misc\\Parachute\\Materials\\ParachuteCanopy_Normal.tga \r\n C Assets\\Prefabs\\Misc\\Parachute\\Materials\\ParachuteCanopy_Specular.tga \r\n C Assets\\Prefabs\\Misc\\Parachute\\Materials\\ParachuteBag_AO.png \r\n C Assets\\Prefabs\\Misc\\Parachute\\Materials\\ParachuteBag_ClothMask.png \r\n C Assets\\Prefabs\\Misc\\Parachute\\Materials\\ParachuteBag_Diffuse.png \r\n C Assets\\Prefabs\\Misc\\Parachute\\Materials\\ParachuteBag_Normal.png \r\n C Assets\\Prefabs\\Misc\\Parachute\\Materials\\ParachuteBag_Specular.png \r\n C Assets\\Prefabs\\Misc\\Parachute\\Parachute_Canopy_rigged.fbx \r\n C Assets\\Prefabs\\Misc\\Parachute\\Parachute_Canopy.FBX \r\n C Assets\\Prefabs\\Misc\\Parachute\\parachute.item.prefab \r\n C Assets\\Prefabs\\Misc\\Parachute\\ParachuteBackpack.fbx \r\n C Assets\\Content\\Player\\Animations\\unarmed\\RustPlayer@skydiving_parachute_open.fbx \r\n C Assets\\Content\\Player\\Animations\\unarmed\\RustPlayer@skydiving.fbx \r\n C Assets\\Content\\Player\\Animations\\unarmed\\RustPlayer@skydiving.fbx.meta \r\n A Assets\\Prefabs\\Misc\\Parachute\\Materials\\DetailTextures \r\n A Assets\\Prefabs\\Misc\\Parachute\\Materials\\DetailTextures.meta \r\n A Assets\\Prefabs\\Misc\\Parachute\\Materials\\ParachuteCanopy_DetailMask.tga \r\n A Assets\\Prefabs\\Misc\\Parachute\\Materials\\ParachuteCanopy_DetailMask.tga.meta \r\n A Assets\\Prefabs\\Misc\\Parachute\\parachute.backpack.female.prefab \r\n A Assets\\Prefabs\\Misc\\Parachute\\parachute.backpack.female.prefab.meta \r\n A Assets\\Prefabs\\Misc\\Parachute\\ParachuteBackpack_WM.fbx \r\n A Assets\\Prefabs\\Misc\\Parachute\\ParachuteBackpack_WM.fbx.meta \r\n A Assets\\Prefabs\\Misc\\Parachute\\ParachuteBackpack.worldmodel.prefab \r\n A Assets\\Prefabs\\Misc\\Parachute\\ParachuteBackpack.worldmodel.prefab.meta \r\n A Assets\\Prefabs\\Misc\\Parachute\\Materials\\DetailTextures\\CordDetail_AO.png \r\n A Assets\\Prefabs\\Misc\\Parachute\\Materials\\DetailTextures\\CordDetail_AO.png.meta \r\n A Assets\\Prefabs\\Misc\\Parachute\\Materials\\DetailTextures\\CordDetail_Diffuse.png \r\n A Assets\\Prefabs\\Misc\\Parachute\\Materials\\DetailTextures\\CordDetail_Diffuse.png.meta \r\n A Assets\\Prefabs\\Misc\\Parachute\\Materials\\DetailTextures\\CordDetail_n.png \r\n A Assets\\Prefabs\\Misc\\Parachute\\Materials\\DetailTextures\\CordDetail_n.png.meta"
+    "Date": "02/09/2023 14:12:49",
+    "Items": "C Assets\\Localization\\af\\engine.json \r\n C Assets\\Localization\\ar\\engine.json \r\n C Assets\\Localization\\ca\\engine.json \r\n C Assets\\Localization\\cs\\engine.json \r\n C Assets\\Localization\\da\\engine.json \r\n C Assets\\Localization\\de\\engine.json \r\n C Assets\\Localization\\el\\engine.json \r\n C Assets\\Localization\\en-PT\\engine.json \r\n C Assets\\Localization\\en\\engine.json \r\n C Assets\\Localization\\es-ES\\engine.json \r\n C Assets\\Localization\\fi\\engine.json \r\n C Assets\\Localization\\fr\\engine.json \r\n C Assets\\Localization\\he\\engine.json \r\n C Assets\\Localization\\hu\\engine.json \r\n C Assets\\Localization\\it\\engine.json \r\n C Assets\\Localization\\ja\\engine.json \r\n C Assets\\Localization\\ko\\engine.json \r\n C Assets\\Localization\\nl\\engine.json \r\n C Assets\\Localization\\no\\engine.json \r\n C Assets\\Localization\\pl\\engine.json \r\n C Assets\\Localization\\pt-BR\\engine.json \r\n C Assets\\Localization\\pt-PT\\engine.json \r\n C Assets\\Localization\\ro\\engine.json \r\n C Assets\\Localization\\ru\\engine.json \r\n C Assets\\Localization\\sr\\engine.json \r\n C Assets\\Localization\\sv-SE\\engine.json \r\n C Assets\\Localization\\tr\\engine.json \r\n C Assets\\Localization\\uk\\engine.json \r\n C Assets\\Localization\\vi\\engine.json \r\n C Assets\\Localization\\zh-CN\\engine.json \r\n C Assets\\Localization\\zh-TW\\engine.json \r\n C Assets\\Scenes\\Test\\ParticleTestMap.unity \r\n C Assets\\Prefabs\\Ammo\\Rocket\\rocket_heatseeker.prefab \r\n C Assets\\Prefabs\\Ammo\\Rocket\\Effects\\PFX_RocketTrail.prefab \r\n C Assets\\Prefabs\\Weapons\\HomingMissileLauncher\\Effects\\pfx_manpad_launcher_attack.prefab \r\n C Assets\\Prefabs\\Weapons\\HomingMissileLauncher\\Effects\\pfx_manpad_rocket.prefab \r\n C Assets\\Prefabs\\Weapons\\HomingMissileLauncher\\Effects\\pfx_manpad_explosion.prefab \r\n C Assets\\Prefabs\\Weapons\\HomingMissileLauncher\\Model\\Materials\\Textures\\HMLMissile_Albedo.tga.meta \r\n C Assets\\Prefabs\\Weapons\\HomingMissileLauncher\\Model\\Materials\\Textures\\HMLMissile_AO.tga.meta \r\n C Assets\\Prefabs\\Weapons\\HomingMissileLauncher\\Model\\Materials\\Textures\\HMLMissile_Emission.tga.meta \r\n C Assets\\Prefabs\\Weapons\\HomingMissileLauncher\\Model\\Materials\\Textures\\HMLMissile_Metallic.tga.meta \r\n C Assets\\Prefabs\\Weapons\\HomingMissileLauncher\\Model\\Materials\\Textures\\HMLMissile_Normal.tga.meta \r\n C Assets\\Prefabs\\Weapons\\HomingMissileLauncher\\Model\\Materials\\HMLMissile.mat \r\n C Assets\\Prefabs\\Weapons\\HomingMissileLauncher\\homing_missile_launcher.viewmodel.prefab \r\n C Assets\\Prefabs\\Weapons\\HomingMissileLauncher\\homing_missile_launcher.entity.prefab"
   },
   "Build": {
-    "Id": "5066",
-    "Number": "5066",
-    "Tag": "jenkins-RustServer-5066",
-    "Url": "https://build.facepunch.com/job/RustServer/5066/",
+    "Id": "5067",
+    "Number": "5067",
+    "Tag": "jenkins-RustServer-5067",
+    "Url": "https://build.facepunch.com/job/RustServer/5067/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1693647815,
+  "Date": 1693660394,
   "DateString": "2 09 2023",
-  "TimeString": "09:43"
+  "TimeString": "13:13"
 }
