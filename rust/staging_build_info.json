@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "87052",
+    "ChangeId": "87055",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "SeekerTarget NRE prevention",
-    "Author": "jarryd",
-    "Date": "02/09/2023 02:08:41",
-    "Items": "C Assets\\Scripts\\Entity\\Misc\\SeekerMissiles\\SeekerTarget.cs"
+    "Comment": "merge from parachute",
+    "Author": "alistair",
+    "Date": "02/09/2023 10:42:55",
+    "Items": "C Assets\\Prefabs\\Misc\\Parachute\\Materials\\Parachute_Canopy.mat \r\n C Assets\\Prefabs\\Misc\\Parachute\\Materials\\ParachuteCanopy_AO.tga \r\n C Assets\\Prefabs\\Misc\\Parachute\\Materials\\ParachuteCanopy_Diffuse.tga \r\n C Assets\\Prefabs\\Misc\\Parachute\\Materials\\ParachuteCanopy_Normal.tga \r\n C Assets\\Prefabs\\Misc\\Parachute\\Materials\\ParachuteCanopy_Specular.tga \r\n C Assets\\Prefabs\\Misc\\Parachute\\Materials\\ParachuteBag_AO.png \r\n C Assets\\Prefabs\\Misc\\Parachute\\Materials\\ParachuteBag_ClothMask.png \r\n C Assets\\Prefabs\\Misc\\Parachute\\Materials\\ParachuteBag_Diffuse.png \r\n C Assets\\Prefabs\\Misc\\Parachute\\Materials\\ParachuteBag_Normal.png \r\n C Assets\\Prefabs\\Misc\\Parachute\\Materials\\ParachuteBag_Specular.png \r\n C Assets\\Prefabs\\Misc\\Parachute\\Parachute_Canopy_rigged.fbx \r\n C Assets\\Prefabs\\Misc\\Parachute\\Parachute_Canopy.FBX \r\n C Assets\\Prefabs\\Misc\\Parachute\\parachute.item.prefab \r\n C Assets\\Prefabs\\Misc\\Parachute\\ParachuteBackpack.fbx \r\n C Assets\\Content\\Player\\Animations\\unarmed\\RustPlayer@skydiving_parachute_open.fbx \r\n C Assets\\Content\\Player\\Animations\\unarmed\\RustPlayer@skydiving.fbx \r\n C Assets\\Content\\Player\\Animations\\unarmed\\RustPlayer@skydiving.fbx.meta \r\n A Assets\\Prefabs\\Misc\\Parachute\\Materials\\DetailTextures \r\n A Assets\\Prefabs\\Misc\\Parachute\\Materials\\DetailTextures.meta \r\n A Assets\\Prefabs\\Misc\\Parachute\\Materials\\ParachuteCanopy_DetailMask.tga \r\n A Assets\\Prefabs\\Misc\\Parachute\\Materials\\ParachuteCanopy_DetailMask.tga.meta \r\n A Assets\\Prefabs\\Misc\\Parachute\\parachute.backpack.female.prefab \r\n A Assets\\Prefabs\\Misc\\Parachute\\parachute.backpack.female.prefab.meta \r\n A Assets\\Prefabs\\Misc\\Parachute\\ParachuteBackpack_WM.fbx \r\n A Assets\\Prefabs\\Misc\\Parachute\\ParachuteBackpack_WM.fbx.meta \r\n A Assets\\Prefabs\\Misc\\Parachute\\ParachuteBackpack.worldmodel.prefab \r\n A Assets\\Prefabs\\Misc\\Parachute\\ParachuteBackpack.worldmodel.prefab.meta \r\n A Assets\\Prefabs\\Misc\\Parachute\\Materials\\DetailTextures\\CordDetail_AO.png \r\n A Assets\\Prefabs\\Misc\\Parachute\\Materials\\DetailTextures\\CordDetail_AO.png.meta \r\n A Assets\\Prefabs\\Misc\\Parachute\\Materials\\DetailTextures\\CordDetail_Diffuse.png \r\n A Assets\\Prefabs\\Misc\\Parachute\\Materials\\DetailTextures\\CordDetail_Diffuse.png.meta \r\n A Assets\\Prefabs\\Misc\\Parachute\\Materials\\DetailTextures\\CordDetail_n.png \r\n A Assets\\Prefabs\\Misc\\Parachute\\Materials\\DetailTextures\\CordDetail_n.png.meta"
   },
   "Build": {
-    "Id": "5065",
-    "Number": "5065",
-    "Tag": "jenkins-RustServer-5065",
-    "Url": "https://build.facepunch.com/job/RustServer/5065/",
+    "Id": "5066",
+    "Number": "5066",
+    "Tag": "jenkins-RustServer-5066",
+    "Url": "https://build.facepunch.com/job/RustServer/5066/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1693617074,
+  "Date": 1693647815,
   "DateString": "2 09 2023",
-  "TimeString": "01:11"
+  "TimeString": "09:43"
 }
