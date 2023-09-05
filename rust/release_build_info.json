@@ -10,14 +10,14 @@
     "Items": "C Packages\\manifest.json \r\n C Packages\\packages-lock.json \r\n C ProjectSettings\\ProjectSettings.asset \r\n C ProjectSettings\\ProjectVersion.txt \r\n C Assets\\Standard Assets\\Third Party\\Time of Day\\Assets\\Scripts\\TOD_Sky+API.cs \r\n C Assets\\TerrainFormer\\Editor\\TerrainFormerEditor.cs \r\n C Assets\\Rust.Ai\\Npc\\BaseNpc.Ai.cs \r\n C Assets\\Rust.Ai\\BaseNavigator.cs \r\n C Assets\\Editor\\Utility\\BuildDefines.cs \r\n C Assets\\Editor\\Utility\\Phrases\\Phrases.Engine.cs \r\n C Assets\\Editor\\Utility\\BuildAssetBundles.cs \r\n C Assets\\Editor\\Utility\\Build.cs \r\n C Assets\\Plugins\\Rust.UI\\Controls\\RustText.cs \r\n C Assets\\Prefabs\\Deployable\\Composter\\Composter.cs \r\n C Assets\\Scripts\\Collision\\GamePhysics.cs \r\n C Assets\\Scripts\\Shared\\GameManifest-Generate.cs \r\n C Assets\\Scripts\\Game\\Bootstrap\\Bootstrap.cs \r\n C Assets\\Scripts\\UI\\Clans \r\n C Assets\\Scripts\\UI\\Clans\\UIClanCreator.cs"
   },
   "Build": {
-    "Id": "7",
-    "Number": "7",
-    "Tag": "jenkins-RustReleaseServer2021-7",
-    "Url": "https://build.facepunch.com/job/RustReleaseServer2021/7/",
+    "Id": "8",
+    "Number": "8",
+    "Tag": "jenkins-RustReleaseServer2021-8",
+    "Url": "https://build.facepunch.com/job/RustReleaseServer2021/8/",
     "Name": "RustReleaseServer2021",
     "Node": "Win4"
   },
-  "Date": 1693596820,
-  "DateString": "1 09 2023",
-  "TimeString": "19:33"
+  "Date": 1693807348,
+  "DateString": "4 09 2023",
+  "TimeString": "06:02"
 }
