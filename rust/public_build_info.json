@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "85883",
-    "Branch": "release",
+    "ChangeId": "87004",
+    "Branch": "experimental/release",
     "Repo": "rust_reboot",
-    "Comment": "",
-    "Author": "alistair",
-    "Date": "11/08/2023 18:31:43",
-    "Items": "C Assets\\Generated\\ConsoleSystem.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-Server.cs \r\n C Assets\\Scripts\\ConsoleCommands\\global.cs"
+    "Comment": "2021.3.29f1 cherry picks (likely a good idea to delete this before merging from experimental the next time)",
+    "Author": "andre",
+    "Date": "01/09/2023 09:58:41",
+    "Items": "C Packages\\manifest.json \r\n C Packages\\packages-lock.json \r\n C ProjectSettings\\ProjectSettings.asset \r\n C ProjectSettings\\ProjectVersion.txt \r\n C Assets\\Standard Assets\\Third Party\\Time of Day\\Assets\\Scripts\\TOD_Sky+API.cs \r\n C Assets\\TerrainFormer\\Editor\\TerrainFormerEditor.cs \r\n C Assets\\Rust.Ai\\Npc\\BaseNpc.Ai.cs \r\n C Assets\\Rust.Ai\\BaseNavigator.cs \r\n C Assets\\Editor\\Utility\\BuildDefines.cs \r\n C Assets\\Editor\\Utility\\Phrases\\Phrases.Engine.cs \r\n C Assets\\Editor\\Utility\\BuildAssetBundles.cs \r\n C Assets\\Editor\\Utility\\Build.cs \r\n C Assets\\Plugins\\Rust.UI\\Controls\\RustText.cs \r\n C Assets\\Prefabs\\Deployable\\Composter\\Composter.cs \r\n C Assets\\Scripts\\Collision\\GamePhysics.cs \r\n C Assets\\Scripts\\Shared\\GameManifest-Generate.cs \r\n C Assets\\Scripts\\Game\\Bootstrap\\Bootstrap.cs \r\n C Assets\\Scripts\\UI\\Clans \r\n C Assets\\Scripts\\UI\\Clans\\UIClanCreator.cs"
   },
   "Build": {
-    "Id": "527",
-    "Number": "527",
-    "Tag": "jenkins-RustReleaseServer-527",
-    "Url": "https://build.facepunch.com/job/RustReleaseServer/527/",
-    "Name": "RustReleaseServer",
+    "Id": "8",
+    "Number": "8",
+    "Tag": "jenkins-RustReleaseServer2021-8",
+    "Url": "https://build.facepunch.com/job/RustReleaseServer2021/8/",
+    "Name": "RustReleaseServer2021",
     "Node": "Win4"
   },
-  "Date": 1691775161,
-  "DateString": "11 08 2023",
-  "TimeString": "17:32"
+  "Date": 1693807348,
+  "DateString": "4 09 2023",
+  "TimeString": "06:02"
 }
