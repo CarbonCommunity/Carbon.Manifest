@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "87168",
+    "ChangeId": "87173",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "merge from HomingMissileLauncher",
+    "Comment": "merge from parachute",
     "Author": "alistair",
-    "Date": "05/09/2023 08:46:05",
-    "Items": "C Assets\\Rust.Ai\\Agents\\NPCPlayer\\NPCPlayer.cs \r\n C Assets\\Prefabs\\Weapons\\HomingMissileLauncher\\Model\\v_homing_missile_launcher_anims.fbx \r\n C Assets\\Prefabs\\Weapons\\HomingMissileLauncher\\homing_missile_launcher.viewmodel.prefab \r\n C Assets\\Prefabs\\Weapons\\HomingMissileLauncher\\SeekerTestEntity\\SeekerTest.cs \r\n C Assets\\Prefabs\\Weapons\\HomingMissileLauncher\\SeekerTestEntity\\SeekerTest.prefab \r\n C Assets\\Content\\Player\\Animations\\Hold Types\\homing_missile_launcher\\HoldType.HomingMissileLauncher.overrideController \r\n C Assets\\Content\\Player\\Animations\\Hold Types\\homing_missile_launcher\\idle_hml_anims.fbx \r\n C Assets\\Content\\Player\\Animations\\Hold Types\\homing_missile_launcher\\idle_hml_anims.fbx.meta \r\n C Assets\\Content\\UI\\GameUI\\GameUI.Hud.Crosshair.prefab \r\n C Assets\\Scripts\\Entity\\BaseEntity\\HeldEntity\\FlameThrower.cs \r\n C Assets\\Scripts\\Entity\\BaseEntity\\HeldEntity\\BaseProjectile.cs \r\n C Assets\\Scripts\\Entity\\BaseEntity\\HeldEntity\\AttackEntity.cs \r\n C Assets\\Scripts\\Entity\\BaseEntity\\HeldEntity\\LockOnLauncher.cs \r\n C Assets\\Scripts\\Entity\\Misc\\SeekerMissiles\\SeekerTarget.cs \r\n C Assets\\Scripts\\Entity\\Misc\\SeekerMissiles\\SeekingServerProjectile.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\AttackHeliPilotFlare.cs \r\n D Assets\\Scripts\\UI\\HomingMissileLauncherCrosshair.cs \r\n D Assets\\Scripts\\UI\\HomingMissileLauncherCrosshair.cs.meta"
+    "Date": "05/09/2023 09:31:23",
+    "Items": "C Assets\\Prefabs\\Misc\\Parachute\\parachute.prefab \r\n C Assets\\Prefabs\\Misc\\Parachute\\Parachute.cs \r\n C Assets\\Content\\Player\\Animations\\unarmed\\RustPlayer@skydiving_parachute_open.fbx \r\n C Assets\\Content\\Properties\\Protection\\Parachute.asset"
   },
   "Build": {
-    "Id": "5076",
-    "Number": "5076",
-    "Tag": "jenkins-RustServer-5076",
-    "Url": "https://build.facepunch.com/job/RustServer/5076/",
+    "Id": "5077",
+    "Number": "5077",
+    "Tag": "jenkins-RustServer-5077",
+    "Url": "https://build.facepunch.com/job/RustServer/5077/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1693900002,
+  "Date": 1693906387,
   "DateString": "5 09 2023",
-  "TimeString": "07:46"
+  "TimeString": "09:33"
 }
