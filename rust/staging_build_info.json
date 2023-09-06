@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "87216",
+    "ChangeId": "87238",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Refactored my new FindItemByItemName method in PlayerInventory to work more like the others, and also search containerWear",
-    "Author": "BillBorman",
-    "Date": "05/09/2023 21:43:29",
-    "Items": "C Assets\\Scripts\\Entity\\Player\\Components\\PlayerInventory.cs"
+    "Comment": "Merge from parachute",
+    "Author": "jarryd",
+    "Date": "06/09/2023 06:08:44",
+    "Items": "C Assets\\Scripts\\UI\\Inventory\\UIInventory.cs"
   },
   "Build": {
-    "Id": "5083",
-    "Number": "5083",
-    "Tag": "jenkins-RustServer-5083",
-    "Url": "https://build.facepunch.com/job/RustServer/5083/",
+    "Id": "5084",
+    "Number": "5084",
+    "Tag": "jenkins-RustServer-5084",
+    "Url": "https://build.facepunch.com/job/RustServer/5084/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1693950305,
-  "DateString": "5 09 2023",
-  "TimeString": "21:45"
+  "Date": 1693976955,
+  "DateString": "6 09 2023",
+  "TimeString": "05:09"
 }
