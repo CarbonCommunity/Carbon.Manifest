@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "87272",
+    "ChangeId": "87289",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "merge from Attack Helicopter",
-    "Author": "alistair",
-    "Date": "06/09/2023 21:58:35",
-    "Items": "C Assets\\Prefabs\\Ammo\\Rocket\\rocket_heatseeker.prefab \r\n C Assets\\bundled\\Prefabs\\ui\\GameUI.prefab \r\n C Assets\\Content\\Properties\\Protection\\player_large_helicopter_protection.asset \r\n C Assets\\Scripts\\UI\\Crosshair.cs"
+    "Comment": "Add missing SeekingServerProjectile component \r\nI think this got removed somehow in 87271 and broke homing missiles",
+    "Author": "jarryd",
+    "Date": "07/09/2023 03:12:06",
+    "Items": "C Assets\\Prefabs\\Ammo\\Rocket\\rocket_heatseeker.prefab"
   },
   "Build": {
-    "Id": "5090",
-    "Number": "5090",
-    "Tag": "jenkins-RustServer-5090",
-    "Url": "https://build.facepunch.com/job/RustServer/5090/",
+    "Id": "5091",
+    "Number": "5091",
+    "Tag": "jenkins-RustServer-5091",
+    "Url": "https://build.facepunch.com/job/RustServer/5091/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1694035568,
-  "DateString": "6 09 2023",
-  "TimeString": "21:26"
+  "Date": 1694052767,
+  "DateString": "7 09 2023",
+  "TimeString": "02:12"
 }
