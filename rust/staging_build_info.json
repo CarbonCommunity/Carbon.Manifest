@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "87313",
+    "ChangeId": "87328",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Added a simple do_shore_drift convar, allowing for easily disabling boat shore drift entirely",
-    "Author": "BillBorman",
-    "Date": "07/09/2023 10:40:06",
-    "Items": "C Assets\\Generated\\ConsoleSystem.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Boat\\BaseBoat.cs"
+    "Comment": "merge from Attack Helicopter",
+    "Author": "alistair",
+    "Date": "07/09/2023 19:55:11",
+    "Items": "C Assets\\Scenes\\Test\\MonumentIsland_Oilrigs.unity \r\n C Assets\\Content\\Vehicles\\AttackHelicopter\\UI.Dialog.AttackHeli.prefab \r\n C Assets\\Content\\Vehicles\\AttackHelicopter\\AttackHelicopter.entity.prefab \r\n C Assets\\Content\\Vehicles\\AttackHelicopter\\Model\\AttackHelicopter_CONVEX.fbx \r\n C Assets\\Content\\Vehicles\\AttackHelicopter\\Model\\AttackHelicopter_CONVEX.fbx.meta \r\n C Assets\\Content\\Vehicles\\AttackHelicopter\\Model\\AttackHelicopter_GIBs.fbx \r\n C Assets\\Content\\Vehicles\\AttackHelicopter\\Model\\AttackHelicopter_GIBs.fbx.meta \r\n C Assets\\Scripts\\Client\\CameraEffects\\AttackHeliCamOverlay.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\AttackHelicopterTurret.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\AttackHeliGunnerSeat.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\AttackHeliUIDialog.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\AttackHelicopter.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\AttackHelicopterRockets.cs"
   },
   "Build": {
-    "Id": "5093",
-    "Number": "5093",
-    "Tag": "jenkins-RustServer-5093",
-    "Url": "https://build.facepunch.com/job/RustServer/5093/",
+    "Id": "5094",
+    "Number": "5094",
+    "Tag": "jenkins-RustServer-5094",
+    "Url": "https://build.facepunch.com/job/RustServer/5094/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1694079651,
+  "Date": 1694112936,
   "DateString": "7 09 2023",
-  "TimeString": "09:40"
+  "TimeString": "18:55"
 }
