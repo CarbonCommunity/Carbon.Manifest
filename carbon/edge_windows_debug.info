@@ -1,1 +1,5 @@
-connection failure
+{
+	"Version": "0.2023.3252.5136-Debug",
+	"Protocol": "2023.09.07.6",
+	"Platform": "Windows"
+}
