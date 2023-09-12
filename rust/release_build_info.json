@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "87363",
+    "ChangeId": "87416",
     "Branch": "release",
     "Repo": "rust_reboot",
     "Comment": "merge from main",
     "Author": "alistair",
-    "Date": "09/09/2023 09:10:03",
-    "Items": "C Assets\\Scripts\\Entity\\Misc\\SeekerMissiles\\SeekerTarget.cs \r\n C Assets\\Scripts\\Entity\\Misc\\SeekerMissiles\\SeekingServerProjectile.cs \r\n C Assets\\Scripts\\Entity\\Misc\\WeaponRack\\WeaponRack.Server.cs \r\n C Assets\\Scripts\\Entity\\BaseEntity\\HeldEntity\\LockOnLauncher.cs \r\n C Assets\\Scripts\\Entity\\RoadFlare.cs"
+    "Date": "12/09/2023 10:50:53",
+    "Items": "C Assets\\bundled\\Prefabs\\static\\miningquarry_static.prefab \r\n C Assets\\bundled\\Prefabs\\static\\pumpjack-static.prefab \r\n C Assets\\Prefabs\\Vehicle\\Seats\\MiniHeliPassenger.prefab \r\n C Assets\\Prefabs\\Vehicle\\Seats\\MiniHeliSeat.prefab \r\n C Assets\\Prefabs\\Vehicle\\Seats\\AttackHeliGunner.prefab \r\n C Assets\\Prefabs\\Vehicle\\Seats\\AttackHeliDriver.prefab \r\n C Assets\\Prefabs\\Deployable\\Quarry\\quarry_track.fbx \r\n C Assets\\Prefabs\\Deployable\\Quarry\\quarry_track.controller \r\n C Assets\\Prefabs\\Deployable\\Quarry\\mining_quarry.prefab \r\n C Assets\\Scripts\\EntityIO\\IOEntity.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\BaseVehicleSeat.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\BaseMountable.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-Group.cs"
   },
   "Build": {
-    "Id": "532",
-    "Number": "532",
-    "Tag": "jenkins-RustReleaseServer-532",
-    "Url": "https://build.facepunch.com/job/RustReleaseServer/532/",
+    "Id": "533",
+    "Number": "533",
+    "Tag": "jenkins-RustReleaseServer-533",
+    "Url": "https://build.facepunch.com/job/RustReleaseServer/533/",
     "Name": "RustReleaseServer",
     "Node": "Win4"
   },
-  "Date": 1694247048,
-  "DateString": "9 09 2023",
-  "TimeString": "08:10"
+  "Date": 1694512300,
+  "DateString": "12 09 2023",
+  "TimeString": "09:51"
 }
