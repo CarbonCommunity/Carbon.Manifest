@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "87474",
+    "ChangeId": "87476",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "merge from water5-black-flicker-fix",
+    "Comment": "merge from wr_scale_fixes",
     "Author": "alistair",
-    "Date": "14/09/2023 07:47:39",
-    "Items": "C Assets\\Content\\Image Effects\\postfx_volumes\\main_base.asset"
+    "Date": "14/09/2023 07:49:09",
+    "Items": "C Assets\\Prefabs\\Weapons\\Stone Spear\\stone_spear.worldmodel.prefab \r\n C Assets\\Prefabs\\Weapons\\Wooden Spear\\wooden_spear.worldmodel.prefab \r\n C Assets\\Prefabs\\Weapons\\Paddle\\paddle.worldmodel.prefab \r\n C Assets\\Prefabs\\Weapons\\Halloween\\Pitchfork\\pitchfork.worldmodel.prefab"
   },
   "Build": {
-    "Id": "5106",
-    "Number": "5106",
-    "Tag": "jenkins-RustServer-5106",
-    "Url": "https://build.facepunch.com/job/RustServer/5106/",
+    "Id": "5107",
+    "Number": "5107",
+    "Tag": "jenkins-RustServer-5107",
+    "Url": "https://build.facepunch.com/job/RustServer/5107/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1694674093,
+  "Date": 1694678654,
   "DateString": "14 09 2023",
-  "TimeString": "06:48"
+  "TimeString": "08:04"
 }
