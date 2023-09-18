@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "87524",
+    "ChangeId": "87528",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Admin tools now also allow disabling the Performance Text UI",
+    "Comment": "Speed up entity IsVisible test performance by capping maxDistance to the maximum of the distance between the two points",
     "Author": "BillBorman",
-    "Date": "17/09/2023 23:31:25",
-    "Items": "C Assets\\bundled\\Prefabs\\ui\\EngineUI.prefab"
+    "Date": "18/09/2023 02:00:34",
+    "Items": "C Assets\\Scripts\\Entity\\BaseEntity\\BaseEntity.cs"
   },
   "Build": {
-    "Id": "5109",
-    "Number": "5109",
-    "Tag": "jenkins-RustServer-5109",
-    "Url": "https://build.facepunch.com/job/RustServer/5109/",
+    "Id": "5110",
+    "Number": "5110",
+    "Tag": "jenkins-RustServer-5110",
+    "Url": "https://build.facepunch.com/job/RustServer/5110/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1694989912,
-  "DateString": "17 09 2023",
-  "TimeString": "22:31"
+  "Date": 1694998871,
+  "DateString": "18 09 2023",
+  "TimeString": "01:01"
 }
