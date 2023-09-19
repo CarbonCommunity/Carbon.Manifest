@@ -1,2 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Error><Code>NoSuchKey</Code><Message>The specified key does not exist.</Message><Key>529473407/74e738a7-9a5b-47d3-a800-885cb1f4b9cd</Key><RequestId>Y41V1RB6BVG2FSMG</RequestId><HostId>h5fJjcyNZof9mHTpYqE1201cHBOxN24X0oZX54NMVtaqondP9Dy8WZmu+J963lAaB0+4RzIqi3l3TFbGXsg9lg==</HostId></Error>
+{
+	"Version": "0.2023.3262.1237-DebugUnix",
+	"Protocol": "2023.10.05.0",
+	"Platform": "Linux"
+}
