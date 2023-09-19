@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "87554",
+    "ChangeId": "87571",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "A couple of very minor edits to buoyancy.cs",
-    "Author": "BillBorman",
-    "Date": "18/09/2023 23:22:02",
-    "Items": "C Assets\\Scripts\\Entity\\Vehicle\\Boat\\Buoyancy.cs"
+    "Comment": "~Merge from dof_exposer_improvements",
+    "Author": "jarryd",
+    "Date": "19/09/2023 05:36:24",
+    "Items": "C Assets\\Prefabs\\Engine\\Main Camera.prefab \r\n C Assets\\Prefabs\\Misc\\movember\\movember_moustache_style01\\material \r\n C Assets\\Scripts\\Debugging\\DofExposer.cs \r\n C Assets\\Scripts\\UI\\Demo\\DebugCameraInfoReadout.cs \r\n C Assets\\Scripts\\Client\\RustCamera.cs \r\n C Assets\\Scripts\\Util\\Components\\Screenshot.cs \r\n A Assets\\Content\\Image Effects\\postfx_volumes\\dof_exposer.asset \r\n A Assets\\Content\\Image Effects\\postfx_volumes\\dof_exposer.asset.meta"
   },
   "Build": {
-    "Id": "5114",
-    "Number": "5114",
-    "Tag": "jenkins-RustServer-5114",
-    "Url": "https://build.facepunch.com/job/RustServer/5114/",
+    "Id": "5115",
+    "Number": "5115",
+    "Tag": "jenkins-RustServer-5115",
+    "Url": "https://build.facepunch.com/job/RustServer/5115/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1695078635,
-  "DateString": "18 09 2023",
-  "TimeString": "23:10"
+  "Date": 1695144986,
+  "DateString": "19 09 2023",
+  "TimeString": "17:36"
 }
