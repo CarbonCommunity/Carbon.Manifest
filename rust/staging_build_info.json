@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "87586",
+    "ChangeId": "87589",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Removed the legacy parachute animations in the player controller, they weren't being used but were throwing some warnings on boot\r\nImproved hand IK easing on first person parachute, created a new SetParameterCurveAnimatorBehaviour behaviour to set a float parameter over time during an animator state",
+    "Comment": "Fixed player potentially getting stuck in the skydiving pose when stuck between two objects and considered non grounded\r\nSkydiving animations will now only play if the players velocity is > 10, should also fix some reports of the animation triggerring while climbing ladders\r\nFixed some IK weirdness during parachute deploy animation in third person introduced in 87586",
     "Author": "jarryd",
-    "Date": "19/09/2023 23:54:50",
-    "Items": "C Assets\\Prefabs\\Misc\\Parachute\\parachute.anim.controller \r\n C Assets\\Prefabs\\Misc\\Parachute\\ParachuteSeat.cs \r\n C Assets\\Prefabs\\Misc\\Parachute\\Parachute.cs \r\n C Assets\\Content\\Player\\Animations\\PlayerAnimation.controller \r\n A Assets\\Scripts\\ViewModel\\SetParameterCurveAnimatorBehaviour.cs \r\n A Assets\\Scripts\\ViewModel\\SetParameterCurveAnimatorBehaviour.cs.meta"
+    "Date": "20/09/2023 03:02:02",
+    "Items": "C Assets\\Prefabs\\Misc\\Parachute\\parachute.anim.controller \r\n C Assets\\Content\\Player\\Animations\\PlayerAnimation.controller"
   },
   "Build": {
-    "Id": "5117",
-    "Number": "5117",
-    "Tag": "jenkins-RustServer-5117",
-    "Url": "https://build.facepunch.com/job/RustServer/5117/",
+    "Id": "5118",
+    "Number": "5118",
+    "Tag": "jenkins-RustServer-5118",
+    "Url": "https://build.facepunch.com/job/RustServer/5118/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1695165191,
-  "DateString": "19 09 2023",
-  "TimeString": "23:13"
+  "Date": 1695175355,
+  "DateString": "20 09 2023",
+  "TimeString": "02:02"
 }
