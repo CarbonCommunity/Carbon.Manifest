@@ -10,14 +10,14 @@
     "Items": "C Assets\\bundled\\Prefabs\\static\\miningquarry_static.prefab \r\n C Assets\\bundled\\Prefabs\\static\\pumpjack-static.prefab \r\n C Assets\\Prefabs\\Vehicle\\Seats\\MiniHeliPassenger.prefab \r\n C Assets\\Prefabs\\Vehicle\\Seats\\MiniHeliSeat.prefab \r\n C Assets\\Prefabs\\Vehicle\\Seats\\AttackHeliGunner.prefab \r\n C Assets\\Prefabs\\Vehicle\\Seats\\AttackHeliDriver.prefab \r\n C Assets\\Prefabs\\Deployable\\Quarry\\quarry_track.fbx \r\n C Assets\\Prefabs\\Deployable\\Quarry\\quarry_track.controller \r\n C Assets\\Prefabs\\Deployable\\Quarry\\mining_quarry.prefab \r\n C Assets\\Scripts\\EntityIO\\IOEntity.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\BaseVehicleSeat.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\BaseMountable.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-Group.cs"
   },
   "Build": {
-    "Id": "536",
-    "Number": "536",
-    "Tag": "jenkins-RustReleaseServer-536",
-    "Url": "https://build.facepunch.com/job/RustReleaseServer/536/",
+    "Id": "537",
+    "Number": "537",
+    "Tag": "jenkins-RustReleaseServer-537",
+    "Url": "https://build.facepunch.com/job/RustReleaseServer/537/",
     "Name": "RustReleaseServer",
     "Node": "Win4"
   },
-  "Date": 1695280947,
-  "DateString": "21 09 2023",
-  "TimeString": "07:22"
+  "Date": 1695369915,
+  "DateString": "22 09 2023",
+  "TimeString": "08:05"
 }
