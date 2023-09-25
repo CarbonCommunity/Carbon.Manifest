@@ -1,3 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?><Error><Code>ServerBusy</Code><Message>Egress is over the account limit.
-RequestId:24dd70f9-801e-001b-73cf-efdf56000000
-Time:2023-09-25T16:42:18.8383086Z</Message></Error>
+{
+	"Version": "0.2023.3267.3628-DebugUnix",
+	"Protocol": "2023.09.07.7",
+	"Platform": "Linux"
+}
