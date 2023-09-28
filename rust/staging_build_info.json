@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "87817",
+    "ChangeId": "87934",
     "Branch": "experimental",
     "Repo": "rust_reboot",
     "Comment": "merge from main",
     "Author": "alistair",
-    "Date": "26/09/2023 16:30:26",
-    "Items": "C Assets\\Editor\\Shaders\\RustStandardShaderGUI.cs \r\n C Assets\\Content\\Shaders\\Resources\\Internal-DeferredShading.shader \r\n C Assets\\Content\\Shaders\\Include\\RenderPipelinesCore\\Common.cginc \r\n C Assets\\Content\\Shaders\\Include\\DeferredDecal.cginc \r\n C Assets\\Content\\Shaders\\Standard\\Standard.shader \r\n C Assets\\Content\\Shaders\\Standard\\Include\\UnityStandardInput.cginc \r\n C Assets\\Content\\Shaders\\Standard\\Include\\StandardBSDF.cginc \r\n C Assets\\Content\\Shaders\\Standard\\Include\\StandardBSDFCommon.cginc \r\n C Assets\\Content\\Shaders\\Standard\\Include\\StandardBSDFInput.cginc \r\n C Assets\\Content\\Shaders\\Standard\\Include\\UnityLightingCommon.cginc \r\n C Assets\\Content\\Shaders\\Standard\\Include\\Standard.cginc \r\n C Assets\\Content\\Shaders\\Standard\\Include\\StandardLayers.cginc \r\n C Assets\\Content\\Shaders\\Standard\\Include\\UnityStandardCore.cginc \r\n C Assets\\Content\\Properties\\BuildingGrade\\brutalist.asset \r\n C Assets\\Scripts\\Rendering\\DeferredExtension\\DeferredExtension.cs \r\n A Assets\\Content\\Shaders\\Resources\\RefractionPyramid.shader \r\n A Assets\\Content\\Shaders\\Resources\\RefractionPyramid.shader.meta \r\n A Assets\\Content\\Shaders\\Include\\RenderPipelinesCore\\GeometricTools.cginc \r\n A Assets\\Content\\Shaders\\Include\\RenderPipelinesCore\\GeometricTools.cginc.meta \r\n A Assets\\Content\\Shaders\\Include\\RenderPipelinesCore\\Refraction.cginc \r\n A Assets\\Content\\Shaders\\Include\\RenderPipelinesCore\\Refraction.cginc.meta \r\n A Assets\\Content\\Shaders\\Include\\RenderPipelinesCore\\SpaceTransforms.cginc \r\n A Assets\\Content\\Shaders\\Include\\RenderPipelinesCore\\SpaceTransforms.cginc.meta \r\n A Assets\\Content\\Shaders\\Include\\RenderPipelinesCore\\VolumeRendering.cginc \r\n A Assets\\Content\\Shaders\\Include\\RenderPipelinesCore\\VolumeRendering.cginc.meta \r\n A Assets\\Content\\Shaders\\Include\\ScreenSpaceRefraction.cginc \r\n A Assets\\Content\\Shaders\\Include\\ScreenSpaceRefraction.cginc.meta \r\n A Assets\\Scripts\\Rendering\\DeferredExtension\\BindRendererBounds.cs \r\n A Assets\\Scripts\\Rendering\\DeferredExtension\\BindRendererBounds.cs.meta"
+    "Date": "28/09/2023 14:28:22",
+    "Items": "C Assets\\Scenes\\Prefabs\\Mining Quarries\\mining_quarry_a.unity \r\n C Assets\\Scenes\\Prefabs\\Mining Quarries\\mining_quarry_b.unity \r\n C Assets\\Scenes\\Prefabs\\Mining Quarries\\mining_quarry_c.unity \r\n C Assets\\bundled\\Prefabs\\autospawn\\monument\\small\\mining_quarry_a.prefab \r\n C Assets\\bundled\\Prefabs\\autospawn\\monument\\small\\mining_quarry_b.prefab \r\n C Assets\\bundled\\Prefabs\\autospawn\\monument\\small\\mining_quarry_c.prefab \r\n C Assets\\Generated\\ConsoleSystem.cs \r\n C Assets\\Plugins\\Facepunch.Network\\DemoClient.cs \r\n C Assets\\Plugins\\Facepunch.Network\\BaseNetwork.cs \r\n C Assets\\Plugins\\Facepunch.Network\\NetRead.cs \r\n C Assets\\Plugins\\Facepunch.Network\\NetWrite.cs \r\n C Assets\\Plugins\\Facepunch.Network\\Client.DemoRecord.cs \r\n C Assets\\Plugins\\Facepunch.Raknet\\Facepunch.Raknet.asmdef \r\n C Assets\\Plugins\\Facepunch.Raknet\\Raknet.Server.cs \r\n C Assets\\Plugins\\Facepunch.Raknet\\Raknet.Client.cs \r\n C Assets\\Plugins\\Facepunch.SteamNetworking\\Facepunch.SteamNetworking.asmdef \r\n C Assets\\Plugins\\Facepunch.SteamNetworking\\SteamNetworking.Server.cs \r\n C Assets\\Plugins\\Rust.Global\\Collections\\PersistentObjectWorkQueue.cs \r\n C Assets\\Plugins\\Rust.Data\\generated\\ProtocolParser.cs \r\n C Assets\\Prefabs\\Deployable\\Single Shot Trap\\GunTrap.cs \r\n C Assets\\Scripts\\Networking\\NetworkCryptography.cs \r\n C Assets\\Scripts\\Server\\ServerMgr.cs \r\n C Assets\\Scripts\\Game\\TriggerBase.cs \r\n C Assets\\Scripts\\ConsoleCommands\\global.cs \r\n C Assets\\Scripts\\Entity\\Misc\\AutoTurret\\AutoTurret.Queue.cs \r\n C Assets\\Scripts\\Entity\\Misc\\AutoTurret\\AutoTurret.Server.cs \r\n A Assets\\Plugins\\Rust.Data\\IStreamReader.cs \r\n A Assets\\Plugins\\Rust.Data\\IStreamReader.cs.meta \r\n A Assets\\Plugins\\Rust.Data\\IStreamWriter.cs \r\n A Assets\\Plugins\\Rust.Data\\IStreamWriter.cs.meta \r\n A Assets\\Plugins\\Rust.Data\\NetworkDefines.cs \r\n A Assets\\Plugins\\Rust.Data\\NetworkDefines.cs.meta \r\n A Assets\\Prefabs\\Deployable\\Single Shot Trap\\GunTrap.Queue.cs \r\n A Assets\\Prefabs\\Deployable\\Single Shot Trap\\GunTrap.Queue.cs.meta"
   },
   "Build": {
-    "Id": "5131",
-    "Number": "5131",
-    "Tag": "jenkins-RustServer-5131",
-    "Url": "https://build.facepunch.com/job/RustServer/5131/",
+    "Id": "5135",
+    "Number": "5135",
+    "Tag": "jenkins-RustServer-5135",
+    "Url": "https://build.facepunch.com/job/RustServer/5135/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1695744612,
-  "DateString": "26 09 2023",
-  "TimeString": "16:10"
+  "Date": 1695909316,
+  "DateString": "28 09 2023",
+  "TimeString": "13:55"
 }
