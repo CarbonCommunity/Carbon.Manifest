@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "87945",
+    "ChangeId": "87972",
     "Branch": "experimental",
     "Repo": "rust_reboot",
     "Comment": "merge from main",
     "Author": "alistair",
-    "Date": "29/09/2023 08:44:00",
-    "Items": "C Prerequisites\\SteamInventory\\generator.json \r\n C Prerequisites\\SteamInventory\\Icons\\584379.png \r\n C Prerequisites\\SteamInventory\\PaymentRules.csv \r\n C Prerequisites\\SteamInventory\\schema-full.json \r\n C Prerequisites\\SteamInventory\\schema-new.json \r\n C Prerequisites\\SteamInventory\\schema-old.json \r\n C Assets\\Scenes\\Release\\CraggyIsland.unity \r\n C Assets\\Plugins\\Facepunch.Network\\DemoClient.cs \r\n C Assets\\Plugins\\Facepunch.Network\\BaseNetwork.cs \r\n C Assets\\Plugins\\Facepunch.Network\\NetRead.cs \r\n C Assets\\Plugins\\Facepunch.Network\\NetWrite.cs \r\n C Assets\\Plugins\\Facepunch.Network\\Client.DemoRecord.cs \r\n C Assets\\Plugins\\Facepunch.Raknet\\Facepunch.Raknet.asmdef \r\n C Assets\\Plugins\\Facepunch.Raknet\\Raknet.Server.cs \r\n C Assets\\Plugins\\Facepunch.Raknet\\Raknet.Client.cs \r\n C Assets\\Plugins\\Facepunch.SteamNetworking\\Facepunch.SteamNetworking.asmdef \r\n C Assets\\Plugins\\Facepunch.SteamNetworking\\SteamNetworking.Server.cs \r\n C Assets\\Plugins\\Rust.Data\\generated\\ProtocolParser.cs \r\n C Assets\\Plugins\\Rust.Workshop\\Approved.2023.cs \r\n C Assets\\Scripts\\Networking\\NetworkCryptography.cs \r\n A Prerequisites\\SteamInventory\\Icons\\55200.png \r\n A Prerequisites\\SteamInventory\\Icons\\55201.png \r\n A Prerequisites\\SteamInventory\\Icons\\55202.png \r\n A Prerequisites\\SteamInventory\\Icons\\55203.png \r\n A Prerequisites\\SteamInventory\\Icons\\55204.png \r\n A Prerequisites\\SteamInventory\\Icons\\55205.png \r\n A Prerequisites\\SteamInventory\\Icons\\55206.png \r\n A Prerequisites\\SteamInventory\\Icons\\55207.png \r\n A Prerequisites\\SteamInventory\\Icons\\55208.png \r\n D Assets\\Plugins\\Rust.Data\\IStreamReader.cs \r\n D Assets\\Plugins\\Rust.Data\\IStreamReader.cs.meta \r\n D Assets\\Plugins\\Rust.Data\\IStreamWriter.cs \r\n D Assets\\Plugins\\Rust.Data\\IStreamWriter.cs.meta \r\n D Assets\\Plugins\\Rust.Data\\NetworkDefines.cs \r\n D Assets\\Plugins\\Rust.Data\\NetworkDefines.cs.meta"
+    "Date": "30/09/2023 12:02:56",
+    "Items": "C Assets\\Generated\\ConsoleSystem.cs \r\n C Assets\\Plugins\\Facepunch.Network\\DemoClient.cs \r\n C Assets\\Plugins\\Facepunch.Network\\BaseNetwork.cs \r\n C Assets\\Plugins\\Facepunch.Network\\NetRead.cs \r\n C Assets\\Plugins\\Facepunch.Network\\NetWrite.cs \r\n C Assets\\Plugins\\Facepunch.Network\\Client.DemoRecord.cs \r\n C Assets\\Plugins\\Facepunch.Raknet\\Facepunch.Raknet.asmdef \r\n C Assets\\Plugins\\Facepunch.Raknet\\Raknet.Server.cs \r\n C Assets\\Plugins\\Facepunch.Raknet\\Raknet.Client.cs \r\n C Assets\\Plugins\\Facepunch.SteamNetworking\\Facepunch.SteamNetworking.asmdef \r\n C Assets\\Plugins\\Facepunch.SteamNetworking\\SteamNetworking.Server.cs \r\n C Assets\\Plugins\\Rust.Data\\generated\\ProtocolParser.cs \r\n C Assets\\Scripts\\Engine\\DDraw\\DDraw.cs \r\n C Assets\\Scripts\\Networking\\NetworkCryptography.cs \r\n C Assets\\Scripts\\ConsoleCommands\\ddraw.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\AttackHelicopter.cs \r\n A Assets\\Plugins\\Rust.Data\\IStreamReader.cs \r\n A Assets\\Plugins\\Rust.Data\\IStreamReader.cs.meta \r\n A Assets\\Plugins\\Rust.Data\\IStreamWriter.cs \r\n A Assets\\Plugins\\Rust.Data\\IStreamWriter.cs.meta \r\n A Assets\\Plugins\\Rust.Data\\NetworkDefines.cs \r\n A Assets\\Plugins\\Rust.Data\\NetworkDefines.cs.meta"
   },
   "Build": {
-    "Id": "5136",
-    "Number": "5136",
-    "Tag": "jenkins-RustServer-5136",
-    "Url": "https://build.facepunch.com/job/RustServer/5136/",
+    "Id": "5137",
+    "Number": "5137",
+    "Tag": "jenkins-RustServer-5137",
+    "Url": "https://build.facepunch.com/job/RustServer/5137/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1695975120,
-  "DateString": "29 09 2023",
-  "TimeString": "08:12"
+  "Date": 1696073292,
+  "DateString": "30 09 2023",
+  "TimeString": "11:28"
 }
