@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "88058",
+    "ChangeId": "88073",
     "Branch": "experimental",
     "Repo": "rust_reboot",
     "Comment": "merge from main",
     "Author": "alistair",
-    "Date": "03/10/2023 08:55:10",
-    "Items": "C Assets\\Localization\\ar\\engine.json \r\n C Assets\\Localization\\en-PT\\engine.json \r\n C Assets\\Localization\\es-ES\\engine.json \r\n C Assets\\Localization\\he\\engine.json \r\n C Assets\\Localization\\ja\\engine.json \r\n C Assets\\Localization\\pt-BR\\engine.json \r\n C Assets\\Localization\\vi\\engine.json \r\n C Assets\\Localization\\zh-CN\\engine.json \r\n C Assets\\Localization\\af\\engine.json \r\n C Assets\\Localization\\ca\\engine.json \r\n C Assets\\Localization\\cs\\engine.json \r\n C Assets\\Localization\\da\\engine.json \r\n C Assets\\Localization\\de\\engine.json \r\n C Assets\\Localization\\el\\engine.json \r\n C Assets\\Localization\\en\\engine.json \r\n C Assets\\Localization\\fi\\engine.json \r\n C Assets\\Localization\\fr\\engine.json \r\n C Assets\\Localization\\hu\\engine.json \r\n C Assets\\Localization\\it\\engine.json \r\n C Assets\\Localization\\ko\\engine.json \r\n C Assets\\Localization\\nl\\engine.json \r\n C Assets\\Localization\\no\\engine.json \r\n C Assets\\Localization\\pl\\engine.json \r\n C Assets\\Localization\\pt-PT\\engine.json \r\n C Assets\\Localization\\ro\\engine.json \r\n C Assets\\Localization\\ru\\engine.json \r\n C Assets\\Localization\\sr\\engine.json \r\n C Assets\\Localization\\sv-SE\\engine.json \r\n C Assets\\Localization\\tr\\engine.json \r\n C Assets\\Localization\\uk\\engine.json \r\n C Assets\\Localization\\zh-TW\\engine.json \r\n C Assets\\bundled\\Prefabs\\static\\water_catcher_small.static.prefab \r\n C Assets\\bundled\\Prefabs\\world\\climate.prefab \r\n C Assets\\Content\\Building\\Textures\\brutalist_skin_version2_diff.tga \r\n C Assets\\Content\\Building\\Textures\\brutalist_skin_version2_nrm.tga \r\n C Assets\\Content\\Building\\Textures\\brutalist_skin_version2_spec.tga \r\n C Assets\\Content\\Props\\JerryCan\\Models\\Materials\\jerrycan.mat \r\n C Assets\\Content\\Props\\JerryCan\\Models\\Materials\\jerrycan_black.mat \r\n C Assets\\Content\\Props\\JerryCan\\Models\\Materials\\jerrycan_blue.mat \r\n C Assets\\Content\\Props\\JerryCan\\Models\\Materials\\jerrycan_blue_backup.mat \r\n C Assets\\Prefabs\\Food\\Water Jug\\waterjug.viewmodel.prefab \r\n C Assets\\Prefabs\\Food\\Water Jug\\waterjug.item.prefab \r\n C Assets\\Prefabs\\Food\\Water Jug\\waterjug.worldmodel.prefab \r\n C Assets\\Prefabs\\Clothes\\Halloween.GhostSheet\\GhostSheet.Female.prefab \r\n C Assets\\Prefabs\\Building Core\\roof.triangle\\roof.triangle.brutalist.up.prefab \r\n C Assets\\Prefabs\\Deployable\\Single Shot Trap\\GunTrap.cs \r\n C Assets\\Prefabs\\Deployable\\Water Catcher\\water_catcher_small.prefab \r\n C Assets\\Prefabs\\Deployable\\Water Catcher\\water_catcher_large.prefab \r\n C Assets\\Scripts\\Util\\Libraries\\WorldSplineSharedData.cs \r\n C Assets\\Scripts\\Entity\\Construction\\WaterCatcher.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\ModularVehicles\\ModularCarPresetConfig.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\ModularVehicles\\EngineAudioSet.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\ModularVehicles\\ModuleTypes\\VehicleModuleEngineItems.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Train\\TrainWagonLootData.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\AttackHelicopterTurret.cs \r\n C Assets\\Scripts\\Entity\\Misc\\AutoTurret\\AutoTurret.Server.cs \r\n A Assets\\Content\\Textures\\Decals\\concrete_leaks_f.mat \r\n A Assets\\Content\\Textures\\Decals\\concrete_leaks_f.mat.meta \r\n A Assets\\Content\\Textures\\Decals\\concrete_leaks_f.tga \r\n A Assets\\Content\\Textures\\Decals\\concrete_leaks_f.tga.meta \r\n A Assets\\Content\\Textures\\Decals\\decal_concrete_leaks_f.prefab \r\n A Assets\\Content\\Textures\\Decals\\decal_concrete_leaks_f.prefab.meta \r\n A Assets\\Content\\Props\\JerryCan\\Models\\Materials\\jerrycan_yellow.mat \r\n A Assets\\Content\\Props\\JerryCan\\Models\\Materials\\jerrycan_yellow.mat.meta \r\n A Assets\\Prefabs\\Deployable\\Water Catcher\\Water Catcher Collection Rates.asset \r\n A Assets\\Prefabs\\Deployable\\Water Catcher\\Water Catcher Collection Rates.asset.meta \r\n A Assets\\Scripts\\Entity\\Construction\\Editor \r\n A Assets\\Scripts\\Entity\\Construction\\Editor.meta \r\n A Assets\\Scripts\\Entity\\Construction\\WaterCatcherCollectRate.cs \r\n A Assets\\Scripts\\Entity\\Construction\\WaterCatcherCollectRate.cs.meta \r\n A Assets\\Scripts\\Entity\\Construction\\Editor\\WaterCatcherCollectRateEditor.cs \r\n A Assets\\Scripts\\Entity\\Construction\\Editor\\WaterCatcherCollectRateEditor.cs.meta"
+    "Date": "03/10/2023 13:52:19",
+    "Items": "C Assets\\Prefabs\\Food\\Water Jug\\waterjug.entity.prefab \r\n C Assets\\Prefabs\\Food\\Water Jug\\waterjug.item.prefab \r\n A Assets\\Prefabs\\Food\\Water Jug\\waterjug.worldmodel.icon.png \r\n A Assets\\Prefabs\\Food\\Water Jug\\waterjug.worldmodel.icon.png.meta"
   },
   "Build": {
-    "Id": "5141",
-    "Number": "5141",
-    "Tag": "jenkins-RustServer-5141",
-    "Url": "https://build.facepunch.com/job/RustServer/5141/",
+    "Id": "5142",
+    "Number": "5142",
+    "Tag": "jenkins-RustServer-5142",
+    "Url": "https://build.facepunch.com/job/RustServer/5142/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1696322222,
+  "Date": 1696339619,
   "DateString": "3 10 2023",
-  "TimeString": "08:37"
+  "TimeString": "13:26"
 }
