@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "87415",
+    "ChangeId": "88137",
     "Branch": "experimental/release",
     "Repo": "rust_reboot",
-    "Comment": "merge from main",
+    "Comment": "merge from experimental",
     "Author": "alistair",
-    "Date": "12/09/2023 10:49:26",
-    "Items": "C Assets\\bundled\\Prefabs\\static\\miningquarry_static.prefab \r\n C Assets\\bundled\\Prefabs\\static\\pumpjack-static.prefab \r\n C Assets\\Prefabs\\Vehicle\\Seats\\MiniHeliPassenger.prefab \r\n C Assets\\Prefabs\\Vehicle\\Seats\\MiniHeliSeat.prefab \r\n C Assets\\Prefabs\\Vehicle\\Seats\\AttackHeliGunner.prefab \r\n C Assets\\Prefabs\\Vehicle\\Seats\\AttackHeliDriver.prefab \r\n C Assets\\Prefabs\\Deployable\\Quarry\\quarry_track.fbx \r\n C Assets\\Prefabs\\Deployable\\Quarry\\quarry_track.controller \r\n C Assets\\Prefabs\\Deployable\\Quarry\\mining_quarry.prefab \r\n C Assets\\Scripts\\EntityIO\\IOEntity.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\BaseVehicleSeat.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\BaseMountable.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-Group.cs"
+    "Date": "04/10/2023 11:08:41",
+    "Items": "C Assets\\Prefabs\\Deployable\\Tier 1 Workbench\\Workbench1.deployed.prefab \r\n C Assets\\Prefabs\\Deployable\\Tier 2 Workbench\\workbench2.deployed.prefab \r\n C Assets\\Prefabs\\Deployable\\Tier 3 Workbench\\workbench3.deployed.prefab \r\n C Assets\\Scripts\\Game\\TriggerWorkbench.cs \r\n C Assets\\Scripts\\Entity\\Player\\Components\\PlayerMetabolism.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-Server.cs"
   },
   "Build": {
-    "Id": "537",
-    "Number": "537",
-    "Tag": "jenkins-RustReleaseServer-537",
-    "Url": "https://build.facepunch.com/job/RustReleaseServer/537/",
+    "Id": "539",
+    "Number": "539",
+    "Tag": "jenkins-RustReleaseServer-539",
+    "Url": "https://build.facepunch.com/job/RustReleaseServer/539/",
     "Name": "RustReleaseServer",
     "Node": "Win4"
   },
-  "Date": 1695369915,
-  "DateString": "22 09 2023",
-  "TimeString": "08:05"
+  "Date": 1696417096,
+  "DateString": "4 10 2023",
+  "TimeString": "10:58"
 }
