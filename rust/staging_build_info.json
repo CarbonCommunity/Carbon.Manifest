@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "88127",
+    "ChangeId": "88135",
     "Branch": "experimental",
     "Repo": "rust_reboot",
     "Comment": "merge from main",
     "Author": "alistair",
-    "Date": "04/10/2023 07:31:49",
-    "Items": "C Prerequisites\\SteamInventory\\schema-full.json \r\n C Prerequisites\\SteamInventory\\schema-new.json \r\n C protobuf\\proto\\Messages.proto \r\n C Assets\\Scenes\\Prefabs\\Compound\\compound.unity \r\n C Assets\\Scenes\\Prefabs\\Oilrig\\Oilrig.unity \r\n C Assets\\Scenes\\Prefabs\\Oilrig\\Oilrig_small.unity \r\n C Assets\\bundled\\Prefabs\\static\\ModularCarLift.static.prefab \r\n C Assets\\bundled\\Prefabs\\autospawn\\monument\\offshore\\Oilrig_1.prefab \r\n C Assets\\bundled\\Prefabs\\autospawn\\monument\\offshore\\Oilrig_2.prefab \r\n C Assets\\bundled\\Prefabs\\autospawn\\monument\\medium\\Compound.prefab \r\n C Assets\\bundled\\Prefabs\\ui\\EngineUI.prefab \r\n C Assets\\bundled\\Prefabs\\ui\\GameUI.prefab \r\n C Assets\\Generated\\ConsoleSystem.cs \r\n C Assets\\Content\\UI\\GameUI\\UI.Deathscreen.Respawn.Sleepingbag.Cluster.prefab \r\n C Assets\\Content\\UI\\GameUI\\UI.Deathscreen.Respawn.Sleepingbag.prefab \r\n C Assets\\Content\\UI\\GameUI\\GameUI.DeathScreen.prefab \r\n C Assets\\Content\\UI\\GameUI\\GameUI.Hud.prefab \r\n C Assets\\Content\\Properties\\Camera\\Environment Properties.asset \r\n C Assets\\Content\\Properties\\BuildingGrade\\brutalist.asset \r\n C Assets\\Plugins\\Rust.Global\\Protocol.cs \r\n C Assets\\Plugins\\Rust.Data\\generated\\ProtocolBuffers.cs \r\n C Assets\\Plugins\\Rust.Data\\generated\\ProtocolBuffers.Serializer.cs \r\n C Assets\\Prefabs\\NPC\\AutoTurret\\autoturret_deployed.prefab \r\n C Assets\\Prefabs\\Misc\\Summer_DLC\\Beach_Towel\\beachtowel.deployed.prefab \r\n C Assets\\Prefabs\\Deployable\\Modular Car Lift\\electrical.modularcarlift.deployed.prefab \r\n C Assets\\Prefabs\\Deployable\\Bed\\bed_deployed.prefab \r\n C Assets\\Prefabs\\Deployable\\Sleeping Bag\\sleepingbag_leather_deployed.prefab \r\n C Assets\\Prefabs\\Deployable\\PlayerIOEnts\\WaterPump\\water.pump.deployed.prefab \r\n C Assets\\Prefabs\\Deployable\\PlayerIOEnts\\Batteries\\SmallRechargableBattery.deployed.prefab \r\n C Assets\\Scripts\\UI\\SleepingBagButton.cs \r\n C Assets\\Scripts\\UI\\Ingame\\Map\\SleepingBagMapMarker.cs \r\n C Assets\\Scripts\\ConsoleCommands\\sentry.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-Flags.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-Server.cs \r\n C Assets\\Scripts\\Entity\\Player\\Components\\PlayerMetabolism.cs \r\n C Assets\\Scripts\\Entity\\Misc\\AutoTurret\\AutoTurret.cs \r\n C Assets\\Scripts\\Entity\\Misc\\AutoTurret\\AutoTurret.Server.cs \r\n C Assets\\Scripts\\Entity\\Misc\\SleepingBagCamper.cs \r\n C Assets\\Scripts\\Entity\\Misc\\SleepingBag.cs \r\n A Assets\\Icons\\no_sleep.png \r\n A Assets\\Icons\\no_sleep.png.meta \r\n A Assets\\Icons\\no_spawn.png \r\n A Assets\\Icons\\no_spawn.png.meta \r\n A Assets\\Content\\UI\\GameUI\\GameUI.Hud.Warnings.prefab \r\n A Assets\\Prefabs\\NPC\\AutoTurret\\Sound\\autoturret-interference-spark-loop-01.wav \r\n A Assets\\Prefabs\\NPC\\AutoTurret\\Sound\\autoturret-interference-spark-loop-01.wav.meta \r\n A Assets\\Prefabs\\NPC\\AutoTurret\\Sound\\autoturret-interference-spark-loop.asset \r\n A Assets\\Prefabs\\NPC\\AutoTurret\\Sound\\autoturret-interference-spark-loop.asset.meta \r\n A Assets\\Prefabs\\Misc\\BuildingSkins\\brutalist \r\n A Assets\\Prefabs\\Misc\\BuildingSkins\\brutalist.meta \r\n A Assets\\Scripts\\UI\\NoRespawnIcon.cs \r\n A Assets\\Scripts\\UI\\NoRespawnIcon.cs.meta \r\n A Assets\\Scripts\\Game\\TriggerNoRespawnZone.cs \r\n A Assets\\Scripts\\Game\\TriggerNoRespawnZone.cs.meta \r\n A Assets\\Prefabs\\Misc\\BuildingSkins\\brutalist\\brutalist.sitem.asset \r\n A Assets\\Prefabs\\Misc\\BuildingSkins\\brutalist\\brutalist.sitem.asset.meta \r\n A Assets\\Prefabs\\Misc\\BuildingSkins\\brutalist\\brutalist.skin.store.icon.png.meta \r\n D Assets\\Content\\UI\\GameUI\\GameUI.Hud.HostileWarning.prefab \r\n M Assets\\Content\\UI\\GameUI\\GameUI.Hud.Warnings.prefab.meta"
+    "Date": "04/10/2023 11:07:30",
+    "Items": "C Assets\\Prefabs\\Deployable\\Tier 1 Workbench\\Workbench1.deployed.prefab \r\n C Assets\\Prefabs\\Deployable\\Tier 2 Workbench\\workbench2.deployed.prefab \r\n C Assets\\Prefabs\\Deployable\\Tier 3 Workbench\\workbench3.deployed.prefab \r\n C Assets\\Scripts\\Game\\TriggerWorkbench.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-Server.cs \r\n C Assets\\Scripts\\Entity\\Player\\Components\\PlayerMetabolism.cs"
   },
   "Build": {
-    "Id": "5144",
-    "Number": "5144",
-    "Tag": "jenkins-RustServer-5144",
-    "Url": "https://build.facepunch.com/job/RustServer/5144/",
+    "Id": "5145",
+    "Number": "5145",
+    "Tag": "jenkins-RustServer-5145",
+    "Url": "https://build.facepunch.com/job/RustServer/5145/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1696403626,
+  "Date": 1696414753,
   "DateString": "4 10 2023",
-  "TimeString": "07:13"
+  "TimeString": "10:19"
 }
