@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "88137",
+    "ChangeId": "88182",
     "Branch": "experimental/release",
     "Repo": "rust_reboot",
-    "Comment": "merge from experimental",
+    "Comment": "merge from experimental - RC",
     "Author": "alistair",
-    "Date": "04/10/2023 11:08:41",
-    "Items": "C Assets\\Prefabs\\Deployable\\Tier 1 Workbench\\Workbench1.deployed.prefab \r\n C Assets\\Prefabs\\Deployable\\Tier 2 Workbench\\workbench2.deployed.prefab \r\n C Assets\\Prefabs\\Deployable\\Tier 3 Workbench\\workbench3.deployed.prefab \r\n C Assets\\Scripts\\Game\\TriggerWorkbench.cs \r\n C Assets\\Scripts\\Entity\\Player\\Components\\PlayerMetabolism.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-Server.cs"
+    "Date": "05/10/2023 08:35:03",
+    "Items": "C Assets\\Localization\\da\\engine.json \r\n C Assets\\Localization\\es-ES\\engine.json \r\n C Assets\\Localization\\nl\\engine.json \r\n C Assets\\Localization\\ro\\engine.json \r\n C Assets\\Localization\\de\\engine.json \r\n C Assets\\Localization\\it\\engine.json \r\n C Assets\\Localization\\ko\\engine.json \r\n C Assets\\Localization\\ru\\engine.json \r\n C Assets\\Localization\\vi\\engine.json \r\n C Assets\\Localization\\zh-CN\\engine.json \r\n C Assets\\Prefabs\\Ammo\\Rocket\\ammo_rocket_seeker.item.prefab \r\n C Assets\\Scripts\\UI\\NoRespawnIcon.cs \r\n C Assets\\Scripts\\Entity\\Misc\\AutoTurret\\AutoTurret.Server.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer.cs"
   },
   "Build": {
-    "Id": "539",
-    "Number": "539",
-    "Tag": "jenkins-RustReleaseServer-539",
-    "Url": "https://build.facepunch.com/job/RustReleaseServer/539/",
+    "Id": "541",
+    "Number": "541",
+    "Tag": "jenkins-RustReleaseServer-541",
+    "Url": "https://build.facepunch.com/job/RustReleaseServer/541/",
     "Name": "RustReleaseServer",
     "Node": "Win4"
   },
-  "Date": 1696417096,
-  "DateString": "4 10 2023",
-  "TimeString": "10:58"
+  "Date": 1696493572,
+  "DateString": "5 10 2023",
+  "TimeString": "08:12"
 }
