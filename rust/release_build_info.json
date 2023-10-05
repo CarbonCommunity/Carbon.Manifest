@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "88182",
+    "ChangeId": "88212",
     "Branch": "experimental/release",
     "Repo": "rust_reboot",
-    "Comment": "merge from experimental - RC",
+    "Comment": "merge from experimental",
     "Author": "alistair",
-    "Date": "05/10/2023 08:35:03",
-    "Items": "C Assets\\Localization\\da\\engine.json \r\n C Assets\\Localization\\es-ES\\engine.json \r\n C Assets\\Localization\\nl\\engine.json \r\n C Assets\\Localization\\ro\\engine.json \r\n C Assets\\Localization\\de\\engine.json \r\n C Assets\\Localization\\it\\engine.json \r\n C Assets\\Localization\\ko\\engine.json \r\n C Assets\\Localization\\ru\\engine.json \r\n C Assets\\Localization\\vi\\engine.json \r\n C Assets\\Localization\\zh-CN\\engine.json \r\n C Assets\\Prefabs\\Ammo\\Rocket\\ammo_rocket_seeker.item.prefab \r\n C Assets\\Scripts\\UI\\NoRespawnIcon.cs \r\n C Assets\\Scripts\\Entity\\Misc\\AutoTurret\\AutoTurret.Server.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer.cs"
+    "Date": "05/10/2023 22:30:38",
+    "Items": "C Prerequisites\\SteamInventory\\generator.json \r\n C Prerequisites\\SteamInventory\\Icons\\584379.png \r\n C Prerequisites\\SteamInventory\\PaymentRules.csv \r\n C Prerequisites\\SteamInventory\\schema-full.json \r\n C Prerequisites\\SteamInventory\\schema-new.json \r\n C Prerequisites\\SteamInventory\\schema-old.json \r\n C Assets\\Plugins\\Rust.Workshop\\Approved.2023.cs \r\n C Assets\\Prefabs\\Deployable\\MixingTable\\MixingTable.deployed.prefab \r\n C Assets\\Scripts\\ServerList\\ServerCacheQuery.cs \r\n C Assets\\Scripts\\Entity\\BaseEntity\\BaseEntity.cs \r\n A Prerequisites\\SteamInventory\\Icons\\55300.png \r\n A Prerequisites\\SteamInventory\\Icons\\55301.png \r\n A Prerequisites\\SteamInventory\\Icons\\55302.png \r\n A Prerequisites\\SteamInventory\\Icons\\55303.png \r\n A Prerequisites\\SteamInventory\\Icons\\55304.png \r\n A Prerequisites\\SteamInventory\\Icons\\55305.png \r\n A Prerequisites\\SteamInventory\\Icons\\55306.png \r\n A Prerequisites\\SteamInventory\\Icons\\55307.png \r\n A Prerequisites\\SteamInventory\\Icons\\55308.png"
   },
   "Build": {
-    "Id": "541",
-    "Number": "541",
-    "Tag": "jenkins-RustReleaseServer-541",
-    "Url": "https://build.facepunch.com/job/RustReleaseServer/541/",
+    "Id": "542",
+    "Number": "542",
+    "Tag": "jenkins-RustReleaseServer-542",
+    "Url": "https://build.facepunch.com/job/RustReleaseServer/542/",
     "Name": "RustReleaseServer",
     "Node": "Win4"
   },
-  "Date": 1696493572,
+  "Date": 1696543281,
   "DateString": "5 10 2023",
-  "TimeString": "08:12"
+  "TimeString": "22:01"
 }
