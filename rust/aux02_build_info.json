@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "88198",
+    "ChangeId": "88272",
     "Branch": "Aux2",
     "Repo": "rust_reboot",
-    "Comment": "Merge from rail_network_link",
-    "Author": "andre",
-    "Date": "05/10/2023 15:39:18",
-    "Items": "C Assets\\Content\\Structures\\train_tunnels\\train_tunnel_double_entrance_36m.prefab \r\n C Assets\\Scripts\\Procedural\\TerrainExtension\\TerrainPath.cs \r\n A Assets\\Content\\Structures\\train_tunnels\\Models\\Materials\\train_tunnel_concrete_generic_vcol.mat \r\n A Assets\\Content\\Structures\\train_tunnels\\Models\\Materials\\train_tunnel_concrete_generic_vcol.mat.meta"
+    "Comment": "Merge from tutorial_island",
+    "Author": "jarryd",
+    "Date": "09/10/2023 00:10:31",
+    "Items": "C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialIsland.prefab \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialMission03_Objective_OpenStorage.asset \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialMission05B_CookFood.asset \r\n C Assets\\Prefabs\\NPC\\Bandit\\Shopkeepers\\NPCShopKeeper.cs \r\n C Assets\\Prefabs\\NPC\\Bandit\\Shopkeepers\\ConversationManager.cs \r\n C Assets\\Prefabs\\NPC\\Bandit\\Shopkeepers\\NPCTalking.cs \r\n C Assets\\Prefabs\\NPC\\Tutorial\\TutorialConversation_Stage05.asset \r\n C Assets\\Prefabs\\NPC\\Tutorial\\MissionProvider_Tutorial.prefab \r\n C Assets\\Prefabs\\NPC\\Tutorial\\TutorialNPC.cs \r\n C Assets\\Rust.Ai\\Agents\\Bear\\Bear_Tutorial.prefab \r\n C Assets\\Rust.Ai\\Agents\\Chicken\\Chicken.tutorial.prefab \r\n C Assets\\Rust.Ai\\Npc\\BaseNpc.Ai.cs \r\n C Assets\\Scripts\\UI\\Pings\\PingWidget.cs \r\n A Assets\\Rust.Ai\\Agents\\Bear\\Sound\\Roar.prefab \r\n A Assets\\Rust.Ai\\Agents\\Bear\\Sound\\Roar.prefab.meta"
   },
   "Build": {
-    "Id": "527",
-    "Number": "527",
-    "Tag": "jenkins-RustServerAux02-527",
-    "Url": "https://build.facepunch.com/job/RustServerAux02/527/",
+    "Id": "528",
+    "Number": "528",
+    "Tag": "jenkins-RustServerAux02-528",
+    "Url": "https://build.facepunch.com/job/RustServerAux02/528/",
     "Name": "RustServerAux02",
     "Node": "Win4"
   },
-  "Date": 1696518915,
-  "DateString": "5 10 2023",
-  "TimeString": "15:15"
+  "Date": 1696808565,
+  "DateString": "8 10 2023",
+  "TimeString": "23:42"
 }
