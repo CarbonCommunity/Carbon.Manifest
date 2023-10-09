@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "88262",
+    "ChangeId": "88301",
     "Branch": "experimental/release",
     "Repo": "rust_reboot",
     "Comment": "merge from main",
     "Author": "alistair",
-    "Date": "08/10/2023 10:51:37",
-    "Items": "C Assets\\Prefabs\\Deployable\\VendingMachine\\VendingMachine.cs"
+    "Date": "09/10/2023 17:43:15",
+    "Items": "C Assets\\Prefabs\\Misc\\BuildingSkins\\brutalist\\brutalist.sitem.asset \r\n C Assets\\Scripts\\ServerList\\ServerCacheDatabase.cs \r\n A Assets\\Prefabs\\Tools\\Pipe\\Materials\\PipeMaterial 2.mat \r\n A Assets\\Prefabs\\Tools\\Pipe\\Materials\\PipeMaterial 2.mat.meta \r\n A Assets\\Prefabs\\Tools\\Pipe\\Textures\\IndustrialPipes2_Albedo.tga \r\n A Assets\\Prefabs\\Tools\\Pipe\\Textures\\IndustrialPipes2_Albedo.tga.meta"
   },
   "Build": {
-    "Id": "543",
-    "Number": "543",
-    "Tag": "jenkins-RustReleaseServer-543",
-    "Url": "https://build.facepunch.com/job/RustReleaseServer/543/",
+    "Id": "544",
+    "Number": "544",
+    "Tag": "jenkins-RustReleaseServer-544",
+    "Url": "https://build.facepunch.com/job/RustReleaseServer/544/",
     "Name": "RustReleaseServer",
     "Node": "Win4"
   },
-  "Date": 1696760913,
-  "DateString": "8 10 2023",
-  "TimeString": "10:28"
+  "Date": 1696871682,
+  "DateString": "9 10 2023",
+  "TimeString": "17:14"
 }
