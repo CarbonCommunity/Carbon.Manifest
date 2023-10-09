@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "88272",
+    "ChangeId": "88287",
     "Branch": "Aux2",
     "Repo": "rust_reboot",
     "Comment": "Merge from tutorial_island",
     "Author": "jarryd",
-    "Date": "09/10/2023 00:10:31",
-    "Items": "C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialIsland.prefab \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialMission03_Objective_OpenStorage.asset \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialMission05B_CookFood.asset \r\n C Assets\\Prefabs\\NPC\\Bandit\\Shopkeepers\\NPCShopKeeper.cs \r\n C Assets\\Prefabs\\NPC\\Bandit\\Shopkeepers\\ConversationManager.cs \r\n C Assets\\Prefabs\\NPC\\Bandit\\Shopkeepers\\NPCTalking.cs \r\n C Assets\\Prefabs\\NPC\\Tutorial\\TutorialConversation_Stage05.asset \r\n C Assets\\Prefabs\\NPC\\Tutorial\\MissionProvider_Tutorial.prefab \r\n C Assets\\Prefabs\\NPC\\Tutorial\\TutorialNPC.cs \r\n C Assets\\Rust.Ai\\Agents\\Bear\\Bear_Tutorial.prefab \r\n C Assets\\Rust.Ai\\Agents\\Chicken\\Chicken.tutorial.prefab \r\n C Assets\\Rust.Ai\\Npc\\BaseNpc.Ai.cs \r\n C Assets\\Scripts\\UI\\Pings\\PingWidget.cs \r\n A Assets\\Rust.Ai\\Agents\\Bear\\Sound\\Roar.prefab \r\n A Assets\\Rust.Ai\\Agents\\Bear\\Sound\\Roar.prefab.meta"
+    "Date": "09/10/2023 05:02:41",
+    "Items": "C ProjectSettings\\ProjectSettings.asset \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialBuildTarget.cs \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialMission02_Craft.asset \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialMission03B_BuildBase.asset \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialMission04B_FillToolCupboard.asset \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialMission05B_CookFood.asset \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialMission06B_KillTheBear.asset \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialMission07C_BuildKayak.asset \r\n C Assets\\Prefabs\\NPC\\Bandit\\Shopkeepers\\NPCTalking.cs \r\n C Assets\\Prefabs\\NPC\\Tutorial\\TutorialConversation.asset \r\n C Assets\\Prefabs\\NPC\\Tutorial\\TutorialConversation_MidMission.asset \r\n C Assets\\Prefabs\\NPC\\Tutorial\\TutorialConversation_Stage03.asset \r\n C Assets\\Prefabs\\NPC\\Tutorial\\TutorialConversation_Stage04.asset \r\n C Assets\\Prefabs\\NPC\\Tutorial\\TutorialConversation_Stage05.asset \r\n C Assets\\Prefabs\\NPC\\Tutorial\\TutorialConversation_Stage06.asset \r\n C Assets\\Prefabs\\NPC\\Tutorial\\TutorialConversation_Stage07.asset \r\n C Assets\\Prefabs\\NPC\\Tutorial\\TutorialNPC.cs \r\n C Assets\\Prefabs\\NPC\\Tutorial\\TutorialConversation_Stage02.asset \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-Mission.cs \r\n C Assets\\Scripts\\UI\\TutorialHelpModal.cs \r\n A Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialMission_Objective_SpeakWithSurvivor.asset \r\n D Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialMission_Objective_SpeakWithScientist.asset \r\n M Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialMission_Objective_SpeakWithSurvivor.asset.meta"
   },
   "Build": {
-    "Id": "528",
-    "Number": "528",
-    "Tag": "jenkins-RustServerAux02-528",
-    "Url": "https://build.facepunch.com/job/RustServerAux02/528/",
+    "Id": "529",
+    "Number": "529",
+    "Tag": "jenkins-RustServerAux02-529",
+    "Url": "https://build.facepunch.com/job/RustServerAux02/529/",
     "Name": "RustServerAux02",
     "Node": "Win4"
   },
-  "Date": 1696808565,
-  "DateString": "8 10 2023",
-  "TimeString": "23:42"
+  "Date": 1696826023,
+  "DateString": "9 10 2023",
+  "TimeString": "04:33"
 }
