@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "88212",
+    "ChangeId": "88262",
     "Branch": "experimental/release",
     "Repo": "rust_reboot",
-    "Comment": "merge from experimental",
+    "Comment": "merge from main",
     "Author": "alistair",
-    "Date": "05/10/2023 22:30:38",
-    "Items": "C Prerequisites\\SteamInventory\\generator.json \r\n C Prerequisites\\SteamInventory\\Icons\\584379.png \r\n C Prerequisites\\SteamInventory\\PaymentRules.csv \r\n C Prerequisites\\SteamInventory\\schema-full.json \r\n C Prerequisites\\SteamInventory\\schema-new.json \r\n C Prerequisites\\SteamInventory\\schema-old.json \r\n C Assets\\Plugins\\Rust.Workshop\\Approved.2023.cs \r\n C Assets\\Prefabs\\Deployable\\MixingTable\\MixingTable.deployed.prefab \r\n C Assets\\Scripts\\ServerList\\ServerCacheQuery.cs \r\n C Assets\\Scripts\\Entity\\BaseEntity\\BaseEntity.cs \r\n A Prerequisites\\SteamInventory\\Icons\\55300.png \r\n A Prerequisites\\SteamInventory\\Icons\\55301.png \r\n A Prerequisites\\SteamInventory\\Icons\\55302.png \r\n A Prerequisites\\SteamInventory\\Icons\\55303.png \r\n A Prerequisites\\SteamInventory\\Icons\\55304.png \r\n A Prerequisites\\SteamInventory\\Icons\\55305.png \r\n A Prerequisites\\SteamInventory\\Icons\\55306.png \r\n A Prerequisites\\SteamInventory\\Icons\\55307.png \r\n A Prerequisites\\SteamInventory\\Icons\\55308.png"
+    "Date": "08/10/2023 10:51:37",
+    "Items": "C Assets\\Prefabs\\Deployable\\VendingMachine\\VendingMachine.cs"
   },
   "Build": {
-    "Id": "542",
-    "Number": "542",
-    "Tag": "jenkins-RustReleaseServer-542",
-    "Url": "https://build.facepunch.com/job/RustReleaseServer/542/",
+    "Id": "543",
+    "Number": "543",
+    "Tag": "jenkins-RustReleaseServer-543",
+    "Url": "https://build.facepunch.com/job/RustReleaseServer/543/",
     "Name": "RustReleaseServer",
     "Node": "Win4"
   },
-  "Date": 1696543281,
-  "DateString": "5 10 2023",
-  "TimeString": "22:01"
+  "Date": 1696760913,
+  "DateString": "8 10 2023",
+  "TimeString": "10:28"
 }
