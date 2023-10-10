@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "88287",
+    "ChangeId": "88353",
     "Branch": "Aux2",
     "Repo": "rust_reboot",
-    "Comment": "Merge from tutorial_island",
-    "Author": "jarryd",
-    "Date": "09/10/2023 05:02:41",
-    "Items": "C ProjectSettings\\ProjectSettings.asset \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialBuildTarget.cs \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialMission02_Craft.asset \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialMission03B_BuildBase.asset \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialMission04B_FillToolCupboard.asset \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialMission05B_CookFood.asset \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialMission06B_KillTheBear.asset \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialMission07C_BuildKayak.asset \r\n C Assets\\Prefabs\\NPC\\Bandit\\Shopkeepers\\NPCTalking.cs \r\n C Assets\\Prefabs\\NPC\\Tutorial\\TutorialConversation.asset \r\n C Assets\\Prefabs\\NPC\\Tutorial\\TutorialConversation_MidMission.asset \r\n C Assets\\Prefabs\\NPC\\Tutorial\\TutorialConversation_Stage03.asset \r\n C Assets\\Prefabs\\NPC\\Tutorial\\TutorialConversation_Stage04.asset \r\n C Assets\\Prefabs\\NPC\\Tutorial\\TutorialConversation_Stage05.asset \r\n C Assets\\Prefabs\\NPC\\Tutorial\\TutorialConversation_Stage06.asset \r\n C Assets\\Prefabs\\NPC\\Tutorial\\TutorialConversation_Stage07.asset \r\n C Assets\\Prefabs\\NPC\\Tutorial\\TutorialNPC.cs \r\n C Assets\\Prefabs\\NPC\\Tutorial\\TutorialConversation_Stage02.asset \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-Mission.cs \r\n C Assets\\Scripts\\UI\\TutorialHelpModal.cs \r\n A Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialMission_Objective_SpeakWithSurvivor.asset \r\n D Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialMission_Objective_SpeakWithScientist.asset \r\n M Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialMission_Objective_SpeakWithSurvivor.asset.meta"
+    "Comment": "merge from rail_network_link",
+    "Author": "alistair",
+    "Date": "10/10/2023 15:13:02",
+    "Items": "C Assets\\Content\\Structures\\train_tunnels\\Models\\Materials\\train_tunnel_cables.mat \r\n C Assets\\Content\\Vehicles\\Trains\\Wagons\\TrainWagonUnloadableLoot.entity.prefab \r\n C Assets\\Content\\Vehicles\\Trains\\Wagons\\TrainWagonUnloadable.entity.prefab \r\n C Assets\\Content\\Vehicles\\Trains\\Wagons\\TrainWagonUnloadableFuel.entity.prefab \r\n C Assets\\Content\\Vehicles\\Trains\\Wagons\\_BaseTrainWagon.entity.prefab \r\n C Assets\\Content\\Vehicles\\Trains\\WorkCart\\workcart.entity.prefab \r\n C Assets\\Content\\Vehicles\\Trains\\Caboose\\TrainCaboose.entity.prefab \r\n C Assets\\Content\\Vehicles\\Trains\\Locomotive\\locomotive.entity.prefab \r\n C Assets\\Scenes\\Prefabs\\Train Tunnel Entrance\\train_tunnel_entrance_a\\HeightTexture.png \r\n C Assets\\Scenes\\Prefabs\\Train Tunnel Entrance\\train_tunnel_entrance_a\\NormalTexture.png \r\n C Assets\\Scenes\\Prefabs\\Train Tunnel Entrance\\train_tunnel_entrance_a.asset \r\n C Assets\\Scenes\\Prefabs\\Train Tunnel Entrance\\train_tunnel_entrance_a.unity \r\n A Assets\\Content\\Structures\\train_tunnels\\Models\\Materials\\train_tunnel_bricks_large.mat \r\n A Assets\\Content\\Structures\\train_tunnels\\Models\\Materials\\train_tunnel_bricks_large.mat.meta \r\n A Assets\\Content\\Structures\\train_tunnels\\Models\\Materials\\train_tunnel_concrete_ground_terrain_blend.mat \r\n A Assets\\Content\\Structures\\train_tunnels\\Models\\Materials\\train_tunnel_concrete_ground_terrain_blend.mat.meta \r\n A Assets\\Content\\Structures\\train_tunnels\\Models\\Materials\\train_tunnel_concrete_trims.mat \r\n A Assets\\Content\\Structures\\train_tunnels\\Models\\Materials\\train_tunnel_concrete_trims.mat.meta \r\n A Assets\\Content\\Structures\\train_tunnels\\Models\\Materials\\train_tunnel_corrugated.mat \r\n A Assets\\Content\\Structures\\train_tunnels\\Models\\Materials\\train_tunnel_corrugated.mat.meta \r\n A Assets\\Content\\Structures\\train_tunnels\\Models\\Materials\\train_tunnel_wooden_planks.mat \r\n A Assets\\Content\\Structures\\train_tunnels\\Models\\Materials\\train_tunnel_wooden_planks.mat.meta \r\n A Assets\\Content\\Structures\\train_tunnels\\Models\\train_tunnel_double_entrance_72m_b_part1_COL.fbx \r\n A Assets\\Content\\Structures\\train_tunnels\\Models\\train_tunnel_double_entrance_72m_b_part1_COL.fbx.meta \r\n A Assets\\Content\\Structures\\train_tunnels\\Models\\train_tunnel_double_entrance_72m_b_part1.fbx \r\n A Assets\\Content\\Structures\\train_tunnels\\Models\\train_tunnel_double_entrance_72m_b_part1.fbx.meta \r\n A Assets\\Content\\Structures\\train_tunnels\\Models\\train_tunnel_double_entrance_72m_b_part2.fbx \r\n A Assets\\Content\\Structures\\train_tunnels\\Models\\train_tunnel_double_entrance_72m_b_part2.fbx.meta \r\n A Assets\\Content\\Structures\\train_tunnels\\train_tunnel_double_entrance_b_72m.prefab \r\n A Assets\\Content\\Structures\\train_tunnels\\train_tunnel_double_entrance_b_72m.prefab.meta \r\n A Assets\\Content\\Textures\\Generic\\stonewall_b \r\n A Assets\\Content\\Textures\\Generic\\stonewall_b.meta \r\n A Assets\\Content\\Textures\\Generic\\stonewall_b\\stonewall_b_ao.tga \r\n A Assets\\Content\\Textures\\Generic\\stonewall_b\\stonewall_b_ao.tga.meta \r\n A Assets\\Content\\Textures\\Generic\\stonewall_b\\stonewall_b_diff.tga \r\n A Assets\\Content\\Textures\\Generic\\stonewall_b\\stonewall_b_diff.tga.meta \r\n A Assets\\Content\\Textures\\Generic\\stonewall_b\\stonewall_b_mask.tga \r\n A Assets\\Content\\Textures\\Generic\\stonewall_b\\stonewall_b_mask.tga.meta \r\n A Assets\\Content\\Textures\\Generic\\stonewall_b\\stonewall_b_nrm.tga \r\n A Assets\\Content\\Textures\\Generic\\stonewall_b\\stonewall_b_nrm.tga.meta \r\n A Assets\\Content\\Textures\\Generic\\stonewall_b\\stonewall_b_spec.tga \r\n A Assets\\Content\\Textures\\Generic\\stonewall_b\\stonewall_b_spec.tga.meta"
   },
   "Build": {
-    "Id": "529",
-    "Number": "529",
-    "Tag": "jenkins-RustServerAux02-529",
-    "Url": "https://build.facepunch.com/job/RustServerAux02/529/",
+    "Id": "530",
+    "Number": "530",
+    "Tag": "jenkins-RustServerAux02-530",
+    "Url": "https://build.facepunch.com/job/RustServerAux02/530/",
     "Name": "RustServerAux02",
     "Node": "Win4"
   },
-  "Date": 1696826023,
-  "DateString": "9 10 2023",
-  "TimeString": "04:33"
+  "Date": 1696949855,
+  "DateString": "10 10 2023",
+  "TimeString": "14:57"
 }
