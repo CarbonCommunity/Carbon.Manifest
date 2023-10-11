@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "88366",
+    "ChangeId": "88387",
     "Branch": "experimental",
     "Repo": "rust_reboot",
-    "Comment": "merge from main",
-    "Author": "alistair",
-    "Date": "10/10/2023 18:24:31",
-    "Items": "C Prerequisites\\SteamInventory\\PaymentRules.csv \r\n C Prerequisites\\SteamInventory\\schema-old.json \r\n C Prerequisites\\SteamInventory\\schema-full.json \r\n C Prerequisites\\SteamInventory\\schema-new.json \r\n C Assets\\Plugins\\Rust.Workshop\\Approved.2023.cs \r\n C Assets\\Scripts\\Development\\SteamInventoryGen.cs \r\n C Assets\\Scripts\\UI\\Inventory\\ItemIcon.cs \r\n C Assets\\Scripts\\ConsoleCommands\\admin.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\ModularVehicles\\ModularCarCodeLock.cs \r\n A Prerequisites\\SteamInventory\\Icons\\11249.png \r\n A Prerequisites\\SteamInventory\\Icons\\11250.png \r\n A Prerequisites\\SteamInventory\\Icons\\11251.png \r\n A Prerequisites\\SteamInventory\\Icons\\11252.png \r\n A Prerequisites\\SteamInventory\\Icons\\11253.png"
+    "Comment": "Merge Main -> Experimental",
+    "Author": "BillBorman",
+    "Date": "11/10/2023 02:27:52",
+    "Items": "C Assets\\Content\\Vehicles\\ModularCar\\_base_car_chassis.entity.prefab \r\n C Assets\\Content\\Vehicles\\ModularCar\\Module_Entities\\2module_camper.prefab \r\n C Assets\\Content\\Vehicles\\ModularCar\\Module_Entities\\1module_cockpit.prefab \r\n C Assets\\Content\\Vehicles\\ModularCar\\Module_Entities\\1module_cockpit_armored.prefab \r\n C Assets\\Content\\Vehicles\\ModularCar\\Module_Entities\\1module_cockpit_with_engine.prefab \r\n C Assets\\Content\\Vehicles\\ModularCar\\Module_Entities\\1module_engine.prefab \r\n C Assets\\Content\\Vehicles\\ModularCar\\Module_Entities\\1module_flatbed.prefab \r\n C Assets\\Content\\Vehicles\\ModularCar\\Module_Entities\\1module_passengers_armored.prefab \r\n C Assets\\Content\\Vehicles\\ModularCar\\Module_Entities\\1module_rear_seats.prefab \r\n C Assets\\Content\\Vehicles\\ModularCar\\Module_Entities\\1module_storage.prefab \r\n C Assets\\Content\\Vehicles\\ModularCar\\Module_Entities\\1module_taxi.prefab \r\n C Assets\\Content\\Vehicles\\ModularCar\\Module_Entities\\2module_flatbed.prefab \r\n C Assets\\Content\\Vehicles\\ModularCar\\Module_Entities\\2module_fuel_tank.prefab \r\n C Assets\\Content\\Vehicles\\ModularCar\\Module_Entities\\2module_passengers.prefab \r\n C Assets\\Scripts\\Entity\\Vehicle\\BaseVehicle.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\BaseVehicle.Server.cs"
   },
   "Build": {
-    "Id": "5155",
-    "Number": "5155",
-    "Tag": "jenkins-RustServer-5155",
-    "Url": "https://build.facepunch.com/job/RustServer/5155/",
+    "Id": "5156",
+    "Number": "5156",
+    "Tag": "jenkins-RustServer-5156",
+    "Url": "https://build.facepunch.com/job/RustServer/5156/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1696960277,
-  "DateString": "10 10 2023",
-  "TimeString": "17:51"
+  "Date": 1696989575,
+  "DateString": "11 10 2023",
+  "TimeString": "01:59"
 }
