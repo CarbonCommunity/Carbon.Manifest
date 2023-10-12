@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "88459",
+    "ChangeId": "88478",
     "Branch": "experimental",
     "Repo": "rust_reboot",
-    "Comment": "Merge Main -> Experimental",
-    "Author": "BillBorman",
-    "Date": "12/10/2023 03:26:36",
-    "Items": "C Assets\\Content\\Shaders\\Standard\\Generic.shader \r\n C Assets\\Content\\Structures\\Train_unloader\\CoalingTower.cs \r\n C Assets\\Plugins\\Rust.Global\\Math\\OBB.cs \r\n C Assets\\Scripts\\Entity\\Components\\Editor\\EntityFlag_ToggleEditor.cs \r\n C Assets\\Scripts\\Entity\\BaseEntity\\BaseEntity.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\PlayerHelicopter.cs \r\n A Assets\\Scripts\\Entity\\BaseEntity\\Editor \r\n A Assets\\Scripts\\Entity\\BaseEntity\\Editor.meta \r\n A Assets\\Scripts\\Entity\\BaseEntity\\Editor\\FlagsPropertyDrawer.cs \r\n A Assets\\Scripts\\Entity\\BaseEntity\\Editor\\FlagsPropertyDrawer.cs.meta"
+    "Comment": "merge from main",
+    "Author": "alistair",
+    "Date": "12/10/2023 08:37:35",
+    "Items": "C Assets\\Generated\\ConsoleSystem.cs \r\n C Assets\\Content\\UI\\MenuUI\\MenuUI.Options.prefab \r\n C Assets\\Scripts\\UI\\Inventory\\Blueprints\\SelectedBlueprint.cs \r\n C Assets\\Scripts\\ConsoleCommands\\render.cs \r\n C Assets\\Scripts\\Rendering\\Instancing\\Schedulers\\DrawCallManager.cs \r\n C Assets\\Scripts\\Rendering\\Instancing\\Schedulers\\CellMeshAllocator.cs \r\n C Assets\\Scripts\\Entity\\BaseEntity\\BaseEntity.Privilege.cs \r\n C Assets\\Prefabs\\Deployable\\Single Shot Trap\\GunTrap.cs"
   },
   "Build": {
-    "Id": "5159",
-    "Number": "5159",
-    "Tag": "jenkins-RustServer-5159",
-    "Url": "https://build.facepunch.com/job/RustServer/5159/",
+    "Id": "5160",
+    "Number": "5160",
+    "Tag": "jenkins-RustServer-5160",
+    "Url": "https://build.facepunch.com/job/RustServer/5160/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1697079497,
+  "Date": 1697097764,
   "DateString": "12 10 2023",
-  "TimeString": "02:58"
+  "TimeString": "08:02"
 }
