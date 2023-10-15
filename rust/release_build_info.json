@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "88301",
+    "ChangeId": "88562",
     "Branch": "experimental/release",
     "Repo": "rust_reboot",
-    "Comment": "merge from main",
+    "Comment": "cherrypicking 88560",
     "Author": "alistair",
-    "Date": "09/10/2023 17:43:15",
-    "Items": "C Assets\\Prefabs\\Misc\\BuildingSkins\\brutalist\\brutalist.sitem.asset \r\n C Assets\\Scripts\\ServerList\\ServerCacheDatabase.cs \r\n A Assets\\Prefabs\\Tools\\Pipe\\Materials\\PipeMaterial 2.mat \r\n A Assets\\Prefabs\\Tools\\Pipe\\Materials\\PipeMaterial 2.mat.meta \r\n A Assets\\Prefabs\\Tools\\Pipe\\Textures\\IndustrialPipes2_Albedo.tga \r\n A Assets\\Prefabs\\Tools\\Pipe\\Textures\\IndustrialPipes2_Albedo.tga.meta"
+    "Date": "15/10/2023 13:53:20",
+    "Items": "C Assets\\Prefabs\\GameModes\\Objects\\Reclaim\\ReclaimBackpack.cs \r\n C Assets\\Scripts\\Game\\TriggerSafeZone.cs \r\n C Assets\\Scripts\\Entity\\PlayerCorpse.cs \r\n C Assets\\Scripts\\Entity\\WorldItem\\DroppedItemContainer.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer.cs"
   },
   "Build": {
-    "Id": "544",
-    "Number": "544",
-    "Tag": "jenkins-RustReleaseServer-544",
-    "Url": "https://build.facepunch.com/job/RustReleaseServer/544/",
+    "Id": "545",
+    "Number": "545",
+    "Tag": "jenkins-RustReleaseServer-545",
+    "Url": "https://build.facepunch.com/job/RustReleaseServer/545/",
     "Name": "RustReleaseServer",
     "Node": "Win4"
   },
-  "Date": 1696871682,
-  "DateString": "9 10 2023",
-  "TimeString": "17:14"
+  "Date": 1697376007,
+  "DateString": "15 10 2023",
+  "TimeString": "13:20"
 }
