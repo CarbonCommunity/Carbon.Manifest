@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "88561",
+    "ChangeId": "88579",
     "Branch": "experimental",
     "Repo": "rust_reboot",
-    "Comment": "merge from main",
-    "Author": "alistair",
-    "Date": "15/10/2023 12:14:15",
-    "Items": "C Assets\\Scripts\\Game\\TriggerSafeZone.cs \r\n C Assets\\Scripts\\Entity\\PlayerCorpse.cs \r\n C Assets\\Scripts\\Entity\\WorldItem\\DroppedItemContainer.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer.cs \r\n C Assets\\Prefabs\\GameModes\\Objects\\Reclaim\\ReclaimBackpack.cs"
+    "Comment": "Merge Main -> Experimental",
+    "Author": "BillBorman",
+    "Date": "16/10/2023 04:27:08",
+    "Items": "C Assets\\manifest.asset \r\n C Assets\\Content\\Vehicles\\ModularCar\\Module_Entities\\2module_flatbed.prefab"
   },
   "Build": {
-    "Id": "5163",
-    "Number": "5163",
-    "Tag": "jenkins-RustServer-5163",
-    "Url": "https://build.facepunch.com/job/RustServer/5163/",
+    "Id": "5164",
+    "Number": "5164",
+    "Tag": "jenkins-RustServer-5164",
+    "Url": "https://build.facepunch.com/job/RustServer/5164/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1697370356,
-  "DateString": "15 10 2023",
-  "TimeString": "11:45"
+  "Date": 1697428435,
+  "DateString": "16 10 2023",
+  "TimeString": "03:53"
 }
