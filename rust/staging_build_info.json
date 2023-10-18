@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "88639",
+    "ChangeId": "88682",
     "Branch": "experimental",
     "Repo": "rust_reboot",
     "Comment": "merge from main",
     "Author": "alistair",
-    "Date": "17/10/2023 08:06:14",
-    "Items": "C Assets\\Content\\Shaders\\Water\\Resources\\Underwater.shader \r\n C Assets\\Content\\Shaders\\Water\\Resources\\WaterWindow.shader \r\n C Assets\\Content\\Shaders\\Water\\Include\\Water.cginc \r\n C Assets\\Content\\Shaders\\Water\\Include\\WaterShore.cginc \r\n C Assets\\Content\\Shaders\\Water\\Include\\WaterStandard.cginc \r\n C Assets\\Content\\Shaders\\Include\\Camera.cginc \r\n C Assets\\Content\\Shaders\\Standard\\Include\\StandardBSDFCore.cginc \r\n C Assets\\Scripts\\PostProcessing\\CustomPostEffects\\UnderwaterEffect\\UnderwaterEffect.shader \r\n C Assets\\Scripts\\Client\\RustCamera.cs \r\n C Assets\\Scripts\\Client\\Client.Demo.cs \r\n C Assets\\Scripts\\Client\\Client.Connection.cs \r\n C Assets\\Scripts\\Client\\CameraEffects\\WaterOverlay.cs \r\n C Assets\\Scripts\\Procedural\\Water\\WaterCamera.cs \r\n C Assets\\Scripts\\Rendering\\Instancing\\Components\\InstancedScheduler.cs"
+    "Date": "18/10/2023 09:31:31",
+    "Items": "C Assets\\Scripts\\Rendering\\LightCloneShadow.cs"
   },
   "Build": {
-    "Id": "5166",
-    "Number": "5166",
-    "Tag": "jenkins-RustServer-5166",
-    "Url": "https://build.facepunch.com/job/RustServer/5166/",
+    "Id": "5167",
+    "Number": "5167",
+    "Tag": "jenkins-RustServer-5167",
+    "Url": "https://build.facepunch.com/job/RustServer/5167/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1697528735,
-  "DateString": "17 10 2023",
-  "TimeString": "07:45"
+  "Date": 1697619467,
+  "DateString": "18 10 2023",
+  "TimeString": "08:57"
 }
