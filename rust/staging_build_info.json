@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "88682",
+    "ChangeId": "88696",
     "Branch": "experimental",
     "Repo": "rust_reboot",
     "Comment": "merge from main",
     "Author": "alistair",
-    "Date": "18/10/2023 09:31:31",
-    "Items": "C Assets\\Scripts\\Rendering\\LightCloneShadow.cs"
+    "Date": "18/10/2023 15:44:19",
+    "Items": "C Assets\\Content\\UI\\GameUI\\GameUI.Hud.prefab \r\n C Assets\\Scripts\\Client\\RustCamera.cs \r\n C Assets\\Scripts\\Procedural\\Water\\WaterCamera.cs \r\n C Assets\\Scripts\\Rendering\\DeferredExtension\\DeferredExtension.cs"
   },
   "Build": {
-    "Id": "5167",
-    "Number": "5167",
-    "Tag": "jenkins-RustServer-5167",
-    "Url": "https://build.facepunch.com/job/RustServer/5167/",
+    "Id": "5168",
+    "Number": "5168",
+    "Tag": "jenkins-RustServer-5168",
+    "Url": "https://build.facepunch.com/job/RustServer/5168/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1697619467,
+  "Date": 1697641762,
   "DateString": "18 10 2023",
-  "TimeString": "08:57"
+  "TimeString": "15:09"
 }
