@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "88774",
+    "ChangeId": "88818",
     "Branch": "experimental",
     "Repo": "rust_reboot",
     "Comment": "merge from main",
     "Author": "alistair",
-    "Date": "19/10/2023 17:08:43",
-    "Items": "C Assets\\Prefabs\\Misc\\Decor_DLC\\HuntingTrophy_Small\\HuntingTrophy.cs"
+    "Date": "20/10/2023 07:56:27",
+    "Items": "C Prerequisites\\SteamInventory\\generator.json \r\n C Prerequisites\\SteamInventory\\PaymentRules.csv \r\n C Prerequisites\\SteamInventory\\schema-old.json \r\n C Prerequisites\\SteamInventory\\schema-full.json \r\n C Prerequisites\\SteamInventory\\schema-new.json \r\n C Assets\\Content\\Player\\Animations\\PlayerAnimation.controller \r\n C Assets\\Plugins\\Rust.Workshop\\Approved.2023.cs \r\n C Assets\\Scripts\\Item\\ItemDef2\\ItemModHead.cs \r\n C Assets\\Scripts\\Game\\WearableNotify.cs \r\n C Assets\\Scripts\\Game\\WearableNotifyTrophyMounted.cs \r\n C Assets\\Scripts\\Entity\\Construction\\TorchDeployableLightSource.cs \r\n C Assets\\Scripts\\Entity\\BuildingBlock\\GestureDoor.cs \r\n C Assets\\Scripts\\Entity\\Player\\Components\\PlayerModel.cs \r\n C Assets\\Prefabs\\Player\\Gestures\\GestureCollection.asset \r\n C Assets\\Prefabs\\Clothes\\Suit.Hazmat\\Diver\\divingsuit_hazmat.prefab \r\n C Assets\\Prefabs\\Deployable\\WeaponRacks\\weaponrack_single1.deployed.prefab \r\n C Assets\\Prefabs\\Deployable\\WeaponRacks\\weaponrack_single2.deployed.prefab \r\n C Assets\\Prefabs\\Deployable\\WeaponRacks\\weaponrack_single3.deployed.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\TorchHolder\\torchholder.deployed.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\BarDoors\\models\\bar_double_door_rig.FBX \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\BarDoors\\models\\bar_double_door_rig.FBX.meta \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\BarDoors\\models\\bar_doubledoor_anim.controller \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\BarDoors\\door.double.hinged.bardoors.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\HuntingTrophy_Small\\HuntingTrophy.cs \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\HuntingTrophy_Small\\huntingtrophysmall.deployed.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\BaseDecorDLC_Frontier.asset \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\Heads\\HeadEntity.cs \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\WantedPoster\\WantedPoster.cs \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\WantedPoster\\wantedposter.deployed.prefab \r\n C Assets\\Prefabs\\Weapons\\Gestures\\Model\\v_gestures.anim.controller \r\n A Prerequisites\\SteamInventory\\Icons\\55500.png \r\n A Prerequisites\\SteamInventory\\Icons\\55501.png \r\n A Prerequisites\\SteamInventory\\Icons\\55502.png \r\n A Prerequisites\\SteamInventory\\Icons\\55503.png \r\n A Prerequisites\\SteamInventory\\Icons\\55504.png \r\n A Prerequisites\\SteamInventory\\Icons\\55505.png \r\n A Prerequisites\\SteamInventory\\Icons\\55506.png \r\n A Prerequisites\\SteamInventory\\Icons\\55507.png \r\n A Prerequisites\\SteamInventory\\Icons\\55508.png \r\n A Prerequisites\\SteamInventory\\Icons\\55509.png \r\n A Prerequisites\\SteamInventory\\Icons\\55510.png \r\n A Prerequisites\\SteamInventory\\Icons\\55511.png \r\n A Assets\\Content\\Player\\Animations\\Gestures\\idle_gesture_pushDoors.fbx \r\n A Assets\\Content\\Player\\Animations\\Gestures\\idle_gesture_pushDoors.fbx.meta \r\n A Assets\\Prefabs\\Player\\Gestures\\Gesture.Push.asset \r\n A Assets\\Prefabs\\Player\\Gestures\\Gesture.Push.asset.meta \r\n A Assets\\Prefabs\\Weapons\\Gestures\\Model\\v_gesture_pushdoors.fbx \r\n A Assets\\Prefabs\\Weapons\\Gestures\\Model\\v_gesture_pushdoors.fbx.meta"
   },
   "Build": {
-    "Id": "5171",
-    "Number": "5171",
-    "Tag": "jenkins-RustServer-5171",
-    "Url": "https://build.facepunch.com/job/RustServer/5171/",
+    "Id": "5172",
+    "Number": "5172",
+    "Tag": "jenkins-RustServer-5172",
+    "Url": "https://build.facepunch.com/job/RustServer/5172/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1697733653,
-  "DateString": "19 10 2023",
-  "TimeString": "16:40"
+  "Date": 1697786971,
+  "DateString": "20 10 2023",
+  "TimeString": "07:29"
 }
