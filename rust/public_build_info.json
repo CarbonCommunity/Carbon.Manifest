@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "88562",
+    "ChangeId": "88924",
     "Branch": "experimental/release",
     "Repo": "rust_reboot",
-    "Comment": "cherrypicking 88560",
+    "Comment": "merge from halloween2023",
     "Author": "alistair",
-    "Date": "15/10/2023 13:53:20",
-    "Items": "C Assets\\Prefabs\\GameModes\\Objects\\Reclaim\\ReclaimBackpack.cs \r\n C Assets\\Scripts\\Game\\TriggerSafeZone.cs \r\n C Assets\\Scripts\\Entity\\PlayerCorpse.cs \r\n C Assets\\Scripts\\Entity\\WorldItem\\DroppedItemContainer.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer.cs"
+    "Date": "23/10/2023 11:37:44",
+    "Items": "C Assets\\Content\\UI\\MenuUI\\UI.Logo.Big.Halloween2023.png \r\n C Assets\\Prefabs\\Clothes\\halloween.DraculaMask\\draculamask.item.prefab \r\n C Assets\\Prefabs\\Clothes\\halloween.DraculaMask\\DraculaMask.worldmodel.prefab"
   },
   "Build": {
-    "Id": "545",
-    "Number": "545",
-    "Tag": "jenkins-RustReleaseServer-545",
-    "Url": "https://build.facepunch.com/job/RustReleaseServer/545/",
+    "Id": "548",
+    "Number": "548",
+    "Tag": "jenkins-RustReleaseServer-548",
+    "Url": "https://build.facepunch.com/job/RustReleaseServer/548/",
     "Name": "RustReleaseServer",
     "Node": "Win4"
   },
-  "Date": 1697376007,
-  "DateString": "15 10 2023",
-  "TimeString": "13:20"
+  "Date": 1698060117,
+  "DateString": "23 10 2023",
+  "TimeString": "11:21"
 }
