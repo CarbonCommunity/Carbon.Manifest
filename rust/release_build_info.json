@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "88912",
+    "ChangeId": "88924",
     "Branch": "experimental/release",
     "Repo": "rust_reboot",
     "Comment": "merge from halloween2023",
     "Author": "alistair",
-    "Date": "23/10/2023 09:04:43",
-    "Items": "C Assets\\manifest.asset \r\n C Assets\\Rust.Ai\\Agents\\NPCPlayer\\Pet\\ScarecrowNPC.cs \r\n C Assets\\bundled\\Prefabs\\ui\\GameUI.prefab \r\n C Assets\\Content\\UI\\GameUI\\GameUI.Hud.prefab \r\n C Assets\\Content\\Properties\\LootSpawn\\Halloween\\Halloween.Loot.Basic.asset \r\n C Assets\\Prefabs\\NPC\\Scarecrow\\Scarecrow_Dungeon.prefab \r\n C Assets\\Prefabs\\NPC\\Scarecrow\\Scarecrow_DungeonNoRoam.prefab \r\n C Assets\\Prefabs\\NPC\\Scarecrow\\Scarecrow.prefab \r\n C Assets\\Prefabs\\Clothes\\Halloween.DraculaCape\\DraculaCape.item.prefab \r\n C Assets\\Prefabs\\Clothes\\halloween.DraculaMask\\draculamask.item.prefab \r\n C Assets\\Prefabs\\Deployable\\FrankensteinTable\\FrankensteinTable.item.prefab \r\n A Assets\\Content\\Properties\\SteamCategories\\limited-halloween2023-299.steam.asset \r\n A Assets\\Content\\Properties\\SteamCategories\\limited-halloween2023-299.steam.asset.meta \r\n A Assets\\Content\\Properties\\SteamCategories\\limited-halloween2023-399.steam.asset \r\n A Assets\\Content\\Properties\\SteamCategories\\limited-halloween2023-399.steam.asset.meta \r\n A Assets\\Content\\Properties\\SteamCategories\\limited-halloween2023-499.steam.asset \r\n A Assets\\Content\\Properties\\SteamCategories\\limited-halloween2023-499.steam.asset.meta \r\n A Assets\\Content\\Properties\\SteamCategories\\limited-halloween2023-599.steam.asset \r\n A Assets\\Content\\Properties\\SteamCategories\\limited-halloween2023-599.steam.asset.meta \r\n A Assets\\Content\\Properties\\SteamCategories\\limited-halloween2023-799.steam.asset \r\n A Assets\\Content\\Properties\\SteamCategories\\limited-halloween2023-799.steam.asset.meta \r\n A Assets\\Content\\Properties\\Protection\\Clothing\\draculacape.asset \r\n A Assets\\Content\\Properties\\Protection\\Clothing\\draculacape.asset.meta \r\n A Assets\\Content\\Properties\\LootSpawn\\Halloween\\draculacape.asset \r\n A Assets\\Content\\Properties\\LootSpawn\\Halloween\\draculacape.asset.meta \r\n A Assets\\Prefabs\\Clothes\\halloween.scarecrow\\Effects \r\n A Assets\\Prefabs\\Clothes\\halloween.scarecrow\\Effects.meta \r\n A Assets\\Prefabs\\Clothes\\halloween.scarecrow\\Sound \r\n A Assets\\Prefabs\\Clothes\\halloween.scarecrow\\Sound.meta \r\n A Assets\\Prefabs\\Clothes\\halloween.DraculaMask\\draculamask.sitem.asset \r\n A Assets\\Prefabs\\Clothes\\halloween.DraculaMask\\draculamask.sitem.asset.meta \r\n A Assets\\Prefabs\\Clothes\\halloween.scarecrow\\Effects\\pfx_Scarecrow_CritDeath_Spine3.prefab \r\n A Assets\\Prefabs\\Clothes\\halloween.scarecrow\\Effects\\pfx_Scarecrow_CritDeath_Spine3.prefab.meta \r\n A Assets\\Prefabs\\Clothes\\halloween.scarecrow\\Effects\\vfx_scarecrow_beam.mat \r\n A Assets\\Prefabs\\Clothes\\halloween.scarecrow\\Effects\\vfx_scarecrow_beam.mat.meta \r\n A Assets\\Prefabs\\Clothes\\halloween.scarecrow\\Effects\\vfx_scarecrow_gooo.mat \r\n A Assets\\Prefabs\\Clothes\\halloween.scarecrow\\Effects\\vfx_scarecrow_gooo.mat.meta \r\n A Assets\\Prefabs\\Clothes\\halloween.scarecrow\\Effects\\vfx_scarecrow_shimmer.mat \r\n A Assets\\Prefabs\\Clothes\\halloween.scarecrow\\Effects\\vfx_scarecrow_shimmer.mat.meta \r\n A Assets\\Prefabs\\Clothes\\halloween.scarecrow\\Effects\\vfx_scarecrow_sparks.mat \r\n A Assets\\Prefabs\\Clothes\\halloween.scarecrow\\Effects\\vfx_scarecrow_sparks.mat.meta \r\n A Assets\\Prefabs\\Clothes\\halloween.scarecrow\\Effects\\soul_release_effect.prefab \r\n A Assets\\Prefabs\\Clothes\\halloween.scarecrow\\Effects\\soul_release_effect.prefab.meta \r\n A Assets\\Prefabs\\Clothes\\halloween.scarecrow\\Sound\\soul_release.asset \r\n A Assets\\Prefabs\\Clothes\\halloween.scarecrow\\Sound\\soul_release.asset.meta \r\n A Assets\\Prefabs\\Clothes\\halloween.scarecrow\\Sound\\soul_release.wav \r\n A Assets\\Prefabs\\Clothes\\halloween.scarecrow\\Sound\\soul_release.wav.meta"
+    "Date": "23/10/2023 11:37:44",
+    "Items": "C Assets\\Content\\UI\\MenuUI\\UI.Logo.Big.Halloween2023.png \r\n C Assets\\Prefabs\\Clothes\\halloween.DraculaMask\\draculamask.item.prefab \r\n C Assets\\Prefabs\\Clothes\\halloween.DraculaMask\\DraculaMask.worldmodel.prefab"
   },
   "Build": {
-    "Id": "547",
-    "Number": "547",
-    "Tag": "jenkins-RustReleaseServer-547",
-    "Url": "https://build.facepunch.com/job/RustReleaseServer/547/",
+    "Id": "548",
+    "Number": "548",
+    "Tag": "jenkins-RustReleaseServer-548",
+    "Url": "https://build.facepunch.com/job/RustReleaseServer/548/",
     "Name": "RustReleaseServer",
     "Node": "Win4"
   },
-  "Date": 1698051487,
+  "Date": 1698060117,
   "DateString": "23 10 2023",
-  "TimeString": "08:58"
+  "TimeString": "11:21"
 }
