@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "88953",
+    "ChangeId": "88958",
     "Branch": "Aux2",
     "Repo": "rust_reboot",
-    "Comment": "Cherry-pick new train signal light FX -> Aux2 (not merging rail_network_link directly as it recently merged from Main)",
+    "Comment": "Cherry-pick more signal light changes -> Aux2",
     "Author": "BillBorman",
-    "Date": "23/10/2023 22:01:09",
-    "Items": "C Assets\\Content\\Props\\train_signal_lights\\Textures\\train_signal_lights_em.tga.meta \r\n C Assets\\Content\\Props\\train_signal_lights\\models\\Materials\\train_signal_lights_green.mat \r\n C Assets\\Content\\Props\\train_signal_lights\\models\\Materials\\train_signal_lights_yellow.mat \r\n C Assets\\Content\\Props\\train_signal_lights\\models\\Materials\\train_signal_lights_red.mat \r\n C Assets\\Content\\Props\\train_signal_lights\\train_signal_lights_a.prefab \r\n C Assets\\Content\\Props\\train_signal_lights\\train_signal_lights_b.prefab \r\n C Assets\\Content\\Props\\train_signal_lights\\TrainSignalLightFX.prefab"
+    "Date": "23/10/2023 23:08:13",
+    "Items": "C Assets\\Content\\Props\\train_signal_lights\\models\\Materials\\train_signal_lights_yellow.mat \r\n C Assets\\Content\\Props\\train_signal_lights\\models\\Materials\\train_signal_lights_red.mat \r\n C Assets\\Content\\Props\\train_signal_lights\\train_signal_lights_a.prefab \r\n C Assets\\Content\\Props\\train_signal_lights\\train_signal_lights_b.prefab \r\n C Assets\\Content\\Props\\train_signal_lights\\TrainSignalLightFX.prefab"
   },
   "Build": {
-    "Id": "538",
-    "Number": "538",
-    "Tag": "jenkins-RustServerAux02-538",
-    "Url": "https://build.facepunch.com/job/RustServerAux02/538/",
+    "Id": "539",
+    "Number": "539",
+    "Tag": "jenkins-RustServerAux02-539",
+    "Url": "https://build.facepunch.com/job/RustServerAux02/539/",
     "Name": "RustServerAux02",
     "Node": "Win4"
   },
-  "Date": 1698097796,
+  "Date": 1698101601,
   "DateString": "23 10 2023",
-  "TimeString": "21:49"
+  "TimeString": "22:53"
 }
