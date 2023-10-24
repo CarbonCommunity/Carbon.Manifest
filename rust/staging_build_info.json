@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "88992",
+    "ChangeId": "89014",
     "Branch": "experimental",
     "Repo": "rust_reboot",
-    "Comment": "merge from main",
-    "Author": "alistair",
-    "Date": "24/10/2023 13:34:15",
-    "Items": "C Assets\\bundled\\Prefabs\\ui\\MenuUI.prefab \r\n C Assets\\bundled\\Prefabs\\ui\\GameUI.prefab \r\n C Assets\\Scripts\\ConsoleCommands\\halloween.cs \r\n C Assets\\Content\\Sound\\Ambience\\baseAmbienceEmitter.prefab \r\n C Assets\\Content\\Sound\\Ambience\\lifeAmbienceEmitter.prefab \r\n C Assets\\Content\\Properties\\SpawnPopulation\\collectable-resource-stone.asset \r\n C Assets\\Prefabs\\Missions\\Portal\\HalloweenDungeon.cs \r\n C Assets\\Prefabs\\Deployable\\FrankensteinTable\\FrankensteinTable.item.prefab \r\n M Assets\\StreamingAssets\\MenuVideo\\industrial.mp4 \r\n M Assets\\StreamingAssets\\MenuVideo\\industrial.mp4.meta \r\n M Assets\\StreamingAssets\\MenuVideo\\locomotive.mp4 \r\n M Assets\\StreamingAssets\\MenuVideo\\locomotive.mp4.meta \r\n M Assets\\StreamingAssets\\MenuVideo\\nukesilo.mp4 \r\n M Assets\\StreamingAssets\\MenuVideo\\nukesilo.mp4.meta \r\n M Assets\\StreamingAssets\\MenuVideo\\ferryterminal.mp4 \r\n M Assets\\StreamingAssets\\MenuVideo\\ferryterminal.mp4.meta \r\n M Assets\\StreamingAssets\\MenuVideo\\tugboat.mp4 \r\n M Assets\\StreamingAssets\\MenuVideo\\tugboat.mp4.meta \r\n M Assets\\StreamingAssets\\MenuVideo\\attackhelicopter.mp4 \r\n M Assets\\StreamingAssets\\MenuVideo\\attackhelicopter.mp4.meta \r\n M Assets\\StreamingAssets\\MenuVideo\\archive\\skullspikes.mp4 \r\n M Assets\\StreamingAssets\\MenuVideo\\archive\\skullspikes.mp4.meta \r\n M Assets\\Prefabs\\Misc\\Halloween\\event_halloween.prefab \r\n M Assets\\Prefabs\\Misc\\Halloween\\event_halloween.prefab.meta"
+    "Comment": "Merge main -> experimental",
+    "Author": "BillBorman",
+    "Date": "24/10/2023 23:44:11",
+    "Items": "C Assets\\Plugins\\Rust.Global\\Defines.cs \r\n C Assets\\Scripts\\Game\\TriggerParent.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Snowmobile\\Snowmobile.Server.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\BaseVehicle.Server.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Boat\\RHIBAIController.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Boat\\BaseBoat.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\CH47AIBrain.States.Land.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\CH47PathFinder.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\CH47HelicopterAIController.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\BaseHelicopter.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-Parachute.cs \r\n C Assets\\Content\\Shaders\\Resources\\Standard\\Internal-ScreenSpaceShadows.shader \r\n C Assets\\Content\\Shaders\\Include\\ScreenSpaceShadows.cginc"
   },
   "Build": {
-    "Id": "5187",
-    "Number": "5187",
-    "Tag": "jenkins-RustServer-5187",
-    "Url": "https://build.facepunch.com/job/RustServer/5187/",
+    "Id": "5188",
+    "Number": "5188",
+    "Tag": "jenkins-RustServer-5188",
+    "Url": "https://build.facepunch.com/job/RustServer/5188/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1698154411,
+  "Date": 1698190489,
   "DateString": "24 10 2023",
-  "TimeString": "13:33"
+  "TimeString": "23:34"
 }
