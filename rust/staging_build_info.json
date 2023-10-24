@@ -10,14 +10,14 @@
     "Items": "C Assets\\bundled\\Prefabs\\ui\\MenuUI.prefab \r\n C Assets\\bundled\\Prefabs\\ui\\GameUI.prefab \r\n C Assets\\Scripts\\ConsoleCommands\\halloween.cs \r\n C Assets\\Content\\Sound\\Ambience\\baseAmbienceEmitter.prefab \r\n C Assets\\Content\\Sound\\Ambience\\lifeAmbienceEmitter.prefab \r\n C Assets\\Content\\Properties\\SpawnPopulation\\collectable-resource-stone.asset \r\n C Assets\\Prefabs\\Missions\\Portal\\HalloweenDungeon.cs \r\n C Assets\\Prefabs\\Deployable\\FrankensteinTable\\FrankensteinTable.item.prefab \r\n M Assets\\StreamingAssets\\MenuVideo\\industrial.mp4 \r\n M Assets\\StreamingAssets\\MenuVideo\\industrial.mp4.meta \r\n M Assets\\StreamingAssets\\MenuVideo\\locomotive.mp4 \r\n M Assets\\StreamingAssets\\MenuVideo\\locomotive.mp4.meta \r\n M Assets\\StreamingAssets\\MenuVideo\\nukesilo.mp4 \r\n M Assets\\StreamingAssets\\MenuVideo\\nukesilo.mp4.meta \r\n M Assets\\StreamingAssets\\MenuVideo\\ferryterminal.mp4 \r\n M Assets\\StreamingAssets\\MenuVideo\\ferryterminal.mp4.meta \r\n M Assets\\StreamingAssets\\MenuVideo\\tugboat.mp4 \r\n M Assets\\StreamingAssets\\MenuVideo\\tugboat.mp4.meta \r\n M Assets\\StreamingAssets\\MenuVideo\\attackhelicopter.mp4 \r\n M Assets\\StreamingAssets\\MenuVideo\\attackhelicopter.mp4.meta \r\n M Assets\\StreamingAssets\\MenuVideo\\archive\\skullspikes.mp4 \r\n M Assets\\StreamingAssets\\MenuVideo\\archive\\skullspikes.mp4.meta \r\n M Assets\\Prefabs\\Misc\\Halloween\\event_halloween.prefab \r\n M Assets\\Prefabs\\Misc\\Halloween\\event_halloween.prefab.meta"
   },
   "Build": {
-    "Id": "5186",
-    "Number": "5186",
-    "Tag": "jenkins-RustServer-5186",
-    "Url": "https://build.facepunch.com/job/RustServer/5186/",
+    "Id": "5187",
+    "Number": "5187",
+    "Tag": "jenkins-RustServer-5187",
+    "Url": "https://build.facepunch.com/job/RustServer/5187/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1698151961,
+  "Date": 1698154411,
   "DateString": "24 10 2023",
-  "TimeString": "12:52"
+  "TimeString": "13:33"
 }
