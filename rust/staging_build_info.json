@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "89051",
+    "ChangeId": "89054",
     "Branch": "experimental",
     "Repo": "rust_reboot",
-    "Comment": "Merge from main",
-    "Author": "andre",
-    "Date": "25/10/2023 13:10:49",
-    "Items": "C Assets\\Scripts\\Client\\DrawCameraFrustum.cs"
+    "Comment": "merge from main",
+    "Author": "alistair",
+    "Date": "25/10/2023 13:59:57",
+    "Items": "C Assets\\Prefabs\\Deployable\\WeaponRacks\\weaponrack_single1.item.prefab \r\n C Assets\\Prefabs\\Deployable\\WeaponRacks\\weaponrack_single2.item.prefab \r\n C Assets\\Prefabs\\Deployable\\WeaponRacks\\weaponrack_single3.item.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\TorchHolder\\torchholder.item.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\Minecart Planter\\minecart.planter.item.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\BarDoors\\door.double.hinged.bardoors.item.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\StorageBarrel\\storage_barrel_b.item.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\StorageBarrel\\storage_barrel_c.item.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\Bath Tub Planter\\bathtub.planter.item.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\WantedPoster\\Model\\WantedPosterStandard.fbx \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\rockingchair.item.prefab \r\n C Assets\\Prefabs\\Weapons\\Gestures\\Model\\v_gesture_pushdoors.fbx \r\n C Assets\\Prefabs\\Weapons\\Gestures\\Model\\v_gesture_pushdoors.fbx.meta"
   },
   "Build": {
-    "Id": "5193",
-    "Number": "5193",
-    "Tag": "jenkins-RustServer-5193",
-    "Url": "https://build.facepunch.com/job/RustServer/5193/",
+    "Id": "5194",
+    "Number": "5194",
+    "Tag": "jenkins-RustServer-5194",
+    "Url": "https://build.facepunch.com/job/RustServer/5194/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1698238803,
+  "Date": 1698241515,
   "DateString": "25 10 2023",
-  "TimeString": "13:00"
+  "TimeString": "13:45"
 }
