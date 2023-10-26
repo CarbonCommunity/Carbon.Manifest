@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "89074",
+    "ChangeId": "89097",
     "Branch": "experimental",
     "Repo": "rust_reboot",
-    "Comment": "merge from main",
-    "Author": "alistair",
-    "Date": "25/10/2023 17:43:33",
-    "Items": "C Assets\\Editor\\Shaders\\RustStandardShaderGUI.cs \r\n C Assets\\Scripts\\Item\\ItemDef2\\ItemModRepair.cs \r\n C Assets\\Scripts\\Rendering\\DeferredMeshDecals\\DeferredMeshDecal.cs \r\n C Assets\\Scripts\\Rendering\\DeferredMeshDecals\\DeferredMeshDecalRenderer.cs \r\n C Assets\\Scripts\\Entity\\Construction\\RepairBench.cs \r\n C Assets\\Content\\Shaders\\Resources\\Standard\\Internal-Standard-Decal.shader \r\n C Assets\\Content\\Shaders\\Resources\\Standard\\Internal-Standard-Decal-Specular.shader \r\n C Assets\\Content\\Shaders\\Standard\\Standard-Decal.shader \r\n C Assets\\Content\\Shaders\\Standard\\Standard-Decal-Specular.shader \r\n C Assets\\Content\\Shaders\\Standard\\Include\\StandardLayers.cginc \r\n C Assets\\Content\\Shaders\\Standard\\Include\\UnityStandardCore.cginc \r\n C Assets\\Prefabs\\Tools\\JackHammer\\jackhammer.item.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\BarDoors\\door.double.hinged.bardoors.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\StorageBarrel\\storage_barrel_b.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\Bath Tub Planter\\bathtub.planter.deployed.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\WantedPoster\\Materials\\WantedPosterSketch.mat \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\WantedPoster\\WantedPoster.cs \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\WantedPoster\\wantedposter.deployed.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\WantedPoster\\Textures\\WantedPoster1_SketchOverlay_Mask.tga \r\n A Assets\\bundled\\Prefabs\\world\\desktop.ini.meta \r\n A Assets\\Content\\Shaders\\Resources\\Standard\\Internal-Standard-Decal-Poster.shader \r\n A Assets\\Content\\Shaders\\Resources\\Standard\\Internal-Standard-Decal-Poster.shader.meta \r\n A Assets\\Content\\Shaders\\Standard\\Standard-Decal-Poster.shader \r\n A Assets\\Content\\Shaders\\Standard\\Standard-Decal-Poster.shader.meta \r\n A Assets\\Prefabs\\Misc\\Halloween\\desktop.ini.meta \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter.meta \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\Materials \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\Materials\\RailRoadPlanter.mat \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\Materials\\RailRoadPlanter.mat.meta \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\Materials\\Textures \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\Materials\\Textures\\RailRoadPlanter_Albedo.tga \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\Materials\\Textures\\RailRoadPlanter_Albedo.tga.meta \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\Materials\\Textures\\RailRoadPlanter_AO.tga \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\Materials\\Textures\\RailRoadPlanter_AO.tga.meta \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\Materials\\Textures\\RailRoadPlanter_Metallic.tga \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\Materials\\Textures\\RailRoadPlanter_Metallic.tga.meta \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\Materials\\Textures\\RailRoadPlanter_Normal.tga \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\Materials\\Textures\\RailRoadPlanter_Normal.tga.meta \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\Materials\\Textures.meta \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\Materials.meta \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\Models \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\Models\\RailRoadPlanter_DEPLOY.fbx \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\Models\\RailRoadPlanter_DEPLOY.fbx.meta \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\Models\\RailRoadPlanter_GIB.fbx \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\Models\\RailRoadPlanter_GIB.fbx.meta \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\Models\\RailRoadPlanter.fbx \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\Models\\RailRoadPlanter.fbx.meta \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\Models.meta \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\RailRoadPlanter.prefab \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\RailRoadPlanter.prefab.meta \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\RailRoadPlanter.deployed.prefab \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\RailRoadPlanter.deployed.prefab.meta \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\RailRoadPlanter.item.prefab \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\RailRoadPlanter.item.prefab.meta"
+    "Comment": "Merge main -> experimental",
+    "Author": "BillBorman",
+    "Date": "26/10/2023 02:08:18",
+    "Items": "C Assets\\Scenes\\Test\\BillBTestMap.unity \r\n C Assets\\Scripts\\Entity\\BaseEntity\\BaseEntity.Parenting.cs"
   },
   "Build": {
-    "Id": "5195",
-    "Number": "5195",
-    "Tag": "jenkins-RustServer-5195",
-    "Url": "https://build.facepunch.com/job/RustServer/5195/",
+    "Id": "5196",
+    "Number": "5196",
+    "Tag": "jenkins-RustServer-5196",
+    "Url": "https://build.facepunch.com/job/RustServer/5196/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1698255789,
-  "DateString": "25 10 2023",
-  "TimeString": "17:43"
+  "Date": 1698285125,
+  "DateString": "26 10 2023",
+  "TimeString": "01:52"
 }
