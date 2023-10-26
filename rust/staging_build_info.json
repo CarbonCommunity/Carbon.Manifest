@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "89121",
+    "ChangeId": "89141",
     "Branch": "experimental",
     "Repo": "rust_reboot",
     "Comment": "merge from main",
     "Author": "alistair",
-    "Date": "26/10/2023 11:21:50",
-    "Items": "C Assets\\Scripts\\Rendering\\DeferredMeshDecals\\DeferredMeshDecal.cs \r\n C Assets\\Scripts\\Rendering\\DeferredMeshDecals\\DeferredMeshDecalRenderer.cs \r\n C Assets\\Scripts\\UI\\SteamFriendsList.cs \r\n C Assets\\Scripts\\UI\\PlayerPreview\\uiPlayerPreview.cs \r\n C Assets\\Scripts\\Entity\\Construction\\TorchDeployableLightSource.cs \r\n C Assets\\Scripts\\Entity\\BaseEntity\\HeldEntity\\TorchWeapon.cs \r\n C Assets\\Scripts\\Entity\\BuildingBlock\\GestureDoor.cs \r\n C Assets\\manifest.asset \r\n C Assets\\Content\\Player\\Animations\\Gestures\\Mixamo\\kick_the_doors.fbx.meta \r\n C Assets\\Prefabs\\Weapon Mods\\LaserSight\\LaserBeam.cs \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\TorchHolder\\torchholder.deployed.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\Minecart Planter\\minecart.planter.deployed.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\HuntingTrophy_Large\\huntingtrophylarge.deployed.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\BarDoors\\door.double.hinged.bardoors.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\HuntingTrophy_Small\\HuntingTrophy.cs \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\Bath Tub Planter\\bathtub.planter.deployed.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\WantedPoster\\Materials\\WantedPosterSketch.mat \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\WantedPoster\\WantedPoster.cs \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\WantedPoster\\wantedposter.deployed.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\WantedPoster\\Skins\\wantedposter.wantedposter2.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\WantedPoster\\Skins\\wantedposter.wantedposter3.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\RailRoadPlanter.deployed.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\RailRoadPlanter.item.prefab \r\n C Assets\\Prefabs\\Weapons\\Torch\\torch.entity.prefab \r\n C Assets\\Prefabs\\Weapons\\DiverTorch\\diver_torch.entity.prefab \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\RailRoadPlanter.icon.png \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\RailRoadPlanter.icon.png.meta"
+    "Date": "26/10/2023 14:49:56",
+    "Items": "C Assets\\Scripts\\Rendering\\mirror\\PlanarReflectionCamera.cs \r\n C Assets\\Content\\Shaders\\mirror\\mirror.shader \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\Skinning Knife\\skinningknife.worldmodel.prefab"
   },
   "Build": {
-    "Id": "5199",
-    "Number": "5199",
-    "Tag": "jenkins-RustServer-5199",
-    "Url": "https://build.facepunch.com/job/RustServer/5199/",
+    "Id": "5201",
+    "Number": "5201",
+    "Tag": "jenkins-RustServer-5201",
+    "Url": "https://build.facepunch.com/job/RustServer/5201/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1698318628,
+  "Date": 1698331552,
   "DateString": "26 10 2023",
-  "TimeString": "11:10"
+  "TimeString": "14:45"
 }
