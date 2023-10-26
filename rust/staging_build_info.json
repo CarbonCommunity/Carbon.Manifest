@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "89148",
+    "ChangeId": "89166",
     "Branch": "experimental",
     "Repo": "rust_reboot",
-    "Comment": "merge from main",
+    "Comment": "merge form main",
     "Author": "alistair",
-    "Date": "26/10/2023 18:40:31",
-    "Items": "C protobuf\\proto\\Item.proto \r\n C Assets\\Plugins\\Rust.Data\\generated\\ProtocolBuffers.cs \r\n C Assets\\Plugins\\Rust.Data\\generated\\ProtocolBuffers.Serializer.cs \r\n C Assets\\Scripts\\Item\\Manager\\ItemManager.cs \r\n C Assets\\Scripts\\Item\\Item.IconAmount.cs \r\n C Assets\\Scripts\\Item\\Item.saveload.cs \r\n C Assets\\Scripts\\Item\\Item.cs \r\n C Assets\\Scripts\\Item\\ItemDef2\\ItemModEntity.cs \r\n C Assets\\Scripts\\Util\\Libraries\\GlobalMessage.cs \r\n C Assets\\Scripts\\UI\\Inventory\\ItemIcon.cs \r\n C Assets\\Scripts\\ConsoleCommands\\player.cs \r\n C Assets\\Scripts\\Entity\\Construction\\RepairBench.cs \r\n C Assets\\Scripts\\Entity\\BaseEntity\\HeldEntity\\BaseProjectile.Clip.cs \r\n C Assets\\Scripts\\Entity\\BaseEntity\\HeldEntity\\HeldEntity.server.cs \r\n C Assets\\Scripts\\Entity\\BaseEntity\\HeldEntity\\BaseLauncher.cs \r\n C Assets\\Scripts\\Entity\\BaseEntity\\HeldEntity\\BowWeapon.cs \r\n C Assets\\Scripts\\Entity\\BaseEntity\\HeldEntity\\BaseProjectile.cs \r\n C Assets\\Scripts\\Entity\\Misc\\AutoTurret\\AutoTurret.Server.cs \r\n C Assets\\Scripts\\Entity\\Misc\\WeaponRack\\WeaponRack.Server.cs \r\n C Assets\\Prefabs\\Misc\\XMas\\SnowballGun\\SnowballGun.cs"
+    "Date": "26/10/2023 21:09:44",
+    "Items": "C Assets\\bundled\\Prefabs\\autospawn\\monument\\xlarge\\launch_site_1.prefab \r\n C Assets\\bundled\\Prefabs\\autospawn\\monument\\large\\airfield_1.prefab \r\n C Assets\\bundled\\Prefabs\\autospawn\\monument\\large\\military_tunnel_1.prefab \r\n C Assets\\bundled\\Prefabs\\autospawn\\monument\\large\\powerplant_1.prefab \r\n C Assets\\bundled\\Prefabs\\autospawn\\monument\\large\\water_treatment_plant_1.prefab \r\n C Assets\\bundled\\Prefabs\\autospawn\\monument\\large\\excavator_1.prefab \r\n C Assets\\bundled\\Prefabs\\autospawn\\monument\\large\\trainyard_1.prefab \r\n C Assets\\bundled\\Prefabs\\autospawn\\monument\\harbor\\ferry_terminal_1.prefab \r\n C Assets\\bundled\\Prefabs\\autospawn\\monument\\harbor\\harbor_1.prefab \r\n C Assets\\bundled\\Prefabs\\autospawn\\monument\\harbor\\harbor_2.prefab \r\n C Assets\\bundled\\Prefabs\\autospawn\\monument\\medium\\Compound.prefab \r\n C Assets\\Generated\\ConsoleSystem.cs \r\n C Assets\\Scripts\\Server\\Auth_CentralizedBans.cs \r\n C Assets\\Scripts\\Server\\CompanionServer\\Server.cs \r\n C Assets\\Scripts\\Rendering\\DeferredMeshDecals\\DeferredMeshDecal.cs \r\n C Assets\\Scripts\\ConsoleCommands\\app.cs \r\n C Assets\\Content\\Shaders\\Nature\\Foliage.shader \r\n C Assets\\Content\\Shaders\\Resources\\Standard\\Internal-ScreenSpaceShadows.shader \r\n C Assets\\Content\\Shaders\\Standard\\Standard-Terrain-BaseMap.shader \r\n C Assets\\Content\\Shaders\\Standard\\Standard-TerrainBlend-Specular.shader \r\n C Assets\\Content\\Shaders\\Standard\\Hair.shader \r\n C Assets\\Content\\Shaders\\Standard\\Generic.shader \r\n C Assets\\Content\\Shaders\\Standard\\Foliage.shader \r\n C Assets\\Content\\Shaders\\Standard\\Standard-Terrain.shader \r\n C Assets\\Content\\Shaders\\Standard\\Skin.shader \r\n C Assets\\Content\\Structures\\train_tunnels\\Corridor_Prefabs\\corridor_stairwell_bottom_360.prefab \r\n C Assets\\Content\\Structures\\train_tunnels\\train_tunnel_double_slope_b_36m.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\StorageBarrel\\storage_barrel_b.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\HuntingTrophy_Small\\huntingtrophysmall.deployed.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\WantedPoster\\WantedPoster.cs \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\WantedPoster\\Skins\\wantedposter.wantedposter2.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\WantedPoster\\Skins\\wantedposter.wantedposter3.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\WantedPoster\\Textures\\WantedPoster1_SketchOverlay_Mask.tga \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\Skinning Knife\\Model\\v_SkinningKnife.fbx \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\Skinning Knife\\skinningknife.entity.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\Skinning Knife\\skinningknife.projectile.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\Skinning Knife\\skinningknife.viewmodel.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\Skinning Knife\\skinningknife.worldmodel.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\RailRoadPlanter.item.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\RailRoadPlanter.deployed.icon.png.meta \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Skinning Knife\\Model\\w_SkinningKnife_rigged.fbx \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Skinning Knife\\Model\\w_SkinningKnife_rigged.fbx.meta \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\RailRoadPlanter.deployed.icon.png \r\n D Assets\\bundled\\Prefabs\\world\\desktop.ini.meta \r\n D Assets\\Content\\Shaders\\Custom\\WallPoster.shader \r\n D Assets\\Content\\Shaders\\Custom\\WallPoster.shader.meta \r\n D Assets\\Prefabs\\Misc\\Halloween\\desktop.ini.meta \r\n D Assets\\Prefabs\\Misc\\Decor_DLC\\Skinning Knife\\v_SkinningKnife.prefab \r\n D Assets\\Prefabs\\Misc\\Decor_DLC\\Skinning Knife\\v_SkinningKnife.prefab.meta \r\n D Assets\\Prefabs\\Misc\\Decor_DLC\\Skinning Knife\\w_SkinningKnife.prefab \r\n D Assets\\Prefabs\\Misc\\Decor_DLC\\Skinning Knife\\w_SkinningKnife.prefab.meta \r\n D Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\RailRoadPlanter.icon.png \r\n D Assets\\_TEMP \r\n D Assets\\_TEMP.meta \r\n M Assets\\Prefabs\\Misc\\Decor_DLC\\Rail Road Planter\\RailRoadPlanter.deployed.icon.png.meta"
   },
   "Build": {
-    "Id": "5203",
-    "Number": "5203",
-    "Tag": "jenkins-RustServer-5203",
-    "Url": "https://build.facepunch.com/job/RustServer/5203/",
+    "Id": "5205",
+    "Number": "5205",
+    "Tag": "jenkins-RustServer-5205",
+    "Url": "https://build.facepunch.com/job/RustServer/5205/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1698347348,
+  "Date": 1698358091,
   "DateString": "26 10 2023",
-  "TimeString": "19:09"
+  "TimeString": "22:08"
 }
