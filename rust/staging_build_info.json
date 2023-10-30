@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "89246",
+    "ChangeId": "89298",
     "Branch": "experimental",
     "Repo": "rust_reboot",
-    "Comment": "merge from main",
-    "Author": "alistair",
-    "Date": "27/10/2023 19:16:53",
-    "Items": "C Assets\\Scenes\\Prefabs\\Train Tunnel Entrance\\train_tunnel_entrance_a.unity \r\n C Assets\\Scripts\\Procedural\\TerrainGenerator\\ProceduralComponent\\GenerateDungeonGrid.cs \r\n C Assets\\Content\\Structures\\train_tunnels\\Prefabs\\train_tunnel_terraincheck.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\HuntingTrophy_Fish\\models\\Fish\\Sardine.fbx \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\WantedPoster\\Skins\\wantedposter.wantedposter2.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\WantedPoster\\Skins\\wantedposter.wantedposter3.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\WantedPoster\\Skins\\wantedposter.wantedposter4.prefab \r\n A Assets\\Scripts\\Procedural\\TerrainFilter\\Editor \r\n A Assets\\Scripts\\Procedural\\TerrainFilter\\Editor.meta \r\n A Assets\\Scripts\\Procedural\\TerrainFilter\\TerrainFilterGenerator.cs \r\n A Assets\\Scripts\\Procedural\\TerrainFilter\\TerrainFilterGenerator.cs.meta \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\WantedPoster\\Materials\\WantedPosterSketch_Poster4.mat \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\WantedPoster\\Materials\\WantedPosterSketch_Poster4.mat.meta \r\n A Assets\\Scripts\\Procedural\\TerrainFilter\\Editor\\TerrainFilterGeneratorInspector.cs \r\n A Assets\\Scripts\\Procedural\\TerrainFilter\\Editor\\TerrainFilterGeneratorInspector.cs.meta"
+    "Comment": "Merge from main",
+    "Author": "jarryd",
+    "Date": "30/10/2023 03:27:29",
+    "Items": "C Assets\\Scripts\\Client\\SkinnedMultiMesh.cs \r\n C Assets\\Scripts\\UI\\SteamFriendsList.cs \r\n C Assets\\Scripts\\UI\\Inventory\\HeadInformationPanel.cs \r\n C Assets\\Scripts\\Entity\\Construction\\FishMount.cs \r\n C Assets\\Scripts\\Entity\\BuildingBlock\\Door.cs \r\n C Assets\\Scripts\\Entity\\Player\\Components\\PlayerModel.cs \r\n C Assets\\Rust.Ai\\NextAI\\HorseBreed.cs \r\n C Assets\\Rust.Ai\\NextAI\\RidableHorse\\Breeds\\Appaloosa.asset \r\n C Assets\\Rust.Ai\\NextAI\\RidableHorse\\Breeds\\Pinto.asset \r\n C Assets\\Rust.Ai\\NextAI\\RidableHorse\\Breeds\\Black.asset \r\n C Assets\\Rust.Ai\\NextAI\\RidableHorse\\Breeds\\DappleGrey.asset \r\n C Assets\\Rust.Ai\\NextAI\\RidableHorse\\Breeds\\PieBald.asset \r\n C Assets\\Rust.Ai\\NextAI\\RidableHorse\\Breeds\\RedRoan.asset \r\n C Assets\\Rust.Ai\\NextAI\\RidableHorse\\Breeds\\White.asset \r\n C Assets\\Rust.Ai\\NextAI\\RidableHorse\\Breeds\\Bay.asset \r\n C Assets\\Rust.Ai\\NextAI\\RidableHorse\\Breeds\\Chestnut.asset \r\n C Assets\\Rust.Ai\\NextAI\\RidableHorse\\Breeds\\Bucksin.asset \r\n C Assets\\Content\\UI\\GameUI\\UI.InfoPanel.HeadInfo.prefab \r\n C Assets\\Prefabs\\Deployable\\Hot Air Balloon\\HotAirBalloon.prefab \r\n C Assets\\Prefabs\\Deployable\\Chair\\chair.worldmodel.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\HuntingTrophy_Small\\HuntingTrophy.cs \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\HuntingTrophy_Small\\huntingtrophysmall.deployed.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\HuntingTrophy_Fish\\fishtrophy.deployed.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\HuntingTrophy_Fish\\animations\\FishTrophyAnimation.fbx \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\HuntingTrophy_Fish\\animations\\FishTrophyAnimation.fbx.meta \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\Heads\\headbag.item.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\WantedPoster\\wantedposter.deployed.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\WantedPoster\\Skins\\wantedposter.wantedposter2.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\WantedPoster\\Skins\\wantedposter.wantedposter3.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\WantedPoster\\Skins\\wantedposter.wantedposter4.prefab \r\n A Assets\\Rust.Ai\\Agents\\Horse\\HorseAvatar_Appaloosa.png \r\n A Assets\\Rust.Ai\\Agents\\Horse\\HorseAvatar_Appaloosa.png.meta \r\n A Assets\\Rust.Ai\\Agents\\Horse\\HorseAvatar_Bay.png \r\n A Assets\\Rust.Ai\\Agents\\Horse\\HorseAvatar_Bay.png.meta \r\n A Assets\\Rust.Ai\\Agents\\Horse\\HorseAvatar_BlackThoroughbred.png \r\n A Assets\\Rust.Ai\\Agents\\Horse\\HorseAvatar_BlackThoroughbred.png.meta \r\n A Assets\\Rust.Ai\\Agents\\Horse\\HorseAvatar_Bucksin.png \r\n A Assets\\Rust.Ai\\Agents\\Horse\\HorseAvatar_Bucksin.png.meta \r\n A Assets\\Rust.Ai\\Agents\\Horse\\HorseAvatar_Chestnut.png \r\n A Assets\\Rust.Ai\\Agents\\Horse\\HorseAvatar_Chestnut.png.meta \r\n A Assets\\Rust.Ai\\Agents\\Horse\\HorseAvatar_DappleGrey.png \r\n A Assets\\Rust.Ai\\Agents\\Horse\\HorseAvatar_DappleGrey.png.meta \r\n A Assets\\Rust.Ai\\Agents\\Horse\\HorseAvatar_Piebald.png \r\n A Assets\\Rust.Ai\\Agents\\Horse\\HorseAvatar_Piebald.png.meta \r\n A Assets\\Rust.Ai\\Agents\\Horse\\HorseAvatar_Pinto.png \r\n A Assets\\Rust.Ai\\Agents\\Horse\\HorseAvatar_Pinto.png.meta \r\n A Assets\\Rust.Ai\\Agents\\Horse\\HorseAvatar_RedRoan.png \r\n A Assets\\Rust.Ai\\Agents\\Horse\\HorseAvatar_RedRoan.png.meta \r\n A Assets\\Rust.Ai\\Agents\\Horse\\HorseAvatar_WhiteThoroughbred.png \r\n A Assets\\Rust.Ai\\Agents\\Horse\\HorseAvatar_WhiteThoroughbred.png.meta \r\n A Assets\\Prefabs\\Misc\\Burlap Sack\\Burlap Sack Bloody.png \r\n A Assets\\Prefabs\\Misc\\Burlap Sack\\Burlap Sack Bloody.png.meta \r\n D Assets\\Prefabs\\Misc\\Decor_DLC\\HuntingTrophy_Fish\\HuntingTrophy_Fish.prefab \r\n D Assets\\Prefabs\\Misc\\Decor_DLC\\HuntingTrophy_Fish\\HuntingTrophy_Fish.prefab.meta"
   },
   "Build": {
-    "Id": "5212",
-    "Number": "5212",
-    "Tag": "jenkins-RustServer-5212",
-    "Url": "https://build.facepunch.com/job/RustServer/5212/",
+    "Id": "5222",
+    "Number": "5222",
+    "Tag": "jenkins-RustServer-5222",
+    "Url": "https://build.facepunch.com/job/RustServer/5222/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1698434321,
-  "DateString": "27 10 2023",
-  "TimeString": "19:18"
+  "Date": 1698642848,
+  "DateString": "30 10 2023",
+  "TimeString": "05:14"
 }
