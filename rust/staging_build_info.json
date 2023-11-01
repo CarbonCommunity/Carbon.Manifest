@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "89414",
+    "ChangeId": "89440",
     "Branch": "experimental",
     "Repo": "rust_reboot",
     "Comment": "merge from main",
     "Author": "alistair",
-    "Date": "01/11/2023 09:20:08",
-    "Items": "C Assets\\skins.asset \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\models\\rocking_chair_COL.fbx \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\rockingchair.deployed.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\rockingchair.item.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\RockingChair.cs \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\skins\\rockingchair.rockingchair2.deployed.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\skins\\rockingchair.rockingchair2.deployed.prefab.meta \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\skins\\rockingchair.rockingchair2.item.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\skins\\rockingchair.rockingchair2.skin.asset \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\skins\\rockingchair.rockingchair3.deployed.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\skins\\rockingchair.rockingchair3.deployed.prefab.meta \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\skins\\rockingchair.rockingchair3.item.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\skins\\rockingchair.rockingchair3.skin.asset \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\RockingChairCollision.prefab \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\RockingChairCollision.prefab.meta"
+    "Date": "01/11/2023 18:35:03",
+    "Items": "C Prerequisites\\SteamInventory\\schema-old.json \r\n C Prerequisites\\SteamInventory\\schema-full.json \r\n C Prerequisites\\SteamInventory\\schema-new.json \r\n C Assets\\Third Party\\OcclusionCulling\\Scripts\\OcclusionCulling.Visibility.cs \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\BaseDecorDLC_Frontier.asset \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\rockingchair.worldmodel.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\skins\\rockingchair.rockingchair2.item.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\skins\\rockingchair.rockingchair2.worldmodel.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\skins\\rockingchair.rockingchair3.item.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\skins\\rockingchair.rockingchair3.worldmodel.prefab \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\frontier_pack_icon.png \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\frontier_pack_icon.png.meta"
   },
   "Build": {
-    "Id": "5244",
-    "Number": "5244",
-    "Tag": "jenkins-RustServer-5244",
-    "Url": "https://build.facepunch.com/job/RustServer/5244/",
+    "Id": "5246",
+    "Number": "5246",
+    "Tag": "jenkins-RustServer-5246",
+    "Url": "https://build.facepunch.com/job/RustServer/5246/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1698836636,
+  "Date": 1698866720,
   "DateString": "1 11 2023",
-  "TimeString": "11:03"
+  "TimeString": "19:25"
 }
