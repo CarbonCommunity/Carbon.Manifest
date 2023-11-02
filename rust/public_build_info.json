@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "88924",
+    "ChangeId": "89481",
     "Branch": "experimental/release",
     "Repo": "rust_reboot",
-    "Comment": "merge from halloween2023",
+    "Comment": "cherrypicking 89480 - Mirrors removed from decor DLC due to performance concerns",
     "Author": "alistair",
-    "Date": "23/10/2023 11:37:44",
-    "Items": "C Assets\\Content\\UI\\MenuUI\\UI.Logo.Big.Halloween2023.png \r\n C Assets\\Prefabs\\Clothes\\halloween.DraculaMask\\draculamask.item.prefab \r\n C Assets\\Prefabs\\Clothes\\halloween.DraculaMask\\DraculaMask.worldmodel.prefab"
+    "Date": "02/11/2023 12:42:02",
+    "Items": "C Assets\\Prefabs\\Misc\\Mirror\\frontiermirror.large.item.prefab \r\n C Assets\\Prefabs\\Misc\\Mirror\\frontiermirror.medium.item.prefab \r\n C Assets\\Prefabs\\Misc\\Mirror\\frontiermirror.small.item.prefab \r\n C Assets\\Prefabs\\Misc\\Mirror\\frontiermirror.standing.item.prefab"
   },
   "Build": {
-    "Id": "548",
-    "Number": "548",
-    "Tag": "jenkins-RustReleaseServer-548",
-    "Url": "https://build.facepunch.com/job/RustReleaseServer/548/",
+    "Id": "557",
+    "Number": "557",
+    "Tag": "jenkins-RustReleaseServer-557",
+    "Url": "https://build.facepunch.com/job/RustReleaseServer/557/",
     "Name": "RustReleaseServer",
     "Node": "Win4"
   },
-  "Date": 1698060117,
-  "DateString": "23 10 2023",
-  "TimeString": "11:21"
+  "Date": 1698934850,
+  "DateString": "2 11 2023",
+  "TimeString": "14:20"
 }
