@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "89446",
+    "ChangeId": "89476",
     "Branch": "experimental/release",
     "Repo": "rust_reboot",
-    "Comment": "merge from main",
+    "Comment": "merge from main RC",
     "Author": "alistair",
-    "Date": "01/11/2023 20:37:56",
-    "Items": "C Prerequisites\\SteamInventory\\schema-full.json \r\n C Prerequisites\\SteamInventory\\schema-new.json \r\n C Prerequisites\\SteamInventory\\schema-old.json \r\n C Assets\\Third Party\\OcclusionCulling\\Scripts\\OcclusionCulling.Visibility.cs \r\n C Assets\\Generated\\EntityMenu.cs \r\n C Assets\\Localization\\ar\\engine.json \r\n C Assets\\Localization\\ca\\engine.json \r\n C Assets\\Localization\\el\\engine.json \r\n C Assets\\Localization\\en\\engine.json \r\n C Assets\\Localization\\fi\\engine.json \r\n C Assets\\Localization\\hu\\engine.json \r\n C Assets\\Localization\\no\\engine.json \r\n C Assets\\Localization\\pl\\engine.json \r\n C Assets\\Localization\\pt-PT\\engine.json \r\n C Assets\\Localization\\sr\\engine.json \r\n C Assets\\Localization\\sv-SE\\engine.json \r\n C Assets\\Localization\\tr\\engine.json \r\n C Assets\\Localization\\af\\engine.json \r\n C Assets\\Localization\\cs\\engine.json \r\n C Assets\\Localization\\en-PT\\engine.json \r\n C Assets\\Localization\\fr\\engine.json \r\n C Assets\\Localization\\he\\engine.json \r\n C Assets\\Localization\\ja\\phrases.json \r\n C Assets\\Localization\\ja\\engine.json \r\n C Assets\\Localization\\pt-BR\\engine.json \r\n C Assets\\Localization\\uk\\engine.json \r\n C Assets\\Localization\\zh-TW\\engine.json \r\n C Assets\\Localization\\da\\engine.json \r\n C Assets\\Localization\\es-ES\\engine.json \r\n C Assets\\Localization\\nl\\engine.json \r\n C Assets\\Localization\\ro\\engine.json \r\n C Assets\\Localization\\de\\engine.json \r\n C Assets\\Localization\\it\\engine.json \r\n C Assets\\Localization\\ko\\engine.json \r\n C Assets\\Localization\\ru\\phrases.json \r\n C Assets\\Localization\\ru\\engine.json \r\n C Assets\\Localization\\vi\\engine.json \r\n C Assets\\Localization\\zh-CN\\phrases.json \r\n C Assets\\Localization\\zh-CN\\engine.json \r\n C Assets\\Content\\Shaders\\Include\\DistanceFade.cginc \r\n C Assets\\Content\\Shaders\\Include\\Constants.cginc \r\n C Assets\\Content\\Shaders\\Standard\\Foliage-Billboard.shader \r\n C Assets\\Content\\Shaders\\Standard\\Include\\UnityStandardShadow.cginc \r\n C Assets\\Content\\Shaders\\Standard\\Include\\UnityStandardCore.cginc \r\n C Assets\\Content\\Shaders\\mirror\\mirror.cginc \r\n C Assets\\Prefabs\\Engine\\Main Camera.prefab \r\n C Assets\\Prefabs\\Deployable\\Hot Air Balloon\\HotAirBalloon_armor_T1.prefab \r\n C Assets\\Prefabs\\Tools\\Wire\\WireTool.cs \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\HuntingTrophy_Large\\huntingtrophylarge.item.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\StorageBarrel\\models\\storage_barrel_b_gibs.fbx.meta \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\StorageBarrel\\models\\storage_barrel_b.fbx.meta \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\StorageBarrel\\models\\storage_barrel_c_gibs.fbx.meta \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\StorageBarrel\\models\\storage_barrel_c.fbx.meta \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\StorageBarrel\\models\\storage_barrel_COL.fbx.meta \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\StorageBarrel\\storage_barrel_b.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\StorageBarrel\\storage_barrel_c.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\StorageBarrel\\storage_barrel_b.item.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\StorageBarrel\\storage_barrel_c.item.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\HuntingTrophy_Small\\huntingtrophysmall.item.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\BaseDecorDLC_Frontier.asset \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\RockingChair.cs \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\rockingchair.worldmodel.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\skins\\rockingchair.rockingchair2.item.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\skins\\rockingchair.rockingchair2.worldmodel.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\skins\\rockingchair.rockingchair3.item.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\skins\\rockingchair.rockingchair3.worldmodel.prefab \r\n C Assets\\Prefabs\\Misc\\Mirror\\frontiermirror.large.prefab \r\n C Assets\\Prefabs\\Misc\\Mirror\\frontiermirror.medium.prefab \r\n C Assets\\Prefabs\\Misc\\Mirror\\frontiermirror.small.prefab \r\n C Assets\\Prefabs\\Misc\\Mirror\\frontiermirror.standing.prefab \r\n C Assets\\Scripts\\Procedural\\TerrainExtension\\TerrainTexturing.cs \r\n C Assets\\Scripts\\Rendering\\DeferredExtension\\DeferredExtension.cs \r\n C Assets\\Scripts\\Rendering\\mirror\\PlanarReflectionCamera.cs \r\n C Assets\\Scripts\\Entity\\BaseEntity\\HeldEntity\\BaseLauncher.cs \r\n A Assets\\Content\\Shaders\\Include\\Mirror.cginc \r\n A Assets\\Content\\Shaders\\Include\\Mirror.cginc.meta \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\frontier_pack_icon.png \r\n A Assets\\Prefabs\\Misc\\Decor_DLC\\frontier_pack_icon.png.meta"
+    "Date": "02/11/2023 08:30:11",
+    "Items": "C Assets\\Scripts\\Entity\\WorldItem\\DroppedItem.cs"
   },
   "Build": {
-    "Id": "553",
-    "Number": "553",
-    "Tag": "jenkins-RustReleaseServer-553",
-    "Url": "https://build.facepunch.com/job/RustReleaseServer/553/",
+    "Id": "555",
+    "Number": "555",
+    "Tag": "jenkins-RustReleaseServer-555",
+    "Url": "https://build.facepunch.com/job/RustReleaseServer/555/",
     "Name": "RustReleaseServer",
     "Node": "Win4"
   },
-  "Date": 1698879065,
-  "DateString": "1 11 2023",
-  "TimeString": "22:51"
+  "Date": 1698925295,
+  "DateString": "2 11 2023",
+  "TimeString": "11:41"
 }
