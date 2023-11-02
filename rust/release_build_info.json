@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "89476",
+    "ChangeId": "89481",
     "Branch": "experimental/release",
     "Repo": "rust_reboot",
-    "Comment": "merge from main RC",
+    "Comment": "cherrypicking 89480 - Mirrors removed from decor DLC due to performance concerns",
     "Author": "alistair",
-    "Date": "02/11/2023 08:30:11",
-    "Items": "C Assets\\Scripts\\Entity\\WorldItem\\DroppedItem.cs"
+    "Date": "02/11/2023 12:42:02",
+    "Items": "C Assets\\Prefabs\\Misc\\Mirror\\frontiermirror.large.item.prefab \r\n C Assets\\Prefabs\\Misc\\Mirror\\frontiermirror.medium.item.prefab \r\n C Assets\\Prefabs\\Misc\\Mirror\\frontiermirror.small.item.prefab \r\n C Assets\\Prefabs\\Misc\\Mirror\\frontiermirror.standing.item.prefab"
   },
   "Build": {
-    "Id": "555",
-    "Number": "555",
-    "Tag": "jenkins-RustReleaseServer-555",
-    "Url": "https://build.facepunch.com/job/RustReleaseServer/555/",
+    "Id": "557",
+    "Number": "557",
+    "Tag": "jenkins-RustReleaseServer-557",
+    "Url": "https://build.facepunch.com/job/RustReleaseServer/557/",
     "Name": "RustReleaseServer",
     "Node": "Win4"
   },
-  "Date": 1698925295,
+  "Date": 1698934850,
   "DateString": "2 11 2023",
-  "TimeString": "11:41"
+  "TimeString": "14:20"
 }
