@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "89481",
+    "ChangeId": "89516",
     "Branch": "experimental/release",
     "Repo": "rust_reboot",
-    "Comment": "cherrypicking 89480 - Mirrors removed from decor DLC due to performance concerns",
+    "Comment": "merge from main",
     "Author": "alistair",
-    "Date": "02/11/2023 12:42:02",
-    "Items": "C Assets\\Prefabs\\Misc\\Mirror\\frontiermirror.large.item.prefab \r\n C Assets\\Prefabs\\Misc\\Mirror\\frontiermirror.medium.item.prefab \r\n C Assets\\Prefabs\\Misc\\Mirror\\frontiermirror.small.item.prefab \r\n C Assets\\Prefabs\\Misc\\Mirror\\frontiermirror.standing.item.prefab"
+    "Date": "03/11/2023 14:22:43",
+    "Items": "C Assets\\Third Party\\SE Screen Space Shadows\\SEScreenSpaceShadows.cs \r\n C Assets\\Content\\Effects\\Textures\\Flare\\RustFlareOrb.shader \r\n C Assets\\Content\\Shaders\\Override\\Particle Add.shader \r\n C Assets\\Content\\Shaders\\Override\\Particle AddSmooth.shader \r\n C Assets\\Content\\Shaders\\Particles\\PixelAdd Advanced.shader \r\n C Assets\\Content\\Shaders\\Particles\\PixelLit Blended Custom.shader \r\n C Assets\\Content\\Shaders\\Particles\\VertexLit Blended Custom.shader \r\n C Assets\\Content\\Shaders\\Particles\\Additive HDR.shader \r\n C Assets\\Content\\Shaders\\Particles\\LitSmokeEmissiveFlame.shader \r\n C Assets\\Content\\Shaders\\Particles\\WaterDrop.shader \r\n C Assets\\Content\\Shaders\\Particles\\PixelLit Advanced.shader \r\n C Assets\\Content\\Shaders\\Particles\\PixelLit 6-Point.shader \r\n C Assets\\Content\\Shaders\\Include\\Mirror.cginc \r\n C Assets\\Content\\Shaders\\mirror\\mirror.shader \r\n C Assets\\Prefabs\\VoiceAudio\\BoomBox\\BoomBox.deployed.prefab \r\n C Assets\\Prefabs\\VoiceAudio\\MicrophoneStand\\microphonestandio.entity.prefab \r\n C Assets\\Prefabs\\VoiceAudio\\DiscoFloor\\discofloor.deployed.prefab \r\n C Assets\\Prefabs\\VoiceAudio\\DiscoFloor\\skins\\discofloor.largetiles.deployed.prefab \r\n C Assets\\Prefabs\\Deployable\\Hot Air Balloon\\HotAirBalloon.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\WantedPoster\\wantedposter.item.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\rockingchair.worldmodel.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\skins\\rockingchair.rockingchair2.worldmodel.prefab \r\n C Assets\\Prefabs\\Misc\\Mirror\\frontiermirror.large.item.prefab \r\n C Assets\\Prefabs\\Misc\\Mirror\\frontiermirror.medium.item.prefab \r\n C Assets\\Prefabs\\Misc\\Mirror\\frontiermirror.small.item.prefab \r\n C Assets\\Prefabs\\Misc\\Mirror\\frontiermirror.standing.item.prefab \r\n C Assets\\Scripts\\Rendering\\LightCloneShadow.cs \r\n C Assets\\Scripts\\Rendering\\mirror\\PlanarReflectionCamera.cs \r\n C Assets\\Scripts\\Analytics\\Analytics.Azure.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Helicopter\\BaseHelicopter.cs \r\n C Assets\\Scripts\\Entity\\Misc\\CardGames\\BlackjackController.cs \r\n C Assets\\Scripts\\Entity\\Misc\\CardGames\\TexasHoldEmController.cs \r\n C Assets\\Scripts\\Entity\\Misc\\CardGames\\CardGameController.cs \r\n D Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\models\\rocking_chair_variant1_COL.fbx \r\n D Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\models\\rocking_chair_variant1_COL.fbx.meta \r\n D Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\models\\rocking_chair_variant2_COL.fbx \r\n D Assets\\Prefabs\\Misc\\Decor_DLC\\RockingChair\\models\\rocking_chair_variant2_COL.fbx.meta"
   },
   "Build": {
-    "Id": "557",
-    "Number": "557",
-    "Tag": "jenkins-RustReleaseServer-557",
-    "Url": "https://build.facepunch.com/job/RustReleaseServer/557/",
+    "Id": "559",
+    "Number": "559",
+    "Tag": "jenkins-RustReleaseServer-559",
+    "Url": "https://build.facepunch.com/job/RustReleaseServer/559/",
     "Name": "RustReleaseServer",
     "Node": "Win4"
   },
-  "Date": 1698934850,
-  "DateString": "2 11 2023",
-  "TimeString": "14:20"
+  "Date": 1699026037,
+  "DateString": "3 11 2023",
+  "TimeString": "15:40"
 }
