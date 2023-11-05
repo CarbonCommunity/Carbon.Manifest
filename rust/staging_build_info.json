@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "89515",
+    "ChangeId": "89529",
     "Branch": "experimental",
     "Repo": "rust_reboot",
     "Comment": "merge from main",
     "Author": "alistair",
-    "Date": "03/11/2023 14:03:52",
-    "Items": "C Assets\\Generated\\ConsoleSystem.cs \r\n C Assets\\Scripts\\Rendering\\LightCloneShadow.cs \r\n C Assets\\Scripts\\ConsoleCommands\\graphics.cs"
+    "Date": "04/11/2023 16:00:49",
+    "Items": "C Prerequisites\\SteamInventory\\generator.json \r\n C Prerequisites\\SteamInventory\\Icons\\584379.png \r\n C Prerequisites\\SteamInventory\\PaymentRules.csv \r\n C Prerequisites\\SteamInventory\\schema-old.json \r\n C Prerequisites\\SteamInventory\\schema-full.json \r\n C Prerequisites\\SteamInventory\\schema-new.json \r\n C Assets\\Plugins\\Rust.Workshop\\Approved.2023.cs \r\n C Assets\\Scripts\\Rendering\\LightCloneShadow.cs \r\n C Assets\\Content\\Properties\\SteamCategories\\limited-halloween2023-299.steam.asset \r\n C Assets\\Content\\Properties\\SteamCategories\\limited-halloween2023-399.steam.asset \r\n C Assets\\Content\\Properties\\SteamCategories\\limited-halloween2023-499.steam.asset \r\n C Assets\\Content\\Properties\\SteamCategories\\limited-halloween2023-599.steam.asset \r\n C Assets\\Content\\Properties\\SteamCategories\\limited-halloween2023-799.steam.asset \r\n C Assets\\Content\\Properties\\SteamCategories\\limited-halloween2023-699.steam.asset \r\n C Assets\\Prefabs\\Building Core\\floor.triangle\\floor.triangle.prefab \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\BaseDecorDLC_Frontier.asset \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\frontier_pack_icon.png \r\n A Prerequisites\\SteamInventory\\Icons\\55700.png \r\n A Prerequisites\\SteamInventory\\Icons\\55701.png \r\n A Prerequisites\\SteamInventory\\Icons\\55702.png \r\n A Prerequisites\\SteamInventory\\Icons\\55703.png \r\n A Prerequisites\\SteamInventory\\Icons\\55704.png \r\n A Prerequisites\\SteamInventory\\Icons\\55705.png \r\n A Prerequisites\\SteamInventory\\Icons\\55706.png \r\n A Prerequisites\\SteamInventory\\Icons\\55707.png \r\n A Prerequisites\\SteamInventory\\Icons\\55708.png \r\n A Prerequisites\\SteamInventory\\Icons\\55709.png"
   },
   "Build": {
-    "Id": "5253",
-    "Number": "5253",
-    "Tag": "jenkins-RustServer-5253",
-    "Url": "https://build.facepunch.com/job/RustServer/5253/",
+    "Id": "5255",
+    "Number": "5255",
+    "Tag": "jenkins-RustServer-5255",
+    "Url": "https://build.facepunch.com/job/RustServer/5255/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1699023685,
-  "DateString": "3 11 2023",
-  "TimeString": "15:01"
+  "Date": 1699183389,
+  "DateString": "5 11 2023",
+  "TimeString": "11:23"
 }
