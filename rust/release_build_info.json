@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "89530",
+    "ChangeId": "89546",
     "Branch": "experimental/release",
     "Repo": "rust_reboot",
     "Comment": "merge from main",
     "Author": "alistair",
-    "Date": "04/11/2023 16:01:09",
-    "Items": "C Assets\\Prefabs\\Building Core\\floor.triangle\\floor.triangle.prefab"
+    "Date": "06/11/2023 15:45:33",
+    "Items": "C Assets\\Prefabs\\Ammo\\Rocket\\HVRocket.worldmodel.prefab \r\n C Assets\\Prefabs\\Ammo\\Rocket\\IncendiaryRocket.worldmodel.prefab \r\n C Assets\\Prefabs\\Ammo\\Rocket\\rocket.worldmodel.prefab \r\n C Assets\\Prefabs\\Food\\Bota bag\\bota_bag.worldmodel.prefab \r\n C Assets\\Prefabs\\Plants\\Pumpkin\\pumpkin.worldmodel.prefab \r\n C Assets\\Prefabs\\Weapon Mods\\Flashlight\\pistol_flashlight.worldmodel.prefab \r\n C Assets\\Prefabs\\Deployable\\Bear Trap\\snaptrap.worldmodel.prefab \r\n C Assets\\Prefabs\\Deployable\\PTZ Security Camera\\PTZSecurityCamera.worldmodel.prefab \r\n C Assets\\Prefabs\\Tools\\Fishing Rod\\fishing_rod.worldmodel.prefab \r\n C Assets\\Prefabs\\Misc\\XMas\\food\\candycane.worldmodel.prefab \r\n C Assets\\Prefabs\\Misc\\XMas\\pookie\\pookie.worldmodel.prefab \r\n C Assets\\Prefabs\\Misc\\XMas\\XmasDecorations\\electric_garland.worldmodel.prefab \r\n C Assets\\Prefabs\\Misc\\XMas\\XmasDecorations\\candycanes.worldmodel.prefab \r\n C Assets\\Prefabs\\Misc\\XMas\\XmasDecorations\\gingermen.worldmodel.prefab \r\n C Assets\\Prefabs\\Misc\\XMas\\XmasDecorations\\pinecones.worldmodel.prefab \r\n C Assets\\Prefabs\\Misc\\XMas\\XmasDecorations\\polestar.worldmodel.prefab \r\n C Assets\\Prefabs\\Misc\\XMas\\XmasDecorations\\tinsel.worldmodel.prefab \r\n C Assets\\Prefabs\\Misc\\XMas\\XmasDecorations\\xmas_baubles.worldmodel.prefab \r\n C Assets\\Prefabs\\Misc\\XMas\\stockings\\stocking.large.worldmodel.prefab \r\n C Assets\\Prefabs\\Misc\\XMas\\stockings\\stocking.small.worldmodel.prefab \r\n C Assets\\Prefabs\\Misc\\XMas\\wearable\\santahat\\santahat.worldmodel.prefab \r\n C Assets\\Prefabs\\Misc\\Easter\\Painted Eggs\\bronzeegg.worldmodel.prefab \r\n C Assets\\Prefabs\\Misc\\Easter\\Painted Eggs\\goldegg.worldmodel.prefab \r\n C Assets\\Prefabs\\Misc\\Easter\\Painted Eggs\\paintedeggs.worldmodel.prefab \r\n C Assets\\Prefabs\\Misc\\Easter\\Painted Eggs\\silveregg.worldmodel.prefab \r\n C Assets\\Scripts\\Rendering\\LightCloneShadow.cs \r\n C Assets\\Scripts\\Entity\\WorldItem\\DroppedItem.cs \r\n D Assets\\Prefabs\\VoiceAudio\\Telephone\\telephone.worldmodel.prefab \r\n D Assets\\Prefabs\\VoiceAudio\\Telephone\\telephone.worldmodel.prefab.meta"
   },
   "Build": {
-    "Id": "561",
-    "Number": "561",
-    "Tag": "jenkins-RustReleaseServer-561",
-    "Url": "https://build.facepunch.com/job/RustReleaseServer/561/",
+    "Id": "563",
+    "Number": "563",
+    "Tag": "jenkins-RustReleaseServer-563",
+    "Url": "https://build.facepunch.com/job/RustReleaseServer/563/",
     "Name": "RustReleaseServer",
     "Node": "Win4"
   },
-  "Date": 1699116962,
-  "DateString": "4 11 2023",
-  "TimeString": "16:56"
+  "Date": 1699291963,
+  "DateString": "6 11 2023",
+  "TimeString": "17:32"
 }
