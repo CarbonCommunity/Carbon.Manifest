@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "89563",
+    "ChangeId": "89611",
     "Branch": "Aux2",
     "Repo": "rust_reboot",
     "Comment": "merge from building_skins_4",
     "Author": "alistair",
-    "Date": "07/11/2023 08:14:59",
-    "Items": "C Assets\\Content\\Properties\\BuildingGrade\\gingerbread.asset"
+    "Date": "08/11/2023 09:00:33",
+    "Items": "C Assets\\Content\\Building\\Parts\\armored\\foundation.steps.collision.fbx \r\n C Assets\\Content\\Building\\Parts\\frontier\\foundation.steps.collision.fbx \r\n C Assets\\Content\\Building\\Parts\\frontier\\roof.triangle.up.collision.fbx \r\n C Assets\\Content\\Building\\Parts\\frontier\\roof.triangle.up.fbx \r\n C Assets\\Content\\Building\\Parts\\frontier\\roof.triangle.up.top.line.collision.fbx \r\n C Assets\\Content\\Building\\Parts\\gingerbread\\foundation.steps.collision.fbx \r\n C Assets\\Prefabs\\Building Core\\foundation.triangle\\foundation.triangle.frontier.prefab \r\n C Assets\\Prefabs\\Building Core\\roof\\roof.frontier.bottom.line.prefab \r\n C Assets\\Prefabs\\Building Core\\stairs.l\\block.stair.lshape.frontier.prefab \r\n C Assets\\Prefabs\\Building Core\\stairs.spiral.triangle\\stairs.triangle.spiral.frontier.prefab \r\n C Assets\\Prefabs\\Building Core\\stairs.spiral.triangle\\stairs.triangle.spiral.landing.frontier.prefab \r\n C Assets\\Prefabs\\Building Core\\stairs.spiral\\block.stair.spiral.frontier.prefab \r\n C Assets\\Prefabs\\Building Core\\stairs.spiral\\stairs.spiral.landing.frontier.prefab \r\n C Assets\\Prefabs\\Building Core\\stairs.u\\block.stair.ushape.frontier.prefab \r\n C Assets\\Prefabs\\Building Core\\foundation\\foundation.frontier.prefab"
   },
   "Build": {
-    "Id": "546",
-    "Number": "546",
-    "Tag": "jenkins-RustServerAux02-546",
-    "Url": "https://build.facepunch.com/job/RustServerAux02/546/",
+    "Id": "548",
+    "Number": "548",
+    "Tag": "jenkins-RustServerAux02-548",
+    "Url": "https://build.facepunch.com/job/RustServerAux02/548/",
     "Name": "RustServerAux02",
     "Node": "Win4"
   },
-  "Date": 1699351837,
-  "DateString": "7 11 2023",
-  "TimeString": "10:10"
+  "Date": 1699455636,
+  "DateString": "8 11 2023",
+  "TimeString": "15:00"
 }
