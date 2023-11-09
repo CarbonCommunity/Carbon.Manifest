@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "89584",
+    "ChangeId": "89631",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Fixed Detail Layer breaking lighting when using normal blending with UV1 (tangent space mismatch)",
-    "Author": "diogo",
-    "Date": "07/11/2023 16:16:03",
-    "Items": "C Assets\\Content\\Shaders\\Standard\\Include\\StandardLayers.cginc"
+    "Comment": "Removed some #if UNITY_2021_3_OR_NEWER defines now that we've finally updated",
+    "Author": "jarryd",
+    "Date": "08/11/2023 21:39:10",
+    "Items": "C Assets\\Scripts\\Entity\\Player\\Components\\PlayerModel.cs"
   },
   "Build": {
-    "Id": "5262",
-    "Number": "5262",
-    "Tag": "jenkins-RustServer-5262",
-    "Url": "https://build.facepunch.com/job/RustServer/5262/",
+    "Id": "5264",
+    "Number": "5264",
+    "Tag": "jenkins-RustServer-5264",
+    "Url": "https://build.facepunch.com/job/RustServer/5264/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1699378198,
-  "DateString": "7 11 2023",
-  "TimeString": "17:29"
+  "Date": 1699556415,
+  "DateString": "9 11 2023",
+  "TimeString": "19:00"
 }
