@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "89642",
+    "ChangeId": "89658",
     "Branch": "Aux2",
     "Repo": "rust_reboot",
-    "Comment": "Merge from tutorial_island",
-    "Author": "jarryd",
-    "Date": "09/11/2023 01:11:23",
-    "Items": "C Assets\\Scripts\\Entity\\Player\\BasePlayer-Server.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-Tutorial.cs \r\n C Assets\\Scripts\\Entity\\Misc\\SleepingBag.cs \r\n C Assets\\Scripts\\UI\\CompassMissionMarker.cs \r\n C Assets\\Scripts\\UI\\Ingame\\Map\\MissionMapMarker.cs \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialIsland.cs"
+    "Comment": "merge from building_skins_4",
+    "Author": "alistair",
+    "Date": "09/11/2023 08:08:55",
+    "Items": "C Assets\\Prefabs\\Building Core\\roof.triangle\\roof.triangle.gingerbread.prefab"
   },
   "Build": {
-    "Id": "550",
-    "Number": "550",
-    "Tag": "jenkins-RustServerAux02-550",
-    "Url": "https://build.facepunch.com/job/RustServerAux02/550/",
+    "Id": "552",
+    "Number": "552",
+    "Tag": "jenkins-RustServerAux02-552",
+    "Url": "https://build.facepunch.com/job/RustServerAux02/552/",
     "Name": "RustServerAux02",
     "Node": "Win4"
   },
-  "Date": 1699499398,
+  "Date": 1699528222,
   "DateString": "9 11 2023",
-  "TimeString": "03:09"
+  "TimeString": "11:10"
 }
