@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "89676",
+    "ChangeId": "89697",
     "Branch": "Aux2",
     "Repo": "rust_reboot",
     "Comment": "Merge from tutorial_island",
     "Author": "jarryd",
-    "Date": "09/11/2023 22:09:34",
-    "Items": "C Assets\\Scripts\\Mission\\BaseMission.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-Tick.cs \r\n C Assets\\Third Party\\Terrain To Mesh\\Scripts\\AmazingAssets.TerrainToMesh.dll.meta \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialMission08_Objective_MoveKayak.asset \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\CinematicScenePlaybackEntity.cs \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\EndCinematic\\EndTimeline.playable.meta \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\KillPlayerSignal.signal.meta \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\EndTutorialCinematic.prefab \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialIsland.cs \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialIsland.prefab \r\n A Assets\\Scripts\\Mission\\Objectives\\MissionObjective_EnterTrigger.cs \r\n A Assets\\Scripts\\Mission\\Objectives\\MissionObjective_EnterTrigger.cs.meta \r\n A Assets\\Scripts\\Mission\\TriggerMission.cs \r\n A Assets\\Scripts\\Mission\\TriggerMission.cs.meta"
+    "Date": "10/11/2023 05:41:13",
+    "Items": "C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialIsland.cs"
   },
   "Build": {
-    "Id": "554",
-    "Number": "554",
-    "Tag": "jenkins-RustServerAux02-554",
-    "Url": "https://build.facepunch.com/job/RustServerAux02/554/",
+    "Id": "556",
+    "Number": "556",
+    "Tag": "jenkins-RustServerAux02-556",
+    "Url": "https://build.facepunch.com/job/RustServerAux02/556/",
     "Name": "RustServerAux02",
     "Node": "Win4"
   },
-  "Date": 1699574306,
-  "DateString": "9 11 2023",
-  "TimeString": "23:58"
+  "Date": 1699597653,
+  "DateString": "10 11 2023",
+  "TimeString": "06:27"
 }
