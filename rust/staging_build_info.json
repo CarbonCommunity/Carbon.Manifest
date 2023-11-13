@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "89631",
+    "ChangeId": "89718",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Removed some #if UNITY_2021_3_OR_NEWER defines now that we've finally updated",
-    "Author": "jarryd",
-    "Date": "08/11/2023 21:39:10",
-    "Items": "C Assets\\Scripts\\Entity\\Player\\Components\\PlayerModel.cs"
+    "Comment": "~!skin approval",
+    "Author": "helkus",
+    "Date": "10/11/2023 20:14:15",
+    "Items": "C Prerequisites\\SteamInventory\\generator.json \r\n C Prerequisites\\SteamInventory\\Icons\\584379.png \r\n C Prerequisites\\SteamInventory\\PaymentRules.csv \r\n C Prerequisites\\SteamInventory\\schema-full.json \r\n C Prerequisites\\SteamInventory\\schema-new.json \r\n C Prerequisites\\SteamInventory\\schema-old.json \r\n C Assets\\Plugins\\Rust.Workshop\\Approved.2023.cs \r\n A Prerequisites\\SteamInventory\\Icons\\55800.png \r\n A Prerequisites\\SteamInventory\\Icons\\55801.png \r\n A Prerequisites\\SteamInventory\\Icons\\55802.png \r\n A Prerequisites\\SteamInventory\\Icons\\55803.png \r\n A Prerequisites\\SteamInventory\\Icons\\55804.png \r\n A Prerequisites\\SteamInventory\\Icons\\55805.png \r\n A Prerequisites\\SteamInventory\\Icons\\55806.png \r\n A Prerequisites\\SteamInventory\\Icons\\55807.png \r\n A Prerequisites\\SteamInventory\\Icons\\55808.png \r\n A Prerequisites\\SteamInventory\\Icons\\55809.png \r\n A Prerequisites\\SteamInventory\\Icons\\55810.png \r\n A Prerequisites\\SteamInventory\\Icons\\55811.png"
   },
   "Build": {
-    "Id": "5264",
-    "Number": "5264",
-    "Tag": "jenkins-RustServer-5264",
-    "Url": "https://build.facepunch.com/job/RustServer/5264/",
+    "Id": "5267",
+    "Number": "5267",
+    "Tag": "jenkins-RustServer-5267",
+    "Url": "https://build.facepunch.com/job/RustServer/5267/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1699556415,
-  "DateString": "9 11 2023",
-  "TimeString": "19:00"
+  "Date": 1699885245,
+  "DateString": "13 11 2023",
+  "TimeString": "14:20"
 }
