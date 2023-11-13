@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "89730",
+    "ChangeId": "89742",
     "Branch": "Aux2",
     "Repo": "rust_reboot",
     "Comment": "Merge from tutorial_island",
     "Author": "jarryd",
-    "Date": "12/11/2023 22:29:19",
-    "Items": "C Prerequisites\\SteamInventory\\generator.json \r\n C Prerequisites\\SteamInventory\\Icons\\584379.png \r\n C Prerequisites\\SteamInventory\\PaymentRules.csv \r\n C Prerequisites\\SteamInventory\\schema-full.json \r\n C Prerequisites\\SteamInventory\\schema-new.json \r\n C Prerequisites\\SteamInventory\\schema-old.json \r\n C Assets\\Generated\\ConsoleSystem.cs \r\n C Assets\\Plugins\\Rust.Workshop\\Approved.2023.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-Tick.cs \r\n C Assets\\Scripts\\Entity\\Player\\Components\\PlayerModel.cs \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialIsland.cs \r\n A Prerequisites\\SteamInventory\\Icons\\55800.png \r\n A Prerequisites\\SteamInventory\\Icons\\55801.png \r\n A Prerequisites\\SteamInventory\\Icons\\55802.png \r\n A Prerequisites\\SteamInventory\\Icons\\55803.png \r\n A Prerequisites\\SteamInventory\\Icons\\55804.png \r\n A Prerequisites\\SteamInventory\\Icons\\55805.png \r\n A Prerequisites\\SteamInventory\\Icons\\55806.png \r\n A Prerequisites\\SteamInventory\\Icons\\55807.png \r\n A Prerequisites\\SteamInventory\\Icons\\55808.png \r\n A Prerequisites\\SteamInventory\\Icons\\55809.png \r\n A Prerequisites\\SteamInventory\\Icons\\55810.png \r\n A Prerequisites\\SteamInventory\\Icons\\55811.png"
+    "Date": "13/11/2023 05:34:36",
+    "Items": "C Assets\\Scripts\\Building\\SocketMod_TerrainCheck.cs \r\n C Assets\\Scripts\\Game\\ValidBounds.cs \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialIsland.cs"
   },
   "Build": {
-    "Id": "558",
-    "Number": "558",
-    "Tag": "jenkins-RustServerAux02-558",
-    "Url": "https://build.facepunch.com/job/RustServerAux02/558/",
+    "Id": "560",
+    "Number": "560",
+    "Tag": "jenkins-RustServerAux02-560",
+    "Url": "https://build.facepunch.com/job/RustServerAux02/560/",
     "Name": "RustServerAux02",
     "Node": "Win4"
   },
-  "Date": 1699835179,
+  "Date": 1699865072,
   "DateString": "13 11 2023",
-  "TimeString": "00:26"
+  "TimeString": "08:44"
 }
