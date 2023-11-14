@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "89767",
+    "ChangeId": "89777",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "merge from fix_wire_tool_reconnect + fix_wire_reconnect_nre",
+    "Comment": "merge from fix_skin_item_sfx",
     "Author": "alistair",
-    "Date": "14/11/2023 07:39:37",
-    "Items": "C Assets\\Prefabs\\Tools\\Wire\\WireTool.cs"
+    "Date": "14/11/2023 12:26:08",
+    "Items": "C Assets\\Scripts\\Entity\\Construction\\RepairBench.cs"
   },
   "Build": {
-    "Id": "5269",
-    "Number": "5269",
-    "Tag": "jenkins-RustServer-5269",
-    "Url": "https://build.facepunch.com/job/RustServer/5269/",
+    "Id": "5271",
+    "Number": "5271",
+    "Tag": "jenkins-RustServer-5271",
+    "Url": "https://build.facepunch.com/job/RustServer/5271/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1699953474,
+  "Date": 1699970887,
   "DateString": "14 11 2023",
-  "TimeString": "09:17"
+  "TimeString": "14:08"
 }
