@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "89718",
+    "ChangeId": "89767",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "~!skin approval",
-    "Author": "helkus",
-    "Date": "10/11/2023 20:14:15",
-    "Items": "C Prerequisites\\SteamInventory\\generator.json \r\n C Prerequisites\\SteamInventory\\Icons\\584379.png \r\n C Prerequisites\\SteamInventory\\PaymentRules.csv \r\n C Prerequisites\\SteamInventory\\schema-full.json \r\n C Prerequisites\\SteamInventory\\schema-new.json \r\n C Prerequisites\\SteamInventory\\schema-old.json \r\n C Assets\\Plugins\\Rust.Workshop\\Approved.2023.cs \r\n A Prerequisites\\SteamInventory\\Icons\\55800.png \r\n A Prerequisites\\SteamInventory\\Icons\\55801.png \r\n A Prerequisites\\SteamInventory\\Icons\\55802.png \r\n A Prerequisites\\SteamInventory\\Icons\\55803.png \r\n A Prerequisites\\SteamInventory\\Icons\\55804.png \r\n A Prerequisites\\SteamInventory\\Icons\\55805.png \r\n A Prerequisites\\SteamInventory\\Icons\\55806.png \r\n A Prerequisites\\SteamInventory\\Icons\\55807.png \r\n A Prerequisites\\SteamInventory\\Icons\\55808.png \r\n A Prerequisites\\SteamInventory\\Icons\\55809.png \r\n A Prerequisites\\SteamInventory\\Icons\\55810.png \r\n A Prerequisites\\SteamInventory\\Icons\\55811.png"
+    "Comment": "merge from fix_wire_tool_reconnect + fix_wire_reconnect_nre",
+    "Author": "alistair",
+    "Date": "14/11/2023 07:39:37",
+    "Items": "C Assets\\Prefabs\\Tools\\Wire\\WireTool.cs"
   },
   "Build": {
-    "Id": "5267",
-    "Number": "5267",
-    "Tag": "jenkins-RustServer-5267",
-    "Url": "https://build.facepunch.com/job/RustServer/5267/",
+    "Id": "5269",
+    "Number": "5269",
+    "Tag": "jenkins-RustServer-5269",
+    "Url": "https://build.facepunch.com/job/RustServer/5269/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1699885245,
-  "DateString": "13 11 2023",
-  "TimeString": "14:20"
+  "Date": 1699953474,
+  "DateString": "14 11 2023",
+  "TimeString": "09:17"
 }
