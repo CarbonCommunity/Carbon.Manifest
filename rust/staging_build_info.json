@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "89810",
+    "ChangeId": "89826",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "More compile fixes for gizmos",
+    "Comment": "Update my ColliderShrinkToFit editor to Unity 2021 style",
     "Author": "BillBorman",
-    "Date": "14/11/2023 23:08:07",
-    "Items": "C Assets\\Scripts\\Game\\ValidBounds.cs \r\n C Assets\\Prefabs\\NPC\\M2Bradley\\Scripts\\PathSpeedZone.cs \r\n C Assets\\Rust.Ai\\AIInformationZone\\AIInformationZone.cs \r\n C Assets\\Rust.Ai\\NavMesh\\DungeonNavMesh.cs \r\n C Assets\\Rust.Ai\\NavMesh\\MonumentNavMesh.cs"
+    "Date": "15/11/2023 02:59:14",
+    "Items": "C Assets\\Editor\\Rust\\ColliderShrinkToFit.cs"
   },
   "Build": {
-    "Id": "5277",
-    "Number": "5277",
-    "Tag": "jenkins-RustServer-5277",
-    "Url": "https://build.facepunch.com/job/RustServer/5277/",
+    "Id": "5279",
+    "Number": "5279",
+    "Tag": "jenkins-RustServer-5279",
+    "Url": "https://build.facepunch.com/job/RustServer/5279/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1700008216,
+  "Date": 1700018749,
   "DateString": "15 11 2023",
-  "TimeString": "00:30"
+  "TimeString": "03:25"
 }
