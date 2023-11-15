@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "89826",
+    "ChangeId": "89828",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Update my ColliderShrinkToFit editor to Unity 2021 style",
+    "Comment": "Remove log in IgnoreCollision trigger",
     "Author": "BillBorman",
-    "Date": "15/11/2023 02:59:14",
-    "Items": "C Assets\\Editor\\Rust\\ColliderShrinkToFit.cs"
+    "Date": "15/11/2023 03:46:25",
+    "Items": "C Assets\\Scripts\\Util\\Components\\IgnoreCollision.cs"
   },
   "Build": {
-    "Id": "5279",
-    "Number": "5279",
-    "Tag": "jenkins-RustServer-5279",
-    "Url": "https://build.facepunch.com/job/RustServer/5279/",
+    "Id": "5281",
+    "Number": "5281",
+    "Tag": "jenkins-RustServer-5281",
+    "Url": "https://build.facepunch.com/job/RustServer/5281/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1700018749,
+  "Date": 1700025490,
   "DateString": "15 11 2023",
-  "TimeString": "03:25"
+  "TimeString": "05:18"
 }
