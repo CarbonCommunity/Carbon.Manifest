@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "89777",
+    "ChangeId": "89810",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "merge from fix_skin_item_sfx",
-    "Author": "alistair",
-    "Date": "14/11/2023 12:26:08",
-    "Items": "C Assets\\Scripts\\Entity\\Construction\\RepairBench.cs"
+    "Comment": "More compile fixes for gizmos",
+    "Author": "BillBorman",
+    "Date": "14/11/2023 23:08:07",
+    "Items": "C Assets\\Scripts\\Game\\ValidBounds.cs \r\n C Assets\\Prefabs\\NPC\\M2Bradley\\Scripts\\PathSpeedZone.cs \r\n C Assets\\Rust.Ai\\AIInformationZone\\AIInformationZone.cs \r\n C Assets\\Rust.Ai\\NavMesh\\DungeonNavMesh.cs \r\n C Assets\\Rust.Ai\\NavMesh\\MonumentNavMesh.cs"
   },
   "Build": {
-    "Id": "5271",
-    "Number": "5271",
-    "Tag": "jenkins-RustServer-5271",
-    "Url": "https://build.facepunch.com/job/RustServer/5271/",
+    "Id": "5277",
+    "Number": "5277",
+    "Tag": "jenkins-RustServer-5277",
+    "Url": "https://build.facepunch.com/job/RustServer/5277/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1699970887,
-  "DateString": "14 11 2023",
-  "TimeString": "14:08"
+  "Date": 1700008216,
+  "DateString": "15 11 2023",
+  "TimeString": "00:30"
 }
