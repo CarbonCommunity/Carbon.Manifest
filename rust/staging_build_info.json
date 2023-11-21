@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "89828",
+    "ChangeId": "90118",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Remove log in IgnoreCollision trigger",
-    "Author": "BillBorman",
-    "Date": "15/11/2023 03:46:25",
-    "Items": "C Assets\\Scripts\\Util\\Components\\IgnoreCollision.cs"
+    "Comment": "~!backup",
+    "Author": "helkus",
+    "Date": "21/11/2023 21:30:21",
+    "Items": "C Prerequisites\\SteamInventory\\generator.json \r\n C Prerequisites\\SteamInventory\\Icons\\584379.png \r\n C Prerequisites\\SteamInventory\\PaymentRules.csv \r\n C Prerequisites\\SteamInventory\\schema-full.json \r\n C Prerequisites\\SteamInventory\\schema-new.json \r\n C Prerequisites\\SteamInventory\\schema-old.json \r\n C Assets\\Plugins\\Rust.Workshop\\Approved.2023.cs \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\BaseDecorDLC_Frontier.asset \r\n A Prerequisites\\SteamInventory\\Icons\\55900.png \r\n A Prerequisites\\SteamInventory\\Icons\\55901.png \r\n A Prerequisites\\SteamInventory\\Icons\\55902.png \r\n A Prerequisites\\SteamInventory\\Icons\\55903.png \r\n A Prerequisites\\SteamInventory\\Icons\\55904.png \r\n A Prerequisites\\SteamInventory\\Icons\\55905.png \r\n A Prerequisites\\SteamInventory\\Icons\\55906.png \r\n A Prerequisites\\SteamInventory\\Icons\\55907.png \r\n A Prerequisites\\SteamInventory\\Icons\\55908.png \r\n A Prerequisites\\SteamInventory\\Icons\\55909.png \r\n A Prerequisites\\SteamInventory\\Icons\\55910.png"
   },
   "Build": {
-    "Id": "5281",
-    "Number": "5281",
-    "Tag": "jenkins-RustServer-5281",
-    "Url": "https://build.facepunch.com/job/RustServer/5281/",
+    "Id": "5314",
+    "Number": "5314",
+    "Tag": "jenkins-RustServer-5314",
+    "Url": "https://build.facepunch.com/job/RustServer/5314/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1700025490,
-  "DateString": "15 11 2023",
-  "TimeString": "05:18"
+  "Date": 1700602993,
+  "DateString": "21 11 2023",
+  "TimeString": "21:43"
 }

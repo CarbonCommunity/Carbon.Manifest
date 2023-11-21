@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "89824",
+    "ChangeId": "90082",
     "Branch": "Aux2",
     "Repo": "rust_reboot",
-    "Comment": "Merge from tutorial_island",
-    "Author": "jarryd",
-    "Date": "15/11/2023 01:33:55",
-    "Items": "C Assets\\Scripts\\Audio\\SoundSource.cs \r\n C Assets\\Scripts\\Procedural\\Water\\WaterCullingVolume.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-Tutorial.cs \r\n C Assets\\Content\\Developer\\dev.camera.mat \r\n C Assets\\Content\\Effects\\Materials\\Water\\Splash_Foam_Refract.mat \r\n C Assets\\Content\\Effects\\Materials\\Water\\Bubble_Underwater_01.mat \r\n C Assets\\Content\\Nature\\Underwater_plants\\models\\Materials\\underwater_plants.mat \r\n C Assets\\Content\\Props\\abandonned_raft\\models\\Materials\\raft_sail.mat \r\n C Assets\\Content\\Props\\bollard\\Models\\Materials\\bollards_rope.mat \r\n C Assets\\Content\\Props\\bollard\\Models\\Materials\\bollards.mat \r\n C Assets\\Content\\Props\\bollard\\Models\\Materials\\bollards_paint_white.mat \r\n C Assets\\Content\\Props\\pots\\Materials\\kettle milkchurn moonshine.mat \r\n C Assets\\Content\\Props\\pipes\\Models\\Materials\\pipes.mat \r\n C Assets\\Content\\Props\\industrial_fixtures\\Models\\Materials\\vents.mat \r\n C Assets\\Content\\Props\\small_junk\\models\\Materials\\small_junk.mat \r\n C Assets\\Content\\Props\\truck_barrier_guide\\models\\Materials\\truck_barrier_guide.mat \r\n C Assets\\Content\\Props\\light_fixtures\\Models\\Materials\\light_fixtures.mat \r\n C Assets\\Content\\Props\\light_fixtures\\Models\\Materials\\light_fixtures_EM_G.mat \r\n C Assets\\Content\\Props\\light_fixtures\\Models\\Materials\\Cargoship\\light_fixtures_CargoShipWarm.mat \r\n C Assets\\Content\\Structures\\Harbor\\Tugboat\\Models\\Materials\\bollards.mat \r\n C Assets\\Content\\Structures\\Harbor\\Tugboat\\Models\\Materials\\tugboat_props.mat \r\n C Assets\\Content\\UI\\PlayerPreviewSegments.mat \r\n C Assets\\Content\\Vehicles\\Submarine\\Effects\\Materials\\sonar_sweep_tugstyle.mat \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialIsland.cs \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialIsland.prefab \r\n C Assets\\Prefabs\\Deployable\\Research Table\\Materials\\research_table.mat \r\n C Assets\\Prefabs\\Misc\\Summer_DLC\\beach_chair\\materials\\milkcrate_table.mat \r\n C Assets\\Prefabs\\Misc\\XMas\\Christmas_props\\Assets\\Materials\\Box_1.mat"
+    "Comment": "Fixed UNITY_EDITOR define going too low, causing RPCSyncJoints error in server build",
+    "Author": "BillBorman",
+    "Date": "21/11/2023 09:38:55",
+    "Items": "C Assets\\Scripts\\Shared\\Ragdoll.cs"
   },
   "Build": {
-    "Id": "562",
-    "Number": "562",
-    "Tag": "jenkins-RustServerAux02-562",
-    "Url": "https://build.facepunch.com/job/RustServerAux02/562/",
+    "Id": "566",
+    "Number": "566",
+    "Tag": "jenkins-RustServerAux02-566",
+    "Url": "https://build.facepunch.com/job/RustServerAux02/566/",
     "Name": "RustServerAux02",
     "Node": "Win4"
   },
-  "Date": 1700020029,
-  "DateString": "15 11 2023",
-  "TimeString": "03:47"
+  "Date": 1700604965,
+  "DateString": "21 11 2023",
+  "TimeString": "22:16"
 }
