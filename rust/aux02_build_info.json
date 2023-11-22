@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90082",
+    "ChangeId": "90143",
     "Branch": "Aux2",
     "Repo": "rust_reboot",
-    "Comment": "Fixed UNITY_EDITOR define going too low, causing RPCSyncJoints error in server build",
-    "Author": "BillBorman",
-    "Date": "21/11/2023 09:38:55",
-    "Items": "C Assets\\Scripts\\Shared\\Ragdoll.cs"
+    "Comment": "Merge from tutorial_island",
+    "Author": "jarryd",
+    "Date": "22/11/2023 02:33:37",
+    "Items": "C Assets\\Scripts\\UI\\Ingame\\GameTip.cs \r\n C Assets\\Content\\Nature\\TreesSource\\Birch\\Models\\Materials\\birch_temperate.mat"
   },
   "Build": {
-    "Id": "566",
-    "Number": "566",
-    "Tag": "jenkins-RustServerAux02-566",
-    "Url": "https://build.facepunch.com/job/RustServerAux02/566/",
+    "Id": "569",
+    "Number": "569",
+    "Tag": "jenkins-RustServerAux02-569",
+    "Url": "https://build.facepunch.com/job/RustServerAux02/569/",
     "Name": "RustServerAux02",
     "Node": "Win4"
   },
-  "Date": 1700604965,
-  "DateString": "21 11 2023",
-  "TimeString": "22:16"
+  "Date": 1700624082,
+  "DateString": "22 11 2023",
+  "TimeString": "03:34"
 }
