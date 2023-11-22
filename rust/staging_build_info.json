@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90158",
+    "ChangeId": "90179",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "merge from HABParentingFix",
-    "Author": "alistair",
-    "Date": "22/11/2023 08:14:49",
-    "Items": "C Assets\\Prefabs\\Deployable\\Hot Air Balloon\\HotAirBalloon.prefab"
+    "Comment": "Re-enabled Tugboat deployment for the Twitch Rivals desk",
+    "Author": "BillBorman",
+    "Date": "22/11/2023 21:43:12",
+    "Items": "C Assets\\Prefabs\\Misc\\Twitch\\Twitch_rivals_2023_desk\\twitchrivals2023_desk.prefab"
   },
   "Build": {
-    "Id": "5320",
-    "Number": "5320",
-    "Tag": "jenkins-RustServer-5320",
-    "Url": "https://build.facepunch.com/job/RustServer/5320/",
+    "Id": "5322",
+    "Number": "5322",
+    "Tag": "jenkins-RustServer-5322",
+    "Url": "https://build.facepunch.com/job/RustServer/5322/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1700662214,
+  "Date": 1700693064,
   "DateString": "22 11 2023",
-  "TimeString": "14:10"
+  "TimeString": "22:44"
 }
