@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90118",
+    "ChangeId": "90134",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "~!backup",
-    "Author": "helkus",
-    "Date": "21/11/2023 21:30:21",
-    "Items": "C Prerequisites\\SteamInventory\\generator.json \r\n C Prerequisites\\SteamInventory\\Icons\\584379.png \r\n C Prerequisites\\SteamInventory\\PaymentRules.csv \r\n C Prerequisites\\SteamInventory\\schema-full.json \r\n C Prerequisites\\SteamInventory\\schema-new.json \r\n C Prerequisites\\SteamInventory\\schema-old.json \r\n C Assets\\Plugins\\Rust.Workshop\\Approved.2023.cs \r\n C Assets\\Prefabs\\Misc\\Decor_DLC\\BaseDecorDLC_Frontier.asset \r\n A Prerequisites\\SteamInventory\\Icons\\55900.png \r\n A Prerequisites\\SteamInventory\\Icons\\55901.png \r\n A Prerequisites\\SteamInventory\\Icons\\55902.png \r\n A Prerequisites\\SteamInventory\\Icons\\55903.png \r\n A Prerequisites\\SteamInventory\\Icons\\55904.png \r\n A Prerequisites\\SteamInventory\\Icons\\55905.png \r\n A Prerequisites\\SteamInventory\\Icons\\55906.png \r\n A Prerequisites\\SteamInventory\\Icons\\55907.png \r\n A Prerequisites\\SteamInventory\\Icons\\55908.png \r\n A Prerequisites\\SteamInventory\\Icons\\55909.png \r\n A Prerequisites\\SteamInventory\\Icons\\55910.png"
+    "Comment": "Fixed airfield black tiles when running in low shader quality",
+    "Author": "diogo",
+    "Date": "22/11/2023 00:42:59",
+    "Items": "C Assets\\Content\\Shaders\\Standard\\Standard-BlendLayer.shader \r\n C Assets\\Content\\Shaders\\Standard\\Standard-BlendLayer-Specular.shader"
   },
   "Build": {
-    "Id": "5314",
-    "Number": "5314",
-    "Tag": "jenkins-RustServer-5314",
-    "Url": "https://build.facepunch.com/job/RustServer/5314/",
+    "Id": "5316",
+    "Number": "5316",
+    "Tag": "jenkins-RustServer-5316",
+    "Url": "https://build.facepunch.com/job/RustServer/5316/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1700602993,
-  "DateString": "21 11 2023",
-  "TimeString": "21:43"
+  "Date": 1700617412,
+  "DateString": "22 11 2023",
+  "TimeString": "01:43"
 }
