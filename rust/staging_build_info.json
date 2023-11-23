@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90204",
+    "ChangeId": "90213",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "merge from DisableNonMovingItems",
-    "Author": "alistair",
-    "Date": "23/11/2023 08:53:35",
-    "Items": "C Assets\\Scripts\\Entity\\Player\\BasePlayer-Projectile.cs \r\n C Assets\\Scripts\\Entity\\WorldItem\\DroppedItem.cs"
+    "Comment": "~ More materials",
+    "Author": "andre",
+    "Date": "23/11/2023 13:53:05",
+    "Items": "C Assets\\Prefabs\\Building\\legacy.shelter.wood\\models \r\n C Assets\\Prefabs\\Building\\legacy.shelter.wood\\models\\Materials \r\n C Assets\\Prefabs\\Building\\legacy.shelter.wood\\models\\Materials\\legacy_wood_shelter_LOD2.mat \r\n C Assets\\Content\\Building\\materials\\building_parts_atlas.mat \r\n C Assets\\Content\\Props\\folding_chairs\\models \r\n C Assets\\Content\\Props\\folding_chairs\\models\\Materials \r\n C Assets\\Content\\Props\\folding_chairs\\models\\Materials\\folding_chair_clean_black.mat \r\n C Assets\\Content\\Props\\folding_chairs\\models\\Materials\\folding_chair_clean_blue.mat \r\n C Assets\\Content\\Props\\folding_chairs\\models\\Materials\\folding_chair_clean_green.mat \r\n C Assets\\Content\\Props\\folding_chairs\\models\\Materials\\folding_chair_clean_red.mat \r\n C Assets\\Content\\Props\\folding_chairs\\models\\Materials\\folding_chair_clean.mat \r\n C Assets\\Content\\Props\\folding_chairs\\models\\Materials\\folding_chair_metal.mat \r\n C Assets\\Content\\Props\\folding_chairs\\models\\Materials\\folding_chair_rusty_black.mat \r\n C Assets\\Content\\Props\\folding_chairs\\models\\Materials\\folding_chair_rusty_blue.mat \r\n C Assets\\Content\\Props\\folding_chairs\\models\\Materials\\folding_chair_rusty_green.mat \r\n C Assets\\Content\\Props\\folding_chairs\\models\\Materials\\folding_chair_rusty_red.mat \r\n C Assets\\Content\\Props\\folding_chairs\\models\\Materials\\folding_chair_rusty.mat"
   },
   "Build": {
-    "Id": "5324",
-    "Number": "5324",
-    "Tag": "jenkins-RustServer-5324",
-    "Url": "https://build.facepunch.com/job/RustServer/5324/",
+    "Id": "5326",
+    "Number": "5326",
+    "Tag": "jenkins-RustServer-5326",
+    "Url": "https://build.facepunch.com/job/RustServer/5326/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1700732548,
+  "Date": 1700751530,
   "DateString": "23 11 2023",
-  "TimeString": "09:42"
+  "TimeString": "14:58"
 }
