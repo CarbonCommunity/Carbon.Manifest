@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90280",
+    "ChangeId": "90311",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "merge from qol_drone_id_inventory",
-    "Author": "alistair",
-    "Date": "24/11/2023 08:31:16",
-    "Items": "C Assets\\bundled\\Prefabs\\ui\\GameUI.prefab \r\n C Assets\\Content\\UI\\GameUI\\GameUI.Inventory.prefab \r\n A Assets\\Scripts\\UI\\Inventory\\DroneInformationPanel.cs \r\n A Assets\\Scripts\\UI\\Inventory\\DroneInformationPanel.cs.meta \r\n A Assets\\Content\\UI\\GameUI\\UI.InfoPanel.DroneInfo.prefab \r\n A Assets\\Content\\UI\\GameUI\\UI.InfoPanel.DroneInfo.prefab.meta"
+    "Comment": "Update Facepunch.Flexbox to get new features and bug fixes (prefabs shouldn't dirty themselves anymore hopefully)",
+    "Author": "rohan",
+    "Date": "25/11/2023 05:42:06",
+    "Items": "C Assets\\Plugins\\Rust.UI\\Controls\\RustFlexText.cs \r\n C Assets\\Plugins\\Facepunch.Flexbox\\Enums.cs \r\n C Assets\\Plugins\\Facepunch.Flexbox\\FlexChildEnumerable.cs \r\n C Assets\\Plugins\\Facepunch.Flexbox\\FlexElement.cs \r\n C Assets\\Plugins\\Facepunch.Flexbox\\FlexLayoutManager.cs \r\n C Assets\\Plugins\\Facepunch.Flexbox\\FlexText.cs \r\n C Assets\\Plugins\\Facepunch.Flexbox\\IFlexNode.cs \r\n C Assets\\Plugins\\Facepunch.Flexbox\\Editor\\FlexElementEditor.cs \r\n C Assets\\Plugins\\Facepunch.Flexbox\\FlexUtility.cs \r\n A Assets\\Plugins\\Facepunch.Flexbox\\Editor\\FlexColumnsElementEditor.cs \r\n A Assets\\Plugins\\Facepunch.Flexbox\\Editor\\FlexColumnsElementEditor.cs.meta \r\n A Assets\\Plugins\\Facepunch.Flexbox\\Editor\\FlexElementEditorBase.cs \r\n A Assets\\Plugins\\Facepunch.Flexbox\\Editor\\FlexElementEditorBase.cs.meta \r\n A Assets\\Plugins\\Facepunch.Flexbox\\Editor\\FlexValuePropertyDrawer.cs \r\n A Assets\\Plugins\\Facepunch.Flexbox\\Editor\\FlexValuePropertyDrawer.cs.meta \r\n A Assets\\Plugins\\Facepunch.Flexbox\\FlexColumnsElement.cs \r\n A Assets\\Plugins\\Facepunch.Flexbox\\FlexColumnsElement.cs.meta \r\n A Assets\\Plugins\\Facepunch.Flexbox\\FlexElementBase.cs \r\n A Assets\\Plugins\\Facepunch.Flexbox\\FlexElementBase.cs.meta \r\n A Assets\\Plugins\\Facepunch.Flexbox\\FlexValue.cs \r\n A Assets\\Plugins\\Facepunch.Flexbox\\FlexValue.cs.meta"
   },
   "Build": {
-    "Id": "5329",
-    "Number": "5329",
-    "Tag": "jenkins-RustServer-5329",
-    "Url": "https://build.facepunch.com/job/RustServer/5329/",
+    "Id": "5330",
+    "Number": "5330",
+    "Tag": "jenkins-RustServer-5330",
+    "Url": "https://build.facepunch.com/job/RustServer/5330/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1700816283,
-  "DateString": "24 11 2023",
-  "TimeString": "08:58"
+  "Date": 1700892959,
+  "DateString": "25 11 2023",
+  "TimeString": "06:15"
 }
