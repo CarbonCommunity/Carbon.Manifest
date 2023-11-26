@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90311",
+    "ChangeId": "90325",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Update Facepunch.Flexbox to get new features and bug fixes (prefabs shouldn't dirty themselves anymore hopefully)",
-    "Author": "rohan",
-    "Date": "25/11/2023 05:42:06",
-    "Items": "C Assets\\Plugins\\Rust.UI\\Controls\\RustFlexText.cs \r\n C Assets\\Plugins\\Facepunch.Flexbox\\Enums.cs \r\n C Assets\\Plugins\\Facepunch.Flexbox\\FlexChildEnumerable.cs \r\n C Assets\\Plugins\\Facepunch.Flexbox\\FlexElement.cs \r\n C Assets\\Plugins\\Facepunch.Flexbox\\FlexLayoutManager.cs \r\n C Assets\\Plugins\\Facepunch.Flexbox\\FlexText.cs \r\n C Assets\\Plugins\\Facepunch.Flexbox\\IFlexNode.cs \r\n C Assets\\Plugins\\Facepunch.Flexbox\\Editor\\FlexElementEditor.cs \r\n C Assets\\Plugins\\Facepunch.Flexbox\\FlexUtility.cs \r\n A Assets\\Plugins\\Facepunch.Flexbox\\Editor\\FlexColumnsElementEditor.cs \r\n A Assets\\Plugins\\Facepunch.Flexbox\\Editor\\FlexColumnsElementEditor.cs.meta \r\n A Assets\\Plugins\\Facepunch.Flexbox\\Editor\\FlexElementEditorBase.cs \r\n A Assets\\Plugins\\Facepunch.Flexbox\\Editor\\FlexElementEditorBase.cs.meta \r\n A Assets\\Plugins\\Facepunch.Flexbox\\Editor\\FlexValuePropertyDrawer.cs \r\n A Assets\\Plugins\\Facepunch.Flexbox\\Editor\\FlexValuePropertyDrawer.cs.meta \r\n A Assets\\Plugins\\Facepunch.Flexbox\\FlexColumnsElement.cs \r\n A Assets\\Plugins\\Facepunch.Flexbox\\FlexColumnsElement.cs.meta \r\n A Assets\\Plugins\\Facepunch.Flexbox\\FlexElementBase.cs \r\n A Assets\\Plugins\\Facepunch.Flexbox\\FlexElementBase.cs.meta \r\n A Assets\\Plugins\\Facepunch.Flexbox\\FlexValue.cs \r\n A Assets\\Plugins\\Facepunch.Flexbox\\FlexValue.cs.meta"
+    "Comment": "",
+    "Author": "alistair",
+    "Date": "26/11/2023 19:00:28",
+    "Items": "C Assets\\Prefabs\\Deployable\\Barricades\\barricade.concrete.prefab"
   },
   "Build": {
-    "Id": "5330",
-    "Number": "5330",
-    "Tag": "jenkins-RustServer-5330",
-    "Url": "https://build.facepunch.com/job/RustServer/5330/",
+    "Id": "5331",
+    "Number": "5331",
+    "Tag": "jenkins-RustServer-5331",
+    "Url": "https://build.facepunch.com/job/RustServer/5331/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1700892959,
-  "DateString": "25 11 2023",
-  "TimeString": "06:15"
+  "Date": 1701026818,
+  "DateString": "26 11 2023",
+  "TimeString": "19:26"
 }
