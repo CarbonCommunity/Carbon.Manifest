@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90325",
+    "ChangeId": "90339",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "",
-    "Author": "alistair",
-    "Date": "26/11/2023 19:00:28",
-    "Items": "C Assets\\Prefabs\\Deployable\\Barricades\\barricade.concrete.prefab"
+    "Comment": "Slight change to buoyancy shouldSleep rule",
+    "Author": "BillBorman",
+    "Date": "27/11/2023 04:03:40",
+    "Items": "C Assets\\Scripts\\Entity\\Vehicle\\Boat\\Buoyancy.cs"
   },
   "Build": {
-    "Id": "5331",
-    "Number": "5331",
-    "Tag": "jenkins-RustServer-5331",
-    "Url": "https://build.facepunch.com/job/RustServer/5331/",
+    "Id": "5332",
+    "Number": "5332",
+    "Tag": "jenkins-RustServer-5332",
+    "Url": "https://build.facepunch.com/job/RustServer/5332/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1701026818,
-  "DateString": "26 11 2023",
-  "TimeString": "19:26"
+  "Date": 1701058935,
+  "DateString": "27 11 2023",
+  "TimeString": "04:22"
 }
