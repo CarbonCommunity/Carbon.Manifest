@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90469",
+    "ChangeId": "90470",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "removed duplicate lod group",
-    "Author": "mattisaac",
-    "Date": "28/11/2023 21:47:46",
-    "Items": "C Assets\\Prefabs\\Misc\\trophy_2023\\trophy_2023.deployed.prefab"
+    "Comment": "EmissionOffsetStepped is now client only and won't run if the camera is further than 15m away",
+    "Author": "jarryd",
+    "Date": "28/11/2023 22:26:55",
+    "Items": "C Assets\\Scripts\\EmissionOffsetStepped.cs"
   },
   "Build": {
-    "Id": "5340",
-    "Number": "5340",
-    "Tag": "jenkins-RustServer-5340",
-    "Url": "https://build.facepunch.com/job/RustServer/5340/",
+    "Id": "5341",
+    "Number": "5341",
+    "Tag": "jenkins-RustServer-5341",
+    "Url": "https://build.facepunch.com/job/RustServer/5341/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1701209660,
+  "Date": 1701211934,
   "DateString": "28 11 2023",
-  "TimeString": "22:14"
+  "TimeString": "22:52"
 }
