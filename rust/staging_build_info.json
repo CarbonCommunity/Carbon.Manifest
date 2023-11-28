@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90373",
+    "ChangeId": "90431",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "merged from birthday_time :tada:",
+    "Comment": "merge form b_shotgun",
     "Author": "alistair",
-    "Date": "27/11/2023 17:32:58",
-    "Items": "C Assets\\Scripts\\Entity\\Player\\Components\\PlayerInventory.cs"
+    "Date": "28/11/2023 09:42:40",
+    "Items": "C Assets\\Prefabs\\Weapons\\M4 Shotgun\\m4_shotgun.entity.prefab"
   },
   "Build": {
-    "Id": "5335",
-    "Number": "5335",
-    "Tag": "jenkins-RustServer-5335",
-    "Url": "https://build.facepunch.com/job/RustServer/5335/",
+    "Id": "5337",
+    "Number": "5337",
+    "Tag": "jenkins-RustServer-5337",
+    "Url": "https://build.facepunch.com/job/RustServer/5337/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1701108413,
-  "DateString": "27 11 2023",
-  "TimeString": "18:06"
+  "Date": 1701166724,
+  "DateString": "28 11 2023",
+  "TimeString": "10:18"
 }
