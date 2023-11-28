@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90447",
+    "ChangeId": "90455",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "merge from fix_default_binds_repeating",
-    "Author": "alistair",
-    "Date": "28/11/2023 13:17:20",
-    "Items": "C Assets\\Plugins\\Facepunch.Input\\Input.cs"
+    "Comment": "assigned correct world model to trophy 2023",
+    "Author": "mattisaac",
+    "Date": "28/11/2023 15:20:03",
+    "Items": "C Assets\\Prefabs\\Misc\\trophy_2023\\trophy_2023.item.prefab \r\n C Assets\\Prefabs\\Misc\\trophy_2023\\trophy_2023.worldmodel.prefab"
   },
   "Build": {
-    "Id": "5338",
-    "Number": "5338",
-    "Tag": "jenkins-RustServer-5338",
-    "Url": "https://build.facepunch.com/job/RustServer/5338/",
+    "Id": "5339",
+    "Number": "5339",
+    "Tag": "jenkins-RustServer-5339",
+    "Url": "https://build.facepunch.com/job/RustServer/5339/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1701179357,
+  "Date": 1701186434,
   "DateString": "28 11 2023",
-  "TimeString": "13:49"
+  "TimeString": "15:47"
 }
