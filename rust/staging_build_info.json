@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90455",
+    "ChangeId": "90469",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "assigned correct world model to trophy 2023",
+    "Comment": "removed duplicate lod group",
     "Author": "mattisaac",
-    "Date": "28/11/2023 15:20:03",
-    "Items": "C Assets\\Prefabs\\Misc\\trophy_2023\\trophy_2023.item.prefab \r\n C Assets\\Prefabs\\Misc\\trophy_2023\\trophy_2023.worldmodel.prefab"
+    "Date": "28/11/2023 21:47:46",
+    "Items": "C Assets\\Prefabs\\Misc\\trophy_2023\\trophy_2023.deployed.prefab"
   },
   "Build": {
-    "Id": "5339",
-    "Number": "5339",
-    "Tag": "jenkins-RustServer-5339",
-    "Url": "https://build.facepunch.com/job/RustServer/5339/",
+    "Id": "5340",
+    "Number": "5340",
+    "Tag": "jenkins-RustServer-5340",
+    "Url": "https://build.facepunch.com/job/RustServer/5340/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1701186434,
+  "Date": 1701209660,
   "DateString": "28 11 2023",
-  "TimeString": "15:47"
+  "TimeString": "22:14"
 }
