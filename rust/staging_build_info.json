@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90470",
+    "ChangeId": "90479",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "EmissionOffsetStepped is now client only and won't run if the camera is further than 15m away",
-    "Author": "jarryd",
-    "Date": "28/11/2023 22:26:55",
-    "Items": "C Assets\\Scripts\\EmissionOffsetStepped.cs"
+    "Comment": "Merged shelter changes into main.\r\nShould fix NRE experienced by staging players.",
+    "Author": "Ian.H",
+    "Date": "29/11/2023 01:09:07",
+    "Items": "C Assets\\Prefabs\\Building\\legacy.shelter.wood\\legacy.shelter.wood.deployed.prefab \r\n C Assets\\Prefabs\\Building\\legacy.shelter.wood\\legacy.shelter.wood.door.prefab \r\n C Assets\\Prefabs\\Building\\legacy.shelter.wood\\legacy.shelter.wood.item.prefab"
   },
   "Build": {
-    "Id": "5341",
-    "Number": "5341",
-    "Tag": "jenkins-RustServer-5341",
-    "Url": "https://build.facepunch.com/job/RustServer/5341/",
+    "Id": "5342",
+    "Number": "5342",
+    "Tag": "jenkins-RustServer-5342",
+    "Url": "https://build.facepunch.com/job/RustServer/5342/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1701211934,
-  "DateString": "28 11 2023",
-  "TimeString": "22:52"
+  "Date": 1701221993,
+  "DateString": "29 11 2023",
+  "TimeString": "01:39"
 }
