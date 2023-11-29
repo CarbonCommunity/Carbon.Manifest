@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90510",
+    "ChangeId": "90527",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Restoared sav to 243, stomped in 90484 ServerSideRagdolls merge, resulting in servers rolling back to last months savs\r\nNetwork++",
-    "Author": "alistair",
-    "Date": "29/11/2023 15:10:33",
-    "Items": "C Assets\\Plugins\\Rust.Global\\Protocol.cs \r\n A Assets\\bundled\\Prefabs\\world\\desktop.ini.meta \r\n A Assets\\Prefabs\\Misc\\Halloween\\desktop.ini.meta"
+    "Comment": "Temporarily disabled procedural instancing to fix particles using regular shaders (this breaks global rendering @Jake_Rich)",
+    "Author": "diogo",
+    "Date": "29/11/2023 20:25:24",
+    "Items": "C Assets\\Content\\Shaders\\Nature\\Cliff_Basic_Snow.shader \r\n C Assets\\Content\\Shaders\\Nature\\Cliff_Basic.shader \r\n C Assets\\Content\\Shaders\\Nature\\Cliff_LOD.shader \r\n C Assets\\Content\\Shaders\\Nature\\Cliff.shader \r\n C Assets\\Content\\Shaders\\Standard\\Standard-Blend4Way.shader \r\n C Assets\\Content\\Shaders\\Standard\\Standard-Blend4Way-Specular.shader \r\n C Assets\\Content\\Shaders\\Standard\\Standard-Specular.shader \r\n C Assets\\Content\\Shaders\\Standard\\Standard.shader \r\n C Assets\\Content\\Shaders\\Standard\\Standard-BlendLayer.shader \r\n C Assets\\Content\\Shaders\\Standard\\Standard-BlendLayer-Specular.shader"
   },
   "Build": {
-    "Id": "5347",
-    "Number": "5347",
-    "Tag": "jenkins-RustServer-5347",
-    "Url": "https://build.facepunch.com/job/RustServer/5347/",
+    "Id": "5348",
+    "Number": "5348",
+    "Tag": "jenkins-RustServer-5348",
+    "Url": "https://build.facepunch.com/job/RustServer/5348/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1701272165,
+  "Date": 1701291847,
   "DateString": "29 11 2023",
-  "TimeString": "15:36"
+  "TimeString": "21:04"
 }
