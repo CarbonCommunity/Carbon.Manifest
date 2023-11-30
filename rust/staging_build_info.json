@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90545",
+    "ChangeId": "90556",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Remove desktop.ini files added in 90510 (Alistair pls)",
-    "Author": "BillBorman",
-    "Date": "30/11/2023 01:12:50",
-    "Items": "D Assets\\bundled\\Prefabs\\world\\desktop.ini.meta \r\n D Assets\\Prefabs\\Misc\\Halloween\\desktop.ini.meta"
+    "Comment": "merge from fix_wall_connect_tcs",
+    "Author": "alistair",
+    "Date": "30/11/2023 08:34:12",
+    "Items": "C Assets\\Scripts\\Building\\BuildingProximity.cs"
   },
   "Build": {
-    "Id": "5350",
-    "Number": "5350",
-    "Tag": "jenkins-RustServer-5350",
-    "Url": "https://build.facepunch.com/job/RustServer/5350/",
+    "Id": "5351",
+    "Number": "5351",
+    "Tag": "jenkins-RustServer-5351",
+    "Url": "https://build.facepunch.com/job/RustServer/5351/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1701309167,
+  "Date": 1701336189,
   "DateString": "30 11 2023",
-  "TimeString": "01:52"
+  "TimeString": "09:23"
 }
