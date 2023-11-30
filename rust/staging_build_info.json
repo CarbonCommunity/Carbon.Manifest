@@ -10,14 +10,14 @@
     "Items": "D Assets\\bundled\\Prefabs\\world\\desktop.ini.meta \r\n D Assets\\Prefabs\\Misc\\Halloween\\desktop.ini.meta"
   },
   "Build": {
-    "Id": "5349",
-    "Number": "5349",
-    "Tag": "jenkins-RustServer-5349",
-    "Url": "https://build.facepunch.com/job/RustServer/5349/",
+    "Id": "5350",
+    "Number": "5350",
+    "Tag": "jenkins-RustServer-5350",
+    "Url": "https://build.facepunch.com/job/RustServer/5350/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1701307228,
+  "Date": 1701309167,
   "DateString": "30 11 2023",
-  "TimeString": "01:20"
+  "TimeString": "01:52"
 }
