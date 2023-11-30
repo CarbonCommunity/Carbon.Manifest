@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90527",
+    "ChangeId": "90545",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Temporarily disabled procedural instancing to fix particles using regular shaders (this breaks global rendering @Jake_Rich)",
-    "Author": "diogo",
-    "Date": "29/11/2023 20:25:24",
-    "Items": "C Assets\\Content\\Shaders\\Nature\\Cliff_Basic_Snow.shader \r\n C Assets\\Content\\Shaders\\Nature\\Cliff_Basic.shader \r\n C Assets\\Content\\Shaders\\Nature\\Cliff_LOD.shader \r\n C Assets\\Content\\Shaders\\Nature\\Cliff.shader \r\n C Assets\\Content\\Shaders\\Standard\\Standard-Blend4Way.shader \r\n C Assets\\Content\\Shaders\\Standard\\Standard-Blend4Way-Specular.shader \r\n C Assets\\Content\\Shaders\\Standard\\Standard-Specular.shader \r\n C Assets\\Content\\Shaders\\Standard\\Standard.shader \r\n C Assets\\Content\\Shaders\\Standard\\Standard-BlendLayer.shader \r\n C Assets\\Content\\Shaders\\Standard\\Standard-BlendLayer-Specular.shader"
+    "Comment": "Remove desktop.ini files added in 90510 (Alistair pls)",
+    "Author": "BillBorman",
+    "Date": "30/11/2023 01:12:50",
+    "Items": "D Assets\\bundled\\Prefabs\\world\\desktop.ini.meta \r\n D Assets\\Prefabs\\Misc\\Halloween\\desktop.ini.meta"
   },
   "Build": {
-    "Id": "5348",
-    "Number": "5348",
-    "Tag": "jenkins-RustServer-5348",
-    "Url": "https://build.facepunch.com/job/RustServer/5348/",
+    "Id": "5349",
+    "Number": "5349",
+    "Tag": "jenkins-RustServer-5349",
+    "Url": "https://build.facepunch.com/job/RustServer/5349/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1701291847,
-  "DateString": "29 11 2023",
-  "TimeString": "21:04"
+  "Date": 1701307228,
+  "DateString": "30 11 2023",
+  "TimeString": "01:20"
 }
