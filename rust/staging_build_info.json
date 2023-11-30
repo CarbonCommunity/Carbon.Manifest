@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90556",
+    "ChangeId": "90563",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "merge from fix_wall_connect_tcs",
+    "Comment": "merge form chainsaw_reload_fix2",
     "Author": "alistair",
-    "Date": "30/11/2023 08:34:12",
-    "Items": "C Assets\\Scripts\\Building\\BuildingProximity.cs"
+    "Date": "30/11/2023 14:53:01",
+    "Items": "C Assets\\Prefabs\\Weapons\\Chainsaw\\Chainsaw.cs \r\n C Assets\\Scripts\\Entity\\BaseEntity\\BaseEntity.Signal.cs"
   },
   "Build": {
-    "Id": "5351",
-    "Number": "5351",
-    "Tag": "jenkins-RustServer-5351",
-    "Url": "https://build.facepunch.com/job/RustServer/5351/",
+    "Id": "5352",
+    "Number": "5352",
+    "Tag": "jenkins-RustServer-5352",
+    "Url": "https://build.facepunch.com/job/RustServer/5352/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1701336189,
+  "Date": 1701357520,
   "DateString": "30 11 2023",
-  "TimeString": "09:23"
+  "TimeString": "15:18"
 }
