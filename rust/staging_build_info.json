@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90609",
+    "ChangeId": "90622",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "sitem setups",
-    "Author": "helkus",
-    "Date": "01/12/2023 00:03:44",
-    "Items": "C Prerequisites\\SteamInventory\\generator.json \r\n C Prerequisites\\SteamInventory\\PaymentRules.csv \r\n C Prerequisites\\SteamInventory\\schema-full.json \r\n C Prerequisites\\SteamInventory\\schema-new.json \r\n C Prerequisites\\SteamInventory\\schema-old.json \r\n C Assets\\Plugins\\Rust.Workshop\\Approved.2023.cs \r\n C Assets\\Prefabs\\Weapons\\Legacy Bow\\legacybow.item.prefab \r\n C Assets\\Prefabs\\Weapons\\Legacy Bow\\legacybow.skin.asset \r\n C Assets\\Content\\Properties\\BuildingGrade\\frontier.asset \r\n A Assets\\Prefabs\\Misc\\BuildingSkins\\frontier \r\n A Assets\\Prefabs\\Misc\\BuildingSkins\\frontier.meta \r\n A Assets\\Prefabs\\Misc\\BuildingSkins\\frontier\\frontier.sitem.asset \r\n A Assets\\Prefabs\\Misc\\BuildingSkins\\frontier\\frontier.sitem.asset.meta"
+    "Comment": "Merge ServerSideRagdolls -> main",
+    "Author": "BillBorman",
+    "Date": "01/12/2023 04:08:32",
+    "Items": "C ProjectSettings\\DynamicsManager.asset \r\n C Assets\\Prefabs\\Player\\player_corpse_new.prefab \r\n C Assets\\Rust.Ai\\Agents\\NPCPlayer\\Gingerbread\\GingerbreadNPC.cs \r\n C Assets\\Rust.Ai\\Agents\\NPCPlayer\\HumanNPC\\HumanNPC.cs \r\n C Assets\\Rust.Ai\\Agents\\NPCPlayer\\Pet\\FrankensteinPet.cs \r\n C Assets\\Rust.Ai\\Agents\\NPCPlayer\\Pet\\ScarecrowNPC.cs \r\n C Assets\\Content\\Vehicles\\Scrap Heli Carrier\\ScrapTransportHelicopter.prefab \r\n C Assets\\Scripts\\ConsoleCommands\\physics.cs \r\n C Assets\\Scripts\\Entity\\PlayerCorpse.cs \r\n C Assets\\Scripts\\Entity\\BaseCorpse.cs \r\n C Assets\\Scripts\\Entity\\BaseEntity\\BaseEntity.Server.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-Server.cs \r\n A Assets\\Content\\Player\\Server Side Ragdoll Bone Pos Data.asset \r\n A Assets\\Content\\Player\\Server Side Ragdoll Bone Pos Data.asset.meta \r\n A Assets\\Scripts\\Shared\\Editor\\PlayerBonePosDataEditor.cs \r\n A Assets\\Scripts\\Shared\\Editor\\PlayerBonePosDataEditor.cs.meta \r\n A Assets\\Scripts\\Shared\\PlayerBonePosData.cs \r\n A Assets\\Scripts\\Shared\\PlayerBonePosData.cs.meta \r\n D Assets\\Content\\Player\\BonePosData \r\n D Assets\\Content\\Player\\BonePosData.meta \r\n D Assets\\Scripts\\Shared\\Editor\\PlayerBonePositionDataEditor.cs \r\n D Assets\\Scripts\\Shared\\Editor\\PlayerBonePositionDataEditor.cs.meta \r\n D Assets\\Scripts\\Shared\\PlayerBonePositionData.cs \r\n D Assets\\Scripts\\Shared\\PlayerBonePositionData.cs.meta"
   },
   "Build": {
-    "Id": "5353",
-    "Number": "5353",
-    "Tag": "jenkins-RustServer-5353",
-    "Url": "https://build.facepunch.com/job/RustServer/5353/",
+    "Id": "5354",
+    "Number": "5354",
+    "Tag": "jenkins-RustServer-5354",
+    "Url": "https://build.facepunch.com/job/RustServer/5354/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1701392232,
+  "Date": 1701405719,
   "DateString": "1 12 2023",
-  "TimeString": "00:57"
+  "TimeString": "04:41"
 }
