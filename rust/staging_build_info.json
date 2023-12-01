@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90645",
+    "ChangeId": "90661",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "hooked up 10 birthday texture on balloons",
-    "Author": "mattisaac",
-    "Date": "01/12/2023 13:22:18",
-    "Items": "C Assets\\Prefabs\\Misc\\Balloons\\Models\\Materials\\balloons_7thbirthday.mat \r\n C Assets\\Prefabs\\Misc\\Balloons\\Models\\Materials\\balloons.mat"
+    "Comment": "merge from legacybow",
+    "Author": "alistair",
+    "Date": "01/12/2023 16:20:58",
+    "Items": "C Assets\\Prefabs\\Weapons\\Legacy Bow\\legacybow.viewmodel.prefab \r\n C Assets\\Prefabs\\Weapons\\Legacy Bow\\Model\\v_legacybow_anims.fbx \r\n C Assets\\Prefabs\\Weapons\\Legacy Bow\\Model\\v_legacybow_anims.fbx.meta"
   },
   "Build": {
-    "Id": "5358",
-    "Number": "5358",
-    "Tag": "jenkins-RustServer-5358",
-    "Url": "https://build.facepunch.com/job/RustServer/5358/",
+    "Id": "5359",
+    "Number": "5359",
+    "Tag": "jenkins-RustServer-5359",
+    "Url": "https://build.facepunch.com/job/RustServer/5359/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1701439180,
+  "Date": 1701450384,
   "DateString": "1 12 2023",
-  "TimeString": "13:59"
+  "TimeString": "17:06"
 }
