@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90661",
+    "ChangeId": "90678",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "merge from legacybow",
-    "Author": "alistair",
-    "Date": "01/12/2023 16:20:58",
-    "Items": "C Assets\\Prefabs\\Weapons\\Legacy Bow\\legacybow.viewmodel.prefab \r\n C Assets\\Prefabs\\Weapons\\Legacy Bow\\Model\\v_legacybow_anims.fbx \r\n C Assets\\Prefabs\\Weapons\\Legacy Bow\\Model\\v_legacybow_anims.fbx.meta"
+    "Comment": "m4 balance changes, accepts extended mags",
+    "Author": "helkus",
+    "Date": "01/12/2023 18:23:52",
+    "Items": "C Assets\\Prefabs\\Weapons\\M4 Shotgun\\m4_shotgun.entity.prefab \r\n C Assets\\Prefabs\\Weapons\\M4 Shotgun\\m4_shotgun.item.prefab \r\n C Assets\\Content\\Properties\\Recoil\\pumpshotgunrecoil.asset \r\n C Assets\\Content\\Properties\\Recoil\\M4Recoil.asset \r\n C Assets\\Scripts\\AimConeUtil.cs \r\n C Assets\\Scripts\\Shared\\RecoilProperties.cs \r\n C Assets\\Scripts\\UI\\Inventory\\ProjectileWeaponInformationPanel.cs \r\n C Assets\\Scripts\\Entity\\BaseEntity\\HeldEntity\\BaseProjectile.cs"
   },
   "Build": {
-    "Id": "5359",
-    "Number": "5359",
-    "Tag": "jenkins-RustServer-5359",
-    "Url": "https://build.facepunch.com/job/RustServer/5359/",
+    "Id": "5360",
+    "Number": "5360",
+    "Tag": "jenkins-RustServer-5360",
+    "Url": "https://build.facepunch.com/job/RustServer/5360/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1701450384,
+  "Date": 1701456668,
   "DateString": "1 12 2023",
-  "TimeString": "17:06"
+  "TimeString": "18:51"
 }
