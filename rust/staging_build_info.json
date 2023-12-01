@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90563",
+    "ChangeId": "90609",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "merge form chainsaw_reload_fix2",
-    "Author": "alistair",
-    "Date": "30/11/2023 14:53:01",
-    "Items": "C Assets\\Prefabs\\Weapons\\Chainsaw\\Chainsaw.cs \r\n C Assets\\Scripts\\Entity\\BaseEntity\\BaseEntity.Signal.cs"
+    "Comment": "sitem setups",
+    "Author": "helkus",
+    "Date": "01/12/2023 00:03:44",
+    "Items": "C Prerequisites\\SteamInventory\\generator.json \r\n C Prerequisites\\SteamInventory\\PaymentRules.csv \r\n C Prerequisites\\SteamInventory\\schema-full.json \r\n C Prerequisites\\SteamInventory\\schema-new.json \r\n C Prerequisites\\SteamInventory\\schema-old.json \r\n C Assets\\Plugins\\Rust.Workshop\\Approved.2023.cs \r\n C Assets\\Prefabs\\Weapons\\Legacy Bow\\legacybow.item.prefab \r\n C Assets\\Prefabs\\Weapons\\Legacy Bow\\legacybow.skin.asset \r\n C Assets\\Content\\Properties\\BuildingGrade\\frontier.asset \r\n A Assets\\Prefabs\\Misc\\BuildingSkins\\frontier \r\n A Assets\\Prefabs\\Misc\\BuildingSkins\\frontier.meta \r\n A Assets\\Prefabs\\Misc\\BuildingSkins\\frontier\\frontier.sitem.asset \r\n A Assets\\Prefabs\\Misc\\BuildingSkins\\frontier\\frontier.sitem.asset.meta"
   },
   "Build": {
-    "Id": "5352",
-    "Number": "5352",
-    "Tag": "jenkins-RustServer-5352",
-    "Url": "https://build.facepunch.com/job/RustServer/5352/",
+    "Id": "5353",
+    "Number": "5353",
+    "Tag": "jenkins-RustServer-5353",
+    "Url": "https://build.facepunch.com/job/RustServer/5353/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1701357520,
-  "DateString": "30 11 2023",
-  "TimeString": "15:18"
+  "Date": 1701392232,
+  "DateString": "1 12 2023",
+  "TimeString": "00:57"
 }
