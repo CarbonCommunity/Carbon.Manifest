@@ -10,14 +10,14 @@
     "Items": "C Assets\\Prefabs\\Building\\legacy.shelter.wood\\LegacyShelter.cs"
   },
   "Build": {
-    "Id": "5363",
-    "Number": "5363",
-    "Tag": "jenkins-RustServer-5363",
-    "Url": "https://build.facepunch.com/job/RustServer/5363/",
+    "Id": "5364",
+    "Number": "5364",
+    "Tag": "jenkins-RustServer-5364",
+    "Url": "https://build.facepunch.com/job/RustServer/5364/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1701534177,
+  "Date": 1701536736,
   "DateString": "2 12 2023",
-  "TimeString": "16:22"
+  "TimeString": "17:05"
 }
