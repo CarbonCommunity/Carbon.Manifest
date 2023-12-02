@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90703",
+    "ChangeId": "90707",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "~ advent calendar pass",
+    "Comment": "subtracting 90701 - Sever fails to load",
     "Author": "alistair",
-    "Date": "02/12/2023 13:33:19",
-    "Items": "C Assets\\Prefabs\\Misc\\XMas\\advent_calendar\\advendcalendar.deployed.prefab"
+    "Date": "02/12/2023 14:48:20",
+    "Items": "C protobuf\\proto\\Entity.proto \r\n C Assets\\Plugins\\Rust.Data\\generated\\ProtocolBuffers.cs \r\n C Assets\\Plugins\\Rust.Data\\generated\\ProtocolBuffers.Serializer.cs \r\n C Assets\\Generated\\ConsoleSystem.cs \r\n C Assets\\Generated\\EntityMenu.cs \r\n C Assets\\Generated\\RpcCalls.cs \r\n C Assets\\Prefabs\\Building\\legacy.shelter.wood\\legacy.shelter.wood.deployed.prefab \r\n C Assets\\Prefabs\\Building\\legacy.shelter.wood\\legacy.shelter.wood.door.prefab \r\n C Assets\\Prefabs\\Building\\legacy.shelter.wood\\LegacyShelter.cs \r\n C Assets\\Prefabs\\Building\\legacy.shelter.wood\\LegacyShelterDoor.cs \r\n D Assets\\Prefabs\\Building\\legacy.shelter.wood\\Effects \r\n D Assets\\Prefabs\\Building\\legacy.shelter.wood\\Effects.meta \r\n D Assets\\Prefabs\\Building\\legacy.shelter.wood\\Sound \r\n D Assets\\Prefabs\\Building\\legacy.shelter.wood\\Sound.meta \r\n D Assets\\Content\\Sound\\SoundClasses\\object-deploy-no-occlusion.sound-class.asset \r\n D Assets\\Content\\Sound\\SoundClasses\\object-deploy-no-occlusion.sound-class.asset.meta"
   },
   "Build": {
-    "Id": "5361",
-    "Number": "5361",
-    "Tag": "jenkins-RustServer-5361",
-    "Url": "https://build.facepunch.com/job/RustServer/5361/",
+    "Id": "5362",
+    "Number": "5362",
+    "Tag": "jenkins-RustServer-5362",
+    "Url": "https://build.facepunch.com/job/RustServer/5362/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1701524919,
+  "Date": 1701530607,
   "DateString": "2 12 2023",
-  "TimeString": "13:48"
+  "TimeString": "15:23"
 }
