@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90707",
+    "ChangeId": "90713",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "subtracting 90701 - Sever fails to load",
+    "Comment": "merge from legacy_shelter",
     "Author": "alistair",
-    "Date": "02/12/2023 14:48:20",
-    "Items": "C protobuf\\proto\\Entity.proto \r\n C Assets\\Plugins\\Rust.Data\\generated\\ProtocolBuffers.cs \r\n C Assets\\Plugins\\Rust.Data\\generated\\ProtocolBuffers.Serializer.cs \r\n C Assets\\Generated\\ConsoleSystem.cs \r\n C Assets\\Generated\\EntityMenu.cs \r\n C Assets\\Generated\\RpcCalls.cs \r\n C Assets\\Prefabs\\Building\\legacy.shelter.wood\\legacy.shelter.wood.deployed.prefab \r\n C Assets\\Prefabs\\Building\\legacy.shelter.wood\\legacy.shelter.wood.door.prefab \r\n C Assets\\Prefabs\\Building\\legacy.shelter.wood\\LegacyShelter.cs \r\n C Assets\\Prefabs\\Building\\legacy.shelter.wood\\LegacyShelterDoor.cs \r\n D Assets\\Prefabs\\Building\\legacy.shelter.wood\\Effects \r\n D Assets\\Prefabs\\Building\\legacy.shelter.wood\\Effects.meta \r\n D Assets\\Prefabs\\Building\\legacy.shelter.wood\\Sound \r\n D Assets\\Prefabs\\Building\\legacy.shelter.wood\\Sound.meta \r\n D Assets\\Content\\Sound\\SoundClasses\\object-deploy-no-occlusion.sound-class.asset \r\n D Assets\\Content\\Sound\\SoundClasses\\object-deploy-no-occlusion.sound-class.asset.meta"
+    "Date": "02/12/2023 16:13:41",
+    "Items": "C Assets\\Prefabs\\Building\\legacy.shelter.wood\\LegacyShelter.cs"
   },
   "Build": {
-    "Id": "5362",
-    "Number": "5362",
-    "Tag": "jenkins-RustServer-5362",
-    "Url": "https://build.facepunch.com/job/RustServer/5362/",
+    "Id": "5363",
+    "Number": "5363",
+    "Tag": "jenkins-RustServer-5363",
+    "Url": "https://build.facepunch.com/job/RustServer/5363/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1701530607,
+  "Date": 1701534177,
   "DateString": "2 12 2023",
-  "TimeString": "15:23"
+  "TimeString": "16:22"
 }
