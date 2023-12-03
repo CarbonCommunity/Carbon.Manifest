@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90713",
+    "ChangeId": "90718",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "merge from legacy_shelter",
-    "Author": "alistair",
-    "Date": "02/12/2023 16:13:41",
-    "Items": "C Assets\\Prefabs\\Building\\legacy.shelter.wood\\LegacyShelter.cs"
+    "Comment": "Fixed BindSubsurfaceProfile requiring Renderer",
+    "Author": "diogo",
+    "Date": "03/12/2023 14:19:27",
+    "Items": "C Assets\\Scripts\\Rendering\\DeferredExtension\\BindSubsurfaceProfile.cs"
   },
   "Build": {
-    "Id": "5364",
-    "Number": "5364",
-    "Tag": "jenkins-RustServer-5364",
-    "Url": "https://build.facepunch.com/job/RustServer/5364/",
+    "Id": "5366",
+    "Number": "5366",
+    "Tag": "jenkins-RustServer-5366",
+    "Url": "https://build.facepunch.com/job/RustServer/5366/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1701536736,
-  "DateString": "2 12 2023",
-  "TimeString": "17:05"
+  "Date": 1701614958,
+  "DateString": "3 12 2023",
+  "TimeString": "14:49"
 }
