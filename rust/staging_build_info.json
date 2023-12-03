@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90718",
+    "ChangeId": "90723",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Fixed BindSubsurfaceProfile requiring Renderer",
-    "Author": "diogo",
-    "Date": "03/12/2023 14:19:27",
-    "Items": "C Assets\\Scripts\\Rendering\\DeferredExtension\\BindSubsurfaceProfile.cs"
+    "Comment": "Code gen. Looks like some got reverted in the 90701 merge .",
+    "Author": "BillBorman",
+    "Date": "03/12/2023 22:06:07",
+    "Items": "C Assets\\Generated\\ConsoleSystem.cs \r\n C Assets\\Generated\\EntityMenu.cs \r\n C Assets\\Generated\\RpcCalls.cs"
   },
   "Build": {
-    "Id": "5366",
-    "Number": "5366",
-    "Tag": "jenkins-RustServer-5366",
-    "Url": "https://build.facepunch.com/job/RustServer/5366/",
+    "Id": "5367",
+    "Number": "5367",
+    "Tag": "jenkins-RustServer-5367",
+    "Url": "https://build.facepunch.com/job/RustServer/5367/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1701614958,
+  "Date": 1701642947,
   "DateString": "3 12 2023",
-  "TimeString": "14:49"
+  "TimeString": "22:35"
 }
