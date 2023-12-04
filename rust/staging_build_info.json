@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90743",
+    "ChangeId": "90745",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "confetticannon default bp + craft",
-    "Author": "alistair",
-    "Date": "04/12/2023 07:58:13",
-    "Items": "C Assets\\Prefabs\\Misc\\ConfettiCannon\\confetticannon.item.prefab"
+    "Comment": "Manifest rebuild (fast)",
+    "Author": "BillBorman",
+    "Date": "04/12/2023 08:59:25",
+    "Items": "C Assets\\manifest.asset"
   },
   "Build": {
-    "Id": "5369",
-    "Number": "5369",
-    "Tag": "jenkins-RustServer-5369",
-    "Url": "https://build.facepunch.com/job/RustServer/5369/",
+    "Id": "5370",
+    "Number": "5370",
+    "Tag": "jenkins-RustServer-5370",
+    "Url": "https://build.facepunch.com/job/RustServer/5370/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1701678497,
+  "Date": 1701681513,
   "DateString": "4 12 2023",
-  "TimeString": "08:28"
+  "TimeString": "09:18"
 }
