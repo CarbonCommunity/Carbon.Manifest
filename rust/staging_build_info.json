@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90738",
+    "ChangeId": "90743",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Merge from confetti_cannon",
-    "Author": "jarryd",
-    "Date": "04/12/2023 03:59:32",
-    "Items": "C Assets\\Prefabs\\Misc\\ConfettiCannon\\ConfettiCannon.cs"
+    "Comment": "confetticannon default bp + craft",
+    "Author": "alistair",
+    "Date": "04/12/2023 07:58:13",
+    "Items": "C Assets\\Prefabs\\Misc\\ConfettiCannon\\confetticannon.item.prefab"
   },
   "Build": {
-    "Id": "5368",
-    "Number": "5368",
-    "Tag": "jenkins-RustServer-5368",
-    "Url": "https://build.facepunch.com/job/RustServer/5368/",
+    "Id": "5369",
+    "Number": "5369",
+    "Tag": "jenkins-RustServer-5369",
+    "Url": "https://build.facepunch.com/job/RustServer/5369/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1701664612,
+  "Date": 1701678497,
   "DateString": "4 12 2023",
-  "TimeString": "04:36"
+  "TimeString": "08:28"
 }
