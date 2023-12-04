@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90751",
+    "ChangeId": "90757",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Disabled useViewModelCamera on Birthday cake",
-    "Author": "alistair",
-    "Date": "04/12/2023 12:11:39",
-    "Items": "C Assets\\Prefabs\\Weapons\\Cake\\cake.viewmodel.prefab"
+    "Comment": "Disabled useViewModelCamera on Birthday cake 10 prefab",
+    "Author": "mattisaac",
+    "Date": "04/12/2023 15:33:21",
+    "Items": "C Assets\\Prefabs\\Weapons\\Cake\\cake_10.viewmodel.prefab"
   },
   "Build": {
-    "Id": "5372",
-    "Number": "5372",
-    "Tag": "jenkins-RustServer-5372",
-    "Url": "https://build.facepunch.com/job/RustServer/5372/",
+    "Id": "5373",
+    "Number": "5373",
+    "Tag": "jenkins-RustServer-5373",
+    "Url": "https://build.facepunch.com/job/RustServer/5373/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1701693719,
+  "Date": 1701705879,
   "DateString": "4 12 2023",
-  "TimeString": "12:41"
+  "TimeString": "16:04"
 }
