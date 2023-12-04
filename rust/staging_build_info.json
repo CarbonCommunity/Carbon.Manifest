@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90723",
+    "ChangeId": "90738",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Code gen. Looks like some got reverted in the 90701 merge .",
-    "Author": "BillBorman",
-    "Date": "03/12/2023 22:06:07",
-    "Items": "C Assets\\Generated\\ConsoleSystem.cs \r\n C Assets\\Generated\\EntityMenu.cs \r\n C Assets\\Generated\\RpcCalls.cs"
+    "Comment": "Merge from confetti_cannon",
+    "Author": "jarryd",
+    "Date": "04/12/2023 03:59:32",
+    "Items": "C Assets\\Prefabs\\Misc\\ConfettiCannon\\ConfettiCannon.cs"
   },
   "Build": {
-    "Id": "5367",
-    "Number": "5367",
-    "Tag": "jenkins-RustServer-5367",
-    "Url": "https://build.facepunch.com/job/RustServer/5367/",
+    "Id": "5368",
+    "Number": "5368",
+    "Tag": "jenkins-RustServer-5368",
+    "Url": "https://build.facepunch.com/job/RustServer/5368/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1701642947,
-  "DateString": "3 12 2023",
-  "TimeString": "22:35"
+  "Date": 1701664612,
+  "DateString": "4 12 2023",
+  "TimeString": "04:36"
 }
