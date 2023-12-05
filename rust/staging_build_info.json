@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90809",
+    "ChangeId": "90812",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "~ merge from b_shotgun",
-    "Author": "alistair",
-    "Date": "05/12/2023 09:53:30",
-    "Items": "C Assets\\Content\\Properties\\LootSpawn\\Generated\\Items\\Weapon\\shotgun.m4.asset"
+    "Comment": "Second attempt. Fixed NRE on server load due to horse ragdoll having no head bone",
+    "Author": "BillBorman",
+    "Date": "05/12/2023 10:46:17",
+    "Items": "C Assets\\Scripts\\Shared\\Ragdoll.cs"
   },
   "Build": {
-    "Id": "5380",
-    "Number": "5380",
-    "Tag": "jenkins-RustServer-5380",
-    "Url": "https://build.facepunch.com/job/RustServer/5380/",
+    "Id": "5381",
+    "Number": "5381",
+    "Tag": "jenkins-RustServer-5381",
+    "Url": "https://build.facepunch.com/job/RustServer/5381/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1701771363,
+  "Date": 1701774792,
   "DateString": "5 12 2023",
-  "TimeString": "10:16"
+  "TimeString": "11:13"
 }
