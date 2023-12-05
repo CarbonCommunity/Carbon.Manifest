@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90773",
+    "ChangeId": "90788",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "merge from item_store_order",
-    "Author": "alistair",
-    "Date": "04/12/2023 19:18:55",
-    "Items": "C Assets\\Plugins\\Rust.Platform.Common\\IPlayerItemDefinition.cs \r\n C Assets\\Plugins\\Rust.Platform.Steam\\SteamItemDefinition.cs \r\n C Assets\\Scripts\\UI\\Main Menu\\ItemStore\\ItemStore.cs \r\n C Assets\\Scripts\\UI\\Main Menu\\ItemStore\\ItemStoreItem.cs \r\n C Assets\\Scripts\\UI\\Main Menu\\ItemStore\\ItemStore.Item.prefab \r\n C Assets\\Scripts\\UI\\Main Menu\\ItemStore\\ItemStore.ItemList.prefab \r\n A Assets\\Content\\UI\\UI.Saturation.shader \r\n A Assets\\Content\\UI\\UI.Saturation.shader.meta \r\n A Assets\\Scripts\\UI\\Main Menu\\ItemStore\\UI.Grayscale.mat \r\n A Assets\\Scripts\\UI\\Main Menu\\ItemStore\\UI.Grayscale.mat.meta"
+    "Comment": "Merge ServerSideRagdolls -> main",
+    "Author": "BillBorman",
+    "Date": "05/12/2023 02:09:11",
+    "Items": "C Assets\\Plugins\\Facepunch.UnityEngine\\TransformEx.cs \r\n C Assets\\Prefabs\\Player\\player_corpse_new.prefab \r\n C Assets\\Scripts\\Shared\\Ragdoll.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-Server.cs \r\n C Assets\\Scripts\\Entity\\Player\\Components\\PlayerEyes.cs"
   },
   "Build": {
-    "Id": "5374",
-    "Number": "5374",
-    "Tag": "jenkins-RustServer-5374",
-    "Url": "https://build.facepunch.com/job/RustServer/5374/",
+    "Id": "5375",
+    "Number": "5375",
+    "Tag": "jenkins-RustServer-5375",
+    "Url": "https://build.facepunch.com/job/RustServer/5375/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1701719642,
-  "DateString": "4 12 2023",
-  "TimeString": "19:54"
+  "Date": 1701743974,
+  "DateString": "5 12 2023",
+  "TimeString": "02:39"
 }
