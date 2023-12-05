@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90803",
+    "ChangeId": "90809",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "~ merge from legacy_shelter",
+    "Comment": "~ merge from b_shotgun",
     "Author": "alistair",
-    "Date": "05/12/2023 08:46:16",
-    "Items": "C Assets\\Prefabs\\Building\\legacy.shelter.wood\\legacy.shelter.wood.deployed.prefab \r\n C Assets\\Prefabs\\Building\\legacy.shelter.wood\\legacy.shelter.wood.door.prefab \r\n C Assets\\Prefabs\\Building\\legacy.shelter.wood\\legacy.shelter.wood.item.prefab \r\n C Assets\\Prefabs\\Building\\legacy.shelter.wood\\LegacyShelter.cs \r\n C Assets\\Prefabs\\Building\\legacy.shelter.wood\\LegacyShelterDoor.cs \r\n C Assets\\Scripts\\UI\\Vitals\\VitalInfo.cs \r\n C Assets\\Scripts\\Entity\\BaseEntity\\BaseEntity.Privilege.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-Privilege.cs \r\n C Assets\\Scripts\\Entity\\BuildingBlock\\Locks\\BaseLock.cs \r\n C Assets\\Scripts\\Entity\\BuildingBlock\\SimplePrivilege.cs"
+    "Date": "05/12/2023 09:53:30",
+    "Items": "C Assets\\Content\\Properties\\LootSpawn\\Generated\\Items\\Weapon\\shotgun.m4.asset"
   },
   "Build": {
-    "Id": "5379",
-    "Number": "5379",
-    "Tag": "jenkins-RustServer-5379",
-    "Url": "https://build.facepunch.com/job/RustServer/5379/",
+    "Id": "5380",
+    "Number": "5380",
+    "Tag": "jenkins-RustServer-5380",
+    "Url": "https://build.facepunch.com/job/RustServer/5380/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1701768400,
+  "Date": 1701771363,
   "DateString": "5 12 2023",
-  "TimeString": "09:26"
+  "TimeString": "10:16"
 }
