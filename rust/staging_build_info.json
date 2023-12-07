@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90817",
+    "ChangeId": "90919",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "merge from fix_oil_rig_restart_radiation",
-    "Author": "alistair",
-    "Date": "05/12/2023 16:00:48",
-    "Items": "C Assets\\Scenes\\Prefabs\\Oilrig\\Oilrig_small.unity \r\n C Assets\\Scenes\\Prefabs\\Oilrig\\Oilrig.unity \r\n C Assets\\bundled\\Prefabs\\autospawn\\monument\\offshore\\Oilrig_1.prefab \r\n C Assets\\bundled\\Prefabs\\autospawn\\monument\\offshore\\Oilrig_2.prefab \r\n C Assets\\Scripts\\Game\\SaveRestore.Load.cs \r\n A Assets\\Scripts\\Entity\\DisableSave.cs \r\n A Assets\\Scripts\\Entity\\DisableSave.cs.meta"
+    "Comment": "Fix for GetEntityDecayDuration NRE",
+    "Author": "jarryd",
+    "Date": "07/12/2023 11:03:43",
+    "Items": "C Assets\\Prefabs\\Building\\legacy.shelter.wood\\LegacyShelter.cs"
   },
   "Build": {
-    "Id": "5383",
-    "Number": "5383",
-    "Tag": "jenkins-RustServer-5383",
-    "Url": "https://build.facepunch.com/job/RustServer/5383/",
+    "Id": "5392",
+    "Number": "5392",
+    "Tag": "jenkins-RustServer-5392",
+    "Url": "https://build.facepunch.com/job/RustServer/5392/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1701794211,
-  "DateString": "5 12 2023",
-  "TimeString": "16:36"
+  "Date": 1701949537,
+  "DateString": "7 12 2023",
+  "TimeString": "11:45"
 }
