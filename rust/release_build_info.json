@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90943",
+    "ChangeId": "90947",
     "Branch": "release",
     "Repo": "rust_reboot",
-    "Comment": "merge from BuoyancyHotfix",
+    "Comment": "merge from team_marker_reconnect_fix",
     "Author": "alistair",
-    "Date": "07/12/2023 20:26:06",
-    "Items": "C Assets\\Scripts\\Entity\\Vehicle\\Boat\\Buoyancy.cs"
+    "Date": "07/12/2023 22:02:54",
+    "Items": "C Assets\\Scripts\\UI\\Ingame\\Map\\MapView.cs"
   },
   "Build": {
-    "Id": "580",
-    "Number": "580",
-    "Tag": "jenkins-RustReleaseServer-580",
-    "Url": "https://build.facepunch.com/job/RustReleaseServer/580/",
+    "Id": "581",
+    "Number": "581",
+    "Tag": "jenkins-RustReleaseServer-581",
+    "Url": "https://build.facepunch.com/job/RustReleaseServer/581/",
     "Name": "RustReleaseServer",
     "Node": "Win4"
   },
-  "Date": 1701982770,
+  "Date": 1701988449,
   "DateString": "7 12 2023",
-  "TimeString": "20:59"
+  "TimeString": "22:34"
 }
