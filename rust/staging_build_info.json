@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90971",
+    "ChangeId": "90982",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "merge from CorpseRagdollParentingFix/LessSinkableBoats",
+    "Comment": "",
     "Author": "alistair",
-    "Date": "08/12/2023 10:15:40",
-    "Items": "C Assets\\Prefabs\\Player\\player_corpse_new.prefab \r\n C Assets\\Content\\Vehicles\\Boats\\Kayak\\Kayak.prefab \r\n C Assets\\Content\\Vehicles\\Boats\\RHIB\\RHIB.prefab \r\n C Assets\\Content\\Vehicles\\Boats\\Rowboat\\Rowboat.prefab \r\n C Assets\\Plugins\\Facepunch.Skeleton\\Skeleton.cs \r\n C Assets\\Scripts\\Shared\\Ragdoll.cs \r\n C Assets\\Scripts\\Entity\\BaseCorpse.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-Server.cs"
+    "Date": "08/12/2023 14:32:35",
+    "Items": "C Assets\\Prefabs\\Building\\legacy.shelter.wood\\legacy.shelter.wood.deployed.prefab"
   },
   "Build": {
-    "Id": "5396",
-    "Number": "5396",
-    "Tag": "jenkins-RustServer-5396",
-    "Url": "https://build.facepunch.com/job/RustServer/5396/",
+    "Id": "5397",
+    "Number": "5397",
+    "Tag": "jenkins-RustServer-5397",
+    "Url": "https://build.facepunch.com/job/RustServer/5397/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1702033460,
+  "Date": 1702049257,
   "DateString": "8 12 2023",
-  "TimeString": "11:04"
+  "TimeString": "15:27"
 }
