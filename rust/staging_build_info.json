@@ -10,14 +10,14 @@
     "Items": "C Assets\\Prefabs\\Player\\player_corpse_new.prefab \r\n C Assets\\Content\\Vehicles\\Boats\\Kayak\\Kayak.prefab \r\n C Assets\\Content\\Vehicles\\Boats\\RHIB\\RHIB.prefab \r\n C Assets\\Content\\Vehicles\\Boats\\Rowboat\\Rowboat.prefab \r\n C Assets\\Plugins\\Facepunch.Skeleton\\Skeleton.cs \r\n C Assets\\Scripts\\Shared\\Ragdoll.cs \r\n C Assets\\Scripts\\Entity\\BaseCorpse.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-Server.cs"
   },
   "Build": {
-    "Id": "5395",
-    "Number": "5395",
-    "Tag": "jenkins-RustServer-5395",
-    "Url": "https://build.facepunch.com/job/RustServer/5395/",
+    "Id": "5396",
+    "Number": "5396",
+    "Tag": "jenkins-RustServer-5396",
+    "Url": "https://build.facepunch.com/job/RustServer/5396/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1702031384,
+  "Date": 1702033460,
   "DateString": "8 12 2023",
-  "TimeString": "10:29"
+  "TimeString": "11:04"
 }
