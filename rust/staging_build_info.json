@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90919",
+    "ChangeId": "90948",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Fix for GetEntityDecayDuration NRE",
-    "Author": "jarryd",
-    "Date": "07/12/2023 11:03:43",
-    "Items": "C Assets\\Prefabs\\Building\\legacy.shelter.wood\\LegacyShelter.cs"
+    "Comment": "~ merge from team_marker_reconnect_fix + rust10_drop_fix + BuoyancyHotfix",
+    "Author": "alistair",
+    "Date": "07/12/2023 22:05:27",
+    "Items": "C Assets\\Plugins\\Rust.Platform.Steam\\SteamPlatform.Inventory.cs \r\n C Assets\\Scripts\\UI\\Ingame\\Map\\MapView.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Boat\\Buoyancy.cs"
   },
   "Build": {
-    "Id": "5392",
-    "Number": "5392",
-    "Tag": "jenkins-RustServer-5392",
-    "Url": "https://build.facepunch.com/job/RustServer/5392/",
+    "Id": "5393",
+    "Number": "5393",
+    "Tag": "jenkins-RustServer-5393",
+    "Url": "https://build.facepunch.com/job/RustServer/5393/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1701949537,
-  "DateString": "7 12 2023",
-  "TimeString": "11:45"
+  "Date": 1701994270,
+  "DateString": "8 12 2023",
+  "TimeString": "00:11"
 }
