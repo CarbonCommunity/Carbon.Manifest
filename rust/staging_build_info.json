@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90967",
+    "ChangeId": "90971",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "merge from BuoyancyPerf",
+    "Comment": "merge from CorpseRagdollParentingFix/LessSinkableBoats",
     "Author": "alistair",
-    "Date": "08/12/2023 09:11:11",
-    "Items": "C Assets\\Prefabs\\Player\\player_corpse_new.prefab \r\n C Assets\\Scripts\\Entity\\PlayerCorpse.cs \r\n C Assets\\Scripts\\Entity\\BaseEntity\\BaseEntity.Server.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Boat\\Tugboat.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Boat\\BaseBoat.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Boat\\Buoyancy.cs"
+    "Date": "08/12/2023 10:15:40",
+    "Items": "C Assets\\Prefabs\\Player\\player_corpse_new.prefab \r\n C Assets\\Content\\Vehicles\\Boats\\Kayak\\Kayak.prefab \r\n C Assets\\Content\\Vehicles\\Boats\\RHIB\\RHIB.prefab \r\n C Assets\\Content\\Vehicles\\Boats\\Rowboat\\Rowboat.prefab \r\n C Assets\\Plugins\\Facepunch.Skeleton\\Skeleton.cs \r\n C Assets\\Scripts\\Shared\\Ragdoll.cs \r\n C Assets\\Scripts\\Entity\\BaseCorpse.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-Server.cs"
   },
   "Build": {
-    "Id": "5394",
-    "Number": "5394",
-    "Tag": "jenkins-RustServer-5394",
-    "Url": "https://build.facepunch.com/job/RustServer/5394/",
+    "Id": "5395",
+    "Number": "5395",
+    "Tag": "jenkins-RustServer-5395",
+    "Url": "https://build.facepunch.com/job/RustServer/5395/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1702028565,
+  "Date": 1702031384,
   "DateString": "8 12 2023",
-  "TimeString": "09:42"
+  "TimeString": "10:29"
 }
