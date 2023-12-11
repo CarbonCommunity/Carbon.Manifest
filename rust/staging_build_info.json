@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "91016",
+    "ChangeId": "91019",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "merge from io_budget_health",
+    "Comment": "merge from xmas_2023",
     "Author": "alistair",
-    "Date": "11/12/2023 08:55:06",
-    "Items": "C Assets\\Generated\\ConsoleSystem.cs \r\n C Assets\\Scripts\\ConsoleCommands\\sentry.cs \r\n C Assets\\Scripts\\EntityIO\\IOEntity.cs \r\n C Assets\\Scripts\\Entity\\Misc\\AutoTurret\\AutoTurret.Server.cs"
+    "Date": "11/12/2023 12:03:12",
+    "Items": "C Assets\\bundled\\Prefabs\\autospawn\\monument\\medium\\Bandit_town.prefab \r\n C Assets\\bundled\\Prefabs\\autospawn\\monument\\medium\\Compound.prefab \r\n C Assets\\bundled\\Prefabs\\world\\event_airdrop.prefab \r\n C Assets\\Prefabs\\Missions\\Portal\\HalloweenPortalEntry.prefab \r\n C Assets\\Prefabs\\Missions\\Portal\\ProceduralDungeon\\XmasTunnels\\XmasDungeon.cs \r\n C Assets\\Prefabs\\Misc\\Burlap Sack\\generic_world.prefab \r\n C Assets\\Prefabs\\Misc\\XMas\\advent_calendar\\advent.calendar.item.prefab \r\n C Assets\\Prefabs\\Misc\\XMas\\IceWalls\\icewall.item.prefab \r\n C Assets\\Prefabs\\Misc\\XMas\\IceWalls\\wall.external.high.ice.item.prefab \r\n C Assets\\Prefabs\\Misc\\XMas\\sleigh\\Materials\\sleigh.mat \r\n C Assets\\Prefabs\\Misc\\XMas\\sleigh\\SantaParticles.mat \r\n C Assets\\Prefabs\\Misc\\XMas\\sleigh\\SantaTrails.mat \r\n C Assets\\Prefabs\\Misc\\XMas\\XmasTree\\xmas_tree.item.prefab \r\n C Assets\\Content\\Properties\\BuildingGrade\\gingerbread.asset \r\n C Assets\\Scripts\\Shared\\BuildingGrade.cs \r\n C Assets\\Scripts\\ConsoleCommands\\xmas.cs \r\n C Assets\\Scripts\\Entity\\BuildingBlock\\BuildingBlock.Grades.cs \r\n M Assets\\bundled\\Prefabs\\world\\event_xmas.prefab.meta \r\n M Assets\\bundled\\Prefabs\\world\\event_xmas.prefab"
   },
   "Build": {
-    "Id": "5399",
-    "Number": "5399",
-    "Tag": "jenkins-RustServer-5399",
-    "Url": "https://build.facepunch.com/job/RustServer/5399/",
+    "Id": "5400",
+    "Number": "5400",
+    "Tag": "jenkins-RustServer-5400",
+    "Url": "https://build.facepunch.com/job/RustServer/5400/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1702286818,
+  "Date": 1702298587,
   "DateString": "11 12 2023",
-  "TimeString": "09:26"
+  "TimeString": "12:43"
 }
