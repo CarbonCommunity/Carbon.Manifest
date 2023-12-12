@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "91036",
+    "ChangeId": "91052",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Fixed incorrect calculation when substituting components in repair costs, fixes some items being too cheap to repair",
-    "Author": "jarryd",
-    "Date": "11/12/2023 22:38:16",
-    "Items": "C Assets\\Scripts\\Entity\\Construction\\RepairBench.cs"
+    "Comment": "Merge GrenadeThrowFix -> main",
+    "Author": "BillBorman",
+    "Date": "12/12/2023 02:49:19",
+    "Items": "C Assets\\Scripts\\Entity\\BaseEntity\\BaseEntity.Parenting.cs \r\n C Assets\\Scripts\\Entity\\TimedExplosive.cs"
   },
   "Build": {
-    "Id": "5401",
-    "Number": "5401",
-    "Tag": "jenkins-RustServer-5401",
-    "Url": "https://build.facepunch.com/job/RustServer/5401/",
+    "Id": "5402",
+    "Number": "5402",
+    "Tag": "jenkins-RustServer-5402",
+    "Url": "https://build.facepunch.com/job/RustServer/5402/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1702336148,
-  "DateString": "11 12 2023",
-  "TimeString": "23:09"
+  "Date": 1702351224,
+  "DateString": "12 12 2023",
+  "TimeString": "03:20"
 }
