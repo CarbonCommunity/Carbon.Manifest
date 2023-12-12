@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "90915",
+    "ChangeId": "91062",
     "Branch": "Aux2",
     "Repo": "rust_reboot",
-    "Comment": "Merge LessSinkableBoats -> Aux2",
-    "Author": "BillBorman",
-    "Date": "07/12/2023 09:52:29",
-    "Items": "C Assets\\Scripts\\Entity\\BaseCorpse.cs \r\n C Assets\\Scripts\\Shared\\Ragdoll.cs \r\n C Assets\\Content\\Vehicles\\Boats\\Kayak\\Kayak.prefab \r\n C Assets\\Content\\Vehicles\\Boats\\RHIB\\RHIB.prefab \r\n C Assets\\Content\\Vehicles\\Boats\\Rowboat\\Rowboat.prefab"
+    "Comment": "Manifest, code gen, protobuf",
+    "Author": "jarryd",
+    "Date": "12/12/2023 05:12:48",
+    "Items": "C Assets\\manifest.asset \r\n C Assets\\Generated\\ConsoleSystem.cs \r\n C Assets\\Generated\\RpcCalls.cs \r\n C Assets\\Plugins\\Rust.Data\\generated\\ProtocolBuffers.cs \r\n C Assets\\Plugins\\Rust.Data\\generated\\ProtocolBuffers.Serializer.cs"
   },
   "Build": {
-    "Id": "580",
-    "Number": "580",
-    "Tag": "jenkins-RustServerAux02-580",
-    "Url": "https://build.facepunch.com/job/RustServerAux02/580/",
+    "Id": "581",
+    "Number": "581",
+    "Tag": "jenkins-RustServerAux02-581",
+    "Url": "https://build.facepunch.com/job/RustServerAux02/581/",
     "Name": "RustServerAux02",
     "Node": "Win4"
   },
-  "Date": 1701944785,
-  "DateString": "7 12 2023",
-  "TimeString": "10:26"
+  "Date": 1702361222,
+  "DateString": "12 12 2023",
+  "TimeString": "06:07"
 }
