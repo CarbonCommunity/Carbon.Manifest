@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "91052",
+    "ChangeId": "91056",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Merge GrenadeThrowFix -> main",
+    "Comment": "- Removed the option to use extrapolation in my GenericLerp, it only seems to cause problems. This fixes some lerp jitter with server-side ragdolls.\r\n- Keep running limbInterp tick until lerpToServerSimTime, if it's longer than 2s",
     "Author": "BillBorman",
-    "Date": "12/12/2023 02:49:19",
-    "Items": "C Assets\\Scripts\\Entity\\BaseEntity\\BaseEntity.Parenting.cs \r\n C Assets\\Scripts\\Entity\\TimedExplosive.cs"
+    "Date": "12/12/2023 03:33:56",
+    "Items": "C Assets\\Scripts\\Shared\\Ragdoll.cs \r\n C Assets\\Scripts\\Client\\GenericLerp.cs"
   },
   "Build": {
-    "Id": "5402",
-    "Number": "5402",
-    "Tag": "jenkins-RustServer-5402",
-    "Url": "https://build.facepunch.com/job/RustServer/5402/",
+    "Id": "5403",
+    "Number": "5403",
+    "Tag": "jenkins-RustServer-5403",
+    "Url": "https://build.facepunch.com/job/RustServer/5403/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1702351224,
+  "Date": 1702353806,
   "DateString": "12 12 2023",
-  "TimeString": "03:20"
+  "TimeString": "04:03"
 }
