@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "91062",
+    "ChangeId": "91088",
     "Branch": "Aux2",
     "Repo": "rust_reboot",
-    "Comment": "Manifest, code gen, protobuf",
+    "Comment": "Merge from tutorial_island",
     "Author": "jarryd",
-    "Date": "12/12/2023 05:12:48",
-    "Items": "C Assets\\manifest.asset \r\n C Assets\\Generated\\ConsoleSystem.cs \r\n C Assets\\Generated\\RpcCalls.cs \r\n C Assets\\Plugins\\Rust.Data\\generated\\ProtocolBuffers.cs \r\n C Assets\\Plugins\\Rust.Data\\generated\\ProtocolBuffers.Serializer.cs"
+    "Date": "13/12/2023 00:51:31",
+    "Items": "C Assets\\Prefabs\\NPC\\Tutorial\\TutorialConversation.asset \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialMission03_BuildBase.asset \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialMission04_FinishBase.asset \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialMission05_HuntForFood.asset \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialMission06_PrepareForCombat.asset \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialMission07_BuildFurnace.asset \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialMission07B_BuildWorkbench.asset \r\n C Assets\\Prefabs\\Missions\\TutorialIsland\\TutorialMission07C_BuildKayak.asset \r\n C Assets\\Content\\UI\\GameUI\\TutorialHelp\\UI.Dialog.TutorialHelpModal.prefab \r\n C Assets\\Scripts\\Mission\\Objectives\\MissionObjective_Craft.cs \r\n C Assets\\Scripts\\UI\\Inventory\\Blueprints\\SelectedBlueprint.cs \r\n C Assets\\Scripts\\UI\\TutorialHelpModal.cs \r\n C Assets\\Scripts\\UI\\TutorialHelpPopup.cs \r\n C Assets\\Scripts\\Entity\\Player\\BasePlayer-Tutorial.cs"
   },
   "Build": {
-    "Id": "581",
-    "Number": "581",
-    "Tag": "jenkins-RustServerAux02-581",
-    "Url": "https://build.facepunch.com/job/RustServerAux02/581/",
+    "Id": "582",
+    "Number": "582",
+    "Tag": "jenkins-RustServerAux02-582",
+    "Url": "https://build.facepunch.com/job/RustServerAux02/582/",
     "Name": "RustServerAux02",
     "Node": "Win4"
   },
-  "Date": 1702361222,
-  "DateString": "12 12 2023",
-  "TimeString": "06:07"
+  "Date": 1702430806,
+  "DateString": "13 12 2023",
+  "TimeString": "01:26"
 }
