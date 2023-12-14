@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "91160",
+    "ChangeId": "91161",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Merge RagdollFloatFix -> main",
+    "Comment": "Minor code cleanup, improve clarity on layer use",
     "Author": "BillBorman",
-    "Date": "14/12/2023 21:46:51",
-    "Items": "C Assets\\Scripts\\Entity\\PlayerCorpse.cs"
+    "Date": "14/12/2023 21:55:02",
+    "Items": "C Assets\\Plugins\\Rust.Global\\Defines.cs \r\n C Assets\\Scripts\\Shared\\Ragdoll.cs \r\n C Assets\\Scripts\\Entity\\StabilityEntity\\StabilityEntity.Queue.cs \r\n C Assets\\Scripts\\Entity\\WorldItem\\DroppedItem.cs"
   },
   "Build": {
-    "Id": "5409",
-    "Number": "5409",
-    "Tag": "jenkins-RustServer-5409",
-    "Url": "https://build.facepunch.com/job/RustServer/5409/",
+    "Id": "5410",
+    "Number": "5410",
+    "Tag": "jenkins-RustServer-5410",
+    "Url": "https://build.facepunch.com/job/RustServer/5410/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1702590821,
+  "Date": 1702592899,
   "DateString": "14 12 2023",
-  "TimeString": "21:53"
+  "TimeString": "22:28"
 }
