@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "91115",
+    "ChangeId": "91140",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "",
-    "Author": "alistair",
-    "Date": "13/12/2023 14:25:24",
-    "Items": "C Assets\\Scripts\\Client\\EAC.cs"
+    "Comment": "Improved eye and eyelid position on both client- and server-side ragdolls",
+    "Author": "BillBorman",
+    "Date": "14/12/2023 02:51:02",
+    "Items": "C Assets\\Prefabs\\Player\\player_ragdoll.prefab \r\n C Assets\\Prefabs\\Player\\player_corpse_new.prefab"
   },
   "Build": {
-    "Id": "5407",
-    "Number": "5407",
-    "Tag": "jenkins-RustServer-5407",
-    "Url": "https://build.facepunch.com/job/RustServer/5407/",
+    "Id": "5408",
+    "Number": "5408",
+    "Tag": "jenkins-RustServer-5408",
+    "Url": "https://build.facepunch.com/job/RustServer/5408/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1702480010,
-  "DateString": "13 12 2023",
-  "TimeString": "15:06"
+  "Date": 1702524058,
+  "DateString": "14 12 2023",
+  "TimeString": "03:20"
 }
