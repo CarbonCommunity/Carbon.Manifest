@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "91116",
+    "ChangeId": "91173",
     "Branch": "release",
     "Repo": "rust_reboot",
-    "Comment": "cherrypicking 91113",
+    "Comment": "merge from xmas_2023",
     "Author": "alistair",
-    "Date": "13/12/2023 14:34:16",
-    "Items": "C Assets\\Scripts\\Client\\EAC.cs"
+    "Date": "15/12/2023 08:53:15",
+    "Items": "C Prerequisites\\SteamInventory\\generator.json \r\n C Prerequisites\\SteamInventory\\Icons\\584379.png \r\n C Prerequisites\\SteamInventory\\PaymentRules.csv \r\n C Prerequisites\\SteamInventory\\schema-full.json \r\n C Prerequisites\\SteamInventory\\schema-new.json \r\n C Prerequisites\\SteamInventory\\schema-old.json \r\n C Assets\\Plugins\\Rust.Workshop\\SteamInventory.cs \r\n C Assets\\Plugins\\Rust.Workshop\\Approved.2023.cs \r\n C Assets\\Generated\\ConsoleSystem.cs \r\n C Assets\\bundled\\Prefabs\\world\\event_airdrop.prefab \r\n C Assets\\bundled\\Prefabs\\autospawn\\monument\\medium\\Bandit_town.prefab \r\n C Assets\\bundled\\Prefabs\\autospawn\\monument\\medium\\Compound.prefab \r\n C Assets\\Prefabs\\Missions\\Portal\\ProceduralDungeon\\XmasTunnels\\XmasDungeon.cs \r\n C Assets\\Prefabs\\Missions\\Portal\\HalloweenPortalEntry.prefab \r\n C Assets\\Prefabs\\Weapons\\Legacy Bow\\legacybow.skin.asset \r\n C Assets\\Prefabs\\Misc\\BuildingSkins\\frontier\\frontier.sitem.asset \r\n C Assets\\Prefabs\\Misc\\Burlap Sack\\generic_world.prefab \r\n C Assets\\Prefabs\\Misc\\XMas\\XmasTree\\xmas_tree.item.prefab \r\n C Assets\\Prefabs\\Misc\\XMas\\sleigh\\Materials\\sleigh.mat \r\n C Assets\\Prefabs\\Misc\\XMas\\sleigh\\SantaParticles.mat \r\n C Assets\\Prefabs\\Misc\\XMas\\sleigh\\SantaTrails.mat \r\n C Assets\\Prefabs\\Misc\\XMas\\advent_calendar\\advent.calendar.item.prefab \r\n C Assets\\Prefabs\\Misc\\XMas\\IceWalls\\icewall.item.prefab \r\n C Assets\\Prefabs\\Misc\\XMas\\IceWalls\\wall.external.high.ice.item.prefab \r\n C Assets\\Content\\Properties\\BuildingGrade\\gingerbread.asset \r\n C Assets\\Scripts\\Client\\GenericLerp.cs \r\n C Assets\\Scripts\\Development\\SteamInventoryGen.cs \r\n C Assets\\Scripts\\EntityIO\\IOEntity.cs \r\n C Assets\\Scripts\\Shared\\BuildingGrade.cs \r\n C Assets\\Scripts\\Shared\\Ragdoll.cs \r\n C Assets\\Scripts\\Entity\\TimedExplosive.cs \r\n C Assets\\Scripts\\Entity\\BuildingBlock\\BuildingBlock.Grades.cs \r\n C Assets\\Scripts\\Entity\\Misc\\AutoTurret\\AutoTurret.Server.cs \r\n C Assets\\Scripts\\Entity\\BaseEntity\\BaseEntity.Parenting.cs \r\n C Assets\\Scripts\\ConsoleCommands\\xmas.cs \r\n C Assets\\Scripts\\ConsoleCommands\\sentry.cs \r\n A Prerequisites\\SteamInventory\\Icons\\56200.png \r\n A Prerequisites\\SteamInventory\\Icons\\56201.png \r\n A Prerequisites\\SteamInventory\\Icons\\56202.png \r\n A Prerequisites\\SteamInventory\\Icons\\56203.png \r\n A Prerequisites\\SteamInventory\\Icons\\56204.png \r\n A Prerequisites\\SteamInventory\\Icons\\56205.png \r\n A Prerequisites\\SteamInventory\\Icons\\56206.png \r\n A Prerequisites\\SteamInventory\\Icons\\56207.png \r\n A Assets\\Content\\Properties\\SteamCategories\\limited-350.asset \r\n A Assets\\Content\\Properties\\SteamCategories\\limited-350.asset.meta \r\n M Assets\\bundled\\Prefabs\\world\\event_xmas.prefab.meta \r\n M Assets\\bundled\\Prefabs\\world\\event_xmas.prefab"
   },
   "Build": {
-    "Id": "587",
-    "Number": "587",
-    "Tag": "jenkins-RustReleaseServer-587",
-    "Url": "https://build.facepunch.com/job/RustReleaseServer/587/",
+    "Id": "588",
+    "Number": "588",
+    "Tag": "jenkins-RustReleaseServer-588",
+    "Url": "https://build.facepunch.com/job/RustReleaseServer/588/",
     "Name": "RustReleaseServer",
     "Node": "Win4"
   },
-  "Date": 1702480753,
-  "DateString": "13 12 2023",
-  "TimeString": "15:19"
+  "Date": 1702632977,
+  "DateString": "15 12 2023",
+  "TimeString": "09:36"
 }
