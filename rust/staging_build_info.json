@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "91161",
+    "ChangeId": "91191",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Minor code cleanup, improve clarity on layer use",
-    "Author": "BillBorman",
-    "Date": "14/12/2023 21:55:02",
-    "Items": "C Assets\\Plugins\\Rust.Global\\Defines.cs \r\n C Assets\\Scripts\\Shared\\Ragdoll.cs \r\n C Assets\\Scripts\\Entity\\StabilityEntity\\StabilityEntity.Queue.cs \r\n C Assets\\Scripts\\Entity\\WorldItem\\DroppedItem.cs"
+    "Comment": "gingerbread fix",
+    "Author": "helkus",
+    "Date": "16/12/2023 16:25:16",
+    "Items": "C Assets\\Scripts\\Entity\\BuildingBlock\\BuildingBlock.Grades.cs"
   },
   "Build": {
-    "Id": "5410",
-    "Number": "5410",
-    "Tag": "jenkins-RustServer-5410",
-    "Url": "https://build.facepunch.com/job/RustServer/5410/",
+    "Id": "5411",
+    "Number": "5411",
+    "Tag": "jenkins-RustServer-5411",
+    "Url": "https://build.facepunch.com/job/RustServer/5411/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1702592899,
-  "DateString": "14 12 2023",
-  "TimeString": "22:28"
+  "Date": 1702746097,
+  "DateString": "16 12 2023",
+  "TimeString": "17:01"
 }
