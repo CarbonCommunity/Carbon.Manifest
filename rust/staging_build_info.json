@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "91191",
+    "ChangeId": "91206",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "gingerbread fix",
-    "Author": "helkus",
-    "Date": "16/12/2023 16:25:16",
-    "Items": "C Assets\\Scripts\\Entity\\BuildingBlock\\BuildingBlock.Grades.cs"
+    "Comment": "",
+    "Author": "BillBorman",
+    "Date": "18/12/2023 02:14:36",
+    "Items": "C Assets\\Unimplemented\\Weapon Mods\\Rails\\Model\\Materials\\rails.mat \r\n C Assets\\Prefabs\\Weapon Mods\\LaserSight\\Model\\Materials\\lasersight.mat \r\n C Assets\\Content\\UI\\GameUI\\Clan\\GameUI.Clan.prefab \r\n C Assets\\Scripts\\Entity\\PlayerCorpse.cs \r\n C Assets\\Scripts\\Entity\\BaseEntity\\BaseEntity.Server.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Boat\\Tugboat.cs \r\n C Assets\\Scripts\\Entity\\Vehicle\\Boat\\Buoyancy.cs"
   },
   "Build": {
-    "Id": "5411",
-    "Number": "5411",
-    "Tag": "jenkins-RustServer-5411",
-    "Url": "https://build.facepunch.com/job/RustServer/5411/",
+    "Id": "5412",
+    "Number": "5412",
+    "Tag": "jenkins-RustServer-5412",
+    "Url": "https://build.facepunch.com/job/RustServer/5412/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1702746097,
-  "DateString": "16 12 2023",
-  "TimeString": "17:01"
+  "Date": 1702867534,
+  "DateString": "18 12 2023",
+  "TimeString": "02:45"
 }
