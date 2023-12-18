@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "91208",
+    "ChangeId": "91213",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Ragdoll preprocess to match new pose",
-    "Author": "BillBorman",
-    "Date": "18/12/2023 02:57:02",
-    "Items": "C Assets\\Prefabs\\Player\\player_corpse_new.prefab"
+    "Comment": "Fixed black cream material on gingerbread tunnel entrances",
+    "Author": "damian",
+    "Date": "18/12/2023 11:53:25",
+    "Items": "C Assets\\Content\\Structures\\Timber_mine_xmas\\models\\Materials\\cream_pile_entrance.mat"
   },
   "Build": {
-    "Id": "5414",
-    "Number": "5414",
-    "Tag": "jenkins-RustServer-5414",
-    "Url": "https://build.facepunch.com/job/RustServer/5414/",
+    "Id": "5415",
+    "Number": "5415",
+    "Tag": "jenkins-RustServer-5415",
+    "Url": "https://build.facepunch.com/job/RustServer/5415/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1702871941,
+  "Date": 1702902459,
   "DateString": "18 12 2023",
-  "TimeString": "03:59"
+  "TimeString": "12:27"
 }
