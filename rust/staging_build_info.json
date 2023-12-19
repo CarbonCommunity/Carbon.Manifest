@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "91238",
+    "ChangeId": "91242",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "Just more materials to commit",
+    "Comment": "When running in listen server mode, skip client-side corpses in the corpseinfo command",
     "Author": "BillBorman",
-    "Date": "19/12/2023 02:50:19",
-    "Items": "C Assets\\Unimplemented\\Weapon Mods\\Rails\\Model\\Materials\\rails.mat \r\n C Assets\\Prefabs\\Weapon Mods\\Flashlight\\Model\\Materials\\flashlight.mat \r\n C Assets\\Prefabs\\Weapon Mods\\LaserSight\\Model\\Materials\\lasersight.mat \r\n C Assets\\Prefabs\\Plants\\Potato\\Materials\\potato_atlas.mat \r\n C Assets\\Prefabs\\Misc\\XMas\\christmas_present\\Models\\Materials\\christmas_present.mat \r\n C Assets\\Prefabs\\Misc\\XMas\\wearable\\GingerbreadMan\\Materials\\mat_Gingerbreadman_Cloth.mat \r\n C Assets\\Content\\Nature\\Terrain\\Stones\\models\\Materials\\stones_splat_rocks_snow.mat \r\n C Assets\\Content\\Nature\\TreesSource\\Palm_Trees\\models\\materials\\palm_tree_small_a_LOD4.mat \r\n C Assets\\Content\\Structures\\Timber_mine_xmas\\models\\Materials\\gumdrop_entrance.mat \r\n C Assets\\Content\\Structures\\Timber_mine_xmas\\models\\Materials\\wood_timber_trims_candy.mat \r\n C Assets\\Content\\Props\\wooden_crates\\Models\\Materials\\wooden_crate_gingerbread.mat \r\n C Assets\\Content\\Props\\gingerbread_barricades\\models\\Materials\\gingerbread barricades.mat \r\n C Assets\\Content\\Vehicles\\MLRS\\Effects\\flame-mlrs-cone.mat"
+    "Date": "19/12/2023 03:39:04",
+    "Items": "C Assets\\Scripts\\ConsoleCommands\\server.cs"
   },
   "Build": {
-    "Id": "5417",
-    "Number": "5417",
-    "Tag": "jenkins-RustServer-5417",
-    "Url": "https://build.facepunch.com/job/RustServer/5417/",
+    "Id": "5418",
+    "Number": "5418",
+    "Tag": "jenkins-RustServer-5418",
+    "Url": "https://build.facepunch.com/job/RustServer/5418/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1702954820,
+  "Date": 1702957228,
   "DateString": "19 12 2023",
-  "TimeString": "03:00"
+  "TimeString": "03:40"
 }
