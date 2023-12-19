@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "91192",
+    "ChangeId": "91246",
     "Branch": "release",
     "Repo": "rust_reboot",
-    "Comment": "cherrypicking 91191",
+    "Comment": "",
     "Author": "alistair",
-    "Date": "16/12/2023 17:26:56",
-    "Items": "C Assets\\Scripts\\Entity\\BuildingBlock\\BuildingBlock.Grades.cs"
+    "Date": "19/12/2023 09:43:50",
+    "Items": "C Assets\\Scripts\\Client\\EAC.cs"
   },
   "Build": {
-    "Id": "589",
-    "Number": "589",
-    "Tag": "jenkins-RustReleaseServer-589",
-    "Url": "https://build.facepunch.com/job/RustReleaseServer/589/",
+    "Id": "590",
+    "Number": "590",
+    "Tag": "jenkins-RustReleaseServer-590",
+    "Url": "https://build.facepunch.com/job/RustReleaseServer/590/",
     "Name": "RustReleaseServer",
     "Node": "Win4"
   },
-  "Date": 1702749715,
-  "DateString": "16 12 2023",
-  "TimeString": "18:01"
+  "Date": 1702980995,
+  "DateString": "19 12 2023",
+  "TimeString": "10:16"
 }
