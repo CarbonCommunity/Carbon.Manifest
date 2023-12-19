@@ -10,14 +10,14 @@
     "Items": "C Assets\\Scripts\\ConsoleCommands\\server.cs"
   },
   "Build": {
-    "Id": "5418",
-    "Number": "5418",
-    "Tag": "jenkins-RustServer-5418",
-    "Url": "https://build.facepunch.com/job/RustServer/5418/",
+    "Id": "5419",
+    "Number": "5419",
+    "Tag": "jenkins-RustServer-5419",
+    "Url": "https://build.facepunch.com/job/RustServer/5419/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1702957228,
+  "Date": 1702959471,
   "DateString": "19 12 2023",
-  "TimeString": "03:40"
+  "TimeString": "04:17"
 }
