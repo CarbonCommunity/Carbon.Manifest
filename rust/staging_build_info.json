@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "91242",
+    "ChangeId": "91265",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "When running in listen server mode, skip client-side corpses in the corpseinfo command",
+    "Comment": "Fixed too many buoyancy points assigned on player_corpse_new buoyancy script. This could do with a more thorough improvement but this will do for now as a safe fix for Main post-lockdown.",
     "Author": "BillBorman",
-    "Date": "19/12/2023 03:39:04",
-    "Items": "C Assets\\Scripts\\ConsoleCommands\\server.cs"
+    "Date": "20/12/2023 00:39:09",
+    "Items": "C Assets\\Prefabs\\Player\\player_corpse_new.prefab"
   },
   "Build": {
-    "Id": "5419",
-    "Number": "5419",
-    "Tag": "jenkins-RustServer-5419",
-    "Url": "https://build.facepunch.com/job/RustServer/5419/",
+    "Id": "5420",
+    "Number": "5420",
+    "Tag": "jenkins-RustServer-5420",
+    "Url": "https://build.facepunch.com/job/RustServer/5420/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1702959471,
-  "DateString": "19 12 2023",
-  "TimeString": "04:17"
+  "Date": 1703034647,
+  "DateString": "20 12 2023",
+  "TimeString": "01:10"
 }
