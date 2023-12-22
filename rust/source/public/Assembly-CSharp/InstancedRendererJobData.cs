@@ -12,7 +12,7 @@ public struct InstancedRendererJobData
 
 	public ShadowCastingMode ShadowMode;
 
-	public bool HasMesh => (int)ShadowMode != 3;
+	public bool HasMesh => ShadowMode != ShadowCastingMode.ShadowsOnly;
 
-	public bool HasShadow => (int)ShadowMode > 0;
+	public bool HasShadow => ShadowMode != ShadowCastingMode.Off;
 }

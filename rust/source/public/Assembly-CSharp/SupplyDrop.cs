@@ -1,4 +1,3 @@
-using System;
 using ConVar;
 using Rust;
 using UnityEngine;
@@ -14,12 +13,12 @@ public class SupplyDrop : LootContainer
 	public override void ServerInit ()
 	{
 		base.ServerInit ();
-		if (!Application.isLoadingSave) {
+		if (!Rust.Application.isLoadingSave) {
 			SetFlag (Flags.Reserved2, b: true);
 		}
 		isLootable = false;
-		((FacepunchBehaviour)this).Invoke ((Action)MakeLootable, 300f);
-		((FacepunchBehaviour)this).InvokeRepeating ((Action)CheckNightLight, 0f, 30f);
+		Invoke (MakeLootable, 300f);
+		InvokeRepeating (CheckNightLight, 0f, 30f);
 	}
 
 	private void RemoveParachute ()
@@ -34,8 +33,8 @@ public class SupplyDrop : LootContainer
 
 	private void OnCollisionEnter (Collision collision)
 	{
-		bool flag = ((1 << ((Component)collision.collider).gameObject.layer) & 0x40A10111) > 0;
-		if (((1 << ((Component)collision.collider).gameObject.layer) & 0x8000000) > 0 && collision.GetEntity () is Tugboat) {
+		bool flag = ((1 << collision.collider.gameObject.layer) & 0x40A10111) > 0;
+		if (((1 << collision.collider.gameObject.layer) & 0x8000000) > 0 && collision.GetEntity () is Tugboat) {
 			flag = true;
 		}
 		if (flag) {
@@ -52,7 +51,7 @@ public class SupplyDrop : LootContainer
 	public override void OnFlagsChanged (Flags old, Flags next)
 	{
 		base.OnFlagsChanged (old, next);
-		if ((Object)(object)ParachuteRoot != (Object)null) {
+		if (ParachuteRoot != null) {
 			ParachuteRoot.SetActive (next.HasFlag (Flags.Reserved2));
 		}
 	}

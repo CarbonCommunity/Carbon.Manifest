@@ -67,7 +67,7 @@ public class WorldConfig
 		try {
 			LoadFromJsonString (File.ReadAllText (fileName));
 		} catch (Exception ex) {
-			Debug.LogError ((object)ex.Message);
+			Debug.LogError (ex.Message);
 		}
 	}
 
@@ -76,7 +76,7 @@ public class WorldConfig
 		try {
 			LoadFromWorldConfig (JsonConvert.DeserializeObject<WorldConfig> (JsonString = data));
 		} catch (Exception ex) {
-			Debug.LogError ((object)ex.Message);
+			Debug.LogError (ex.Message);
 		}
 	}
 

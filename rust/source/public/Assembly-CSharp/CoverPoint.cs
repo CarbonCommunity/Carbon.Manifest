@@ -25,39 +25,31 @@ public class CoverPoint
 
 	public Vector3 Position {
 		get {
-			//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-			//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-			if (IsDynamic && (Object)(object)SourceTransform != (Object)null) {
+			if (IsDynamic && SourceTransform != null) {
 				return SourceTransform.position;
 			}
 			return _staticPosition;
 		}
 		set {
-			//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0002: Unknown result type (might be due to invalid IL or missing references)
 			_staticPosition = value;
 		}
 	}
 
 	public Vector3 Normal {
 		get {
-			//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-			//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-			if (IsDynamic && (Object)(object)SourceTransform != (Object)null) {
+			if (IsDynamic && SourceTransform != null) {
 				return SourceTransform.forward;
 			}
 			return _staticNormal;
 		}
 		set {
-			//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0002: Unknown result type (might be due to invalid IL or missing references)
 			_staticNormal = value;
 		}
 	}
 
 	public BaseEntity ReservedFor { get; set; }
 
-	public bool IsReserved => (Object)(object)ReservedFor != (Object)null;
+	public bool IsReserved => ReservedFor != null;
 
 	public bool IsCompromised { get; set; }
 
@@ -66,8 +58,8 @@ public class CoverPoint
 	public bool IsValidFor (BaseEntity entity)
 	{
 		if (!IsCompromised) {
-			if (!((Object)(object)ReservedFor == (Object)null)) {
-				return (Object)(object)ReservedFor == (Object)(object)entity;
+			if (!(ReservedFor == null)) {
+				return ReservedFor == entity;
 			}
 			return true;
 		}
@@ -82,8 +74,8 @@ public class CoverPoint
 
 	public void CoverIsCompromised (float cooldown)
 	{
-		if (!IsCompromised && (Object)(object)Volume != (Object)null) {
-			((MonoBehaviour)Volume).StartCoroutine (StartCooldown (cooldown));
+		if (!IsCompromised && Volume != null) {
+			Volume.StartCoroutine (StartCooldown (cooldown));
 		}
 	}
 
@@ -96,16 +88,7 @@ public class CoverPoint
 
 	public bool ProvidesCoverFromPoint (Vector3 point, float arcThreshold)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 val = Position - point;
-		Vector3 normalized = ((Vector3)(ref val)).normalized;
+		Vector3 normalized = (Position - point).normalized;
 		return Vector3.Dot (Normal, normalized) < arcThreshold;
 	}
 }

@@ -22,7 +22,7 @@ public class ModularCarSeat : MouseSteerableSeat
 	{
 		if (associatedSeatingModule.DoorsAreLockable) {
 			ModularCar modularCar = associatedSeatingModule.Vehicle as ModularCar;
-			if ((Object)(object)modularCar != (Object)null) {
+			if (modularCar != null) {
 				return modularCar.PlayerCanUseThis (player, ModularCarCodeLock.LockType.Door);
 			}
 		}

@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class XORSwitch : IOEntity
@@ -51,8 +50,8 @@ public class XORSwitch : IOEntity
 			break;
 		}
 		if (firstRun) {
-			if (!((FacepunchBehaviour)this).IsInvoking ((Action)UpdateFlags)) {
-				((FacepunchBehaviour)this).Invoke ((Action)UpdateFlags, 0.1f);
+			if (!IsInvoking (UpdateFlags)) {
+				Invoke (UpdateFlags, 0.1f);
 			}
 		} else {
 			UpdateFlags ();

@@ -12,7 +12,7 @@ public class IndustrialStorageAdaptor : IndustrialEntity, IIndustrialStorage
 
 	public BaseEntity cachedParent {
 		get {
-			if ((Object)(object)_cachedParent == (Object)null) {
+			if (_cachedParent == null) {
 				_cachedParent = GetParentEntity ();
 			}
 			return _cachedParent;
@@ -39,19 +39,12 @@ public class IndustrialStorageAdaptor : IndustrialEntity, IIndustrialStorage
 
 	public Vector2i InputSlotRange (int slotIndex)
 	{
-		//IL_0066: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)cachedParent != (Object)null) {
+		if (cachedParent != null) {
 			if (cachedParent is IIndustrialStorage industrialStorage) {
 				return industrialStorage.InputSlotRange (slotIndex);
 			}
 			if (cachedParent is Locker locker) {
-				Vector3 localPosition = ((Component)this).transform.localPosition;
+				Vector3 localPosition = base.transform.localPosition;
 				return locker.GetIndustrialSlotRange (localPosition);
 			}
 		}
@@ -63,15 +56,7 @@ public class IndustrialStorageAdaptor : IndustrialEntity, IIndustrialStorage
 
 	public Vector2i OutputSlotRange (int slotIndex)
 	{
-		//IL_008f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0087: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0031: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0063: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006b: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)cachedParent != (Object)null) {
+		if (cachedParent != null) {
 			if (cachedParent is DropBox && Container != null) {
 				return new Vector2i (0, Container.capacity - 2);
 			}
@@ -79,7 +64,7 @@ public class IndustrialStorageAdaptor : IndustrialEntity, IIndustrialStorage
 				return industrialStorage.OutputSlotRange (slotIndex);
 			}
 			if (cachedParent is Locker locker) {
-				Vector3 localPosition = ((Component)this).transform.localPosition;
+				Vector3 localPosition = base.transform.localPosition;
 				return locker.GetIndustrialSlotRange (localPosition);
 			}
 		}
@@ -91,7 +76,7 @@ public class IndustrialStorageAdaptor : IndustrialEntity, IIndustrialStorage
 
 	public void OnStorageItemTransferBegin ()
 	{
-		if ((Object)(object)cachedParent != (Object)null) {
+		if (cachedParent != null) {
 			if (cachedParent is VendingMachine vendingMachine) {
 				vendingMachine.OnIndustrialItemTransferBegins ();
 			} else if (cachedParent is Locker locker) {
@@ -102,7 +87,7 @@ public class IndustrialStorageAdaptor : IndustrialEntity, IIndustrialStorage
 
 	public void OnStorageItemTransferEnd ()
 	{
-		if ((Object)(object)cachedParent != (Object)null) {
+		if (cachedParent != null) {
 			if (cachedParent is VendingMachine vendingMachine) {
 				vendingMachine.OnIndustrialItemTransferEnds ();
 			} else if (cachedParent is Locker locker) {
@@ -119,11 +104,11 @@ public class IndustrialStorageAdaptor : IndustrialEntity, IIndustrialStorage
 	public void ClientNotifyItemAddRemoved (bool add)
 	{
 		if (add) {
-			GreenLight.SetActive (false);
-			GreenLight.SetActive (true);
+			GreenLight.SetActive (value: false);
+			GreenLight.SetActive (value: true);
 		} else {
-			RedLight.SetActive (false);
-			RedLight.SetActive (true);
+			RedLight.SetActive (value: false);
+			RedLight.SetActive (value: true);
 		}
 	}
 }

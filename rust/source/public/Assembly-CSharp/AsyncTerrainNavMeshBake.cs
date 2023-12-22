@@ -32,57 +32,44 @@ public class AsyncTerrainNavMeshBake : CustomYieldInstruction
 
 	public Mesh mesh {
 		get {
-			//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0006: Expected O, but got Unknown
-			Mesh val = new Mesh ();
+			Mesh mesh = new Mesh ();
 			if (vertices != null) {
-				val.SetVertices (vertices);
-				Pool.FreeList<Vector3> (ref vertices);
+				mesh.SetVertices (vertices);
+				Pool.FreeList (ref vertices);
 			}
 			if (normals != null) {
-				val.SetNormals (normals);
-				Pool.FreeList<Vector3> (ref normals);
+				mesh.SetNormals (normals);
+				Pool.FreeList (ref normals);
 			}
 			if (triangles != null) {
-				val.SetTriangles (triangles, 0);
-				Pool.FreeList<int> (ref triangles);
+				mesh.SetTriangles (triangles, 0);
+				Pool.FreeList (ref triangles);
 			}
 			if (indices != null) {
-				Pool.FreeList<int> (ref indices);
+				Pool.FreeList (ref indices);
 			}
-			return val;
+			return mesh;
 		}
 	}
 
 	public NavMeshBuildSource CreateNavMeshBuildSource ()
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
 		NavMeshBuildSource result = default(NavMeshBuildSource);
-		((NavMeshBuildSource)(ref result)).transform = Matrix4x4.TRS (pivot, Quaternion.identity, Vector3.one);
-		((NavMeshBuildSource)(ref result)).shape = (NavMeshBuildSourceShape)0;
-		((NavMeshBuildSource)(ref result)).sourceObject = (Object)(object)mesh;
+		result.transform = Matrix4x4.TRS (pivot, Quaternion.identity, Vector3.one);
+		result.shape = NavMeshBuildSourceShape.Mesh;
+		result.sourceObject = mesh;
 		return result;
 	}
 
 	public NavMeshBuildSource CreateNavMeshBuildSource (int area)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
 		NavMeshBuildSource result = CreateNavMeshBuildSource ();
-		((NavMeshBuildSource)(ref result)).area = area;
+		result.area = area;
 		return result;
 	}
 
 	public AsyncTerrainNavMeshBake (Vector3 pivot, int width, int height, bool normal, bool alpha)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
 		this.pivot = pivot;
 		this.width = width;
 		this.height = height;
@@ -97,35 +84,16 @@ public class AsyncTerrainNavMeshBake : CustomYieldInstruction
 
 	private void DoWork ()
 	{
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0078: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0083: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0090: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0095: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0096: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ca: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0142: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ef: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fe: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 val = default(Vector3);
-		((Vector3)(ref val))..ctor ((float)(width / 2), 0f, (float)(height / 2));
-		Vector3 val2 = default(Vector3);
-		((Vector3)(ref val2))..ctor (pivot.x - val.x, 0f, pivot.z - val.z);
+		Vector3 vector = new Vector3 (width / 2, 0f, height / 2);
+		Vector3 vector2 = new Vector3 (pivot.x - vector.x, 0f, pivot.z - vector.z);
 		TerrainHeightMap heightMap = TerrainMeta.HeightMap;
 		TerrainAlphaMap alphaMap = TerrainMeta.AlphaMap;
 		int num = 0;
 		for (int i = 0; i <= height; i++) {
 			int num2 = 0;
 			while (num2 <= width) {
-				Vector3 worldPos = new Vector3 ((float)num2, 0f, (float)i) + val2;
-				Vector3 item = new Vector3 ((float)num2, 0f, (float)i) - val;
+				Vector3 worldPos = new Vector3 (num2, 0f, i) + vector2;
+				Vector3 item = new Vector3 (num2, 0f, i) - vector;
 				float num3 = heightMap.GetHeight (worldPos);
 				if (num3 < -1f) {
 					indices.Add (-1);

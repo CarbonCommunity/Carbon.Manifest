@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class DeferredAction
 {
-	private Object sender;
+	private UnityEngine.Object sender;
 
 	private Action action;
 
@@ -13,7 +13,7 @@ public class DeferredAction
 
 	public int Index => (int)priority;
 
-	public DeferredAction (Object sender, Action action, ActionPriority priority = ActionPriority.Medium)
+	public DeferredAction (UnityEngine.Object sender, Action action, ActionPriority priority = ActionPriority.Medium)
 	{
 		this.sender = sender;
 		this.action = action;
@@ -27,7 +27,7 @@ public class DeferredAction
 			throw new Exception ("Double invocation of a deferred action.");
 		}
 		Idle = true;
-		if (Object.op_Implicit (sender)) {
+		if ((bool)sender) {
 			action ();
 		}
 	}
@@ -46,7 +46,7 @@ public class DeferredAction
 		return obj != null;
 	}
 
-	public static void Invoke (Object sender, Action action, ActionPriority priority = ActionPriority.Medium)
+	public static void Invoke (UnityEngine.Object sender, Action action, ActionPriority priority = ActionPriority.Medium)
 	{
 		new DeferredAction (sender, action, priority).Invoke ();
 	}

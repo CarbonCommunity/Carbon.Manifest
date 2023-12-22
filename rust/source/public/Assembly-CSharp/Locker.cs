@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Network;
@@ -37,46 +38,34 @@ public class Locker : StorageContainer
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("Locker.OnRpcMessage", 0);
-		try {
-			if (rpc == 1799659668 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("Locker.OnRpcMessage")) {
+			if (rpc == 1799659668 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - RPC_Equip "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - RPC_Equip ");
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_Equip", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_Equip")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (1799659668u, "RPC_Equip", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							RPC_Equip (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_Equip");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -146,24 +135,6 @@ public class Locker : StorageContainer
 	[RPC_Server.IsVisible (3f)]
 	public void RPC_Equip (RPCMessage msg)
 	{
-		//IL_00c7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00da: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0115: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0122: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0222: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0227: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ad: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ba: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ed: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f3: Unknown result type (might be due to invalid IL or missing references)
 		int num = msg.read.Int32 ();
 		if (num < 0 || num >= 3 || IsEquipping ()) {
 			return;
@@ -218,7 +189,7 @@ public class Locker : StorageContainer
 		if (flag) {
 			Effect.server.Run (equipSound.resourcePath, player, StringPool.Get ("spine3"), Vector3.zero, Vector3.zero);
 			SetFlag (Flags.Reserved1, b: true);
-			((FacepunchBehaviour)this).Invoke ((Action)ClearEquipping, 1.5f);
+			Invoke (ClearEquipping, 1.5f);
 		}
 	}
 
@@ -244,7 +215,7 @@ public class Locker : StorageContainer
 	{
 		int num = pos / 14 * 14;
 		ItemModWearable itemModWearable = item.info.ItemModWearable;
-		if ((Object)(object)itemModWearable == (Object)null) {
+		if (itemModWearable == null) {
 			return false;
 		}
 		bool num2 = item.IsBackpack ();
@@ -256,7 +227,7 @@ public class Locker : StorageContainer
 			Item slot = base.inventory.GetSlot (i);
 			if (slot != null) {
 				ItemModWearable itemModWearable2 = slot.info.ItemModWearable;
-				if (!((Object)(object)itemModWearable2 == (Object)null) && !itemModWearable2.CanExistWith (itemModWearable)) {
+				if (!(itemModWearable2 == null) && !itemModWearable2.CanExistWith (itemModWearable)) {
 					return true;
 				}
 			}
@@ -266,11 +237,6 @@ public class Locker : StorageContainer
 
 	public Vector2i GetIndustrialSlotRange (Vector3 localPosition)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0031: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
 		if (localPosition.x < -0.3f) {
 			return new Vector2i (28, 41);
 		}

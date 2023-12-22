@@ -16,67 +16,35 @@ public class NexusClanEventHandler : INexusClanEventListener
 
 	public void OnDisbanded (in ClanDisbandedEvent args)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		IClanChangeSink changeSink = _changeSink;
-		ClanDisbandedEvent val = args;
-		changeSink.ClanDisbanded (((ClanDisbandedEvent)(ref val)).ClanId);
-		val = args;
-		foreach (string member in ((ClanDisbandedEvent)(ref val)).Members) {
+		_changeSink.ClanDisbanded (args.ClanId);
+		foreach (string member in args.Members) {
 			ulong steamId = NexusClanUtil.GetSteamId (member);
-			_changeSink.MembershipChanged (steamId, (long?)null);
+			_changeSink.MembershipChanged (steamId, null);
 		}
 	}
 
 	public void OnInvitation (in ClanInvitedEvent args)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		ClanInvitedEvent val = args;
-		ulong steamId = NexusClanUtil.GetSteamId (((ClanInvitedEvent)(ref val)).PlayerId);
-		IClanChangeSink changeSink = _changeSink;
-		val = args;
-		changeSink.InvitationCreated (steamId, ((ClanInvitedEvent)(ref val)).ClanId);
+		ulong steamId = NexusClanUtil.GetSteamId (args.PlayerId);
+		_changeSink.InvitationCreated (steamId, args.ClanId);
 	}
 
 	public void OnJoined (in ClanJoinedEvent args)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		ClanJoinedEvent val = args;
-		ulong steamId = NexusClanUtil.GetSteamId (((ClanJoinedEvent)(ref val)).PlayerId);
-		IClanChangeSink changeSink = _changeSink;
-		val = args;
-		changeSink.MembershipChanged (steamId, (long?)((ClanJoinedEvent)(ref val)).ClanId);
+		ulong steamId = NexusClanUtil.GetSteamId (args.PlayerId);
+		_changeSink.MembershipChanged (steamId, args.ClanId);
 	}
 
 	public void OnKicked (in ClanKickedEvent args)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		ClanKickedEvent val = args;
-		ulong steamId = NexusClanUtil.GetSteamId (((ClanKickedEvent)(ref val)).PlayerId);
-		_changeSink.MembershipChanged (steamId, (long?)null);
+		ulong steamId = NexusClanUtil.GetSteamId (args.PlayerId);
+		_changeSink.MembershipChanged (steamId, null);
 	}
 
 	public void OnChanged (in ClanChangedEvent args)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		NexusClanBackend backend = _backend;
-		ClanChangedEvent val = args;
-		backend.UpdateWrapper (((ClanChangedEvent)(ref val)).ClanId);
-		IClanChangeSink changeSink = _changeSink;
-		val = args;
-		changeSink.ClanChanged (((ClanChangedEvent)(ref val)).ClanId, (ClanDataSource)(-1));
+		_backend.UpdateWrapper (args.ClanId);
+		_changeSink.ClanChanged (args.ClanId, ClanDataSource.All);
 	}
 
 	public void OnUnload (in long clanId)

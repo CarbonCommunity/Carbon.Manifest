@@ -8,10 +8,6 @@ public struct MeshOverrideData : IEquatable<MeshOverrideData>
 
 	public bool Equals (MeshOverrideData other)
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
 		if (Color.x == other.Color.x && Color.y == other.Color.y && Color.z == other.Color.z) {
 			return Color.w == other.Color.w;
 		}
@@ -28,7 +24,7 @@ public struct MeshOverrideData : IEquatable<MeshOverrideData>
 
 	public override int GetHashCode ()
 	{
-		return ((object)(float4)(ref Color)).GetHashCode ();
+		return Color.GetHashCode ();
 	}
 
 	public static bool operator == (MeshOverrideData left, MeshOverrideData right)

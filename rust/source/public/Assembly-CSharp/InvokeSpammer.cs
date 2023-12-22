@@ -1,4 +1,3 @@
-using System;
 using System.Threading;
 using UnityEngine;
 
@@ -10,7 +9,7 @@ public class InvokeSpammer : MonoBehaviour
 
 	private void Start ()
 	{
-		((FacepunchBehaviour)SingletonComponent<InvokeHandler>.Instance).InvokeRepeating ((Action)TestInvoke, RepeatTime, RepeatTime);
+		SingletonComponent<InvokeHandler>.Instance.InvokeRepeating (TestInvoke, RepeatTime, RepeatTime);
 	}
 
 	private void TestInvoke ()

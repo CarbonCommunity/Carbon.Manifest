@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 [ExecuteInEditMode]
@@ -41,12 +40,12 @@ public class VisualizeTexelDensity : MonoBehaviour
 	private void Awake ()
 	{
 		instance = this;
-		mainCamera = ((Component)this).GetComponent<Camera> ();
+		mainCamera = GetComponent<Camera> ();
 	}
 
 	private void OnEnable ()
 	{
-		mainCamera = ((Component)this).GetComponent<Camera> ();
+		mainCamera = GetComponent<Camera> ();
 		screenWidth = Screen.width;
 		screenHeight = Screen.height;
 		LoadResources ();
@@ -62,89 +61,76 @@ public class VisualizeTexelDensity : MonoBehaviour
 
 	private void LoadResources ()
 	{
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Expected O, but got Unknown
-		if ((Object)(object)texelDensityGradTex == (Object)null) {
-			ref Texture reference = ref texelDensityGradTex;
-			Object obj = Resources.Load ("TexelDensityGrad");
-			reference = (Texture)(object)((obj is Texture) ? obj : null);
+		if (texelDensityGradTex == null) {
+			texelDensityGradTex = Resources.Load ("TexelDensityGrad") as Texture;
 		}
-		if ((Object)(object)texelDensityOverlayMat == (Object)null) {
+		if (texelDensityOverlayMat == null) {
 			texelDensityOverlayMat = new Material (Shader.Find ("Hidden/TexelDensityOverlay")) {
-				hideFlags = (HideFlags)52
+				hideFlags = HideFlags.DontSave
 			};
 		}
 	}
 
 	private void SafeDestroyViewTexelDensity ()
 	{
-		if ((Object)(object)texelDensityCamera != (Object)null) {
-			Object.DestroyImmediate ((Object)(object)((Component)texelDensityCamera).gameObject);
+		if (texelDensityCamera != null) {
+			Object.DestroyImmediate (texelDensityCamera.gameObject);
 			texelDensityCamera = null;
 		}
-		if ((Object)(object)texelDensityGradTex != (Object)null) {
-			Resources.UnloadAsset ((Object)(object)texelDensityGradTex);
+		if (texelDensityGradTex != null) {
+			Resources.UnloadAsset (texelDensityGradTex);
 			texelDensityGradTex = null;
 		}
-		if ((Object)(object)texelDensityOverlayMat != (Object)null) {
-			Object.DestroyImmediate ((Object)(object)texelDensityOverlayMat);
+		if (texelDensityOverlayMat != null) {
+			Object.DestroyImmediate (texelDensityOverlayMat);
 			texelDensityOverlayMat = null;
 		}
 	}
 
 	private void SafeDestroyViewTexelDensityRT ()
 	{
-		if ((Object)(object)texelDensityRT != (Object)null) {
-			Graphics.SetRenderTarget ((RenderTexture)null);
+		if (texelDensityRT != null) {
+			Graphics.SetRenderTarget (null);
 			texelDensityRT.Release ();
-			Object.DestroyImmediate ((Object)(object)texelDensityRT);
+			Object.DestroyImmediate (texelDensityRT);
 			texelDensityRT = null;
 		}
 	}
 
 	private void UpdateViewTexelDensity (bool screenResized)
 	{
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0037: Expected O, but got Unknown
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0063: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0128: Unknown result type (might be due to invalid IL or missing references)
-		//IL_012d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013a: Expected O, but got Unknown
-		if ((Object)(object)texelDensityCamera == (Object)null) {
-			GameObject val = new GameObject ("Texel Density Camera", new Type[1] { typeof(Camera) }) {
-				hideFlags = (HideFlags)61
+		if (texelDensityCamera == null) {
+			GameObject gameObject = new GameObject ("Texel Density Camera", typeof(Camera)) {
+				hideFlags = HideFlags.HideAndDontSave
 			};
-			val.transform.parent = ((Component)mainCamera).transform;
-			val.transform.localPosition = Vector3.zero;
-			val.transform.localRotation = Quaternion.identity;
-			texelDensityCamera = val.GetComponent<Camera> ();
+			gameObject.transform.parent = mainCamera.transform;
+			gameObject.transform.localPosition = Vector3.zero;
+			gameObject.transform.localRotation = Quaternion.identity;
+			texelDensityCamera = gameObject.GetComponent<Camera> ();
 			texelDensityCamera.CopyFrom (mainCamera);
-			texelDensityCamera.renderingPath = (RenderingPath)1;
+			texelDensityCamera.renderingPath = RenderingPath.Forward;
 			texelDensityCamera.allowMSAA = false;
 			texelDensityCamera.allowHDR = false;
-			texelDensityCamera.clearFlags = (CameraClearFlags)1;
-			texelDensityCamera.depthTextureMode = (DepthTextureMode)0;
+			texelDensityCamera.clearFlags = CameraClearFlags.Skybox;
+			texelDensityCamera.depthTextureMode = DepthTextureMode.None;
 			texelDensityCamera.SetReplacementShader (shader, shaderTag);
-			((Behaviour)texelDensityCamera).enabled = false;
+			texelDensityCamera.enabled = false;
 		}
-		if ((Object)(object)texelDensityRT == (Object)null || screenResized || !texelDensityRT.IsCreated ()) {
+		if (texelDensityRT == null || screenResized || !texelDensityRT.IsCreated ()) {
 			texelDensityCamera.targetTexture = null;
 			SafeDestroyViewTexelDensityRT ();
-			texelDensityRT = new RenderTexture (screenWidth, screenHeight, 24, (RenderTextureFormat)0) {
-				hideFlags = (HideFlags)52
+			texelDensityRT = new RenderTexture (screenWidth, screenHeight, 24, RenderTextureFormat.ARGB32) {
+				hideFlags = HideFlags.DontSave
 			};
-			((Object)texelDensityRT).name = "TexelDensityRT";
-			((Texture)texelDensityRT).filterMode = (FilterMode)0;
-			((Texture)texelDensityRT).wrapMode = (TextureWrapMode)1;
+			texelDensityRT.name = "TexelDensityRT";
+			texelDensityRT.filterMode = FilterMode.Point;
+			texelDensityRT.wrapMode = TextureWrapMode.Clamp;
 			texelDensityRT.Create ();
 		}
-		if ((Object)(object)texelDensityCamera.targetTexture != (Object)(object)texelDensityRT) {
+		if (texelDensityCamera.targetTexture != texelDensityRT) {
 			texelDensityCamera.targetTexture = texelDensityRT;
 		}
-		Shader.SetGlobalFloat ("global_TexelsPerMeter", (float)texelsPerMeter);
+		Shader.SetGlobalFloat ("global_TexelsPerMeter", texelsPerMeter);
 		Shader.SetGlobalTexture ("global_TexelDensityGrad", texelDensityGradTex);
 		texelDensityCamera.fieldOfView = mainCamera.fieldOfView;
 		texelDensityCamera.nearClipPlane = mainCamera.nearClipPlane;
@@ -165,35 +151,18 @@ public class VisualizeTexelDensity : MonoBehaviour
 	private void OnRenderImage (RenderTexture source, RenderTexture destination)
 	{
 		if (initialized) {
-			UpdateViewTexelDensity (CheckScreenResized (((Texture)source).width, ((Texture)source).height));
+			UpdateViewTexelDensity (CheckScreenResized (source.width, source.height));
 			texelDensityCamera.Render ();
-			texelDensityOverlayMat.SetTexture ("_TexelDensityMap", (Texture)(object)texelDensityRT);
+			texelDensityOverlayMat.SetTexture ("_TexelDensityMap", texelDensityRT);
 			texelDensityOverlayMat.SetFloat ("_Opacity", overlayOpacity);
-			Graphics.Blit ((Texture)(object)source, destination, texelDensityOverlayMat, 0);
+			Graphics.Blit (source, destination, texelDensityOverlayMat, 0);
 		} else {
-			Graphics.Blit ((Texture)(object)source, destination);
+			Graphics.Blit (source, destination);
 		}
 	}
 
 	private void DrawGUIText (float x, float y, Vector2 size, string text, GUIStyle fontStyle)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0075: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0097: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ca: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d0: Unknown result type (might be due to invalid IL or missing references)
 		fontStyle.normal.textColor = Color.black;
 		GUI.Label (new Rect (x - 1f, y + 1f, size.x, size.y), text, fontStyle);
 		GUI.Label (new Rect (x + 1f, y - 1f, size.x, size.y), text, fontStyle);
@@ -205,34 +174,6 @@ public class VisualizeTexelDensity : MonoBehaviour
 
 	private void OnGUI ()
 	{
-		//IL_00c5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00dc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f8: Expected O, but got Unknown
-		//IL_0104: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010e: Expected O, but got Unknown
-		//IL_0109: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0113: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011d: Expected O, but got Unknown
-		//IL_0118: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0122: Unknown result type (might be due to invalid IL or missing references)
-		//IL_012c: Expected O, but got Unknown
-		//IL_0127: Unknown result type (might be due to invalid IL or missing references)
-		//IL_012c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0131: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013b: Expected O, but got Unknown
-		//IL_0136: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0144: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0154: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0162: Unknown result type (might be due to invalid IL or missing references)
-		//IL_017a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_018b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01c7: Unknown result type (might be due to invalid IL or missing references)
 		if (initialized && showHUD) {
 			string text = "Texels Per Meter";
 			string text2 = "0";
@@ -243,20 +184,20 @@ public class VisualizeTexelDensity : MonoBehaviour
 			float num3 = (Screen.width - texelDensityGradTex.width) / 2;
 			float num4 = 32f;
 			GL.PushMatrix ();
-			GL.LoadPixelMatrix (0f, (float)Screen.width, (float)Screen.height, 0f);
-			Graphics.DrawTexture (new Rect (num3 - 2f, num4 - 2f, num + 4f, num2 + 4f), (Texture)(object)Texture2D.whiteTexture);
+			GL.LoadPixelMatrix (0f, Screen.width, Screen.height, 0f);
+			Graphics.DrawTexture (new Rect (num3 - 2f, num4 - 2f, num + 4f, num2 + 4f), Texture2D.whiteTexture);
 			Graphics.DrawTexture (new Rect (num3, num4, num, num2), texelDensityGradTex);
 			GL.PopMatrix ();
-			GUIStyle val = new GUIStyle ();
-			val.fontSize = 13;
-			Vector2 val2 = val.CalcSize (new GUIContent (text));
-			Vector2 size = val.CalcSize (new GUIContent (text2));
-			Vector2 val3 = val.CalcSize (new GUIContent (text3));
-			Vector2 val4 = val.CalcSize (new GUIContent (text4));
-			DrawGUIText (((float)Screen.width - val2.x) / 2f, num4 - val2.y - 5f, val2, text, val);
-			DrawGUIText (num3, num4 + num2 + 6f, size, text2, val);
-			DrawGUIText (((float)Screen.width - val3.x) / 2f, num4 + num2 + 6f, val3, text3, val);
-			DrawGUIText (num3 + num - val4.x, num4 + num2 + 6f, val4, text4, val);
+			GUIStyle gUIStyle = new GUIStyle ();
+			gUIStyle.fontSize = 13;
+			Vector2 size = gUIStyle.CalcSize (new GUIContent (text));
+			Vector2 size2 = gUIStyle.CalcSize (new GUIContent (text2));
+			Vector2 size3 = gUIStyle.CalcSize (new GUIContent (text3));
+			Vector2 size4 = gUIStyle.CalcSize (new GUIContent (text4));
+			DrawGUIText (((float)Screen.width - size.x) / 2f, num4 - size.y - 5f, size, text, gUIStyle);
+			DrawGUIText (num3, num4 + num2 + 6f, size2, text2, gUIStyle);
+			DrawGUIText (((float)Screen.width - size3.x) / 2f, num4 + num2 + 6f, size3, text3, gUIStyle);
+			DrawGUIText (num3 + num - size4.x, num4 + num2 + 6f, size4, text4, gUIStyle);
 		}
 	}
 }

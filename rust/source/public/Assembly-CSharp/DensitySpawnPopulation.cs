@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Text;
 using ConVar;
@@ -52,7 +51,7 @@ public class DensitySpawnPopulation : SpawnPopulationBase
 	{
 		if (Prefabs == null || Prefabs.Length == 0) {
 			if (!string.IsNullOrEmpty (ResourceFolder)) {
-				Prefabs = Prefab.Load<Spawnable> ("assets/bundled/prefabs/autospawn/" + ResourceFolder, GameManager.server, PrefabAttribute.server, useProbabilities: false, useWorldConfig: true);
+				Prefabs = Prefab.Load<Spawnable> ("assets/bundled/prefabs/autospawn/" + ResourceFolder, GameManager.server, PrefabAttribute.server, useProbabilities: false);
 			}
 			if (ResourceList != null && ResourceList.Length != 0) {
 				List<string> list = new List<string> ();
@@ -60,7 +59,7 @@ public class DensitySpawnPopulation : SpawnPopulationBase
 				foreach (GameObjectRef gameObjectRef in resourceList) {
 					string resourcePath = gameObjectRef.resourcePath;
 					if (string.IsNullOrEmpty (resourcePath)) {
-						Debug.LogWarning ((object)(((Object)this).name + " resource list contains invalid resource path for GUID " + gameObjectRef.guid), (Object)(object)this);
+						Debug.LogWarning (base.name + " resource list contains invalid resource path for GUID " + gameObjectRef.guid, this);
 					} else {
 						list.Add (resourcePath);
 					}
@@ -77,34 +76,14 @@ public class DensitySpawnPopulation : SpawnPopulationBase
 
 	public override void SubFill (SpawnHandler spawnHandler, SpawnDistribution distribution, int numToFill, bool initialSpawn)
 	{
-		//IL_0090: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ce: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ee: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0100: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0188: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0118: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0125: Unknown result type (might be due to invalid IL or missing references)
-		//IL_012a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0197: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0199: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0142: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0144: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0154: Unknown result type (might be due to invalid IL or missing references)
-		float num = Mathf.Max ((float)ClusterSizeMax, distribution.GetGridCellArea () * GetMaximumSpawnDensity ());
+		float num = Mathf.Max (ClusterSizeMax, distribution.GetGridCellArea () * GetMaximumSpawnDensity ());
 		UpdateWeights (distribution, GetTargetCount (distribution));
 		int num2 = (initialSpawn ? (numToFill * SpawnAttemptsInitial) : (numToFill * SpawnAttemptsRepeating));
 		while (numToFill >= ClusterSizeMin && num2 > 0) {
 			ByteQuadtree.Element node = distribution.SampleNode ();
-			int num3 = Random.Range (ClusterSizeMin, ClusterSizeMax + 1);
-			num3 = Mathx.Min (num2, numToFill, num3);
-			for (int i = 0; i < num3; i++) {
+			int f = Random.Range (ClusterSizeMin, ClusterSizeMax + 1);
+			f = Mathx.Min (num2, numToFill, f);
+			for (int i = 0; i < f; i++) {
 				Vector3 spawnPos;
 				Quaternion spawnRot;
 				bool flag = distribution.Sample (out spawnPos, out spawnRot, node, AlignToNormal, ClusterDithering) && Filter.GetFactor (spawnPos) > 0f;
@@ -146,7 +125,7 @@ public class DensitySpawnPopulation : SpawnPopulationBase
 
 	protected virtual int GetPrefabWeight (Prefab<Spawnable> prefab)
 	{
-		if (!Object.op_Implicit ((Object)(object)prefab.Parameters)) {
+		if (!prefab.Parameters) {
 			return 1;
 		}
 		return prefab.Parameters.Count;
@@ -206,7 +185,7 @@ public class DensitySpawnPopulation : SpawnPopulationBase
 		byte[] baseValues = new byte[populationRes * populationRes];
 		SpawnFilter filter = Filter;
 		float cutoff = FilterCutoff;
-		Parallel.For (0, populationRes, (Action<int>)delegate(int z) {
+		Parallel.For (0, populationRes, delegate(int z) {
 			for (int i = 0; i < populationRes; i++) {
 				float normX = ((float)i + 0.5f) / (float)populationRes;
 				float normZ = ((float)z + 0.5f) / (float)populationRes;
@@ -219,8 +198,6 @@ public class DensitySpawnPopulation : SpawnPopulationBase
 
 	public override int GetTargetCount (SpawnDistribution distribution)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000a: Unknown result type (might be due to invalid IL or missing references)
 		float num = TerrainMeta.Size.x * TerrainMeta.Size.z;
 		float num2 = GetCurrentSpawnDensity ();
 		if (!ScaleWithLargeMaps) {
@@ -240,9 +217,9 @@ public class DensitySpawnPopulation : SpawnPopulationBase
 	public override void GetReportString (StringBuilder sb, bool detailed)
 	{
 		if (!string.IsNullOrEmpty (ResourceFolder)) {
-			sb.AppendLine (((Object)this).name + " (autospawn/" + ResourceFolder + ")");
+			sb.AppendLine (base.name + " (autospawn/" + ResourceFolder + ")");
 		} else {
-			sb.AppendLine (((Object)this).name);
+			sb.AppendLine (base.name);
 		}
 		if (!detailed) {
 			return;
@@ -251,7 +228,7 @@ public class DensitySpawnPopulation : SpawnPopulationBase
 		if (Prefabs != null) {
 			Prefab<Spawnable>[] prefabs = Prefabs;
 			foreach (Prefab<Spawnable> prefab in prefabs) {
-				sb.AppendLine ("\t\t" + prefab.Name + " - " + (object)prefab.Object);
+				sb.AppendLine ("\t\t" + prefab.Name + " - " + prefab.Object);
 			}
 		} else {
 			sb.AppendLine ("\t\tN/A");

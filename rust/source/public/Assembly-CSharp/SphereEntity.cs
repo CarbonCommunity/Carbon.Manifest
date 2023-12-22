@@ -13,7 +13,7 @@ public class SphereEntity : BaseEntity
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.sphereEntity = Pool.Get<SphereEntity> ();
+		info.msg.sphereEntity = Pool.Get<ProtoBuf.SphereEntity> ();
 		info.msg.sphereEntity.radius = currentRadius;
 	}
 
@@ -36,8 +36,7 @@ public class SphereEntity : BaseEntity
 
 	protected void UpdateScale ()
 	{
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		((Component)this).transform.localScale = new Vector3 (currentRadius, currentRadius, currentRadius);
+		base.transform.localScale = new Vector3 (currentRadius, currentRadius, currentRadius);
 	}
 
 	protected void Update ()

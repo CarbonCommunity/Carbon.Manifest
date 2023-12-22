@@ -22,7 +22,7 @@ public class ElectricalHeater : IOEntity
 	{
 		base.OnFlagsChanged (old, next);
 		bool flag = next.HasFlag (Flags.Reserved8);
-		if (old.HasFlag (Flags.Reserved8) != flag && (Object)(object)growableHeatSource != (Object)null) {
+		if (old.HasFlag (Flags.Reserved8) != flag && growableHeatSource != null) {
 			growableHeatSource.ForceUpdateGrowablesInRange ();
 		}
 	}
@@ -30,7 +30,7 @@ public class ElectricalHeater : IOEntity
 	public override void OnKilled (HitInfo info)
 	{
 		base.OnKilled (info);
-		if ((Object)(object)growableHeatSource != (Object)null) {
+		if (growableHeatSource != null) {
 			growableHeatSource.ForceUpdateGrowablesInRange ();
 		}
 	}

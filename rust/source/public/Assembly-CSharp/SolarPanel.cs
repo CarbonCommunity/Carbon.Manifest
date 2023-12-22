@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class SolarPanel : IOEntity
@@ -31,34 +30,26 @@ public class SolarPanel : IOEntity
 	public override void ServerInit ()
 	{
 		base.ServerInit ();
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)SunUpdate, 1f, 5f, 2f);
+		InvokeRandomized (SunUpdate, 1f, 5f, 2f);
 	}
 
 	public void SunUpdate ()
 	{
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0063: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0073: Unknown result type (might be due to invalid IL or missing references)
 		int num = currentEnergy;
 		if (TOD_Sky.Instance.IsNight) {
 			num = 0;
 		} else {
 			Vector3 sunDirection = TOD_Sky.Instance.SunDirection;
-			float num2 = Vector3.Dot (((Component)sunSampler).transform.forward, sunDirection);
-			float num3 = Mathf.InverseLerp (dot_minimum, dot_maximum, num2);
-			if (num3 > 0f && !IsVisible (((Component)sunSampler).transform.position + sunDirection * 100f, 101f)) {
-				num3 = 0f;
+			float value = Vector3.Dot (sunSampler.transform.forward, sunDirection);
+			float num2 = Mathf.InverseLerp (dot_minimum, dot_maximum, value);
+			if (num2 > 0f && !IsVisible (sunSampler.transform.position + sunDirection * 100f, 101f)) {
+				num2 = 0f;
 			}
-			num = Mathf.FloorToInt ((float)maximalPowerOutput * num3 * base.healthFraction);
+			num = Mathf.FloorToInt ((float)maximalPowerOutput * num2 * base.healthFraction);
 		}
-		bool num4 = currentEnergy != num;
+		bool num3 = currentEnergy != num;
 		currentEnergy = num;
-		if (num4) {
+		if (num3) {
 			MarkDirty ();
 		}
 	}

@@ -67,18 +67,13 @@ public class ConnectionLimiter
 
 	public override string ToString ()
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Expected O, but got Unknown
-		TextTable val = new TextTable ();
-		val.AddColumns (new string[2] { "IP", "connections" });
+		TextTable textTable = new TextTable ();
+		textTable.AddColumns ("IP", "connections");
 		lock (_sync) {
 			foreach (KeyValuePair<IPAddress, int> item in _addressCounts.OrderByDescending ((KeyValuePair<IPAddress, int> t) => t.Value)) {
-				val.AddRow (new string[2] {
-					item.Key.ToString (),
-					item.Value.ToString ()
-				});
+				textTable.AddRow (item.Key.ToString (), item.Value.ToString ());
 			}
-			return $"{val}\n{_overallCount} total";
+			return $"{textTable}\n{_overallCount} total";
 		}
 	}
 }

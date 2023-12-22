@@ -7,10 +7,10 @@ public class SpawnOptionsHandler : BaseNexusRequestHandler<SpawnOptionsRequest>
 {
 	protected override void Handle ()
 	{
-		Response val = BaseNexusRequestHandler<SpawnOptionsRequest>.NewResponse ();
-		val.spawnOptions = Pool.Get<SpawnOptionsResponse> ();
-		val.spawnOptions.spawnOptions = Pool.GetList<SpawnOptions> ();
-		BasePlayer.GetRespawnOptionsForPlayer (val.spawnOptions.spawnOptions, base.Request.userId);
-		SendSuccess (val);
+		Response response = BaseNexusRequestHandler<SpawnOptionsRequest>.NewResponse ();
+		response.spawnOptions = Pool.Get<SpawnOptionsResponse> ();
+		response.spawnOptions.spawnOptions = Pool.GetList<RespawnInformation.SpawnOptions> ();
+		BasePlayer.GetRespawnOptionsForPlayer (response.spawnOptions.spawnOptions, base.Request.userId);
+		SendSuccess (response);
 	}
 }

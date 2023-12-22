@@ -15,7 +15,7 @@ public class ConstructionGrade : PrefabAttribute
 
 	public float maxHealth {
 		get {
-			if (!Object.op_Implicit ((Object)(object)gradeBase) || !construction) {
+			if (!gradeBase || !construction) {
 				return 0f;
 			}
 			return gradeBase.baseHealth * construction.healthMultiplier;

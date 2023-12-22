@@ -28,7 +28,7 @@ public class DungeonBaseLink : MonoBehaviour
 		get {
 			if (sockets == null) {
 				sockets = new List<DungeonBaseSocket> ();
-				((Component)this).GetComponentsInChildren<DungeonBaseSocket> (true, sockets);
+				GetComponentsInChildren (includeInactive: true, sockets);
 			}
 			return sockets;
 		}
@@ -38,7 +38,7 @@ public class DungeonBaseLink : MonoBehaviour
 		get {
 			if (volumes == null) {
 				volumes = new List<DungeonVolume> ();
-				((Component)this).GetComponentsInChildren<DungeonVolume> (true, volumes);
+				GetComponentsInChildren (includeInactive: true, volumes);
 			}
 			return volumes;
 		}
@@ -46,17 +46,16 @@ public class DungeonBaseLink : MonoBehaviour
 
 	protected void Awake ()
 	{
-		if (Object.op_Implicit ((Object)(object)TerrainMeta.Path)) {
+		if ((bool)TerrainMeta.Path) {
 			TerrainMeta.Path.DungeonBaseLinks.Add (this);
 		}
 	}
 
 	internal void Initialize ()
 	{
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		if (!((Object)(object)TerrainMeta.Path == (Object)null)) {
-			Dungeon = TerrainMeta.Path.FindClosest (TerrainMeta.Path.DungeonBaseEntrances, ((Component)this).transform.position);
-			if (!((Object)(object)Dungeon == (Object)null)) {
+		if (!(TerrainMeta.Path == null)) {
+			Dungeon = TerrainMeta.Path.FindClosest (TerrainMeta.Path.DungeonBaseEntrances, base.transform.position);
+			if (!(Dungeon == null)) {
 				Dungeon.Add (this);
 			}
 		}

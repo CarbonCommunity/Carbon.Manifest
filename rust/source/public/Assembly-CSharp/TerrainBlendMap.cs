@@ -7,9 +7,9 @@ public class TerrainBlendMap : TerrainMap<byte>
 
 	public override void Setup ()
 	{
-		if ((Object)(object)BlendTexture != (Object)null) {
-			if (((Texture)BlendTexture).width == ((Texture)BlendTexture).height) {
-				res = ((Texture)BlendTexture).width;
+		if (BlendTexture != null) {
+			if (BlendTexture.width == BlendTexture.height) {
+				res = BlendTexture.width;
 				src = (dst = new byte[res * res]);
 				Color32[] pixels = BlendTexture.GetPixels32 ();
 				int i = 0;
@@ -23,7 +23,7 @@ public class TerrainBlendMap : TerrainMap<byte>
 					}
 				}
 			} else {
-				Debug.LogError ((object)("Invalid alpha texture: " + ((Object)BlendTexture).name));
+				Debug.LogError ("Invalid alpha texture: " + BlendTexture.name);
 			}
 			return;
 		}
@@ -38,15 +38,11 @@ public class TerrainBlendMap : TerrainMap<byte>
 
 	public void GenerateTextures ()
 	{
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Expected O, but got Unknown
-		BlendTexture = new Texture2D (res, res, (TextureFormat)1, true, true);
-		((Object)BlendTexture).name = "BlendTexture";
-		((Texture)BlendTexture).wrapMode = (TextureWrapMode)1;
-		Color32[] col = (Color32[])(object)new Color32[res * res];
-		Parallel.For (0, res, (Action<int>)delegate(int z) {
-			//IL_0039: Unknown result type (might be due to invalid IL or missing references)
-			//IL_003e: Unknown result type (might be due to invalid IL or missing references)
+		BlendTexture = new Texture2D (res, res, TextureFormat.Alpha8, mipChain: true, linear: true);
+		BlendTexture.name = "BlendTexture";
+		BlendTexture.wrapMode = TextureWrapMode.Clamp;
+		Color32[] col = new Color32[res * res];
+		Parallel.For (0, res, delegate(int z) {
 			for (int i = 0; i < res; i++) {
 				byte b = src [z * res + i];
 				col [z * res + i] = new Color32 (b, b, b, b);
@@ -57,15 +53,13 @@ public class TerrainBlendMap : TerrainMap<byte>
 
 	public void ApplyTextures ()
 	{
-		BlendTexture.Apply (true, false);
-		BlendTexture.Compress (false);
-		BlendTexture.Apply (false, true);
+		BlendTexture.Apply (updateMipmaps: true, makeNoLongerReadable: false);
+		BlendTexture.Compress (highQuality: false);
+		BlendTexture.Apply (updateMipmaps: false, makeNoLongerReadable: true);
 	}
 
 	public float GetAlpha (Vector3 worldPos)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
 		float normX = TerrainMeta.NormalizeX (worldPos.x);
 		float normZ = TerrainMeta.NormalizeZ (worldPos.z);
 		return GetAlpha (normX, normZ);
@@ -80,20 +74,18 @@ public class TerrainBlendMap : TerrainMap<byte>
 		int num5 = Mathf.Clamp ((int)num3, 0, num);
 		int x = Mathf.Min (num4 + 1, num);
 		int z = Mathf.Min (num5 + 1, num);
-		float num6 = Mathf.Lerp (GetAlpha (num4, num5), GetAlpha (x, num5), num2 - (float)num4);
-		float num7 = Mathf.Lerp (GetAlpha (num4, z), GetAlpha (x, z), num2 - (float)num4);
-		return Mathf.Lerp (num6, num7, num3 - (float)num5);
+		float a = Mathf.Lerp (GetAlpha (num4, num5), GetAlpha (x, num5), num2 - (float)num4);
+		float b = Mathf.Lerp (GetAlpha (num4, z), GetAlpha (x, z), num2 - (float)num4);
+		return Mathf.Lerp (a, b, num3 - (float)num5);
 	}
 
 	public float GetAlpha (int x, int z)
 	{
-		return BitUtility.Byte2Float ((int)src [z * res + x]);
+		return BitUtility.Byte2Float (src [z * res + x]);
 	}
 
 	public void SetAlpha (Vector3 worldPos, float a)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
 		float normX = TerrainMeta.NormalizeX (worldPos.x);
 		float normZ = TerrainMeta.NormalizeZ (worldPos.z);
 		SetAlpha (normX, normZ, a);
@@ -118,8 +110,6 @@ public class TerrainBlendMap : TerrainMap<byte>
 
 	public void SetAlpha (Vector3 worldPos, float a, float opacity, float radius, float fade = 0f)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
 		float normX = TerrainMeta.NormalizeX (worldPos.x);
 		float normZ = TerrainMeta.NormalizeZ (worldPos.z);
 		SetAlpha (normX, normZ, a, opacity, radius, fade);

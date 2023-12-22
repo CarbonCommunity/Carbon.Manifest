@@ -5,23 +5,22 @@ public class SetClanMotd : BaseClanHandler<AppSendMessage>
 {
 	public override async void Execute ()
 	{
-		string motd = default(string);
-		if (!ClanValidator.ValidateMotd (base.Proto.message, ref motd)) {
-			((BaseHandler<AppSendMessage>)this).SendError ("invalid_motd");
+		if (!ClanValidator.ValidateMotd (base.Proto.message, out var motd)) {
+			SendError ("invalid_motd");
 			return;
 		}
 		IClan clan = await GetClan ();
 		if (clan == null) {
-			((BaseHandler<AppSendMessage>)this).SendError ("no_clan");
+			SendError ("no_clan");
 			return;
 		}
 		long previousTimestamp = clan.MotdTimestamp;
-		ClanResult val = await clan.SetMotd (motd, base.UserId);
-		if ((int)val == 1) {
+		ClanResult clanResult = await clan.SetMotd (motd, base.UserId);
+		if (clanResult == ClanResult.Success) {
 			SendSuccess ();
 			ClanPushNotifications.SendClanAnnouncement (clan, previousTimestamp, base.UserId);
 		} else {
-			SendError (val);
+			SendError (clanResult);
 		}
 	}
 }

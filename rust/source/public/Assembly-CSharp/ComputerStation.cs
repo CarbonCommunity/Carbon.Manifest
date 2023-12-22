@@ -1,9 +1,9 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using ConVar;
 using Facepunch;
 using Network;
-using Network.Visibility;
 using ProtoBuf;
 using Rust;
 using UnityEngine;
@@ -44,114 +44,95 @@ public class ComputerStation : BaseMountable
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("ComputerStation.OnRpcMessage", 0);
-		try {
-			if (rpc == 481778085 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("ComputerStation.OnRpcMessage")) {
+			if (rpc == 481778085 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - AddBookmark "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - AddBookmark ");
 				}
-				TimeWarning val2 = TimeWarning.New ("AddBookmark", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Call", 0);
+				using (TimeWarning.New ("AddBookmark")) {
 					try {
-						RPCMessage rPCMessage = default(RPCMessage);
-						rPCMessage.connection = msg.connection;
-						rPCMessage.player = player;
-						rPCMessage.read = msg.read;
-						RPCMessage msg2 = rPCMessage;
-						AddBookmark (msg2);
-					} finally {
-						((IDisposable)val3)?.Dispose ();
+						using (TimeWarning.New ("Call")) {
+							RPCMessage rPCMessage = default(RPCMessage);
+							rPCMessage.connection = msg.connection;
+							rPCMessage.player = player;
+							rPCMessage.read = msg.read;
+							RPCMessage msg2 = rPCMessage;
+							AddBookmark (msg2);
+						}
+					} catch (Exception exception) {
+						Debug.LogException (exception);
+						player.Kick ("RPC Error in AddBookmark");
 					}
-				} catch (Exception ex) {
-					Debug.LogException (ex);
-					player.Kick ("RPC Error in AddBookmark");
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 552248427 && (Object)(object)player != (Object)null) {
+			if (rpc == 552248427 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - BeginControllingBookmark "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - BeginControllingBookmark ");
 				}
-				TimeWarning val2 = TimeWarning.New ("BeginControllingBookmark", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Call", 0);
+				using (TimeWarning.New ("BeginControllingBookmark")) {
 					try {
-						RPCMessage rPCMessage = default(RPCMessage);
-						rPCMessage.connection = msg.connection;
-						rPCMessage.player = player;
-						rPCMessage.read = msg.read;
-						RPCMessage msg3 = rPCMessage;
-						BeginControllingBookmark (msg3);
-					} finally {
-						((IDisposable)val3)?.Dispose ();
+						using (TimeWarning.New ("Call")) {
+							RPCMessage rPCMessage = default(RPCMessage);
+							rPCMessage.connection = msg.connection;
+							rPCMessage.player = player;
+							rPCMessage.read = msg.read;
+							RPCMessage msg3 = rPCMessage;
+							BeginControllingBookmark (msg3);
+						}
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
+						player.Kick ("RPC Error in BeginControllingBookmark");
 					}
-				} catch (Exception ex2) {
-					Debug.LogException (ex2);
-					player.Kick ("RPC Error in BeginControllingBookmark");
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 2498687923u && (Object)(object)player != (Object)null) {
+			if (rpc == 2498687923u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - DeleteBookmark "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - DeleteBookmark ");
 				}
-				TimeWarning val2 = TimeWarning.New ("DeleteBookmark", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Call", 0);
+				using (TimeWarning.New ("DeleteBookmark")) {
 					try {
-						RPCMessage rPCMessage = default(RPCMessage);
-						rPCMessage.connection = msg.connection;
-						rPCMessage.player = player;
-						rPCMessage.read = msg.read;
-						RPCMessage msg4 = rPCMessage;
-						DeleteBookmark (msg4);
-					} finally {
-						((IDisposable)val3)?.Dispose ();
+						using (TimeWarning.New ("Call")) {
+							RPCMessage rPCMessage = default(RPCMessage);
+							rPCMessage.connection = msg.connection;
+							rPCMessage.player = player;
+							rPCMessage.read = msg.read;
+							RPCMessage msg4 = rPCMessage;
+							DeleteBookmark (msg4);
+						}
+					} catch (Exception exception3) {
+						Debug.LogException (exception3);
+						player.Kick ("RPC Error in DeleteBookmark");
 					}
-				} catch (Exception ex3) {
-					Debug.LogException (ex3);
-					player.Kick ("RPC Error in DeleteBookmark");
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 2139261430 && (Object)(object)player != (Object)null) {
+			if (rpc == 2139261430 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - Server_DisconnectControl "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - Server_DisconnectControl ");
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_DisconnectControl", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Call", 0);
+				using (TimeWarning.New ("Server_DisconnectControl")) {
 					try {
-						RPCMessage rPCMessage = default(RPCMessage);
-						rPCMessage.connection = msg.connection;
-						rPCMessage.player = player;
-						rPCMessage.read = msg.read;
-						RPCMessage msg5 = rPCMessage;
-						Server_DisconnectControl (msg5);
-					} finally {
-						((IDisposable)val3)?.Dispose ();
+						using (TimeWarning.New ("Call")) {
+							RPCMessage rPCMessage = default(RPCMessage);
+							rPCMessage.connection = msg.connection;
+							rPCMessage.player = player;
+							rPCMessage.read = msg.read;
+							RPCMessage msg5 = rPCMessage;
+							Server_DisconnectControl (msg5);
+						}
+					} catch (Exception exception4) {
+						Debug.LogException (exception4);
+						player.Kick ("RPC Error in Server_DisconnectControl");
 					}
-				} catch (Exception ex4) {
-					Debug.LogException (ex4);
-					player.Kick ("RPC Error in Server_DisconnectControl");
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -159,7 +140,7 @@ public class ComputerStation : BaseMountable
 	public bool AllowPings ()
 	{
 		BaseEntity baseEntity = currentlyControllingEnt.Get (base.isServer);
-		if ((Object)(object)baseEntity != (Object)null && baseEntity is IRemoteControllable { CanPing: not false }) {
+		if (baseEntity != null && baseEntity is IRemoteControllable { CanPing: not false }) {
 			return true;
 		}
 		return false;
@@ -173,12 +154,12 @@ public class ComputerStation : BaseMountable
 		if (str.Length > 32) {
 			return false;
 		}
-		return StringEx.IsAlphaNumeric (str);
+		return str.IsAlphaNumeric ();
 	}
 
 	public override void DestroyShared ()
 	{
-		if (base.isServer && Object.op_Implicit ((Object)(object)GetMounted ())) {
+		if (base.isServer && (bool)GetMounted ()) {
 			StopControl (GetMounted ());
 		}
 		base.DestroyShared ();
@@ -187,30 +168,29 @@ public class ComputerStation : BaseMountable
 	public override void ServerInit ()
 	{
 		base.ServerInit ();
-		((FacepunchBehaviour)this).Invoke ((Action)GatherStaticCameras, 5f);
+		Invoke (GatherStaticCameras, 5f);
 	}
 
 	public void GatherStaticCameras ()
 	{
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		if (Application.isLoadingSave) {
-			((FacepunchBehaviour)this).Invoke ((Action)GatherStaticCameras, 1f);
+		if (Rust.Application.isLoadingSave) {
+			Invoke (GatherStaticCameras, 1f);
 		} else {
 			if (!isStatic || !(autoGatherRadius > 0f)) {
 				return;
 			}
-			List<BaseEntity> list = Pool.GetList<BaseEntity> ();
-			Vis.Entities (((Component)this).transform.position, autoGatherRadius, list, 256, (QueryTriggerInteraction)1);
-			foreach (BaseEntity item in list) {
-				IRemoteControllable component = ((Component)item).GetComponent<IRemoteControllable> ();
+			List<BaseEntity> obj = Facepunch.Pool.GetList<BaseEntity> ();
+			Vis.Entities (base.transform.position, autoGatherRadius, obj, 256, QueryTriggerInteraction.Ignore);
+			foreach (BaseEntity item in obj) {
+				IRemoteControllable component = item.GetComponent<IRemoteControllable> ();
 				if (component != null) {
-					CCTV_RC component2 = ((Component)item).GetComponent<CCTV_RC> ();
-					if (!((Object)(object)component2 == (Object)null) && component2.IsStatic () && !controlBookmarks.Contains (component.GetIdentifier ())) {
+					CCTV_RC component2 = item.GetComponent<CCTV_RC> ();
+					if (!(component2 == null) && component2.IsStatic () && !controlBookmarks.Contains (component.GetIdentifier ())) {
 						ForceAddBookmark (component.GetIdentifier ());
 					}
 				}
 			}
-			Pool.FreeList<BaseEntity> (ref list);
+			Facepunch.Pool.FreeList (ref obj);
 		}
 	}
 
@@ -222,27 +202,25 @@ public class ComputerStation : BaseMountable
 
 	public void StopControl (BasePlayer ply)
 	{
-		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
 		BaseEntity baseEntity = currentlyControllingEnt.Get (serverside: true);
-		if (Object.op_Implicit ((Object)(object)baseEntity)) {
-			((Component)baseEntity).GetComponent<IRemoteControllable> ().StopControl (new CameraViewerId (currentPlayerID, 0L));
+		if ((bool)baseEntity) {
+			baseEntity.GetComponent<IRemoteControllable> ().StopControl (new CameraViewerId (currentPlayerID, 0L));
 		}
-		if (Object.op_Implicit ((Object)(object)ply)) {
-			ply.net.SwitchSecondaryGroup ((Group)null);
+		if ((bool)ply) {
+			ply.net.SwitchSecondaryGroup (null);
 		}
 		currentlyControllingEnt.uid = default(NetworkableId);
 		currentPlayerID = 0uL;
 		SetFlag (Flags.Reserved2, b: false, recursive: false, networkupdate: false);
 		SendNetworkUpdate ();
 		SendControlBookmarks (ply);
-		((FacepunchBehaviour)this).CancelInvoke ((Action)ControlCheck);
-		((FacepunchBehaviour)this).CancelInvoke ((Action)CheckCCTVAchievement);
+		CancelInvoke (ControlCheck);
+		CancelInvoke (CheckCCTVAchievement);
 	}
 
 	public bool IsPlayerAdmin (BasePlayer player)
 	{
-		return (Object)(object)player == (Object)(object)_mounted;
+		return player == _mounted;
 	}
 
 	[RPC_Server]
@@ -252,13 +230,12 @@ public class ComputerStation : BaseMountable
 		if (!IsPlayerAdmin (player) || isStatic) {
 			return;
 		}
-		string text = msg.read.String (256, false);
+		string text = msg.read.String ();
 		if (IsValidIdentifier (text) && controlBookmarks.Contains (text)) {
 			controlBookmarks.Remove (text);
 			SendControlBookmarks (player);
 			BaseEntity baseEntity = currentlyControllingEnt.Get (serverside: true);
-			IRemoteControllable remoteControllable = default(IRemoteControllable);
-			if ((Object)(object)baseEntity != (Object)null && ((Component)baseEntity).TryGetComponent<IRemoteControllable> (ref remoteControllable) && remoteControllable.GetIdentifier () == text) {
+			if (baseEntity != null && baseEntity.TryGetComponent<IRemoteControllable> (out var component) && component.GetIdentifier () == text) {
 				StopControl (player);
 			}
 		}
@@ -276,14 +253,11 @@ public class ComputerStation : BaseMountable
 	[RPC_Server]
 	public void BeginControllingBookmark (RPCMessage msg)
 	{
-		//IL_0081: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fa: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer player = msg.player;
 		if (!IsPlayerAdmin (player)) {
 			return;
 		}
-		string text = msg.read.String (256, false);
+		string text = msg.read.String ();
 		if (!IsValidIdentifier (text) || !controlBookmarks.Contains (text)) {
 			return;
 		}
@@ -292,12 +266,12 @@ public class ComputerStation : BaseMountable
 			return;
 		}
 		BaseEntity ent = remoteControllable.GetEnt ();
-		if ((Object)(object)ent == (Object)null) {
-			Debug.LogWarning ((object)("RC identifier " + text + " was found but has a null or destroyed entity, this should never happen"));
-		} else if (remoteControllable.CanControl (player.userID) && !(Vector3.Distance (((Component)this).transform.position, ((Component)ent).transform.position) >= remoteControllable.MaxRange)) {
+		if (ent == null) {
+			Debug.LogWarning ("RC identifier " + text + " was found but has a null or destroyed entity, this should never happen");
+		} else if (remoteControllable.CanControl (player.userID) && !(Vector3.Distance (base.transform.position, ent.transform.position) >= remoteControllable.MaxRange)) {
 			BaseEntity baseEntity = currentlyControllingEnt.Get (serverside: true);
-			if (Object.op_Implicit ((Object)(object)baseEntity)) {
-				((Component)baseEntity).GetComponent<IRemoteControllable> ()?.StopControl (new CameraViewerId (currentPlayerID, 0L));
+			if ((bool)baseEntity) {
+				baseEntity.GetComponent<IRemoteControllable> ()?.StopControl (new CameraViewerId (currentPlayerID, 0L));
 			}
 			player.net.SwitchSecondaryGroup (ent.net.group);
 			currentlyControllingEnt.uid = ent.net.ID;
@@ -307,30 +281,19 @@ public class ComputerStation : BaseMountable
 			SendNetworkUpdateImmediate ();
 			SendControlBookmarks (player);
 			if (GameInfo.HasAchievements && remoteControllable.GetEnt () is CCTV_RC) {
-				((FacepunchBehaviour)this).InvokeRepeating ((Action)CheckCCTVAchievement, 1f, 3f);
+				InvokeRepeating (CheckCCTVAchievement, 1f, 3f);
 			}
-			((FacepunchBehaviour)this).InvokeRepeating ((Action)ControlCheck, 0f, 0f);
+			InvokeRepeating (ControlCheck, 0f, 0f);
 		}
 	}
 
 	private void CheckCCTVAchievement ()
 	{
-		//IL_0083: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0088: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0092: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0097: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ab: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c2: Unknown result type (might be due to invalid IL or missing references)
-		if (!((Object)(object)_mounted != (Object)null)) {
+		if (!(_mounted != null)) {
 			return;
 		}
 		BaseEntity baseEntity = currentlyControllingEnt.Get (serverside: true);
-		if (!((Object)(object)baseEntity != (Object)null) || !(baseEntity is CCTV_RC cCTV_RC)) {
+		if (!(baseEntity != null) || !(baseEntity is CCTV_RC cCTV_RC)) {
 			return;
 		}
 		foreach (Connection subscriber in _mounted.net.secondaryGroup.subscribers) {
@@ -338,14 +301,13 @@ public class ComputerStation : BaseMountable
 				continue;
 			}
 			BasePlayer basePlayer = subscriber.player as BasePlayer;
-			if (!((Object)(object)basePlayer == (Object)null)) {
-				Vector3 val = basePlayer.CenterPoint ();
-				Vector3 val2 = val - cCTV_RC.pitch.position;
-				float num = Vector3.Dot (((Vector3)(ref val2)).normalized, cCTV_RC.pitch.forward);
-				Vector3 val3 = cCTV_RC.pitch.InverseTransformPoint (val);
-				if (num > 0.6f && ((Vector3)(ref val3)).magnitude < 10f) {
+			if (!(basePlayer == null)) {
+				Vector3 vector = basePlayer.CenterPoint ();
+				float num = Vector3.Dot ((vector - cCTV_RC.pitch.position).normalized, cCTV_RC.pitch.forward);
+				Vector3 vector2 = cCTV_RC.pitch.InverseTransformPoint (vector);
+				if (num > 0.6f && vector2.magnitude < 10f) {
 					_mounted.GiveAchievement ("BIG_BROTHER");
-					((FacepunchBehaviour)this).CancelInvoke ((Action)CheckCCTVAchievement);
+					CancelInvoke (CheckCCTVAchievement);
 					break;
 				}
 			}
@@ -360,7 +322,7 @@ public class ComputerStation : BaseMountable
 		if (isStatic) {
 			return false;
 		}
-		if (Time.realtimeSinceStartup < nextAddTime) {
+		if (UnityEngine.Time.realtimeSinceStartup < nextAddTime) {
 			return false;
 		}
 		if (controlBookmarks.Count > 3) {
@@ -377,8 +339,8 @@ public class ComputerStation : BaseMountable
 		}
 		IRemoteControllable remoteControllable = RemoteControlEntity.FindByID (identifier);
 		if (remoteControllable != null) {
-			if ((Object)(object)remoteControllable.GetEnt () == (Object)null) {
-				Debug.LogWarning ((object)("RC identifier " + identifier + " was found but has a null or destroyed entity, this should never happen"));
+			if (remoteControllable.GetEnt () == null) {
+				Debug.LogWarning ("RC identifier " + identifier + " was found but has a null or destroyed entity, this should never happen");
 			} else {
 				controlBookmarks.Add (identifier);
 			}
@@ -390,7 +352,7 @@ public class ComputerStation : BaseMountable
 	{
 		BasePlayer player = msg.player;
 		if (IsPlayerAdmin (player) && !isStatic) {
-			if (Time.realtimeSinceStartup < nextAddTime) {
+			if (UnityEngine.Time.realtimeSinceStartup < nextAddTime) {
 				player.ChatMessage ("Slow down...");
 				return;
 			}
@@ -398,8 +360,8 @@ public class ComputerStation : BaseMountable
 				player.ChatMessage ("Too many bookmarks, delete some");
 				return;
 			}
-			nextAddTime = Time.realtimeSinceStartup + 1f;
-			string identifier = msg.read.String (256, false);
+			nextAddTime = UnityEngine.Time.realtimeSinceStartup + 1f;
+			string identifier = msg.read.String ();
 			ForceAddBookmark (identifier);
 			SendControlBookmarks (player);
 		}
@@ -407,13 +369,11 @@ public class ComputerStation : BaseMountable
 
 	public void ControlCheck ()
 	{
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
 		bool flag = false;
 		BaseEntity baseEntity = currentlyControllingEnt.Get (base.isServer);
-		if (Object.op_Implicit ((Object)(object)baseEntity) && Object.op_Implicit ((Object)(object)_mounted)) {
-			IRemoteControllable component = ((Component)baseEntity).GetComponent<IRemoteControllable> ();
-			if (component != null && component.CanControl (_mounted.userID) && Vector3.Distance (((Component)this).transform.position, ((Component)baseEntity).transform.position) < component.MaxRange) {
+		if ((bool)baseEntity && (bool)_mounted) {
+			IRemoteControllable component = baseEntity.GetComponent<IRemoteControllable> ();
+			if (component != null && component.CanControl (_mounted.userID) && Vector3.Distance (base.transform.position, baseEntity.transform.position) < component.MaxRange) {
 				flag = true;
 				_mounted.net.SwitchSecondaryGroup (baseEntity.net.group);
 			}
@@ -430,7 +390,7 @@ public class ComputerStation : BaseMountable
 
 	public void SendControlBookmarks (BasePlayer player)
 	{
-		if (!((Object)(object)player == (Object)null)) {
+		if (!(player == null)) {
 			string arg = GenerateControlBookmarkString ();
 			ClientRPCPlayer (null, player, "ReceiveBookmarks", arg);
 		}
@@ -440,7 +400,7 @@ public class ComputerStation : BaseMountable
 	{
 		base.OnPlayerMounted ();
 		BasePlayer mounted = _mounted;
-		if (Object.op_Implicit ((Object)(object)mounted)) {
+		if ((bool)mounted) {
 			SendControlBookmarks (mounted);
 		}
 		SetFlag (Flags.On, b: true);
@@ -457,27 +417,24 @@ public class ComputerStation : BaseMountable
 	{
 		base.PlayerServerInput (inputState, player);
 		if (HasFlag (Flags.Reserved2) && currentlyControllingEnt.IsValid (serverside: true)) {
-			((Component)currentlyControllingEnt.Get (serverside: true)).GetComponent<IRemoteControllable> ().UserInput (inputState, new CameraViewerId (player.userID, 0L));
+			currentlyControllingEnt.Get (serverside: true).GetComponent<IRemoteControllable> ().UserInput (inputState, new CameraViewerId (player.userID, 0L));
 		}
 	}
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
 		if (!info.forDisk) {
-			info.msg.ioEntity = Pool.Get<IOEntity> ();
+			info.msg.ioEntity = Facepunch.Pool.Get<ProtoBuf.IOEntity> ();
 			info.msg.ioEntity.genericEntRef1 = currentlyControllingEnt.uid;
 		} else {
-			info.msg.computerStation = Pool.Get<ComputerStation> ();
+			info.msg.computerStation = Facepunch.Pool.Get<ProtoBuf.ComputerStation> ();
 			info.msg.computerStation.bookmarks = GenerateControlBookmarkString ();
 		}
 	}
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (!info.fromDisk) {
 			if (info.msg.ioEntity != null) {

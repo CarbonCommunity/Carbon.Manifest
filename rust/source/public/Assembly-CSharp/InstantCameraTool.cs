@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -36,49 +37,37 @@ public class InstantCameraTool : HeldEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("InstantCameraTool.OnRpcMessage", 0);
-		try {
-			if (rpc == 3122234259u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("InstantCameraTool.OnRpcMessage")) {
+			if (rpc == 3122234259u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - TakePhoto "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - TakePhoto ");
 				}
-				TimeWarning val2 = TimeWarning.New ("TakePhoto", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("TakePhoto")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (3122234259u, "TakePhoto", this, player, 3uL)) {
 							return true;
 						}
 						if (!RPC_Server.FromOwner.Test (3122234259u, "TakePhoto", this, player)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							TakePhoto (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in TakePhoto");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -88,68 +77,54 @@ public class InstantCameraTool : HeldEntity
 	[RPC_Server.CallsPerSecond (3uL)]
 	private void TakePhoto (RPCMessage msg)
 	{
-		//IL_00a9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0143: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0117: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0124: Unknown result type (might be due to invalid IL or missing references)
-		//IL_012a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0188: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0198: Unknown result type (might be due to invalid IL or missing references)
-		//IL_019d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ad: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0202: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer player = msg.player;
 		Item item = GetItem ();
-		if ((Object)(object)player == (Object)null || item == null || item.condition <= 0f) {
+		if (player == null || item == null || item.condition <= 0f) {
 			return;
 		}
-		byte[] array = msg.read.BytesWithSize (10485760u, false);
+		byte[] array = msg.read.BytesWithSize ();
 		if (array.Length > 102400 || !ImageProcessing.IsValidJPG (array, resolutionX, resolutionY)) {
 			return;
 		}
 		Item item2 = ItemManager.Create (photoItem, 1, 0uL);
 		if (item2 == null) {
-			Debug.LogError ((object)"Failed to create photo item");
+			Debug.LogError ("Failed to create photo item");
 			return;
 		}
-		if (!((NetworkableId)(ref item2.instanceData.subEntity)).IsValid) {
+		if (!item2.instanceData.subEntity.IsValid) {
 			item2.Remove ();
-			Debug.LogError ((object)"Photo has no sub-entity");
+			Debug.LogError ("Photo has no sub-entity");
 			return;
 		}
 		BaseNetworkable baseNetworkable = BaseNetworkable.serverEntities.Find (item2.instanceData.subEntity);
-		if ((Object)(object)baseNetworkable == (Object)null) {
+		if (baseNetworkable == null) {
 			item2.Remove ();
-			Debug.LogError ((object)"Sub-entity was not found");
+			Debug.LogError ("Sub-entity was not found");
 			return;
 		}
 		if (!(baseNetworkable is PhotoEntity photoEntity)) {
 			item2.Remove ();
-			Debug.LogError ((object)"Sub-entity is not a photo");
+			Debug.LogError ("Sub-entity is not a photo");
 			return;
 		}
 		photoEntity.SetImageData (player.userID, array);
 		if (!player.inventory.GiveItem (item2)) {
 			item2.Drop (player.GetDropPosition (), player.GetDropVelocity ());
 		}
-		EffectNetwork.Send (new Effect (screenshotEffect.resourcePath, ((Component)this).transform.position, ((Component)this).transform.forward, msg.connection));
+		EffectNetwork.Send (new Effect (screenshotEffect.resourcePath, base.transform.position, base.transform.forward, msg.connection));
 		if (!hasSentAchievement && !string.IsNullOrEmpty ("SUMMER_PAPARAZZI")) {
 			Vector3 position = GetOwnerPlayer ().eyes.position;
-			Vector3 val = GetOwnerPlayer ().eyes.HeadForward ();
-			List<BasePlayer> list = Pool.GetList<BasePlayer> ();
-			Vis.Entities (position + val * 5f, 5f, list, 131072, (QueryTriggerInteraction)2);
-			foreach (BasePlayer item3 in list) {
-				if (item3.isServer && (Object)(object)item3 != (Object)(object)GetOwnerPlayer () && item3.IsVisible (GetOwnerPlayer ().eyes.position)) {
+			Vector3 vector = GetOwnerPlayer ().eyes.HeadForward ();
+			List<BasePlayer> obj = Facepunch.Pool.GetList<BasePlayer> ();
+			Vis.Entities (position + vector * 5f, 5f, obj, 131072);
+			foreach (BasePlayer item3 in obj) {
+				if (item3.isServer && item3 != GetOwnerPlayer () && item3.IsVisible (GetOwnerPlayer ().eyes.position)) {
 					hasSentAchievement = true;
 					GetOwnerPlayer ().GiveAchievement ("SUMMER_PAPARAZZI");
 					break;
 				}
 			}
-			Pool.FreeList<BasePlayer> (ref list);
+			Facepunch.Pool.FreeList (ref obj);
 		}
 		item.LoseCondition (1f);
 	}

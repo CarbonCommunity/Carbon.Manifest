@@ -38,7 +38,7 @@ public abstract class BaseScreenShake : MonoBehaviour
 
 	protected void OnDisable ()
 	{
-		if (!Application.isQuitting) {
+		if (!Rust.Application.isQuitting) {
 			list.Remove (this);
 		}
 	}

@@ -58,7 +58,7 @@ public class HelicopterTurret : MonoBehaviour
 		while (num2 >= 0) {
 			num2--;
 			PatrolHelicopterAI.targetinfo targetinfo = newTargetList [num];
-			if (targetinfo != null && (Object)(object)targetinfo.ent != (Object)null && targetinfo.IsVisible () && InFiringArc (targetinfo.ply)) {
+			if (targetinfo != null && targetinfo.ent != null && targetinfo.IsVisible () && InFiringArc (targetinfo.ply)) {
 				SetTarget (targetinfo.ply);
 				return true;
 			}
@@ -78,12 +78,12 @@ public class HelicopterTurret : MonoBehaviour
 
 	public float TimeSinceTargetLastSeen ()
 	{
-		return Time.realtimeSinceStartup - lastSeenTargetTime;
+		return UnityEngine.Time.realtimeSinceStartup - lastSeenTargetTime;
 	}
 
 	public bool HasTarget ()
 	{
-		return (Object)(object)_target != (Object)null;
+		return _target != null;
 	}
 
 	public void ClearTarget ()
@@ -98,11 +98,11 @@ public class HelicopterTurret : MonoBehaviour
 			ClearTarget ();
 		}
 		if (HasTarget ()) {
-			if (Time.time - lastBurstTime > burstLength + timeBetweenBursts && TargetVisible ()) {
-				lastBurstTime = Time.time;
+			if (UnityEngine.Time.time - lastBurstTime > burstLength + timeBetweenBursts && TargetVisible ()) {
+				lastBurstTime = UnityEngine.Time.time;
 			}
-			if (Time.time < lastBurstTime + burstLength && Time.time - lastFireTime >= fireRate && InFiringArc (_target)) {
-				lastFireTime = Time.time;
+			if (UnityEngine.Time.time < lastBurstTime + burstLength && UnityEngine.Time.time - lastFireTime >= fireRate && InFiringArc (_target)) {
+				lastFireTime = UnityEngine.Time.time;
 				FireGun ();
 			}
 		}
@@ -110,37 +110,20 @@ public class HelicopterTurret : MonoBehaviour
 
 	public void FireGun ()
 	{
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		_heliAI.FireGun (((Component)_target).transform.position + new Vector3 (0f, 0.25f, 0f), ConVar.PatrolHelicopter.bulletAccuracy, left);
+		_heliAI.FireGun (_target.transform.position + new Vector3 (0f, 0.25f, 0f), ConVar.PatrolHelicopter.bulletAccuracy, left);
 	}
 
 	public Vector3 GetPositionForEntity (BaseCombatEntity potentialtarget)
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		return ((Component)potentialtarget).transform.position;
+		return potentialtarget.transform.position;
 	}
 
 	public float AngleToTarget (BaseCombatEntity potentialtarget)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
 		Vector3 positionForEntity = GetPositionForEntity (potentialtarget);
 		Vector3 position = muzzleTransform.position;
-		Vector3 val = positionForEntity - position;
-		Vector3 normalized = ((Vector3)(ref val)).normalized;
-		return Vector3.Angle (left ? (-((Component)_heliAI).transform.right) : ((Component)_heliAI).transform.right, normalized);
+		Vector3 normalized = (positionForEntity - position).normalized;
+		return Vector3.Angle (left ? (-_heliAI.transform.right) : _heliAI.transform.right, normalized);
 	}
 
 	public bool InFiringArc (BaseCombatEntity potentialtarget)
@@ -150,39 +133,20 @@ public class HelicopterTurret : MonoBehaviour
 
 	public void UpdateTargetVisibility ()
 	{
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0056: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0060: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0064: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0069: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0089: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0095: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a1: Unknown result type (might be due to invalid IL or missing references)
 		if (HasTarget ()) {
-			Vector3 position = ((Component)_target).transform.position;
+			Vector3 position = _target.transform.position;
 			BasePlayer basePlayer = _target as BasePlayer;
-			if (Object.op_Implicit ((Object)(object)basePlayer)) {
+			if ((bool)basePlayer) {
 				position = basePlayer.eyes.position;
 			}
 			bool flag = false;
 			float num = Vector3.Distance (position, muzzleTransform.position);
-			Vector3 val = position - muzzleTransform.position;
-			Vector3 normalized = ((Vector3)(ref val)).normalized;
-			if (num < maxTargetRange && InFiringArc (_target) && GamePhysics.Trace (new Ray (muzzleTransform.position + normalized * 6f, normalized), 0f, out var hitInfo, num * 1.1f, 1218652417, (QueryTriggerInteraction)0) && (Object)(object)((Component)((RaycastHit)(ref hitInfo)).collider).gameObject.ToBaseEntity () == (Object)(object)_target) {
+			Vector3 normalized = (position - muzzleTransform.position).normalized;
+			if (num < maxTargetRange && InFiringArc (_target) && GamePhysics.Trace (new Ray (muzzleTransform.position + normalized * 6f, normalized), 0f, out var hitInfo, num * 1.1f, 1218652417) && hitInfo.collider.gameObject.ToBaseEntity () == _target) {
 				flag = true;
 			}
 			if (flag) {
-				lastSeenTargetTime = Time.realtimeSinceStartup;
+				lastSeenTargetTime = UnityEngine.Time.realtimeSinceStartup;
 			}
 			targetVisible = flag;
 		}

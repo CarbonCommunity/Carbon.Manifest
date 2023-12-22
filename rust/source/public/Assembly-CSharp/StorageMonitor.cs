@@ -2,7 +2,6 @@ using System;
 using Facepunch;
 using Network;
 using ProtoBuf;
-using UnityEngine;
 
 public class StorageMonitor : AppIOEntity
 {
@@ -12,7 +11,7 @@ public class StorageMonitor : AppIOEntity
 
 	private double _lastPowerOnUpdate;
 
-	public override AppEntityType Type => (AppEntityType)3;
+	public override AppEntityType Type => AppEntityType.StorageMonitor;
 
 	public override bool Value {
 		get {
@@ -32,16 +31,16 @@ public class StorageMonitor : AppIOEntity
 	{
 		base.FillEntityPayload (payload);
 		StorageContainer storageContainer = GetStorageContainer ();
-		if ((Object)(object)storageContainer == (Object)null || !HasFlag (Flags.Reserved8)) {
+		if (storageContainer == null || !HasFlag (Flags.Reserved8)) {
 			return;
 		}
-		payload.items = Pool.GetList<Item> ();
-		foreach (Item item in storageContainer.inventory.itemList) {
-			Item val = Pool.Get<Item> ();
-			val.itemId = (item.IsBlueprint () ? item.blueprintTargetDef.itemid : item.info.itemid);
-			val.quantity = item.amount;
-			val.itemIsBlueprint = item.IsBlueprint ();
-			payload.items.Add (val);
+		payload.items = Pool.GetList<AppEntityPayload.Item> ();
+		foreach (Item item2 in storageContainer.inventory.itemList) {
+			AppEntityPayload.Item item = Pool.Get<AppEntityPayload.Item> ();
+			item.itemId = (item2.IsBlueprint () ? item2.blueprintTargetDef.itemid : item2.info.itemid);
+			item.quantity = item2.amount;
+			item.itemIsBlueprint = item2.IsBlueprint ();
+			payload.items.Add (item);
 		}
 		payload.capacity = storageContainer.inventory.capacity;
 		if (storageContainer is BuildingPrivlidge buildingPrivlidge) {
@@ -57,7 +56,7 @@ public class StorageMonitor : AppIOEntity
 	{
 		base.Init ();
 		StorageContainer storageContainer = GetStorageContainer ();
-		if ((Object)(object)storageContainer != (Object)null && storageContainer.inventory != null) {
+		if (storageContainer != null && storageContainer.inventory != null) {
 			ItemContainer inventory = storageContainer.inventory;
 			inventory.onItemAddedRemoved = (Action<Item, bool>)Delegate.Combine (inventory.onItemAddedRemoved, _onContainerChangedHandler);
 		}
@@ -67,7 +66,7 @@ public class StorageMonitor : AppIOEntity
 	{
 		base.DestroyShared ();
 		StorageContainer storageContainer = GetStorageContainer ();
-		if ((Object)(object)storageContainer != (Object)null && storageContainer.inventory != null) {
+		if (storageContainer != null && storageContainer.inventory != null) {
 			ItemContainer inventory = storageContainer.inventory;
 			inventory.onItemAddedRemoved = (Action<Item, bool>)Delegate.Remove (inventory.onItemAddedRemoved, _onContainerChangedHandler);
 		}
@@ -103,7 +102,7 @@ public class StorageMonitor : AppIOEntity
 	private void OnContainerChanged (Item item, bool added)
 	{
 		if (HasFlag (Flags.Reserved8)) {
-			((FacepunchBehaviour)this).Invoke (_resetSwitchHandler, 0.5f);
+			Invoke (_resetSwitchHandler, 0.5f);
 			if (!IsOn ()) {
 				SetFlag (Flags.On, b: true);
 				SendNetworkUpdateImmediate ();

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Rust;
 using UnityEngine;
@@ -40,7 +39,7 @@ public class BaseFirework : BaseCombatEntity, IIgniteable
 		if (!IsExhausted () && !IsLit ()) {
 			SetFlag (Flags.OnFire, b: true);
 			EnableGlobalBroadcast (wants: true);
-			((FacepunchBehaviour)this).Invoke ((Action)Begin, fuseLength);
+			Invoke (Begin, fuseLength);
 			pickup.enabled = false;
 			EnableSaving (wants: false);
 		}
@@ -51,7 +50,7 @@ public class BaseFirework : BaseCombatEntity, IIgniteable
 		SetFlag (Flags.OnFire, b: false);
 		SetFlag (Flags.On, b: true, recursive: false, networkupdate: false);
 		SendNetworkUpdate_Flags ();
-		((FacepunchBehaviour)this).Invoke ((Action)OnExhausted, activityLength);
+		Invoke (OnExhausted, activityLength);
 	}
 
 	public virtual void OnExhausted ()
@@ -61,7 +60,7 @@ public class BaseFirework : BaseCombatEntity, IIgniteable
 		SetFlag (Flags.On, b: false, recursive: false, networkupdate: false);
 		EnableGlobalBroadcast (wants: false);
 		SendNetworkUpdate_Flags ();
-		((FacepunchBehaviour)this).Invoke ((Action)Cleanup, corpseDuration);
+		Invoke (Cleanup, corpseDuration);
 		_activeFireworks.Remove (this);
 	}
 
@@ -97,13 +96,13 @@ public class BaseFirework : BaseCombatEntity, IIgniteable
 		if (limitActiveCount) {
 			if (NumActiveFireworks () >= maxActiveFireworks) {
 				SetFlag (Flags.OnFire, b: true);
-				((FacepunchBehaviour)this).Invoke ((Action)StaggeredTryLightFuse, 0.35f);
+				Invoke (StaggeredTryLightFuse, 0.35f);
 				return;
 			}
 			_activeFireworks.Add (this);
 			SetFlag (Flags.OnFire, b: false, recursive: false, networkupdate: false);
 		}
-		((FacepunchBehaviour)this).Invoke ((Action)TryLightFuse, Random.Range (0.1f, 0.3f));
+		Invoke (TryLightFuse, Random.Range (0.1f, 0.3f));
 	}
 
 	public bool CanIgnite ()

@@ -14,8 +14,8 @@ public class CopyLODValues : MonoBehaviour, IEditorComponent
 
 	public bool CanCopy ()
 	{
-		if ((Object)(object)source != (Object)null) {
-			return (Object)(object)destination != (Object)null;
+		if (source != null) {
+			return destination != null;
 		}
 		return false;
 	}
@@ -36,7 +36,7 @@ public class CopyLODValues : MonoBehaviour, IEditorComponent
 		for (int j = 0; j < lODs2.Length && j < lODs.Length; j++) {
 			int num2 = ((j == lODs2.Length - 1) ? (lODs.Length - 1) : j);
 			lODs2 [j].screenRelativeTransitionHeight = lODs [num2].screenRelativeTransitionHeight;
-			Debug.Log ((object)$"Set destination LOD {j} to {lODs2 [j].screenRelativeTransitionHeight}");
+			Debug.Log ($"Set destination LOD {j} to {lODs2 [j].screenRelativeTransitionHeight}");
 		}
 		destination.SetLODs (lODs2);
 	}

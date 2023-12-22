@@ -12,7 +12,7 @@ public class AIStateContainer
 	public int InputMemorySlot { get; private set; } = -1;
 
 
-	public void Init (AIStateContainer container, BaseEntity owner)
+	public void Init (ProtoBuf.AIStateContainer container, BaseEntity owner)
 	{
 		ID = container.id;
 		State = (AIState)container.state;
@@ -29,18 +29,16 @@ public class AIStateContainer
 		}
 	}
 
-	public AIStateContainer ToProto ()
+	public ProtoBuf.AIStateContainer ToProto ()
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Expected O, but got Unknown
-		AIStateContainer val = new AIStateContainer ();
-		val.id = ID;
-		val.state = (int)State;
-		val.events = new List<AIEventData> ();
-		val.inputMemorySlot = InputMemorySlot;
+		ProtoBuf.AIStateContainer aIStateContainer = new ProtoBuf.AIStateContainer ();
+		aIStateContainer.id = ID;
+		aIStateContainer.state = (int)State;
+		aIStateContainer.events = new List<AIEventData> ();
+		aIStateContainer.inputMemorySlot = InputMemorySlot;
 		foreach (BaseAIEvent @event in Events) {
-			val.events.Add (@event.ToProto ());
+			aIStateContainer.events.Add (@event.ToProto ());
 		}
-		return val;
+		return aIStateContainer;
 	}
 }

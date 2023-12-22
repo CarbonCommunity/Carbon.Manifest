@@ -27,7 +27,7 @@ public class PinataPayouts : PrefabAttribute, IServerComponent
 		if (totalChance == 0) {
 			return AllPayouts [0];
 		}
-		int num = Random.Range (0, totalChance);
+		int num = UnityEngine.Random.Range (0, totalChance);
 		int num2 = 0;
 		for (int j = 0; j < AllPayouts.Length; j++) {
 			Payout result = AllPayouts [j];

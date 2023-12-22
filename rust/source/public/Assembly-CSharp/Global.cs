@@ -123,7 +123,7 @@ public class Global : ConsoleSystem
 	public static void ApplyAsyncLoadingPreset ()
 	{
 		if (asyncLoadingPreset != 0) {
-			Debug.Log ((object)$"Applying async loading preset number {asyncLoadingPreset}");
+			UnityEngine.Debug.Log ($"Applying async loading preset number {asyncLoadingPreset}");
 		}
 		switch (asyncLoadingPreset) {
 		case 1:
@@ -145,7 +145,7 @@ public class Global : ConsoleSystem
 			asyncWarmup = false;
 			break;
 		default:
-			Debug.LogWarning ((object)$"There is no asyncLoading preset number {asyncLoadingPreset}");
+			UnityEngine.Debug.LogWarning ($"There is no asyncLoading preset number {asyncLoadingPreset}");
 			break;
 		case 0:
 			break;
@@ -163,11 +163,11 @@ public class Global : ConsoleSystem
 	public static void quit (Arg args)
 	{
 		SingletonComponent<ServerMgr>.Instance.Shutdown ();
-		Application.isQuitting = true;
-		Net.sv.Stop ("quit");
+		Rust.Application.isQuitting = true;
+		Network.Net.sv.Stop ("quit");
 		Process.GetCurrentProcess ().Kill ();
-		Debug.Log ((object)"Quitting");
-		Application.Quit ();
+		UnityEngine.Debug.Log ("Quitting");
+		Rust.Application.Quit ();
 	}
 
 	[ServerVar]
@@ -180,29 +180,29 @@ public class Global : ConsoleSystem
 	[ClientVar]
 	public static void objects (Arg args)
 	{
-		Object[] array = Object.FindObjectsOfType<Object> ();
+		UnityEngine.Object[] array = UnityEngine.Object.FindObjectsOfType<UnityEngine.Object> ();
 		string text = "";
 		Dictionary<Type, int> dictionary = new Dictionary<Type, int> ();
 		Dictionary<Type, long> dictionary2 = new Dictionary<Type, long> ();
-		Object[] array2 = array;
-		foreach (Object val in array2) {
-			int runtimeMemorySize = Profiler.GetRuntimeMemorySize (val);
-			if (dictionary.ContainsKey (((object)val).GetType ())) {
-				dictionary [((object)val).GetType ()]++;
+		UnityEngine.Object[] array2 = array;
+		foreach (UnityEngine.Object @object in array2) {
+			int runtimeMemorySize = Profiler.GetRuntimeMemorySize (@object);
+			if (dictionary.ContainsKey (@object.GetType ())) {
+				dictionary [@object.GetType ()]++;
 			} else {
-				dictionary.Add (((object)val).GetType (), 1);
+				dictionary.Add (@object.GetType (), 1);
 			}
-			if (dictionary2.ContainsKey (((object)val).GetType ())) {
-				dictionary2 [((object)val).GetType ()] += runtimeMemorySize;
+			if (dictionary2.ContainsKey (@object.GetType ())) {
+				dictionary2 [@object.GetType ()] += runtimeMemorySize;
 			} else {
-				dictionary2.Add (((object)val).GetType (), runtimeMemorySize);
+				dictionary2.Add (@object.GetType (), runtimeMemorySize);
 			}
 		}
 		foreach (KeyValuePair<Type, long> item in dictionary2.OrderByDescending (delegate(KeyValuePair<Type, long> x) {
 			KeyValuePair<Type, long> keyValuePair = x;
 			return keyValuePair.Value;
 		})) {
-			text = text + dictionary [item.Key].ToString ().PadLeft (10) + " " + NumberExtensions.FormatBytes<long> (item.Value, false).PadLeft (15) + "\t" + item.Key?.ToString () + "\n";
+			text = text + dictionary [item.Key].ToString ().PadLeft (10) + " " + item.Value.FormatBytes ().PadLeft (15) + "\t" + item.Key?.ToString () + "\n";
 		}
 		args.ReplyWith (text);
 	}
@@ -211,12 +211,12 @@ public class Global : ConsoleSystem
 	[ClientVar]
 	public static void textures (Arg args)
 	{
-		Texture[] array = Object.FindObjectsOfType<Texture> ();
+		UnityEngine.Texture[] array = UnityEngine.Object.FindObjectsOfType<UnityEngine.Texture> ();
 		string text = "";
-		Texture[] array2 = array;
-		foreach (Texture val in array2) {
-			string text2 = NumberExtensions.FormatBytes<int> (Profiler.GetRuntimeMemorySize ((Object)(object)val), false);
-			text = text + ((object)val).ToString ().PadRight (30) + ((Object)val).name.PadRight (30) + text2 + "\n";
+		UnityEngine.Texture[] array2 = array;
+		foreach (UnityEngine.Texture texture in array2) {
+			string text2 = Profiler.GetRuntimeMemorySize (texture).FormatBytes ();
+			text = text + texture.ToString ().PadRight (30) + texture.name.PadRight (30) + text2 + "\n";
 		}
 		args.ReplyWith (text);
 	}
@@ -225,21 +225,20 @@ public class Global : ConsoleSystem
 	[ClientVar]
 	public static void colliders (Arg args)
 	{
-		int num = (from x in Object.FindObjectsOfType<Collider> ()
+		int num = (from x in UnityEngine.Object.FindObjectsOfType<Collider> ()
 			where x.enabled
 			select x).Count ();
-		int num2 = (from x in Object.FindObjectsOfType<Collider> ()
+		int num2 = (from x in UnityEngine.Object.FindObjectsOfType<Collider> ()
 			where !x.enabled
 			select x).Count ();
-		string text = num + " colliders enabled, " + num2 + " disabled";
-		args.ReplyWith (text);
+		string strValue = num + " colliders enabled, " + num2 + " disabled";
+		args.ReplyWith (strValue);
 	}
 
 	[ServerVar]
 	[ClientVar]
 	public static void error (Arg args)
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
 		((GameObject)null).transform.position = Vector3.zero;
 	}
 
@@ -248,8 +247,8 @@ public class Global : ConsoleSystem
 	public static void queue (Arg args)
 	{
 		string text = "";
-		text = text + "stabilityCheckQueue:\t\t" + ((ObjectWorkQueue<StabilityEntity>)StabilityEntity.stabilityCheckQueue).Info () + "\n";
-		text = text + "updateSurroundingsQueue:\t" + ((ObjectWorkQueue<Bounds>)StabilityEntity.updateSurroundingsQueue).Info () + "\n";
+		text = text + "stabilityCheckQueue:\t\t" + StabilityEntity.stabilityCheckQueue.Info () + "\n";
+		text = text + "updateSurroundingsQueue:\t" + StabilityEntity.updateSurroundingsQueue.Info () + "\n";
 		args.ReplyWith (text);
 	}
 
@@ -257,9 +256,9 @@ public class Global : ConsoleSystem
 	public static void setinfo (Arg args)
 	{
 		BasePlayer basePlayer = args.Player ();
-		if (Object.op_Implicit ((Object)(object)basePlayer)) {
-			string @string = args.GetString (0, (string)null);
-			string string2 = args.GetString (1, (string)null);
+		if ((bool)basePlayer) {
+			string @string = args.GetString (0, null);
+			string string2 = args.GetString (1, null);
 			if (@string != null && string2 != null) {
 				basePlayer.SetInfo (@string, string2);
 			}
@@ -270,7 +269,7 @@ public class Global : ConsoleSystem
 	public static void sleep (Arg args)
 	{
 		BasePlayer basePlayer = args.Player ();
-		if (Object.op_Implicit ((Object)(object)basePlayer) && !basePlayer.IsSleeping () && !basePlayer.IsSpectating () && !basePlayer.IsDead ()) {
+		if ((bool)basePlayer && !basePlayer.IsSleeping () && !basePlayer.IsSpectating () && !basePlayer.IsDead ()) {
 			basePlayer.StartSleeping ();
 		}
 	}
@@ -279,9 +278,9 @@ public class Global : ConsoleSystem
 	public static void sleeptarget (Arg args)
 	{
 		BasePlayer basePlayer = args.Player ();
-		if (Object.op_Implicit ((Object)(object)basePlayer)) {
+		if ((bool)basePlayer) {
 			BasePlayer lookingAtPlayer = RelationshipManager.GetLookingAtPlayer (basePlayer);
-			if (!((Object)(object)lookingAtPlayer == (Object)null)) {
+			if (!(lookingAtPlayer == null)) {
 				lookingAtPlayer.StartSleeping ();
 			}
 		}
@@ -291,7 +290,7 @@ public class Global : ConsoleSystem
 	public static void kill (Arg args)
 	{
 		BasePlayer basePlayer = args.Player ();
-		if (Object.op_Implicit ((Object)(object)basePlayer) && !basePlayer.IsSpectating () && !basePlayer.IsDead ()) {
+		if ((bool)basePlayer && !basePlayer.IsSpectating () && !basePlayer.IsDead ()) {
 			if (basePlayer.CanSuicide ()) {
 				basePlayer.MarkSuicide ();
 				basePlayer.Hurt (1000f, DamageType.Suicide, basePlayer, useProtection: false);
@@ -305,12 +304,12 @@ public class Global : ConsoleSystem
 	public static void respawn (Arg args)
 	{
 		BasePlayer basePlayer = args.Player ();
-		if (!Object.op_Implicit ((Object)(object)basePlayer)) {
+		if (!basePlayer) {
 			return;
 		}
 		if (!basePlayer.IsDead () && !basePlayer.IsSpectating ()) {
 			if (developer > 0) {
-				Debug.LogWarning ((object)(((object)basePlayer)?.ToString () + " wanted to respawn but isn't dead or spectating"));
+				UnityEngine.Debug.LogWarning (basePlayer?.ToString () + " wanted to respawn but isn't dead or spectating");
 			}
 			basePlayer.SendNetworkUpdate ();
 		} else if (basePlayer.CanRespawn ()) {
@@ -329,7 +328,7 @@ public class Global : ConsoleSystem
 
 	public static void InjurePlayer (BasePlayer ply)
 	{
-		if ((Object)(object)ply == (Object)null || ply.IsDead ()) {
+		if (ply == null || ply.IsDead ()) {
 			return;
 		}
 		if (ConVar.Server.woundingenabled && !ply.IsIncapacitated () && !ply.IsSleeping () && !ply.isMounted) {
@@ -351,7 +350,7 @@ public class Global : ConsoleSystem
 
 	public static void RecoverPlayer (BasePlayer ply)
 	{
-		if (!((Object)(object)ply == (Object)null) && !ply.IsDead ()) {
+		if (!(ply == null) && !ply.IsDead ()) {
 			ply.StopWounded ();
 		}
 	}
@@ -360,11 +359,11 @@ public class Global : ConsoleSystem
 	public static void spectate (Arg args)
 	{
 		BasePlayer basePlayer = args.Player ();
-		if (Object.op_Implicit ((Object)(object)basePlayer)) {
+		if ((bool)basePlayer) {
 			if (!basePlayer.IsDead ()) {
 				basePlayer.DieInstantly ();
 			}
-			string @string = args.GetString (0, "");
+			string @string = args.GetString (0);
 			if (basePlayer.IsDead ()) {
 				basePlayer.StartSpectating ();
 				basePlayer.UpdateSpectateTarget (@string);
@@ -375,9 +374,9 @@ public class Global : ConsoleSystem
 	[ServerVar]
 	public static void toggleSpectateTeamInfo (Arg args)
 	{
-		bool @bool = args.GetBool (0, false);
+		bool @bool = args.GetBool (0);
 		BasePlayer basePlayer = args.Player ();
-		if ((Object)(object)basePlayer != (Object)null) {
+		if (basePlayer != null) {
 			basePlayer.SetSpectateTeamInfo (@bool);
 			args.ReplyWith ($"ToggleSpectateTeamInfo is now {@bool}");
 		} else {
@@ -389,7 +388,7 @@ public class Global : ConsoleSystem
 	public static void spectateid (Arg args)
 	{
 		BasePlayer basePlayer = args.Player ();
-		if (Object.op_Implicit ((Object)(object)basePlayer)) {
+		if ((bool)basePlayer) {
 			if (!basePlayer.IsDead ()) {
 				basePlayer.DieInstantly ();
 			}
@@ -404,61 +403,50 @@ public class Global : ConsoleSystem
 	[ServerUserVar]
 	public static void respawn_sleepingbag (Arg args)
 	{
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ab: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a3: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer basePlayer = args.Player ();
-		if (!Object.op_Implicit ((Object)(object)basePlayer) || !basePlayer.IsDead ()) {
+		if (!basePlayer || !basePlayer.IsDead ()) {
 			return;
 		}
 		NetworkableId entityID = args.GetEntityID (0);
-		if (!((NetworkableId)(ref entityID)).IsValid) {
+		if (!entityID.IsValid) {
 			args.ReplyWith ("Missing sleeping bag ID");
 			return;
 		}
-		string @string = args.GetString (1, "");
+		string @string = args.GetString (1);
 		string errorMessage;
 		if (NexusServer.Started && !string.IsNullOrWhiteSpace (@string)) {
 			if (!ZoneController.Instance.CanRespawnAcrossZones (basePlayer)) {
 				args.ReplyWith ("You cannot respawn to a different zone");
 				return;
 			}
-			NexusZoneDetails val = NexusServer.FindZone (@string);
-			if (val == null) {
+			NexusZoneDetails nexusZoneDetails = NexusServer.FindZone (@string);
+			if (nexusZoneDetails == null) {
 				args.ReplyWith ("Zone was not found");
 			} else if (!basePlayer.CanRespawn ()) {
 				args.ReplyWith ("You can't respawn again so quickly, wait a while");
 			} else {
-				NexusRespawn (basePlayer, val, entityID);
+				NexusRespawn (basePlayer, nexusZoneDetails, entityID);
 			}
 		} else if (!SleepingBag.TrySpawnPlayer (basePlayer, entityID, out errorMessage)) {
 			args.ReplyWith (errorMessage);
 		}
 		static async void NexusRespawn (BasePlayer player, NexusZoneDetails toZone, NetworkableId sleepingBag)
 		{
-			//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-			//IL_001f: Unknown result type (might be due to invalid IL or missing references)
 			_ = 1;
 			try {
 				player.nextRespawnTime = float.PositiveInfinity;
-				Request val2 = Pool.Get<Request> ();
-				val2.respawnAtBag = Pool.Get<SleepingBagRespawnRequest> ();
-				val2.respawnAtBag.userId = player.userID;
-				val2.respawnAtBag.sleepingBagId = sleepingBag;
-				val2.respawnAtBag.secondaryData = player.SaveSecondaryData ();
-				Response val3 = await NexusServer.ZoneRpc (toZone.Key, val2);
-				try {
-					if (!val3.status.success) {
+				Request request = Facepunch.Pool.Get<Request> ();
+				request.respawnAtBag = Facepunch.Pool.Get<SleepingBagRespawnRequest> ();
+				request.respawnAtBag.userId = player.userID;
+				request.respawnAtBag.sleepingBagId = sleepingBag;
+				request.respawnAtBag.secondaryData = player.SaveSecondaryData ();
+				using (Response response = await NexusServer.ZoneRpc (toZone.Key, request)) {
+					if (!response.status.success) {
 						if (player.IsConnected) {
-							player.ConsoleMessage ("RespawnAtBag failed: " + val3.status.errorMessage);
+							player.ConsoleMessage ("RespawnAtBag failed: " + response.status.errorMessage);
 						}
 						return;
 					}
-				} finally {
-					((IDisposable)val3)?.Dispose ();
 				}
 				await NexusServer.ZoneClient.Assign (player.UserIDString, toZone.Key);
 				if (player.IsConnected) {
@@ -478,42 +466,34 @@ public class Global : ConsoleSystem
 	[ServerUserVar]
 	public static void respawn_sleepingbag_remove (Arg args)
 	{
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007f: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer basePlayer = args.Player ();
-		if (!Object.op_Implicit ((Object)(object)basePlayer)) {
+		if (!basePlayer) {
 			return;
 		}
 		NetworkableId entityID = args.GetEntityID (0);
-		if (!((NetworkableId)(ref entityID)).IsValid) {
+		if (!entityID.IsValid) {
 			args.ReplyWith ("Missing sleeping bag ID");
 			return;
 		}
-		string @string = args.GetString (1, "");
+		string @string = args.GetString (1);
 		if (NexusServer.Started && !string.IsNullOrWhiteSpace (@string)) {
-			NexusZoneDetails val = NexusServer.FindZone (@string);
-			if (val == null) {
+			NexusZoneDetails nexusZoneDetails = NexusServer.FindZone (@string);
+			if (nexusZoneDetails == null) {
 				args.ReplyWith ("Zone was not found");
 			} else if (ZoneController.Instance.CanRespawnAcrossZones (basePlayer)) {
-				NexusRemoveBag (basePlayer, val.Key, entityID);
+				NexusRemoveBag (basePlayer, nexusZoneDetails.Key, entityID);
 			}
 		} else {
 			SleepingBag.DestroyBag (basePlayer.userID, entityID);
 		}
 		static async void NexusRemoveBag (BasePlayer player, string zoneKey, NetworkableId sleepingBag)
 		{
-			//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-			//IL_001f: Unknown result type (might be due to invalid IL or missing references)
 			try {
-				Request val2 = Pool.Get<Request> ();
-				val2.destroyBag = Pool.Get<SleepingBagDestroyRequest> ();
-				val2.destroyBag.userId = player.userID;
-				val2.destroyBag.sleepingBagId = sleepingBag;
-				(await NexusServer.ZoneRpc (zoneKey, val2)).Dispose ();
+				Request request = Facepunch.Pool.Get<Request> ();
+				request.destroyBag = Facepunch.Pool.Get<SleepingBagDestroyRequest> ();
+				request.destroyBag.userId = player.userID;
+				request.destroyBag.sleepingBagId = sleepingBag;
+				(await NexusServer.ZoneRpc (zoneKey, request)).Dispose ();
 			} catch (Exception ex) {
 				if (player.IsConnected) {
 					player.ConsoleMessage (ex.ToString ());
@@ -526,7 +506,7 @@ public class Global : ConsoleSystem
 	public static void status_sv (Arg args)
 	{
 		BasePlayer basePlayer = args.Player ();
-		if (Object.op_Implicit ((Object)(object)basePlayer)) {
+		if ((bool)basePlayer) {
 			args.ReplyWith (basePlayer.GetDebugStatus ());
 		}
 	}
@@ -541,18 +521,18 @@ public class Global : ConsoleSystem
 	{
 		if (args.HasArgs (2)) {
 			BasePlayer playerOrSleeperOrBot = args.GetPlayerOrSleeperOrBot (0);
-			if (Object.op_Implicit ((Object)(object)playerOrSleeperOrBot) && playerOrSleeperOrBot.IsAlive ()) {
+			if ((bool)playerOrSleeperOrBot && playerOrSleeperOrBot.IsAlive ()) {
 				BasePlayer playerOrSleeperOrBot2 = args.GetPlayerOrSleeperOrBot (1);
-				if (Object.op_Implicit ((Object)(object)playerOrSleeperOrBot2) && playerOrSleeperOrBot2.IsAlive ()) {
+				if ((bool)playerOrSleeperOrBot2 && playerOrSleeperOrBot2.IsAlive ()) {
 					playerOrSleeperOrBot.Teleport (playerOrSleeperOrBot2);
 				}
 			}
 			return;
 		}
 		BasePlayer basePlayer = args.Player ();
-		if (Object.op_Implicit ((Object)(object)basePlayer) && basePlayer.IsAlive ()) {
+		if ((bool)basePlayer && basePlayer.IsAlive ()) {
 			BasePlayer playerOrSleeperOrBot3 = args.GetPlayerOrSleeperOrBot (0);
-			if (Object.op_Implicit ((Object)(object)playerOrSleeperOrBot3) && playerOrSleeperOrBot3.IsAlive ()) {
+			if ((bool)playerOrSleeperOrBot3 && playerOrSleeperOrBot3.IsAlive ()) {
 				basePlayer.Teleport (playerOrSleeperOrBot3);
 			}
 		}
@@ -562,7 +542,7 @@ public class Global : ConsoleSystem
 	public static void teleport2me (Arg args)
 	{
 		BasePlayer playerOrSleeperOrBot = args.GetPlayerOrSleeperOrBot (0);
-		if ((Object)(object)playerOrSleeperOrBot == (Object)null) {
+		if (playerOrSleeperOrBot == null) {
 			args.ReplyWith ("Player or bot not found");
 			return;
 		}
@@ -571,7 +551,7 @@ public class Global : ConsoleSystem
 			return;
 		}
 		BasePlayer basePlayer = args.Player ();
-		if (Object.op_Implicit ((Object)(object)basePlayer) && basePlayer.IsAlive ()) {
+		if ((bool)basePlayer && basePlayer.IsAlive ()) {
 			playerOrSleeperOrBot.Teleport (basePlayer);
 		}
 	}
@@ -580,7 +560,7 @@ public class Global : ConsoleSystem
 	public static void teleporteveryone2me (Arg args)
 	{
 		BasePlayer basePlayer = args.Player ();
-		if (Object.op_Implicit ((Object)(object)basePlayer)) {
+		if ((bool)basePlayer) {
 			TeleportPlayersToMe (basePlayer, includeSleepers: true, includeNonSleepers: true);
 		}
 	}
@@ -589,7 +569,7 @@ public class Global : ConsoleSystem
 	public static void teleportsleepers2me (Arg args)
 	{
 		BasePlayer basePlayer = args.Player ();
-		if (Object.op_Implicit ((Object)(object)basePlayer)) {
+		if ((bool)basePlayer) {
 			TeleportPlayersToMe (basePlayer, includeSleepers: true, includeNonSleepers: false);
 		}
 	}
@@ -598,18 +578,18 @@ public class Global : ConsoleSystem
 	public static void teleportnonsleepers2me (Arg args)
 	{
 		BasePlayer basePlayer = args.Player ();
-		if (Object.op_Implicit ((Object)(object)basePlayer)) {
+		if ((bool)basePlayer) {
 			TeleportPlayersToMe (basePlayer, includeSleepers: false, includeNonSleepers: true);
 		}
 	}
 
 	private static void TeleportPlayersToMe (BasePlayer player, bool includeSleepers, bool includeNonSleepers)
 	{
-		if ((Object)(object)player == (Object)null || !Object.op_Implicit ((Object)(object)player) || !player.IsAlive ()) {
+		if (player == null || !player || !player.IsAlive ()) {
 			return;
 		}
 		foreach (BasePlayer allPlayer in BasePlayer.allPlayerList) {
-			if (allPlayer.IsAlive () && !((Object)(object)allPlayer == (Object)(object)player) && (!allPlayer.IsSleeping () || includeSleepers) && (allPlayer.IsSleeping () || includeNonSleepers)) {
+			if (allPlayer.IsAlive () && !(allPlayer == player) && (!allPlayer.IsSleeping () || includeSleepers) && (allPlayer.IsSleeping () || includeNonSleepers)) {
 				allPlayer.Teleport (player);
 			}
 		}
@@ -619,18 +599,16 @@ public class Global : ConsoleSystem
 	public static void teleportany (Arg args)
 	{
 		BasePlayer basePlayer = args.Player ();
-		if (Object.op_Implicit ((Object)(object)basePlayer) && basePlayer.IsAlive ()) {
-			basePlayer.Teleport (args.GetString (0, ""), playersOnly: false);
+		if ((bool)basePlayer && basePlayer.IsAlive ()) {
+			basePlayer.Teleport (args.GetString (0), playersOnly: false);
 		}
 	}
 
 	[ServerVar]
 	public static void teleportpos (Arg args)
 	{
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer basePlayer = args.Player ();
-		if (Object.op_Implicit ((Object)(object)basePlayer) && basePlayer.IsAlive ()) {
+		if ((bool)basePlayer && basePlayer.IsAlive ()) {
 			basePlayer.Teleport (args.GetVector3 (0, Vector3.zero));
 		}
 	}
@@ -638,23 +616,14 @@ public class Global : ConsoleSystem
 	[ServerVar]
 	public static void teleportlos (Arg args)
 	{
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0062: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0067: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer basePlayer = args.Player ();
-		if (Object.op_Implicit ((Object)(object)basePlayer) && basePlayer.IsAlive ()) {
-			Ray val = basePlayer.eyes.HeadRay ();
+		if ((bool)basePlayer && basePlayer.IsAlive ()) {
+			Ray ray = basePlayer.eyes.HeadRay ();
 			int @int = args.GetInt (0, 1000);
-			RaycastHit val2 = default(RaycastHit);
-			if (Physics.Raycast (val, ref val2, (float)@int, 1218652417)) {
-				basePlayer.Teleport (((RaycastHit)(ref val2)).point);
+			if (UnityEngine.Physics.Raycast (ray, out var hitInfo, @int, 1218652417)) {
+				basePlayer.Teleport (hitInfo.point);
 			} else {
-				basePlayer.Teleport (((Ray)(ref val)).origin + ((Ray)(ref val)).direction * (float)@int);
+				basePlayer.Teleport (ray.origin + ray.direction * @int);
 			}
 		}
 	}
@@ -662,51 +631,47 @@ public class Global : ConsoleSystem
 	[ServerVar]
 	public static void teleport2owneditem (Arg arg)
 	{
-		//IL_008f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ae: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer basePlayer = arg.Player ();
 		BasePlayer playerOrSleeper = arg.GetPlayerOrSleeper (0);
 		ulong result;
-		if ((Object)(object)playerOrSleeper != (Object)null) {
+		if (playerOrSleeper != null) {
 			result = playerOrSleeper.userID;
-		} else if (!ulong.TryParse (arg.GetString (0, ""), out result)) {
+		} else if (!ulong.TryParse (arg.GetString (0), out result)) {
 			arg.ReplyWith ("No player with that id found");
 			return;
 		}
-		string @string = arg.GetString (1, "");
+		string @string = arg.GetString (1);
 		BaseEntity[] array = BaseEntity.Util.FindTargetsOwnedBy (result, @string);
 		if (array.Length == 0) {
 			arg.ReplyWith ("No targets found");
 			return;
 		}
-		int num = Random.Range (0, array.Length);
-		arg.ReplyWith ($"Teleporting to {array [num].ShortPrefabName} at {((Component)array [num]).transform.position}");
-		basePlayer.Teleport (((Component)array [num]).transform.position);
+		int num = UnityEngine.Random.Range (0, array.Length);
+		arg.ReplyWith ($"Teleporting to {array [num].ShortPrefabName} at {array [num].transform.position}");
+		basePlayer.Teleport (array [num].transform.position);
 	}
 
 	[ServerVar]
 	public static void teleport2autheditem (Arg arg)
 	{
-		//IL_008f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ae: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer basePlayer = arg.Player ();
 		BasePlayer playerOrSleeper = arg.GetPlayerOrSleeper (0);
 		ulong result;
-		if ((Object)(object)playerOrSleeper != (Object)null) {
+		if (playerOrSleeper != null) {
 			result = playerOrSleeper.userID;
-		} else if (!ulong.TryParse (arg.GetString (0, ""), out result)) {
+		} else if (!ulong.TryParse (arg.GetString (0), out result)) {
 			arg.ReplyWith ("No player with that id found");
 			return;
 		}
-		string @string = arg.GetString (1, "");
+		string @string = arg.GetString (1);
 		BaseEntity[] array = BaseEntity.Util.FindTargetsAuthedTo (result, @string);
 		if (array.Length == 0) {
 			arg.ReplyWith ("No targets found");
 			return;
 		}
-		int num = Random.Range (0, array.Length);
-		arg.ReplyWith ($"Teleporting to {array [num].ShortPrefabName} at {((Component)array [num]).transform.position}");
-		basePlayer.Teleport (((Component)array [num]).transform.position);
+		int num = UnityEngine.Random.Range (0, array.Length);
+		arg.ReplyWith ($"Teleporting to {array [num].ShortPrefabName} at {array [num].transform.position}");
+		basePlayer.Teleport (array [num].transform.position);
 	}
 
 	[ServerVar]
@@ -717,7 +682,7 @@ public class Global : ConsoleSystem
 			arg.ReplyWith ("You don't have a marker set");
 			return;
 		}
-		string @string = arg.GetString (0, "");
+		string @string = arg.GetString (0);
 		if (!string.IsNullOrEmpty (@string)) {
 			foreach (MapNote item in basePlayer.State.pointsOfInterest) {
 				if (!string.IsNullOrEmpty (item.label) && string.Equals (item.label, @string, StringComparison.InvariantCultureIgnoreCase)) {
@@ -726,8 +691,8 @@ public class Global : ConsoleSystem
 				}
 			}
 		}
-		if (arg.HasArgs (1)) {
-			int @int = arg.GetInt (0, 0);
+		if (arg.HasArgs ()) {
+			int @int = arg.GetInt (0);
 			if (@int >= 0 && @int < basePlayer.State.pointsOfInterest.Count) {
 				TeleportToMarker (basePlayer.State.pointsOfInterest [@int], basePlayer);
 				return;
@@ -744,11 +709,6 @@ public class Global : ConsoleSystem
 
 	private static void TeleportToMarker (MapNote marker, BasePlayer player)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
 		Vector3 worldPosition = marker.worldPosition;
 		float height = TerrainMeta.HeightMap.GetHeight (worldPosition);
 		float height2 = TerrainMeta.WaterMap.GetHeight (worldPosition);
@@ -759,9 +719,6 @@ public class Global : ConsoleSystem
 	[ServerVar]
 	public static void teleport2death (Arg arg)
 	{
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer basePlayer = arg.Player ();
 		if (basePlayer.ServerCurrentDeathNote == null) {
 			arg.ReplyWith ("You don't have a current death note!");
@@ -775,9 +732,9 @@ public class Global : ConsoleSystem
 	[ClientVar]
 	public static void free (Arg args)
 	{
-		Pool.clear_prefabs (args);
-		Pool.clear_assets (args);
-		Pool.clear_memory (args);
+		ConVar.Pool.clear_prefabs (args);
+		ConVar.Pool.clear_assets (args);
+		ConVar.Pool.clear_memory (args);
 		ConVar.GC.collect ();
 		ConVar.GC.unload ();
 	}
@@ -786,7 +743,7 @@ public class Global : ConsoleSystem
 	[ClientVar]
 	public static void version (Arg arg)
 	{
-		arg.ReplyWith ($"Protocol: {Protocol.printable}\nBuild Date: {BuildInfo.Current.BuildDate}\nUnity Version: {Application.unityVersion}\nChangeset: {BuildInfo.Current.Scm.ChangeId}\nBranch: {BuildInfo.Current.Scm.Branch}");
+		arg.ReplyWith ($"Protocol: {Protocol.printable}\nBuild Date: {BuildInfo.Current.BuildDate}\nUnity Version: {UnityEngine.Application.unityVersion}\nChangeset: {BuildInfo.Current.Scm.ChangeId}\nBranch: {BuildInfo.Current.Scm.Branch}");
 	}
 
 	[ServerVar]
@@ -807,7 +764,7 @@ public class Global : ConsoleSystem
 	public static void breakitem (Arg args)
 	{
 		BasePlayer basePlayer = args.Player ();
-		if (Object.op_Implicit ((Object)(object)basePlayer)) {
+		if ((bool)basePlayer) {
 			Item activeItem = basePlayer.GetActiveItem ();
 			activeItem?.LoseCondition (activeItem.condition);
 		}
@@ -817,7 +774,7 @@ public class Global : ConsoleSystem
 	public static void breakclothing (Arg args)
 	{
 		BasePlayer basePlayer = args.Player ();
-		if (!Object.op_Implicit ((Object)(object)basePlayer)) {
+		if (!basePlayer) {
 			return;
 		}
 		foreach (Item item in basePlayer.inventory.containerWear.itemList) {
@@ -829,29 +786,16 @@ public class Global : ConsoleSystem
 	[ClientVar]
 	public static void subscriptions (Arg arg)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Expected O, but got Unknown
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		TextTable val = new TextTable ();
-		val.AddColumn ("realm");
-		val.AddColumn ("group");
+		TextTable textTable = new TextTable ();
+		textTable.AddColumn ("realm");
+		textTable.AddColumn ("group");
 		BasePlayer basePlayer = arg.Player ();
-		if (Object.op_Implicit ((Object)(object)basePlayer)) {
-			Enumerator<Group> enumerator = basePlayer.net.subscriber.subscribed.GetEnumerator ();
-			try {
-				while (enumerator.MoveNext ()) {
-					Group current = enumerator.Current;
-					val.AddRow (new string[2] {
-						"sv",
-						current.ID.ToString ()
-					});
-				}
-			} finally {
-				((IDisposable)enumerator).Dispose ();
+		if ((bool)basePlayer) {
+			foreach (Group item in basePlayer.net.subscriber.subscribed) {
+				textTable.AddRow ("sv", item.ID.ToString ());
 			}
 		}
-		arg.ReplyWith (arg.HasArg ("--json") ? val.ToJson () : ((object)val).ToString ());
+		arg.ReplyWith (arg.HasArg ("--json") ? textTable.ToJson () : textTable.ToString ());
 	}
 
 	public static uint GingerbreadMaterialID ()
@@ -865,101 +809,69 @@ public class Global : ConsoleSystem
 	[ServerVar]
 	public static void ClearAllSprays ()
 	{
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		List<SprayCanSpray> list = Pool.GetList<SprayCanSpray> ();
-		Enumerator<SprayCanSpray> enumerator = SprayCanSpray.AllSprays.GetEnumerator ();
-		try {
-			while (enumerator.MoveNext ()) {
-				SprayCanSpray current = enumerator.Current;
-				list.Add (current);
-			}
-		} finally {
-			((IDisposable)enumerator).Dispose ();
+		List<SprayCanSpray> obj = Facepunch.Pool.GetList<SprayCanSpray> ();
+		foreach (SprayCanSpray allSpray in SprayCanSpray.AllSprays) {
+			obj.Add (allSpray);
 		}
-		foreach (SprayCanSpray item in list) {
+		foreach (SprayCanSpray item in obj) {
 			item.Kill ();
 		}
-		Pool.FreeList<SprayCanSpray> (ref list);
+		Facepunch.Pool.FreeList (ref obj);
 	}
 
 	[ServerVar]
 	public static void ClearAllSpraysByPlayer (Arg arg)
 	{
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		if (!arg.HasArgs (1)) {
+		if (!arg.HasArgs ()) {
 			return;
 		}
 		ulong uLong = arg.GetULong (0, 0uL);
-		List<SprayCanSpray> list = Pool.GetList<SprayCanSpray> ();
-		Enumerator<SprayCanSpray> enumerator = SprayCanSpray.AllSprays.GetEnumerator ();
-		try {
-			while (enumerator.MoveNext ()) {
-				SprayCanSpray current = enumerator.Current;
-				if (current.sprayedByPlayer == uLong) {
-					list.Add (current);
-				}
+		List<SprayCanSpray> obj = Facepunch.Pool.GetList<SprayCanSpray> ();
+		foreach (SprayCanSpray allSpray in SprayCanSpray.AllSprays) {
+			if (allSpray.sprayedByPlayer == uLong) {
+				obj.Add (allSpray);
 			}
-		} finally {
-			((IDisposable)enumerator).Dispose ();
 		}
-		foreach (SprayCanSpray item in list) {
+		foreach (SprayCanSpray item in obj) {
 			item.Kill ();
 		}
-		int count = list.Count;
-		Pool.FreeList<SprayCanSpray> (ref list);
+		int count = obj.Count;
+		Facepunch.Pool.FreeList (ref obj);
 		arg.ReplyWith ($"Deleted {count} sprays by {uLong}");
 	}
 
 	[ServerVar]
 	public static void ClearSpraysInRadius (Arg arg)
 	{
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer basePlayer = arg.Player ();
-		if (!((Object)(object)basePlayer == (Object)null)) {
+		if (!(basePlayer == null)) {
 			float @float = arg.GetFloat (0, 16f);
-			int num = ClearSpraysInRadius (((Component)basePlayer).transform.position, @float);
+			int num = ClearSpraysInRadius (basePlayer.transform.position, @float);
 			arg.ReplyWith ($"Deleted {num} sprays within {@float} of {basePlayer.displayName}");
 		}
 	}
 
 	private static int ClearSpraysInRadius (Vector3 position, float radius)
 	{
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		List<SprayCanSpray> list = Pool.GetList<SprayCanSpray> ();
-		Enumerator<SprayCanSpray> enumerator = SprayCanSpray.AllSprays.GetEnumerator ();
-		try {
-			while (enumerator.MoveNext ()) {
-				SprayCanSpray current = enumerator.Current;
-				if (current.Distance (position) <= radius) {
-					list.Add (current);
-				}
+		List<SprayCanSpray> obj = Facepunch.Pool.GetList<SprayCanSpray> ();
+		foreach (SprayCanSpray allSpray in SprayCanSpray.AllSprays) {
+			if (allSpray.Distance (position) <= radius) {
+				obj.Add (allSpray);
 			}
-		} finally {
-			((IDisposable)enumerator).Dispose ();
 		}
-		foreach (SprayCanSpray item in list) {
+		foreach (SprayCanSpray item in obj) {
 			item.Kill ();
 		}
-		int count = list.Count;
-		Pool.FreeList<SprayCanSpray> (ref list);
+		int count = obj.Count;
+		Facepunch.Pool.FreeList (ref obj);
 		return count;
 	}
 
 	[ServerVar]
 	public static void ClearSpraysAtPositionInRadius (Arg arg)
 	{
-		//IL_0004: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 vector = arg.GetVector3 (0, default(Vector3));
-		float @float = arg.GetFloat (1, 0f);
+		Vector3 vector = arg.GetVector3 (0);
+		float @float = arg.GetFloat (1);
 		if (@float != 0f) {
 			int num = ClearSpraysInRadius (vector, @float);
 			arg.ReplyWith ($"Deleted {num} sprays within {@float} of {vector}");
@@ -969,22 +881,15 @@ public class Global : ConsoleSystem
 	[ServerVar]
 	public static void ClearDroppedItems ()
 	{
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		List<DroppedItem> list = Pool.GetList<DroppedItem> ();
-		Enumerator<BaseNetworkable> enumerator = BaseNetworkable.serverEntities.GetEnumerator ();
-		try {
-			while (enumerator.MoveNext ()) {
-				if (enumerator.Current is DroppedItem item) {
-					list.Add (item);
-				}
+		List<DroppedItem> obj = Facepunch.Pool.GetList<DroppedItem> ();
+		foreach (BaseNetworkable serverEntity in BaseNetworkable.serverEntities) {
+			if (serverEntity is DroppedItem item) {
+				obj.Add (item);
 			}
-		} finally {
-			((IDisposable)enumerator).Dispose ();
 		}
-		foreach (DroppedItem item2 in list) {
+		foreach (DroppedItem item2 in obj) {
 			item2.Kill ();
 		}
-		Pool.FreeList<DroppedItem> (ref list);
+		Facepunch.Pool.FreeList (ref obj);
 	}
 }

@@ -22,7 +22,7 @@ public class UIFadeOut : MonoBehaviour
 		float num = timeStarted;
 		targetGroup.alpha = Mathf.InverseLerp (num + secondsToFadeOut, num, Time.realtimeSinceStartup - fadeDelay);
 		if (destroyOnFaded && Time.realtimeSinceStartup - fadeDelay > timeStarted + secondsToFadeOut) {
-			GameManager.Destroy (((Component)this).gameObject);
+			GameManager.Destroy (base.gameObject);
 		}
 	}
 }

@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -52,88 +53,67 @@ public class WantedPoster : DecayEntity, ISignage, IUGCBrowserEntity, ILOD, ISer
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("WantedPoster.OnRpcMessage", 0);
-		try {
-			if (rpc == 2419123501u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("WantedPoster.OnRpcMessage")) {
+			if (rpc == 2419123501u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - ClearPlayer "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - ClearPlayer ");
 				}
-				TimeWarning val2 = TimeWarning.New ("ClearPlayer", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("ClearPlayer")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (2419123501u, "ClearPlayer", this, player, 5uL)) {
 							return true;
 						}
 						if (!RPC_Server.IsVisible.Test (2419123501u, "ClearPlayer", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							ClearPlayer (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in ClearPlayer");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 657465493 && (Object)(object)player != (Object)null) {
+			if (rpc == 657465493 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - UpdatePoster "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - UpdatePoster ");
 				}
-				TimeWarning val2 = TimeWarning.New ("UpdatePoster", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("UpdatePoster")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (657465493u, "UpdatePoster", this, player, 5uL)) {
 							return true;
 						}
 						if (!RPC_Server.IsVisible.Test (657465493u, "UpdatePoster", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg3 = rPCMessage;
 							UpdatePoster (msg3);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in UpdatePoster");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -143,15 +123,12 @@ public class WantedPoster : DecayEntity, ISignage, IUGCBrowserEntity, ILOD, ISer
 	[RPC_Server.CallsPerSecond (5uL)]
 	private void UpdatePoster (RPCMessage msg)
 	{
-		//IL_008c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d2: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)msg.player == (Object)null || !CanUpdateSign (msg.player)) {
+		if (msg.player == null || !CanUpdateSign (msg.player)) {
 			return;
 		}
 		ulong num = msg.read.UInt64 ();
-		string text = msg.read.String (256, false);
-		byte[] array = msg.read.BytesWithSize (10485760u, false);
+		string text = msg.read.String ();
+		byte[] array = msg.read.BytesWithSize ();
 		playerId = num;
 		playerName = text;
 		SetFlag (Flags.Reserved1, b: true);
@@ -177,8 +154,7 @@ public class WantedPoster : DecayEntity, ISignage, IUGCBrowserEntity, ILOD, ISer
 	[RPC_Server.CallsPerSecond (5uL)]
 	private void ClearPlayer (RPCMessage msg)
 	{
-		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
-		if (!((Object)(object)msg.player == (Object)null) && CanUpdateSign (msg.player)) {
+		if (!(msg.player == null) && CanUpdateSign (msg.player)) {
 			playerId = 0uL;
 			playerName = string.Empty;
 			SetFlag (Flags.Reserved1, b: false);
@@ -205,7 +181,7 @@ public class WantedPoster : DecayEntity, ISignage, IUGCBrowserEntity, ILOD, ISer
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.wantedPoster = Pool.Get<WantedPoster> ();
+		info.msg.wantedPoster = Facepunch.Pool.Get<ProtoBuf.WantedPoster> ();
 		info.msg.wantedPoster.imageCrc = imageCrc;
 		info.msg.wantedPoster.playerId = playerId;
 		info.msg.wantedPoster.playerName = playerName;

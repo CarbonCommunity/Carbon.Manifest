@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -13,42 +14,35 @@ public class SprayCanSpray : DecayEntity, ISplashable
 
 	public ulong sprayedByPlayer;
 
-	public static ListHashSet<SprayCanSpray> AllSprays = new ListHashSet<SprayCanSpray> (8);
+	public static ListHashSet<SprayCanSpray> AllSprays = new ListHashSet<SprayCanSpray> ();
 
 	public override bool BypassInsideDecayMultiplier => true;
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("SprayCanSpray.OnRpcMessage", 0);
-		try {
-			if (rpc == 2774110739u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("SprayCanSpray.OnRpcMessage")) {
+			if (rpc == 2774110739u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - Server_RequestWaterClear "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - Server_RequestWaterClear ");
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_RequestWaterClear", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Call", 0);
+				using (TimeWarning.New ("Server_RequestWaterClear")) {
 					try {
-						RPCMessage rPCMessage = default(RPCMessage);
-						rPCMessage.connection = msg.connection;
-						rPCMessage.player = player;
-						rPCMessage.read = msg.read;
-						RPCMessage msg2 = rPCMessage;
-						Server_RequestWaterClear (msg2);
-					} finally {
-						((IDisposable)val3)?.Dispose ();
+						using (TimeWarning.New ("Call")) {
+							RPCMessage rPCMessage = default(RPCMessage);
+							rPCMessage.connection = msg.connection;
+							rPCMessage.player = player;
+							rPCMessage.read = msg.read;
+							RPCMessage msg2 = rPCMessage;
+							Server_RequestWaterClear (msg2);
+						}
+					} catch (Exception exception) {
+						Debug.LogException (exception);
+						player.Kick ("RPC Error in Server_RequestWaterClear");
 					}
-				} catch (Exception ex) {
-					Debug.LogException (ex);
-					player.Kick ("RPC Error in Server_RequestWaterClear");
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -57,7 +51,7 @@ public class SprayCanSpray : DecayEntity, ISplashable
 	{
 		base.Save (info);
 		if (info.msg.spray == null) {
-			info.msg.spray = Pool.Get<Spray> ();
+			info.msg.spray = Facepunch.Pool.Get<Spray> ();
 		}
 		info.msg.spray.sprayedBy = sprayedByPlayer;
 		info.msg.spray.timestamp = sprayTimestamp.ToBinary ();
@@ -77,7 +71,7 @@ public class SprayCanSpray : DecayEntity, ISplashable
 		base.OnDeployed (parent, deployedBy, fromItem);
 		sprayTimestamp = DateTime.Now;
 		sprayedByPlayer = deployedBy.userID;
-		if (Global.MaxSpraysPerPlayer > 0 && sprayedByPlayer != 0L) {
+		if (ConVar.Global.MaxSpraysPerPlayer > 0 && sprayedByPlayer != 0L) {
 			int num = -1;
 			DateTime now = DateTime.Now;
 			int num2 = 0;
@@ -90,29 +84,29 @@ public class SprayCanSpray : DecayEntity, ISplashable
 					}
 				}
 			}
-			if (num2 >= Global.MaxSpraysPerPlayer && num != -1) {
+			if (num2 >= ConVar.Global.MaxSpraysPerPlayer && num != -1) {
 				AllSprays [num].Kill ();
 			}
 		}
-		if ((Object)(object)deployedBy == (Object)null || !deployedBy.IsBuildingAuthed ()) {
-			((FacepunchBehaviour)this).Invoke ((Action)ApplyOutOfAuthConditionPenalty, 1f);
+		if (deployedBy == null || !deployedBy.IsBuildingAuthed ()) {
+			Invoke (ApplyOutOfAuthConditionPenalty, 1f);
 		}
 	}
 
 	private void ApplyOutOfAuthConditionPenalty ()
 	{
 		if (!IsFullySpawned ()) {
-			((FacepunchBehaviour)this).Invoke ((Action)ApplyOutOfAuthConditionPenalty, 1f);
+			Invoke (ApplyOutOfAuthConditionPenalty, 1f);
 			return;
 		}
-		float amount = MaxHealth () * (1f - Global.SprayOutOfAuthMultiplier);
+		float amount = MaxHealth () * (1f - ConVar.Global.SprayOutOfAuthMultiplier);
 		Hurt (amount, DamageType.Decay);
 	}
 
 	public override void ServerInit ()
 	{
 		base.ServerInit ();
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)RainCheck, 60f, 180f, 30f);
+		InvokeRandomized (RainCheck, 60f, 180f, 30f);
 		if (!AllSprays.Contains (this)) {
 			AllSprays.Add (this);
 		}
@@ -128,8 +122,7 @@ public class SprayCanSpray : DecayEntity, ISplashable
 
 	private void RainCheck ()
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		if (Climate.GetRain (((Component)this).transform.position) > 0f && IsOutside ()) {
+		if (Climate.GetRain (base.transform.position) > 0f && IsOutside ()) {
 			Kill ();
 		}
 	}
@@ -151,14 +144,14 @@ public class SprayCanSpray : DecayEntity, ISplashable
 	private void Server_RequestWaterClear (RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
-		if (!((Object)(object)player == (Object)null) && Menu_WaterClear_ShowIf (player)) {
+		if (!(player == null) && Menu_WaterClear_ShowIf (player)) {
 			Kill ();
 		}
 	}
 
 	private bool Menu_WaterClear_ShowIf (BasePlayer player)
 	{
-		if ((Object)(object)player.GetHeldEntity () != (Object)null && player.GetHeldEntity () is BaseLiquidVessel baseLiquidVessel) {
+		if (player.GetHeldEntity () != null && player.GetHeldEntity () is BaseLiquidVessel baseLiquidVessel) {
 			return baseLiquidVessel.AmountHeld () > 0;
 		}
 		return false;

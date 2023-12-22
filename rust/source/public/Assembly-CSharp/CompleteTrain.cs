@@ -82,7 +82,7 @@ public class CompleteTrain : IDisposable
 
 	public TrainCar PrimaryTrainCar { get; private set; }
 
-	public bool TrainIsReversing => (Object)(object)PrimaryTrainCar != (Object)(object)trainCars [0];
+	public bool TrainIsReversing => PrimaryTrainCar != trainCars [0];
 
 	public float TotalForces { get; private set; }
 
@@ -97,31 +97,21 @@ public class CompleteTrain : IDisposable
 
 	public CompleteTrain (TrainCar trainCar)
 	{
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		List<TrainCar> list = Pool.GetList<TrainCar> ();
+		List<TrainCar> list = Facepunch.Pool.GetList<TrainCar> ();
 		list.Add (trainCar);
 		Init (list);
 	}
 
 	public CompleteTrain (List<TrainCar> allTrainCars)
 	{
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
 		Init (allTrainCars);
 	}
 
 	private void Init (List<TrainCar> allTrainCars)
 	{
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
 		trainCars = allTrainCars;
-		timeSinceLastChange = TimeSince.op_Implicit (0f);
-		lastMovingTime = Time.time;
+		timeSinceLastChange = 0f;
+		lastMovingTime = UnityEngine.Time.time;
 		float num = 0f;
 		PrimaryTrainCar = trainCars [0];
 		for (int i = 0; i < trainCars.Count; i++) {
@@ -157,25 +147,23 @@ public class CompleteTrain : IDisposable
 		if (!disposed) {
 			EndShunting (CoalingTower.ActionAttemptStatus.GenericError);
 			disposed = true;
-			Pool.FreeList<TrainCar> (ref trainCars);
+			Facepunch.Pool.FreeList (ref trainCars);
 		}
 	}
 
 	public void RemoveTrainCar (TrainCar trainCar)
 	{
-		//IL_0061: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0066: Unknown result type (might be due to invalid IL or missing references)
 		if (disposed) {
 			return;
 		}
 		if (trainCars.Count <= 1) {
-			Debug.LogWarning ((object)(GetType ().Name + ": Can't remove car from CompleteTrain of length one."));
+			Debug.LogWarning (GetType ().Name + ": Can't remove car from CompleteTrain of length one.");
 			return;
 		}
 		int num = IndexOf (trainCar);
 		bool flag = ((num != 0) ? IsCoupledBackwards (0) : IsCoupledBackwards (1));
 		trainCars.RemoveAt (num);
-		timeSinceLastChange = TimeSince.op_Implicit (0f);
+		timeSinceLastChange = 0f;
 		LinedUpToUnload = -1;
 		if (IsCoupledBackwards (0) != flag) {
 			trackSpeed *= -1f;
@@ -188,7 +176,7 @@ public class CompleteTrain : IDisposable
 			return 0f;
 		}
 		if (trainCars.IndexOf (trainCar) < 0) {
-			Debug.LogError ((object)(GetType ().Name + ": Train car not found in the trainCars list."));
+			Debug.LogError (GetType ().Name + ": Train car not found in the trainCars list.");
 			return 0f;
 		}
 		if (IsCoupledBackwards (trainCar)) {
@@ -200,7 +188,7 @@ public class CompleteTrain : IDisposable
 	public float GetPrevTrackSpeedFor (TrainCar trainCar)
 	{
 		if (trainCars.IndexOf (trainCar) < 0) {
-			Debug.LogError ((object)(GetType ().Name + ": Train car not found in the trainCars list."));
+			Debug.LogError (GetType ().Name + ": Train car not found in the trainCars list.");
 			return 0f;
 		}
 		if (IsCoupledBackwards (trainCar)) {
@@ -224,9 +212,9 @@ public class CompleteTrain : IDisposable
 		LinedUpToUnload = CheckLinedUpToUnload (out unloaderPos);
 		if (!disposed) {
 			if (Mathf.Abs (trackSpeed) > 0.1f) {
-				lastMovingTime = Time.time;
+				lastMovingTime = UnityEngine.Time.time;
 			}
-			if (!HasAnyEnginesOn () && !HasAnyCollisions () && Time.time > lastMovingTime + 10f) {
+			if (!HasAnyEnginesOn () && !HasAnyCollisions () && UnityEngine.Time.time > lastMovingTime + 10f) {
 				trackSpeed = 0f;
 				SleepAll ();
 			}
@@ -292,12 +280,6 @@ public class CompleteTrain : IDisposable
 
 	public bool TryShuntCarTo (Vector3 shuntDirection, float shuntDistance, TrainCar shuntTarget, Action<CoalingTower.ActionAttemptStatus> shuntEndCallback, out CoalingTower.ActionAttemptStatus status)
 	{
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0062: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0073: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008e: Unknown result type (might be due to invalid IL or missing references)
 		if (disposed) {
 			status = CoalingTower.ActionAttemptStatus.NoTrainCar;
 			return false;
@@ -317,9 +299,9 @@ public class CompleteTrain : IDisposable
 		this.shuntDirection = shuntDirection;
 		this.shuntDistance = shuntDistance;
 		this.shuntTarget = shuntTarget;
-		timeSinceShuntStart = TimeSince.op_Implicit (0f);
-		shuntStartPos2D.x = ((Component)shuntTarget).transform.position.x;
-		shuntStartPos2D.y = ((Component)shuntTarget).transform.position.z;
+		timeSinceShuntStart = 0f;
+		shuntStartPos2D.x = shuntTarget.transform.position.x;
+		shuntStartPos2D.y = shuntTarget.transform.position.z;
 		isShunting = true;
 		this.shuntEndCallback = shuntEndCallback;
 		status = CoalingTower.ActionAttemptStatus.NoError;
@@ -342,7 +324,7 @@ public class CompleteTrain : IDisposable
 			return false;
 		}
 		if (trainCars.Count == 1) {
-			return (Object)(object)trainCars [0] == (Object)(object)trainCar;
+			return trainCars [0] == trainCar;
 		}
 		return false;
 	}
@@ -357,16 +339,9 @@ public class CompleteTrain : IDisposable
 
 	public bool TryGetAdjacentTrainCar (TrainCar trainCar, bool next, Vector3 forwardDir, out TrainCar result)
 	{
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
 		int num = trainCars.IndexOf (trainCar);
-		Vector3 val = ((!IsCoupledBackwards (num)) ? ((Component)trainCar).transform.forward : (-((Component)trainCar).transform.forward));
-		if (Vector3.Dot (val, forwardDir) < 0f) {
+		Vector3 lhs = ((!IsCoupledBackwards (num)) ? trainCar.transform.forward : (-trainCar.transform.forward));
+		if (Vector3.Dot (lhs, forwardDir) < 0f) {
 			next = !next;
 		}
 		if (num >= 0) {
@@ -419,72 +394,62 @@ public class CompleteTrain : IDisposable
 
 	private void MovementTick (float dt)
 	{
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ef: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ff: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015d: Unknown result type (might be due to invalid IL or missing references)
 		prevTrackSpeed = trackSpeed;
 		if (!isShunting) {
 			trackSpeed += TotalForces * dt / TotalMass;
 		} else {
-			bool flag = Vector3.Dot (shuntDirection, ((Component)PrimaryTrainCar).transform.forward) >= 0f;
+			bool flag = Vector3.Dot (shuntDirection, PrimaryTrainCar.transform.forward) >= 0f;
 			if (IsCoupledBackwards (PrimaryTrainCar)) {
 				flag = !flag;
 			}
-			if ((Object)(object)shuntTarget == (Object)null || shuntTarget.IsDead () || shuntTarget.IsDestroyed) {
+			if (shuntTarget == null || shuntTarget.IsDead () || shuntTarget.IsDestroyed) {
 				EndShunting (CoalingTower.ActionAttemptStatus.NoTrainCar);
 			} else {
 				float num = 4f;
-				shuntTargetPos2D.x = ((Component)shuntTarget).transform.position.x;
-				shuntTargetPos2D.y = ((Component)shuntTarget).transform.position.z;
-				float num2 = shuntDistance - Vector3.Distance (Vector2.op_Implicit (shuntStartPos2D), Vector2.op_Implicit (shuntTargetPos2D));
+				shuntTargetPos2D.x = shuntTarget.transform.position.x;
+				shuntTargetPos2D.y = shuntTarget.transform.position.z;
+				float num2 = shuntDistance - Vector3.Distance (shuntStartPos2D, shuntTargetPos2D);
 				if (num2 < 2f) {
-					float num3 = Mathf.InverseLerp (0f, 2f, num2);
-					num *= Mathf.Lerp (0.1f, 1f, num3);
+					float t = Mathf.InverseLerp (0f, 2f, num2);
+					num *= Mathf.Lerp (0.1f, 1f, t);
 				}
 				trackSpeed = Mathf.MoveTowards (trackSpeed, flag ? num : (0f - num), dt * 10f);
-				if (TimeSince.op_Implicit (timeSinceShuntStart) > 20f || num2 <= 0f) {
+				if ((float)timeSinceShuntStart > 20f || num2 <= 0f) {
 					EndShunting (CoalingTower.ActionAttemptStatus.NoError);
 					trackSpeed = 0f;
 				}
 			}
 		}
-		float num4 = trainCars [0].rigidBody.drag;
+		float num3 = trainCars [0].rigidBody.drag;
 		if (IsLinedUpToUnload) {
-			float num5 = Mathf.Abs (trackSpeed);
-			if (num5 > 1f) {
+			float num4 = Mathf.Abs (trackSpeed);
+			if (num4 > 1f) {
 				TrainCarUnloadable trainCarUnloadable = trainCars [LinedUpToUnload] as TrainCarUnloadable;
-				if ((Object)(object)trainCarUnloadable != (Object)null) {
-					float num6 = trainCarUnloadable.MinDistToUnloadingArea (unloaderPos);
-					float num7 = Mathf.InverseLerp (2f, 0f, num6);
-					if (num5 < 2f) {
-						float num8 = (num5 - 1f) / 1f;
-						num7 *= num8;
+				if (trainCarUnloadable != null) {
+					float value = trainCarUnloadable.MinDistToUnloadingArea (unloaderPos);
+					float num5 = Mathf.InverseLerp (2f, 0f, value);
+					if (num4 < 2f) {
+						float num6 = (num4 - 1f) / 1f;
+						num5 *= num6;
 					}
-					num4 = Mathf.Lerp (num4, 3.5f, num7);
+					num3 = Mathf.Lerp (num3, 3.5f, num5);
 				}
 			}
 		}
 		if (trackSpeed > 0f) {
-			trackSpeed -= num4 * 4f * dt;
+			trackSpeed -= num3 * 4f * dt;
 			if (trackSpeed < 0f) {
 				trackSpeed = 0f;
 			}
 		} else if (trackSpeed < 0f) {
-			trackSpeed += num4 * 4f * dt;
+			trackSpeed += num3 * 4f * dt;
 			if (trackSpeed > 0f) {
 				trackSpeed = 0f;
 			}
 		}
-		float num9 = trackSpeed;
+		float num7 = trackSpeed;
 		trackSpeed = ApplyCollisionsToTrackSpeed (trackSpeed, TotalMass, dt);
-		if (isShunting && trackSpeed != num9) {
+		if (isShunting && trackSpeed != num7) {
 			EndShunting (CoalingTower.ActionAttemptStatus.GenericError);
 		}
 		if (disposed) {
@@ -509,14 +474,14 @@ public class CompleteTrain : IDisposable
 		if (trainCars.Count <= 1) {
 			return;
 		}
-		if ((Object)(object)PrimaryTrainCar == (Object)(object)trainCars [0]) {
+		if (PrimaryTrainCar == trainCars [0]) {
 			for (int i = 1; i < trainCars.Count; i++) {
 				MoveOtherTrainCar (trainCars [i], trainCars [i - 1]);
 			}
 			return;
 		}
-		for (int num10 = trainCars.Count - 2; num10 >= 0; num10--) {
-			MoveOtherTrainCar (trainCars [num10], trainCars [num10 + 1]);
+		for (int num8 = trainCars.Count - 2; num8 >= 0; num8--) {
+			MoveOtherTrainCar (trainCars [num8], trainCars [num8 + 1]);
 		}
 	}
 
@@ -540,7 +505,7 @@ public class CompleteTrain : IDisposable
 			num -= trainCar.DistFrontWheelToBackCoupling;
 			num -= prevTrainCar.DistFrontWheelToFrontCoupling;
 		} else {
-			Debug.LogError ((object)(GetType ().Name + ": Uncoupled!"));
+			Debug.LogError (GetType ().Name + ": Uncoupled!");
 		}
 		trainCar.OtherTrainCarTick (frontTrackSection, frontWheelSplineDist, 0f - num);
 	}
@@ -559,7 +524,7 @@ public class CompleteTrain : IDisposable
 			return false;
 		}
 		for (int i = 0; i < listToCompare.Count; i++) {
-			if ((Object)(object)trainCars [i] != (Object)(object)listToCompare [i]) {
+			if (trainCars [i] != listToCompare [i]) {
 				return false;
 			}
 		}
@@ -591,10 +556,6 @@ public class CompleteTrain : IDisposable
 
 	private int CheckLinedUpToUnload (out Vector3 unloaderPos)
 	{
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005c: Unknown result type (might be due to invalid IL or missing references)
 		if (disposed) {
 			unloaderPos = Vector3.zero;
 			return -1;
@@ -631,7 +592,7 @@ public class CompleteTrain : IDisposable
 		}
 		TrainCoupling coupledTo = trainCar.coupling.frontCoupling.CoupledTo;
 		if (coupledTo != null) {
-			return (Object)(object)coupledTo.owner != (Object)(object)trainCars [trainCarIndex - 1];
+			return coupledTo.owner != trainCars [trainCarIndex - 1];
 		}
 		return true;
 	}
@@ -674,85 +635,56 @@ public class CompleteTrain : IDisposable
 
 	private float ApplyCollisionsToTrackSpeed (float trackSpeed, float totalMass, float deltaTime)
 	{
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0085: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0078: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0093: Unknown result type (might be due to invalid IL or missing references)
 		TrainCar owner = frontCollisionTrigger.owner;
-		Vector3 forwardVector = (IsCoupledBackwards (owner) ? (-((Component)owner).transform.forward) : ((Component)owner).transform.forward);
+		Vector3 forwardVector = (IsCoupledBackwards (owner) ? (-owner.transform.forward) : owner.transform.forward);
 		trackSpeed = ApplyCollisions (trackSpeed, owner, forwardVector, atOurFront: true, frontCollisionTrigger, totalMass, ref staticCollidingAtFront, staticCollidingAtRear, deltaTime);
 		if (disposed) {
 			return trackSpeed;
 		}
 		owner = rearCollisionTrigger.owner;
-		forwardVector = (IsCoupledBackwards (owner) ? (-((Component)owner).transform.forward) : ((Component)owner).transform.forward);
+		forwardVector = (IsCoupledBackwards (owner) ? (-owner.transform.forward) : owner.transform.forward);
 		trackSpeed = ApplyCollisions (trackSpeed, owner, forwardVector, atOurFront: false, rearCollisionTrigger, totalMass, ref staticCollidingAtRear, staticCollidingAtFront, deltaTime);
 		if (disposed) {
 			return trackSpeed;
 		}
-		Rigidbody val = null;
+		Rigidbody rigidbody = null;
 		foreach (KeyValuePair<Rigidbody, float> prevTrackSpeed in prevTrackSpeeds) {
-			if ((Object)(object)prevTrackSpeed.Key == (Object)null || (!frontCollisionTrigger.otherRigidbodyContents.Contains (prevTrackSpeed.Key) && !rearCollisionTrigger.otherRigidbodyContents.Contains (prevTrackSpeed.Key))) {
-				val = prevTrackSpeed.Key;
+			if (prevTrackSpeed.Key == null || (!frontCollisionTrigger.otherRigidbodyContents.Contains (prevTrackSpeed.Key) && !rearCollisionTrigger.otherRigidbodyContents.Contains (prevTrackSpeed.Key))) {
+				rigidbody = prevTrackSpeed.Key;
 				break;
 			}
 		}
-		if ((Object)(object)val != (Object)null) {
-			prevTrackSpeeds.Remove (val);
+		if (rigidbody != null) {
+			prevTrackSpeeds.Remove (rigidbody);
 		}
 		return trackSpeed;
 	}
 
 	private float ApplyCollisions (float trackSpeed, TrainCar ourTrainCar, Vector3 forwardVector, bool atOurFront, TriggerTrainCollisions trigger, float ourTotalMass, ref StaticCollisionState wasStaticColliding, StaticCollisionState otherEndStaticColliding, float deltaTime)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0182: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ba: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ca: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01cf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01dd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0134: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0139: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013a: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 val = forwardVector * trackSpeed;
+		Vector3 vector = forwardVector * trackSpeed;
 		bool flag = trigger.HasAnyStaticContents;
 		if (atOurFront && ourTrainCar.FrontAtEndOfLine) {
 			flag = true;
 		} else if (!atOurFront && ourTrainCar.RearAtEndOfLine) {
 			flag = true;
 		}
-		float num = (flag ? (((Vector3)(ref val)).magnitude * Mathf.Clamp (ourTotalMass, 1f, 13000f)) : 0f);
+		float num = (flag ? (vector.magnitude * Mathf.Clamp (ourTotalMass, 1f, 13000f)) : 0f);
 		trackSpeed = HandleStaticCollisions (flag, atOurFront, trackSpeed, ref wasStaticColliding, trigger);
 		if (!flag && otherEndStaticColliding == StaticCollisionState.Free) {
 			foreach (TrainCar trainContent in trigger.trainContents) {
-				Vector3 val2 = ((Component)trainContent).transform.forward * trainContent.GetPrevTrackSpeed ();
-				trackSpeed = HandleTrainCollision (atOurFront, forwardVector, trackSpeed, ((Component)ourTrainCar).transform, trainContent, deltaTime, ref wasStaticColliding);
-				num += Vector3.Magnitude (val2 - val) * Mathf.Clamp (trainContent.rigidBody.mass, 1f, 13000f);
+				Vector3 vector2 = trainContent.transform.forward * trainContent.GetPrevTrackSpeed ();
+				trackSpeed = HandleTrainCollision (atOurFront, forwardVector, trackSpeed, ourTrainCar.transform, trainContent, deltaTime, ref wasStaticColliding);
+				num += Vector3.Magnitude (vector2 - vector) * Mathf.Clamp (trainContent.rigidBody.mass, 1f, 13000f);
 			}
 			foreach (Rigidbody otherRigidbodyContent in trigger.otherRigidbodyContents) {
 				trackSpeed = HandleRigidbodyCollision (atOurFront, trackSpeed, forwardVector, ourTotalMass, otherRigidbodyContent, otherRigidbodyContent.mass, deltaTime, calcSecondaryForces: true);
-				num += Vector3.Magnitude (otherRigidbodyContent.velocity - val) * Mathf.Clamp (otherRigidbodyContent.mass, 1f, 13000f);
+				num += Vector3.Magnitude (otherRigidbodyContent.velocity - vector) * Mathf.Clamp (otherRigidbodyContent.mass, 1f, 13000f);
 			}
 		}
-		if (num >= 70000f && TimeSince.op_Implicit (timeSinceLastChange) > 1f && trigger.owner.ApplyCollisionDamage (num) > 5f) {
+		if (num >= 70000f && (float)timeSinceLastChange > 1f && trigger.owner.ApplyCollisionDamage (num) > 5f) {
 			foreach (Collider colliderContent in trigger.colliderContents) {
-				Vector3 contactPoint = colliderContent.ClosestPointOnBounds (((Component)trigger.owner).transform.position);
+				Vector3 contactPoint = colliderContent.ClosestPointOnBounds (trigger.owner.transform.position);
 				trigger.owner.TryShowCollisionFX (contactPoint, trigger.owner.collisionEffect);
 			}
 		}
@@ -767,7 +699,7 @@ public class CompleteTrain : IDisposable
 			wasStaticColliding = StaticCollisionState.StaticColliding;
 			HashSet<GameObject> hashSet = (front ? monitoredStaticContentF : monitoredStaticContentR);
 			hashSet.Clear ();
-			if ((Object)(object)trigger != (Object)null) {
+			if (trigger != null) {
 				foreach (GameObject staticContent in trigger.staticContents) {
 					hashSet.Add (staticContent);
 				}
@@ -786,7 +718,7 @@ public class CompleteTrain : IDisposable
 				if (hashSet2.Count > 0) {
 					bool flag3 = true;
 					foreach (GameObject item in hashSet2) {
-						if ((Object)(object)item != (Object)null) {
+						if (item != null) {
 							flag3 = false;
 							break;
 						}
@@ -811,50 +743,30 @@ public class CompleteTrain : IDisposable
 
 	private float HandleTrainCollision (bool front, Vector3 forwardVector, float trackSpeed, Transform ourTransform, TrainCar theirTrain, float deltaTime, ref StaticCollisionState wasStaticColliding)
 	{
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0004: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0087: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0088: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ae: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d1: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 val = (front ? forwardVector : (-forwardVector));
-		float num = Vector3.Angle (val, ((Component)theirTrain).transform.forward);
-		Vector3 val2 = ((Component)theirTrain).transform.position - ourTransform.position;
-		float num2 = Vector3.Dot (val, ((Vector3)(ref val2)).normalized);
-		if ((num > 30f && num < 150f) || Mathf.Abs (num2) < 0.975f) {
+		Vector3 vector = (front ? forwardVector : (-forwardVector));
+		float num = Vector3.Angle (vector, theirTrain.transform.forward);
+		float f = Vector3.Dot (vector, (theirTrain.transform.position - ourTransform.position).normalized);
+		if ((num > 30f && num < 150f) || Mathf.Abs (f) < 0.975f) {
 			trackSpeed = (front ? (-0.5f) : 0.5f);
 		} else {
-			List<CompleteTrain> prevTrains = Pool.GetList<CompleteTrain> ();
-			float totalPushingMass = GetTotalPushingMass (val, forwardVector, ref prevTrains);
+			List<CompleteTrain> prevTrains = Facepunch.Pool.GetList<CompleteTrain> ();
+			float totalPushingMass = GetTotalPushingMass (vector, forwardVector, ref prevTrains);
 			trackSpeed = ((!(totalPushingMass < 0f)) ? HandleRigidbodyCollision (front, trackSpeed, forwardVector, TotalMass, theirTrain.rigidBody, totalPushingMass, deltaTime, calcSecondaryForces: false) : HandleStaticCollisions (staticColliding: true, front, trackSpeed, ref wasStaticColliding));
 			prevTrains.Clear ();
-			float num3 = GetTotalPushingForces (val, forwardVector, ref prevTrains);
+			float num2 = GetTotalPushingForces (vector, forwardVector, ref prevTrains);
 			if (!front) {
-				num3 *= -1f;
+				num2 *= -1f;
 			}
-			if ((front && num3 <= 0f) || (!front && num3 >= 0f)) {
-				trackSpeed += num3 / TotalMass * deltaTime;
+			if ((front && num2 <= 0f) || (!front && num2 >= 0f)) {
+				trackSpeed += num2 / TotalMass * deltaTime;
 			}
-			Pool.FreeList<CompleteTrain> (ref prevTrains);
+			Facepunch.Pool.FreeList (ref prevTrains);
 		}
 		return trackSpeed;
 	}
 
 	private float HandleRigidbodyCollision (bool atOurFront, float trackSpeed, Vector3 forwardVector, float ourTotalMass, Rigidbody theirRB, float theirTotalMass, float deltaTime, bool calcSecondaryForces)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
 		float num = Vector3.Dot (forwardVector, theirRB.velocity);
 		float num2 = trackSpeed - num;
 		if ((atOurFront && num2 <= 0f) || (!atOurFront && num2 >= 0f)) {
@@ -871,27 +783,19 @@ public class CompleteTrain : IDisposable
 				prevTrackSpeeds.Add (theirRB, num);
 			}
 		}
-		float num6 = num3 / ourTotalMass * deltaTime;
-		num6 = Mathf.Clamp (num6, 0f - Mathf.Abs (num - trackSpeed) - 0.5f, Mathf.Abs (num - trackSpeed) + 0.5f);
-		trackSpeed -= num6;
+		float value = num3 / ourTotalMass * deltaTime;
+		value = Mathf.Clamp (value, 0f - Mathf.Abs (num - trackSpeed) - 0.5f, Mathf.Abs (num - trackSpeed) + 0.5f);
+		trackSpeed -= value;
 		return trackSpeed;
 	}
 
 	private float GetTotalPushingMass (Vector3 pushDirection, Vector3 ourForward, ref List<CompleteTrain> prevTrains)
 	{
-		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e1: Unknown result type (might be due to invalid IL or missing references)
 		float num = 0f;
 		if (prevTrains.Count > 0) {
 			if (prevTrains.Contains (this)) {
-				if (Global.developer > 1 || Application.isEditor) {
-					Debug.LogWarning ((object)"GetTotalPushingMass: Recursive loop detected. Bailing out.");
+				if (Global.developer > 1 || UnityEngine.Application.isEditor) {
+					Debug.LogWarning ("GetTotalPushingMass: Recursive loop detected. Bailing out.");
 				}
 				return 0f;
 			}
@@ -905,7 +809,7 @@ public class CompleteTrain : IDisposable
 		TriggerTrainCollisions triggerTrainCollisions = (flag ? frontCollisionTrigger : rearCollisionTrigger);
 		foreach (TrainCar trainContent in triggerTrainCollisions.trainContents) {
 			if (trainContent.completeTrain != this) {
-				Vector3 ourForward2 = (trainContent.completeTrain.IsCoupledBackwards (trainContent) ? (-((Component)trainContent).transform.forward) : ((Component)trainContent).transform.forward);
+				Vector3 ourForward2 = (trainContent.completeTrain.IsCoupledBackwards (trainContent) ? (-trainContent.transform.forward) : trainContent.transform.forward);
 				float totalPushingMass = trainContent.completeTrain.GetTotalPushingMass (pushDirection, ourForward2, ref prevTrains);
 				if (totalPushingMass < 0f) {
 					return -1f;
@@ -921,19 +825,11 @@ public class CompleteTrain : IDisposable
 
 	private float GetTotalPushingForces (Vector3 pushDirection, Vector3 ourForward, ref List<CompleteTrain> prevTrains)
 	{
-		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00aa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ca: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cb: Unknown result type (might be due to invalid IL or missing references)
 		float num = 0f;
 		if (prevTrains.Count > 0) {
 			if (prevTrains.Contains (this)) {
-				if (Global.developer > 1 || Application.isEditor) {
-					Debug.LogWarning ((object)"GetTotalPushingForces: Recursive loop detected. Bailing out.");
+				if (Global.developer > 1 || UnityEngine.Application.isEditor) {
+					Debug.LogWarning ("GetTotalPushingForces: Recursive loop detected. Bailing out.");
 				}
 				return 0f;
 			}
@@ -947,7 +843,7 @@ public class CompleteTrain : IDisposable
 		}
 		foreach (TrainCar trainContent in triggerTrainCollisions.trainContents) {
 			if (trainContent.completeTrain != this) {
-				Vector3 ourForward2 = (trainContent.completeTrain.IsCoupledBackwards (trainContent) ? (-((Component)trainContent).transform.forward) : ((Component)trainContent).transform.forward);
+				Vector3 ourForward2 = (trainContent.completeTrain.IsCoupledBackwards (trainContent) ? (-trainContent.transform.forward) : trainContent.transform.forward);
 				num += trainContent.completeTrain.GetTotalPushingForces (pushDirection, ourForward2, ref prevTrains);
 			}
 		}

@@ -70,7 +70,7 @@ public class SystemInfoGeneralText : MonoBehaviour
 				stringBuilder.Append ("World");
 				stringBuilder.AppendLine ();
 				stringBuilder.Append ("\tSeed:        ");
-				if ((Object)(object)activeGameMode != (Object)null && !activeGameMode.ingameMap) {
+				if (activeGameMode != null && !activeGameMode.ingameMap) {
 					stringBuilder.Append ("?");
 				} else {
 					stringBuilder.Append (World.Seed);
@@ -81,27 +81,27 @@ public class SystemInfoGeneralText : MonoBehaviour
 				stringBuilder.Append (" km²");
 				stringBuilder.AppendLine ();
 				stringBuilder.Append ("\tHeightmap:   ");
-				stringBuilder.Append (MB (Object.op_Implicit ((Object)(object)TerrainMeta.HeightMap) ? TerrainMeta.HeightMap.GetMemoryUsage () : 0));
+				stringBuilder.Append (MB (TerrainMeta.HeightMap ? TerrainMeta.HeightMap.GetMemoryUsage () : 0));
 				stringBuilder.Append (" MB");
 				stringBuilder.AppendLine ();
 				stringBuilder.Append ("\tWatermap:    ");
-				stringBuilder.Append (MB (Object.op_Implicit ((Object)(object)TerrainMeta.WaterMap) ? TerrainMeta.WaterMap.GetMemoryUsage () : 0));
+				stringBuilder.Append (MB (TerrainMeta.WaterMap ? TerrainMeta.WaterMap.GetMemoryUsage () : 0));
 				stringBuilder.Append (" MB");
 				stringBuilder.AppendLine ();
 				stringBuilder.Append ("\tSplatmap:    ");
-				stringBuilder.Append (MB (Object.op_Implicit ((Object)(object)TerrainMeta.SplatMap) ? TerrainMeta.SplatMap.GetMemoryUsage () : 0));
+				stringBuilder.Append (MB (TerrainMeta.SplatMap ? TerrainMeta.SplatMap.GetMemoryUsage () : 0));
 				stringBuilder.Append (" MB");
 				stringBuilder.AppendLine ();
 				stringBuilder.Append ("\tBiomemap:    ");
-				stringBuilder.Append (MB (Object.op_Implicit ((Object)(object)TerrainMeta.BiomeMap) ? TerrainMeta.BiomeMap.GetMemoryUsage () : 0));
+				stringBuilder.Append (MB (TerrainMeta.BiomeMap ? TerrainMeta.BiomeMap.GetMemoryUsage () : 0));
 				stringBuilder.Append (" MB");
 				stringBuilder.AppendLine ();
 				stringBuilder.Append ("\tTopologymap: ");
-				stringBuilder.Append (MB (Object.op_Implicit ((Object)(object)TerrainMeta.TopologyMap) ? TerrainMeta.TopologyMap.GetMemoryUsage () : 0));
+				stringBuilder.Append (MB (TerrainMeta.TopologyMap ? TerrainMeta.TopologyMap.GetMemoryUsage () : 0));
 				stringBuilder.Append (" MB");
 				stringBuilder.AppendLine ();
 				stringBuilder.Append ("\tAlphamap:    ");
-				stringBuilder.Append (MB (Object.op_Implicit ((Object)(object)TerrainMeta.AlphaMap) ? TerrainMeta.AlphaMap.GetMemoryUsage () : 0));
+				stringBuilder.Append (MB (TerrainMeta.AlphaMap ? TerrainMeta.AlphaMap.GetMemoryUsage () : 0));
 				stringBuilder.Append (" MB");
 				stringBuilder.AppendLine ();
 			}
@@ -117,7 +117,7 @@ public class SystemInfoGeneralText : MonoBehaviour
 
 	protected void Update ()
 	{
-		((TMP_Text)text).text = currentInfo;
+		text.text = currentInfo;
 	}
 
 	private static long MB (long bytes)

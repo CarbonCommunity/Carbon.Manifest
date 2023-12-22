@@ -48,7 +48,7 @@ public class GestureConfig : ScriptableObject
 
 	public string convarName;
 
-	public Phrase gestureName;
+	public Translate.Phrase gestureName;
 
 	public Sprite icon;
 
@@ -99,10 +99,10 @@ public class GestureConfig : ScriptableObject
 		if (gestureType == GestureType.Cinematic) {
 			return player.IsAdmin;
 		}
-		if ((Object)(object)dlcItem != (Object)null && dlcItem.CanUse (player)) {
+		if (dlcItem != null && dlcItem.CanUse (player)) {
 			return true;
 		}
-		if ((Object)(object)inventoryItem != (Object)null && player.blueprints.steamInventory.HasItem (inventoryItem.id)) {
+		if (inventoryItem != null && player.blueprints.steamInventory.HasItem (inventoryItem.id)) {
 			return true;
 		}
 		return false;

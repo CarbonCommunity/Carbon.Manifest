@@ -44,10 +44,6 @@ public class SeekerTarget
 
 	public bool TryGetPosition (out Vector3 result)
 	{
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
 		if (owner.IsUnityNull ()) {
 			result = Vector3.zero;
 			return false;
@@ -65,15 +61,6 @@ public class SeekerTarget
 
 	public static SeekerTarget GetBestForPoint (Vector3 from, Vector3 forward, float maxCone, float maxDist, SeekerStrength minStrength = SeekerStrength.LOW)
 	{
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0059: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0061: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0062: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c0: Unknown result type (might be due to invalid IL or missing references)
 		SeekerTarget result = null;
 		float num = 0f;
 		foreach (KeyValuePair<ISeekerTargetOwner, SeekerTarget> seekerTarget in seekerTargets) {
@@ -82,8 +69,8 @@ public class SeekerTarget
 			if (value.strength < minStrength || !value.IsValidTarget () || !value.TryGetPosition (out var result2)) {
 				continue;
 			}
-			Vector3 val = Vector3Ex.Direction (result2, from);
-			float num2 = Vector3.Dot (forward, val);
+			Vector3 rhs = Vector3Ex.Direction (result2, from);
+			float num2 = Vector3.Dot (forward, rhs);
 			float num3 = Vector3.Distance (result2, from);
 			if (num3 < maxDist && num2 > maxCone) {
 				float num4 = 1f - num3 / maxDist * 0.3f;

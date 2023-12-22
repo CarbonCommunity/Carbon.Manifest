@@ -49,7 +49,7 @@ public class RFManager
 		frequency = ClampFrequency (frequency);
 		List<IRFObject> listenList = GetListenList (frequency);
 		if (listenList.Contains (obj)) {
-			Debug.Log ((object)"adding same listener twice");
+			Debug.Log ("adding same listener twice");
 			return;
 		}
 		listenList.Add (obj);
@@ -117,8 +117,6 @@ public class RFManager
 
 	public static void MarkFrequencyDirty (int frequency)
 	{
-		//IL_0073: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007a: Unknown result type (might be due to invalid IL or missing references)
 		frequency = ClampFrequency (frequency);
 		List<IRFObject> broadcasterList = GetBroadcasterList (frequency);
 		List<IRFObject> listenList = GetListenList (frequency);
@@ -145,7 +143,7 @@ public class RFManager
 			}
 		}
 		if (flag2) {
-			Debug.LogWarning ((object)("Found null entries in the RF listener list for frequency " + frequency + "... cleaning up."));
+			Debug.LogWarning ("Found null entries in the RF listener list for frequency " + frequency + "... cleaning up.");
 			for (int num2 = listenList.Count - 1; num2 >= 0; num2--) {
 				if (listenList [num2] == null) {
 					listenList.RemoveAt (num2);
@@ -155,7 +153,7 @@ public class RFManager
 		if (!flag3) {
 			return;
 		}
-		Debug.LogWarning ((object)("Found null entries in the RF broadcaster list for frequency " + frequency + "... cleaning up."));
+		Debug.LogWarning ("Found null entries in the RF broadcaster list for frequency " + frequency + "... cleaning up.");
 		for (int num3 = broadcasterList.Count - 1; num3 >= 0; num3--) {
 			if (broadcasterList [num3] == null) {
 				broadcasterList.RemoveAt (num3);

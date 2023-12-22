@@ -6,21 +6,21 @@ public static class OnParentSpawningEx
 {
 	public static void BroadcastOnParentSpawning (this GameObject go)
 	{
-		List<IOnParentSpawning> list = Pool.GetList<IOnParentSpawning> ();
-		go.GetComponentsInChildren<IOnParentSpawning> (list);
-		for (int i = 0; i < list.Count; i++) {
-			list [i].OnParentSpawning ();
+		List<IOnParentSpawning> obj = Pool.GetList<IOnParentSpawning> ();
+		go.GetComponentsInChildren (obj);
+		for (int i = 0; i < obj.Count; i++) {
+			obj [i].OnParentSpawning ();
 		}
-		Pool.FreeList<IOnParentSpawning> (ref list);
+		Pool.FreeList (ref obj);
 	}
 
 	public static void SendOnParentSpawning (this GameObject go)
 	{
-		List<IOnParentSpawning> list = Pool.GetList<IOnParentSpawning> ();
-		go.GetComponents<IOnParentSpawning> (list);
-		for (int i = 0; i < list.Count; i++) {
-			list [i].OnParentSpawning ();
+		List<IOnParentSpawning> obj = Pool.GetList<IOnParentSpawning> ();
+		go.GetComponents (obj);
+		for (int i = 0; i < obj.Count; i++) {
+			obj [i].OnParentSpawning ();
 		}
-		Pool.FreeList<IOnParentSpawning> (ref list);
+		Pool.FreeList (ref obj);
 	}
 }

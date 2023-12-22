@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Facepunch;
 using ProtoBuf;
@@ -41,7 +40,7 @@ public class ReclaimManager : BaseEntity
 			id = -2;
 			if (inventory != null) {
 				inventory.Clear ();
-				Pool.Free<ItemContainer> (ref inventory);
+				Pool.Free (ref inventory);
 			}
 		}
 	}
@@ -142,7 +141,7 @@ public class ReclaimManager : BaseEntity
 	{
 		entry.Cleanup ();
 		entries.Remove (entry);
-		Pool.Free<PlayerReclaimEntry> (ref entry);
+		Pool.Free (ref entry);
 		entry = null;
 	}
 
@@ -153,7 +152,7 @@ public class ReclaimManager : BaseEntity
 			return;
 		}
 		lastReclaimID = info.msg.reclaimManager.lastReclaimID;
-		foreach (ReclaimInfo reclaimEntry in info.msg.reclaimManager.reclaimEntries) {
+		foreach (ProtoBuf.ReclaimManager.ReclaimInfo reclaimEntry in info.msg.reclaimManager.reclaimEntries) {
 			PlayerReclaimEntry playerReclaimEntry = NewEntry ();
 			playerReclaimEntry.killerID = reclaimEntry.killerID;
 			playerReclaimEntry.victimID = reclaimEntry.victimID;
@@ -169,22 +168,22 @@ public class ReclaimManager : BaseEntity
 		if (!info.forDisk) {
 			return;
 		}
-		info.msg.reclaimManager = Pool.Get<ReclaimManager> ();
-		info.msg.reclaimManager.reclaimEntries = Pool.GetList<ReclaimInfo> ();
+		info.msg.reclaimManager = Pool.Get<ProtoBuf.ReclaimManager> ();
+		info.msg.reclaimManager.reclaimEntries = Pool.GetList<ProtoBuf.ReclaimManager.ReclaimInfo> ();
 		info.msg.reclaimManager.lastReclaimID = lastReclaimID;
 		foreach (PlayerReclaimEntry entry in entries) {
-			ReclaimInfo val = Pool.Get<ReclaimInfo> ();
-			val.killerID = entry.killerID;
-			val.victimID = entry.victimID;
-			val.killerString = entry.killerString;
-			val.inventory = entry.inventory.Save ();
-			info.msg.reclaimManager.reclaimEntries.Add (val);
+			ProtoBuf.ReclaimManager.ReclaimInfo reclaimInfo = Pool.Get<ProtoBuf.ReclaimManager.ReclaimInfo> ();
+			reclaimInfo.killerID = entry.killerID;
+			reclaimInfo.victimID = entry.victimID;
+			reclaimInfo.killerString = entry.killerString;
+			reclaimInfo.inventory = entry.inventory.Save ();
+			info.msg.reclaimManager.reclaimEntries.Add (reclaimInfo);
 		}
 	}
 
 	public override void ServerInit ()
 	{
-		((FacepunchBehaviour)this).InvokeRepeating ((Action)TickEntries, 1f, 60f);
+		InvokeRepeating (TickEntries, 1f, 60f);
 		_instance = this;
 		base.ServerInit ();
 	}

@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Network;
@@ -18,46 +19,34 @@ public class PressButton : IOEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("PressButton.OnRpcMessage", 0);
-		try {
-			if (rpc == 3778543711u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("PressButton.OnRpcMessage")) {
+			if (rpc == 3778543711u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - Press "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - Press ");
 				}
-				TimeWarning val2 = TimeWarning.New ("Press", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Press")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (3778543711u, "Press", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							Press (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in Press");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -67,14 +56,14 @@ public class PressButton : IOEntity
 		base.ResetIOState ();
 		SetFlag (Flags.On, b: false);
 		SetFlag (Flags.Reserved3, b: false);
-		((FacepunchBehaviour)this).CancelInvoke ((Action)Unpress);
-		((FacepunchBehaviour)this).CancelInvoke ((Action)UnpowerTime);
+		CancelInvoke (Unpress);
+		CancelInvoke (UnpowerTime);
 	}
 
 	public override int GetPassthroughAmount (int outputSlot = 0)
 	{
 		if (IsOn ()) {
-			if ((Object)(object)sourceItem != (Object)null || smallBurst) {
+			if (sourceItem != null || smallBurst) {
 				if (HasFlag (Flags.Reserved3)) {
 					return Mathf.Max (pressPowerAmount, base.GetPassthroughAmount ());
 				}
@@ -103,11 +92,11 @@ public class PressButton : IOEntity
 	{
 		if (!IsOn ()) {
 			SetFlag (Flags.On, b: true);
-			((FacepunchBehaviour)this).Invoke ((Action)UnpowerTime, pressPowerTime);
+			Invoke (UnpowerTime, pressPowerTime);
 			SetFlag (Flags.Reserved3, b: true);
 			SendNetworkUpdateImmediate ();
 			MarkDirty ();
-			((FacepunchBehaviour)this).Invoke ((Action)Unpress, pressDuration);
+			Invoke (Unpress, pressDuration);
 		}
 	}
 

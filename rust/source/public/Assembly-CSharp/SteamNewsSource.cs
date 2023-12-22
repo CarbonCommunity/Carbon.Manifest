@@ -24,12 +24,12 @@ public static class SteamNewsSource
 	{
 		WWW www = new WWW ("http://api.steampowered.com/ISteamNews/GetNewsForApp/v0002/?appid=252490&count=8&format=json&feeds=steam_community_announcements");
 		yield return www;
-		Object val = Object.Parse (www.text);
+		JSON.Object @object = JSON.Object.Parse (www.text);
 		www.Dispose ();
-		if (val == null) {
+		if (@object == null) {
 			yield break;
 		}
-		Array array = val.GetObject ("appnews").GetArray ("newsitems");
+		Array array = @object.GetObject ("appnews").GetArray ("newsitems");
 		List<Story> list = new List<Story> ();
 		foreach (Value item in array) {
 			string @string = item.Obj.GetString ("contents", "Missing Contents");
@@ -37,7 +37,7 @@ public static class SteamNewsSource
 			list.Add (new Story {
 				name = item.Obj.GetString ("title", "Missing Title"),
 				url = item.Obj.GetString ("url", "Missing URL"),
-				date = item.Obj.GetInt ("date", 0),
+				date = item.Obj.GetInt ("date"),
 				text = @string,
 				author = item.Obj.GetString ("author", "Missing Author")
 			});

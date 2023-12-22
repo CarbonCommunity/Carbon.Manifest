@@ -16,7 +16,7 @@ public static class ArrayEx
 		if (array == null || array.Length == 0) {
 			return default(T);
 		}
-		return array [Random.Range (0, array.Length)];
+		return array [UnityEngine.Random.Range (0, array.Length)];
 	}
 
 	public static T GetRandom<T> (this T[] array, uint seed)

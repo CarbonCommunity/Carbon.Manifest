@@ -20,14 +20,14 @@ public class ItemModMenuOption : ItemMod
 
 	private void OnValidate ()
 	{
-		if ((Object)(object)actionTarget == (Object)null) {
-			Debug.LogWarning ((object)"ItemModMenuOption: actionTarget is null!", (Object)(object)((Component)this).gameObject);
+		if (actionTarget == null) {
+			Debug.LogWarning ("ItemModMenuOption: actionTarget is null!", base.gameObject);
 		}
 		if (string.IsNullOrEmpty (commandName)) {
-			Debug.LogWarning ((object)"ItemModMenuOption: commandName can't be empty!", (Object)(object)((Component)this).gameObject);
+			Debug.LogWarning ("ItemModMenuOption: commandName can't be empty!", base.gameObject);
 		}
-		if ((Object)(object)option.icon == (Object)null) {
-			Debug.LogWarning ((object)("No icon set for ItemModMenuOption " + ((Object)((Component)this).gameObject).name), (Object)(object)((Component)this).gameObject);
+		if (option.icon == null) {
+			Debug.LogWarning ("No icon set for ItemModMenuOption " + base.gameObject.name, base.gameObject);
 		}
 	}
 }

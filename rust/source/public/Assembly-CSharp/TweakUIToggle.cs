@@ -30,8 +30,6 @@ public class TweakUIToggle : TweakUIBase
 
 	protected override void SetConvarValue ()
 	{
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
 		base.SetConvarValue ();
 		if (conVar != null) {
 			bool flag = toggleControl.isOn;
@@ -40,7 +38,7 @@ public class TweakUIToggle : TweakUIBase
 			}
 			if (conVar.AsBool != flag) {
 				lastConVarChanged = conVar.FullName;
-				timeSinceLastConVarChange = TimeSince.op_Implicit (0f);
+				timeSinceLastConVarChange = 0f;
 				conVar.Set (flag);
 			}
 		}

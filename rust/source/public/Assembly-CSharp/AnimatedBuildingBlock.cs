@@ -14,7 +14,7 @@ public class AnimatedBuildingBlock : StabilityEntity
 	public override void ServerInit ()
 	{
 		base.ServerInit ();
-		if (!Application.isLoadingSave) {
+		if (!Rust.Application.isLoadingSave) {
 			UpdateAnimationParameters (init: true);
 		}
 	}
@@ -33,18 +33,18 @@ public class AnimatedBuildingBlock : StabilityEntity
 
 	protected void UpdateAnimationParameters (bool init)
 	{
-		if (!Object.op_Implicit ((Object)(object)model) || !Object.op_Implicit ((Object)(object)model.animator) || !model.animator.isInitialized) {
+		if (!model || !model.animator || !model.animator.isInitialized) {
 			return;
 		}
 		bool num = animatorNeedsInitializing || animatorIsOpen != IsOpen () || (init && isAnimating);
 		bool flag = animatorNeedsInitializing || init;
 		if (num) {
 			isAnimating = true;
-			((Behaviour)model.animator).enabled = true;
+			model.animator.enabled = true;
 			model.animator.SetBool (Open, animatorIsOpen = IsOpen ());
 			if (flag) {
 				model.animator.fireEvents = false;
-				if (((Behaviour)model.animator).isActiveAndEnabled) {
+				if (model.animator.isActiveAndEnabled) {
 					model.animator.Update (0f);
 					model.animator.Update (20f);
 				}
@@ -71,11 +71,11 @@ public class AnimatedBuildingBlock : StabilityEntity
 
 	private void PutAnimatorToSleep ()
 	{
-		if (!Object.op_Implicit ((Object)(object)model) || !Object.op_Implicit ((Object)(object)model.animator)) {
-			Debug.LogWarning ((object)(((Component)this).transform.GetRecursiveName () + " has missing model/animator"), (Object)(object)((Component)this).gameObject);
+		if (!model || !model.animator) {
+			Debug.LogWarning (base.transform.GetRecursiveName () + " has missing model/animator", base.gameObject);
 			return;
 		}
-		((Behaviour)model.animator).enabled = false;
+		model.animator.enabled = false;
 		if (base.isServer) {
 			SetFlag (Flags.Busy, b: false);
 		}

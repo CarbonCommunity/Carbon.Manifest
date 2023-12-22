@@ -28,7 +28,6 @@ public abstract class Graph : MonoBehaviour
 
 	protected Vector3 GetVertex (float x, float y)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
 		return new Vector3 (x, y, 0f);
 	}
 
@@ -46,18 +45,11 @@ public abstract class Graph : MonoBehaviour
 
 	protected void OnGUI ()
 	{
-		//IL_0005: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000b: Invalid comparison between Unknown and I4
-		//IL_011a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0132: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0147: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_017a: Unknown result type (might be due to invalid IL or missing references)
-		if ((int)Event.current.type == 7 && values != null && values.Length != 0) {
-			float num = Mathf.Max (((Rect)(ref Area)).width, ScreenFill.x * (float)Screen.width);
-			float num2 = Mathf.Max (((Rect)(ref Area)).height, ScreenFill.y * (float)Screen.height);
-			float num3 = ((Rect)(ref Area)).x - Pivot.x * num + ScreenOrigin.x * (float)Screen.width;
-			float num4 = ((Rect)(ref Area)).y - Pivot.y * num2 + ScreenOrigin.y * (float)Screen.height;
+		if (Event.current.type == EventType.Repaint && values != null && values.Length != 0) {
+			float num = Mathf.Max (Area.width, ScreenFill.x * (float)Screen.width);
+			float num2 = Mathf.Max (Area.height, ScreenFill.y * (float)Screen.height);
+			float num3 = Area.x - Pivot.x * num + ScreenOrigin.x * (float)Screen.width;
+			float num4 = Area.y - Pivot.y * num2 + ScreenOrigin.y * (float)Screen.height;
 			GL.PushMatrix ();
 			Material.SetPass (0);
 			GL.LoadPixelMatrix ();

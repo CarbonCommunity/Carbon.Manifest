@@ -6,7 +6,7 @@ public class LootPanel : MonoBehaviour
 {
 	public interface IHasLootPanel
 	{
-		Phrase LootPanelTitle { get; }
+		Translate.Phrase LootPanelTitle { get; }
 	}
 
 	public Text Title;

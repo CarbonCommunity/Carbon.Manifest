@@ -12,24 +12,24 @@ public class StripRig : MonoBehaviour, IPrefabPreProcess
 
 	public void PreProcess (IPrefabProcessor preProcess, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
 	{
-		if (Object.op_Implicit ((Object)(object)root) && ((serverside && fromServer) || (clientside && fromClient))) {
-			SkinnedMeshRenderer component = ((Component)this).GetComponent<SkinnedMeshRenderer> ();
+		if ((bool)root && ((serverside && fromServer) || (clientside && fromClient))) {
+			SkinnedMeshRenderer component = GetComponent<SkinnedMeshRenderer> ();
 			Strip (preProcess, component);
 		}
-		preProcess.RemoveComponent ((Component)(object)this);
+		preProcess.RemoveComponent (this);
 	}
 
 	public void Strip (IPrefabProcessor preProcess, SkinnedMeshRenderer skinnedMeshRenderer)
 	{
-		List<Transform> list = Pool.GetList<Transform> ();
-		((Component)root).GetComponentsInChildren<Transform> (list);
-		for (int num = list.Count - 1; num >= 0; num--) {
+		List<Transform> obj = Pool.GetList<Transform> ();
+		root.GetComponentsInChildren (obj);
+		for (int num = obj.Count - 1; num >= 0; num--) {
 			if (preProcess != null) {
-				preProcess.NominateForDeletion (((Component)list [num]).gameObject);
+				preProcess.NominateForDeletion (obj [num].gameObject);
 			} else {
-				Object.DestroyImmediate ((Object)(object)((Component)list [num]).gameObject);
+				Object.DestroyImmediate (obj [num].gameObject);
 			}
 		}
-		Pool.FreeList<Transform> (ref list);
+		Pool.FreeList (ref obj);
 	}
 }

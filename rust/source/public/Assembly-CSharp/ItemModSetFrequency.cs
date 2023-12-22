@@ -25,18 +25,14 @@ public class ItemModSetFrequency : ItemMod
 
 	public override void ServerCommand (Item item, string command, BasePlayer player)
 	{
-		//IL_0078: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0131: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0136: Unknown result type (might be due to invalid IL or missing references)
 		base.ServerCommand (item, command, player);
 		if (command.Contains ("SetFrequency")) {
 			if (itemsOnCooldown.Count > 0 && onlyFrequency) {
 				for (int num = itemsOnCooldown.Count - 1; num >= 0; num--) {
-					if (itemsOnCooldown [num].TargetItem == item && TimeSince.op_Implicit (itemsOnCooldown [num].TimeSinceEdit) < 2f) {
+					if (itemsOnCooldown [num].TargetItem == item && (float)itemsOnCooldown [num].TimeSinceEdit < 2f) {
 						return;
 					}
-					if (TimeSince.op_Implicit (itemsOnCooldown [num].TimeSinceEdit) > 2f) {
+					if ((float)itemsOnCooldown [num].TimeSinceEdit > 2f) {
 						itemsOnCooldown.RemoveAt (num);
 					}
 				}
@@ -44,7 +40,7 @@ public class ItemModSetFrequency : ItemMod
 			int result = 0;
 			if (int.TryParse (command.Substring (command.IndexOf (":") + 1), out result)) {
 				BaseEntity heldEntity = item.GetHeldEntity ();
-				if ((Object)(object)heldEntity != (Object)null && heldEntity is Detonator detonator) {
+				if (heldEntity != null && heldEntity is Detonator detonator) {
 					detonator.ServerSetFrequency (player, result);
 				} else {
 					item.instanceData.dataInt = result;
@@ -56,11 +52,11 @@ public class ItemModSetFrequency : ItemMod
 				if (onlyFrequency) {
 					itemsOnCooldown.Add (new ItemTime {
 						TargetItem = item,
-						TimeSinceEdit = TimeSince.op_Implicit (0f)
+						TimeSinceEdit = 0f
 					});
 				}
 			} else {
-				Debug.Log ((object)"Parse fuckup");
+				Debug.Log ("Parse fuckup");
 			}
 		}
 		if (!onlyFrequency) {
@@ -76,10 +72,8 @@ public class ItemModSetFrequency : ItemMod
 
 	public override void OnItemCreated (Item item)
 	{
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Expected O, but got Unknown
 		if (item.instanceData == null) {
-			item.instanceData = new InstanceData ();
+			item.instanceData = new ProtoBuf.Item.InstanceData ();
 			item.instanceData.ShouldPool = false;
 			item.instanceData.dataInt = defaultFrequency;
 		}

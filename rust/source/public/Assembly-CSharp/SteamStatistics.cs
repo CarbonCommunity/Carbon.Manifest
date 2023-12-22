@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ConVar;
@@ -37,24 +36,21 @@ public class SteamStatistics
 		if (!PlatformService.Instance.IsValid || refresh == null || !refresh.IsCompleted) {
 			return;
 		}
-		TimeWarning val = TimeWarning.New ("PlayerStats.Add", 0);
-		try {
+		using (TimeWarning.New ("PlayerStats.Add")) {
 			int value = 0;
 			if (intStats.TryGetValue (name, out value)) {
 				intStats [name] += var;
-				PlatformService.Instance.SetPlayerStatInt (player.userID, name, (long)intStats [name]);
+				PlatformService.Instance.SetPlayerStatInt (player.userID, name, intStats [name]);
 				return;
 			}
 			value = (int)PlatformService.Instance.GetPlayerStatInt (player.userID, name, 0L);
-			if (!PlatformService.Instance.SetPlayerStatInt (player.userID, name, (long)(value + var))) {
+			if (!PlatformService.Instance.SetPlayerStatInt (player.userID, name, value + var)) {
 				if (Global.developer > 0) {
-					Debug.LogWarning ((object)("[STEAMWORKS] Couldn't SetUserStat: " + name));
+					Debug.LogWarning ("[STEAMWORKS] Couldn't SetUserStat: " + name);
 				}
 			} else {
 				intStats.Add (name, value + var);
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 	}
 
@@ -66,14 +62,11 @@ public class SteamStatistics
 		if (refresh == null || !refresh.IsCompleted) {
 			return 0;
 		}
-		TimeWarning val = TimeWarning.New ("PlayerStats.Get", 0);
-		try {
+		using (TimeWarning.New ("PlayerStats.Get")) {
 			if (intStats.TryGetValue (name, out var value)) {
 				return value;
 			}
 			return (int)PlatformService.Instance.GetPlayerStatInt (player.userID, name, 0L);
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 	}
 }

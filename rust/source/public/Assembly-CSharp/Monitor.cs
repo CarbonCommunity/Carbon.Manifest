@@ -24,18 +24,12 @@ public abstract class Monitor
 
 	protected void CheckOutput (int width, int height)
 	{
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0061: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006d: Expected O, but got Unknown
-		if ((Object)(object)output == (Object)null || !output.IsCreated () || ((Texture)output).width != width || ((Texture)output).height != height) {
-			RuntimeUtilities.Destroy ((Object)(object)output);
-			output = new RenderTexture (width, height, 0, (RenderTextureFormat)0) {
+		if (output == null || !output.IsCreated () || output.width != width || output.height != height) {
+			RuntimeUtilities.Destroy (output);
+			output = new RenderTexture (width, height, 0, RenderTextureFormat.ARGB32) {
 				anisoLevel = 0,
-				filterMode = (FilterMode)1,
-				wrapMode = (TextureWrapMode)1,
+				filterMode = FilterMode.Bilinear,
+				wrapMode = TextureWrapMode.Clamp,
 				useMipMap = false
 			};
 		}
@@ -47,7 +41,7 @@ public abstract class Monitor
 
 	internal virtual void OnDisable ()
 	{
-		RuntimeUtilities.Destroy ((Object)(object)output);
+		RuntimeUtilities.Destroy (output);
 	}
 
 	internal abstract void Render (PostProcessRenderContext context);

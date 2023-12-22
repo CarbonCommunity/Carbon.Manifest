@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -32,65 +33,43 @@ public class ItemBasedFlowRestrictor : IOEntity, IContainerSounds
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("ItemBasedFlowRestrictor.OnRpcMessage", 0);
-		try {
-			if (rpc == 331989034 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("ItemBasedFlowRestrictor.OnRpcMessage")) {
+			if (rpc == 331989034 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - RPC_OpenLoot "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - RPC_OpenLoot ");
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_OpenLoot", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_OpenLoot")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (331989034u, "RPC_OpenLoot", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage rpc2 = rPCMessage;
 							RPC_OpenLoot (rpc2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_OpenLoot");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
 
 	public override void ResetIOState ()
 	{
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0059: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0063: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0075: Unknown result type (might be due to invalid IL or missing references)
 		SetFlag (Flags.On, b: false);
 		if (inventory != null) {
-			inventory.GetSlot (0)?.Drop (((Component)debugOrigin).transform.position + ((Component)this).transform.forward * 0.5f, GetInheritedDropVelocity () + ((Component)this).transform.forward * 2f);
+			inventory.GetSlot (0)?.Drop (debugOrigin.transform.position + base.transform.forward * 0.5f, GetInheritedDropVelocity () + base.transform.forward * 2f);
 		}
 	}
 
@@ -122,7 +101,7 @@ public class ItemBasedFlowRestrictor : IOEntity, IContainerSounds
 		if (passthroughItemConditionLossPerSec > 0f && slot.hasCondition && slot.conditionNormalized <= 0f) {
 			return false;
 		}
-		if ((Object)(object)slot.info == (Object)(object)passthroughItem) {
+		if (slot.info == passthroughItem) {
 			return true;
 		}
 		return false;
@@ -144,7 +123,7 @@ public class ItemBasedFlowRestrictor : IOEntity, IContainerSounds
 			CreateInventory (giveUID: true);
 			OnInventoryFirstCreated (inventory);
 		}
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)TickPassthroughItem, 1f, 1f, 0.015f);
+		InvokeRandomized (TickPassthroughItem, 1f, 1f, 0.015f);
 		base.ServerInit ();
 	}
 
@@ -173,10 +152,10 @@ public class ItemBasedFlowRestrictor : IOEntity, IContainerSounds
 		base.Save (info);
 		if (info.forDisk) {
 			if (inventory != null) {
-				info.msg.storageBox = Pool.Get<StorageBox> ();
+				info.msg.storageBox = Facepunch.Pool.Get<StorageBox> ();
 				info.msg.storageBox.contents = inventory.Save ();
 			} else {
-				Debug.LogWarning ((object)("Storage container without inventory: " + ((object)this).ToString ()));
+				Debug.LogWarning ("Storage container without inventory: " + ToString ());
 			}
 		}
 	}
@@ -189,7 +168,7 @@ public class ItemBasedFlowRestrictor : IOEntity, IContainerSounds
 				inventory.Load (info.msg.storageBox.contents);
 				inventory.capacity = numSlots;
 			} else {
-				Debug.LogWarning ((object)("Storage container without inventory: " + ((object)this).ToString ()));
+				Debug.LogWarning ("Storage container without inventory: " + ToString ());
 			}
 		}
 	}
@@ -210,7 +189,7 @@ public class ItemBasedFlowRestrictor : IOEntity, IContainerSounds
 	{
 		if (inventory != null) {
 			BasePlayer player = rpc.player;
-			if (Object.op_Implicit ((Object)(object)player) && player.CanInteract () && player.inventory.loot.StartLootingEntity (this)) {
+			if ((bool)player && player.CanInteract () && player.inventory.loot.StartLootingEntity (this)) {
 				SetFlag (Flags.Open, b: true);
 				player.inventory.loot.AddContainer (inventory);
 				player.inventory.loot.SendImmediate ();

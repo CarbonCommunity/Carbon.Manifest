@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -22,7 +23,6 @@ public class AttackHelicopter : PlayerHelicopter
 
 		public void Reset ()
 		{
-			//IL_001b: Unknown result type (might be due to invalid IL or missing references)
 			fire1 = false;
 			fire2 = false;
 			reload = false;
@@ -127,154 +127,115 @@ public class AttackHelicopter : PlayerHelicopter
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("AttackHelicopter.OnRpcMessage", 0);
-		try {
-			if (rpc == 3309981499u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("AttackHelicopter.OnRpcMessage")) {
+			if (rpc == 3309981499u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - RPC_CloseGunnerView "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - RPC_CloseGunnerView ");
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_CloseGunnerView", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_CloseGunnerView")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (3309981499u, "RPC_CloseGunnerView", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							RPC_CloseGunnerView (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_CloseGunnerView");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 1427416040 && (Object)(object)player != (Object)null) {
+			if (rpc == 1427416040 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - RPC_OpenGunnerView "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - RPC_OpenGunnerView ");
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_OpenGunnerView", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_OpenGunnerView")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (1427416040u, "RPC_OpenGunnerView", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg3 = rPCMessage;
 							RPC_OpenGunnerView (msg3);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in RPC_OpenGunnerView");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 4185921214u && (Object)(object)player != (Object)null) {
+			if (rpc == 4185921214u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - RPC_OpenStorage "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - RPC_OpenStorage ");
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_OpenStorage", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_OpenStorage")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (4185921214u, "RPC_OpenStorage", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg4 = rPCMessage;
 							RPC_OpenStorage (msg4);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex3) {
-						Debug.LogException (ex3);
+					} catch (Exception exception3) {
+						Debug.LogException (exception3);
 						player.Kick ("RPC Error in RPC_OpenStorage");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 148009183 && (Object)(object)player != (Object)null) {
+			if (rpc == 148009183 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - RPC_OpenTurret "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - RPC_OpenTurret ");
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_OpenTurret", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_OpenTurret")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (148009183u, "RPC_OpenTurret", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg5 = rPCMessage;
 							RPC_OpenTurret (msg5);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex4) {
-						Debug.LogException (ex4);
+					} catch (Exception exception4) {
+						Debug.LogException (exception4);
 						player.Kick ("RPC Error in RPC_OpenTurret");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -307,8 +268,6 @@ public class AttackHelicopter : PlayerHelicopter
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (info.msg.attackHeli != null) {
 			turretInstance.uid = info.msg.attackHeli.turretID;
@@ -357,23 +316,13 @@ public class AttackHelicopter : PlayerHelicopter
 
 	public override void PassengerInput (InputState inputState, BasePlayer player)
 	{
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0070: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0075: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0095: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00af: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b4: Unknown result type (might be due to invalid IL or missing references)
 		base.PassengerInput (inputState, player);
-		timeSinceLastGunnerInput = TimeSince.op_Implicit (0f);
+		timeSinceLastGunnerInput = 0f;
 		gunnerInputState.fire1 = inputState.IsDown (BUTTON.FIRE_PRIMARY);
 		gunnerInputState.fire2 = inputState.IsDown (BUTTON.FIRE_SECONDARY);
 		gunnerInputState.reload = inputState.IsDown (BUTTON.RELOAD);
-		((Ray)(ref gunnerInputState.eyeRay)).direction = Quaternion.Euler (inputState.current.aimAngles) * Vector3.forward;
-		((Ray)(ref gunnerInputState.eyeRay)).origin = player.eyes.position + ((Ray)(ref gunnerInputState.eyeRay)).direction * 0.5f;
+		gunnerInputState.eyeRay.direction = Quaternion.Euler (inputState.current.aimAngles) * Vector3.forward;
+		gunnerInputState.eyeRay.origin = player.eyes.position + gunnerInputState.eyeRay.direction * 0.5f;
 		if (IsOn () && GunnerIsInGunnerView) {
 			AttackHelicopterTurret turret = GetTurret ();
 			if (turret.InputTick (gunnerInputState)) {
@@ -393,31 +342,24 @@ public class AttackHelicopter : PlayerHelicopter
 
 	private void WeaponFireFailed (int ammo, BasePlayer player)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
-		if (!(TimeSince.op_Implicit (timeSinceFailedWeaponFireRPC) <= 1f) && ammo <= 0) {
+		if (!((float)timeSinceFailedWeaponFireRPC <= 1f) && ammo <= 0) {
 			ClientRPCPlayer (null, player, "WeaponFireFailed");
-			timeSinceFailedWeaponFireRPC = TimeSince.op_Implicit (0f);
+			timeSinceFailedWeaponFireRPC = 0f;
 		}
 	}
 
 	private void FlareFireFailed (BasePlayer player)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		if (!(TimeSince.op_Implicit (timeSinceFailedFlareRPC) <= 1f)) {
+		if (!((float)timeSinceFailedFlareRPC <= 1f)) {
 			ClientRPCPlayer (null, player, "FlareFireFailed");
-			timeSinceFailedFlareRPC = TimeSince.op_Implicit (0f);
+			timeSinceFailedFlareRPC = 0f;
 		}
 	}
 
 	public override void VehicleFixedUpdate ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
 		base.VehicleFixedUpdate ();
-		if (TimeSince.op_Implicit (timeSinceLastGunnerInput) > 0.5f) {
+		if ((float)timeSinceLastGunnerInput > 0.5f) {
 			gunnerInputState.Reset ();
 		}
 	}
@@ -458,12 +400,8 @@ public class AttackHelicopter : PlayerHelicopter
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
-		info.msg.attackHeli = Pool.Get<AttackHeli> ();
+		info.msg.attackHeli = Facepunch.Pool.Get<AttackHeli> ();
 		info.msg.attackHeli.turretID = turretInstance.uid;
 		info.msg.attackHeli.rocketsID = rocketsInstance.uid;
 	}
@@ -471,9 +409,9 @@ public class AttackHelicopter : PlayerHelicopter
 	private void MarkAllMountedPlayersAsHostile ()
 	{
 		foreach (MountPointInfo mountPoint in mountPoints) {
-			if ((Object)(object)mountPoint.mountable != (Object)null) {
+			if (mountPoint.mountable != null) {
 				BasePlayer mounted = mountPoint.mountable.GetMounted ();
-				if ((Object)(object)mounted != (Object)null) {
+				if (mounted != null) {
 					mounted.MarkHostileFor ();
 				}
 			}
@@ -486,7 +424,7 @@ public class AttackHelicopter : PlayerHelicopter
 			return false;
 		}
 		AttackHelicopterTurret turret = GetTurret ();
-		if ((Object)(object)turret != (Object)null && (Object)(object)turret.GetAttachedHeldEntity () == (Object)null) {
+		if (turret != null && turret.GetAttachedHeldEntity () == null) {
 			ItemDefinition itemToCreate;
 			ItemDefinition itemDefinition;
 			switch (tier) {
@@ -518,7 +456,7 @@ public class AttackHelicopter : PlayerHelicopter
 			turret.forceAcceptAmmo = false;
 		}
 		AttackHelicopterRockets rockets = GetRockets ();
-		if ((Object)(object)rockets != (Object)null) {
+		if (rockets != null) {
 			ItemDefinition itemDefinition2 = ItemManager.FindItemDefinition ("flare");
 			ItemDefinition itemDefinition3 = tier switch {
 				1 => ItemManager.FindItemDefinition ("ammo.rocket.hv"), 
@@ -544,7 +482,7 @@ public class AttackHelicopter : PlayerHelicopter
 	private bool TryFireFlare ()
 	{
 		AttackHelicopterRockets rockets = GetRockets ();
-		if ((Object)(object)rockets != (Object)null && rockets.TryTakeFlare ()) {
+		if (rockets != null && rockets.TryTakeFlare ()) {
 			LaunchFlare ();
 			return true;
 		}
@@ -553,20 +491,9 @@ public class AttackHelicopter : PlayerHelicopter
 
 	private void LaunchFlare ()
 	{
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0062: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0082: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0097: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a2: Unknown result type (might be due to invalid IL or missing references)
 		Effect.server.Run (flareFireFX.resourcePath, this, StringPool.Get ("FlareLaunchPos"), Vector3.zero, Vector3.zero);
-		Object.Instantiate<GameObject> (pilotFlare.Get (), leftFlareLaunchPos.position, Quaternion.identity).GetComponent<AttackHeliPilotFlare> ().Init (-((Component)this).transform.right * flareLaunchVel);
-		Object.Instantiate<GameObject> (pilotFlare.Get (), rightFlareLaunchPos.position, Quaternion.identity).GetComponent<AttackHeliPilotFlare> ().Init (((Component)this).transform.right * flareLaunchVel);
+		UnityEngine.Object.Instantiate (pilotFlare.Get (), leftFlareLaunchPos.position, Quaternion.identity).GetComponent<AttackHeliPilotFlare> ().Init (-base.transform.right * flareLaunchVel);
+		UnityEngine.Object.Instantiate (pilotFlare.Get (), rightFlareLaunchPos.position, Quaternion.identity).GetComponent<AttackHeliPilotFlare> ().Init (base.transform.right * flareLaunchVel);
 	}
 
 	[RPC_Server]
@@ -574,13 +501,13 @@ public class AttackHelicopter : PlayerHelicopter
 	public void RPC_OpenTurret (RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
-		if (!CanBeLooted (player) || player.isMounted || (IsSafe () && (Object)(object)player != (Object)(object)creatorEntity)) {
+		if (!CanBeLooted (player) || player.isMounted || (IsSafe () && player != creatorEntity)) {
 			return;
 		}
 		StorageContainer turret = GetTurret ();
-		if (!((Object)(object)turret == (Object)null)) {
+		if (!(turret == null)) {
 			BasePlayer driver = GetDriver ();
-			if (!((Object)(object)driver != (Object)null) || !((Object)(object)driver != (Object)(object)player)) {
+			if (!(driver != null) || !(driver != player)) {
 				turret.PlayerOpenLoot (player);
 			}
 		}
@@ -591,13 +518,13 @@ public class AttackHelicopter : PlayerHelicopter
 	public void RPC_OpenStorage (RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
-		if (!CanBeLooted (player) || player.isMounted || (IsSafe () && (Object)(object)player != (Object)(object)creatorEntity)) {
+		if (!CanBeLooted (player) || player.isMounted || (IsSafe () && player != creatorEntity)) {
 			return;
 		}
 		StorageContainer rockets = GetRockets ();
-		if (!((Object)(object)rockets == (Object)null)) {
+		if (!(rockets == null)) {
 			BasePlayer driver = GetDriver ();
-			if (!((Object)(object)driver != (Object)null) || !((Object)(object)driver != (Object)(object)player)) {
+			if (!(driver != null) || !(driver != player)) {
 				rockets.PlayerOpenLoot (player);
 			}
 		}

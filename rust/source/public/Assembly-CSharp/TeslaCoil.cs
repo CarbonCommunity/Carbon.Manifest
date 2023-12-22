@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using Rust;
 using UnityEngine;
@@ -45,13 +44,13 @@ public class TeslaCoil : IOEntity
 			if (num < 0f) {
 				num = 0f;
 			}
-			float num2 = Mathf.Min (dischargeTickRate - num, dischargeTickRate);
-			((FacepunchBehaviour)this).InvokeRepeating ((Action)Discharge, num2, dischargeTickRate);
+			float time = Mathf.Min (dischargeTickRate - num, dischargeTickRate);
+			InvokeRepeating (Discharge, time, dischargeTickRate);
 			SetFlag (Flags.Reserved1, inputAmount < powerForHeavyShorting, recursive: false, networkupdate: false);
 			SetFlag (Flags.Reserved2, inputAmount >= powerForHeavyShorting, recursive: false, networkupdate: false);
 			SetFlag (Flags.On, b: true);
 		} else {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)Discharge);
+			CancelInvoke (Discharge);
 			SetFlag (Flags.Reserved1, b: false, recursive: false, networkupdate: false);
 			SetFlag (Flags.Reserved2, b: false, recursive: false, networkupdate: false);
 			SetFlag (Flags.On, b: false);
@@ -60,8 +59,6 @@ public class TeslaCoil : IOEntity
 
 	public void Discharge ()
 	{
-		//IL_007a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0081: Unknown result type (might be due to invalid IL or missing references)
 		float damageAmount = Mathf.Clamp ((float)currentEnergy * powerToDamageRatio, 0f, maxDamageOutput) * dischargeTickRate;
 		lastDischargeTime = Time.time;
 		if (targetTrigger.entityContents != null) {
@@ -69,8 +66,8 @@ public class TeslaCoil : IOEntity
 			if (array != null) {
 				BaseEntity[] array2 = array;
 				for (int i = 0; i < array2.Length; i++) {
-					BaseCombatEntity component = ((Component)array2 [i]).GetComponent<BaseCombatEntity> ();
-					if (Object.op_Implicit ((Object)(object)component) && component.IsVisible (((Component)damageEyes).transform.position, component.CenterPoint ())) {
+					BaseCombatEntity component = array2 [i].GetComponent<BaseCombatEntity> ();
+					if ((bool)component && component.IsVisible (damageEyes.transform.position, component.CenterPoint ())) {
 						component.OnAttacked (new HitInfo (this, component, DamageType.ElectricShock, damageAmount));
 					}
 				}

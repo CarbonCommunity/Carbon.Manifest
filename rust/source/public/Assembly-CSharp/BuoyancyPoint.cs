@@ -26,14 +26,12 @@ public class BuoyancyPoint : MonoBehaviour
 
 	public void Start ()
 	{
-		randomOffset = Random.Range (0f, 20f);
+		randomOffset = UnityEngine.Random.Range (0f, 20f);
 	}
 
 	public void OnDrawGizmos ()
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
 		Gizmos.color = gizmoColour;
-		Gizmos.DrawSphere (((Component)this).transform.position, size * 0.5f);
+		Gizmos.DrawSphere (base.transform.position, size * 0.5f);
 	}
 }

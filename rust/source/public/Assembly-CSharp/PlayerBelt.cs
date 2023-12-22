@@ -1,4 +1,3 @@
-using System;
 using Facepunch.Rust;
 using UnityEngine;
 
@@ -21,36 +20,28 @@ public class PlayerBelt
 
 	public void DropActive (Vector3 position, Vector3 velocity)
 	{
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006c: Unknown result type (might be due to invalid IL or missing references)
 		Item activeItem = player.GetActiveItem ();
 		if (activeItem == null) {
 			return;
 		}
-		TimeWarning val = TimeWarning.New ("PlayerBelt.DropActive", 0);
-		try {
+		using (TimeWarning.New ("PlayerBelt.DropActive")) {
 			DroppedItem droppedItem = activeItem.Drop (position, velocity) as DroppedItem;
-			if ((Object)(object)droppedItem != (Object)null) {
+			if (droppedItem != null) {
 				droppedItem.DropReason = DroppedItem.DropReasonEnum.Death;
 				droppedItem.DroppedBy = player.userID;
 				Analytics.Azure.OnItemDropped (player, droppedItem, DroppedItem.DropReasonEnum.Death);
 			}
 			player.svActiveItemID = default(ItemId);
 			player.SendNetworkUpdate ();
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 	}
 
 	public Item GetItemInSlot (int slot)
 	{
-		if ((Object)(object)player == (Object)null) {
+		if (player == null) {
 			return null;
 		}
-		if ((Object)(object)player.inventory == (Object)null) {
+		if (player.inventory == null) {
 			return null;
 		}
 		if (player.inventory.containerBelt == null) {

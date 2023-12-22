@@ -1,5 +1,3 @@
-using System;
-
 public class SingleSpawn : SpawnGroup
 {
 	public override bool WantsInitialSpawn ()
@@ -9,6 +7,6 @@ public class SingleSpawn : SpawnGroup
 
 	public void FillDelay (float delay)
 	{
-		((FacepunchBehaviour)this).Invoke ((Action)Fill, delay);
+		Invoke (Fill, delay);
 	}
 }

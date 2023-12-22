@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class WaterPump : LiquidContainer
@@ -20,10 +19,9 @@ public class WaterPump : LiquidContainer
 
 	private void CreateWater ()
 	{
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
 		if (!IsFull ()) {
 			ItemDefinition atPoint = WaterResource.GetAtPoint (WaterResourceLocation.position);
-			if ((Object)(object)atPoint != (Object)null) {
+			if (atPoint != null) {
 				base.inventory.AddItem (atPoint, AmountPerPump, 0uL);
 				UpdateOnFlag ();
 			}
@@ -38,11 +36,11 @@ public class WaterPump : LiquidContainer
 			return;
 		}
 		if (flag) {
-			if (!((FacepunchBehaviour)this).IsInvoking ((Action)CreateWater)) {
-				((FacepunchBehaviour)this).InvokeRandomized ((Action)CreateWater, PumpInterval, PumpInterval, PumpInterval * 0.1f);
+			if (!IsInvoking (CreateWater)) {
+				InvokeRandomized (CreateWater, PumpInterval, PumpInterval, PumpInterval * 0.1f);
 			}
-		} else if (((FacepunchBehaviour)this).IsInvoking ((Action)CreateWater)) {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)CreateWater);
+		} else if (IsInvoking (CreateWater)) {
+			CancelInvoke (CreateWater);
 		}
 	}
 

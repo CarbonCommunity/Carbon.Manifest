@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -9,15 +10,15 @@ using UnityEngine.Assertions;
 
 public class RidableHorse : BaseRidableAnimal
 {
-	public Phrase SwapToSingleTitle;
+	public Translate.Phrase SwapToSingleTitle;
 
-	public Phrase SwapToSingleDescription;
+	public Translate.Phrase SwapToSingleDescription;
 
 	public Sprite SwapToSingleIcon;
 
-	public Phrase SwapToDoubleTitle;
+	public Translate.Phrase SwapToDoubleTitle;
 
-	public Phrase SwapToDoubleDescription;
+	public Translate.Phrase SwapToDoubleDescription;
 
 	public Sprite SwapToDoubleIcon;
 
@@ -56,7 +57,7 @@ public class RidableHorse : BaseRidableAnimal
 
 	private int prevSlots;
 
-	private static Material[] breedAssignmentArray = (Material[])(object)new Material[2];
+	private static Material[] breedAssignmentArray = new Material[2];
 
 	private float distanceRecordingSpacing = 5f;
 
@@ -74,46 +75,34 @@ public class RidableHorse : BaseRidableAnimal
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("RidableHorse.OnRpcMessage", 0);
-		try {
-			if (rpc == 1765203204 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("RidableHorse.OnRpcMessage")) {
+			if (rpc == 1765203204 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - RPC_ReqSwapSaddleType "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - RPC_ReqSwapSaddleType ");
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_ReqSwapSaddleType", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_ReqSwapSaddleType")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (1765203204u, "RPC_ReqSwapSaddleType", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							RPC_ReqSwapSaddleType (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_ReqSwapSaddleType");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -127,7 +116,7 @@ public class RidableHorse : BaseRidableAnimal
 	{
 		if (currentBreed != index) {
 			if (index >= breeds.Length || index < 0) {
-				Debug.LogError ((object)("ApplyBreed issue! index is " + index + " breed length is : " + breeds.Length));
+				Debug.LogError ("ApplyBreed issue! index is " + index + " breed length is : " + breeds.Length);
 				return;
 			}
 			ApplyBreedInternal (breeds [index]);
@@ -183,32 +172,20 @@ public class RidableHorse : BaseRidableAnimal
 
 	public override bool IsStandCollisionClear ()
 	{
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0090: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00aa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0102: Unknown result type (might be due to invalid IL or missing references)
-		List<Collider> list = Pool.GetList<Collider> ();
+		List<Collider> obj = Facepunch.Pool.GetList<Collider> ();
 		bool flag = false;
 		if (HasSingleSaddle ()) {
-			Vis.Colliders<Collider> (((Component)mountPoints [0].mountable.eyePositionOverride).transform.position - ((Component)this).transform.forward * 1f, 2f, list, 2162689, (QueryTriggerInteraction)2);
-			flag = list.Count > 0;
+			Vis.Colliders (mountPoints [0].mountable.eyePositionOverride.transform.position - base.transform.forward * 1f, 2f, obj, 2162689);
+			flag = obj.Count > 0;
 		} else if (HasDoubleSaddle ()) {
-			Vis.Colliders<Collider> (((Component)mountPoints [1].mountable.eyePositionOverride).transform.position - ((Component)this).transform.forward * 1f, 2f, list, 2162689, (QueryTriggerInteraction)2);
-			flag = list.Count > 0;
+			Vis.Colliders (mountPoints [1].mountable.eyePositionOverride.transform.position - base.transform.forward * 1f, 2f, obj, 2162689);
+			flag = obj.Count > 0;
 			if (!flag) {
-				Vis.Colliders<Collider> (((Component)mountPoints [2].mountable.eyePositionOverride).transform.position - ((Component)this).transform.forward * 1f, 2f, list, 2162689, (QueryTriggerInteraction)2);
-				flag = list.Count > 0;
+				Vis.Colliders (mountPoints [2].mountable.eyePositionOverride.transform.position - base.transform.forward * 1f, 2f, obj, 2162689);
+				flag = obj.Count > 0;
 			}
 		}
-		Pool.FreeList<Collider> (ref list);
+		Facepunch.Pool.FreeList (ref obj);
 		return !flag;
 	}
 
@@ -245,7 +222,7 @@ public class RidableHorse : BaseRidableAnimal
 			}
 			baseMountable = (HasDriver () ? mountPoints [2].mountable : mountPoints [1].mountable);
 		}
-		if ((Object)(object)baseMountable != (Object)null) {
+		if (baseMountable != null) {
 			baseMountable.AttemptMount (player, doMountChecks);
 		}
 		if (PlayerIsMounted (player)) {
@@ -256,11 +233,11 @@ public class RidableHorse : BaseRidableAnimal
 	public override void SetupCorpse (BaseCorpse corpse)
 	{
 		base.SetupCorpse (corpse);
-		HorseCorpse component = ((Component)corpse).GetComponent<HorseCorpse> ();
-		if (Object.op_Implicit ((Object)(object)component)) {
+		HorseCorpse component = corpse.GetComponent<HorseCorpse> ();
+		if ((bool)component) {
 			component.breedIndex = currentBreed;
 		} else {
-			Debug.Log ((object)"no horse corpse");
+			Debug.Log ("no horse corpse");
 		}
 	}
 
@@ -291,7 +268,7 @@ public class RidableHorse : BaseRidableAnimal
 
 	public override void ServerInit ()
 	{
-		SetBreed (Random.Range (0, breeds.Length));
+		SetBreed (UnityEngine.Random.Range (0, breeds.Length));
 		baseHorseProtection = baseProtection;
 		riderProtection = ScriptableObject.CreateInstance<ProtectionProperties> ();
 		baseProtection = ScriptableObject.CreateInstance<ProtectionProperties> ();
@@ -303,14 +280,14 @@ public class RidableHorse : BaseRidableAnimal
 	public override void PlayerMounted (BasePlayer player, BaseMountable seat)
 	{
 		base.PlayerMounted (player, seat);
-		((FacepunchBehaviour)this).InvokeRepeating ((Action)RecordDistance, distanceRecordingSpacing, distanceRecordingSpacing);
+		InvokeRepeating (RecordDistance, distanceRecordingSpacing, distanceRecordingSpacing);
 		TryLeaveHitch ();
 	}
 
 	public override void PlayerDismounted (BasePlayer player, BaseMountable seat)
 	{
 		base.PlayerDismounted (player, seat);
-		((FacepunchBehaviour)this).CancelInvoke ((Action)RecordDistance);
+		CancelInvoke (RecordDistance);
 		if (NumMounted () == 0) {
 			TryHitch ();
 		}
@@ -318,13 +295,13 @@ public class RidableHorse : BaseRidableAnimal
 
 	public bool IsHitched ()
 	{
-		return (Object)(object)currentHitch != (Object)null;
+		return currentHitch != null;
 	}
 
 	public void SetHitch (HitchTrough Hitch)
 	{
 		currentHitch = Hitch;
-		SetFlag (Flags.Reserved3, (Object)(object)currentHitch != (Object)null);
+		SetFlag (Flags.Reserved3, currentHitch != null);
 	}
 
 	public override float ReplenishRatio ()
@@ -334,19 +311,19 @@ public class RidableHorse : BaseRidableAnimal
 
 	public override void EatNearbyFood ()
 	{
-		if (Time.time < nextEatTime || (StaminaCoreFraction () >= 1f && base.healthFraction >= 1f)) {
+		if (UnityEngine.Time.time < nextEatTime || (StaminaCoreFraction () >= 1f && base.healthFraction >= 1f)) {
 			return;
 		}
 		if (IsHitched ()) {
 			Item foodItem = currentHitch.GetFoodItem ();
 			if (foodItem != null && foodItem.amount > 0) {
-				ItemModConsumable component = ((Component)foodItem.info).GetComponent<ItemModConsumable> ();
-				if (Object.op_Implicit ((Object)(object)component)) {
+				ItemModConsumable component = foodItem.info.GetComponent<ItemModConsumable> ();
+				if ((bool)component) {
 					float amount = component.GetIfType (MetabolismAttribute.Type.Calories) * currentHitch.caloriesToDecaySeconds;
 					AddDecayDelay (amount);
 					ReplenishFromFood (component);
 					foodItem.UseItem ();
-					nextEatTime = Time.time + Random.Range (2f, 3f) + Mathf.InverseLerp (0.5f, 1f, StaminaCoreFraction ()) * 4f;
+					nextEatTime = UnityEngine.Time.time + UnityEngine.Random.Range (2f, 3f) + Mathf.InverseLerp (0.5f, 1f, StaminaCoreFraction ()) * 4f;
 					return;
 				}
 			}
@@ -356,33 +333,27 @@ public class RidableHorse : BaseRidableAnimal
 
 	public void TryLeaveHitch ()
 	{
-		if (Object.op_Implicit ((Object)(object)currentHitch)) {
+		if ((bool)currentHitch) {
 			currentHitch.Unhitch (this);
 		}
 	}
 
 	public void TryHitch ()
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
-		List<HitchTrough> list = Pool.GetList<HitchTrough> ();
-		Vis.Entities (((Component)this).transform.position, 2.5f, list, 256, (QueryTriggerInteraction)1);
-		foreach (HitchTrough item in list) {
-			if (!(Vector3.Dot (Vector3Ex.Direction2D (((Component)item).transform.position, ((Component)this).transform.position), ((Component)this).transform.forward) < 0.4f) && !item.isClient && item.HasSpace () && item.ValidHitchPosition (((Component)this).transform.position) && item.AttemptToHitch (this)) {
+		List<HitchTrough> obj = Facepunch.Pool.GetList<HitchTrough> ();
+		Vis.Entities (base.transform.position, 2.5f, obj, 256, QueryTriggerInteraction.Ignore);
+		foreach (HitchTrough item in obj) {
+			if (!(Vector3.Dot (Vector3Ex.Direction2D (item.transform.position, base.transform.position), base.transform.forward) < 0.4f) && !item.isClient && item.HasSpace () && item.ValidHitchPosition (base.transform.position) && item.AttemptToHitch (this)) {
 				break;
 			}
 		}
-		Pool.FreeList<HitchTrough> (ref list);
+		Facepunch.Pool.FreeList (ref obj);
 	}
 
 	public void RecordDistance ()
 	{
 		BasePlayer driver = GetDriver ();
-		if ((Object)(object)driver == (Object)null) {
+		if (driver == null) {
 			tempDistanceTravelled = 0f;
 			return;
 		}
@@ -405,7 +376,7 @@ public class RidableHorse : BaseRidableAnimal
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.horse = Pool.Get<Horse> ();
+		info.msg.horse = Facepunch.Pool.Get<ProtoBuf.Horse> ();
 		info.msg.horse.staminaSeconds = staminaSeconds;
 		info.msg.horse.currentMaxStaminaSeconds = currentMaxStaminaSeconds;
 		info.msg.horse.breedIndex = currentBreed;
@@ -434,11 +405,11 @@ public class RidableHorse : BaseRidableAnimal
 
 	public override bool CanAnimalAcceptItem (Item item, int targetSlot)
 	{
-		ItemModAnimalEquipment component = ((Component)item.info).GetComponent<ItemModAnimalEquipment> ();
+		ItemModAnimalEquipment component = item.info.GetComponent<ItemModAnimalEquipment> ();
 		if (IsForSale () && ItemIsSaddle (item)) {
 			return false;
 		}
-		if (!Object.op_Implicit ((Object)(object)component)) {
+		if (!component) {
 			return false;
 		}
 		if (ItemIsSaddle (item) && HasSaddle ()) {
@@ -450,12 +421,12 @@ public class RidableHorse : BaseRidableAnimal
 		for (int i = 0; i < equipmentInventory.capacity; i++) {
 			Item slot = equipmentInventory.GetSlot (i);
 			if (slot != null) {
-				ItemModAnimalEquipment component2 = ((Component)slot.info).GetComponent<ItemModAnimalEquipment> ();
-				if (!((Object)(object)component2 == (Object)null) && component2.slot == component.slot) {
+				ItemModAnimalEquipment component2 = slot.info.GetComponent<ItemModAnimalEquipment> ();
+				if (!(component2 == null) && component2.slot == component.slot) {
 					int slot2 = (int)component2.slot;
 					string text = slot2.ToString ();
 					slot2 = (int)component.slot;
-					Debug.Log ((object)("rejecting because slot same, found : " + text + " new : " + slot2));
+					Debug.Log ("rejecting because slot same, found : " + text + " new : " + slot2);
 					return false;
 				}
 			}
@@ -465,15 +436,6 @@ public class RidableHorse : BaseRidableAnimal
 
 	public void EquipmentUpdate ()
 	{
-		//IL_0157: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0161: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0166: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0170: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0175: Unknown result type (might be due to invalid IL or missing references)
-		//IL_017a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0181: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0187: Unknown result type (might be due to invalid IL or missing references)
 		SetFlag (Flags.Reserved4, b: false, recursive: false, networkupdate: false);
 		SetFlag (Flags.Reserved5, b: false, recursive: false, networkupdate: false);
 		SetFlag (Flags.Reserved6, b: false, recursive: false, networkupdate: false);
@@ -486,16 +448,16 @@ public class RidableHorse : BaseRidableAnimal
 			if (slot == null) {
 				continue;
 			}
-			ItemModAnimalEquipment component = ((Component)slot.info).GetComponent<ItemModAnimalEquipment> ();
-			if (Object.op_Implicit ((Object)(object)component)) {
+			ItemModAnimalEquipment component = slot.info.GetComponent<ItemModAnimalEquipment> ();
+			if ((bool)component) {
 				SetFlag (component.WearableFlag, b: true, recursive: false, networkupdate: false);
 				if (component.hideHair) {
 					SetFlag (Flags.Reserved4, b: true);
 				}
-				if (Object.op_Implicit ((Object)(object)component.riderProtection)) {
+				if ((bool)component.riderProtection) {
 					riderProtection.Add (component.riderProtection, 1f);
 				}
-				if (Object.op_Implicit ((Object)(object)component.animalProtection)) {
+				if ((bool)component.animalProtection) {
 					baseProtection.Add (component.animalProtection, 1f);
 				}
 				equipmentSpeedMod += component.speedModifier;
@@ -507,7 +469,7 @@ public class RidableHorse : BaseRidableAnimal
 				Item slot2 = storageInventory.GetSlot (j);
 				if (slot2 != null) {
 					slot2.RemoveFromContainer ();
-					slot2.Drop (((Component)this).transform.position + Vector3.up + Random.insideUnitSphere * 0.25f, Vector3.zero);
+					slot2.Drop (base.transform.position + Vector3.up + UnityEngine.Random.insideUnitSphere * 0.25f, Vector3.zero);
 				}
 			}
 		}
@@ -549,7 +511,7 @@ public class RidableHorse : BaseRidableAnimal
 		if (!ItemIsSaddle (item)) {
 			return 0;
 		}
-		ItemModAnimalEquipment component = ((Component)item.info).GetComponent<ItemModAnimalEquipment> ();
+		ItemModAnimalEquipment component = item.info.GetComponent<ItemModAnimalEquipment> ();
 		if (component.slot == ItemModAnimalEquipment.SlotType.Saddle) {
 			return 1;
 		}
@@ -582,8 +544,8 @@ public class RidableHorse : BaseRidableAnimal
 		if (item == null) {
 			return false;
 		}
-		ItemModAnimalEquipment component = ((Component)item.info).GetComponent<ItemModAnimalEquipment> ();
-		if ((Object)(object)component == (Object)null) {
+		ItemModAnimalEquipment component = item.info.GetComponent<ItemModAnimalEquipment> ();
+		if (component == null) {
 			return false;
 		}
 		if (component.slot == ItemModAnimalEquipment.SlotType.Saddle || component.slot == ItemModAnimalEquipment.SlotType.SaddleDouble) {
@@ -639,7 +601,7 @@ public class RidableHorse : BaseRidableAnimal
 	public void RPC_ReqSwapSaddleType (RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
-		if (!((Object)(object)player == (Object)null) && !IsForSale () && HasSaddle () && !AnyMounted ()) {
+		if (!(player == null) && !IsForSale () && HasSaddle () && !AnyMounted ()) {
 			int tokenItemID = msg.read.Int32 ();
 			Item item = GetPurchaseToken (player, tokenItemID);
 			if (item != null) {
@@ -659,23 +621,18 @@ public class RidableHorse : BaseRidableAnimal
 	}
 
 	[ServerVar]
-	public static void setHorseBreed (Arg arg)
+	public static void setHorseBreed (ConsoleSystem.Arg arg)
 	{
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0031: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer basePlayer = arg.Player ();
-		if ((Object)(object)basePlayer == (Object)null) {
+		if (basePlayer == null) {
 			return;
 		}
-		int @int = arg.GetInt (0, 0);
-		List<RidableHorse> list = Pool.GetList<RidableHorse> ();
-		Vis.Entities (basePlayer.eyes.position, basePlayer.eyes.position + basePlayer.eyes.HeadForward () * 5f, 0f, list, -1, (QueryTriggerInteraction)2);
-		foreach (RidableHorse item in list) {
+		int @int = arg.GetInt (0);
+		List<RidableHorse> obj = Facepunch.Pool.GetList<RidableHorse> ();
+		Vis.Entities (basePlayer.eyes.position, basePlayer.eyes.position + basePlayer.eyes.HeadForward () * 5f, 0f, obj);
+		foreach (RidableHorse item in obj) {
 			item.SetBreed (@int);
 		}
-		Pool.FreeList<RidableHorse> (ref list);
+		Facepunch.Pool.FreeList (ref obj);
 	}
 }

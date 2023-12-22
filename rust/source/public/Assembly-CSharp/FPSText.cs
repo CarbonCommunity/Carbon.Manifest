@@ -11,7 +11,7 @@ public class FPSText : MonoBehaviour
 	protected void Update ()
 	{
 		if (!(fpsTimer.Elapsed.TotalSeconds < 0.5)) {
-			((Behaviour)this.text).enabled = true;
+			this.text.enabled = true;
 			fpsTimer.Reset ();
 			fpsTimer.Start ();
 			string text = Performance.current.frameRate + " FPS";

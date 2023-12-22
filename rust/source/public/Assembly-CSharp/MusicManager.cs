@@ -76,7 +76,7 @@ public class MusicManager : SingletonComponent<MusicManager>, IClientComponent
 
 	public int barOffset;
 
-	public double currentThemeTime => AudioSettings.dspTime - themeStartTime;
+	public double currentThemeTime => UnityEngine.AudioSettings.dspTime - themeStartTime;
 
 	public int themeBar => currentBar + barOffset;
 

@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public class JunkPileWaterSpawner : SpawnGroup
 {
 	public BaseEntity attachToParent;
@@ -7,7 +5,7 @@ public class JunkPileWaterSpawner : SpawnGroup
 	protected override void PostSpawnProcess (BaseEntity entity, BaseSpawnPoint spawnPoint)
 	{
 		base.PostSpawnProcess (entity, spawnPoint);
-		if ((Object)(object)attachToParent != (Object)null) {
+		if (attachToParent != null) {
 			entity.SetParent (attachToParent, worldPositionStays: true);
 		}
 	}

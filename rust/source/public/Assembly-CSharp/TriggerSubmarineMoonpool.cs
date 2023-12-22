@@ -5,15 +5,15 @@ public class TriggerSubmarineMoonpool : TriggerBase, IServerComponent
 	internal override GameObject InterestedInObject (GameObject obj)
 	{
 		obj = base.InterestedInObject (obj);
-		if ((Object)(object)obj == (Object)null) {
+		if (obj == null) {
 			return null;
 		}
 		BaseEntity baseEntity = obj.ToBaseEntity ();
-		if ((Object)(object)baseEntity == (Object)null) {
+		if (baseEntity == null) {
 			return null;
 		}
 		if (baseEntity.isServer && baseEntity is BaseSubmarine baseSubmarine) {
-			return ((Component)baseSubmarine).gameObject;
+			return baseSubmarine.gameObject;
 		}
 		return null;
 	}

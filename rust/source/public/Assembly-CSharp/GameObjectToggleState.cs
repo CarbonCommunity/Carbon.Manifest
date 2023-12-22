@@ -14,17 +14,16 @@ public class GameObjectToggleState : StateMachineBehaviour
 
 	public override void OnStateUpdate (Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		((StateMachineBehaviour)this).OnStateUpdate (animator, stateInfo, layerIndex);
-		bool flag = ((AnimatorStateInfo)(ref stateInfo)).normalizedTime > ValidNormalisedRange.x && ((AnimatorStateInfo)(ref stateInfo)).normalizedTime < ValidNormalisedRange.y;
-		Model model = ((Component)animator).gameObject.GetComponent<Model> ();
-		if ((Object)(object)model == (Object)null) {
-			model = ((Component)animator).gameObject.GetComponentInParent<Model> ();
+		base.OnStateUpdate (animator, stateInfo, layerIndex);
+		bool flag = stateInfo.normalizedTime > ValidNormalisedRange.x && stateInfo.normalizedTime < ValidNormalisedRange.y;
+		Model model = animator.gameObject.GetComponent<Model> ();
+		if (model == null) {
+			model = animator.gameObject.GetComponentInParent<Model> ();
 		}
-		if ((Object)(object)model != (Object)null) {
-			Transform val = model.FindBone (GameObjectName);
-			if ((Object)(object)val != (Object)null) {
-				((Component)val).gameObject.SetActive (flag ? TargetState : (!TargetState));
+		if (model != null) {
+			Transform transform = model.FindBone (GameObjectName);
+			if (transform != null) {
+				transform.gameObject.SetActive (flag ? TargetState : (!TargetState));
 			}
 		}
 	}

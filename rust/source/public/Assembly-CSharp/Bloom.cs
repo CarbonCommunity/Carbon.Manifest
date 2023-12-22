@@ -7,13 +7,13 @@ using UnityEngine.Serialization;
 [PostProcess (typeof(BloomRenderer), "Unity/Bloom", true)]
 public sealed class Bloom : PostProcessEffectSettings
 {
-	[Min (0f)]
+	[UnityEngine.Rendering.PostProcessing.Min (0f)]
 	[Tooltip ("Strength of the bloom filter. Values higher than 1 will make bloom contribute more energy to the final render.")]
 	public FloatParameter intensity = new FloatParameter {
 		value = 0f
 	};
 
-	[Min (0f)]
+	[UnityEngine.Rendering.PostProcessing.Min (0f)]
 	[Tooltip ("Filters out pixels under this level of brightness. Value is in gamma-space.")]
 	public FloatParameter threshold = new FloatParameter {
 		value = 1f
@@ -60,7 +60,7 @@ public sealed class Bloom : PostProcessEffectSettings
 		value = null
 	};
 
-	[Min (0f)]
+	[UnityEngine.Rendering.PostProcessing.Min (0f)]
 	[Tooltip ("The intensity of the lens dirtiness.")]
 	[DisplayName ("Intensity")]
 	public FloatParameter dirtIntensity = new FloatParameter {

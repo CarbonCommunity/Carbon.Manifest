@@ -9,14 +9,12 @@ public class ChangelogButton : MonoBehaviour
 
 	private void Update ()
 	{
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005f: Expected O, but got Unknown
 		BaseGameMode activeGameMode = BaseGameMode.GetActiveGameMode (serverside: false);
-		if ((Object)(object)activeGameMode != (Object)null) {
+		if (activeGameMode != null) {
 			if (CanvasGroup.alpha != 1f) {
 				CanvasGroup.alpha = 1f;
 				CanvasGroup.blocksRaycasts = true;
-				Button.Text.SetPhrase (new Phrase (activeGameMode.shortname, activeGameMode.shortname));
+				Button.Text.SetPhrase (new Translate.Phrase (activeGameMode.shortname, activeGameMode.shortname));
 			}
 		} else if (CanvasGroup.alpha != 0f) {
 			CanvasGroup.alpha = 0f;

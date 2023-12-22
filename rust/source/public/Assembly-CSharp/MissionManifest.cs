@@ -11,11 +11,11 @@ public class MissionManifest : ScriptableObject
 
 	public static MissionManifest Get ()
 	{
-		if ((Object)(object)instance == (Object)null) {
+		if (instance == null) {
 			instance = Resources.Load<MissionManifest> ("MissionManifest");
 			WorldPositionGenerator[] array = instance.positionGenerators;
 			foreach (WorldPositionGenerator worldPositionGenerator in array) {
-				if ((Object)(object)worldPositionGenerator != (Object)null) {
+				if (worldPositionGenerator != null) {
 					worldPositionGenerator.PrecalculatePositions ();
 				}
 			}

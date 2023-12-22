@@ -1,24 +1,19 @@
 using System.Text;
 using ProtoBuf;
-using UnityEngine;
 
 public static class GrowableGeneEncoding
 {
 	public static void EncodeGenesToItem (GrowableEntity sourceGrowable, Item targetItem)
 	{
-		if (!((Object)(object)sourceGrowable == (Object)null) && sourceGrowable.Genes != null) {
+		if (!(sourceGrowable == null) && sourceGrowable.Genes != null) {
 			EncodeGenesToItem (EncodeGenesToInt (sourceGrowable.Genes), targetItem);
 		}
 	}
 
 	public static void EncodeGenesToItem (int genes, Item targetItem)
 	{
-		//IL_0005: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Expected O, but got Unknown
 		if (targetItem != null) {
-			targetItem.instanceData = new InstanceData {
+			targetItem.instanceData = new ProtoBuf.Item.InstanceData {
 				ShouldPool = false,
 				dataInt = genes
 			};

@@ -17,38 +17,17 @@ public class CH47ReinforcementListener : BaseEntity
 
 	public void Call ()
 	{
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0074: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0079: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0080: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0088: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0095: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00be: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cc: Unknown result type (might be due to invalid IL or missing references)
-		CH47HelicopterAIController component = ((Component)GameManager.server.CreateEntity (heliPrefab.resourcePath)).GetComponent<CH47HelicopterAIController> ();
-		if (Object.op_Implicit ((Object)(object)component)) {
+		CH47HelicopterAIController component = GameManager.server.CreateEntity (heliPrefab.resourcePath).GetComponent<CH47HelicopterAIController> ();
+		if ((bool)component) {
 			_ = TerrainMeta.Size;
-			CH47LandingZone closest = CH47LandingZone.GetClosest (((Component)this).transform.position);
+			CH47LandingZone closest = CH47LandingZone.GetClosest (base.transform.position);
 			Vector3 zero = Vector3.zero;
-			zero.y = ((Component)closest).transform.position.y;
-			Vector3 val = Vector3Ex.Direction2D (((Component)closest).transform.position, zero);
-			Vector3 position = ((Component)closest).transform.position + val * startDist;
-			position.y = ((Component)closest).transform.position.y;
-			((Component)component).transform.position = position;
-			component.SetLandingTarget (((Component)closest).transform.position);
+			zero.y = closest.transform.position.y;
+			Vector3 vector = Vector3Ex.Direction2D (closest.transform.position, zero);
+			Vector3 position = closest.transform.position + vector * startDist;
+			position.y = closest.transform.position.y;
+			component.transform.position = position;
+			component.SetLandingTarget (closest.transform.position);
 			component.Spawn ();
 		}
 	}

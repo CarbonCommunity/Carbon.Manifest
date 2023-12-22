@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using Facepunch;
@@ -48,7 +47,7 @@ public class ProceduralDynamicDungeon : BaseEntity
 	{
 		base.OnFlagsChanged (old, next);
 		foreach (ProceduralDungeonCell spawnedCell in spawnedCells) {
-			EntityFlag_Toggle[] componentsInChildren = ((Component)spawnedCell).GetComponentsInChildren<EntityFlag_Toggle> ();
+			EntityFlag_Toggle[] componentsInChildren = spawnedCell.GetComponentsInChildren<EntityFlag_Toggle> ();
 			for (int i = 0; i < componentsInChildren.Length; i++) {
 				componentsInChildren [i].DoUpdate (this);
 			}
@@ -69,21 +68,16 @@ public class ProceduralDynamicDungeon : BaseEntity
 
 	public bool ContainsAnyPlayers ()
 	{
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0089: Unknown result type (might be due to invalid IL or missing references)
-		Bounds val = default(Bounds);
-		((Bounds)(ref val))..ctor (((Component)this).transform.position, new Vector3 ((float)gridResolution * gridSpacing, 20f, (float)gridResolution * gridSpacing));
+		Bounds bounds = new Bounds (base.transform.position, new Vector3 ((float)gridResolution * gridSpacing, 20f, (float)gridResolution * gridSpacing));
 		for (int i = 0; i < BasePlayer.activePlayerList.Count; i++) {
 			BasePlayer basePlayer = BasePlayer.activePlayerList [i];
-			if (((Bounds)(ref val)).Contains (((Component)basePlayer).transform.position)) {
+			if (bounds.Contains (basePlayer.transform.position)) {
 				return true;
 			}
 		}
 		for (int j = 0; j < BasePlayer.sleepingPlayerList.Count; j++) {
 			BasePlayer basePlayer2 = BasePlayer.sleepingPlayerList [j];
-			if (((Bounds)(ref val)).Contains (((Component)basePlayer2).transform.position)) {
+			if (bounds.Contains (basePlayer2.transform.position)) {
 				return true;
 			}
 		}
@@ -92,21 +86,16 @@ public class ProceduralDynamicDungeon : BaseEntity
 
 	public void KillPlayers ()
 	{
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0095: Unknown result type (might be due to invalid IL or missing references)
-		Bounds val = default(Bounds);
-		((Bounds)(ref val))..ctor (((Component)this).transform.position, new Vector3 ((float)gridResolution * gridSpacing, 20f, (float)gridResolution * gridSpacing));
+		Bounds bounds = new Bounds (base.transform.position, new Vector3 ((float)gridResolution * gridSpacing, 20f, (float)gridResolution * gridSpacing));
 		for (int i = 0; i < BasePlayer.activePlayerList.Count; i++) {
 			BasePlayer basePlayer = BasePlayer.activePlayerList [i];
-			if (((Bounds)(ref val)).Contains (((Component)basePlayer).transform.position)) {
+			if (bounds.Contains (basePlayer.transform.position)) {
 				basePlayer.Hurt (10000f, DamageType.Suicide, null, useProtection: false);
 			}
 		}
 		for (int j = 0; j < BasePlayer.sleepingPlayerList.Count; j++) {
 			BasePlayer basePlayer2 = BasePlayer.sleepingPlayerList [j];
-			if (((Bounds)(ref val)).Contains (((Component)basePlayer2).transform.position)) {
+			if (bounds.Contains (basePlayer2.transform.position)) {
 				basePlayer2.Hurt (10000f, DamageType.Suicide, null, useProtection: false);
 			}
 		}
@@ -123,17 +112,15 @@ public class ProceduralDynamicDungeon : BaseEntity
 
 	public override void ServerInit ()
 	{
-		//IL_006c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
-		if (!Application.isLoadingSave) {
+		if (!Rust.Application.isLoadingSave) {
 			baseseed = (seed = (uint)Random.Range (0, 12345567));
 			int num = (int)seed;
-			Debug.Log ((object)("Spawning dungeon with seed :" + num));
+			Debug.Log ("Spawning dungeon with seed :" + num);
 		}
 		base.ServerInit ();
-		if (!Application.isLoadingSave) {
+		if (!Rust.Application.isLoadingSave) {
 			DoGeneration ();
-			BasePortal component = ((Component)GameManager.server.CreateEntity (exitPortalPrefab.resourcePath, entranceHack.exitPointHack.position, entranceHack.exitPointHack.rotation)).GetComponent<BasePortal> ();
+			BasePortal component = GameManager.server.CreateEntity (exitPortalPrefab.resourcePath, entranceHack.exitPointHack.position, entranceHack.exitPointHack.rotation).GetComponent<BasePortal> ();
 			component.Spawn ();
 			exitPortal.Set (component);
 		}
@@ -144,18 +131,17 @@ public class ProceduralDynamicDungeon : BaseEntity
 		GenerateGrid ();
 		CreateAIZ ();
 		if (base.isServer) {
-			Debug.Log ((object)"Server DoGeneration,calling routine update nav mesh");
-			((MonoBehaviour)this).StartCoroutine (UpdateNavMesh ());
+			Debug.Log ("Server DoGeneration,calling routine update nav mesh");
+			StartCoroutine (UpdateNavMesh ());
 		}
-		((FacepunchBehaviour)this).Invoke ((Action)InitSpawnGroups, 1f);
+		Invoke (InitSpawnGroups, 1f);
 	}
 
 	private void CreateAIZ ()
 	{
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-		AIInformationZone aIInformationZone = ((Component)this).gameObject.AddComponent<AIInformationZone> ();
+		AIInformationZone aIInformationZone = base.gameObject.AddComponent<AIInformationZone> ();
 		aIInformationZone.UseCalculatedCoverDistances = false;
-		((Bounds)(ref aIInformationZone.bounds)).extents = new Vector3 ((float)gridResolution * gridSpacing * 0.75f, 10f, (float)gridResolution * gridSpacing * 0.75f);
+		aIInformationZone.bounds.extents = new Vector3 ((float)gridResolution * gridSpacing * 0.75f, 10f, (float)gridResolution * gridSpacing * 0.75f);
 		aIInformationZone.Init ();
 	}
 
@@ -167,17 +153,13 @@ public class ProceduralDynamicDungeon : BaseEntity
 
 	public IEnumerator UpdateNavMesh ()
 	{
-		Debug.Log ((object)"Dungeon Building navmesh");
-		yield return ((MonoBehaviour)this).StartCoroutine (monumentNavMesh.UpdateNavMeshAndWait ());
-		Debug.Log ((object)"Dungeon done!");
+		Debug.Log ("Dungeon Building navmesh");
+		yield return StartCoroutine (monumentNavMesh.UpdateNavMeshAndWait ());
+		Debug.Log ("Dungeon done!");
 	}
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0061: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0066: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
 		if (info.msg.proceduralDungeon == null) {
 			info.msg.proceduralDungeon = Pool.Get<ProceduralDungeon> ();
@@ -194,10 +176,8 @@ public class ProceduralDynamicDungeon : BaseEntity
 
 	public void InitSpawnGroups ()
 	{
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
 		foreach (ProceduralDungeonCell spawnedCell in spawnedCells) {
-			if (!((Object)(object)entranceHack != (Object)null) || !(Vector3.Distance (((Component)entranceHack).transform.position, ((Component)spawnedCell).transform.position) < 20f)) {
+			if (!(entranceHack != null) || !(Vector3.Distance (entranceHack.transform.position, spawnedCell.transform.position) < 20f)) {
 				SpawnGroup[] spawnGroups = spawnedCell.spawnGroups;
 				for (int i = 0; i < spawnGroups.Length; i++) {
 					spawnGroups [i].Spawn ();
@@ -218,9 +198,6 @@ public class ProceduralDynamicDungeon : BaseEntity
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005f: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (info.msg.proceduralDungeon != null) {
 			baseseed = (seed = info.msg.proceduralDungeon.seed);
@@ -233,14 +210,7 @@ public class ProceduralDynamicDungeon : BaseEntity
 	[ExecuteInEditMode]
 	public void GenerateGrid ()
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ec: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0208: Unknown result type (might be due to invalid IL or missing references)
-		//IL_020d: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 val = ((Component)this).transform.position - new Vector3 ((float)gridResolution * gridSpacing * 0.5f, 0f, (float)gridResolution * gridSpacing * 0.5f);
+		Vector3 vector = base.transform.position - new Vector3 ((float)gridResolution * gridSpacing * 0.5f, 0f, (float)gridResolution * gridSpacing * 0.5f);
 		RetireAllCells ();
 		grid = new bool[gridResolution * gridResolution];
 		for (int i = 0; i < grid.Length; i++) {
@@ -266,7 +236,7 @@ public class ProceduralDynamicDungeon : BaseEntity
 				bool flag = IsEntrance (l, m);
 				GameObjectRef gameObjectRef = null;
 				ProceduralDungeonCell proceduralDungeonCell = null;
-				if ((Object)(object)proceduralDungeonCell == (Object)null) {
+				if (proceduralDungeonCell == null) {
 					foreach (GameObjectRef cellPrefabReference in cellPrefabReferences) {
 						ProceduralDungeonCell component = cellPrefabReference.Get ().GetComponent<ProceduralDungeonCell> ();
 						if (component.north == gridState && component.south == gridState2 && component.west == gridState3 && component.east == gridState4 && component.entrance == flag) {
@@ -276,12 +246,12 @@ public class ProceduralDynamicDungeon : BaseEntity
 						}
 					}
 				}
-				if ((Object)(object)proceduralDungeonCell != (Object)null) {
+				if (proceduralDungeonCell != null) {
 					ProceduralDungeonCell proceduralDungeonCell2 = CellInstantiate (gameObjectRef.resourcePath);
-					((Component)proceduralDungeonCell2).transform.position = val + new Vector3 ((float)l * gridSpacing, 0f, (float)m * gridSpacing);
+					proceduralDungeonCell2.transform.position = vector + new Vector3 ((float)l * gridSpacing, 0f, (float)m * gridSpacing);
 					spawnedCells.Add (proceduralDungeonCell2);
-					((Component)proceduralDungeonCell2).transform.SetParent (((Component)this).transform);
-					if (proceduralDungeonCell2.entrance && (Object)(object)entranceHack == (Object)null) {
+					proceduralDungeonCell2.transform.SetParent (base.transform);
+					if (proceduralDungeonCell2.entrance && entranceHack == null) {
 						entranceHack = proceduralDungeonCell2;
 					}
 				}
@@ -299,7 +269,7 @@ public class ProceduralDynamicDungeon : BaseEntity
 
 	public void RetireCell (GameObject cell)
 	{
-		if (!((Object)(object)cell == (Object)null) && base.isServer) {
+		if (!(cell == null) && base.isServer) {
 			GameManager.server.Retire (cell);
 		}
 	}
@@ -311,8 +281,8 @@ public class ProceduralDynamicDungeon : BaseEntity
 		}
 		for (int num = spawnedCells.Count - 1; num >= 0; num--) {
 			ProceduralDungeonCell proceduralDungeonCell = spawnedCells [num];
-			if (Object.op_Implicit ((Object)(object)proceduralDungeonCell)) {
-				RetireCell (((Component)proceduralDungeonCell).gameObject);
+			if ((bool)proceduralDungeonCell) {
+				RetireCell (proceduralDungeonCell.gameObject);
 			}
 		}
 		spawnedCells.Clear ();

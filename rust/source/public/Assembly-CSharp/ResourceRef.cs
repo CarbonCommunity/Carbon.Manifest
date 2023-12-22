@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class ResourceRef<T> where T : Object
+public class ResourceRef<T> where T : UnityEngine.Object
 {
 	public string guid;
 
@@ -16,10 +16,8 @@ public class ResourceRef<T> where T : Object
 
 	public T Get ()
 	{
-		if ((Object)(object)_cachedObject == (Object)null) {
-			ref T cachedObject = ref _cachedObject;
-			Object obj = GameManifest.GUIDToObject (guid);
-			cachedObject = (T)(object)((obj is T) ? obj : null);
+		if (_cachedObject == null) {
+			_cachedObject = GameManifest.GUIDToObject (guid) as T;
 		}
 		return _cachedObject;
 	}

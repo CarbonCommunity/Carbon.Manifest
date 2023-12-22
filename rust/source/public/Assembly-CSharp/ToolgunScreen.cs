@@ -10,8 +10,8 @@ public class ToolgunScreen : MonoBehaviour
 	public void SetScreenText (string newText)
 	{
 		bool flag = string.IsNullOrEmpty (newText);
-		((Component)blockInfoText).gameObject.SetActive (!flag);
-		((Component)noBlockText).gameObject.SetActive (flag);
+		blockInfoText.gameObject.SetActive (!flag);
+		noBlockText.gameObject.SetActive (flag);
 		blockInfoText.text = newText;
 	}
 }

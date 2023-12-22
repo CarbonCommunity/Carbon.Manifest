@@ -9,8 +9,8 @@ public class TeamInfo : BasePlayerHandler<AppEmpty>
 	{
 		RelationshipManager.PlayerTeam playerTeam = RelationshipManager.ServerInstance.FindPlayersTeam (base.UserId);
 		AppTeamInfo teamInfo = ((playerTeam == null) ? base.Player.GetAppTeamInfo (base.UserId) : playerTeam.GetAppTeamInfo (base.UserId));
-		AppResponse val = Pool.Get<AppResponse> ();
-		val.teamInfo = teamInfo;
-		Send (val);
+		AppResponse appResponse = Pool.Get<AppResponse> ();
+		appResponse.teamInfo = teamInfo;
+		Send (appResponse);
 	}
 }

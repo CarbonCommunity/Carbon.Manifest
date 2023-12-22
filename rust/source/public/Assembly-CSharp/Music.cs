@@ -17,12 +17,12 @@ public class Music : ConsoleSystem
 	public static void info (Arg arg)
 	{
 		StringBuilder stringBuilder = new StringBuilder ();
-		if ((Object)(object)SingletonComponent<MusicManager>.Instance == (Object)null) {
+		if (SingletonComponent<MusicManager>.Instance == null) {
 			stringBuilder.Append ("No music manager was found");
 		} else {
 			stringBuilder.Append ("Current music info: ");
 			stringBuilder.AppendLine ();
-			stringBuilder.Append ("  theme: " + (object)SingletonComponent<MusicManager>.Instance.currentTheme);
+			stringBuilder.Append ("  theme: " + SingletonComponent<MusicManager>.Instance.currentTheme);
 			stringBuilder.AppendLine ();
 			stringBuilder.Append ("  intensity: " + SingletonComponent<MusicManager>.Instance.intensity);
 			stringBuilder.AppendLine ();

@@ -5,9 +5,9 @@ public class PrefabInformation : PrefabAttribute
 {
 	public ItemDefinition associatedItemDefinition;
 
-	public Phrase title;
+	public Translate.Phrase title;
 
-	public Phrase description;
+	public Translate.Phrase description;
 
 	public Sprite sprite;
 

@@ -15,10 +15,6 @@ public struct DrawCallKey : IEquatable<DrawCallKey>, IComparable<DrawCallKey>, I
 
 	public DrawCallKey (Material material, ShadowCastingMode shadowMode, bool receiveShadows, LightProbeUsage lightProbes)
 	{
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
 		Material = material;
 		ShadowMode = shadowMode;
 		ReceiveShadows = receiveShadows;
@@ -43,11 +39,7 @@ public struct DrawCallKey : IEquatable<DrawCallKey>, IComparable<DrawCallKey>, I
 
 	public bool Equals (DrawCallKey other)
 	{
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)Material == (Object)(object)other.Material && ShadowMode == other.ShadowMode && ReceiveShadows == other.ReceiveShadows) {
+		if (Material == other.Material && ShadowMode == other.ShadowMode && ReceiveShadows == other.ReceiveShadows) {
 			return LightProbes == other.LightProbes;
 		}
 		return false;
@@ -63,9 +55,7 @@ public struct DrawCallKey : IEquatable<DrawCallKey>, IComparable<DrawCallKey>, I
 
 	public override int GetHashCode ()
 	{
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		return HashCode.Combine<int, ShadowCastingMode, bool, LightProbeUsage> (((object)Material)?.GetHashCode () ?? 0, ShadowMode, ReceiveShadows, LightProbes);
+		return HashCode.Combine (Material?.GetHashCode () ?? 0, ShadowMode, ReceiveShadows, LightProbes);
 	}
 
 	public static bool operator == (DrawCallKey a, DrawCallKey b)

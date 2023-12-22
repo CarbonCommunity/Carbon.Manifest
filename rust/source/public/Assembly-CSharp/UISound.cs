@@ -7,8 +7,7 @@ public static class UISound
 
 	private static AudioSource GetAudioSource ()
 	{
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)source != (Object)null) {
+		if (source != null) {
 			return source;
 		}
 		source = new GameObject ("UISound").AddComponent<AudioSource> ();
@@ -19,7 +18,7 @@ public static class UISound
 
 	public static void Play (AudioClip clip, float volume = 1f)
 	{
-		if (!((Object)(object)clip == (Object)null)) {
+		if (!(clip == null)) {
 			GetAudioSource ().volume = volume * Audio.master * 0.4f;
 			GetAudioSource ().PlayOneShot (clip);
 		}

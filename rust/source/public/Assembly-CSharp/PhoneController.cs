@@ -66,13 +66,13 @@ public class PhoneController : EntityComponent<BaseEntity>
 
 	public EntityRef currentPlayerRef;
 
-	public List<VoicemailEntry> savedVoicemail;
+	public List<ProtoBuf.VoicemailEntry> savedVoicemail;
 
 	private PhoneController activeCallTo;
 
 	public int MaxVoicemailSlots {
 		get {
-			if (!((Object)(object)cachedCassette != (Object)null)) {
+			if (!(cachedCassette != null)) {
 				return 0;
 			}
 			return cachedCassette.MaximumVoicemailSlots;
@@ -93,7 +93,7 @@ public class PhoneController : EntityComponent<BaseEntity>
 
 	private bool isServer {
 		get {
-			if ((Object)(object)base.baseEntity != (Object)null) {
+			if (base.baseEntity != null) {
 				return base.baseEntity.isServer;
 			}
 			return false;
@@ -108,7 +108,7 @@ public class PhoneController : EntityComponent<BaseEntity>
 
 	private Cassette cachedCassette {
 		get {
-			if (!((Object)(object)base.baseEntity != (Object)null) || !(base.baseEntity is Telephone telephone)) {
+			if (!(base.baseEntity != null) || !(base.baseEntity is Telephone telephone)) {
 				return null;
 			}
 			return telephone.cachedCassette;
@@ -128,7 +128,7 @@ public class PhoneController : EntityComponent<BaseEntity>
 
 	private bool IsPowered ()
 	{
-		if ((Object)(object)base.baseEntity != (Object)null && base.baseEntity is IOEntity iOEntity) {
+		if (base.baseEntity != null && base.baseEntity is IOEntity iOEntity) {
 			return iOEntity.IsPowered ();
 		}
 		return false;
@@ -151,11 +151,10 @@ public class PhoneController : EntityComponent<BaseEntity>
 
 	public void ServerInit ()
 	{
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		if (PhoneNumber == 0 && !Application.isLoadingSave) {
+		if (PhoneNumber == 0 && !Rust.Application.isLoadingSave) {
 			PhoneNumber = TelephoneManager.GetUnusedTelephoneNumber ();
 			if (AppendGridToName & !string.IsNullOrEmpty (PhoneName)) {
-				PhoneName = PhoneName + " " + PositionToGridCoord (((Component)this).transform.position);
+				PhoneName = PhoneName + " " + PositionToGridCoord (base.transform.position);
 			}
 			TelephoneManager.RegisterTelephone (this);
 		}
@@ -180,7 +179,7 @@ public class PhoneController : EntityComponent<BaseEntity>
 
 	public void ClearCurrentUser ()
 	{
-		if ((Object)(object)currentPlayer != (Object)null) {
+		if (currentPlayer != null) {
 			currentPlayer.SetActiveTelephone (null);
 			currentPlayer = null;
 		}
@@ -190,7 +189,7 @@ public class PhoneController : EntityComponent<BaseEntity>
 	public void SetCurrentUser (BaseEntity.RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
-		if (!((Object)(object)currentPlayer == (Object)(object)player)) {
+		if (!(currentPlayer == player)) {
 			UpdateServerPlayer (player);
 			if (serverState == Telephone.CallState.Dialing || serverState == Telephone.CallState.Ringing || serverState == Telephone.CallState.InProcess) {
 				ServerHangUp (default(BaseEntity.RPCMessage));
@@ -200,13 +199,13 @@ public class PhoneController : EntityComponent<BaseEntity>
 
 	private void UpdateServerPlayer (BasePlayer newPlayer)
 	{
-		if (!((Object)(object)currentPlayer == (Object)(object)newPlayer)) {
-			if ((Object)(object)currentPlayer != (Object)null) {
+		if (!(currentPlayer == newPlayer)) {
+			if (currentPlayer != null) {
 				currentPlayer.SetActiveTelephone (null);
 			}
 			currentPlayer = newPlayer;
-			base.baseEntity.SetFlag (BaseEntity.Flags.Busy, (Object)(object)currentPlayer != (Object)null);
-			if ((Object)(object)currentPlayer != (Object)null) {
+			base.baseEntity.SetFlag (BaseEntity.Flags.Busy, currentPlayer != null);
+			if (currentPlayer != null) {
 				currentPlayer.SetActiveTelephone (this);
 			}
 		}
@@ -214,7 +213,7 @@ public class PhoneController : EntityComponent<BaseEntity>
 
 	public void InitiateCall (BaseEntity.RPCMessage msg)
 	{
-		if (!((Object)(object)msg.player != (Object)(object)currentPlayer)) {
+		if (!(msg.player != currentPlayer)) {
 			int number = msg.read.Int32 ();
 			CallPhone (number);
 		}
@@ -231,7 +230,7 @@ public class PhoneController : EntityComponent<BaseEntity>
 			return;
 		}
 		PhoneController telephone = TelephoneManager.GetTelephone (number);
-		if ((Object)(object)telephone != (Object)null) {
+		if (telephone != null) {
 			if (telephone.serverState == Telephone.CallState.Idle && telephone.CanReceiveCall ()) {
 				SetPhoneState (Telephone.CallState.Dialing);
 				lastDialedNumber = number;
@@ -259,10 +258,10 @@ public class PhoneController : EntityComponent<BaseEntity>
 
 	public void AnswerPhone (BaseEntity.RPCMessage msg)
 	{
-		if (((FacepunchBehaviour)this).IsInvoking ((Action)TimeOutDialing)) {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)TimeOutDialing);
+		if (IsInvoking (TimeOutDialing)) {
+			CancelInvoke (TimeOutDialing);
 		}
-		if (!((Object)(object)activeCallTo == (Object)null)) {
+		if (!(activeCallTo == null)) {
 			BasePlayer player = msg.player;
 			UpdateServerPlayer (player);
 			BeginCall ();
@@ -274,12 +273,12 @@ public class PhoneController : EntityComponent<BaseEntity>
 	{
 		activeCallTo = t;
 		SetPhoneState (Telephone.CallState.Ringing);
-		((FacepunchBehaviour)this).Invoke ((Action)TimeOutDialing, CallWaitingTime);
+		Invoke (TimeOutDialing, CallWaitingTime);
 	}
 
 	private void TimeOutDialing ()
 	{
-		if ((Object)(object)activeCallTo != (Object)null) {
+		if (activeCallTo != null) {
 			activeCallTo.ServerPlayAnsweringMessage (this);
 		}
 		SetPhoneState (Telephone.CallState.Idle);
@@ -290,36 +289,32 @@ public class PhoneController : EntityComponent<BaseEntity>
 		SetPhoneState (Telephone.CallState.Idle);
 		base.baseEntity.ClientRPC (null, "ClientOnDialFailed", (int)reason);
 		activeCallTo = null;
-		if (((FacepunchBehaviour)this).IsInvoking ((Action)TimeOutCall)) {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)TimeOutCall);
+		if (IsInvoking (TimeOutCall)) {
+			CancelInvoke (TimeOutCall);
 		}
-		if (((FacepunchBehaviour)this).IsInvoking ((Action)TriggerTimeOut)) {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)TriggerTimeOut);
+		if (IsInvoking (TriggerTimeOut)) {
+			CancelInvoke (TriggerTimeOut);
 		}
-		if (((FacepunchBehaviour)this).IsInvoking ((Action)TimeOutDialing)) {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)TimeOutDialing);
+		if (IsInvoking (TimeOutDialing)) {
+			CancelInvoke (TimeOutDialing);
 		}
 	}
 
 	public void ServerPlayAnsweringMessage (PhoneController fromPhone)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0092: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
 		NetworkableId arg = default(NetworkableId);
 		uint num = 0u;
 		uint arg2 = 0u;
-		if ((Object)(object)activeCallTo != (Object)null && (Object)(object)activeCallTo.cachedCassette != (Object)null) {
+		if (activeCallTo != null && activeCallTo.cachedCassette != null) {
 			arg = activeCallTo.cachedCassette.net.ID;
 			num = activeCallTo.cachedCassette.AudioId;
 			if (num == 0) {
 				arg2 = activeCallTo.cachedCassette.PreloadContent.GetSoundContentId (activeCallTo.cachedCassette.PreloadedAudio);
 			}
 		}
-		if (((NetworkableId)(ref arg)).IsValid) {
-			base.baseEntity.ClientRPC<NetworkableId, uint, uint, int, int> (null, "ClientPlayAnsweringMessage", arg, num, arg2, fromPhone.HasVoicemailSlot () ? 1 : 0, activeCallTo.PhoneNumber);
-			((FacepunchBehaviour)this).Invoke ((Action)TriggerTimeOut, activeCallTo.cachedCassette.MaxCassetteLength);
+		if (arg.IsValid) {
+			base.baseEntity.ClientRPC (null, "ClientPlayAnsweringMessage", arg, num, arg2, fromPhone.HasVoicemailSlot () ? 1 : 0, activeCallTo.PhoneNumber);
+			Invoke (TriggerTimeOut, activeCallTo.cachedCassette.MaxCassetteLength);
 		} else {
 			OnDialFailed (Telephone.DialFailReason.TimedOut);
 		}
@@ -333,7 +328,7 @@ public class PhoneController : EntityComponent<BaseEntity>
 	public void SetPhoneStateWithPlayer (Telephone.CallState state)
 	{
 		serverState = state;
-		base.baseEntity.ClientRPC (null, "SetClientState", (int)serverState, ((Object)(object)activeCallTo != (Object)null) ? activeCallTo.PhoneNumber : 0);
+		base.baseEntity.ClientRPC (null, "SetClientState", (int)serverState, (activeCallTo != null) ? activeCallTo.PhoneNumber : 0);
 		if (base.baseEntity is MobilePhone mobilePhone) {
 			mobilePhone.ToggleRinging (state == Telephone.CallState.Ringing);
 		}
@@ -341,11 +336,11 @@ public class PhoneController : EntityComponent<BaseEntity>
 
 	private void SetPhoneState (Telephone.CallState state)
 	{
-		if (state == Telephone.CallState.Idle && (Object)(object)currentPlayer == (Object)null) {
+		if (state == Telephone.CallState.Idle && currentPlayer == null) {
 			base.baseEntity.SetFlag (BaseEntity.Flags.Busy, b: false);
 		}
 		serverState = state;
-		base.baseEntity.ClientRPC (null, "SetClientState", (int)serverState, ((Object)(object)activeCallTo != (Object)null) ? activeCallTo.PhoneNumber : 0);
+		base.baseEntity.ClientRPC (null, "SetClientState", (int)serverState, (activeCallTo != null) ? activeCallTo.PhoneNumber : 0);
 		if (base.baseEntity is Telephone telephone) {
 			telephone.MarkDirtyForceUpdateOutputs ();
 		}
@@ -356,23 +351,23 @@ public class PhoneController : EntityComponent<BaseEntity>
 
 	public void BeginCall ()
 	{
-		if (IsMobile && (Object)(object)activeCallTo != (Object)null && !activeCallTo.RequirePower) {
-			_ = (Object)(object)currentPlayer != (Object)null;
+		if (IsMobile && activeCallTo != null && !activeCallTo.RequirePower) {
+			_ = currentPlayer != null;
 		}
 		SetPhoneStateWithPlayer (Telephone.CallState.InProcess);
-		((FacepunchBehaviour)this).Invoke ((Action)TimeOutCall, (float)TelephoneManager.MaxCallLength);
+		Invoke (TimeOutCall, TelephoneManager.MaxCallLength);
 	}
 
 	public void ServerHangUp (BaseEntity.RPCMessage msg)
 	{
-		if (!((Object)(object)msg.player != (Object)(object)currentPlayer)) {
+		if (!(msg.player != currentPlayer)) {
 			ServerHangUp ();
 		}
 	}
 
 	public void ServerHangUp ()
 	{
-		if ((Object)(object)activeCallTo != (Object)null) {
+		if (activeCallTo != null) {
 			activeCallTo.RemoteHangUp ();
 		}
 		SelfHangUp ();
@@ -395,21 +390,16 @@ public class PhoneController : EntityComponent<BaseEntity>
 
 	public void OnReceivedVoiceFromUser (byte[] data)
 	{
-		if ((Object)(object)activeCallTo != (Object)null) {
+		if (activeCallTo != null) {
 			activeCallTo.OnReceivedDataFromConnectedPhone (data);
 		}
 	}
 
 	public void OnReceivedDataFromConnectedPhone (byte[] data)
 	{
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		BaseEntity obj = base.baseEntity;
-		SendInfo sendInfo = default(SendInfo);
-		((SendInfo)(ref sendInfo))..ctor (BaseNetworkable.GetConnectionsWithin (((Component)this).transform.position, 15f));
-		sendInfo.priority = (Priority)0;
-		obj.ClientRPCEx (sendInfo, null, "OnReceivedVoice", data.Length, data);
+		base.baseEntity.ClientRPCEx (new SendInfo (BaseNetworkable.GetConnectionsWithin (base.transform.position, 15f)) {
+			priority = Priority.Immediate
+		}, null, "OnReceivedVoice", data.Length, data);
 	}
 
 	public void OnIncomingCallWhileBusy ()
@@ -419,15 +409,15 @@ public class PhoneController : EntityComponent<BaseEntity>
 
 	public void DestroyShared ()
 	{
-		if (isServer && serverState != 0 && (Object)(object)activeCallTo != (Object)null) {
+		if (isServer && serverState != 0 && activeCallTo != null) {
 			activeCallTo.RemoteHangUp ();
 		}
 	}
 
 	public void UpdatePhoneName (BaseEntity.RPCMessage msg)
 	{
-		if (!((Object)(object)msg.player != (Object)(object)currentPlayer)) {
-			string text = msg.read.String (256, false);
+		if (!(msg.player != currentPlayer)) {
+			string text = msg.read.String ();
 			if (text.Length > 20) {
 				text = text.Substring (0, 20);
 			}
@@ -438,37 +428,33 @@ public class PhoneController : EntityComponent<BaseEntity>
 
 	public void Server_RequestPhoneDirectory (BaseEntity.RPCMessage msg)
 	{
-		if ((Object)(object)msg.player != (Object)(object)currentPlayer) {
+		if (msg.player != currentPlayer) {
 			return;
 		}
 		int page = msg.read.Int32 ();
-		PhoneDirectory val = Pool.Get<PhoneDirectory> ();
-		try {
-			TelephoneManager.GetPhoneDirectory (PhoneNumber, page, 12, val);
-			base.baseEntity.ClientRPC<PhoneDirectory> (null, "ReceivePhoneDirectory", val);
-		} finally {
-			((IDisposable)val)?.Dispose ();
-		}
+		using PhoneDirectory phoneDirectory = Pool.Get<PhoneDirectory> ();
+		TelephoneManager.GetPhoneDirectory (PhoneNumber, page, 12, phoneDirectory);
+		base.baseEntity.ClientRPC (null, "ReceivePhoneDirectory", phoneDirectory);
 	}
 
 	public void Server_AddSavedNumber (BaseEntity.RPCMessage msg)
 	{
-		if (!((Object)(object)msg.player != (Object)(object)currentPlayer)) {
+		if (!(msg.player != currentPlayer)) {
 			if (savedNumbers == null) {
 				savedNumbers = Pool.Get<PhoneDirectory> ();
 			}
 			if (savedNumbers.entries == null) {
-				savedNumbers.entries = Pool.GetList<DirectoryEntry> ();
+				savedNumbers.entries = Pool.GetList<PhoneDirectory.DirectoryEntry> ();
 			}
 			int num = msg.read.Int32 ();
-			string text = msg.read.String (256, false);
+			string text = msg.read.String ();
 			if (IsSavedContactValid (text, num) && savedNumbers.entries.Count < 10) {
-				DirectoryEntry val = Pool.Get<DirectoryEntry> ();
-				val.phoneName = text;
-				val.phoneNumber = num;
-				val.ShouldPool = false;
+				PhoneDirectory.DirectoryEntry directoryEntry = Pool.Get<PhoneDirectory.DirectoryEntry> ();
+				directoryEntry.phoneName = text;
+				directoryEntry.phoneNumber = num;
+				directoryEntry.ShouldPool = false;
 				savedNumbers.ShouldPool = false;
-				savedNumbers.entries.Add (val);
+				savedNumbers.entries.Add (directoryEntry);
 				base.baseEntity.SendNetworkUpdate ();
 			}
 		}
@@ -476,9 +462,9 @@ public class PhoneController : EntityComponent<BaseEntity>
 
 	public void Server_RemoveSavedNumber (BaseEntity.RPCMessage msg)
 	{
-		if (!((Object)(object)msg.player != (Object)(object)currentPlayer)) {
+		if (!(msg.player != currentPlayer)) {
 			uint number = msg.read.UInt32 ();
-			if (savedNumbers.entries.RemoveAll ((DirectoryEntry p) => p.phoneNumber == number) > 0) {
+			if (savedNumbers.entries.RemoveAll ((PhoneDirectory.DirectoryEntry p) => p.phoneNumber == number) > 0) {
 				base.baseEntity.SendNetworkUpdate ();
 			}
 		}
@@ -491,21 +477,12 @@ public class PhoneController : EntityComponent<BaseEntity>
 
 	private static string PositionToGridCoord (Vector3 position)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
-		Vector2 val = new Vector2 (TerrainMeta.NormalizeX (position.x), TerrainMeta.NormalizeZ (position.z));
+		Vector2 vector = new Vector2 (TerrainMeta.NormalizeX (position.x), TerrainMeta.NormalizeZ (position.z));
 		float num = TerrainMeta.Size.x / 1024f;
 		int num2 = 7;
-		Vector2 val2 = val * num * (float)num2;
-		float num3 = Mathf.Floor (val2.x) + 1f;
-		float num4 = Mathf.Floor (num * (float)num2 - val2.y);
+		Vector2 vector2 = vector * num * num2;
+		float num3 = Mathf.Floor (vector2.x) + 1f;
+		float num4 = Mathf.Floor (num * (float)num2 - vector2.y);
 		string text = string.Empty;
 		float num5 = num3 / 26f;
 		float num6 = num3 % 26f;
@@ -521,17 +498,15 @@ public class PhoneController : EntityComponent<BaseEntity>
 
 	public void WatchForDisconnects ()
 	{
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
 		bool flag = false;
-		if ((Object)(object)currentPlayer != (Object)null) {
+		if (currentPlayer != null) {
 			if (currentPlayer.IsSleeping ()) {
 				flag = true;
 			}
 			if (currentPlayer.IsDead ()) {
 				flag = true;
 			}
-			if (Vector3.Distance (((Component)this).transform.position, ((Component)currentPlayer).transform.position) > 5f) {
+			if (Vector3.Distance (base.transform.position, currentPlayer.transform.position) > 5f) {
 				flag = true;
 			}
 		} else {
@@ -545,7 +520,7 @@ public class PhoneController : EntityComponent<BaseEntity>
 
 	public void OnParentChanged (BaseEntity newParent)
 	{
-		if ((Object)(object)newParent != (Object)null && newParent is BasePlayer) {
+		if (newParent != null && newParent is BasePlayer) {
 			TelephoneManager.RegisterTelephone (this, checkPhoneNumber: true);
 		} else {
 			TelephoneManager.DeregisterTelephone (this);
@@ -559,10 +534,10 @@ public class PhoneController : EntityComponent<BaseEntity>
 
 	public void ServerSendVoicemail (BaseEntity.RPCMessage msg)
 	{
-		if (!((Object)(object)msg.player == (Object)null)) {
-			byte[] data = msg.read.BytesWithSize (10485760u, false);
+		if (!(msg.player == null)) {
+			byte[] data = msg.read.BytesWithSize ();
 			PhoneController telephone = TelephoneManager.GetTelephone (msg.read.Int32 ());
-			if (!((Object)(object)telephone == (Object)null) && Cassette.IsOggValid (data, telephone.cachedCassette)) {
+			if (!(telephone == null) && Cassette.IsOggValid (data, telephone.cachedCassette)) {
 				telephone.SaveVoicemail (data, msg.player.displayName);
 			}
 		}
@@ -570,18 +545,16 @@ public class PhoneController : EntityComponent<BaseEntity>
 
 	public void SaveVoicemail (byte[] data, string playerName)
 	{
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008f: Unknown result type (might be due to invalid IL or missing references)
 		uint audioId = FileStorage.server.Store (data, FileStorage.Type.ogg, base.baseEntity.net.ID);
 		if (savedVoicemail == null) {
-			savedVoicemail = Pool.GetList<VoicemailEntry> ();
+			savedVoicemail = Pool.GetList<ProtoBuf.VoicemailEntry> ();
 		}
-		VoicemailEntry val = Pool.Get<VoicemailEntry> ();
-		val.audioId = audioId;
-		val.timestamp = DateTime.Now.ToBinary ();
-		val.userName = playerName;
-		val.ShouldPool = false;
-		savedVoicemail.Add (val);
+		ProtoBuf.VoicemailEntry voicemailEntry = Pool.Get<ProtoBuf.VoicemailEntry> ();
+		voicemailEntry.audioId = audioId;
+		voicemailEntry.timestamp = DateTime.Now.ToBinary ();
+		voicemailEntry.userName = playerName;
+		voicemailEntry.ShouldPool = false;
+		savedVoicemail.Add (voicemailEntry);
 		while (savedVoicemail.Count > MaxVoicemailSlots) {
 			FileStorage.server.Remove (savedVoicemail [0].audioId, FileStorage.Type.ogg, base.baseEntity.net.ID);
 			savedVoicemail.RemoveAt (0);
@@ -601,14 +574,13 @@ public class PhoneController : EntityComponent<BaseEntity>
 
 	public void ServerDeleteVoicemail (BaseEntity.RPCMessage msg)
 	{
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
 		uint num = msg.read.UInt32 ();
 		for (int i = 0; i < savedVoicemail.Count; i++) {
 			if (savedVoicemail [i].audioId == num) {
-				VoicemailEntry val = savedVoicemail [i];
-				FileStorage.server.Remove (val.audioId, FileStorage.Type.ogg, base.baseEntity.net.ID);
-				val.ShouldPool = true;
-				Pool.Free<VoicemailEntry> (ref val);
+				ProtoBuf.VoicemailEntry obj = savedVoicemail [i];
+				FileStorage.server.Remove (obj.audioId, FileStorage.Type.ogg, base.baseEntity.net.ID);
+				obj.ShouldPool = true;
+				Pool.Free (ref obj);
 				savedVoicemail.RemoveAt (i);
 				base.baseEntity.SendNetworkUpdate ();
 				break;
@@ -618,14 +590,13 @@ public class PhoneController : EntityComponent<BaseEntity>
 
 	public void DeleteAllVoicemail ()
 	{
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
 		if (savedVoicemail == null) {
 			return;
 		}
-		foreach (VoicemailEntry item in savedVoicemail) {
+		foreach (ProtoBuf.VoicemailEntry item in savedVoicemail) {
 			item.ShouldPool = true;
 			FileStorage.server.Remove (item.audioId, FileStorage.Type.ogg, base.baseEntity.net.ID);
 		}
-		Pool.FreeList<VoicemailEntry> (ref savedVoicemail);
+		Pool.FreeList (ref savedVoicemail);
 	}
 }

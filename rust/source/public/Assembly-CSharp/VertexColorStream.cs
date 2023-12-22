@@ -60,15 +60,13 @@ public class VertexColorStream : MonoBehaviour
 
 	public void init (Mesh origMesh, bool destroyOld)
 	{
-		//IL_012e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0133: Unknown result type (might be due to invalid IL or missing references)
 		originalMesh = origMesh;
-		paintedMesh = Object.Instantiate<Mesh> (origMesh);
+		paintedMesh = Object.Instantiate (origMesh);
 		if (destroyOld) {
-			Object.DestroyImmediate ((Object)(object)origMesh);
+			Object.DestroyImmediate (origMesh);
 		}
-		((Object)paintedMesh).hideFlags = (HideFlags)0;
-		((Object)paintedMesh).name = "vpp_" + ((Object)((Component)this).gameObject).name;
+		paintedMesh.hideFlags = HideFlags.None;
+		paintedMesh.name = "vpp_" + base.gameObject.name;
 		meshHold = new MeshHolder ();
 		meshHold._vertices = paintedMesh.vertices;
 		meshHold._normals = paintedMesh.normals;
@@ -88,9 +86,9 @@ public class VertexColorStream : MonoBehaviour
 		meshHold._uv3 = paintedMesh.uv3;
 		meshHold._colors = paintedMesh.colors;
 		meshHold._uv4 = paintedMesh.uv4;
-		((Component)this).GetComponent<MeshFilter> ().sharedMesh = paintedMesh;
-		if (Object.op_Implicit ((Object)(object)((Component)this).GetComponent<MeshCollider> ())) {
-			((Component)this).GetComponent<MeshCollider> ().sharedMesh = paintedMesh;
+		GetComponent<MeshFilter> ().sharedMesh = paintedMesh;
+		if ((bool)GetComponent<MeshCollider> ()) {
+			GetComponent<MeshCollider> ().sharedMesh = paintedMesh;
 		}
 	}
 
@@ -114,17 +112,15 @@ public class VertexColorStream : MonoBehaviour
 
 	public Vector3[] setVertices (Vector3[] _deformedVertices)
 	{
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
 		paintedMesh.vertices = _deformedVertices;
 		meshHold._vertices = _deformedVertices;
 		paintedMesh.RecalculateNormals ();
 		paintedMesh.RecalculateBounds ();
 		meshHold._normals = paintedMesh.normals;
 		meshHold._bounds = paintedMesh.bounds;
-		((Component)this).GetComponent<MeshCollider> ().sharedMesh = null;
-		if (Object.op_Implicit ((Object)(object)((Component)this).GetComponent<MeshCollider> ())) {
-			((Component)this).GetComponent<MeshCollider> ().sharedMesh = paintedMesh;
+		GetComponent<MeshCollider> ().sharedMesh = null;
+		if ((bool)GetComponent<MeshCollider> ()) {
+			GetComponent<MeshCollider> ().sharedMesh = paintedMesh;
 		}
 		return meshHold._normals;
 	}
@@ -189,16 +185,12 @@ public class VertexColorStream : MonoBehaviour
 
 	public void rebuild ()
 	{
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Expected O, but got Unknown
-		//IL_013b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0267: Unknown result type (might be due to invalid IL or missing references)
-		if (!Object.op_Implicit ((Object)(object)((Component)this).GetComponent<MeshFilter> ())) {
+		if (!GetComponent<MeshFilter> ()) {
 			return;
 		}
 		paintedMesh = new Mesh ();
-		((Object)paintedMesh).hideFlags = (HideFlags)61;
-		((Object)paintedMesh).name = "vpp_" + ((Object)((Component)this).gameObject).name;
+		paintedMesh.hideFlags = HideFlags.HideAndDontSave;
+		paintedMesh.name = "vpp_" + base.gameObject.name;
 		if (meshHold == null || meshHold._vertices.Length == 0 || meshHold._TrianglesOfSubs.Length == 0) {
 			paintedMesh.subMeshCount = _subMeshCount;
 			paintedMesh.vertices = _vertices;
@@ -241,7 +233,7 @@ public class VertexColorStream : MonoBehaviour
 
 	private void Start ()
 	{
-		if (!Object.op_Implicit ((Object)(object)paintedMesh) || meshHold == null) {
+		if (!paintedMesh || meshHold == null) {
 			rebuild ();
 		}
 	}

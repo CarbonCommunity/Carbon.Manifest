@@ -6,11 +6,11 @@ public class ChristmasTree : StorageContainer
 
 	public override bool ItemFilter (Item item, int targetSlot)
 	{
-		if ((Object)(object)((Component)item.info).GetComponent<ItemModXMasTreeDecoration> () == (Object)null) {
+		if (item.info.GetComponent<ItemModXMasTreeDecoration> () == null) {
 			return false;
 		}
 		foreach (Item item2 in base.inventory.itemList) {
-			if ((Object)(object)item2.info == (Object)(object)item.info) {
+			if (item2.info == item.info) {
 				return false;
 			}
 		}
@@ -19,8 +19,8 @@ public class ChristmasTree : StorageContainer
 
 	public override void OnItemAddedOrRemoved (Item item, bool added)
 	{
-		ItemModXMasTreeDecoration component = ((Component)item.info).GetComponent<ItemModXMasTreeDecoration> ();
-		if ((Object)(object)component != (Object)null) {
+		ItemModXMasTreeDecoration component = item.info.GetComponent<ItemModXMasTreeDecoration> ();
+		if (component != null) {
 			SetFlag ((Flags)component.flagsToChange, added);
 		}
 		base.OnItemAddedOrRemoved (item, added);

@@ -6,7 +6,7 @@ public class TweakUIBase : MonoBehaviour
 
 	public bool ApplyImmediatelyOnChange = true;
 
-	internal Command conVar;
+	internal ConsoleSystem.Command conVar;
 
 	private void Awake ()
 	{
@@ -15,9 +15,9 @@ public class TweakUIBase : MonoBehaviour
 
 	protected virtual void Init ()
 	{
-		conVar = Client.Find (convarName);
+		conVar = ConsoleSystem.Index.Client.Find (convarName);
 		if (conVar == null) {
-			Debug.LogWarning ((object)("TweakUI Convar Missing: " + convarName), (Object)(object)((Component)this).gameObject);
+			Debug.LogWarning ("TweakUI Convar Missing: " + convarName, base.gameObject);
 		} else {
 			conVar.OnValueChanged += OnConVarChanged;
 		}
@@ -37,7 +37,7 @@ public class TweakUIBase : MonoBehaviour
 		}
 	}
 
-	protected virtual void OnConVarChanged (Command obj)
+	protected virtual void OnConVarChanged (ConsoleSystem.Command obj)
 	{
 		ResetToConvar ();
 	}

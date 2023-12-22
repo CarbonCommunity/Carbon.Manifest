@@ -18,15 +18,15 @@ public class ArmorInformationPanel : ItemInformationPanel
 
 	public Text areaProtectionText;
 
-	public Phrase LegText;
+	public Translate.Phrase LegText;
 
-	public Phrase ChestText;
+	public Translate.Phrase ChestText;
 
-	public Phrase HeadText;
+	public Translate.Phrase HeadText;
 
-	public Phrase ChestLegsText;
+	public Translate.Phrase ChestLegsText;
 
-	public Phrase WholeBodyText;
+	public Translate.Phrase WholeBodyText;
 
 	public ItemTextValue eggVision;
 }

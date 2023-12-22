@@ -7,11 +7,11 @@ public class CameraSettings : MonoBehaviour, IClientComponent
 
 	private void OnEnable ()
 	{
-		cam = ((Component)this).GetComponent<Camera> ();
+		cam = GetComponent<Camera> ();
 	}
 
 	private void Update ()
 	{
-		cam.farClipPlane = Mathf.Clamp (Graphics.drawdistance, 500f, 2500f);
+		cam.farClipPlane = Mathf.Clamp (ConVar.Graphics.drawdistance, 500f, 2500f);
 	}
 }

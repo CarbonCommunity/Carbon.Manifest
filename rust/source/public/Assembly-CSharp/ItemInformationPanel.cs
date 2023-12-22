@@ -4,12 +4,12 @@ public class ItemInformationPanel : MonoBehaviour
 {
 	public virtual bool EligableForDisplay (ItemDefinition info)
 	{
-		Debug.LogWarning ((object)"ItemInformationPanel.EligableForDisplay");
+		Debug.LogWarning ("ItemInformationPanel.EligableForDisplay");
 		return false;
 	}
 
 	public virtual void SetupForItem (ItemDefinition info, Item item = null)
 	{
-		Debug.LogWarning ((object)"ItemInformationPanel.SetupForItem");
+		Debug.LogWarning ("ItemInformationPanel.SetupForItem");
 	}
 }

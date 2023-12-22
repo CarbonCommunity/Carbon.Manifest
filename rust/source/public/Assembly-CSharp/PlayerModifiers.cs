@@ -1,4 +1,3 @@
-using System;
 using Facepunch;
 using Network;
 using ProtoBuf;
@@ -7,10 +6,7 @@ public class PlayerModifiers : BaseModifiers<BasePlayer>
 {
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("PlayerModifiers.OnRpcMessage", 0);
-		try {
-		} finally {
-			((IDisposable)val)?.Dispose ();
+		using (TimeWarning.New ("PlayerModifiers.OnRpcMessage")) {
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -21,25 +17,25 @@ public class PlayerModifiers : BaseModifiers<BasePlayer>
 		SendChangesToClient ();
 	}
 
-	public PlayerModifiers Save ()
+	public ProtoBuf.PlayerModifiers Save ()
 	{
-		PlayerModifiers val = Pool.Get<PlayerModifiers> ();
-		val.modifiers = Pool.GetList<Modifier> ();
+		ProtoBuf.PlayerModifiers playerModifiers = Pool.Get<ProtoBuf.PlayerModifiers> ();
+		playerModifiers.modifiers = Pool.GetList<ProtoBuf.Modifier> ();
 		foreach (Modifier item in All) {
 			if (item != null) {
-				val.modifiers.Add (item.Save ());
+				playerModifiers.modifiers.Add (item.Save ());
 			}
 		}
-		return val;
+		return playerModifiers;
 	}
 
-	public void Load (PlayerModifiers m)
+	public void Load (ProtoBuf.PlayerModifiers m)
 	{
 		RemoveAll ();
 		if (m == null || m.modifiers == null) {
 			return;
 		}
-		foreach (Modifier modifier2 in m.modifiers) {
+		foreach (ProtoBuf.Modifier modifier2 in m.modifiers) {
 			if (modifier2 != null) {
 				Modifier modifier = new Modifier ();
 				modifier.Init ((Modifier.ModifierType)modifier2.type, (Modifier.ModifierSource)modifier2.source, modifier2.value, modifier2.duration, modifier2.timeRemaing);
@@ -54,11 +50,7 @@ public class PlayerModifiers : BaseModifiers<BasePlayer>
 			return;
 		}
 		SetDirty (flag: false);
-		PlayerModifiers val = Save ();
-		try {
-			base.baseEntity.ClientRPCPlayer<PlayerModifiers> (null, base.baseEntity, "UpdateModifiers", val);
-		} finally {
-			((IDisposable)val)?.Dispose ();
-		}
+		using ProtoBuf.PlayerModifiers arg = Save ();
+		base.baseEntity.ClientRPCPlayer (null, base.baseEntity, "UpdateModifiers", arg);
 	}
 }

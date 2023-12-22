@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -33,166 +34,127 @@ public class NPCTalking : NPCShopKeeper, IConversationProvider
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("NPCTalking.OnRpcMessage", 0);
-		try {
-			if (rpc == 4224060672u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("NPCTalking.OnRpcMessage")) {
+			if (rpc == 4224060672u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - ConversationAction "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - ConversationAction ");
 				}
-				TimeWarning val2 = TimeWarning.New ("ConversationAction", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("ConversationAction")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (4224060672u, "ConversationAction", this, player, 5uL)) {
 							return true;
 						}
 						if (!RPC_Server.MaxDistance.Test (4224060672u, "ConversationAction", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							ConversationAction (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in ConversationAction");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 2112414875 && (Object)(object)player != (Object)null) {
+			if (rpc == 2112414875 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - Server_BeginTalking "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - Server_BeginTalking ");
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_BeginTalking", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_BeginTalking")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (2112414875u, "Server_BeginTalking", this, player, 1uL)) {
 							return true;
 						}
 						if (!RPC_Server.MaxDistance.Test (2112414875u, "Server_BeginTalking", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg3 = rPCMessage;
 							Server_BeginTalking (msg3);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in Server_BeginTalking");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 1597539152 && (Object)(object)player != (Object)null) {
+			if (rpc == 1597539152 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - Server_EndTalking "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - Server_EndTalking ");
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_EndTalking", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_EndTalking")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (1597539152u, "Server_EndTalking", this, player, 1uL)) {
 							return true;
 						}
 						if (!RPC_Server.MaxDistance.Test (1597539152u, "Server_EndTalking", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg4 = rPCMessage;
 							Server_EndTalking (msg4);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex3) {
-						Debug.LogException (ex3);
+					} catch (Exception exception3) {
+						Debug.LogException (exception3);
 						player.Kick ("RPC Error in Server_EndTalking");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 2713250658u && (Object)(object)player != (Object)null) {
+			if (rpc == 2713250658u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - Server_ResponsePressed "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - Server_ResponsePressed ");
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_ResponsePressed", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_ResponsePressed")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (2713250658u, "Server_ResponsePressed", this, player, 5uL)) {
 							return true;
 						}
 						if (!RPC_Server.MaxDistance.Test (2713250658u, "Server_ResponsePressed", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg5 = rPCMessage;
 							Server_ResponsePressed (msg5);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex4) {
-						Debug.LogException (ex4);
+					} catch (Exception exception4) {
+						Debug.LogException (exception4);
 						player.Kick ("RPC Error in Server_ResponsePressed");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -239,7 +201,7 @@ public class NPCTalking : NPCShopKeeper, IConversationProvider
 
 	public void ForceSpeechNode (BasePlayer player, int speechNodeIndex)
 	{
-		if (!((Object)(object)player == (Object)null)) {
+		if (!(player == null)) {
 			ClientRPCPlayer (null, player, "Client_ForceSpeechNode", speechNodeIndex);
 		}
 	}
@@ -255,7 +217,7 @@ public class NPCTalking : NPCShopKeeper, IConversationProvider
 	{
 		for (int num = conversingPlayers.Count - 1; num >= 0; num--) {
 			BasePlayer basePlayer = conversingPlayers [num];
-			if ((Object)(object)basePlayer == (Object)null || !basePlayer.IsAlive () || basePlayer.IsSleeping ()) {
+			if (basePlayer == null || !basePlayer.IsAlive () || basePlayer.IsSleeping ()) {
 				conversingPlayers.RemoveAt (num);
 			}
 		}
@@ -269,7 +231,7 @@ public class NPCTalking : NPCShopKeeper, IConversationProvider
 		BasePlayer player = msg.player;
 		CleanupConversingPlayers ();
 		ConversationData conversationFor = GetConversationFor (player);
-		if ((Object)(object)conversationFor != (Object)null) {
+		if (conversationFor != null) {
 			if (conversingPlayers.Contains (player)) {
 				OnConversationEnded (player);
 			}
@@ -302,15 +264,13 @@ public class NPCTalking : NPCShopKeeper, IConversationProvider
 	public void ConversationAction (RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
-		string action = msg.read.String (256, false);
+		string action = msg.read.String ();
 		OnConversationAction (player, action);
 	}
 
 	public bool ValidConversationPlayer (BasePlayer player)
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		if (Vector3.Distance (((Component)player).transform.position, ((Component)this).transform.position) > maxConversationDistance) {
+		if (Vector3.Distance (player.transform.position, base.transform.position) > maxConversationDistance) {
 			return false;
 		}
 		if (conversingPlayers.Contains (player)) {
@@ -328,7 +288,7 @@ public class NPCTalking : NPCShopKeeper, IConversationProvider
 		int num = msg.read.Int32 ();
 		int num2 = msg.read.Int32 ();
 		ConversationData conversationFor = GetConversationFor (player);
-		if ((Object)(object)conversationFor == (Object)null) {
+		if (conversationFor == null) {
 			return;
 		}
 		ConversationData.ResponseNode responseNode = conversationFor.speeches [num].responses [num2];
@@ -356,11 +316,9 @@ public class NPCTalking : NPCShopKeeper, IConversationProvider
 
 	public virtual void OnConversationAction (BasePlayer player, string action)
 	{
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
 		if (action == "openvending") {
 			InvisibleVendingMachine vendingMachine = GetVendingMachine ();
-			if ((Object)(object)vendingMachine != (Object)null && Vector3.Distance (((Component)player).transform.position, ((Component)this).transform.position) < 5f) {
+			if (vendingMachine != null && Vector3.Distance (player.transform.position, base.transform.position) < 5f) {
 				ForceEndConversation (player);
 				vendingMachine.PlayerOpenLoot (player, "vendingmachine.customer", doPositionChecks: false);
 				return;
@@ -374,7 +332,7 @@ public class NPCTalking : NPCShopKeeper, IConversationProvider
 			}
 			CleanupConversingPlayers ();
 			foreach (BasePlayer conversingPlayer in conversingPlayers) {
-				if (!((Object)(object)conversingPlayer == (Object)(object)player) && !((Object)(object)conversingPlayer == (Object)null)) {
+				if (!(conversingPlayer == player) && !(conversingPlayer == null)) {
 					int speechNodeIndex = GetConversationFor (player).GetSpeechNodeIndex ("startbusy");
 					ForceSpeechNode (conversingPlayer, speechNodeIndex);
 				}

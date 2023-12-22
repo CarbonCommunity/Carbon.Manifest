@@ -1,4 +1,3 @@
-using System;
 using ConVar;
 using ProtoBuf;
 using Rust;
@@ -45,7 +44,7 @@ public class ScarecrowNPC : NPCPlayer, IAISenses, IAIAttack, IThinker
 	public override void ServerInit ()
 	{
 		base.ServerInit ();
-		Brain = ((Component)this).GetComponent<ScarecrowBrain> ();
+		Brain = GetComponent<ScarecrowBrain> ();
 		if (!base.isClient) {
 			AIThinkManager.Add (this);
 			wasSoulReleased = false;
@@ -80,7 +79,7 @@ public class ScarecrowNPC : NPCPlayer, IAISenses, IAIAttack, IThinker
 	{
 		base.EquipWeapon (skipDeployDelay);
 		HeldEntity heldEntity = GetHeldEntity ();
-		if ((Object)(object)heldEntity != (Object)null && heldEntity is Chainsaw chainsaw) {
+		if (heldEntity != null && heldEntity is Chainsaw chainsaw) {
 			chainsaw.ServerNPCStart ();
 		}
 	}
@@ -88,7 +87,7 @@ public class ScarecrowNPC : NPCPlayer, IAISenses, IAIAttack, IThinker
 	public float EngagementRange ()
 	{
 		AttackEntity attackEntity = GetAttackEntity ();
-		if (Object.op_Implicit ((Object)(object)attackEntity)) {
+		if ((bool)attackEntity) {
 			return attackEntity.effectiveRange * (attackEntity.aiOnlyInRange ? 1f : 2f) * Brain.AttackRangeMultiplier;
 		}
 		return Brain.SenseRange;
@@ -114,7 +113,7 @@ public class ScarecrowNPC : NPCPlayer, IAISenses, IAIAttack, IThinker
 
 	public bool CanAttack (BaseEntity entity)
 	{
-		if ((Object)(object)entity == (Object)null) {
+		if (entity == null) {
 			return false;
 		}
 		if (NeedsToReload ()) {
@@ -137,17 +136,13 @@ public class ScarecrowNPC : NPCPlayer, IAISenses, IAIAttack, IThinker
 
 	public bool IsTargetInRange (BaseEntity entity, out float dist)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		dist = Vector3.Distance (((Component)entity).transform.position, ((Component)this).transform.position);
+		dist = Vector3.Distance (entity.transform.position, base.transform.position);
 		return dist <= EngagementRange ();
 	}
 
 	public bool CanSeeTarget (BaseEntity entity)
 	{
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)entity == (Object)null) {
+		if (entity == null) {
 			return false;
 		}
 		return entity.IsVisible (GetEntity ().CenterPoint (), entity.CenterPoint ());
@@ -171,7 +166,7 @@ public class ScarecrowNPC : NPCPlayer, IAISenses, IAIAttack, IThinker
 	public bool IsOnCooldown ()
 	{
 		AttackEntity attackEntity = GetAttackEntity ();
-		if (Object.op_Implicit ((Object)(object)attackEntity)) {
+		if ((bool)attackEntity) {
 			return attackEntity.HasAttackCooldown ();
 		}
 		return true;
@@ -180,7 +175,7 @@ public class ScarecrowNPC : NPCPlayer, IAISenses, IAIAttack, IThinker
 	public bool StartAttacking (BaseEntity target)
 	{
 		BaseCombatEntity baseCombatEntity = target as BaseCombatEntity;
-		if ((Object)(object)baseCombatEntity == (Object)null) {
+		if (baseCombatEntity == null) {
 			return false;
 		}
 		Attack (baseCombatEntity);
@@ -189,19 +184,13 @@ public class ScarecrowNPC : NPCPlayer, IAISenses, IAIAttack, IThinker
 
 	private void Attack (BaseCombatEntity target)
 	{
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		if (!((Object)(object)target == (Object)null)) {
-			Vector3 val = target.ServerPosition - ServerPosition;
-			if (((Vector3)(ref val)).magnitude > 0.001f) {
-				ServerRotation = Quaternion.LookRotation (((Vector3)(ref val)).normalized);
+		if (!(target == null)) {
+			Vector3 vector = target.ServerPosition - ServerPosition;
+			if (vector.magnitude > 0.001f) {
+				ServerRotation = Quaternion.LookRotation (vector.normalized);
 			}
 			AttackEntity attackEntity = GetAttackEntity ();
-			if (Object.op_Implicit ((Object)(object)attackEntity)) {
+			if ((bool)attackEntity) {
 				attackEntity.ServerUse ();
 			}
 		}
@@ -232,16 +221,11 @@ public class ScarecrowNPC : NPCPlayer, IAISenses, IAIAttack, IThinker
 
 	public override BaseCorpse CreateCorpse (PlayerFlags flagsOnDeath, Vector3 posOnDeath, Quaternion rotOnDeath, BaseEntity parentOnDeath)
 	{
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		TimeWarning val = TimeWarning.New ("Create corpse", 0);
-		try {
+		using (TimeWarning.New ("Create corpse")) {
 			string strCorpsePrefab = "assets/prefabs/npc/murderer/murderer_corpse.prefab";
 			NPCPlayerCorpse nPCPlayerCorpse = DropCorpse (strCorpsePrefab, flagsOnDeath, modelState) as NPCPlayerCorpse;
-			if (Object.op_Implicit ((Object)(object)nPCPlayerCorpse)) {
-				((Component)nPCPlayerCorpse).transform.position = ((Component)nPCPlayerCorpse).transform.position + Vector3.down * NavAgent.baseOffset;
+			if ((bool)nPCPlayerCorpse) {
+				nPCPlayerCorpse.transform.position = nPCPlayerCorpse.transform.position + Vector3.down * NavAgent.baseOffset;
 				nPCPlayerCorpse.SetLootableIn (2f);
 				nPCPlayerCorpse.SetFlag (Flags.Reserved5, HasPlayerFlag (PlayerFlags.DisplaySash));
 				nPCPlayerCorpse.SetFlag (Flags.Reserved2, b: true);
@@ -277,21 +261,17 @@ public class ScarecrowNPC : NPCPlayer, IAISenses, IAIAttack, IThinker
 				}
 			}
 			return nPCPlayerCorpse;
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 	}
 
 	public override void Hurt (HitInfo info)
 	{
-		//IL_00c7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cc: Unknown result type (might be due to invalid IL or missing references)
 		bool flag = info.damageTypes.Has (DamageType.Slash) && info.damageTypes.Has (DamageType.Stab) && info.damageTypes.Has (DamageType.Generic) && info.damageTypes.Get (DamageType.Generic) <= 0.1f;
 		if (flag) {
-			if ((Object)(object)info.ProjectilePrefab != (Object)null && !((Object)info.ProjectilePrefab).name.Contains ("vamp")) {
+			if (info.ProjectilePrefab != null && !info.ProjectilePrefab.name.Contains ("vamp")) {
 				flag = false;
 			}
-			if ((Object)(object)info.WeaponPrefab != (Object)null && !((Object)info.WeaponPrefab).name.Contains ("vamp")) {
+			if (info.WeaponPrefab != null && !info.WeaponPrefab.name.Contains ("vamp")) {
 				flag = false;
 			}
 		}
@@ -300,7 +280,7 @@ public class ScarecrowNPC : NPCPlayer, IAISenses, IAIAttack, IThinker
 			info.damageTypes.ScaleAll (1000f);
 			Effect.server.Run (soulReleaseEffect.resourcePath, this, StringPool.Get ("spine3"), Vector3.zero, Vector3.forward);
 		} else if (!info.isHeadshot) {
-			if (((Object)(object)info.InitiatorPlayer != (Object)null && !info.InitiatorPlayer.IsNpc) || ((Object)(object)info.InitiatorPlayer == (Object)null && (Object)(object)info.Initiator != (Object)null && info.Initiator.IsNpc)) {
+			if ((info.InitiatorPlayer != null && !info.InitiatorPlayer.IsNpc) || (info.InitiatorPlayer == null && info.Initiator != null && info.Initiator.IsNpc)) {
 				info.damageTypes.ScaleAll (Halloween.scarecrow_body_dmg_modifier);
 			} else {
 				info.damageTypes.ScaleAll (2f);
@@ -309,7 +289,7 @@ public class ScarecrowNPC : NPCPlayer, IAISenses, IAIAttack, IThinker
 		base.Hurt (info);
 	}
 
-	public override void AttackerInfo (DeathInfo info)
+	public override void AttackerInfo (PlayerLifeStory.DeathInfo info)
 	{
 		base.AttackerInfo (info);
 		info.inflictorName = inventory.containerBelt.GetSlot (0).info.shortname;

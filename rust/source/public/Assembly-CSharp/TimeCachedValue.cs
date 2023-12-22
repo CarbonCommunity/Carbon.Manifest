@@ -19,15 +19,12 @@ public class TimeCachedValue<T>
 
 	public T Get (bool force)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		if (TimeSince.op_Implicit (cooldown) < refreshCooldown && !force && hasRun && !forceNextRun) {
+		if ((float)cooldown < refreshCooldown && !force && hasRun && !forceNextRun) {
 			return cachedValue;
 		}
 		hasRun = true;
 		forceNextRun = false;
-		cooldown = TimeSince.op_Implicit (0f - Random.Range (0f, refreshRandomRange));
+		cooldown = 0f - UnityEngine.Random.Range (0f, refreshRandomRange);
 		if (updateValue != null) {
 			cachedValue = updateValue ();
 		} else {

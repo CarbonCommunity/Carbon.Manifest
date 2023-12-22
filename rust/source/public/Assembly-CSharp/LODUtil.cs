@@ -6,18 +6,11 @@ public static class LODUtil
 
 	public static float GetDistance (Transform transform, LODDistanceMode mode = LODDistanceMode.XYZ)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
 		return GetDistance (transform.position, mode);
 	}
 
 	public static float GetDistance (Vector3 worldPos, LODDistanceMode mode = LODDistanceMode.XYZ)
 	{
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
 		if (MainCamera.isValid) {
 			switch (mode) {
 			case LODDistanceMode.XYZ:
@@ -38,7 +31,7 @@ public static class LODUtil
 
 	public static LODEnvironmentMode DetermineEnvironmentMode (Transform transform)
 	{
-		if (((Component)transform).CompareTag ("OnlyVisibleUnderground") || ((Component)transform.root).CompareTag ("OnlyVisibleUnderground")) {
+		if (transform.CompareTag ("OnlyVisibleUnderground") || transform.root.CompareTag ("OnlyVisibleUnderground")) {
 			return LODEnvironmentMode.Underground;
 		}
 		return LODEnvironmentMode.Default;

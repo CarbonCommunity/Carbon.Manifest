@@ -10,7 +10,7 @@ public class GameModeManifest : ScriptableObject
 
 	public static GameModeManifest Get ()
 	{
-		if ((Object)(object)instance == (Object)null) {
+		if (instance == null) {
 			instance = Resources.Load<GameModeManifest> ("GameModeManifest");
 		}
 		return instance;

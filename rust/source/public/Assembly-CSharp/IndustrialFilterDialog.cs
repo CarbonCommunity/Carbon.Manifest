@@ -22,7 +22,7 @@ public class IndustrialFilterDialog : UIDialog
 
 	public GameObject NoItemsPrompt;
 
-	public Dropdown FilterModeDropdown;
+	public Rust.UI.Dropdown FilterModeDropdown;
 
 	public GameObject[] FilterModeExplanations;
 

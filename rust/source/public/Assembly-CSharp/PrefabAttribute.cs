@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -146,29 +147,17 @@ public abstract class PrefabAttribute : MonoBehaviour, IPrefabPreProcess
 
 	public virtual void PreProcess (IPrefabProcessor preProcess, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
 	{
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0063: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0074: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0079: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0085: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0096: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009b: Unknown result type (might be due to invalid IL or missing references)
 		if (!bundling) {
 			fullName = name;
-			hierachyName = ((Component)this).transform.GetRecursiveName ();
+			hierachyName = base.transform.GetRecursiveName ();
 			prefabID = StringPool.Get (name);
-			instanceID = ((Object)this).GetInstanceID ();
-			worldPosition = ((Component)this).transform.position;
-			worldRotation = ((Component)this).transform.rotation;
-			worldForward = ((Component)this).transform.forward;
-			localPosition = ((Component)this).transform.localPosition;
-			localScale = ((Component)this).transform.localScale;
-			localRotation = ((Component)this).transform.localRotation;
+			instanceID = GetInstanceID ();
+			worldPosition = base.transform.position;
+			worldRotation = base.transform.rotation;
+			worldForward = base.transform.forward;
+			localPosition = base.transform.localPosition;
+			localScale = base.transform.localScale;
+			localRotation = base.transform.localRotation;
 			if (serverside) {
 				prefabAttribute = server;
 				gameManager = GameManager.server;
@@ -178,8 +167,8 @@ public abstract class PrefabAttribute : MonoBehaviour, IPrefabPreProcess
 			if (serverside) {
 				server.Add (prefabID, this);
 			}
-			preProcess.RemoveComponent ((Component)(object)this);
-			preProcess.NominateForDeletion (((Component)this).gameObject);
+			preProcess.RemoveComponent (this);
+			preProcess.NominateForDeletion (base.gameObject);
 		}
 	}
 
@@ -210,7 +199,7 @@ public abstract class PrefabAttribute : MonoBehaviour, IPrefabPreProcess
 	public override int GetHashCode ()
 	{
 		if (hierachyName == null) {
-			return ((Object)this).GetHashCode ();
+			return base.GetHashCode ();
 		}
 		return hierachyName.GetHashCode ();
 	}

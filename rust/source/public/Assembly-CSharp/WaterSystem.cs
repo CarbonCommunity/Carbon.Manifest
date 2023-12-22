@@ -68,7 +68,7 @@ public class WaterSystem : MonoBehaviour
 
 	public static Material OceanMaterial => Instance?.oceanMaterial;
 
-	public static ListHashSet<WaterCamera> WaterCameras { get; } = new ListHashSet<WaterCamera> (8);
+	public static ListHashSet<WaterCamera> WaterCameras { get; } = new ListHashSet<WaterCamera> ();
 
 
 	public static HashSet<WaterBody> WaterBodies { get; } = new HashSet<WaterBody> ();
@@ -94,7 +94,7 @@ public class WaterSystem : MonoBehaviour
 
 	public bool IsInitialized { get; private set; }
 
-	public int Layer => ((Component)this).gameObject.layer;
+	public int Layer => base.gameObject.layer;
 
 	public int Reflections => Water.reflections;
 
@@ -104,8 +104,8 @@ public class WaterSystem : MonoBehaviour
 
 	private void CheckInstance ()
 	{
-		Instance = (((Object)(object)Instance != (Object)null) ? Instance : this);
-		Collision = (((Object)(object)Collision != (Object)null) ? Collision : ((Component)this).GetComponent<WaterCollision> ());
+		Instance = ((Instance != null) ? Instance : this);
+		Collision = ((Collision != null) ? Collision : GetComponent<WaterCollision> ());
 	}
 
 	private void Awake ()
@@ -122,7 +122,7 @@ public class WaterSystem : MonoBehaviour
 
 	private void OnDisable ()
 	{
-		if (!Application.isPlaying || !Application.isQuitting) {
+		if (!UnityEngine.Application.isPlaying || !Rust.Application.isQuitting) {
 			oceanSimulation.Dispose ();
 			oceanSimulation = null;
 			IsInitialized = false;
@@ -132,20 +132,14 @@ public class WaterSystem : MonoBehaviour
 
 	private void Update ()
 	{
-		TimeWarning val = TimeWarning.New ("UpdateWaves", 0);
-		try {
+		using (TimeWarning.New ("UpdateWaves")) {
 			UpdateOceanSimulation ();
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 	}
 
 	public static bool Trace (Ray ray, out Vector3 position, float maxDist = 100f)
 	{
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)Instance == (Object)null) {
+		if (Instance == null) {
 			position = Vector3.zero;
 			return false;
 		}
@@ -154,14 +148,7 @@ public class WaterSystem : MonoBehaviour
 
 	public static bool Trace (Ray ray, out Vector3 position, out Vector3 normal, float maxDist = 100f)
 	{
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)Instance == (Object)null) {
+		if (Instance == null) {
 			position = Vector3.zero;
 			normal = Vector3.zero;
 			return false;
@@ -172,32 +159,22 @@ public class WaterSystem : MonoBehaviour
 
 	public static void GetHeightArray_Managed (Vector2[] pos, Vector2[] posUV, Vector3[] shore, float[] terrainHeight, float[] waterHeight)
 	{
-		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ba: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0094: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d5: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)TerrainTexturing.Instance != (Object)null) {
+		if (TerrainTexturing.Instance != null) {
 			for (int i = 0; i < posUV.Length; i++) {
-				shore [i] = (((Object)(object)TerrainTexturing.Instance != (Object)null) ? TerrainTexturing.Instance.GetCoarseVectorToShore (posUV [i]) : Vector3.zero);
+				shore [i] = ((TerrainTexturing.Instance != null) ? TerrainTexturing.Instance.GetCoarseVectorToShore (posUV [i]) : Vector3.zero);
 			}
 		}
 		for (int j = 0; j < pos.Length; j++) {
-			terrainHeight [j] = (((Object)(object)TerrainMeta.HeightMap != (Object)null) ? TerrainMeta.HeightMap.GetHeightFast (posUV [j]) : 0f);
-			if ((Object)(object)Instance != (Object)null) {
-				waterHeight [j] = Instance.oceanSimulation.GetHeight (Vector3Ex.XZ3D (pos [j]));
+			terrainHeight [j] = ((TerrainMeta.HeightMap != null) ? TerrainMeta.HeightMap.GetHeightFast (posUV [j]) : 0f);
+			if (Instance != null) {
+				waterHeight [j] = Instance.oceanSimulation.GetHeight (pos [j].XZ3D ());
 			}
 		}
 		float num = OceanLevel;
 		for (int k = 0; k < posUV.Length; k++) {
 			Vector2 uv = posUV [k];
-			float num2 = (((Object)(object)TerrainMeta.WaterMap != (Object)null) ? TerrainMeta.WaterMap.GetHeightFast (uv) : 0f);
-			if ((Object)(object)Instance != (Object)null && (double)num2 <= (double)num + 0.01) {
+			float num2 = ((TerrainMeta.WaterMap != null) ? TerrainMeta.WaterMap.GetHeightFast (uv) : 0f);
+			if (Instance != null && (double)num2 <= (double)num + 0.01) {
 				waterHeight [k] = num + waterHeight [k];
 			} else {
 				waterHeight [k] = num2;
@@ -213,8 +190,7 @@ public class WaterSystem : MonoBehaviour
 	[MethodImpl (MethodImplOptions.AggressiveInlining)]
 	public static float GetHeight (Vector3 pos)
 	{
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)Instance == (Object)null) {
+		if (Instance == null) {
 			return OceanLevel;
 		}
 		return Instance.oceanSimulation.GetHeight (pos) + OceanLevel;
@@ -222,13 +198,12 @@ public class WaterSystem : MonoBehaviour
 
 	public static Vector3 GetNormal (Vector3 pos)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
 		return Vector3.up;
 	}
 
 	public static float MinLevel ()
 	{
-		if ((Object)(object)Instance == (Object)null) {
+		if (Instance == null) {
 			return OceanLevel;
 		}
 		return Instance.oceanSimulation.MinLevel () + OceanLevel;
@@ -236,7 +211,7 @@ public class WaterSystem : MonoBehaviour
 
 	public static float MaxLevel ()
 	{
-		if ((Object)(object)Instance == (Object)null) {
+		if (Instance == null) {
 			return OceanLevel;
 		}
 		return Instance.oceanSimulation.MaxLevel () + OceanLevel;
@@ -244,14 +219,12 @@ public class WaterSystem : MonoBehaviour
 
 	public static void RegisterBody (WaterBody body)
 	{
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
 		if (body.Type == WaterBodyType.Ocean) {
-			if ((Object)(object)Ocean == (Object)null) {
+			if (Ocean == null) {
 				Ocean = body;
-				body.Transform.position = Vector3Ex.WithY (body.Transform.position, OceanLevel);
-			} else if ((Object)(object)Ocean != (Object)(object)body) {
-				Debug.LogWarning ((object)"[Water] Ocean body is already registered. Ignoring call because only one is allowed.");
+				body.Transform.position = body.Transform.position.WithY (OceanLevel);
+			} else if (Ocean != body) {
+				Debug.LogWarning ("[Water] Ocean body is already registered. Ignoring call because only one is allowed.");
 				return;
 			}
 		}
@@ -260,7 +233,7 @@ public class WaterSystem : MonoBehaviour
 
 	public static void UnregisterBody (WaterBody body)
 	{
-		if ((Object)(object)body == (Object)(object)Ocean) {
+		if (body == Ocean) {
 			Ocean = null;
 		}
 		WaterBodies.Remove (body);
@@ -268,10 +241,8 @@ public class WaterSystem : MonoBehaviour
 
 	private static void UpdateOceanLevel ()
 	{
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)Ocean != (Object)null) {
-			Ocean.Transform.position = Vector3Ex.WithY (Ocean.Transform.position, OceanLevel);
+		if (Ocean != null) {
+			Ocean.Transform.position = Ocean.Transform.position.WithY (OceanLevel);
 		}
 		foreach (WaterBody waterBody in WaterBodies) {
 			waterBody.OnOceanLevelChanged (OceanLevel);
@@ -281,15 +252,15 @@ public class WaterSystem : MonoBehaviour
 	private void UpdateOceanSimulation ()
 	{
 		if (Water.scaled_time) {
-			WaveTime += Time.deltaTime;
+			WaveTime += UnityEngine.Time.deltaTime;
 		} else {
-			WaveTime = Time.realtimeSinceStartup;
+			WaveTime = UnityEngine.Time.realtimeSinceStartup;
 		}
 		if (Weather.ocean_time >= 0f) {
 			WaveTime = Weather.ocean_time;
 		}
-		float beaufort = (Object.op_Implicit ((Object)(object)SingletonComponent<Climate>.Instance) ? SingletonComponent<Climate>.Instance.WeatherState.OceanScale : 4f);
-		oceanSimulation?.Update (WaveTime, Time.deltaTime, beaufort);
+		float beaufort = (SingletonComponent<Climate>.Instance ? SingletonComponent<Climate>.Instance.WeatherState.OceanScale : 4f);
+		oceanSimulation?.Update (WaveTime, UnityEngine.Time.deltaTime, beaufort);
 	}
 
 	public void Refresh ()

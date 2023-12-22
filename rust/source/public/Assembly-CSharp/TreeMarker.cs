@@ -1,4 +1,3 @@
-using System;
 using Network;
 using UnityEngine;
 
@@ -16,10 +15,7 @@ public class TreeMarker : BaseEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("TreeMarker.OnRpcMessage", 0);
-		try {
-		} finally {
-			((IDisposable)val)?.Dispose ();
+		using (TimeWarning.New ("TreeMarker.OnRpcMessage")) {
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
