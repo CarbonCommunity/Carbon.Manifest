@@ -31,7 +31,7 @@ public class ProgressBar : UIBehaviour
 
 	public bool InstanceIsOpen {
 		get {
-			if ((Object)(object)Instance == (Object)(object)this) {
+			if (Instance == this) {
 				return isOpen;
 			}
 			return Instance.InstanceIsOpen;

@@ -22,7 +22,7 @@ public class TriggerNotify : TriggerBase, IPrefabPreProcess
 	internal override void OnObjects ()
 	{
 		base.OnObjects ();
-		if (toNotify != null || ((Object)(object)notifyTarget != (Object)null && notifyTarget.TryGetComponent<INotifyTrigger> (ref toNotify))) {
+		if (toNotify != null || (notifyTarget != null && notifyTarget.TryGetComponent<INotifyTrigger> (out toNotify))) {
 			toNotify.OnObjects (this);
 		}
 	}
@@ -30,7 +30,7 @@ public class TriggerNotify : TriggerBase, IPrefabPreProcess
 	internal override void OnEmpty ()
 	{
 		base.OnEmpty ();
-		if (toNotify != null || ((Object)(object)notifyTarget != (Object)null && notifyTarget.TryGetComponent<INotifyTrigger> (ref toNotify))) {
+		if (toNotify != null || (notifyTarget != null && notifyTarget.TryGetComponent<INotifyTrigger> (out toNotify))) {
 			toNotify.OnEmpty ();
 		}
 	}
@@ -38,7 +38,7 @@ public class TriggerNotify : TriggerBase, IPrefabPreProcess
 	public void PreProcess (IPrefabProcessor preProcess, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
 	{
 		if ((!clientside || !runClientside) && (!serverside || !runServerside)) {
-			preProcess.RemoveComponent ((Component)(object)this);
+			preProcess.RemoveComponent (this);
 		}
 	}
 }

@@ -8,7 +8,7 @@ public class MissionEntity : BaseMonoBehaviour, IOnParentDestroying
 
 	public void OnParentDestroying ()
 	{
-		Object.Destroy ((Object)(object)this);
+		Object.Destroy (this);
 	}
 
 	public virtual void Setup (BasePlayer assignee, BaseMission.MissionInstance instance, bool wantsSuccessCleanup, bool wantsFailedCleanup)
@@ -16,14 +16,14 @@ public class MissionEntity : BaseMonoBehaviour, IOnParentDestroying
 		cleanupOnMissionFailed = wantsFailedCleanup;
 		cleanupOnMissionSuccess = wantsSuccessCleanup;
 		BaseEntity entity = GetEntity ();
-		if (Object.op_Implicit ((Object)(object)entity)) {
-			((Component)entity).SendMessage ("MissionSetupPlayer", (object)assignee, (SendMessageOptions)1);
+		if ((bool)entity) {
+			entity.SendMessage ("MissionSetupPlayer", assignee, SendMessageOptions.DontRequireReceiver);
 		}
 	}
 
 	public virtual void MissionStarted (BasePlayer assignee, BaseMission.MissionInstance instance)
 	{
-		IMissionEntityListener[] componentsInChildren = ((Component)this).GetComponentsInChildren<IMissionEntityListener> ();
+		IMissionEntityListener[] componentsInChildren = GetComponentsInChildren<IMissionEntityListener> ();
 		for (int i = 0; i < componentsInChildren.Length; i++) {
 			componentsInChildren [i].MissionStarted (assignee, instance);
 		}
@@ -31,7 +31,7 @@ public class MissionEntity : BaseMonoBehaviour, IOnParentDestroying
 
 	public virtual void MissionEnded (BasePlayer assignee, BaseMission.MissionInstance instance)
 	{
-		IMissionEntityListener[] componentsInChildren = ((Component)this).GetComponentsInChildren<IMissionEntityListener> ();
+		IMissionEntityListener[] componentsInChildren = GetComponentsInChildren<IMissionEntityListener> ();
 		for (int i = 0; i < componentsInChildren.Length; i++) {
 			componentsInChildren [i].MissionEnded (assignee, instance);
 		}
@@ -40,7 +40,7 @@ public class MissionEntity : BaseMonoBehaviour, IOnParentDestroying
 		}
 		if ((cleanupOnMissionSuccess && (instance.status == BaseMission.MissionStatus.Completed || instance.status == BaseMission.MissionStatus.Accomplished)) || (cleanupOnMissionFailed && instance.status == BaseMission.MissionStatus.Failed)) {
 			BaseEntity entity = GetEntity ();
-			if (Object.op_Implicit ((Object)(object)entity)) {
+			if ((bool)entity) {
 				entity.Kill ();
 			}
 		}
@@ -48,6 +48,6 @@ public class MissionEntity : BaseMonoBehaviour, IOnParentDestroying
 
 	public BaseEntity GetEntity ()
 	{
-		return ((Component)this).GetComponent<BaseEntity> ();
+		return GetComponent<BaseEntity> ();
 	}
 }

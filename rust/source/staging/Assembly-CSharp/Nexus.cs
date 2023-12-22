@@ -6,7 +6,7 @@ using UnityEngine;
 [Factory ("nexus")]
 public class Nexus : ConsoleSystem
 {
-	public static readonly Phrase RedirectPhrase = new Phrase ("loading.redirect", "Switching servers");
+	public static readonly Translate.Phrase RedirectPhrase = new Translate.Phrase ("loading.redirect", "Switching servers");
 
 	private const string DefaultEndpoint = "https://api.facepunch.com/api/nexus/";
 
@@ -65,7 +65,7 @@ public class Nexus : ConsoleSystem
 			arg.ReplyWith ("Server is not connected to a nexus");
 			return;
 		}
-		string text = arg.GetString (0, "")?.Trim ();
+		string text = arg.GetString (0)?.Trim ();
 		if (string.IsNullOrWhiteSpace (text)) {
 			arg.ReplyWith ("Usage: nexus.transfer <target_zone>");
 			return;
@@ -75,7 +75,7 @@ public class Nexus : ConsoleSystem
 			return;
 		}
 		BasePlayer basePlayer = arg.Connection.player as BasePlayer;
-		if ((Object)(object)basePlayer == (Object)null) {
+		if (basePlayer == null) {
 			arg.ReplyWith ("Must be run as a player");
 		} else {
 			NexusServer.TransferEntity (basePlayer, text, "console");
@@ -99,7 +99,7 @@ public class Nexus : ConsoleSystem
 			arg.ReplyWith ("Server is not connected to a nexus");
 			return;
 		}
-		string @string = arg.GetString (0, "");
+		string @string = arg.GetString (0);
 		if (string.IsNullOrWhiteSpace (@string)) {
 			arg.ReplyWith ("Usage: nexus.ping <target_zone>");
 		} else {
@@ -107,11 +107,11 @@ public class Nexus : ConsoleSystem
 		}
 		static async void SendPing (BasePlayer requester, string to)
 		{
-			Request val = Pool.Get<Request> ();
-			val.ping = Pool.Get<PingRequest> ();
+			Request request = Pool.Get<Request> ();
+			request.ping = Pool.Get<PingRequest> ();
 			float startTime = Time.realtimeSinceStartup;
 			try {
-				await NexusServer.ZoneRpc (to, val);
+				await NexusServer.ZoneRpc (to, request);
 				float num = Time.realtimeSinceStartup - startTime;
 				requester?.ConsoleMessage ($"Ping took {num:F3}s");
 			} catch (Exception arg2) {
@@ -130,11 +130,11 @@ public class Nexus : ConsoleSystem
 		}
 		static async void SendBroadcastPing (BasePlayer requester)
 		{
-			Request val = Pool.Get<Request> ();
-			val.ping = Pool.Get<PingRequest> ();
+			Request request = Pool.Get<Request> ();
+			request.ping = Pool.Get<PingRequest> ();
 			float startTime = Time.realtimeSinceStartup;
 			try {
-				using NexusRpcResult nexusRpcResult = await NexusServer.BroadcastRpc (val);
+				using NexusRpcResult nexusRpcResult = await NexusServer.BroadcastRpc (request);
 				float num = Time.realtimeSinceStartup - startTime;
 				string arg2 = string.Join (", ", nexusRpcResult.Responses.Keys);
 				requester?.ConsoleMessage ($"Broadcast ping took {num:F3}s, response received from zones: {arg2}");

@@ -6,30 +6,20 @@ public static class ClanLogExtensions
 {
 	public static ClanLog ToProto (this ClanLogs clanLogs)
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0090: Unknown result type (might be due to invalid IL or missing references)
-		List<Entry> list = Pool.GetList<Entry> ();
-		foreach (ClanLogEntry entry in clanLogs.Entries) {
-			Entry val = Pool.Get<Entry> ();
-			val.timestamp = entry.Timestamp;
-			val.eventKey = entry.EventKey;
-			val.arg1 = entry.Arg1;
-			val.arg2 = entry.Arg2;
-			val.arg3 = entry.Arg3;
-			val.arg4 = entry.Arg4;
-			list.Add (val);
+		List<ClanLog.Entry> list = Pool.GetList<ClanLog.Entry> ();
+		foreach (ClanLogEntry entry2 in clanLogs.Entries) {
+			ClanLog.Entry entry = Pool.Get<ClanLog.Entry> ();
+			entry.timestamp = entry2.Timestamp;
+			entry.eventKey = entry2.EventKey;
+			entry.arg1 = entry2.Arg1;
+			entry.arg2 = entry2.Arg2;
+			entry.arg3 = entry2.Arg3;
+			entry.arg4 = entry2.Arg4;
+			list.Add (entry);
 		}
-		ClanLog obj = Pool.Get<ClanLog> ();
-		obj.clanId = clanLogs.ClanId;
-		obj.logEntries = list;
-		return obj;
+		ClanLog clanLog = Pool.Get<ClanLog> ();
+		clanLog.clanId = clanLogs.ClanId;
+		clanLog.logEntries = list;
+		return clanLog;
 	}
 }

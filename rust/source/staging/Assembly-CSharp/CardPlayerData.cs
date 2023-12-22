@@ -89,7 +89,7 @@ public class CardPlayerData : IDisposable
 
 	public virtual void Dispose ()
 	{
-		Pool.FreeList<PlayingCard> (ref Cards);
+		Pool.FreeList (ref Cards);
 		if (isServer) {
 			CancelTurnTimer ();
 		}
@@ -99,10 +99,10 @@ public class CardPlayerData : IDisposable
 	{
 		if (isServer) {
 			StorageContainer storage = GetStorage ();
-			if ((Object)(object)storage != (Object)null) {
+			if (storage != null) {
 				return storage.inventory.GetAmount (scrapItemID, onlyUsableAmounts: true);
 			}
-			Debug.LogError ((object)(GetType ().Name + ": Couldn't get player storage."));
+			Debug.LogError (GetType ().Name + ": Couldn't get player storage.");
 		}
 		return 0;
 	}
@@ -227,31 +227,31 @@ public class CardPlayerData : IDisposable
 
 	public virtual void Save (CardGame syncData)
 	{
-		CardPlayer val = Pool.Get<CardPlayer> ();
-		val.userid = UserID;
-		val.cards = Pool.GetList<int> ();
+		CardGame.CardPlayer cardPlayer = Pool.Get<CardGame.CardPlayer> ();
+		cardPlayer.userid = UserID;
+		cardPlayer.cards = Pool.GetList<int> ();
 		foreach (PlayingCard card in Cards) {
-			val.cards.Add (SendCardDetails ? card.GetIndex () : (-1));
+			cardPlayer.cards.Add (SendCardDetails ? card.GetIndex () : (-1));
 		}
-		val.scrap = GetScrapAmount ();
-		val.state = (int)State;
-		val.availableInputs = availableInputs;
-		val.betThisRound = betThisRound;
-		val.betThisTurn = betThisTurn;
-		val.leftRoundEarly = LeftRoundEarly;
-		val.sendCardDetails = SendCardDetails;
-		syncData.players.Add (val);
+		cardPlayer.scrap = GetScrapAmount ();
+		cardPlayer.state = (int)State;
+		cardPlayer.availableInputs = availableInputs;
+		cardPlayer.betThisRound = betThisRound;
+		cardPlayer.betThisTurn = betThisTurn;
+		cardPlayer.leftRoundEarly = LeftRoundEarly;
+		cardPlayer.sendCardDetails = SendCardDetails;
+		syncData.players.Add (cardPlayer);
 	}
 
 	public void StartTurnTimer (Action<CardPlayerData> callback, float maxTurnTime)
 	{
 		turnTimerCallback = callback;
-		((FacepunchBehaviour)SingletonComponent<InvokeHandler>.Instance).Invoke ((Action)TimeoutTurn, maxTurnTime);
+		SingletonComponent<InvokeHandler>.Instance.Invoke (TimeoutTurn, maxTurnTime);
 	}
 
 	public void CancelTurnTimer ()
 	{
-		((FacepunchBehaviour)SingletonComponent<InvokeHandler>.Instance).CancelInvoke ((Action)TimeoutTurn);
+		SingletonComponent<InvokeHandler>.Instance.CancelInvoke (TimeoutTurn);
 	}
 
 	public void TimeoutTurn ()

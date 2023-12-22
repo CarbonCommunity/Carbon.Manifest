@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public class NPCPlayerNavigatorTester : BaseMonoBehaviour
 {
 	public BasePathNode TargetNode;
@@ -8,8 +6,8 @@ public class NPCPlayerNavigatorTester : BaseMonoBehaviour
 
 	private void Update ()
 	{
-		if ((Object)(object)TargetNode != (Object)(object)currentNode) {
-			((Component)this).GetComponent<BaseNavigator> ().SetDestination (TargetNode.Path, TargetNode, 0.5f);
+		if (TargetNode != currentNode) {
+			GetComponent<BaseNavigator> ().SetDestination (TargetNode.Path, TargetNode, 0.5f);
 			currentNode = TargetNode;
 		}
 	}

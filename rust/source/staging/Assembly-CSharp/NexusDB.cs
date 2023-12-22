@@ -13,60 +13,60 @@ public class NexusDB : Database
 
 	public void Initialize ()
 	{
-		if (!((Database)this).TableExists ("seen")) {
-			((Database)this).Execute ("CREATE TABLE seen (id BLOB PRIMARY KEY)");
+		if (!TableExists ("seen")) {
+			Execute ("CREATE TABLE seen (id BLOB PRIMARY KEY)");
 		}
-		if (!((Database)this).TableExists ("journal")) {
-			((Database)this).Execute ("CREATE TABLE journal (id BLOB PRIMARY KEY, time INTEGER, data BLOB)");
+		if (!TableExists ("journal")) {
+			Execute ("CREATE TABLE journal (id BLOB PRIMARY KEY, time INTEGER, data BLOB)");
 		} else {
-			JournalCount = ((Database)this).Query<int> ("SELECT COUNT(*) FROM journal");
+			JournalCount = Query<int> ("SELECT COUNT(*) FROM journal");
 			if (JournalCount > 0) {
-				long seconds = ((Database)this).Query<long> ("SELECT MIN(time) FROM journal");
+				long seconds = Query<long> ("SELECT MIN(time) FROM journal");
 				OldestJournal = DateTimeOffset.FromUnixTimeSeconds (seconds);
 			} else {
 				OldestJournal = null;
 			}
 		}
-		if (!((Database)this).TableExists ("transferred")) {
-			((Database)this).Execute ("CREATE TABLE transferred (id INTEGER PRIMARY KEY)");
+		if (!TableExists ("transferred")) {
+			Execute ("CREATE TABLE transferred (id INTEGER PRIMARY KEY)");
 		} else {
-			TransferredCount = ((Database)this).Query<int> ("SELECT COUNT(*) FROM transferred");
+			TransferredCount = Query<int> ("SELECT COUNT(*) FROM transferred");
 		}
 	}
 
 	public bool Seen (Guid id)
 	{
-		((Database)this).Execute<Guid> ("INSERT INTO seen(id) VALUES(?) ON CONFLICT DO NOTHING", id);
-		return ((Database)this).AffectedRows > 0;
+		Execute ("INSERT INTO seen(id) VALUES(?) ON CONFLICT DO NOTHING", id);
+		return base.AffectedRows > 0;
 	}
 
 	public bool SeenJournaled (Guid id, byte[] data)
 	{
-		long num = DateTimeOffset.UtcNow.ToUnixTimeSeconds ();
-		((Database)this).BeginTransaction ();
+		long arg = DateTimeOffset.UtcNow.ToUnixTimeSeconds ();
+		BeginTransaction ();
 		try {
-			((Database)this).Execute<Guid> ("INSERT INTO seen(id) VALUES(?) ON CONFLICT DO NOTHING", id);
-			if (((Database)this).AffectedRows <= 0) {
-				((Database)this).Commit ();
+			Execute ("INSERT INTO seen(id) VALUES(?) ON CONFLICT DO NOTHING", id);
+			if (base.AffectedRows <= 0) {
+				Commit ();
 				return false;
 			}
-			((Database)this).Execute<Guid, long, byte[]> ("INSERT INTO journal(id, time, data) VALUES(?, ?, ?)", id, num, data);
+			Execute ("INSERT INTO journal(id, time, data) VALUES(?, ?, ?)", id, arg, data);
 			JournalCount++;
 			if (!OldestJournal.HasValue) {
 				OldestJournal = DateTimeOffset.UtcNow;
 			}
-			((Database)this).Commit ();
+			Commit ();
 			return true;
 		} catch {
-			((Database)this).Rollback ();
+			Rollback ();
 			throw;
 		}
 	}
 
 	public List<(Guid Id, long Time, byte[] Data)> ReadJournal ()
 	{
-		IntPtr intPtr = ((Database)this).Prepare ("SELECT id, time, data FROM journal ORDER BY time ASC");
-		return ((Database)this).ExecuteAndReadQueryResults<(Guid, long, byte[])> (intPtr, (Func<IntPtr, (Guid, long, byte[])>)ReadJournalRow, true).ToList ();
+		IntPtr stmHandle = Prepare ("SELECT id, time, data FROM journal ORDER BY time ASC");
+		return ExecuteAndReadQueryResults (stmHandle, ReadJournalRow).ToList ();
 	}
 
 	private static (Guid, long, byte[]) ReadJournalRow (IntPtr stmHandle)
@@ -79,47 +79,44 @@ public class NexusDB : Database
 
 	public void ClearJournal ()
 	{
-		((Database)this).Execute ("DELETE FROM journal");
+		Execute ("DELETE FROM journal");
 		JournalCount = 0;
 		OldestJournal = null;
 	}
 
 	public void MarkTransferred (HashSet<NetworkableId> entityIds)
 	{
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0031: Unknown result type (might be due to invalid IL or missing references)
 		if (entityIds == null || entityIds.Count == 0) {
 			return;
 		}
-		IntPtr intPtr = ((Database)this).Prepare ("INSERT INTO transferred(id) VALUES(?) ON CONFLICT DO NOTHING");
+		IntPtr stmHandle = Prepare ("INSERT INTO transferred(id) VALUES(?) ON CONFLICT DO NOTHING");
 		try {
-			((Database)this).BeginTransaction ();
+			BeginTransaction ();
 			try {
 				foreach (NetworkableId entityId in entityIds) {
-					Database.Bind<ulong> (intPtr, 1, entityId.Value);
-					((Database)this).ExecuteQuery (intPtr, false);
+					Database.Bind (stmHandle, 1, entityId.Value);
+					ExecuteQuery (stmHandle, finalize: false);
 				}
-				((Database)this).Commit ();
+				Commit ();
 				TransferredCount += entityIds.Count;
 			} catch {
-				((Database)this).Rollback ();
+				Rollback ();
 				throw;
 			}
 		} finally {
-			((Database)this).Finalize (intPtr);
+			Finalize (stmHandle);
 		}
 	}
 
 	public List<NetworkableId> ReadTransferred ()
 	{
-		IntPtr intPtr = ((Database)this).Prepare ("SELECT id FROM transferred");
-		return ((Database)this).ExecuteAndReadQueryResults<NetworkableId> (intPtr, (Func<IntPtr, NetworkableId>)((IntPtr h) => new NetworkableId ((ulong)Database.GetColumnValue<uint> (h, 0))), true).ToList ();
+		IntPtr stmHandle = Prepare ("SELECT id FROM transferred");
+		return ExecuteAndReadQueryResults (stmHandle, (IntPtr h) => new NetworkableId (Database.GetColumnValue<uint> (h, 0))).ToList ();
 	}
 
 	public void ClearTransferred ()
 	{
-		((Database)this).Execute ("DELETE FROM transferred");
+		Execute ("DELETE FROM transferred");
 		TransferredCount = 0;
 	}
 }

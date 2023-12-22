@@ -9,8 +9,8 @@ public class MeshToggle : MonoBehaviour
 	public void SwitchRenderer (int index)
 	{
 		if (RendererMeshes.Length != 0) {
-			MeshFilter component = ((Component)this).GetComponent<MeshFilter> ();
-			if (Object.op_Implicit ((Object)(object)component)) {
+			MeshFilter component = GetComponent<MeshFilter> ();
+			if ((bool)component) {
 				component.sharedMesh = RendererMeshes [Mathf.Clamp (index, 0, RendererMeshes.Length - 1)];
 			}
 		}
@@ -25,8 +25,8 @@ public class MeshToggle : MonoBehaviour
 	public void SwitchCollider (int index)
 	{
 		if (ColliderMeshes.Length != 0) {
-			MeshCollider component = ((Component)this).GetComponent<MeshCollider> ();
-			if (Object.op_Implicit ((Object)(object)component)) {
+			MeshCollider component = GetComponent<MeshCollider> ();
+			if ((bool)component) {
 				component.sharedMesh = ColliderMeshes [Mathf.Clamp (index, 0, ColliderMeshes.Length - 1)];
 			}
 		}

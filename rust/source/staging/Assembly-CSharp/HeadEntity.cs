@@ -40,9 +40,8 @@ public class HeadEntity : BaseEntity
 		if (CurrentTrophyData.clothing == null) {
 			CurrentTrophyData.clothing = Pool.GetList<int> ();
 		}
-		ItemModWearable itemModWearable = default(ItemModWearable);
 		foreach (Item item in container.itemList) {
-			if (((Component)item.info).TryGetComponent<ItemModWearable> (ref itemModWearable) && itemModWearable.entityPrefab.isValid && (itemModWearable.entityPrefab.Get ().GetComponent<Wearable> ().occupationOver & (Wearable.OccupationSlots.HeadTop | Wearable.OccupationSlots.Face | Wearable.OccupationSlots.HeadBack | Wearable.OccupationSlots.Mouth | Wearable.OccupationSlots.Eyes)) != 0) {
+			if (item.info.TryGetComponent<ItemModWearable> (out var component) && component.entityPrefab.isValid && (component.entityPrefab.Get ().GetComponent<Wearable> ().occupationOver & (Wearable.OccupationSlots.HeadTop | Wearable.OccupationSlots.Face | Wearable.OccupationSlots.HeadBack | Wearable.OccupationSlots.Mouth | Wearable.OccupationSlots.Eyes)) != 0) {
 				CurrentTrophyData.clothing.Add (item.info.itemid);
 			}
 		}
@@ -68,7 +67,7 @@ public class HeadEntity : BaseEntity
 			InitTrophyData ();
 			info.msg.headData.CopyTo (CurrentTrophyData);
 		} else if (CurrentTrophyData != null) {
-			Pool.Free<HeadData> (ref CurrentTrophyData);
+			Pool.Free (ref CurrentTrophyData);
 		}
 	}
 

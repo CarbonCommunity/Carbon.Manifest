@@ -28,8 +28,6 @@ public class CargoPlane : BaseEntity
 
 	public override void PostServerLoad ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
 		base.PostServerLoad ();
 		if (dropPosition == Vector3.zero) {
 			Initialize ();
@@ -38,11 +36,6 @@ public class CargoPlane : BaseEntity
 
 	private void Initialize ()
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
 		if (dropPosition == Vector3.zero) {
 			dropPosition = RandomDropPosition ();
 		}
@@ -51,21 +44,12 @@ public class CargoPlane : BaseEntity
 
 	public void InitDropPosition (Vector3 newDropPosition)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
 		dropPosition = newDropPosition;
 		dropPosition.y = 0f;
 	}
 
 	public Vector3 RandomDropPosition ()
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0005: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005c: Unknown result type (might be due to invalid IL or missing references)
 		Vector3 zero = Vector3.zero;
 		float num = 100f;
 		float x = TerrainMeta.Size.x;
@@ -78,38 +62,11 @@ public class CargoPlane : BaseEntity
 
 	public void UpdateDropPosition (Vector3 newDropPosition)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0072: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0081: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0100: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0111: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0117: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0121: Unknown result type (might be due to invalid IL or missing references)
-		//IL_012c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_012d: Unknown result type (might be due to invalid IL or missing references)
 		float x = TerrainMeta.Size.x;
 		float y = TerrainMeta.HighestPoint.y + 250f;
 		startPos = Vector3Ex.Range (-1f, 1f);
 		startPos.y = 0f;
-		((Vector3)(ref startPos)).Normalize ();
+		startPos.Normalize ();
 		startPos *= x * 2f;
 		startPos.y = y;
 		endPos = startPos * -1f;
@@ -118,19 +75,13 @@ public class CargoPlane : BaseEntity
 		endPos += newDropPosition;
 		secondsToTake = Vector3.Distance (startPos, endPos) / 50f;
 		secondsToTake *= Random.Range (0.95f, 1.05f);
-		((Component)this).transform.position = startPos;
-		((Component)this).transform.rotation = Quaternion.LookRotation (endPos - startPos);
+		base.transform.position = startPos;
+		base.transform.rotation = Quaternion.LookRotation (endPos - startPos);
 		dropPosition = newDropPosition;
 	}
 
 	private void Update ()
 	{
-		//IL_0090: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0096: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0066: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006c: Unknown result type (might be due to invalid IL or missing references)
 		if (!base.isServer) {
 			return;
 		}
@@ -138,14 +89,14 @@ public class CargoPlane : BaseEntity
 		float num = Mathf.InverseLerp (0f, secondsToTake, secondsTaken);
 		if (!dropped && num >= 0.5f) {
 			dropped = true;
-			BaseEntity baseEntity = GameManager.server.CreateEntity (prefabDrop.resourcePath, ((Component)this).transform.position);
-			if (Object.op_Implicit ((Object)(object)baseEntity)) {
+			BaseEntity baseEntity = GameManager.server.CreateEntity (prefabDrop.resourcePath, base.transform.position);
+			if ((bool)baseEntity) {
 				baseEntity.globalBroadcast = true;
 				baseEntity.Spawn ();
 			}
 		}
-		((Component)this).transform.position = Vector3.Lerp (startPos, endPos, num);
-		((Component)this).transform.hasChanged = true;
+		base.transform.position = Vector3.Lerp (startPos, endPos, num);
+		base.transform.hasChanged = true;
 		if (num >= 1f) {
 			Kill ();
 		}
@@ -153,15 +104,9 @@ public class CargoPlane : BaseEntity
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ac: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
 		if (base.isServer && info.forDisk) {
-			info.msg.cargoPlane = Pool.Get<CargoPlane> ();
+			info.msg.cargoPlane = Pool.Get<ProtoBuf.CargoPlane> ();
 			info.msg.cargoPlane.startPos = startPos;
 			info.msg.cargoPlane.endPos = endPos;
 			info.msg.cargoPlane.secondsToTake = secondsToTake;
@@ -173,12 +118,6 @@ public class CargoPlane : BaseEntity
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ac: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (base.isServer && info.fromDisk && info.msg.cargoPlane != null) {
 			startPos = info.msg.cargoPlane.startPos;

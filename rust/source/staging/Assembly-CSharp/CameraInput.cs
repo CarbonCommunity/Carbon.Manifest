@@ -10,12 +10,6 @@ public class CameraInput : BaseHandler<AppCameraInput>
 
 	public override void Execute ()
 	{
-		//IL_0078: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0082: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0087: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0092: Unknown result type (might be due to invalid IL or missing references)
 		if (!CameraRenderer.enabled) {
 			SendError ("not_enabled");
 			return;
@@ -29,22 +23,18 @@ public class CameraInput : BaseHandler<AppCameraInput>
 			inputState = new InputState ();
 			base.Client.InputState = inputState;
 		}
-		InputMessage val = Pool.Get<InputMessage> ();
-		val.buttons = base.Proto.buttons;
-		val.mouseDelta = Sanitize (Vector2.op_Implicit (base.Proto.mouseDelta));
-		val.aimAngles = Vector3.zero;
-		inputState.Flip (val);
-		Pool.Free<InputMessage> (ref val);
+		InputMessage obj = Pool.Get<InputMessage> ();
+		obj.buttons = base.Proto.buttons;
+		obj.mouseDelta = Sanitize (base.Proto.mouseDelta);
+		obj.aimAngles = Vector3.zero;
+		inputState.Flip (obj);
+		Pool.Free (ref obj);
 		base.Client.CurrentCamera.UserInput (inputState, new CameraViewerId (base.Client.ControllingSteamId, base.Client.ConnectionId));
 		SendSuccess ();
 	}
 
 	private static Vector3 Sanitize (Vector3 value)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
 		return new Vector3 (Sanitize (value.x), Sanitize (value.y), Sanitize (value.z));
 	}
 

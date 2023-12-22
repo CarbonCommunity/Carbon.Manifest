@@ -16,7 +16,7 @@ public class MinMax
 
 	public float Random ()
 	{
-		return Random.Range (x, y);
+		return UnityEngine.Random.Range (x, y);
 	}
 
 	public float Lerp (float t)

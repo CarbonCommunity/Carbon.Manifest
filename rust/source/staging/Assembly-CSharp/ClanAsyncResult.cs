@@ -4,7 +4,7 @@ using System.Diagnostics;
 using Facepunch;
 using UnityEngine;
 
-public sealed class ClanAsyncResult<T> : IPooled
+public sealed class ClanAsyncResult<T> : Pool.IPooled
 {
 	private readonly List<Action<T>> _callbacks = new List<Action<T>> (4);
 
@@ -36,8 +36,8 @@ public sealed class ClanAsyncResult<T> : IPooled
 		foreach (Action<T> callback in _callbacks) {
 			try {
 				callback (_result);
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 		_callbacks.Clear ();
@@ -53,8 +53,8 @@ public sealed class ClanAsyncResult<T> : IPooled
 			try {
 				callback (_result);
 				return;
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 				return;
 			}
 		}
@@ -69,12 +69,12 @@ public sealed class ClanAsyncResult<T> : IPooled
 		_result = default(T);
 	}
 
-	void IPooled.EnterPool ()
+	void Pool.IPooled.EnterPool ()
 	{
 		Reset ();
 	}
 
-	void IPooled.LeavePool ()
+	void Pool.IPooled.LeavePool ()
 	{
 		Reset ();
 	}

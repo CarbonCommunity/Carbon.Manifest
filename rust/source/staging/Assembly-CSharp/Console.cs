@@ -23,10 +23,10 @@ public class Console : ConsoleSystem
 	[Help ("Search the console for a particular string")]
 	public static IEnumerable<Output.Entry> search (Arg arg)
 	{
-		string search = arg.GetString (0, (string)null);
+		string search = arg.GetString (0, null);
 		if (search == null) {
 			return Enumerable.Empty<Output.Entry> ();
 		}
-		return Output.HistoryOutput.Where ((Output.Entry x) => x.Message.Length < 4096 && StringEx.Contains (x.Message, search, CompareOptions.IgnoreCase));
+		return Output.HistoryOutput.Where ((Output.Entry x) => x.Message.Length < 4096 && x.Message.Contains (search, CompareOptions.IgnoreCase));
 	}
 }

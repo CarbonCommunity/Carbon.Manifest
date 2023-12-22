@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Rust;
@@ -15,11 +14,11 @@ public class DirectionalDamageTrigger : TriggerBase
 	internal override GameObject InterestedInObject (GameObject obj)
 	{
 		obj = base.InterestedInObject (obj);
-		if ((Object)(object)obj == (Object)null) {
+		if (obj == null) {
 			return null;
 		}
 		BaseEntity baseEntity = obj.ToBaseEntity ();
-		if ((Object)(object)baseEntity == (Object)null) {
+		if (baseEntity == null) {
 			return null;
 		}
 		if (!(baseEntity is BaseCombatEntity)) {
@@ -28,29 +27,23 @@ public class DirectionalDamageTrigger : TriggerBase
 		if (baseEntity.isClient) {
 			return null;
 		}
-		return ((Component)baseEntity).gameObject;
+		return baseEntity.gameObject;
 	}
 
 	internal override void OnObjects ()
 	{
-		((FacepunchBehaviour)this).InvokeRepeating ((Action)OnTick, repeatRate, repeatRate);
+		InvokeRepeating (OnTick, repeatRate, repeatRate);
 	}
 
 	internal override void OnEmpty ()
 	{
-		((FacepunchBehaviour)this).CancelInvoke ((Action)OnTick);
+		CancelInvoke (OnTick);
 	}
 
 	private void OnTick ()
 	{
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0095: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ac: Unknown result type (might be due to invalid IL or missing references)
 		if (attackEffect.isValid) {
-			Effect.server.Run (attackEffect.resourcePath, ((Component)this).transform.position, Vector3.up);
+			Effect.server.Run (attackEffect.resourcePath, base.transform.position, Vector3.up);
 		}
 		if (entityContents == null) {
 			return;
@@ -59,13 +52,13 @@ public class DirectionalDamageTrigger : TriggerBase
 		foreach (BaseEntity baseEntity in array) {
 			if (baseEntity.IsValid ()) {
 				BaseCombatEntity baseCombatEntity = baseEntity as BaseCombatEntity;
-				if (!((Object)(object)baseCombatEntity == (Object)null)) {
+				if (!(baseCombatEntity == null)) {
 					HitInfo hitInfo = new HitInfo ();
 					hitInfo.damageTypes.Add (damageType);
 					hitInfo.DoHitEffects = true;
 					hitInfo.DidHit = true;
-					hitInfo.PointStart = ((Component)this).transform.position;
-					hitInfo.PointEnd = ((Component)baseCombatEntity).transform.position;
+					hitInfo.PointStart = base.transform.position;
+					hitInfo.PointEnd = baseCombatEntity.transform.position;
 					baseCombatEntity.Hurt (hitInfo);
 				}
 			}

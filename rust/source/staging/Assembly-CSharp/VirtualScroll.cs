@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Facepunch;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class VirtualScroll : MonoBehaviour
@@ -44,15 +43,15 @@ public class VirtualScroll : MonoBehaviour
 
 	public void Awake ()
 	{
-		((UnityEvent<Vector2>)(object)ScrollRect.onValueChanged).AddListener ((UnityAction<Vector2>)OnScrollChanged);
-		if ((Object)(object)DataSourceObject != (Object)null) {
+		ScrollRect.onValueChanged.AddListener (OnScrollChanged);
+		if (DataSourceObject != null) {
 			SetDataSource (DataSourceObject.GetComponent<IDataSource> ());
 		}
 	}
 
 	public void OnDestroy ()
 	{
-		((UnityEvent<Vector2>)(object)ScrollRect.onValueChanged).RemoveListener ((UnityAction<Vector2>)OnScrollChanged);
+		ScrollRect.onValueChanged.RemoveListener (OnScrollChanged);
 	}
 
 	private void OnScrollChanged (Vector2 pos)
@@ -87,18 +86,14 @@ public class VirtualScroll : MonoBehaviour
 
 	public void Rebuild ()
 	{
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0081: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009d: Unknown result type (might be due to invalid IL or missing references)
 		if (dataSource == null) {
 			return;
 		}
 		int itemCount = dataSource.GetItemCount ();
-		object obj = (((Object)(object)OverrideContentRoot != (Object)null) ? ((object)OverrideContentRoot) : ((object)/*isinst with value type is only supported in some contexts*/));
-		((RectTransform)obj).SetSizeWithCurrentAnchors ((Axis)1, (float)(BlockHeight * itemCount - ItemSpacing + Padding.top + Padding.bottom));
-		Rect rect = ScrollRect.viewport.rect;
-		int num = Mathf.Max (2, Mathf.CeilToInt (((Rect)(ref rect)).height / (float)BlockHeight));
-		int num2 = Mathf.FloorToInt ((((RectTransform)obj).anchoredPosition.y - (float)Padding.top) / (float)BlockHeight);
+		RectTransform obj = ((OverrideContentRoot != null) ? OverrideContentRoot : (ScrollRect.viewport.GetChild (0) as RectTransform));
+		obj.SetSizeWithCurrentAnchors (RectTransform.Axis.Vertical, BlockHeight * itemCount - ItemSpacing + Padding.top + Padding.bottom);
+		int num = Mathf.Max (2, Mathf.CeilToInt (ScrollRect.viewport.rect.height / (float)BlockHeight));
+		int num2 = Mathf.FloorToInt ((obj.anchoredPosition.y - (float)Padding.top) / (float)BlockHeight);
 		int num3 = num2 + num;
 		RecycleOutOfRange (num2, num3);
 		for (int i = num2; i <= num3; i++) {
@@ -130,47 +125,38 @@ public class VirtualScroll : MonoBehaviour
 
 	private void Recycle (int key)
 	{
-		GameObject val = ActivePool [key];
-		val.SetActive (false);
+		GameObject gameObject = ActivePool [key];
+		gameObject.SetActive (value: false);
 		ActivePool.Remove (key);
-		InactivePool.Push (val);
+		InactivePool.Push (gameObject);
 	}
 
 	private void BuildItem (int i)
 	{
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0084: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0106: Unknown result type (might be due to invalid IL or missing references)
 		if (i >= 0 && !ActivePool.ContainsKey (i)) {
 			GameObject item = GetItem ();
-			item.SetActive (true);
+			item.SetActive (value: true);
 			dataSource.SetItemData (i, item);
-			Transform transform = item.transform;
-			Transform obj = ((transform is RectTransform) ? transform : null);
-			((RectTransform)obj).anchorMin = new Vector2 (0f, 1f);
-			((RectTransform)obj).anchorMax = new Vector2 (1f, 1f);
-			((RectTransform)obj).pivot = new Vector2 (0.5f, 1f);
-			((RectTransform)obj).offsetMin = new Vector2 (0f, 0f);
-			((RectTransform)obj).offsetMax = new Vector2 (0f, (float)ItemHeight);
-			((RectTransform)obj).sizeDelta = new Vector2 ((float)((Padding.left + Padding.right) * -1), (float)ItemHeight);
-			((RectTransform)obj).anchoredPosition = new Vector2 ((float)(Padding.left - Padding.right) * 0.5f, (float)(-1 * (i * BlockHeight + Padding.top)));
+			RectTransform obj = item.transform as RectTransform;
+			obj.anchorMin = new Vector2 (0f, 1f);
+			obj.anchorMax = new Vector2 (1f, 1f);
+			obj.pivot = new Vector2 (0.5f, 1f);
+			obj.offsetMin = new Vector2 (0f, 0f);
+			obj.offsetMax = new Vector2 (0f, ItemHeight);
+			obj.sizeDelta = new Vector2 ((Padding.left + Padding.right) * -1, ItemHeight);
+			obj.anchoredPosition = new Vector2 ((float)(Padding.left - Padding.right) * 0.5f, -1 * (i * BlockHeight + Padding.top));
 			ActivePool [i] = item;
 		}
 	}
 
 	private GameObject GetItem ()
 	{
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
 		if (InactivePool.Count == 0) {
-			GameObject val = Object.Instantiate<GameObject> (SourceObject);
-			val.transform.SetParent ((Transform)(((Object)(object)OverrideContentRoot != (Object)null) ? ((object)OverrideContentRoot) : ((object)((Transform)ScrollRect.viewport).GetChild (0))), false);
-			val.transform.localScale = Vector3.one;
-			val.SetActive (false);
-			InactivePool.Push (val);
+			GameObject gameObject = Object.Instantiate (SourceObject);
+			gameObject.transform.SetParent ((OverrideContentRoot != null) ? OverrideContentRoot : ScrollRect.viewport.GetChild (0), worldPositionStays: false);
+			gameObject.transform.localScale = Vector3.one;
+			gameObject.SetActive (value: false);
+			InactivePool.Push (gameObject);
 		}
 		return InactivePool.Pop ();
 	}

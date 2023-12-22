@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Network;
@@ -14,50 +15,38 @@ public class ResourceContainer : EntityComponent<BaseEntity>
 	[NonSerialized]
 	public float lastAccessTime;
 
-	public int accessedSecondsAgo => (int)(Time.realtimeSinceStartup - lastAccessTime);
+	public int accessedSecondsAgo => (int)(UnityEngine.Time.realtimeSinceStartup - lastAccessTime);
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("ResourceContainer.OnRpcMessage", 0);
-		try {
-			if (rpc == 548378753 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("ResourceContainer.OnRpcMessage")) {
+			if (rpc == 548378753 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - StartLootingContainer "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - StartLootingContainer ");
 				}
-				TimeWarning val2 = TimeWarning.New ("StartLootingContainer", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("StartLootingContainer")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!BaseEntity.RPC_Server.IsVisible.Test (548378753u, "StartLootingContainer", GetBaseEntity (), player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							BaseEntity.RPCMessage rPCMessage = default(BaseEntity.RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							BaseEntity.RPCMessage msg2 = rPCMessage;
 							StartLootingContainer (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in StartLootingContainer");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -67,8 +56,8 @@ public class ResourceContainer : EntityComponent<BaseEntity>
 	private void StartLootingContainer (BaseEntity.RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
-		if (Object.op_Implicit ((Object)(object)player) && player.CanInteract () && lootable && player.inventory.loot.StartLootingEntity (base.baseEntity)) {
-			lastAccessTime = Time.realtimeSinceStartup;
+		if ((bool)player && player.CanInteract () && lootable && player.inventory.loot.StartLootingEntity (base.baseEntity)) {
+			lastAccessTime = UnityEngine.Time.realtimeSinceStartup;
 			player.inventory.loot.AddContainer (container);
 		}
 	}

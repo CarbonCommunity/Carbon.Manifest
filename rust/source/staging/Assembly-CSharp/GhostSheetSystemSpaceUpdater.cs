@@ -9,23 +9,23 @@ public class GhostSheetSystemSpaceUpdater : MonoBehaviour, IClientComponent
 
 	public void Awake ()
 	{
-		ezSoftBones = ((Component)this).GetComponents<EZSoftBone> ();
-		player = ((Component)this).gameObject.ToBaseEntity () as BasePlayer;
+		ezSoftBones = GetComponents<EZSoftBone> ();
+		player = base.gameObject.ToBaseEntity () as BasePlayer;
 	}
 
 	public void Update ()
 	{
-		if (ezSoftBones == null || ezSoftBones.Length == 0 || (Object)(object)player == (Object)null) {
+		if (ezSoftBones == null || ezSoftBones.Length == 0 || player == null) {
 			return;
 		}
 		BaseMountable mounted = player.GetMounted ();
-		if ((Object)(object)mounted != (Object)null) {
-			SetSimulateSpace (((Component)mounted).transform, collisionEnabled: false);
+		if (mounted != null) {
+			SetSimulateSpace (mounted.transform, collisionEnabled: false);
 			return;
 		}
 		BaseEntity parentEntity = player.GetParentEntity ();
-		if ((Object)(object)parentEntity != (Object)null) {
-			SetSimulateSpace (((Component)parentEntity).transform, collisionEnabled: true);
+		if (parentEntity != null) {
+			SetSimulateSpace (parentEntity.transform, collisionEnabled: true);
 		} else {
 			SetSimulateSpace (null, collisionEnabled: true);
 		}

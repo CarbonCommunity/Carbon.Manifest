@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch.Rust;
@@ -21,82 +22,61 @@ public class MedicalTool : AttackEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("MedicalTool.OnRpcMessage", 0);
-		try {
-			if (rpc == 789049461 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("MedicalTool.OnRpcMessage")) {
+			if (rpc == 789049461 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - UseOther "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - UseOther ");
 				}
-				TimeWarning val2 = TimeWarning.New ("UseOther", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("UseOther")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsActiveItem.Test (789049461u, "UseOther", this, player)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							UseOther (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in UseOther");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 2918424470u && (Object)(object)player != (Object)null) {
+			if (rpc == 2918424470u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - UseSelf "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - UseSelf ");
 				}
-				TimeWarning val2 = TimeWarning.New ("UseSelf", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("UseSelf")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsActiveItem.Test (2918424470u, "UseSelf", this, player)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg3 = rPCMessage;
 							UseSelf (msg3);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in UseSelf");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -105,15 +85,12 @@ public class MedicalTool : AttackEntity
 	[RPC_Server.IsActiveItem]
 	private void UseOther (RPCMessage msg)
 	{
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0067: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer player = msg.player;
 		if (!VerifyClientAttack (player)) {
 			SendNetworkUpdate ();
 		} else if (player.CanInteract () && HasItemAmount () && canUseOnOther) {
 			BasePlayer basePlayer = BaseNetworkable.serverEntities.Find (msg.read.EntityID ()) as BasePlayer;
-			if ((Object)(object)basePlayer != (Object)null && Vector3.Distance (((Component)basePlayer).transform.position, ((Component)player).transform.position) < 4f) {
+			if (basePlayer != null && Vector3.Distance (basePlayer.transform.position, player.transform.position) < 4f) {
 				ClientRPCPlayer (null, player, "Reset");
 				GiveEffectsTo (basePlayer);
 				UseItemAmount (1);
@@ -143,7 +120,7 @@ public class MedicalTool : AttackEntity
 			return;
 		}
 		BasePlayer ownerPlayer = GetOwnerPlayer ();
-		if (!((Object)(object)ownerPlayer == (Object)null) && ownerPlayer.CanInteract () && HasItemAmount ()) {
+		if (!(ownerPlayer == null) && ownerPlayer.CanInteract () && HasItemAmount ()) {
 			GiveEffectsTo (ownerPlayer);
 			UseItemAmount (1);
 			StartAttackCooldown (repeatDelay);
@@ -156,18 +133,18 @@ public class MedicalTool : AttackEntity
 
 	private void GiveEffectsTo (BasePlayer player)
 	{
-		if (!Object.op_Implicit ((Object)(object)player)) {
+		if (!player) {
 			return;
 		}
 		ItemDefinition ownerItemDefinition = GetOwnerItemDefinition ();
-		ItemModConsumable component = ((Component)ownerItemDefinition).GetComponent<ItemModConsumable> ();
-		if (!Object.op_Implicit ((Object)(object)component)) {
-			Debug.LogWarning ((object)("No consumable for medicaltool :" + ((Object)this).name));
+		ItemModConsumable component = ownerItemDefinition.GetComponent<ItemModConsumable> ();
+		if (!component) {
+			Debug.LogWarning ("No consumable for medicaltool :" + base.name);
 			return;
 		}
 		BasePlayer ownerPlayer = GetOwnerPlayer ();
 		Analytics.Azure.OnMedUsed (ownerItemDefinition.shortname, ownerPlayer, player);
-		if ((Object)(object)player != (Object)(object)ownerPlayer && player.IsWounded () && canRevive) {
+		if (player != ownerPlayer && player.IsWounded () && canRevive) {
 			player.StopWounded (ownerPlayer);
 		}
 		foreach (ItemModConsumable.ConsumableEffect effect in component.effects) {

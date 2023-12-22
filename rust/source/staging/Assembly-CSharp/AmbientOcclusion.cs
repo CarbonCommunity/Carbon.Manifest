@@ -71,13 +71,13 @@ public sealed class AmbientOcclusion : PostProcessEffectSettings
 		if (mode.value == AmbientOcclusionMode.ScalableAmbientObscurance) {
 			flag &= !RuntimeUtilities.scriptableRenderPipelineActive;
 			if (context != null) {
-				flag &= Object.op_Implicit ((Object)(object)context.resources.shaders.scalableAO) && context.resources.shaders.scalableAO.isSupported;
+				flag &= (bool)context.resources.shaders.scalableAO && context.resources.shaders.scalableAO.isSupported;
 			}
 		} else if (mode.value == AmbientOcclusionMode.MultiScaleVolumetricObscurance) {
 			if (context != null) {
-				flag &= Object.op_Implicit ((Object)(object)context.resources.shaders.multiScaleAO) && context.resources.shaders.multiScaleAO.isSupported && Object.op_Implicit ((Object)(object)context.resources.computeShaders.multiScaleAODownsample1) && Object.op_Implicit ((Object)(object)context.resources.computeShaders.multiScaleAODownsample2) && Object.op_Implicit ((Object)(object)context.resources.computeShaders.multiScaleAORender) && Object.op_Implicit ((Object)(object)context.resources.computeShaders.multiScaleAOUpsample);
+				flag &= (bool)context.resources.shaders.multiScaleAO && context.resources.shaders.multiScaleAO.isSupported && (bool)context.resources.computeShaders.multiScaleAODownsample1 && (bool)context.resources.computeShaders.multiScaleAODownsample2 && (bool)context.resources.computeShaders.multiScaleAORender && (bool)context.resources.computeShaders.multiScaleAOUpsample;
 			}
-			flag &= SystemInfo.supportsComputeShaders && !RuntimeUtilities.isAndroidOpenGL && ((RenderTextureFormat)14).IsSupported () && ((RenderTextureFormat)15).IsSupported () && ((RenderTextureFormat)16).IsSupported ();
+			flag &= SystemInfo.supportsComputeShaders && !RuntimeUtilities.isAndroidOpenGL && RenderTextureFormat.RFloat.IsSupported () && RenderTextureFormat.RHalf.IsSupported () && RenderTextureFormat.R8.IsSupported ();
 		}
 		return flag;
 	}

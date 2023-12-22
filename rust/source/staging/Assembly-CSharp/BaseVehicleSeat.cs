@@ -16,7 +16,7 @@ public class BaseVehicleSeat : BaseVehicleMountPoint
 	public override void ScaleDamageForPlayer (BasePlayer player, HitInfo info)
 	{
 		BaseVehicle baseVehicle = VehicleParent ();
-		if (!((Object)(object)baseVehicle == (Object)null)) {
+		if (!(baseVehicle == null)) {
 			baseVehicle.ScaleDamageForPlayer (player, info);
 		}
 	}
@@ -24,7 +24,7 @@ public class BaseVehicleSeat : BaseVehicleMountPoint
 	public override void MounteeTookDamage (BasePlayer mountee, HitInfo info)
 	{
 		BaseVehicle baseVehicle = VehicleParent ();
-		if (!((Object)(object)baseVehicle == (Object)null)) {
+		if (!(baseVehicle == null)) {
 			baseVehicle.MounteeTookDamage (mountee, info);
 		}
 	}
@@ -32,7 +32,7 @@ public class BaseVehicleSeat : BaseVehicleMountPoint
 	public override void PlayerServerInput (InputState inputState, BasePlayer player)
 	{
 		BaseVehicle baseVehicle = VehicleParent ();
-		if ((Object)(object)baseVehicle != (Object)null) {
+		if (baseVehicle != null) {
 			baseVehicle.PlayerServerInput (inputState, player);
 		}
 		base.PlayerServerInput (inputState, player);
@@ -41,7 +41,7 @@ public class BaseVehicleSeat : BaseVehicleMountPoint
 	public override void LightToggle (BasePlayer player)
 	{
 		BaseVehicle baseVehicle = VehicleParent ();
-		if (!((Object)(object)baseVehicle == (Object)null)) {
+		if (!(baseVehicle == null)) {
 			baseVehicle.LightToggle (player);
 		}
 	}

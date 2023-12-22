@@ -64,7 +64,7 @@ public class EntityFlag_Toggle : EntityComponent<BaseEntity>, IOnPostNetworkUpda
 
 	public void OnPostNetworkUpdate (BaseEntity entity)
 	{
-		if (!((Object)(object)base.baseEntity != (Object)(object)entity) && runClientside) {
+		if (!(base.baseEntity != entity) && runClientside) {
 			DoUpdate (entity);
 		}
 	}
@@ -79,7 +79,7 @@ public class EntityFlag_Toggle : EntityComponent<BaseEntity>, IOnPostNetworkUpda
 	public void PreProcess (IPrefabProcessor process, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
 	{
 		if ((!clientside || !runClientside) && (!serverside || !runServerside)) {
-			process.RemoveComponent ((Component)(object)this);
+			process.RemoveComponent (this);
 		}
 	}
 }

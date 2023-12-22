@@ -1,5 +1,3 @@
-using System;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Rendering;
 using VLB;
@@ -88,11 +86,19 @@ public static class Consts
 
 	public const BlendingMode BlendingModeDefault = BlendingMode.Additive;
 
-	public static readonly BlendMode[] BlendingMode_SrcFactor;
+	public static readonly BlendMode[] BlendingMode_SrcFactor = new BlendMode[3] {
+		BlendMode.One,
+		BlendMode.OneMinusDstColor,
+		BlendMode.SrcAlpha
+	};
 
-	public static readonly BlendMode[] BlendingMode_DstFactor;
+	public static readonly BlendMode[] BlendingMode_DstFactor = new BlendMode[3] {
+		BlendMode.One,
+		BlendMode.One,
+		BlendMode.OneMinusSrcAlpha
+	};
 
-	public static readonly bool[] BlendingMode_AlphaAsBlack;
+	public static readonly bool[] BlendingMode_AlphaAsBlack = new bool[3] { true, true, false };
 
 	public const float DynOcclusionMinSurfaceRatioDefault = 0.5f;
 
@@ -110,7 +116,7 @@ public static class Consts
 
 	public const string ConfigGeometryTagDefault = "Untagged";
 
-	public const RenderQueue ConfigGeometryRenderQueueDefault = RenderQueue.Transparent;
+	public const VLB.RenderQueue ConfigGeometryRenderQueueDefault = VLB.RenderQueue.Transparent;
 
 	public const bool ConfigGeometryForceSinglePassDefault = false;
 
@@ -122,25 +128,10 @@ public static class Consts
 
 	public static HideFlags ProceduralObjectsHideFlags {
 		get {
-			if (ProceduralObjectsVisibleInEditor) {
-				return (HideFlags)60;
+			if (!ProceduralObjectsVisibleInEditor) {
+				return HideFlags.HideAndDontSave;
 			}
-			return (HideFlags)61;
+			return HideFlags.DontSave | HideFlags.NotEditable;
 		}
-	}
-
-	static Consts ()
-	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		BlendMode[] array = new BlendMode[3];
-		RuntimeHelpers.InitializeArray (array, (RuntimeFieldHandle)/*OpCode not supported: LdMemberToken*/);
-		BlendingMode_SrcFactor = (BlendMode[])(object)array;
-		BlendMode[] array2 = new BlendMode[3];
-		RuntimeHelpers.InitializeArray (array2, (RuntimeFieldHandle)/*OpCode not supported: LdMemberToken*/);
-		BlendingMode_DstFactor = (BlendMode[])(object)array2;
-		BlendingMode_AlphaAsBlack = new bool[3] { true, true, false };
 	}
 }

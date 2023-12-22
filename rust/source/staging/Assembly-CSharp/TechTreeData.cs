@@ -26,7 +26,7 @@ public class TechTreeData : ScriptableObject
 
 		public bool IsGroup ()
 		{
-			if ((Object)(object)itemDef == (Object)null && groupName != "Entry") {
+			if (itemDef == null && groupName != "Entry") {
 				return !string.IsNullOrEmpty (groupName);
 			}
 			return false;
@@ -45,7 +45,7 @@ public class TechTreeData : ScriptableObject
 
 	public NodeInstance GetByID (int id)
 	{
-		if (Application.isPlaying) {
+		if (UnityEngine.Application.isPlaying) {
 			if (_idToNode == null) {
 				_idToNode = nodes.ToDictionary ((NodeInstance n) => n.id, (NodeInstance n) => n);
 			}
@@ -63,7 +63,7 @@ public class TechTreeData : ScriptableObject
 
 	public NodeInstance GetEntryNode ()
 	{
-		if (Application.isPlaying && _entryNode != null && _entryNode.groupName == "Entry") {
+		if (UnityEngine.Application.isPlaying && _entryNode != null && _entryNode.groupName == "Entry") {
 			return _entryNode;
 		}
 		_entryNode = null;
@@ -73,7 +73,7 @@ public class TechTreeData : ScriptableObject
 				return node;
 			}
 		}
-		Debug.LogError ((object)"NO ENTRY NODE FOR TECH TREE, This will Fail hard");
+		Debug.LogError ("NO ENTRY NODE FOR TECH TREE, This will Fail hard");
 		return null;
 	}
 
@@ -166,25 +166,25 @@ public class TechTreeData : ScriptableObject
 			GetNodesRequiredToUnlock (player, GetByID (node.inputs [0]), foundNodes);
 			return;
 		}
-		List<NodeInstance> list = Pool.GetList<NodeInstance> ();
+		List<NodeInstance> obj = Pool.GetList<NodeInstance> ();
 		int num = int.MaxValue;
 		foreach (int input in node.inputs) {
-			List<NodeInstance> list2 = Pool.GetList<NodeInstance> ();
-			GetNodesRequiredToUnlock (player, GetByID (input), list2);
+			List<NodeInstance> obj2 = Pool.GetList<NodeInstance> ();
+			GetNodesRequiredToUnlock (player, GetByID (input), obj2);
 			int num2 = 0;
-			foreach (NodeInstance item in list2) {
-				if (!((Object)(object)item.itemDef == (Object)null) && !HasPlayerUnlocked (player, item)) {
+			foreach (NodeInstance item in obj2) {
+				if (!(item.itemDef == null) && !HasPlayerUnlocked (player, item)) {
 					num2 += ResearchTable.ScrapForResearch (item.itemDef, ResearchTable.ResearchType.TechTree);
 				}
 			}
 			if (num2 < num) {
-				list.Clear ();
-				list.AddRange (list2);
+				obj.Clear ();
+				obj.AddRange (obj2);
 				num = num2;
 			}
-			Pool.FreeList<NodeInstance> (ref list2);
+			Pool.FreeList (ref obj2);
 		}
-		foundNodes.AddRange (list);
-		Pool.FreeList<NodeInstance> (ref list);
+		foundNodes.AddRange (obj);
+		Pool.FreeList (ref obj);
 	}
 }

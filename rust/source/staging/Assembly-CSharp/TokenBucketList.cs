@@ -31,18 +31,18 @@ public class TokenBucketList<TKey> : ITokenBucketSettings
 
 	public void Cleanup ()
 	{
-		List<TKey> list = Pool.GetList<TKey> ();
+		List<TKey> obj = Pool.GetList<TKey> ();
 		foreach (KeyValuePair<TKey, TokenBucket> bucket in _buckets) {
 			if (bucket.Value.IsFull) {
-				list.Add (bucket.Key);
+				obj.Add (bucket.Key);
 			}
 		}
-		foreach (TKey item in list) {
+		foreach (TKey item in obj) {
 			if (_buckets.TryGetValue (item, out var value)) {
-				Pool.Free<TokenBucket> (ref value);
+				Pool.Free (ref value);
 				_buckets.Remove (item);
 			}
 		}
-		Pool.FreeList<TKey> (ref list);
+		Pool.FreeList (ref obj);
 	}
 }

@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class SeekerTest : BaseEntity, SeekerTarget.ISeekerTargetOwner
@@ -37,9 +36,6 @@ public class SeekerTest : BaseEntity, SeekerTarget.ISeekerTargetOwner
 
 	public void DoFlare ()
 	{
-		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
 		if (numFlares != 0) {
 			numFlares--;
 			if (useRoadFlares) {
@@ -48,7 +44,7 @@ public class SeekerTest : BaseEntity, SeekerTarget.ISeekerTargetOwner
 			}
 			SetFlag (Flags.OnFire, b: true);
 			SeekerTarget.SetSeekerTarget (this, SeekerTarget.SeekerStrength.OFF);
-			((FacepunchBehaviour)this).Invoke ((Action)ClearFlares, flareDuration);
+			Invoke (ClearFlares, flareDuration);
 		}
 	}
 
@@ -61,12 +57,12 @@ public class SeekerTest : BaseEntity, SeekerTarget.ISeekerTargetOwner
 	public override void OnEntityMessage (BaseEntity from, string msg)
 	{
 		if (msg == "RadarLock") {
-			if (!((FacepunchBehaviour)this).IsInvoking ((Action)DoFlare)) {
-				((FacepunchBehaviour)this).Invoke ((Action)DoFlare, Random.Range (0.5f, 1f));
+			if (!IsInvoking (DoFlare)) {
+				Invoke (DoFlare, Random.Range (0.5f, 1f));
 			}
 		} else if (msg == "RadarWarning") {
 			SetFlag (Flags.Reserved1, b: true);
-			((FacepunchBehaviour)this).Invoke ((Action)ClearWarning, 1f);
+			Invoke (ClearWarning, 1f);
 		} else {
 			base.OnEntityMessage (from, msg);
 		}

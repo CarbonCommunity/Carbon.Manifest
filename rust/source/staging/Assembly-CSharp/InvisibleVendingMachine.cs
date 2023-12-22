@@ -10,25 +10,21 @@ public class InvisibleVendingMachine : NPCVendingMachine
 
 	public NPCShopKeeper GetNPCShopKeeper ()
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		List<NPCShopKeeper> list = Pool.GetList<NPCShopKeeper> ();
-		Vis.Entities (((Component)this).transform.position, 2f, list, 131072, (QueryTriggerInteraction)2);
+		List<NPCShopKeeper> obj = Pool.GetList<NPCShopKeeper> ();
+		Vis.Entities (base.transform.position, 2f, obj, 131072);
 		NPCShopKeeper result = null;
-		if (list.Count > 0) {
-			result = list [0];
+		if (obj.Count > 0) {
+			result = obj [0];
 		}
-		Pool.FreeList<NPCShopKeeper> (ref list);
+		Pool.FreeList (ref obj);
 		return result;
 	}
 
 	public void KeeperLookAt (Vector3 pos)
 	{
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
 		NPCShopKeeper nPCShopKeeper = GetNPCShopKeeper ();
-		if (!((Object)(object)nPCShopKeeper == (Object)null)) {
-			nPCShopKeeper.SetAimDirection (Vector3Ex.Direction2D (pos, ((Component)nPCShopKeeper).transform.position));
+		if (!(nPCShopKeeper == null)) {
+			nPCShopKeeper.SetAimDirection (Vector3Ex.Direction2D (pos, nPCShopKeeper.transform.position));
 		}
 	}
 
@@ -44,17 +40,12 @@ public class InvisibleVendingMachine : NPCVendingMachine
 
 	public override void CompletePendingOrder ()
 	{
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0059: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0064: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0069: Unknown result type (might be due to invalid IL or missing references)
-		Effect.server.Run (buyEffect.resourcePath, ((Component)this).transform.position, Vector3.up);
+		Effect.server.Run (buyEffect.resourcePath, base.transform.position, Vector3.up);
 		NPCShopKeeper nPCShopKeeper = GetNPCShopKeeper ();
-		if (Object.op_Implicit ((Object)(object)nPCShopKeeper)) {
+		if ((bool)nPCShopKeeper) {
 			nPCShopKeeper.SignalBroadcast (Signal.Gesture, "victory");
-			if ((Object)(object)vend_Player != (Object)null) {
-				nPCShopKeeper.SetAimDirection (Vector3Ex.Direction2D (((Component)vend_Player).transform.position, ((Component)nPCShopKeeper).transform.position));
+			if (vend_Player != null) {
+				nPCShopKeeper.SetAimDirection (Vector3Ex.Direction2D (vend_Player.transform.position, nPCShopKeeper.transform.position));
 			}
 		}
 		base.CompletePendingOrder ();
@@ -62,15 +53,14 @@ public class InvisibleVendingMachine : NPCVendingMachine
 
 	public override bool PlayerOpenLoot (BasePlayer player, string panelToOpen = "", bool doPositionChecks = true)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		KeeperLookAt (((Component)player).transform.position);
+		KeeperLookAt (player.transform.position);
 		return base.PlayerOpenLoot (player, panelToOpen);
 	}
 
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		if ((Object)(object)vmoManifest != (Object)null && info.msg.vendingMachine != null) {
+		if (vmoManifest != null && info.msg.vendingMachine != null) {
 			info.msg.vendingMachine.vmoIndex = vmoManifest.GetIndex (vendingOrders);
 		}
 	}
@@ -79,21 +69,19 @@ public class InvisibleVendingMachine : NPCVendingMachine
 	{
 		base.ServerInit ();
 		if (vmoManifest.GetIndex (vendingOrders) == -1) {
-			Debug.LogError ((object)"VENDING ORDERS NOT FOUND! Did you forget to add these orders to the VMOManifest?");
+			Debug.LogError ("VENDING ORDERS NOT FOUND! Did you forget to add these orders to the VMOManifest?");
 		}
 	}
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_008c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0097: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
-		if (!info.fromDisk || !((Object)(object)vmoManifest != (Object)null) || info.msg.vendingMachine == null) {
+		if (!info.fromDisk || !(vmoManifest != null) || info.msg.vendingMachine == null) {
 			return;
 		}
 		if (info.msg.vendingMachine.vmoIndex == -1 && TerrainMeta.Path.Monuments != null) {
 			foreach (MonumentInfo monument in TerrainMeta.Path.Monuments) {
-				if (monument.displayPhrase.token.Contains ("fish") && Vector3.Distance (((Component)monument).transform.position, ((Component)this).transform.position) < 100f) {
+				if (monument.displayPhrase.token.Contains ("fish") && Vector3.Distance (monument.transform.position, base.transform.position) < 100f) {
 					info.msg.vendingMachine.vmoIndex = 17;
 				}
 			}

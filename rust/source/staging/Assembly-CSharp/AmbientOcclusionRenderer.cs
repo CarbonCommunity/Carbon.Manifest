@@ -19,10 +19,8 @@ internal sealed class AmbientOcclusionRenderer : PostProcessEffectRenderer<Ambie
 
 	public bool IsAmbientOnly (PostProcessRenderContext context)
 	{
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Invalid comparison between Unknown and I4
 		Camera camera = context.camera;
-		if (base.settings.ambientOnly.value && (int)camera.actualRenderingPath == 3) {
+		if (base.settings.ambientOnly.value && camera.actualRenderingPath == RenderingPath.DeferredShading) {
 			return camera.allowHDR;
 		}
 		return false;
@@ -35,7 +33,6 @@ internal sealed class AmbientOcclusionRenderer : PostProcessEffectRenderer<Ambie
 
 	public override DepthTextureMode GetCameraFlags ()
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
 		return Get ().GetCameraFlags ();
 	}
 

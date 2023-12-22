@@ -4,7 +4,7 @@ public class LifeInfographicStatDynamicRow : LifeInfographicStat
 {
 	public RustText StatName;
 
-	public void SetStatName (Phrase phrase)
+	public void SetStatName (Translate.Phrase phrase)
 	{
 		StatName.SetPhrase (phrase);
 	}

@@ -25,11 +25,7 @@ public class Pinata : BaseCombatEntity
 
 	public Transform SwingTransform;
 
-	public AnimationCurve SwingCurve = new AnimationCurve ((Keyframe[])(object)new Keyframe[3] {
-		new Keyframe (0f, 0f),
-		new Keyframe (0.5f, 1f),
-		new Keyframe (1f, 0f)
-	});
+	public AnimationCurve SwingCurve = new AnimationCurve (new Keyframe (0f, 0f), new Keyframe (0.5f, 1f), new Keyframe (1f, 0f));
 
 	[Header ("Visual")]
 	public VisualThreshold[] Thresholds;
@@ -44,17 +40,11 @@ public class Pinata : BaseCombatEntity
 
 	public override void OnKilled (HitInfo info)
 	{
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0071: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0078: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007e: Unknown result type (might be due to invalid IL or missing references)
 		base.OnKilled (info);
 		ItemAmount[] reward = PrefabAttribute.server.Find<PinataPayouts> (prefabID).GetPayout ().Reward;
 		foreach (ItemAmount itemAmount in reward) {
-			if ((Object)(object)itemAmount.itemDef != (Object)null) {
-				ItemManager.Create (itemAmount.itemDef, (int)itemAmount.amount, 0uL).CreateWorldObject (DropPoint.position + Random.onUnitSphere * Random.Range (0f, DropPointRadius));
+			if (itemAmount.itemDef != null) {
+				ItemManager.Create (itemAmount.itemDef, (int)itemAmount.amount, 0uL).CreateWorldObject (DropPoint.position + UnityEngine.Random.onUnitSphere * UnityEngine.Random.Range (0f, DropPointRadius));
 			}
 		}
 	}

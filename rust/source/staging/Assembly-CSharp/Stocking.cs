@@ -9,7 +9,7 @@ public class Stocking : LootContainer
 	{
 		base.ServerInit ();
 		if (stockings == null) {
-			stockings = new ListHashSet<Stocking> (8);
+			stockings = new ListHashSet<Stocking> ();
 		}
 		stockings.Add (this);
 	}
@@ -36,7 +36,7 @@ public class Stocking : LootContainer
 	public override void SpawnLoot ()
 	{
 		if (base.inventory == null) {
-			Debug.Log ((object)("CONTACT DEVELOPERS! Stocking::PopulateLoot has null inventory!!! " + ((Object)this).name));
+			Debug.Log ("CONTACT DEVELOPERS! Stocking::PopulateLoot has null inventory!!! " + base.name);
 		} else if (IsEmpty ()) {
 			base.SpawnLoot ();
 			SetFlag (Flags.On, b: true);

@@ -14,33 +14,23 @@ public class SocketMod_EntityType : SocketMod
 
 	public bool wantsCollide;
 
-	public static Phrase ErrorPhrase = new Phrase ("error_entitytype", "Invalid entity type");
+	public static Translate.Phrase ErrorPhrase = new Translate.Phrase ("error_entitytype", "Invalid entity type");
 
 	private void OnDrawGizmosSelected ()
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
-		Gizmos.matrix = ((Component)this).transform.localToWorldMatrix;
+		Gizmos.matrix = base.transform.localToWorldMatrix;
 		Gizmos.color = (wantsCollide ? new Color (0f, 1f, 0f, 0.7f) : new Color (1f, 0f, 0f, 0.7f));
 		Gizmos.DrawSphere (Vector3.zero, sphereRadius);
 	}
 
 	public override bool DoCheck (Construction.Placement place)
 	{
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
 		bool flag = !wantsCollide;
 		Vector3 position = place.position + place.rotation * worldPosition;
-		List<BaseEntity> list = Pool.GetList<BaseEntity> ();
-		Vis.Entities (position, sphereRadius, list, ((LayerMask)(ref layerMask)).value, queryTriggers);
-		foreach (BaseEntity item in list) {
-			bool flag2 = ((object)item).GetType ().IsAssignableFrom (((object)searchType).GetType ());
+		List<BaseEntity> obj = Pool.GetList<BaseEntity> ();
+		Vis.Entities (position, sphereRadius, obj, layerMask.value, queryTriggers);
+		foreach (BaseEntity item in obj) {
+			bool flag2 = item.GetType ().IsAssignableFrom (searchType.GetType ());
 			if (flag2 && wantsCollide) {
 				flag = true;
 				break;
@@ -53,7 +43,7 @@ public class SocketMod_EntityType : SocketMod
 		if (!flag) {
 			Construction.lastPlacementError = ErrorPhrase.translated;
 		}
-		Pool.FreeList<BaseEntity> (ref list);
+		Pool.FreeList (ref obj);
 		return flag;
 	}
 }

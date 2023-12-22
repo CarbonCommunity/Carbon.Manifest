@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public class ItemModSign : ItemModAssociatedEntity<SignContent>
 {
 	protected override bool AllowNullParenting => true;
@@ -9,7 +7,7 @@ public class ItemModSign : ItemModAssociatedEntity<SignContent>
 	public void OnSignPickedUp (ISignage s, IUGCBrowserEntity ugc, Item toItem)
 	{
 		SignContent signContent = CreateAssociatedEntity (toItem);
-		if ((Object)(object)signContent != (Object)null) {
+		if (signContent != null) {
 			signContent.CopyInfoFromSign (s, ugc);
 		}
 	}

@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Network;
@@ -8,82 +9,61 @@ public class EngineSwitch : BaseEntity
 {
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("EngineSwitch.OnRpcMessage", 0);
-		try {
-			if (rpc == 1249530220 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("EngineSwitch.OnRpcMessage")) {
+			if (rpc == 1249530220 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - StartEngine "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - StartEngine ");
 				}
-				TimeWarning val2 = TimeWarning.New ("StartEngine", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("StartEngine")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (1249530220u, "StartEngine", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							StartEngine (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in StartEngine");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 1739656243 && (Object)(object)player != (Object)null) {
+			if (rpc == 1739656243 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - StopEngine "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - StopEngine ");
 				}
-				TimeWarning val2 = TimeWarning.New ("StopEngine", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("StopEngine")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (1739656243u, "StopEngine", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg3 = rPCMessage;
 							StopEngine (msg3);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in StopEngine");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -93,7 +73,7 @@ public class EngineSwitch : BaseEntity
 	public void StopEngine (RPCMessage msg)
 	{
 		MiningQuarry miningQuarry = GetParentEntity () as MiningQuarry;
-		if (Object.op_Implicit ((Object)(object)miningQuarry)) {
+		if ((bool)miningQuarry) {
 			miningQuarry.EngineSwitch (isOn: false);
 		}
 	}
@@ -103,7 +83,7 @@ public class EngineSwitch : BaseEntity
 	public void StartEngine (RPCMessage msg)
 	{
 		MiningQuarry miningQuarry = GetParentEntity () as MiningQuarry;
-		if (Object.op_Implicit ((Object)(object)miningQuarry)) {
+		if ((bool)miningQuarry) {
 			miningQuarry.EngineSwitch (isOn: true);
 		}
 	}

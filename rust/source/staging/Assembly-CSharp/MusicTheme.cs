@@ -44,14 +44,14 @@ public class MusicTheme : ScriptableObject
 
 		public int endingBar {
 			get {
-				if (!((Object)(object)musicClip == (Object)null)) {
+				if (!(musicClip == null)) {
 					return startingBar + musicClip.lengthInBarsWithTail;
 				}
 				return startingBar;
 			}
 		}
 
-		public bool isControlClip => (Object)(object)musicClip == (Object)null;
+		public bool isControlClip => musicClip == null;
 
 		public bool CanPlay (float intensity)
 		{
@@ -109,10 +109,10 @@ public class MusicTheme : ScriptableObject
 	public ValueRange snow = new ValueRange (0f, 1f);
 
 	[InspectorFlags]
-	public Enum biomes = (Enum)(-1);
+	public TerrainBiome.Enum biomes = (TerrainBiome.Enum)(-1);
 
 	[InspectorFlags]
-	public Enum topologies = (Enum)(-1);
+	public TerrainTopology.Enum topologies = (TerrainTopology.Enum)(-1);
 
 	public AnimationCurve time = AnimationCurve.Linear (0f, 0f, 24f, 0f);
 
@@ -148,7 +148,7 @@ public class MusicTheme : ScriptableObject
 					activeClips [j].Add (positionedClip);
 				}
 			}
-			if ((Object)(object)positionedClip.musicClip != (Object)null) {
+			if (positionedClip.musicClip != null) {
 				AudioClip audioClip = positionedClip.musicClip.audioClip;
 				if (!audioClipDict.ContainsKey (audioClip)) {
 					audioClipDict.Add (audioClip, value: true);
@@ -172,7 +172,7 @@ public class MusicTheme : ScriptableObject
 
 	private int ActiveClipCollectionID (int bar)
 	{
-		return Mathf.FloorToInt (Mathf.Max ((float)(bar / 4), 0f));
+		return Mathf.FloorToInt (Mathf.Max (bar / 4, 0f));
 	}
 
 	public Layer LayerById (int id)
@@ -195,7 +195,7 @@ public class MusicTheme : ScriptableObject
 		int num = 0;
 		for (int i = 0; i < clips.Count; i++) {
 			PositionedClip positionedClip = clips [i];
-			if (!((Object)(object)positionedClip.musicClip == (Object)null)) {
+			if (!(positionedClip.musicClip == null)) {
 				int num2 = positionedClip.startingBar + positionedClip.musicClip.lengthInBars;
 				if (num2 > num) {
 					num = num2;
@@ -207,21 +207,13 @@ public class MusicTheme : ScriptableObject
 
 	public bool CanPlayInEnvironment (int currentBiome, int currentTopology, float currentRain, float currentSnow, float currentWind)
 	{
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0036: Invalid comparison between Unknown and I4
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Invalid comparison between Unknown and I4
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-		if (Object.op_Implicit ((Object)(object)TOD_Sky.Instance) && time.Evaluate (TOD_Sky.Instance.Cycle.Hour) < 0f) {
+		if ((bool)TOD_Sky.Instance && time.Evaluate (TOD_Sky.Instance.Cycle.Hour) < 0f) {
 			return false;
 		}
-		if ((int)biomes != -1 && (biomes & currentBiome) == 0) {
+		if (biomes != (TerrainBiome.Enum)(-1) && ((uint)biomes & (uint)currentBiome) == 0) {
 			return false;
 		}
-		if ((int)topologies != -1 && (topologies & currentTopology) != 0) {
+		if (topologies != (TerrainTopology.Enum)(-1) && ((uint)topologies & (uint)currentTopology) != 0) {
 			return false;
 		}
 		if (((rain.min > 0f || rain.max < 1f) && currentRain < rain.min) || currentRain > rain.max) {
@@ -238,10 +230,8 @@ public class MusicTheme : ScriptableObject
 
 	public bool FirstClipsLoaded ()
 	{
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Invalid comparison between Unknown and I4
 		for (int i = 0; i < firstAudioClips.Count; i++) {
-			if ((int)firstAudioClips [i].loadState != 2) {
+			if (firstAudioClips [i].loadState != AudioDataLoadState.Loaded) {
 				return false;
 			}
 		}

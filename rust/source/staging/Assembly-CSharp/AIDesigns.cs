@@ -8,28 +8,28 @@ public static class AIDesigns
 {
 	public const string DesignFolderPath = "cfg/ai/";
 
-	private static Dictionary<string, AIDesign> designs = new Dictionary<string, AIDesign> ();
+	private static Dictionary<string, ProtoBuf.AIDesign> designs = new Dictionary<string, ProtoBuf.AIDesign> ();
 
-	public static AIDesign GetByNameOrInstance (string designName, AIDesign entityDesign)
+	public static ProtoBuf.AIDesign GetByNameOrInstance (string designName, ProtoBuf.AIDesign entityDesign)
 	{
 		if (entityDesign != null) {
 			return entityDesign;
 		}
-		AIDesign byName = GetByName (designName + "_custom");
+		ProtoBuf.AIDesign byName = GetByName (designName + "_custom");
 		if (byName != null) {
 			return byName;
 		}
 		return GetByName (designName);
 	}
 
-	public static void RefreshCache (string designName, AIDesign design)
+	public static void RefreshCache (string designName, ProtoBuf.AIDesign design)
 	{
 		if (designs.ContainsKey (designName)) {
 			designs [designName] = design;
 		}
 	}
 
-	private static AIDesign GetByName (string designName)
+	private static ProtoBuf.AIDesign GetByName (string designName)
 	{
 		designs.TryGetValue (designName, out var value);
 		if (value != null) {
@@ -40,15 +40,15 @@ public static class AIDesigns
 			return null;
 		}
 		try {
-			using FileStream fileStream = File.Open (text, FileMode.Open);
-			value = AIDesign.Deserialize ((Stream)fileStream);
+			using FileStream stream = File.Open (text, FileMode.Open);
+			value = ProtoBuf.AIDesign.Deserialize (stream);
 			if (value == null) {
 				return null;
 			}
 			designs.Add (designName, value);
 			return value;
 		} catch (Exception) {
-			Debug.LogWarning ((object)("Error trying to find AI design by name: " + text));
+			Debug.LogWarning ("Error trying to find AI design by name: " + text);
 			return null;
 		}
 	}

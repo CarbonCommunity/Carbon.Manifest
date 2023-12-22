@@ -10,6 +10,6 @@ public class LightLOD : MonoBehaviour, ILOD, IClientComponent
 
 	protected void OnValidate ()
 	{
-		LightEx.CheckConflict (((Component)this).gameObject);
+		LightEx.CheckConflict (base.gameObject);
 	}
 }

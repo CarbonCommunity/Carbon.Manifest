@@ -16,8 +16,8 @@ public class TerrainSetNeighbours : MonoBehaviour
 
 	private void Awake ()
 	{
-		((Component)this).GetComponent<Terrain> ().SetNeighbors (leftTerrain, topTerrain, rightTerrain, bottomTerrain);
-		Object.Destroy ((Object)(object)this);
+		GetComponent<Terrain> ().SetNeighbors (leftTerrain, topTerrain, rightTerrain, bottomTerrain);
+		Object.Destroy (this);
 	}
 
 	public void SetNeighbours (Terrain leftTerrain, Terrain topTerrain, Terrain rightTerrain, Terrain bottomTerrain)

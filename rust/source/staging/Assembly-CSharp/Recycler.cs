@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -21,46 +22,34 @@ public class Recycler : StorageContainer
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("Recycler.OnRpcMessage", 0);
-		try {
-			if (rpc == 4167839872u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("Recycler.OnRpcMessage")) {
+			if (rpc == 4167839872u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - SVSwitch "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - SVSwitch ");
 				}
-				TimeWarning val2 = TimeWarning.New ("SVSwitch", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("SVSwitch")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (4167839872u, "SVSwitch", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							SVSwitch (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in SVSwitch");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -73,7 +62,7 @@ public class Recycler : StorageContainer
 	private bool CanBeRecycled (Item item)
 	{
 		if (item != null) {
-			return (Object)(object)item.info.Blueprint != (Object)null;
+			return item.info.Blueprint != null;
 		}
 		return false;
 	}
@@ -111,7 +100,7 @@ public class Recycler : StorageContainer
 	private void SVSwitch (RPCMessage msg)
 	{
 		bool flag = msg.read.Bit ();
-		if (flag == IsOn () || (Object)(object)msg.player == (Object)null || (!flag && onlyOneUser && (Object)(object)msg.player.inventory.loot.entitySource != (Object)(object)this) || (flag && !HasRecyclable ())) {
+		if (flag == IsOn () || msg.player == null || (!flag && onlyOneUser && msg.player.inventory.loot.entitySource != this) || (flag && !HasRecyclable ())) {
 			return;
 		}
 		if (flag) {
@@ -126,15 +115,6 @@ public class Recycler : StorageContainer
 
 	public bool MoveItemToOutput (Item newItem)
 	{
-		//IL_00ad: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ed: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f3: Unknown result type (might be due to invalid IL or missing references)
 		int num = -1;
 		for (int i = 6; i < 12; i++) {
 			Item slot = base.inventory.GetSlot (i);
@@ -160,7 +140,7 @@ public class Recycler : StorageContainer
 		if (num != -1 && newItem.MoveToContainer (base.inventory, num)) {
 			return true;
 		}
-		newItem.Drop (((Component)this).transform.position + new Vector3 (0f, 2f, 0f), GetInheritedDropVelocity () + ((Component)this).transform.forward * 2f);
+		newItem.Drop (base.transform.position + new Vector3 (0f, 2f, 0f), GetInheritedDropVelocity () + base.transform.forward * 2f);
 		return false;
 	}
 
@@ -168,7 +148,7 @@ public class Recycler : StorageContainer
 	{
 		for (int i = 0; i < 6; i++) {
 			Item slot = base.inventory.GetSlot (i);
-			if (slot != null && (Object)(object)slot.info.Blueprint != (Object)null) {
+			if (slot != null && slot.info.Blueprint != null) {
 				return true;
 			}
 		}
@@ -177,7 +157,6 @@ public class Recycler : StorageContainer
 
 	public void RecycleThink ()
 	{
-		//IL_012a: Unknown result type (might be due to invalid IL or missing references)
 		bool flag = false;
 		float num = recycleEfficiency;
 		for (int i = 0; i < 6; i++) {
@@ -190,7 +169,7 @@ public class Recycler : StorageContainer
 			}
 			int num2 = 1;
 			if (slot.amount > 1) {
-				num2 = Mathf.CeilToInt (Mathf.Min ((float)slot.amount, (float)slot.MaxStackable () * 0.1f));
+				num2 = Mathf.CeilToInt (Mathf.Min (slot.amount, (float)slot.MaxStackable () * 0.1f));
 			}
 			if (slot.info.Blueprint.scrapFromRecycle > 0) {
 				int num3 = slot.info.Blueprint.scrapFromRecycle * num2;
@@ -204,15 +183,15 @@ public class Recycler : StorageContainer
 				}
 			}
 			if (!string.IsNullOrEmpty (slot.info.Blueprint.RecycleStat)) {
-				List<BasePlayer> list = Pool.GetList<BasePlayer> ();
-				Vis.Entities (((Component)this).transform.position, 3f, list, 131072, (QueryTriggerInteraction)2);
-				foreach (BasePlayer item3 in list) {
-					if (item3.IsAlive () && !item3.IsSleeping () && (Object)(object)item3.inventory.loot.entitySource == (Object)(object)this) {
+				List<BasePlayer> obj = Facepunch.Pool.GetList<BasePlayer> ();
+				Vis.Entities (base.transform.position, 3f, obj, 131072);
+				foreach (BasePlayer item3 in obj) {
+					if (item3.IsAlive () && !item3.IsSleeping () && item3.inventory.loot.entitySource == this) {
 						item3.stats.Add (slot.info.Blueprint.RecycleStat, num2, (Stats)5);
 						item3.stats.Save ();
 					}
 				}
-				Pool.FreeList<BasePlayer> (ref list);
+				Facepunch.Pool.FreeList (ref obj);
 			}
 			Analytics.Azure.OnItemRecycled (slot.info.shortname, num2, this);
 			slot.UseItem (num2);
@@ -224,12 +203,12 @@ public class Recycler : StorageContainer
 				int num5 = 0;
 				if (num4 <= 1f) {
 					for (int j = 0; j < num2; j++) {
-						if (Random.Range (0f, 1f) <= num4 * num) {
+						if (UnityEngine.Random.Range (0f, 1f) <= num4 * num) {
 							num5++;
 						}
 					}
 				} else {
-					num5 = Mathf.CeilToInt (Mathf.Clamp (num4 * num * Random.Range (1f, 1f), 0f, ingredient.amount)) * num2;
+					num5 = Mathf.CeilToInt (Mathf.Clamp (num4 * num * UnityEngine.Random.Range (1f, 1f), 0f, ingredient.amount)) * num2;
 				}
 				if (num5 <= 0) {
 					continue;
@@ -257,10 +236,8 @@ public class Recycler : StorageContainer
 
 	public void StartRecycling ()
 	{
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0037: Unknown result type (might be due to invalid IL or missing references)
 		if (!IsOn ()) {
-			((FacepunchBehaviour)this).InvokeRepeating ((Action)RecycleThink, 5f, 5f);
+			InvokeRepeating (RecycleThink, 5f, 5f);
 			Effect.server.Run (startSound.resourcePath, this, 0u, Vector3.zero, Vector3.zero);
 			SetFlag (Flags.On, b: true);
 			SendNetworkUpdateImmediate ();
@@ -269,9 +246,7 @@ public class Recycler : StorageContainer
 
 	public void StopRecycling ()
 	{
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		((FacepunchBehaviour)this).CancelInvoke ((Action)RecycleThink);
+		CancelInvoke (RecycleThink);
 		if (IsOn ()) {
 			Effect.server.Run (stopSound.resourcePath, this, 0u, Vector3.zero, Vector3.zero);
 			SetFlag (Flags.On, b: false);

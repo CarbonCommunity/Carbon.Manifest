@@ -12,7 +12,7 @@ public class ItemStoreCartItem : MonoBehaviour
 	public void Init (int index, IPlayerItemDefinition def)
 	{
 		Index = index;
-		((TMP_Text)Name).text = def.Name;
-		((TMP_Text)Price).text = def.LocalPriceFormatted;
+		Name.text = def.Name;
+		Price.text = def.LocalPriceFormatted;
 	}
 }

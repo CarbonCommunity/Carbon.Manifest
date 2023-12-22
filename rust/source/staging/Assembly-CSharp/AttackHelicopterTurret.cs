@@ -39,7 +39,7 @@ public class AttackHelicopterTurret : StorageContainer
 
 	private float lastSentY;
 
-	private bool HasOwner => (Object)(object)owner != (Object)null;
+	private bool HasOwner => owner != null;
 
 	public GunStatus GunState { get; private set; }
 
@@ -49,17 +49,13 @@ public class AttackHelicopterTurret : StorageContainer
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("AttackHelicopterTurret.OnRpcMessage", 0);
-		try {
-		} finally {
-			((IDisposable)val)?.Dispose ();
+		using (TimeWarning.New ("AttackHelicopterTurret.OnRpcMessage")) {
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_006c: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (info.msg.attackHeliTurret != null) {
 			_ = GunState;
@@ -73,9 +69,7 @@ public class AttackHelicopterTurret : StorageContainer
 
 	private void SetGunRotation (float xRot, float yRot)
 	{
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		if (!((Object)(object)owner == (Object)null)) {
+		if (!(owner == null)) {
 			turretHorizontal.localEulerAngles = new Vector3 (0f, yRot, 0f);
 			turretVertical.localEulerAngles = new Vector3 (0f - xRot, 0f, 0f);
 		}
@@ -92,7 +86,6 @@ public class AttackHelicopterTurret : StorageContainer
 
 	public void GetAmmoAmounts (out int clip, out int available)
 	{
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
 		clip = 0;
 		available = 0;
 		if (base.isServer && GetAttachedHeldEntity () is BaseProjectile baseProjectile) {
@@ -103,14 +96,8 @@ public class AttackHelicopterTurret : StorageContainer
 
 	public Vector3 GetProjectedHitPos ()
 	{
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
 		HeldEntity heldEntity = GetAttachedHeldEntity ();
-		if ((Object)(object)heldEntity == (Object)null || (Object)(object)heldEntity.MuzzleTransform == (Object)null) {
+		if (heldEntity == null || heldEntity.MuzzleTransform == null) {
 			return Ballistics.GetBulletHitPoint (turretSocket.position, turretSocket.forward);
 		}
 		return Ballistics.GetBulletHitPoint (heldEntity.MuzzleTransform.position, heldEntity.MuzzleTransform.forward);
@@ -121,15 +108,11 @@ public class AttackHelicopterTurret : StorageContainer
 		base.ServerInit ();
 		ItemContainer itemContainer = base.inventory;
 		itemContainer.canAcceptItem = (Func<Item, int, bool>)Delegate.Combine (itemContainer.canAcceptItem, new Func<Item, int, bool> (CanAcceptItem));
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)RefreshGunState, 0f, 0.25f, 0.05f);
+		InvokeRandomized (RefreshGunState, 0f, 0.25f, 0.05f);
 	}
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_0073: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0093: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b8: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
 		if (HasOwner) {
 			info.msg.attackHeliTurret = Pool.Get<AttackHeliTurret> ();
@@ -161,7 +144,7 @@ public class AttackHelicopterTurret : StorageContainer
 			if (forceAcceptAmmo) {
 				return true;
 			}
-			if (slot == null || (Object)(object)GetAttachedHeldEntity () == (Object)null) {
+			if (slot == null || GetAttachedHeldEntity () == null) {
 				return false;
 			}
 			if (targetSlot == 0) {
@@ -178,12 +161,12 @@ public class AttackHelicopterTurret : StorageContainer
 		if (item.isBroken) {
 			return false;
 		}
-		ItemModEntity component = ((Component)info).GetComponent<ItemModEntity> ();
-		if ((Object)(object)component == (Object)null) {
+		ItemModEntity component = info.GetComponent<ItemModEntity> ();
+		if (component == null) {
 			return false;
 		}
 		HeldEntity component2 = component.entityPrefab.Get ().GetComponent<HeldEntity> ();
-		if ((Object)(object)component2 == (Object)null) {
+		if (component2 == null) {
 			return false;
 		}
 		if (!component2.IsUsableByTurret) {
@@ -194,26 +177,6 @@ public class AttackHelicopterTurret : StorageContainer
 
 	public bool InputTick (AttackHelicopter.GunnerInputState input)
 	{
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0064: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0074: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0079: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0092: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0097: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00aa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ab: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00be: Unknown result type (might be due to invalid IL or missing references)
 		if (!owner.GunnerIsInGunnerView) {
 			return false;
 		}
@@ -223,13 +186,12 @@ public class AttackHelicopterTurret : StorageContainer
 		} else if (input.fire1) {
 			result = TryFireWeapon ();
 		}
-		((Ray)(ref input.eyeRay)).direction = ClampEyeAngle (((Component)owner).transform, ((Ray)(ref input.eyeRay)).direction, owner.turretPitchClamp, owner.turretYawClamp);
+		input.eyeRay.direction = ClampEyeAngle (owner.transform, input.eyeRay.direction, owner.turretPitchClamp, owner.turretYawClamp);
 		Vector3 bulletHitPoint = Ballistics.GetBulletHitPoint (input.eyeRay);
 		bulletHitPoint.y -= muzzleYOffset;
-		Vector3 val = bulletHitPoint - turretSocket.position;
-		val = ((Component)this).transform.InverseTransformDirection (val);
-		Quaternion val2 = Quaternion.LookRotation (val, Vector3.up);
-		Vector3 eulerAngles = ((Quaternion)(ref val2)).eulerAngles;
+		Vector3 direction = bulletHitPoint - turretSocket.position;
+		direction = base.transform.InverseTransformDirection (direction);
+		Vector3 eulerAngles = Quaternion.LookRotation (direction, Vector3.up).eulerAngles;
 		float num = 0f - eulerAngles.x;
 		float y = eulerAngles.y;
 		SetGunRotation (num, y);
@@ -243,56 +205,38 @@ public class AttackHelicopterTurret : StorageContainer
 
 	private Vector3 ClampEyeAngle (Transform heliTransform, Vector3 eyeDir, Vector2 pitchRange, Vector2 yawRange)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0031: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0063: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0070: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 val = heliTransform.InverseTransformDirection (eyeDir);
-		float num = Mathf.Clamp (Mathf.Asin (0f - val.y) * 57.29578f, pitchRange.x, pitchRange.y);
-		float num2 = Mathf.Atan2 (val.x, val.z) * 57.29578f;
-		num2 = Mathf.Clamp (num2, yawRange.x, yawRange.y);
-		val = Quaternion.Euler (num, num2, 0f) * Vector3.forward;
-		return heliTransform.TransformDirection (val);
+		Vector3 vector = heliTransform.InverseTransformDirection (eyeDir);
+		float x = Mathf.Clamp (Mathf.Asin (0f - vector.y) * 57.29578f, pitchRange.x, pitchRange.y);
+		float value = Mathf.Atan2 (vector.x, vector.z) * 57.29578f;
+		value = Mathf.Clamp (value, yawRange.x, yawRange.y);
+		vector = Quaternion.Euler (x, value, 0f) * Vector3.forward;
+		return heliTransform.TransformDirection (vector);
 	}
 
 	public override void OnItemAddedOrRemoved (Item item, bool added)
 	{
 		base.OnItemAddedOrRemoved (item, added);
-		if (Object.op_Implicit ((Object)(object)((Component)item.info).GetComponent<ItemModEntity> ())) {
-			if (((FacepunchBehaviour)this).IsInvoking ((Action)UpdateAttachedWeapon)) {
+		if ((bool)item.info.GetComponent<ItemModEntity> ()) {
+			if (IsInvoking (UpdateAttachedWeapon)) {
 				UpdateAttachedWeapon ();
 			}
-			((FacepunchBehaviour)this).Invoke ((Action)UpdateAttachedWeapon, 0.5f);
+			Invoke (UpdateAttachedWeapon, 0.5f);
 		}
 	}
 
 	private void UpdateAttachedWeapon ()
 	{
-		//IL_0063: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
 		if (!HasOwner) {
-			Debug.LogError ((object)(((object)this).GetType ().Name + ": Turret socket not yet set."));
+			Debug.LogError (GetType ().Name + ": Turret socket not yet set.");
 			return;
 		}
 		HeldEntity heldEntity = AutoTurret.TryAddWeaponToTurret (base.inventory.GetSlot (0), turretSocket, this, -0.5f);
-		if ((Object)(object)heldEntity != (Object)null) {
+		if (heldEntity != null) {
 			attachedHeldEntity.Set (heldEntity);
 			muzzleYOffset = turretSocket.InverseTransformPoint (heldEntity.MuzzleTransform.position).y;
 		} else {
 			HeldEntity heldEntity2 = GetAttachedHeldEntity ();
-			if ((Object)(object)heldEntity2 != (Object)null) {
+			if (heldEntity2 != null) {
 				heldEntity2.SetGenericVisible (wantsVis: false);
 				heldEntity2.SetLightsOn (isOn: false);
 			}
@@ -305,7 +249,7 @@ public class AttackHelicopterTurret : StorageContainer
 	private bool TryReload ()
 	{
 		BaseProjectile baseProjectile = GetAttachedHeldEntity () as BaseProjectile;
-		if ((Object)(object)baseProjectile == (Object)null) {
+		if (baseProjectile == null) {
 			return false;
 		}
 		return baseProjectile.ServerTryReload (base.inventory);
@@ -314,7 +258,7 @@ public class AttackHelicopterTurret : StorageContainer
 	private bool TryFireWeapon ()
 	{
 		HeldEntity heldEntity = GetAttachedHeldEntity ();
-		if ((Object)(object)heldEntity == (Object)null) {
+		if (heldEntity == null) {
 			return false;
 		}
 		if (owner.InSafeZone ()) {
@@ -339,10 +283,10 @@ public class AttackHelicopterTurret : StorageContainer
 	{
 		HeldEntity heldEntity = GetAttachedHeldEntity ();
 		GunStatus gunStatus;
-		if (Object.op_Implicit ((Object)(object)heldEntity)) {
+		if ((bool)heldEntity) {
 			gunStatus = GunStatus.Ready;
 			BaseProjectile baseProjectile = heldEntity as BaseProjectile;
-			if ((Object)(object)baseProjectile != (Object)null) {
+			if (baseProjectile != null) {
 				if (baseProjectile.ServerIsReloading ()) {
 					gunStatus = GunStatus.Reloading;
 				} else {

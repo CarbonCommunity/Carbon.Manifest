@@ -12,7 +12,7 @@ public abstract class DeployVolume : PrefabAttribute
 		IncludeList
 	}
 
-	public LayerMask layers = LayerMask.op_Implicit (537001984);
+	public LayerMask layers = 537001984;
 
 	[InspectorFlags]
 	public ColliderInfo.Flags ignore;
@@ -37,7 +37,7 @@ public abstract class DeployVolume : PrefabAttribute
 	public override void PreProcess (IPrefabProcessor preProcess, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
 	{
 		base.PreProcess (preProcess, rootObj, name, serverside, clientside, bundling);
-		IsBuildingBlock = (Object)(object)rootObj.GetComponent<BuildingBlock> () != (Object)null;
+		IsBuildingBlock = rootObj.GetComponent<BuildingBlock> () != null;
 	}
 
 	protected abstract bool Check (Vector3 position, Quaternion rotation, int mask = -1);
@@ -46,8 +46,6 @@ public abstract class DeployVolume : PrefabAttribute
 
 	public static bool Check (Vector3 position, Quaternion rotation, DeployVolume[] volumes, int mask = -1)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
 		for (int i = 0; i < volumes.Length; i++) {
 			if (volumes [i].Check (position, rotation, mask)) {
 				return true;
@@ -58,9 +56,6 @@ public abstract class DeployVolume : PrefabAttribute
 
 	public static bool Check (Vector3 position, Quaternion rotation, DeployVolume[] volumes, OBB test, int mask = -1)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
 		for (int i = 0; i < volumes.Length; i++) {
 			if (volumes [i].Check (position, rotation, test, mask)) {
 				return true;
@@ -71,42 +66,37 @@ public abstract class DeployVolume : PrefabAttribute
 
 	public static bool CheckSphere (Vector3 pos, float radius, int layerMask, DeployVolume volume)
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		List<Collider> list = Pool.GetList<Collider> ();
-		GamePhysics.OverlapSphere (pos, radius, list, layerMask, (QueryTriggerInteraction)2);
-		bool result = CheckFlags (list, volume);
-		Pool.FreeList<Collider> (ref list);
+		List<Collider> obj = Pool.GetList<Collider> ();
+		GamePhysics.OverlapSphere (pos, radius, obj, layerMask, QueryTriggerInteraction.Collide);
+		bool result = CheckFlags (obj, volume);
+		Pool.FreeList (ref obj);
 		return result;
 	}
 
 	public static bool CheckCapsule (Vector3 start, Vector3 end, float radius, int layerMask, DeployVolume volume)
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		List<Collider> list = Pool.GetList<Collider> ();
-		GamePhysics.OverlapCapsule (start, end, radius, list, layerMask, (QueryTriggerInteraction)2);
-		bool result = CheckFlags (list, volume);
-		Pool.FreeList<Collider> (ref list);
+		List<Collider> obj = Pool.GetList<Collider> ();
+		GamePhysics.OverlapCapsule (start, end, radius, obj, layerMask, QueryTriggerInteraction.Collide);
+		bool result = CheckFlags (obj, volume);
+		Pool.FreeList (ref obj);
 		return result;
 	}
 
 	public static bool CheckOBB (OBB obb, int layerMask, DeployVolume volume)
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		List<Collider> list = Pool.GetList<Collider> ();
-		GamePhysics.OverlapOBB (obb, list, layerMask, (QueryTriggerInteraction)2);
-		bool result = CheckFlags (list, volume);
-		Pool.FreeList<Collider> (ref list);
+		List<Collider> obj = Pool.GetList<Collider> ();
+		GamePhysics.OverlapOBB (obb, obj, layerMask, QueryTriggerInteraction.Collide);
+		bool result = CheckFlags (obj, volume);
+		Pool.FreeList (ref obj);
 		return result;
 	}
 
 	public static bool CheckBounds (Bounds bounds, int layerMask, DeployVolume volume)
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		List<Collider> list = Pool.GetList<Collider> ();
-		GamePhysics.OverlapBounds (bounds, list, layerMask, (QueryTriggerInteraction)2);
-		bool result = CheckFlags (list, volume);
-		Pool.FreeList<Collider> (ref list);
+		List<Collider> obj = Pool.GetList<Collider> ();
+		GamePhysics.OverlapBounds (bounds, obj, layerMask, QueryTriggerInteraction.Collide);
+		bool result = CheckFlags (obj, volume);
+		Pool.FreeList (ref obj);
 		return result;
 	}
 
@@ -115,12 +105,12 @@ public abstract class DeployVolume : PrefabAttribute
 		LastDeployHit = null;
 		for (int i = 0; i < list.Count; i++) {
 			LastDeployHit = list [i];
-			GameObject gameObject = ((Component)list [i]).gameObject;
+			GameObject gameObject = list [i].gameObject;
 			if (gameObject.CompareTag ("DeployVolumeIgnore")) {
 				continue;
 			}
 			ColliderInfo component = gameObject.GetComponent<ColliderInfo> ();
-			if (((Object)(object)component != (Object)null && component.HasFlag (ColliderInfo.Flags.OnlyBlockBuildingBlock) && !volume.IsBuildingBlock) || (!((Object)(object)component == (Object)null) && volume.ignore != 0 && component.HasFlag (volume.ignore))) {
+			if ((component != null && component.HasFlag (ColliderInfo.Flags.OnlyBlockBuildingBlock) && !volume.IsBuildingBlock) || (!(component == null) && volume.ignore != 0 && component.HasFlag (volume.ignore))) {
 				continue;
 			}
 			if (volume.entityList.Length == 0 && volume.entityGroups.Length == 0) {
@@ -132,7 +122,7 @@ public abstract class DeployVolume : PrefabAttribute
 				EntityListScriptableObject[] array = volume.entityGroups;
 				foreach (EntityListScriptableObject entityListScriptableObject in array) {
 					if (entityListScriptableObject.entities == null || entityListScriptableObject.entities.Length == 0) {
-						Debug.LogWarning ((object)("Skipping entity group '" + ((Object)entityListScriptableObject).name + "' when checking volume: there are no entities"));
+						Debug.LogWarning ("Skipping entity group '" + entityListScriptableObject.name + "' when checking volume: there are no entities");
 						continue;
 					}
 					if (CheckEntityList (entity, entityListScriptableObject.entities, entityListScriptableObject.whitelist)) {
@@ -156,7 +146,7 @@ public abstract class DeployVolume : PrefabAttribute
 			return true;
 		}
 		bool flag = false;
-		if ((Object)(object)entity != (Object)null) {
+		if (entity != null) {
 			foreach (BaseEntity baseEntity in entities) {
 				if (entity.prefabID == baseEntity.prefabID) {
 					flag = true;

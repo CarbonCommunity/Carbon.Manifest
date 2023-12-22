@@ -1,18 +1,10 @@
-using UnityEngine;
-
 public class ItemModBlueprintCraft : ItemMod
 {
 	public GameObjectRef successEffect;
 
 	public override void ServerCommand (Item item, string command, BasePlayer player)
 	{
-		//IL_0133: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0140: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a8: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)item.GetOwnerPlayer () != (Object)(object)player) {
+		if (item.GetOwnerPlayer () != player) {
 			return;
 		}
 		if (command == "craft") {

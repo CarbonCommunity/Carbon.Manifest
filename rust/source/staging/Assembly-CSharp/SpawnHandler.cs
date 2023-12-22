@@ -37,7 +37,7 @@ public class SpawnHandler : SingletonComponent<SpawnHandler>
 
 	internal SpawnDistribution CharDistribution;
 
-	internal ListHashSet<ISpawnGroup> SpawnGroups = new ListHashSet<ISpawnGroup> (8);
+	internal ListHashSet<ISpawnGroup> SpawnGroups = new ListHashSet<ISpawnGroup> ();
 
 	internal List<SpawnIndividual> SpawnIndividuals = new List<SpawnIndividual> ();
 
@@ -53,14 +53,14 @@ public class SpawnHandler : SingletonComponent<SpawnHandler>
 	protected void OnEnable ()
 	{
 		AllSpawnPopulations = SpawnPopulations.Concat (ConvarSpawnPopulations).ToArray ();
-		((MonoBehaviour)this).StartCoroutine (SpawnTick ());
-		((MonoBehaviour)this).StartCoroutine (SpawnGroupTick ());
-		((MonoBehaviour)this).StartCoroutine (SpawnIndividualTick ());
+		StartCoroutine (SpawnTick ());
+		StartCoroutine (SpawnGroupTick ());
+		StartCoroutine (SpawnIndividualTick ());
 	}
 
 	public static BasePlayer.SpawnPoint GetSpawnPoint ()
 	{
-		if ((Object)(object)SingletonComponent<SpawnHandler>.Instance == (Object)null || SingletonComponent<SpawnHandler>.Instance.CharDistribution == null) {
+		if (SingletonComponent<SpawnHandler>.Instance == null || SingletonComponent<SpawnHandler>.Instance.CharDistribution == null) {
 			return null;
 		}
 		BasePlayer.SpawnPoint spawnPoint = new BasePlayer.SpawnPoint ();
@@ -72,13 +72,12 @@ public class SpawnHandler : SingletonComponent<SpawnHandler>
 
 	private static bool GetSpawnPointStandard (BasePlayer.SpawnPoint spawnPoint)
 	{
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
 		for (int i = 0; i < 60; i++) {
 			if (!SingletonComponent<SpawnHandler>.Instance.CharDistribution.Sample (out spawnPoint.pos, out spawnPoint.rot)) {
 				continue;
 			}
 			bool flag = true;
-			if ((Object)(object)TerrainMeta.Path != (Object)null) {
+			if (TerrainMeta.Path != null) {
 				foreach (MonumentInfo monument in TerrainMeta.Path.Monuments) {
 					if (monument.Distance (spawnPoint.pos) < 50f) {
 						flag = false;
@@ -95,14 +94,6 @@ public class SpawnHandler : SingletonComponent<SpawnHandler>
 
 	public void UpdateDistributions ()
 	{
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0031: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0037: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0120: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0121: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0087: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0088: Unknown result type (might be due to invalid IL or missing references)
 		if (World.Size == 0) {
 			return;
 		}
@@ -114,7 +105,7 @@ public class SpawnHandler : SingletonComponent<SpawnHandler>
 		for (int i = 0; i < AllSpawnPopulations.Length; i++) {
 			SpawnPopulationBase spawnPopulationBase = AllSpawnPopulations [i];
 			if (spawnPopulationBase == null) {
-				Debug.LogError ((object)"Spawn handler contains null spawn population.");
+				Debug.LogError ("Spawn handler contains null spawn population.");
 				continue;
 			}
 			byte[] baseMapValues = spawnPopulationBase.GetBaseMapValues (populationRes);
@@ -125,7 +116,7 @@ public class SpawnHandler : SingletonComponent<SpawnHandler>
 		byte[] map = new byte[char_res * char_res];
 		SpawnFilter filter = CharacterSpawn;
 		float cutoff = CharacterSpawnCutoff;
-		Parallel.For (0, char_res, (Action<int>)delegate(int z) {
+		Parallel.For (0, char_res, delegate(int z) {
 			for (int j = 0; j < char_res; j++) {
 				float normX = ((float)j + 0.5f) / (float)char_res;
 				float normZ = ((float)z + 0.5f) / (float)char_res;
@@ -157,11 +148,9 @@ public class SpawnHandler : SingletonComponent<SpawnHandler>
 
 	public void FillIndividuals ()
 	{
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
 		for (int i = 0; i < SpawnIndividuals.Count; i++) {
 			SpawnIndividual spawnIndividual = SpawnIndividuals [i];
-			Spawn (Prefab.Load<Spawnable> (spawnIndividual.PrefabID, (GameManager)null, (PrefabAttribute.Library)null), spawnIndividual.Position, spawnIndividual.Rotation);
+			Spawn (Prefab.Load<Spawnable> (spawnIndividual.PrefabID), spawnIndividual.Position, spawnIndividual.Rotation);
 		}
 	}
 
@@ -207,8 +196,8 @@ public class SpawnHandler : SingletonComponent<SpawnHandler>
 					if (SpawnDistributions != null) {
 						SpawnRepeating (spawnPopulationBase, spawnDistribution);
 					}
-				} catch (Exception ex) {
-					Debug.LogError ((object)ex);
+				} catch (Exception message) {
+					Debug.LogError (message);
 				}
 				yield return CoroutineEx.waitForEndOfFrame;
 			}
@@ -228,8 +217,8 @@ public class SpawnHandler : SingletonComponent<SpawnHandler>
 				if (spawnGroup != null) {
 					try {
 						spawnGroup.SpawnRepeating ();
-					} catch (Exception ex) {
-						Debug.LogError ((object)ex);
+					} catch (Exception message) {
+						Debug.LogError (message);
 					}
 					yield return CoroutineEx.waitForEndOfFrame;
 				}
@@ -248,9 +237,9 @@ public class SpawnHandler : SingletonComponent<SpawnHandler>
 			for (int i = 0; i < SpawnIndividuals.Count; i++) {
 				SpawnIndividual spawnIndividual = SpawnIndividuals [i];
 				try {
-					Spawn (Prefab.Load<Spawnable> (spawnIndividual.PrefabID, (GameManager)null, (PrefabAttribute.Library)null), spawnIndividual.Position, spawnIndividual.Rotation);
-				} catch (Exception ex) {
-					Debug.LogError ((object)ex);
+					Spawn (Prefab.Load<Spawnable> (spawnIndividual.PrefabID), spawnIndividual.Position, spawnIndividual.Rotation);
+				} catch (Exception message) {
+					Debug.LogError (message);
 				}
 				yield return CoroutineEx.waitForEndOfFrame;
 			}
@@ -271,36 +260,17 @@ public class SpawnHandler : SingletonComponent<SpawnHandler>
 		int count = distribution.Count;
 		int num = targetCount - count;
 		num = Mathf.RoundToInt ((float)num * population.GetCurrentSpawnRate ());
-		num = Random.Range (Mathf.Min (num, MinSpawnsPerTick), Mathf.Min (num, MaxSpawnsPerTick));
+		num = UnityEngine.Random.Range (Mathf.Min (num, MinSpawnsPerTick), Mathf.Min (num, MaxSpawnsPerTick));
 		population.Fill (this, distribution, num, initialSpawn: false);
 	}
 
 	public GameObject Spawn (SpawnPopulationBase population, Prefab<Spawnable> prefab, Vector3 pos, Quaternion rot)
 	{
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0070: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0072: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0083: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0084: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0086: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0092: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0093: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0095: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d2: Unknown result type (might be due to invalid IL or missing references)
 		if (prefab == null) {
 			return null;
 		}
-		if ((Object)(object)prefab.Component == (Object)null) {
-			Debug.LogError ((object)("[Spawn] Missing component 'Spawnable' on " + prefab.Name));
+		if (prefab.Component == null) {
+			Debug.LogError ("[Spawn] Missing component 'Spawnable' on " + prefab.Name);
 			return null;
 		}
 		Vector3 scale = Vector3.one;
@@ -322,71 +292,49 @@ public class SpawnHandler : SingletonComponent<SpawnHandler>
 			return null;
 		}
 		if (Global.developer > 1) {
-			Debug.Log ((object)("[Spawn] Spawning " + prefab.Name));
+			Debug.Log ("[Spawn] Spawning " + prefab.Name);
 		}
 		BaseEntity baseEntity = prefab.SpawnEntity (pos, rot, active: false);
-		if ((Object)(object)baseEntity == (Object)null) {
-			Debug.LogWarning ((object)("[Spawn] Couldn't create prefab as entity - " + prefab.Name));
+		if (baseEntity == null) {
+			Debug.LogWarning ("[Spawn] Couldn't create prefab as entity - " + prefab.Name);
 			return null;
 		}
-		Spawnable component = ((Component)baseEntity).GetComponent<Spawnable> ();
+		Spawnable component = baseEntity.GetComponent<Spawnable> ();
 		if (component.Population != population) {
 			component.Population = population;
 		}
-		((Component)baseEntity).gameObject.AwakeFromInstantiate ();
+		baseEntity.gameObject.AwakeFromInstantiate ();
 		baseEntity.Spawn ();
-		return ((Component)baseEntity).gameObject;
+		return baseEntity.gameObject;
 	}
 
 	private GameObject Spawn (Prefab<Spawnable> prefab, Vector3 pos, Quaternion rot)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
 		if (!CheckBounds (prefab.Object, pos, rot, Vector3.one)) {
 			return null;
 		}
 		BaseEntity baseEntity = prefab.SpawnEntity (pos, rot);
-		if ((Object)(object)baseEntity == (Object)null) {
-			Debug.LogWarning ((object)("[Spawn] Couldn't create prefab as entity - " + prefab.Name));
+		if (baseEntity == null) {
+			Debug.LogWarning ("[Spawn] Couldn't create prefab as entity - " + prefab.Name);
 			return null;
 		}
 		baseEntity.Spawn ();
-		return ((Component)baseEntity).gameObject;
+		return baseEntity.gameObject;
 	}
 
 	public bool CheckBounds (GameObject gameObject, Vector3 pos, Quaternion rot, Vector3 scale)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
 		return CheckBounds (gameObject, pos, rot, scale, BoundsCheckMask);
 	}
 
 	public static bool CheckBounds (GameObject gameObject, Vector3 pos, Quaternion rot, Vector3 scale, LayerMask mask)
 	{
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0031: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0037: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)gameObject == (Object)null) {
+		if (gameObject == null) {
 			return true;
 		}
-		if (LayerMask.op_Implicit (mask) != 0) {
+		if ((int)mask != 0) {
 			BaseEntity component = gameObject.GetComponent<BaseEntity> ();
-			if ((Object)(object)component != (Object)null && Physics.CheckBox (pos + rot * Vector3.Scale (((Bounds)(ref component.bounds)).center, scale), Vector3.Scale (((Bounds)(ref component.bounds)).extents, scale), rot, LayerMask.op_Implicit (mask))) {
+			if (component != null && UnityEngine.Physics.CheckBox (pos + rot * Vector3.Scale (component.bounds.center, scale), Vector3.Scale (component.bounds.extents, scale), rot, mask)) {
 				return false;
 			}
 		}
@@ -416,23 +364,23 @@ public class SpawnHandler : SingletonComponent<SpawnHandler>
 		if (array.Length <= targetCount) {
 			return;
 		}
-		Debug.Log ((object)(((object)population)?.ToString () + " has " + array.Length + " objects, but max allowed is " + targetCount));
+		Debug.Log (population?.ToString () + " has " + array.Length + " objects, but max allowed is " + targetCount);
 		int count = array.Length - targetCount;
-		Debug.Log ((object)(" - deleting " + count + " objects"));
+		Debug.Log (" - deleting " + count + " objects");
 		foreach (Spawnable item in array.Take (count)) {
-			BaseEntity baseEntity = ((Component)item).gameObject.ToBaseEntity ();
+			BaseEntity baseEntity = item.gameObject.ToBaseEntity ();
 			if (baseEntity.IsValid ()) {
 				baseEntity.Kill ();
 			} else {
-				GameManager.Destroy (((Component)item).gameObject);
+				GameManager.Destroy (item.gameObject);
 			}
 		}
 	}
 
 	public Spawnable[] FindAll (SpawnPopulationBase population)
 	{
-		return (from x in Object.FindObjectsOfType<Spawnable> ()
-			where ((Component)x).gameObject.activeInHierarchy && x.Population == population
+		return (from x in UnityEngine.Object.FindObjectsOfType<Spawnable> ()
+			where x.gameObject.activeInHierarchy && x.Population == population
 			select x).ToArray ();
 	}
 
@@ -445,7 +393,7 @@ public class SpawnHandler : SingletonComponent<SpawnHandler>
 	{
 		if (spawnable.Population != null) {
 			if (!population2distribution.TryGetValue (spawnable.Population, out var value)) {
-				Debug.LogWarning ((object)("[SpawnHandler] trying to add instance to invalid population: " + (object)spawnable.Population));
+				Debug.LogWarning ("[SpawnHandler] trying to add instance to invalid population: " + spawnable.Population);
 			} else {
 				value.AddInstance (spawnable);
 			}
@@ -456,7 +404,7 @@ public class SpawnHandler : SingletonComponent<SpawnHandler>
 	{
 		if (spawnable.Population != null) {
 			if (!population2distribution.TryGetValue (spawnable.Population, out var value)) {
-				Debug.LogWarning ((object)("[SpawnHandler] trying to remove instance from invalid population: " + (object)spawnable.Population));
+				Debug.LogWarning ("[SpawnHandler] trying to remove instance from invalid population: " + spawnable.Population);
 			} else {
 				value.RemoveInstance (spawnable);
 			}

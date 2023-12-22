@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Facepunch;
 using ProtoBuf;
@@ -23,9 +22,9 @@ public class HalloweenDungeon : BasePortal
 
 	public AnimationCurve radiationCurve;
 
-	public Phrase collapsePhrase;
+	public Translate.Phrase collapsePhrase;
 
-	public Phrase mountPhrase;
+	public Translate.Phrase mountPhrase;
 
 	private bool anyplayers_cached;
 
@@ -38,7 +37,6 @@ public class HalloweenDungeon : BasePortal
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (info.fromDisk && info.msg.ioEntity != null) {
 			dungeonInstance.uid = info.msg.ioEntity.genericEntRef3;
@@ -62,8 +60,8 @@ public class HalloweenDungeon : BasePortal
 			float lifeFraction = GetLifeFraction ();
 			if (dungeonInstance.IsValid (serverside: true)) {
 				ProceduralDynamicDungeon proceduralDynamicDungeon = dungeonInstance.Get (serverside: true);
-				float num = radiationCurve.Evaluate (lifeFraction) * 80f;
-				proceduralDynamicDungeon.exitRadiation.RadiationAmountOverride = Mathf.Clamp (num, 0f, float.PositiveInfinity);
+				float value = radiationCurve.Evaluate (lifeFraction) * 80f;
+				proceduralDynamicDungeon.exitRadiation.RadiationAmountOverride = Mathf.Clamp (value, 0f, float.PositiveInfinity);
 			}
 			if (lifeFraction >= 1f) {
 				KillIfNoPlayers ();
@@ -84,27 +82,25 @@ public class HalloweenDungeon : BasePortal
 
 	public bool AnyPlayersInside ()
 	{
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
 		ProceduralDynamicDungeon proceduralDynamicDungeon = dungeonInstance.Get (serverside: true);
-		if ((Object)(object)proceduralDynamicDungeon == (Object)null) {
+		if (proceduralDynamicDungeon == null) {
 			anyplayers_cached = false;
 		} else if (Time.time > nextPlayerCheckTime) {
 			nextPlayerCheckTime = Time.time + 10f;
-			anyplayers_cached = BaseNetworkable.HasCloseConnections (((Component)proceduralDynamicDungeon).transform.position, 80f);
+			anyplayers_cached = BaseNetworkable.HasCloseConnections (proceduralDynamicDungeon.transform.position, 80f);
 		}
 		return anyplayers_cached;
 	}
 
 	private void ClearAllEntitiesInRadius (float radius)
 	{
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
 		ProceduralDynamicDungeon proceduralDynamicDungeon = dungeonInstance.Get (serverside: true);
-		if ((Object)(object)proceduralDynamicDungeon == (Object)null) {
+		if (proceduralDynamicDungeon == null) {
 			return;
 		}
-		List<BaseEntity> list = Pool.GetList<BaseEntity> ();
-		Vis.Entities (((Component)proceduralDynamicDungeon).transform.position, radius, list, -1, (QueryTriggerInteraction)2);
-		foreach (BaseEntity item in list) {
+		List<BaseEntity> obj = Pool.GetList<BaseEntity> ();
+		Vis.Entities (proceduralDynamicDungeon.transform.position, radius, obj);
+		foreach (BaseEntity item in obj) {
 			if (item.IsValid () && !item.IsDestroyed) {
 				if (item is LootableCorpse lootableCorpse) {
 					lootableCorpse.blockBagDrop = true;
@@ -112,16 +108,14 @@ public class HalloweenDungeon : BasePortal
 				item.Kill ();
 			}
 		}
-		Pool.FreeList<BaseEntity> (ref list);
+		Pool.FreeList (ref obj);
 	}
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
 		if (info.msg.ioEntity == null) {
-			info.msg.ioEntity = Pool.Get<IOEntity> ();
+			info.msg.ioEntity = Pool.Get<ProtoBuf.IOEntity> ();
 		}
 		info.msg.ioEntity.genericEntRef3 = dungeonInstance.uid;
 		info.msg.ioEntity.genericFloat1 = secondsUsed;
@@ -157,59 +151,30 @@ public class HalloweenDungeon : BasePortal
 
 	public override void ServerInit ()
 	{
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005a: Unknown result type (might be due to invalid IL or missing references)
 		base.ServerInit ();
-		if (!Application.isLoadingSave) {
+		if (!Rust.Application.isLoadingSave) {
 			timeAlive = Random.Range (0f, 60f);
 			SpawnSubEntities ();
 		}
 		localEntryExitPos.DropToGround (alignToNormal: false, 10f);
-		Transform transform = ((Component)localEntryExitPos).transform;
-		transform.position += Vector3.up * 0.05f;
-		((FacepunchBehaviour)this).Invoke ((Action)CheckBlocked, 0.25f);
+		localEntryExitPos.transform.position += Vector3.up * 0.05f;
+		Invoke (CheckBlocked, 0.25f);
 	}
 
 	public void CheckBlocked ()
 	{
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
 		float num = 0.5f;
 		float num2 = 1.8f;
 		Vector3 position = localEntryExitPos.position;
-		Vector3 val = position + new Vector3 (0f, num, 0f);
-		Vector3 val2 = position + new Vector3 (0f, num2 - num, 0f);
-		if (Physics.CheckCapsule (val, val2, num, 1537286401)) {
+		Vector3 start = position + new Vector3 (0f, num, 0f);
+		Vector3 end = position + new Vector3 (0f, num2 - num, 0f);
+		if (Physics.CheckCapsule (start, end, num, 1537286401)) {
 			Kill ();
 		}
 	}
 
 	public static Vector3 GetDungeonSpawnPoint ()
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0093: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00aa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00af: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ea: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ef: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011f: Unknown result type (might be due to invalid IL or missing references)
 		float num = Mathf.Floor (TerrainMeta.Size.x / 200f);
 		float num2 = 1000f;
 		Vector3 zero = Vector3.zero;
@@ -219,16 +184,16 @@ public class HalloweenDungeon : BasePortal
 		_ = Vector3.zero;
 		for (int i = 0; (float)i < num2; i++) {
 			for (int j = 0; (float)j < num; j++) {
-				Vector3 val = zero + new Vector3 ((float)j * 200f, (float)i * 100f, 0f);
+				Vector3 vector = zero + new Vector3 ((float)j * 200f, (float)i * 100f, 0f);
 				bool flag = false;
 				foreach (ProceduralDynamicDungeon dungeon in ProceduralDynamicDungeon.dungeons) {
-					if ((Object)(object)dungeon != (Object)null && dungeon.isServer && Vector3.Distance (((Component)dungeon).transform.position, val) < 10f) {
+					if (dungeon != null && dungeon.isServer && Vector3.Distance (dungeon.transform.position, vector) < 10f) {
 						flag = true;
 						break;
 					}
 				}
 				if (!flag) {
-					return val;
+					return vector;
 				}
 			}
 		}
@@ -250,25 +215,15 @@ public class HalloweenDungeon : BasePortal
 
 	public void SpawnSubEntities ()
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0005: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0064: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006a: Unknown result type (might be due to invalid IL or missing references)
 		Vector3 dungeonSpawnPoint = GetDungeonSpawnPoint ();
 		if (dungeonSpawnPoint == Vector3.zero) {
-			Debug.LogError ((object)"No dungeon spawn point");
-			((FacepunchBehaviour)this).Invoke ((Action)DelayedDestroy, 5f);
+			Debug.LogError ("No dungeon spawn point");
+			Invoke (DelayedDestroy, 5f);
 			return;
 		}
 		BaseEntity baseEntity = GameManager.server.CreateEntity (dungeonPrefab.resourcePath, dungeonSpawnPoint, Quaternion.identity);
-		ProceduralDynamicDungeon component = ((Component)baseEntity).GetComponent<ProceduralDynamicDungeon> ();
-		component.mapOffset = ((Component)this).transform.position - dungeonSpawnPoint;
+		ProceduralDynamicDungeon component = baseEntity.GetComponent<ProceduralDynamicDungeon> ();
+		component.mapOffset = base.transform.position - dungeonSpawnPoint;
 		baseEntity.Spawn ();
 		dungeonInstance.Set (component);
 		BasePortal basePortal = (targetPortal = component.GetExitPortal ());

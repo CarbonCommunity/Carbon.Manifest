@@ -11,20 +11,20 @@ public class VehicleModuleEngineItems : ScriptableObject
 
 	public bool TryGetItem (int tier, EngineStorage.EngineItemTypes type, out ItemModEngineItem output)
 	{
-		List<ItemModEngineItem> list = Pool.GetList<ItemModEngineItem> ();
+		List<ItemModEngineItem> obj = Pool.GetList<ItemModEngineItem> ();
 		bool result = false;
 		output = null;
 		ItemModEngineItem[] array = engineItems;
 		foreach (ItemModEngineItem itemModEngineItem in array) {
 			if (itemModEngineItem.tier == tier && itemModEngineItem.engineItemType == type) {
-				list.Add (itemModEngineItem);
+				obj.Add (itemModEngineItem);
 			}
 		}
-		if (list.Count > 0) {
-			output = ListEx.GetRandom<ItemModEngineItem> (list);
+		if (obj.Count > 0) {
+			output = obj.GetRandom ();
 			result = true;
 		}
-		Pool.FreeList<ItemModEngineItem> (ref list);
+		Pool.FreeList (ref obj);
 		return result;
 	}
 }

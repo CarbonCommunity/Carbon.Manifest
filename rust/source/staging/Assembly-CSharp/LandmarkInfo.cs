@@ -7,7 +7,7 @@ public class LandmarkInfo : MonoBehaviour
 
 	public bool isLayerSpecific;
 
-	public Phrase displayPhrase;
+	public Translate.Phrase displayPhrase;
 
 	public Sprite mapIcon;
 
@@ -15,7 +15,7 @@ public class LandmarkInfo : MonoBehaviour
 
 	protected virtual void Awake ()
 	{
-		if (Object.op_Implicit ((Object)(object)TerrainMeta.Path)) {
+		if ((bool)TerrainMeta.Path) {
 			TerrainMeta.Path.Landmarks.Add (this);
 		}
 	}

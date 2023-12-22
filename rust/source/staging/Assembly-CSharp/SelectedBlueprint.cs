@@ -38,10 +38,10 @@ public class SelectedBlueprint : SingletonComponent<SelectedBlueprint>, IInvento
 
 	public static bool isOpen {
 		get {
-			if ((Object)(object)SingletonComponent<SelectedBlueprint>.Instance == (Object)null) {
+			if (SingletonComponent<SelectedBlueprint>.Instance == null) {
 				return false;
 			}
-			return (Object)(object)SingletonComponent<SelectedBlueprint>.Instance.blueprint != (Object)null;
+			return SingletonComponent<SelectedBlueprint>.Instance.blueprint != null;
 		}
 	}
 }

@@ -30,9 +30,9 @@ public class ContactsPanel : SingletonComponent<ContactsPanel>
 
 	public RustButton lastSeenToggle;
 
-	public Phrase sortingByLastSeenPhrase;
+	public Translate.Phrase sortingByLastSeenPhrase;
 
-	public Phrase sortingByFirstSeen;
+	public Translate.Phrase sortingByFirstSeen;
 
 	public RustText sortText;
 }

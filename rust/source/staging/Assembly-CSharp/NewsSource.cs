@@ -7,9 +7,7 @@ using Facepunch.Extend;
 using Facepunch.Math;
 using Facepunch.Models;
 using Rust.UI;
-using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class NewsSource : MonoBehaviour
@@ -75,19 +73,17 @@ public class NewsSource : MonoBehaviour
 
 	public void SetStory (SteamNewsSource.Story story)
 	{
-		//IL_00b9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c3: Expected O, but got Unknown
 		PlayerPrefs.SetInt ("lastNewsDate", story.date);
-		TransformEx.DestroyAllChildren ((Transform)(object)container, false);
-		((TMP_Text)title).text = story.name;
-		((TMP_Text)authorName).text = "by " + story.author;
-		string text = NumberExtensions.FormatSecondsLong ((long)(Epoch.Current - story.date));
-		((TMP_Text)date).text = "Posted " + text + " ago";
-		((UnityEventBase)button.onClick).RemoveAllListeners ();
-		((UnityEvent)button.onClick).AddListener ((UnityAction)delegate {
+		container.DestroyAllChildren ();
+		title.text = story.name;
+		authorName.text = "by " + story.author;
+		string text = NumberExtensions.FormatSecondsLong (Epoch.Current - story.date);
+		date.text = "Posted " + text + " ago";
+		button.onClick.RemoveAllListeners ();
+		button.onClick.AddListener (delegate {
 			string text2 = GetBlogPost ()?.Url ?? story.url;
-			Debug.Log ((object)("Opening URL: " + text2));
-			Application.OpenURL (text2);
+			Debug.Log ("Opening URL: " + text2);
+			UnityEngine.Application.OpenURL (text2);
 		});
 		string firstImage = GetBlogPost ()?.HeaderImage;
 		ParagraphBuilder currentParagraph = ParagraphBuilder.New ();
@@ -96,25 +92,13 @@ public class NewsSource : MonoBehaviour
 		if (firstImage != null) {
 			coverImage.Load (firstImage);
 		}
-		RustText[] componentsInChildren = ((Component)container).GetComponentsInChildren<RustText> ();
+		RustText[] componentsInChildren = container.GetComponentsInChildren<RustText> ();
 		for (int i = 0; i < componentsInChildren.Length; i++) {
 			componentsInChildren [i].DoAutoSize ();
 		}
-		BlogInfo GetBlogPost ()
+		Facepunch.Models.Manifest.NewsInfo.BlogInfo GetBlogPost ()
 		{
-			Manifest manifest = Application.Manifest;
-			if (manifest == null) {
-				return null;
-			}
-			NewsInfo news = manifest.News;
-			if (news == null) {
-				return null;
-			}
-			BlogInfo[] blogs = news.Blogs;
-			if (blogs == null) {
-				return null;
-			}
-			return List.FindWith<BlogInfo, string> ((IReadOnlyCollection<BlogInfo>)(object)blogs, (Func<BlogInfo, string>)((BlogInfo b) => b.Title), story.name, (IEqualityComparer<string>)StringComparer.InvariantCultureIgnoreCase);
+			return ((IReadOnlyCollection<Facepunch.Models.Manifest.NewsInfo.BlogInfo>)(object)Facepunch.Application.Manifest?.News?.Blogs)?.FindWith ((Facepunch.Models.Manifest.NewsInfo.BlogInfo b) => b.Title, story.name, StringComparer.InvariantCultureIgnoreCase);
 		}
 	}
 
@@ -129,7 +113,7 @@ public class NewsSource : MonoBehaviour
 			switch (value2.ToLowerInvariant ()) {
 			case "previewyoutube":
 				if (depth == 0) {
-					string[] array2 = value3.Split (';', StringSplitOptions.None);
+					string[] array2 = value3.Split (';');
 					AppendYouTube (ref currentParagraph, array2 [0]);
 				}
 				break;
@@ -232,12 +216,11 @@ public class NewsSource : MonoBehaviour
 	{
 		if (currentParagraph.StringBuilder.Length > 0) {
 			string text = currentParagraph.StringBuilder.ToString ();
-			RustText obj = Object.Instantiate<RustText> (paragraphTemplate, (Transform)(object)container);
-			ComponentExtensions.SetActive<RustText> (obj, true);
-			obj.SetText (text);
-			NewsParagraph newsParagraph = default(NewsParagraph);
-			if (((Component)obj).TryGetComponent<NewsParagraph> (ref newsParagraph)) {
-				newsParagraph.Links = currentParagraph.Links;
+			RustText rustText = UnityEngine.Object.Instantiate (paragraphTemplate, container);
+			rustText.SetActive (active: true);
+			rustText.SetText (text);
+			if (rustText.TryGetComponent<NewsParagraph> (out var component)) {
+				component.Links = currentParagraph.Links;
 			}
 		}
 		currentParagraph = ParagraphBuilder.New ();
@@ -246,25 +229,23 @@ public class NewsSource : MonoBehaviour
 	private void AppendImage (ref ParagraphBuilder currentParagraph, string url)
 	{
 		AppendParagraph (ref currentParagraph);
-		HttpImage obj = Object.Instantiate<HttpImage> (imageTemplate, (Transform)(object)container);
-		ComponentExtensions.SetActive<HttpImage> (obj, true);
-		obj.Load (url);
+		HttpImage httpImage = UnityEngine.Object.Instantiate (imageTemplate, container);
+		httpImage.SetActive (active: true);
+		httpImage.Load (url);
 	}
 
 	private void AppendYouTube (ref ParagraphBuilder currentParagraph, string videoId)
 	{
-		//IL_0069: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0073: Expected O, but got Unknown
 		AppendParagraph (ref currentParagraph);
-		HttpImage obj = Object.Instantiate<HttpImage> (youtubeTemplate, (Transform)(object)container);
-		ComponentExtensions.SetActive<HttpImage> (obj, true);
-		obj.Load ("https://img.youtube.com/vi/" + videoId + "/maxresdefault.jpg");
-		RustButton component = ((Component)obj).GetComponent<RustButton> ();
-		if ((Object)(object)component != (Object)null) {
+		HttpImage httpImage = UnityEngine.Object.Instantiate (youtubeTemplate, container);
+		httpImage.SetActive (active: true);
+		httpImage.Load ("https://img.youtube.com/vi/" + videoId + "/maxresdefault.jpg");
+		RustButton component = httpImage.GetComponent<RustButton> ();
+		if (component != null) {
 			string videoUrl = "https://www.youtube.com/watch?v=" + videoId;
-			component.OnReleased.AddListener ((UnityAction)delegate {
-				Debug.Log ((object)("Opening URL: " + videoUrl));
-				Application.OpenURL (videoUrl);
+			component.OnReleased.AddListener (delegate {
+				Debug.Log ("Opening URL: " + videoUrl);
+				UnityEngine.Application.OpenURL (videoUrl);
 			});
 		}
 	}

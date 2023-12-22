@@ -37,7 +37,7 @@ public class DungeonGridCell : MonoBehaviour
 
 	protected void Awake ()
 	{
-		if (Object.op_Implicit ((Object)(object)TerrainMeta.Path)) {
+		if ((bool)TerrainMeta.Path) {
 			TerrainMeta.Path.DungeonGridCells.Add (this);
 		}
 	}

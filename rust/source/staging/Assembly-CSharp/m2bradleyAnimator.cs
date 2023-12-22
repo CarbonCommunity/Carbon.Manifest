@@ -102,9 +102,7 @@ public class m2bradleyAnimator : MonoBehaviour
 
 	private void Start ()
 	{
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		mainRigidbody = ((Component)this).GetComponent<Rigidbody> ();
+		mainRigidbody = GetComponent<Rigidbody> ();
 		for (int i = 0; i < ShocksBones.Length; i++) {
 			vecShocksOffsetPosition [i] = ShocksBones [i].localPosition;
 		}
@@ -122,25 +120,17 @@ public class m2bradleyAnimator : MonoBehaviour
 
 	private void AnimateWheelsTreads ()
 	{
-		//IL_005c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0077: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0092: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ad: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
 		float num = 0f;
-		if ((Object)(object)mainRigidbody != (Object)null) {
-			num = Vector3.Dot (mainRigidbody.velocity, ((Component)this).transform.forward);
+		if (mainRigidbody != null) {
+			num = Vector3.Dot (mainRigidbody.velocity, base.transform.forward);
 		}
-		float num2 = Time.time * -1f * num * treadConstant % 1f;
-		treadLeftMaterial.SetTextureOffset ("_MainTex", new Vector2 (num2, 0f));
-		treadLeftMaterial.SetTextureOffset ("_BumpMap", new Vector2 (num2, 0f));
-		treadLeftMaterial.SetTextureOffset ("_SpecGlossMap", new Vector2 (num2, 0f));
-		treadRightMaterial.SetTextureOffset ("_MainTex", new Vector2 (num2, 0f));
-		treadRightMaterial.SetTextureOffset ("_BumpMap", new Vector2 (num2, 0f));
-		treadRightMaterial.SetTextureOffset ("_SpecGlossMap", new Vector2 (num2, 0f));
+		float x = Time.time * -1f * num * treadConstant % 1f;
+		treadLeftMaterial.SetTextureOffset ("_MainTex", new Vector2 (x, 0f));
+		treadLeftMaterial.SetTextureOffset ("_BumpMap", new Vector2 (x, 0f));
+		treadLeftMaterial.SetTextureOffset ("_SpecGlossMap", new Vector2 (x, 0f));
+		treadRightMaterial.SetTextureOffset ("_MainTex", new Vector2 (x, 0f));
+		treadRightMaterial.SetTextureOffset ("_BumpMap", new Vector2 (x, 0f));
+		treadRightMaterial.SetTextureOffset ("_SpecGlossMap", new Vector2 (x, 0f));
 		if (num >= 0f) {
 			wheelAngle = (wheelAngle + Time.deltaTime * num * wheelSpinConstant) % 360f;
 		} else {
@@ -155,50 +145,27 @@ public class m2bradleyAnimator : MonoBehaviour
 
 	private void AdjustShocksHeight ()
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0079: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0083: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0106: Unknown result type (might be due to invalid IL or missing references)
-		Ray val = default(Ray);
-		int mask = LayerMask.GetMask (new string[3] { "Terrain", "World", "Construction" });
+		Ray ray = default(Ray);
+		int mask = LayerMask.GetMask ("Terrain", "World", "Construction");
 		int num = ShocksBones.Length;
 		float num2 = 0.55f;
-		float num3 = 0.79f;
-		float num4 = 0.26f;
-		RaycastHit val2 = default(RaycastHit);
+		float maxDistance = 0.79f;
+		float num3 = 0.26f;
 		for (int i = 0; i < num; i++) {
-			((Ray)(ref val)).origin = ShockTraceLineBegin [i].position;
-			((Ray)(ref val)).direction = ((Component)this).transform.up * -1f;
-			num4 = ((!Physics.SphereCast (val, 0.15f, ref val2, num3, mask)) ? 0.26f : (((RaycastHit)(ref val2)).distance - num2));
-			vecShocksOffsetPosition [i].y = Mathf.Lerp (vecShocksOffsetPosition [i].y, Mathf.Clamp (num4 * -1f, -0.26f, 0f), Time.deltaTime * 5f);
+			ray.origin = ShockTraceLineBegin [i].position;
+			ray.direction = base.transform.up * -1f;
+			num3 = ((!Physics.SphereCast (ray, 0.15f, out var hitInfo, maxDistance, mask)) ? 0.26f : (hitInfo.distance - num2));
+			vecShocksOffsetPosition [i].y = Mathf.Lerp (vecShocksOffsetPosition [i].y, Mathf.Clamp (num3 * -1f, -0.26f, 0f), Time.deltaTime * 5f);
 			ShocksBones [i].localPosition = vecShocksOffsetPosition [i];
 		}
 	}
 
 	private void TrackTurret ()
 	{
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ea: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0171: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0218: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0223: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02bc: Unknown result type (might be due to invalid IL or missing references)
-		if (!((Object)(object)targetTurret != (Object)null)) {
+		if (!(targetTurret != null)) {
 			return;
 		}
-		Vector3 val = targetTurret.position - turret.position;
-		_ = ((Vector3)(ref val)).normalized;
+		_ = (targetTurret.position - turret.position).normalized;
 		CalculateYawPitchOffset (turret, turret.position, targetTurret.position, out var yaw, out var pitch);
 		yaw = NormalizeYaw (yaw);
 		float num = Time.deltaTime * turretTurnSpeed;
@@ -241,20 +208,8 @@ public class m2bradleyAnimator : MonoBehaviour
 
 	private void TrackSpotLight ()
 	{
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00dc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0153: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)targetSpotLight != (Object)null) {
-			Vector3 val = targetSpotLight.position - spotLightYaw.position;
-			_ = ((Vector3)(ref val)).normalized;
+		if (targetSpotLight != null) {
+			_ = (targetSpotLight.position - spotLightYaw.position).normalized;
 			CalculateYawPitchOffset (spotLightYaw, spotLightYaw.position, targetSpotLight.position, out var yaw, out var pitch);
 			yaw = NormalizeYaw (yaw);
 			float num = Time.deltaTime * spotLightTurnSpeed;
@@ -278,18 +233,9 @@ public class m2bradleyAnimator : MonoBehaviour
 
 	private void TrackSideGuns ()
 	{
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0061: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0171: Unknown result type (might be due to invalid IL or missing references)
 		for (int i = 0; i < sideguns.Length; i++) {
-			if (!((Object)(object)targetSideguns [i] == (Object)null)) {
-				Vector3 val = targetSideguns [i].position - sideguns [i].position;
-				_ = ((Vector3)(ref val)).normalized;
+			if (!(targetSideguns [i] == null)) {
+				_ = (targetSideguns [i].position - sideguns [i].position).normalized;
 				CalculateYawPitchOffset (sideguns [i], sideguns [i].position, targetSideguns [i].position, out var yaw, out var pitch);
 				yaw = NormalizeYaw (yaw);
 				float num = Time.deltaTime * sidegunsTurnSpeed;
@@ -312,41 +258,18 @@ public class m2bradleyAnimator : MonoBehaviour
 
 	public void CalculateYawPitchOffset (Transform objectTransform, Vector3 vecStart, Vector3 vecEnd, out float yaw, out float pitch)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0031: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0070: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0071: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0078: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007a: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 val = objectTransform.InverseTransformDirection (vecEnd - vecStart);
-		float num = Mathf.Sqrt (val.x * val.x + val.z * val.z);
-		pitch = (0f - Mathf.Atan2 (val.y, num)) * (180f / (float)Math.PI);
-		Vector3 val2 = vecEnd - vecStart;
-		val = ((Vector3)(ref val2)).normalized;
+		Vector3 vector = objectTransform.InverseTransformDirection (vecEnd - vecStart);
+		float x = Mathf.Sqrt (vector.x * vector.x + vector.z * vector.z);
+		pitch = (0f - Mathf.Atan2 (vector.y, x)) * (180f / MathF.PI);
+		vector = (vecEnd - vecStart).normalized;
 		Vector3 forward = objectTransform.forward;
 		forward.y = 0f;
-		((Vector3)(ref forward)).Normalize ();
-		float num2 = Vector3.Dot (val, forward);
-		float num3 = Vector3.Dot (val, objectTransform.right);
-		float num4 = 360f * num3;
-		float num5 = 360f * (0f - num2);
-		yaw = (Mathf.Atan2 (num4, num5) + (float)Math.PI) * (180f / (float)Math.PI);
+		forward.Normalize ();
+		float num = Vector3.Dot (vector, forward);
+		float num2 = Vector3.Dot (vector, objectTransform.right);
+		float y = 360f * num2;
+		float x2 = 360f * (0f - num);
+		yaw = (Mathf.Atan2 (y, x2) + MathF.PI) * (180f / MathF.PI);
 	}
 
 	public float NormalizeYaw (float flYaw)

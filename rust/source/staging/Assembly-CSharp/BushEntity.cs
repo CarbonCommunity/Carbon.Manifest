@@ -12,7 +12,7 @@ public class BushEntity : BaseEntity, IPrefabPreProcess
 		base.InitShared ();
 		if (base.isServer) {
 			DecorComponent[] components = PrefabAttribute.server.FindAll<DecorComponent> (prefabID);
-			((Component)this).transform.ApplyDecorComponentsScaleOnly (components);
+			base.transform.ApplyDecorComponentsScaleOnly (components);
 		}
 	}
 
@@ -36,7 +36,7 @@ public class BushEntity : BaseEntity, IPrefabPreProcess
 	{
 		base.PreProcess (preProcess, rootObj, name, serverside, clientside, bundling);
 		if (serverside) {
-			globalBroadcast = Tree.global_broadcast;
+			globalBroadcast = ConVar.Tree.global_broadcast;
 		}
 	}
 }

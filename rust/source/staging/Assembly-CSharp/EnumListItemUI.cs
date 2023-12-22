@@ -1,5 +1,4 @@
 using Rust.UI;
-using TMPro;
 using UnityEngine;
 
 public class EnumListItemUI : MonoBehaviour
@@ -14,7 +13,7 @@ public class EnumListItemUI : MonoBehaviour
 	{
 		Value = value;
 		this.list = list;
-		((TMP_Text)TextValue).text = valueText;
+		TextValue.text = valueText;
 	}
 
 	public void Clicked ()

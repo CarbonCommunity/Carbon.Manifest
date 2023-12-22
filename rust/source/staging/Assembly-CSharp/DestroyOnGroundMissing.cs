@@ -4,10 +4,10 @@ public class DestroyOnGroundMissing : MonoBehaviour, IServerComponent
 {
 	private void OnGroundMissing ()
 	{
-		BaseEntity baseEntity = ((Component)this).gameObject.ToBaseEntity ();
-		if ((Object)(object)baseEntity != (Object)null) {
+		BaseEntity baseEntity = base.gameObject.ToBaseEntity ();
+		if (baseEntity != null) {
 			BaseCombatEntity baseCombatEntity = baseEntity as BaseCombatEntity;
-			if ((Object)(object)baseCombatEntity != (Object)null) {
+			if (baseCombatEntity != null) {
 				baseCombatEntity.Die ();
 			} else {
 				baseEntity.Kill (BaseNetworkable.DestroyMode.Gib);

@@ -5,7 +5,7 @@ using Facepunch.Rust;
 using Newtonsoft.Json;
 using UnityEngine;
 
-public class EventRecord : IPooled
+public class EventRecord : Pool.IPooled
 {
 	public DateTime Timestamp;
 
@@ -139,7 +139,6 @@ public class EventRecord : IPooled
 
 	public EventRecord AddField (string key, Vector3 value)
 	{
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
 		Data.Add (new EventRecordField (key) {
 			Vector = value
 		});
@@ -148,10 +147,6 @@ public class EventRecord : IPooled
 
 	public EventRecord AddField (string key, BaseEntity entity)
 	{
-		//IL_0204: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0235: Unknown result type (might be due to invalid IL or missing references)
-		//IL_023a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_023e: Unknown result type (might be due to invalid IL or missing references)
 		if (entity?.net == null) {
 			return this;
 		}
@@ -161,7 +156,7 @@ public class EventRecord : IPooled
 				String = userWipeId
 			});
 			if (basePlayer.isMounted) {
-				AddField (key + "_mounted", (BaseEntity)basePlayer.GetMounted ());
+				AddField (key + "_mounted", basePlayer.GetMounted ());
 			}
 			if (basePlayer.IsAdmin || basePlayer.IsDeveloper) {
 				Data.Add (new EventRecordField (key, "_admin") {
@@ -172,12 +167,12 @@ public class EventRecord : IPooled
 		if (entity is BaseProjectile baseProjectile) {
 			Item item = baseProjectile.GetItem ();
 			if (item != null && (item.contents?.itemList?.Count).GetValueOrDefault () > 0) {
-				List<string> list = Pool.GetList<string> ();
-				foreach (Item item3 in item.contents.itemList) {
-					list.Add (item3.info.shortname);
+				List<string> obj = Pool.GetList<string> ();
+				foreach (Item item2 in item.contents.itemList) {
+					obj.Add (item2.info.shortname);
 				}
-				AddObject (key + "_inventory", list);
-				Pool.FreeList<string> (ref list);
+				AddObject (key + "_inventory", obj);
+				Pool.FreeList (ref obj);
 			}
 		}
 		if (entity is BuildingBlock buildingBlock) {
@@ -189,13 +184,11 @@ public class EventRecord : IPooled
 			String = entity.ShortPrefabName
 		});
 		Data.Add (new EventRecordField (key, "_pos") {
-			Vector = ((Component)entity).transform.position
+			Vector = entity.transform.position
 		});
-		List<EventRecordField> data = Data;
-		EventRecordField item2 = new EventRecordField (key, "_rot");
-		Quaternion rotation = ((Component)entity).transform.rotation;
-		item2.Vector = ((Quaternion)(ref rotation)).eulerAngles;
-		data.Add (item2);
+		Data.Add (new EventRecordField (key, "_rot") {
+			Vector = entity.transform.rotation.eulerAngles
+		});
 		Data.Add (new EventRecordField (key, "_id") {
 			Number = (long)entity.net.ID.Value
 		});
@@ -223,8 +216,8 @@ public class EventRecord : IPooled
 	{
 		if (IsServer) {
 			if (Analytics.StatsBlacklist != null && Analytics.StatsBlacklist.Contains (EventType)) {
-				EventRecord eventRecord = this;
-				Pool.Free<EventRecord> (ref eventRecord);
+				EventRecord obj = this;
+				Pool.Free (ref obj);
 			} else {
 				Analytics.AzureWebInterface.server.EnqueueEvent (this);
 			}

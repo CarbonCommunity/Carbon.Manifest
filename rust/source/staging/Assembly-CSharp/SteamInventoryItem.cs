@@ -12,10 +12,10 @@ public class SteamInventoryItem : MonoBehaviour
 	public bool Setup (IPlayerItem item)
 	{
 		Item = item;
-		if (PlayerItemExtensions.GetDefinition (item) == null) {
+		if (item.GetDefinition () == null) {
 			return false;
 		}
-		((TMP_Text)((Component)TransformEx.FindChildRecursive (((Component)this).transform, "ItemName")).GetComponent<TextMeshProUGUI> ()).text = PlayerItemExtensions.GetDefinition (item).Name;
-		return Image.Load (PlayerItemExtensions.GetDefinition (item).IconUrl);
+		base.transform.FindChildRecursive ("ItemName").GetComponent<TextMeshProUGUI> ().text = item.GetDefinition ().Name;
+		return Image.Load (item.GetDefinition ().IconUrl);
 	}
 }

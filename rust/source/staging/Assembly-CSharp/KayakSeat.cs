@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public class KayakSeat : BaseVehicleSeat
 {
 	public ItemDefinition PaddleItem;
@@ -7,7 +5,7 @@ public class KayakSeat : BaseVehicleSeat
 	public override void OnPlayerMounted ()
 	{
 		base.OnPlayerMounted ();
-		if ((Object)(object)VehicleParent () != (Object)null) {
+		if (VehicleParent () != null) {
 			VehicleParent ().OnPlayerMounted ();
 		}
 	}
@@ -15,7 +13,7 @@ public class KayakSeat : BaseVehicleSeat
 	public override void OnPlayerDismounted (BasePlayer player)
 	{
 		base.OnPlayerDismounted (player);
-		if ((Object)(object)VehicleParent () != (Object)null) {
+		if (VehicleParent () != null) {
 			VehicleParent ().OnPlayerDismounted (player);
 		}
 	}

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,20 +15,13 @@ public class WaterCollision : MonoBehaviour
 
 	public void Clear ()
 	{
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
 		if (waterColliders.Count == 0) {
 			return;
 		}
 		HashSet<Collider>.Enumerator enumerator = waterColliders.GetEnumerator ();
 		while (enumerator.MoveNext ()) {
-			Enumerator<Collider> enumerator2 = ignoredColliders.Keys.GetEnumerator ();
-			try {
-				while (enumerator2.MoveNext ()) {
-					Physics.IgnoreCollision (enumerator2.Current, enumerator.Current, false);
-				}
-			} finally {
-				((IDisposable)enumerator2).Dispose ();
+			foreach (Collider key in ignoredColliders.Keys) {
+				Physics.IgnoreCollision (key, enumerator.Current, ignore: false);
 			}
 		}
 		ignoredColliders.Clear ();
@@ -37,10 +29,10 @@ public class WaterCollision : MonoBehaviour
 
 	public void Reset (Collider collider)
 	{
-		if (waterColliders.Count != 0 && Object.op_Implicit ((Object)(object)collider)) {
+		if (waterColliders.Count != 0 && (bool)collider) {
 			HashSet<Collider>.Enumerator enumerator = waterColliders.GetEnumerator ();
 			while (enumerator.MoveNext ()) {
-				Physics.IgnoreCollision (collider, enumerator.Current, false);
+				Physics.IgnoreCollision (collider, enumerator.Current, ignore: false);
 			}
 			ignoredColliders.Remove (collider);
 		}
@@ -48,35 +40,30 @@ public class WaterCollision : MonoBehaviour
 
 	public bool GetIgnore (Vector3 pos, float radius = 0.01f)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		return GamePhysics.CheckSphere<WaterVisibilityTrigger> (pos, radius, 262144, (QueryTriggerInteraction)2);
+		return GamePhysics.CheckSphere<WaterVisibilityTrigger> (pos, radius, 262144, QueryTriggerInteraction.Collide);
 	}
 
 	public bool GetIgnore (Bounds bounds)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		return GamePhysics.CheckBounds<WaterVisibilityTrigger> (bounds, 262144, (QueryTriggerInteraction)2);
+		return GamePhysics.CheckBounds<WaterVisibilityTrigger> (bounds, 262144, QueryTriggerInteraction.Collide);
 	}
 
 	public bool GetIgnore (Vector3 start, Vector3 end, float radius)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		return GamePhysics.CheckCapsule<WaterVisibilityTrigger> (start, end, radius, 262144, (QueryTriggerInteraction)2);
+		return GamePhysics.CheckCapsule<WaterVisibilityTrigger> (start, end, radius, 262144, QueryTriggerInteraction.Collide);
 	}
 
 	public bool GetIgnore (RaycastHit hit)
 	{
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		if (waterColliders.Contains (((RaycastHit)(ref hit)).collider)) {
-			return GetIgnore (((RaycastHit)(ref hit)).point);
+		if (waterColliders.Contains (hit.collider)) {
+			return GetIgnore (hit.point);
 		}
 		return false;
 	}
 
 	public bool GetIgnore (Collider collider)
 	{
-		if (waterColliders.Count == 0 || !Object.op_Implicit ((Object)(object)collider)) {
+		if (waterColliders.Count == 0 || !collider) {
 			return false;
 		}
 		return ignoredColliders.Contains (collider);
@@ -84,27 +71,27 @@ public class WaterCollision : MonoBehaviour
 
 	public void SetIgnore (Collider collider, Collider trigger, bool ignore = true)
 	{
-		if (waterColliders.Count == 0 || !Object.op_Implicit ((Object)(object)collider)) {
+		if (waterColliders.Count == 0 || !collider) {
 			return;
 		}
 		if (!GetIgnore (collider)) {
 			if (ignore) {
-				List<Collider> list = new List<Collider> { trigger };
+				List<Collider> val = new List<Collider> { trigger };
 				HashSet<Collider>.Enumerator enumerator = waterColliders.GetEnumerator ();
 				while (enumerator.MoveNext ()) {
-					Physics.IgnoreCollision (collider, enumerator.Current, true);
+					Physics.IgnoreCollision (collider, enumerator.Current, ignore: true);
 				}
-				ignoredColliders.Add (collider, list);
+				ignoredColliders.Add (collider, val);
 			}
 			return;
 		}
-		List<Collider> list2 = ignoredColliders [collider];
+		List<Collider> list = ignoredColliders [collider];
 		if (ignore) {
-			if (!list2.Contains (trigger)) {
-				list2.Add (trigger);
+			if (!list.Contains (trigger)) {
+				list.Add (trigger);
 			}
-		} else if (list2.Contains (trigger)) {
-			list2.Remove (trigger);
+		} else if (list.Contains (trigger)) {
+			list.Remove (trigger);
 		}
 	}
 
@@ -114,12 +101,12 @@ public class WaterCollision : MonoBehaviour
 			KeyValuePair<Collider, List<Collider>> byIndex = ignoredColliders.GetByIndex (i);
 			Collider key = byIndex.Key;
 			List<Collider> value = byIndex.Value;
-			if ((Object)(object)key == (Object)null) {
+			if (key == null) {
 				ignoredColliders.RemoveAt (i--);
 			} else if (value.Count == 0) {
 				HashSet<Collider>.Enumerator enumerator = waterColliders.GetEnumerator ();
 				while (enumerator.MoveNext ()) {
-					Physics.IgnoreCollision (key, enumerator.Current, false);
+					Physics.IgnoreCollision (key, enumerator.Current, ignore: false);
 				}
 				ignoredColliders.RemoveAt (i--);
 			}

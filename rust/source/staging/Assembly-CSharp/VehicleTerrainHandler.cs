@@ -44,32 +44,21 @@ public class VehicleTerrainHandler
 
 	public void FixedUpdate ()
 	{
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		if (!vehicle.IsStationary () && TimeSince.op_Implicit (timeSinceTerrainCheck) > 0.25f) {
+		if (!vehicle.IsStationary () && (float)timeSinceTerrainCheck > 0.25f) {
 			DoTerrainCheck ();
 		}
 	}
 
 	private void DoTerrainCheck ()
 	{
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0037: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006e: Unknown result type (might be due to invalid IL or missing references)
-		timeSinceTerrainCheck = TimeSince.op_Implicit (Random.Range (-0.025f, 0.025f));
-		Transform transform = ((Component)vehicle).transform;
-		RaycastHit val = default(RaycastHit);
-		if (Physics.Raycast (transform.position + transform.up * 0.5f, -transform.up, ref val, RayLength, 161546241, (QueryTriggerInteraction)1)) {
-			CurGroundPhysicsMatName = ((RaycastHit)(ref val)).collider.GetMaterialAt (((RaycastHit)(ref val)).point).GetNameLower ();
+		timeSinceTerrainCheck = Random.Range (-0.025f, 0.025f);
+		Transform transform = vehicle.transform;
+		if (Physics.Raycast (transform.position + transform.up * 0.5f, -transform.up, out var hitInfo, RayLength, 161546241, QueryTriggerInteraction.Ignore)) {
+			CurGroundPhysicsMatName = hitInfo.collider.GetMaterialAt (hitInfo.point).GetNameLower ();
 			if (GetOnRoad (CurGroundPhysicsMatName)) {
 				OnSurface = Surface.Road;
 			} else if (CurGroundPhysicsMatName == "snow") {
-				if (((Component)((RaycastHit)(ref val)).collider).CompareTag ("TreatSnowAsIce")) {
+				if (hitInfo.collider.CompareTag ("TreatSnowAsIce")) {
 					OnSurface = Surface.Ice;
 				} else {
 					OnSurface = Surface.Snow;

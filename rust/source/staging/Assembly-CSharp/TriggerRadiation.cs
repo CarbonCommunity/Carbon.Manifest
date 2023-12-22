@@ -23,11 +23,10 @@ public class TriggerRadiation : TriggerBase
 
 	private float GetRadiationSize ()
 	{
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		if (!Object.op_Implicit ((Object)(object)sphereCollider)) {
-			sphereCollider = ((Component)this).GetComponent<SphereCollider> ();
+		if (!sphereCollider) {
+			sphereCollider = GetComponent<SphereCollider> ();
 		}
-		return sphereCollider.radius * Vector3Ex.Max (((Component)this).transform.localScale);
+		return sphereCollider.radius * base.transform.localScale.Max ();
 	}
 
 	private float GetRadiationAmount ()
@@ -55,27 +54,24 @@ public class TriggerRadiation : TriggerBase
 
 	public float GetRadiation (Vector3 position, float radProtection)
 	{
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
 		float radiationSize = GetRadiationSize ();
 		float radiationAmount = GetRadiationAmount ();
-		float num = Vector3.Distance (((Component)this).gameObject.transform.position, position);
-		float num2 = Mathf.InverseLerp (radiationSize, radiationSize * (1f - falloff), num);
-		float num3 = radiationAmount;
+		float num = Mathf.InverseLerp (value: Vector3.Distance (base.gameObject.transform.position, position), a: radiationSize, b: radiationSize * (1f - falloff));
+		float num2 = radiationAmount;
 		if (!BypassArmor) {
-			num3 = Mathf.Clamp (radiationAmount - radProtection, 0f, radiationAmount);
+			num2 = Mathf.Clamp (radiationAmount - radProtection, 0f, radiationAmount);
 		}
-		return num3 * num2;
+		return num2 * num;
 	}
 
 	internal override GameObject InterestedInObject (GameObject obj)
 	{
 		obj = base.InterestedInObject (obj);
-		if ((Object)(object)obj == (Object)null) {
+		if (obj == null) {
 			return null;
 		}
 		BaseEntity baseEntity = obj.ToBaseEntity ();
-		if ((Object)(object)baseEntity == (Object)null) {
+		if (baseEntity == null) {
 			return null;
 		}
 		if (baseEntity.isClient) {
@@ -84,19 +80,15 @@ public class TriggerRadiation : TriggerBase
 		if (!(baseEntity is BaseCombatEntity)) {
 			return null;
 		}
-		return ((Component)baseEntity).gameObject;
+		return baseEntity.gameObject;
 	}
 
 	public void OnDrawGizmosSelected ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
 		float radiationSize = GetRadiationSize ();
 		Gizmos.color = Color.green;
-		Gizmos.DrawWireSphere (((Component)this).transform.position, radiationSize);
+		Gizmos.DrawWireSphere (base.transform.position, radiationSize);
 		Gizmos.color = Color.red;
-		Gizmos.DrawWireSphere (((Component)this).transform.position, radiationSize * (1f - falloff));
+		Gizmos.DrawWireSphere (base.transform.position, radiationSize * (1f - falloff));
 	}
 }

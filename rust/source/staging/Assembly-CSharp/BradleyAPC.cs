@@ -13,7 +13,7 @@ using UnityEngine.AI;
 public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 {
 	[Serializable]
-	public class TargetInfo : IPooled
+	public class TargetInfo : Facepunch.Pool.IPooled
 	{
 		public float damageReceivedFrom;
 
@@ -25,8 +25,6 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 
 		public void EnterPool ()
 		{
-			//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-			//IL_000d: Unknown result type (might be due to invalid IL or missing references)
 			entity = null;
 			lastSeenPosition = Vector3.zero;
 			lastSeenTime = 0f;
@@ -44,17 +42,15 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 
 		public float GetPriorityScore (BradleyAPC apc)
 		{
-			//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-			//IL_002d: Unknown result type (might be due to invalid IL or missing references)
 			BasePlayer basePlayer = entity as BasePlayer;
-			if (Object.op_Implicit ((Object)(object)basePlayer)) {
-				float num = Vector3.Distance (((Component)entity).transform.position, ((Component)apc).transform.position);
-				float num2 = (1f - Mathf.InverseLerp (10f, 80f, num)) * 50f;
-				float num3 = (((Object)(object)basePlayer.GetHeldEntity () == (Object)null) ? 0f : basePlayer.GetHeldEntity ().hostileScore);
-				float num4 = Mathf.InverseLerp (4f, 20f, num3) * 100f;
-				float num5 = Mathf.InverseLerp (10f, 3f, Time.time - lastSeenTime) * 100f;
-				float num6 = Mathf.InverseLerp (0f, 100f, damageReceivedFrom) * 50f;
-				return num2 + num4 + num6 + num5;
+			if ((bool)basePlayer) {
+				float value = Vector3.Distance (entity.transform.position, apc.transform.position);
+				float num = (1f - Mathf.InverseLerp (10f, 80f, value)) * 50f;
+				float value2 = ((basePlayer.GetHeldEntity () == null) ? 0f : basePlayer.GetHeldEntity ().hostileScore);
+				float num2 = Mathf.InverseLerp (4f, 20f, value2) * 100f;
+				float num3 = Mathf.InverseLerp (10f, 3f, UnityEngine.Time.time - lastSeenTime) * 100f;
+				float num4 = Mathf.InverseLerp (0f, 100f, damageReceivedFrom) * 50f;
+				return num + num2 + num4 + num3;
 			}
 			return 0f;
 		}
@@ -62,14 +58,14 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 		public bool IsVisible ()
 		{
 			if (lastSeenTime != -1f) {
-				return Time.time - lastSeenTime < sightUpdateRate * 2f;
+				return UnityEngine.Time.time - lastSeenTime < sightUpdateRate * 2f;
 			}
 			return false;
 		}
 
 		public bool IsValid ()
 		{
-			return (Object)(object)entity != (Object)null;
+			return entity != null;
 		}
 	}
 
@@ -299,20 +295,13 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("BradleyAPC.OnRpcMessage", 0);
-		try {
-		} finally {
-			((IDisposable)val)?.Dispose ();
+		using (TimeWarning.New ("BradleyAPC.OnRpcMessage")) {
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_006a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0080: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0085: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (info.msg.bradley != null && !info.fromDisk) {
 			throttle = info.msg.bradley.engineThrottle;
@@ -325,13 +314,9 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_006d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0072: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0083: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0088: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
 		if (!info.forDisk) {
-			info.msg.bradley = Pool.Get<BradleyAPC> ();
+			info.msg.bradley = Facepunch.Pool.Get<ProtoBuf.BradleyAPC> ();
 			info.msg.bradley.engineThrottle = throttle;
 			info.msg.bradley.throttleLeft = leftThrottle;
 			info.msg.bradley.throttleRight = rightThrottle;
@@ -342,35 +327,6 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 
 	public static BradleyAPC SpawnRoadDrivingBradley (Vector3 spawnPos, Quaternion spawnRot)
 	{
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ab: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ba: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0149: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01de: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0203: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0208: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0270: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0275: Unknown result type (might be due to invalid IL or missing references)
-		//IL_027f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0284: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02ae: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02af: Unknown result type (might be due to invalid IL or missing references)
 		RuntimePath runtimePath = new RuntimePath ();
 		PathList pathList = null;
 		float num = float.PositiveInfinity;
@@ -378,8 +334,8 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 			_ = Vector3.zero;
 			float num2 = float.PositiveInfinity;
 			Vector3[] points = road.Path.Points;
-			foreach (Vector3 val in points) {
-				float num3 = Vector3.Distance (val, spawnPos);
+			foreach (Vector3 a in points) {
+				float num3 = Vector3.Distance (a, spawnPos);
 				if (num3 < num2) {
 					num2 = num3;
 				}
@@ -420,21 +376,21 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 			RuntimeInterestNode interestNode2 = new RuntimeInterestNode (endPoint + Vector3.up * 1f);
 			runtimePath.AddInterestNode (interestNode2);
 		}
-		int num7 = Mathf.CeilToInt (pathList.Path.Length / 500f);
-		num7 = Mathf.Clamp (num7, 1, 3);
+		int value = Mathf.CeilToInt (pathList.Path.Length / 500f);
+		value = Mathf.Clamp (value, 1, 3);
 		if (flag) {
-			num7++;
+			value++;
 		}
-		for (int k = 0; k < num7; k++) {
-			int num8 = Random.Range (0, pathList.Path.Points.Length);
-			RuntimeInterestNode interestNode3 = new RuntimeInterestNode (pathList.Path.Points [num8] + Vector3.up * 1f);
+		for (int k = 0; k < value; k++) {
+			int num7 = UnityEngine.Random.Range (0, pathList.Path.Points.Length);
+			RuntimeInterestNode interestNode3 = new RuntimeInterestNode (pathList.Path.Points [num7] + Vector3.up * 1f);
 			runtimePath.AddInterestNode (interestNode3);
 		}
 		BaseEntity baseEntity = GameManager.server.CreateEntity ("assets/prefabs/npc/m2bradley/bradleyapc.prefab", spawnPos, spawnRot);
 		BradleyAPC bradleyAPC = null;
-		if (Object.op_Implicit ((Object)(object)baseEntity)) {
-			bradleyAPC = ((Component)baseEntity).GetComponent<BradleyAPC> ();
-			if (Object.op_Implicit ((Object)(object)bradleyAPC)) {
+		if ((bool)baseEntity) {
+			bradleyAPC = baseEntity.GetComponent<BradleyAPC> ();
+			if ((bool)bradleyAPC) {
 				bradleyAPC.Spawn ();
 				bradleyAPC.InstallPatrolPath (runtimePath);
 			} else {
@@ -447,11 +403,7 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 	[ServerVar (Name = "spawnroadbradley")]
 	public static string svspawnroadbradley (Vector3 pos, Vector3 dir)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		if (!((Object)(object)SpawnRoadDrivingBradley (pos, Quaternion.LookRotation (dir, Vector3.up)) != (Object)null)) {
+		if (!(SpawnRoadDrivingBradley (pos, Quaternion.LookRotation (dir, Vector3.up)) != null)) {
 			return "Failed to spawn road-driving Bradley.";
 		}
 		return "Spawned road-driving Bradley.";
@@ -459,26 +411,18 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 
 	public void SetDestination (Vector3 dest)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
 		destination = dest;
 	}
 
 	public override void ServerInit ()
 	{
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0078: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007d: Unknown result type (might be due to invalid IL or missing references)
 		base.ServerInit ();
 		Initialize ();
-		((FacepunchBehaviour)this).InvokeRepeating ((Action)UpdateTargetList, 0f, 2f);
-		((FacepunchBehaviour)this).InvokeRepeating ((Action)UpdateTargetVisibilities, 0f, sightUpdateRate);
-		obstacleHitMask = LayerMask.op_Implicit (LayerMask.GetMask (new string[1] { "Vehicle World" }));
-		timeSinceSeemingStuck = TimeSince.op_Implicit (0f);
-		timeSinceStuckReverseStart = TimeSince.op_Implicit (float.MaxValue);
+		InvokeRepeating (UpdateTargetList, 0f, 2f);
+		InvokeRepeating (UpdateTargetVisibilities, 0f, sightUpdateRate);
+		obstacleHitMask = LayerMask.GetMask ("Vehicle World");
+		timeSinceSeemingStuck = 0f;
+		timeSinceStuckReverseStart = float.MaxValue;
 	}
 
 	public override void OnCollision (Collision collision, BaseEntity hitEntity)
@@ -487,140 +431,65 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 
 	public void Initialize ()
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
 		myRigidBody.centerOfMass = centerOfMass.localPosition;
-		destination = ((Component)this).transform.position;
-		finalDestination = ((Component)this).transform.position;
+		destination = base.transform.position;
+		finalDestination = base.transform.position;
 	}
 
 	public BasePlayer FollowPlayer ()
 	{
-		//IL_0005: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000a: Unknown result type (might be due to invalid IL or missing references)
-		Enumerator<BasePlayer> enumerator = BasePlayer.activePlayerList.GetEnumerator ();
-		try {
-			while (enumerator.MoveNext ()) {
-				BasePlayer current = enumerator.Current;
-				if (current.IsAdmin && current.IsAlive () && !current.IsSleeping () && current.GetActiveItem () != null && current.GetActiveItem ().info.shortname == "tool.binoculars") {
-					return current;
-				}
+		foreach (BasePlayer activePlayer in BasePlayer.activePlayerList) {
+			if (activePlayer.IsAdmin && activePlayer.IsAlive () && !activePlayer.IsSleeping () && activePlayer.GetActiveItem () != null && activePlayer.GetActiveItem ().info.shortname == "tool.binoculars") {
+				return activePlayer;
 			}
-		} finally {
-			((IDisposable)enumerator).Dispose ();
 		}
 		return null;
 	}
 
 	public static Vector3 Direction2D (Vector3 aimAt, Vector3 aimFrom)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0031: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 val = new Vector3 (aimAt.x, 0f, aimAt.z) - new Vector3 (aimFrom.x, 0f, aimFrom.z);
-		return ((Vector3)(ref val)).normalized;
+		return (new Vector3 (aimAt.x, 0f, aimAt.z) - new Vector3 (aimFrom.x, 0f, aimFrom.z)).normalized;
 	}
 
 	public bool IsAtDestination ()
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		return Vector3Ex.Distance2D (((Component)this).transform.position, destination) <= stoppingDist;
+		return Vector3Ex.Distance2D (base.transform.position, destination) <= stoppingDist;
 	}
 
 	public bool IsAtFinalDestination ()
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		return Vector3Ex.Distance2D (((Component)this).transform.position, finalDestination) <= stoppingDist;
+		return Vector3Ex.Distance2D (base.transform.position, finalDestination) <= stoppingDist;
 	}
 
 	public Vector3 ClosestPointAlongPath (Vector3 start, Vector3 end, Vector3 fromPos)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0004: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0005: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0037: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 val = end - start;
-		Vector3 val2 = fromPos - start;
-		float num = Vector3.Dot (val, val2);
+		Vector3 vector = end - start;
+		Vector3 rhs = fromPos - start;
+		float num = Vector3.Dot (vector, rhs);
 		float num2 = Vector3.SqrMagnitude (end - start);
 		float num3 = Mathf.Clamp01 (num / num2);
-		return start + val * num3;
+		return start + vector * num3;
 	}
 
 	public void FireGunTest ()
 	{
-		//IL_0059: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0063: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0069: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0084: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0099: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ac: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ba: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ca: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0122: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0127: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0128: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0155: Unknown result type (might be due to invalid IL or missing references)
-		if (Time.time < nextFireTime) {
+		if (UnityEngine.Time.time < nextFireTime) {
 			return;
 		}
-		nextFireTime = Time.time + 0.25f;
+		nextFireTime = UnityEngine.Time.time + 0.25f;
 		numBursted++;
 		if (numBursted >= 4) {
-			nextFireTime = Time.time + 5f;
+			nextFireTime = UnityEngine.Time.time + 5f;
 			numBursted = 0;
 		}
 		Vector3 modifiedAimConeDirection = AimConeUtil.GetModifiedAimConeDirection (2f, CannonMuzzle.rotation * Vector3.forward);
-		Vector3 val = ((Component)CannonPitch).transform.rotation * Vector3.back + ((Component)this).transform.up * -1f;
-		Vector3 normalized = ((Vector3)(ref val)).normalized;
-		myRigidBody.AddForceAtPosition (normalized * recoilScale, ((Component)CannonPitch).transform.position, (ForceMode)1);
-		Effect.server.Run (mainCannonMuzzleFlash.resourcePath, this, StringPool.Get (((Object)((Component)CannonMuzzle).gameObject).name), Vector3.zero, Vector3.zero);
-		BaseEntity baseEntity = GameManager.server.CreateEntity (mainCannonProjectile.resourcePath, ((Component)CannonMuzzle).transform.position, Quaternion.LookRotation (modifiedAimConeDirection));
-		if (!((Object)(object)baseEntity == (Object)null)) {
-			ServerProjectile component = ((Component)baseEntity).GetComponent<ServerProjectile> ();
-			if (Object.op_Implicit ((Object)(object)component)) {
+		Vector3 normalized = (CannonPitch.transform.rotation * Vector3.back + base.transform.up * -1f).normalized;
+		myRigidBody.AddForceAtPosition (normalized * recoilScale, CannonPitch.transform.position, ForceMode.Impulse);
+		Effect.server.Run (mainCannonMuzzleFlash.resourcePath, this, StringPool.Get (CannonMuzzle.gameObject.name), Vector3.zero, Vector3.zero);
+		BaseEntity baseEntity = GameManager.server.CreateEntity (mainCannonProjectile.resourcePath, CannonMuzzle.transform.position, Quaternion.LookRotation (modifiedAimConeDirection));
+		if (!(baseEntity == null)) {
+			ServerProjectile component = baseEntity.GetComponent<ServerProjectile> ();
+			if ((bool)component) {
 				component.InitializeVelocity (modifiedAimConeDirection * component.speed);
 			}
 			baseEntity.Spawn ();
@@ -636,35 +505,23 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 
 	public void UpdateMovement_Patrol ()
 	{
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ad: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_012e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0167: Unknown result type (might be due to invalid IL or missing references)
-		//IL_019a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_019f: Unknown result type (might be due to invalid IL or missing references)
-		if (patrolPath == null || Time.time < nextPatrolTime) {
+		if (patrolPath == null || UnityEngine.Time.time < nextPatrolTime) {
 			return;
 		}
-		nextPatrolTime = Time.time + 20f;
+		nextPatrolTime = UnityEngine.Time.time + 20f;
 		if (HasPath () && !IsAtFinalDestination ()) {
 			return;
 		}
-		IAIPathInterestNode randomInterestNodeAwayFrom = patrolPath.GetRandomInterestNodeAwayFrom (((Component)this).transform.position);
+		IAIPathInterestNode randomInterestNodeAwayFrom = patrolPath.GetRandomInterestNodeAwayFrom (base.transform.position);
 		IAIPathNode closestToPoint = patrolPath.GetClosestToPoint (randomInterestNodeAwayFrom.Position);
 		bool flag = false;
-		List<IAIPathNode> nodes = Pool.GetList<IAIPathNode> ();
+		List<IAIPathNode> nodes = Facepunch.Pool.GetList<IAIPathNode> ();
 		IAIPathNode iAIPathNode;
 		if (GetEngagementPath (ref nodes)) {
 			flag = true;
 			iAIPathNode = nodes [nodes.Count - 1];
 		} else {
-			iAIPathNode = patrolPath.GetClosestToPoint (((Component)this).transform.position);
+			iAIPathNode = patrolPath.GetClosestToPoint (base.transform.position);
 		}
 		if (!(Vector3.Distance (finalDestination, closestToPoint.Position) > 2f)) {
 			return;
@@ -696,21 +553,6 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 
 	public void UpdateMovement_Hunt ()
 	{
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0060: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0067: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0139: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0209: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0242: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0276: Unknown result type (might be due to invalid IL or missing references)
-		//IL_027b: Unknown result type (might be due to invalid IL or missing references)
 		if (patrolPath == null) {
 			return;
 		}
@@ -727,18 +569,18 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 				currentPathIndex = 0;
 			}
 		} else {
-			if (!(Time.time > nextEngagementPathTime) || HasPath () || targetInfo.IsVisible ()) {
+			if (!(UnityEngine.Time.time > nextEngagementPathTime) || HasPath () || targetInfo.IsVisible ()) {
 				return;
 			}
 			bool flag = false;
-			IAIPathNode start = patrolPath.GetClosestToPoint (((Component)this).transform.position);
-			List<IAIPathNode> nodes = Pool.GetList<IAIPathNode> ();
+			IAIPathNode start = patrolPath.GetClosestToPoint (base.transform.position);
+			List<IAIPathNode> nodes = Facepunch.Pool.GetList<IAIPathNode> ();
 			if (GetEngagementPath (ref nodes)) {
 				flag = true;
 				start = nodes [nodes.Count - 1];
 			}
 			IAIPathNode iAIPathNode = null;
-			List<IAIPathNode> nearNodes = Pool.GetList<IAIPathNode> ();
+			List<IAIPathNode> nearNodes = Facepunch.Pool.GetList<IAIPathNode> ();
 			patrolPath.GetNodesNear (targetInfo.lastSeenPosition, ref nearNodes, 30f);
 			Stack<IAIPathNode> stack = null;
 			float num = float.PositiveInfinity;
@@ -753,7 +595,7 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 			}
 			if (stack == null && nearNodes.Count > 0) {
 				Stack<IAIPathNode> path2 = new Stack<IAIPathNode> ();
-				IAIPathNode iAIPathNode2 = nearNodes [Random.Range (0, nearNodes.Count)];
+				IAIPathNode iAIPathNode2 = nearNodes [UnityEngine.Random.Range (0, nearNodes.Count)];
 				if (AStarPath.FindPath (start, iAIPathNode2, out path2, out var pathCost2) && pathCost2 < num) {
 					stack = path2;
 					iAIPathNode = iAIPathNode2;
@@ -773,42 +615,14 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 				pathLooping = false;
 				finalDestination = iAIPathNode.Position;
 			}
-			Pool.FreeList<IAIPathNode> (ref nearNodes);
-			Pool.FreeList<IAIPathNode> (ref nodes);
-			nextEngagementPathTime = Time.time + 5f;
+			Facepunch.Pool.FreeList (ref nearNodes);
+			Facepunch.Pool.FreeList (ref nodes);
+			nextEngagementPathTime = UnityEngine.Time.time + 5f;
 		}
 	}
 
 	public void DoSimpleAI ()
 	{
-		//IL_00a4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00aa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ba: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ec: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fe: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0105: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0110: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0117: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_012d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0132: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ee: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_022f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0234: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0246: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0205: Unknown result type (might be due to invalid IL or missing references)
-		//IL_020a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0215: Unknown result type (might be due to invalid IL or missing references)
-		//IL_021a: Unknown result type (might be due to invalid IL or missing references)
 		if (base.isClient) {
 			return;
 		}
@@ -828,37 +642,37 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 			UpdateMovement_Patrol ();
 		}
 		AdvancePathMovement (force: false);
-		float num = Vector3.Distance (((Component)this).transform.position, destination);
-		float num2 = Vector3.Distance (((Component)this).transform.position, finalDestination);
+		float num = Vector3.Distance (base.transform.position, destination);
+		float value = Vector3.Distance (base.transform.position, finalDestination);
 		if (num > stoppingDist) {
-			Vector3 val = Direction2D (destination, ((Component)this).transform.position);
-			float num3 = Vector3.Dot (val, ((Component)this).transform.right);
-			float num4 = Vector3.Dot (val, ((Component)this).transform.right);
-			float num5 = Vector3.Dot (val, -((Component)this).transform.right);
-			if (Vector3.Dot (val, -((Component)this).transform.forward) > num3) {
-				if (num4 >= num5) {
+			Vector3 lhs = Direction2D (destination, base.transform.position);
+			float num2 = Vector3.Dot (lhs, base.transform.right);
+			float num3 = Vector3.Dot (lhs, base.transform.right);
+			float num4 = Vector3.Dot (lhs, -base.transform.right);
+			if (Vector3.Dot (lhs, -base.transform.forward) > num2) {
+				if (num3 >= num4) {
 					turning = 1f;
 				} else {
 					turning = -1f;
 				}
 			} else {
-				turning = Mathf.Clamp (num3 * 3f, -1f, 1f);
+				turning = Mathf.Clamp (num2 * 3f, -1f, 1f);
 			}
 			float throttleScaleFromTurn = 1f - Mathf.InverseLerp (0f, 0.3f, Mathf.Abs (turning));
 			AvoidObstacles (ref throttleScaleFromTurn);
-			float num6 = Vector3.Dot (myRigidBody.velocity, ((Component)this).transform.forward);
-			if (!(throttle > 0f) || !(num6 < 0.5f)) {
-				timeSinceSeemingStuck = TimeSince.op_Implicit (0f);
-			} else if (TimeSince.op_Implicit (timeSinceSeemingStuck) > 10f) {
-				timeSinceStuckReverseStart = TimeSince.op_Implicit (0f);
-				timeSinceSeemingStuck = TimeSince.op_Implicit (0f);
+			float num5 = Vector3.Dot (myRigidBody.velocity, base.transform.forward);
+			if (!(throttle > 0f) || !(num5 < 0.5f)) {
+				timeSinceSeemingStuck = 0f;
+			} else if ((float)timeSinceSeemingStuck > 10f) {
+				timeSinceStuckReverseStart = 0f;
+				timeSinceSeemingStuck = 0f;
 			}
-			float num7 = Mathf.InverseLerp (0.1f, 0.4f, Vector3.Dot (((Component)this).transform.forward, Vector3.up));
-			if (TimeSince.op_Implicit (timeSinceStuckReverseStart) < 3f) {
+			float num6 = Mathf.InverseLerp (0.1f, 0.4f, Vector3.Dot (base.transform.forward, Vector3.up));
+			if ((float)timeSinceStuckReverseStart < 3f) {
 				throttle = -0.75f;
 				turning = 1f;
 			} else {
-				throttle = (0.1f + Mathf.InverseLerp (0f, 20f, num2) * 1f) * throttleScaleFromTurn + num7;
+				throttle = (0.1f + Mathf.InverseLerp (0f, 20f, value) * 1f) * throttleScaleFromTurn + num6;
 			}
 		}
 		DoWeaponAiming ();
@@ -875,43 +689,22 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 
 	private void AvoidObstacles (ref float throttleScaleFromTurn)
 	{
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0056: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0071: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0088: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0103: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0108: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0162: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0168: Unknown result type (might be due to invalid IL or missing references)
-		//IL_018b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0191: Unknown result type (might be due to invalid IL or missing references)
-		Ray ray = default(Ray);
-		((Ray)(ref ray))..ctor (((Component)this).transform.position + ((Component)this).transform.forward * (((Bounds)(ref bounds)).extents.z - 1f), ((Component)this).transform.forward);
-		if (!GamePhysics.Trace (ray, 3f, out var hitInfo, 20f, LayerMask.op_Implicit (obstacleHitMask), (QueryTriggerInteraction)1, this)) {
+		Ray ray = new Ray (base.transform.position + base.transform.forward * (bounds.extents.z - 1f), base.transform.forward);
+		if (!GamePhysics.Trace (ray, 3f, out var hitInfo, 20f, obstacleHitMask, QueryTriggerInteraction.Ignore, this)) {
 			return;
 		}
-		if (((RaycastHit)(ref hitInfo)).point == Vector3.zero) {
-			((RaycastHit)(ref hitInfo)).point = ((RaycastHit)(ref hitInfo)).collider.ClosestPointOnBounds (((Ray)(ref ray)).origin);
+		if (hitInfo.point == Vector3.zero) {
+			hitInfo.point = hitInfo.collider.ClosestPointOnBounds (ray.origin);
 		}
-		float num = TransformEx.AngleToPos (((Component)this).transform, ((RaycastHit)(ref hitInfo)).point);
+		float num = base.transform.AngleToPos (hitInfo.point);
 		float num2 = Mathf.Abs (num);
-		if (num2 > 75f || !(((RaycastHit)(ref hitInfo)).collider.ToBaseEntity () is BradleyAPC)) {
+		if (num2 > 75f || !(hitInfo.collider.ToBaseEntity () is BradleyAPC)) {
 			return;
 		}
 		bool flag = false;
 		if (num2 < 5f) {
 			float num3 = ((throttle < 0f) ? 150f : 50f);
-			if (Vector3.SqrMagnitude (((Component)this).transform.position - ((RaycastHit)(ref hitInfo)).point) < num3) {
+			if (Vector3.SqrMagnitude (base.transform.position - hitInfo.point) < num3) {
 				flag = true;
 			}
 		}
@@ -923,11 +716,11 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 		throttleScaleFromTurn = (flag ? (-1f) : 1f);
 		int num4 = currentPathIndex;
 		_ = currentPathIndex;
-		float num5 = Vector3.Distance (((Component)this).transform.position, destination);
+		float num5 = Vector3.Distance (base.transform.position, destination);
 		while (HasPath () && (double)num5 < 26.6 && currentPathIndex >= 0) {
 			int num6 = currentPathIndex;
 			AdvancePathMovement (force: true);
-			num5 = Vector3.Distance (((Component)this).transform.position, destination);
+			num5 = Vector3.Distance (base.transform.position, destination);
 			if (currentPathIndex == num4 || currentPathIndex == num6) {
 				break;
 			}
@@ -936,23 +729,6 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 
 	public void DoPhysicsMove ()
 	{
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00dd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00eb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_016e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0173: Unknown result type (might be due to invalid IL or missing references)
-		//IL_017d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0297: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02a2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02e1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02ec: Unknown result type (might be due to invalid IL or missing references)
-		//IL_033b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0340: Unknown result type (might be due to invalid IL or missing references)
 		if (base.isClient) {
 			return;
 		}
@@ -967,47 +743,44 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 			leftThrottle = turning;
 			rightThrottle = turning * -1f;
 		}
-		Vector3.Distance (((Component)this).transform.position, GetFinalDestination ());
-		float num = Vector3.Distance (((Component)this).transform.position, GetCurrentPathDestination ());
+		Vector3.Distance (base.transform.position, GetFinalDestination ());
+		float num = Vector3.Distance (base.transform.position, GetCurrentPathDestination ());
 		float num2 = 15f;
 		if (num < 20f) {
-			float num3 = Vector3.Dot (PathDirection (currentPathIndex), PathDirection (currentPathIndex + 1));
-			float num4 = Mathf.InverseLerp (2f, 10f, num);
-			float num5 = Mathf.InverseLerp (0.5f, 0.8f, num3);
-			num2 = 15f - 14f * ((1f - num5) * (1f - num4));
+			float value = Vector3.Dot (PathDirection (currentPathIndex), PathDirection (currentPathIndex + 1));
+			float num3 = Mathf.InverseLerp (2f, 10f, num);
+			float num4 = Mathf.InverseLerp (0.5f, 0.8f, value);
+			num2 = 15f - 14f * ((1f - num4) * (1f - num3));
 		}
 		_ = 20f;
 		if (patrolPath != null) {
-			float num6 = num2;
+			float num5 = num2;
 			foreach (IAIPathSpeedZone speedZone in patrolPath.SpeedZones) {
-				OBB val = speedZone.WorldSpaceBounds ();
-				if (((OBB)(ref val)).Contains (((Component)this).transform.position)) {
-					num6 = Mathf.Min (num6, speedZone.GetMaxSpeed ());
+				if (speedZone.WorldSpaceBounds ().Contains (base.transform.position)) {
+					num5 = Mathf.Min (num5, speedZone.GetMaxSpeed ());
 				}
 			}
-			currentSpeedZoneLimit = Mathf.Lerp (currentSpeedZoneLimit, num6, Time.deltaTime);
+			currentSpeedZoneLimit = Mathf.Lerp (currentSpeedZoneLimit, num5, UnityEngine.Time.deltaTime);
 			num2 = Mathf.Min (num2, currentSpeedZoneLimit);
 		}
 		if (PathComplete ()) {
 			num2 = 0f;
 		}
-		if (Global.developer > 1) {
-			Debug.Log ((object)("velocity:" + ((Vector3)(ref velocity)).magnitude + "max : " + num2));
+		if (ConVar.Global.developer > 1) {
+			Debug.Log ("velocity:" + velocity.magnitude + "max : " + num2);
 		}
-		brake = ((Vector3)(ref velocity)).magnitude >= num2;
+		brake = velocity.magnitude >= num2;
 		ApplyBrakes (brake ? 1f : 0f);
-		float num7 = throttle;
-		leftThrottle = Mathf.Clamp (leftThrottle + num7, -1f, 1f);
-		rightThrottle = Mathf.Clamp (rightThrottle + num7, -1f, 1f);
-		float num8 = Mathf.InverseLerp (2f, 1f, ((Vector3)(ref velocity)).magnitude * Mathf.Abs (Vector3.Dot (((Vector3)(ref velocity)).normalized, ((Component)this).transform.forward)));
-		float torqueAmount = Mathf.Lerp (moveForceMax, turnForce, num8);
-		float num9 = Mathf.InverseLerp (5f, 1.5f, ((Vector3)(ref velocity)).magnitude * Mathf.Abs (Vector3.Dot (((Vector3)(ref velocity)).normalized, ((Component)this).transform.forward)));
-		ScaleSidewaysFriction (1f - num9);
+		float num6 = throttle;
+		leftThrottle = Mathf.Clamp (leftThrottle + num6, -1f, 1f);
+		rightThrottle = Mathf.Clamp (rightThrottle + num6, -1f, 1f);
+		float t = Mathf.InverseLerp (2f, 1f, velocity.magnitude * Mathf.Abs (Vector3.Dot (velocity.normalized, base.transform.forward)));
+		float torqueAmount = Mathf.Lerp (moveForceMax, turnForce, t);
+		float num7 = Mathf.InverseLerp (5f, 1.5f, velocity.magnitude * Mathf.Abs (Vector3.Dot (velocity.normalized, base.transform.forward)));
+		ScaleSidewaysFriction (1f - num7);
 		SetMotorTorque (leftThrottle, rightSide: false, torqueAmount);
 		SetMotorTorque (rightThrottle, rightSide: true, torqueAmount);
-		TriggerHurtEx triggerHurtEx = impactDamager;
-		Vector3 velocity2 = myRigidBody.velocity;
-		triggerHurtEx.damageEnabled = ((Vector3)(ref velocity2)).magnitude > 2f;
+		impactDamager.damageEnabled = myRigidBody.velocity.magnitude > 2f;
 	}
 
 	public void ApplyBrakes (float amount)
@@ -1020,31 +793,25 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 	{
 		float num = 0f;
 		WheelCollider[] array = (rightSide ? rightWheels : leftWheels);
-		foreach (WheelCollider val in array) {
-			num += val.motorTorque;
+		foreach (WheelCollider wheelCollider in array) {
+			num += wheelCollider.motorTorque;
 		}
 		return num / (float)rightWheels.Length;
 	}
 
 	public void ScaleSidewaysFriction (float scale)
 	{
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0059: Unknown result type (might be due to invalid IL or missing references)
 		float stiffness = 0.75f + 0.75f * scale;
 		WheelCollider[] array = rightWheels;
 		foreach (WheelCollider obj in array) {
 			WheelFrictionCurve sidewaysFriction = obj.sidewaysFriction;
-			((WheelFrictionCurve)(ref sidewaysFriction)).stiffness = stiffness;
+			sidewaysFriction.stiffness = stiffness;
 			obj.sidewaysFriction = sidewaysFriction;
 		}
 		array = leftWheels;
 		foreach (WheelCollider obj2 in array) {
 			WheelFrictionCurve sidewaysFriction2 = obj2.sidewaysFriction;
-			((WheelFrictionCurve)(ref sidewaysFriction2)).stiffness = stiffness;
+			sidewaysFriction2.stiffness = stiffness;
 			obj2.sidewaysFriction = sidewaysFriction2;
 		}
 	}
@@ -1056,9 +823,8 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 		int num2 = (rightSide ? rightWheels.Length : leftWheels.Length);
 		int num3 = 0;
 		WheelCollider[] array = (rightSide ? rightWheels : leftWheels);
-		WheelHit val = default(WheelHit);
 		for (int i = 0; i < array.Length; i++) {
-			if (array [i].GetGroundHit (ref val)) {
+			if (array [i].GetGroundHit (out var _)) {
 				num3++;
 			}
 		}
@@ -1067,12 +833,11 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 			num4 = num2 / num3;
 		}
 		array = (rightSide ? rightWheels : leftWheels);
-		WheelHit val3 = default(WheelHit);
-		foreach (WheelCollider val2 in array) {
-			if (val2.GetGroundHit (ref val3)) {
-				val2.motorTorque = num * num4;
+		foreach (WheelCollider wheelCollider in array) {
+			if (wheelCollider.GetGroundHit (out var _)) {
+				wheelCollider.motorTorque = num * num4;
 			} else {
-				val2.motorTorque = num;
+				wheelCollider.motorTorque = num;
 			}
 		}
 	}
@@ -1087,110 +852,68 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 
 	public void CreateExplosionMarker (float durationMinutes)
 	{
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		BaseEntity baseEntity = GameManager.server.CreateEntity (debrisFieldMarker.resourcePath, ((Component)this).transform.position, Quaternion.identity);
+		BaseEntity baseEntity = GameManager.server.CreateEntity (debrisFieldMarker.resourcePath, base.transform.position, Quaternion.identity);
 		baseEntity.Spawn ();
-		((Component)baseEntity).SendMessage ("SetDuration", (object)durationMinutes, (SendMessageOptions)1);
+		baseEntity.SendMessage ("SetDuration", durationMinutes, SendMessageOptions.DontRequireReceiver);
 	}
 
 	public override void OnKilled (HitInfo info)
 	{
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0069: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0092: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ec: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0107: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0128: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0129: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0134: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0139: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0199: Unknown result type (might be due to invalid IL or missing references)
-		//IL_019e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01cd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ed: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0204: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0206: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0208: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0284: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0285: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0296: Unknown result type (might be due to invalid IL or missing references)
-		//IL_029b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02b1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0301: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0307: Unknown result type (might be due to invalid IL or missing references)
-		//IL_030b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0311: Unknown result type (might be due to invalid IL or missing references)
 		if (base.isClient) {
 			return;
 		}
 		CreateExplosionMarker (10f);
-		Effect.server.Run (explosionEffect.resourcePath, ((Component)mainTurretEyePos).transform.position, Vector3.up, null, broadcast: true);
+		Effect.server.Run (explosionEffect.resourcePath, mainTurretEyePos.transform.position, Vector3.up, null, broadcast: true);
 		Vector3 zero = Vector3.zero;
 		GameObject gibSource = servergibs.Get ().GetComponent<ServerGib> ()._gibSource;
-		List<ServerGib> list = ServerGib.CreateGibs (servergibs.resourcePath, ((Component)this).gameObject, gibSource, zero, 3f);
+		List<ServerGib> list = ServerGib.CreateGibs (servergibs.resourcePath, base.gameObject, gibSource, zero, 3f);
 		for (int i = 0; i < 12 - maxCratesToSpawn; i++) {
-			BaseEntity baseEntity = GameManager.server.CreateEntity (this.fireBall.resourcePath, ((Component)this).transform.position, ((Component)this).transform.rotation);
-			if (!Object.op_Implicit ((Object)(object)baseEntity)) {
+			BaseEntity baseEntity = GameManager.server.CreateEntity (this.fireBall.resourcePath, base.transform.position, base.transform.rotation);
+			if (!baseEntity) {
 				continue;
 			}
-			float num = 3f;
-			float num2 = 10f;
-			Vector3 onUnitSphere = Random.onUnitSphere;
-			((Component)baseEntity).transform.position = ((Component)this).transform.position + new Vector3 (0f, 1.5f, 0f) + onUnitSphere * Random.Range (-4f, 4f);
-			Collider component = ((Component)baseEntity).GetComponent<Collider> ();
+			float minInclusive = 3f;
+			float maxInclusive = 10f;
+			Vector3 onUnitSphere = UnityEngine.Random.onUnitSphere;
+			baseEntity.transform.position = base.transform.position + new Vector3 (0f, 1.5f, 0f) + onUnitSphere * UnityEngine.Random.Range (-4f, 4f);
+			Collider component = baseEntity.GetComponent<Collider> ();
 			baseEntity.Spawn ();
-			baseEntity.SetVelocity (zero + onUnitSphere * Random.Range (num, num2));
+			baseEntity.SetVelocity (zero + onUnitSphere * UnityEngine.Random.Range (minInclusive, maxInclusive));
 			foreach (ServerGib item in list) {
-				Physics.IgnoreCollision (component, (Collider)(object)item.GetCollider (), true);
+				UnityEngine.Physics.IgnoreCollision (component, item.GetCollider (), ignore: true);
 			}
 		}
 		for (int j = 0; j < maxCratesToSpawn; j++) {
-			Vector3 onUnitSphere2 = Random.onUnitSphere;
+			Vector3 onUnitSphere2 = UnityEngine.Random.onUnitSphere;
 			onUnitSphere2.y = 0f;
-			((Vector3)(ref onUnitSphere2)).Normalize ();
-			Vector3 pos = ((Component)this).transform.position + new Vector3 (0f, 1.5f, 0f) + onUnitSphere2 * Random.Range (2f, 3f);
+			onUnitSphere2.Normalize ();
+			Vector3 pos = base.transform.position + new Vector3 (0f, 1.5f, 0f) + onUnitSphere2 * UnityEngine.Random.Range (2f, 3f);
 			BaseEntity baseEntity2 = GameManager.server.CreateEntity (crateToDrop.resourcePath, pos, Quaternion.LookRotation (onUnitSphere2));
 			baseEntity2.Spawn ();
 			LootContainer lootContainer = baseEntity2 as LootContainer;
-			if (Object.op_Implicit ((Object)(object)lootContainer)) {
-				((FacepunchBehaviour)lootContainer).Invoke ((Action)lootContainer.RemoveMe, 1800f);
+			if ((bool)lootContainer) {
+				lootContainer.Invoke (lootContainer.RemoveMe, 1800f);
 			}
-			Collider component2 = ((Component)baseEntity2).GetComponent<Collider> ();
-			Rigidbody val = ((Component)baseEntity2).gameObject.AddComponent<Rigidbody> ();
-			val.useGravity = true;
-			val.collisionDetectionMode = (CollisionDetectionMode)2;
-			val.mass = 2f;
-			val.interpolation = (RigidbodyInterpolation)1;
-			val.velocity = zero + onUnitSphere2 * Random.Range (1f, 3f);
-			val.angularVelocity = Vector3Ex.Range (-1.75f, 1.75f);
-			val.drag = 0.5f * (val.mass / 5f);
-			val.angularDrag = 0.2f * (val.mass / 5f);
+			Collider component2 = baseEntity2.GetComponent<Collider> ();
+			Rigidbody rigidbody = baseEntity2.gameObject.AddComponent<Rigidbody> ();
+			rigidbody.useGravity = true;
+			rigidbody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+			rigidbody.mass = 2f;
+			rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
+			rigidbody.velocity = zero + onUnitSphere2 * UnityEngine.Random.Range (1f, 3f);
+			rigidbody.angularVelocity = Vector3Ex.Range (-1.75f, 1.75f);
+			rigidbody.drag = 0.5f * (rigidbody.mass / 5f);
+			rigidbody.angularDrag = 0.2f * (rigidbody.mass / 5f);
 			FireBall fireBall = GameManager.server.CreateEntity (this.fireBall.resourcePath) as FireBall;
-			if (Object.op_Implicit ((Object)(object)fireBall)) {
+			if ((bool)fireBall) {
 				fireBall.SetParent (baseEntity2);
 				fireBall.Spawn ();
-				((Component)fireBall).GetComponent<Rigidbody> ().isKinematic = true;
-				((Component)fireBall).GetComponent<Collider> ().enabled = false;
+				fireBall.GetComponent<Rigidbody> ().isKinematic = true;
+				fireBall.GetComponent<Collider> ().enabled = false;
 			}
-			((Component)baseEntity2).SendMessage ("SetLockingEnt", (object)((Component)fireBall).gameObject, (SendMessageOptions)1);
+			baseEntity2.SendMessage ("SetLockingEnt", fireBall.gameObject, SendMessageOptions.DontRequireReceiver);
 			foreach (ServerGib item2 in list) {
-				Physics.IgnoreCollision (component2, (Collider)(object)item2.GetCollider (), true);
+				UnityEngine.Physics.IgnoreCollision (component2, item2.GetCollider (), ignore: true);
 			}
 		}
 		base.OnKilled (info);
@@ -1198,10 +921,9 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 
 	public override void OnAttacked (HitInfo info)
 	{
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
 		base.OnAttacked (info);
 		BasePlayer basePlayer = info.Initiator as BasePlayer;
-		if ((Object)(object)basePlayer != (Object)null) {
+		if (basePlayer != null) {
 			AddOrUpdateTarget (basePlayer, info.PointStart, info.damageTypes.Total ());
 		}
 	}
@@ -1218,7 +940,7 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 	public void DoHealing ()
 	{
 		if (!base.isClient && base.healthFraction < 1f && base.SecondsSinceAttacked > 600f) {
-			float amount = MaxHealth () / 300f * Time.fixedDeltaTime;
+			float amount = MaxHealth () / 300f * UnityEngine.Time.fixedDeltaTime;
 			Heal (amount);
 		}
 	}
@@ -1230,10 +952,8 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 
 	public float GetDamageMultiplier (BaseEntity ent)
 	{
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
 		float num = ((throttle > 0f) ? 10f : 0f);
-		float num2 = Vector3.Dot (myRigidBody.velocity, ((Component)this).transform.forward);
+		float num2 = Vector3.Dot (myRigidBody.velocity, base.transform.forward);
 		if (num2 > 0f) {
 			num += num2 * 0.5f;
 		}
@@ -1274,20 +994,16 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 
 	public Vector3 GetFinalDestination ()
 	{
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
 		if (!HasPath ()) {
-			return ((Component)this).transform.position;
+			return base.transform.position;
 		}
 		return finalDestination;
 	}
 
 	public Vector3 GetCurrentPathDestination ()
 	{
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
 		if (!HasPath ()) {
-			return ((Component)this).transform.position;
+			return base.transform.position;
 		}
 		return currentPath [currentPathIndex];
 	}
@@ -1305,18 +1021,16 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 
 	public bool AtCurrentPathNode ()
 	{
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
 		if (currentPathIndex < 0 || currentPathIndex >= currentPath.Count) {
 			return false;
 		}
-		return Vector3.Distance (((Component)this).transform.position, currentPath [currentPathIndex]) <= stoppingDist;
+		return Vector3.Distance (base.transform.position, currentPath [currentPathIndex]) <= stoppingDist;
 	}
 
 	public int GetLoopedIndex (int index)
 	{
 		if (!HasPath ()) {
-			Debug.LogWarning ((object)"Warning, GetLoopedIndex called without a path");
+			Debug.LogWarning ("Warning, GetLoopedIndex called without a path");
 			return 0;
 		}
 		if (!pathLooping) {
@@ -1333,76 +1047,37 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 
 	public Vector3 PathDirection (int index)
 	{
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0081: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0070: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0090: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0091: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0096: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0099: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0089: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008e: Unknown result type (might be due to invalid IL or missing references)
 		if (!HasPath () || currentPath.Count <= 1) {
-			return ((Component)this).transform.forward;
+			return base.transform.forward;
 		}
 		index = GetLoopedIndex (index);
-		Vector3 val;
-		Vector3 val2;
+		Vector3 vector;
+		Vector3 vector2;
 		if (pathLooping) {
 			int loopedIndex = GetLoopedIndex (index - 1);
-			val = currentPath [loopedIndex];
-			val2 = currentPath [GetLoopedIndex (index)];
+			vector = currentPath [loopedIndex];
+			vector2 = currentPath [GetLoopedIndex (index)];
 		} else {
-			val = ((index - 1 >= 0) ? currentPath [index - 1] : ((Component)this).transform.position);
-			val2 = currentPath [index];
+			vector = ((index - 1 >= 0) ? currentPath [index - 1] : base.transform.position);
+			vector2 = currentPath [index];
 		}
-		Vector3 val3 = val2 - val;
-		return ((Vector3)(ref val3)).normalized;
+		return (vector2 - vector).normalized;
 	}
 
 	public Vector3 IdealPathPosition ()
 	{
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0062: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0067: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
 		if (!HasPath ()) {
-			return ((Component)this).transform.position;
+			return base.transform.position;
 		}
 		int loopedIndex = GetLoopedIndex (currentPathIndex - 1);
 		if (loopedIndex == currentPathIndex) {
 			return currentPath [currentPathIndex];
 		}
-		return ClosestPointAlongPath (currentPath [loopedIndex], currentPath [currentPathIndex], ((Component)this).transform.position);
+		return ClosestPointAlongPath (currentPath [loopedIndex], currentPath [currentPathIndex], base.transform.position);
 	}
 
 	public void AdvancePathMovement (bool force)
 	{
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0059: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0067: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0085: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0086: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0087: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0088: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a7: Unknown result type (might be due to invalid IL or missing references)
 		if (HasPath ()) {
 			if (force || AtCurrentPathNode () || currentPathIndex == -1) {
 				currentPathIndex = GetLoopedIndex (currentPathIndex + 1);
@@ -1411,35 +1086,22 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 				ClearPath ();
 				return;
 			}
-			Vector3 val = IdealPathPosition ();
-			Vector3 val2 = currentPath [currentPathIndex];
-			float num = Vector3.Distance (val, val2);
-			float num2 = Vector3.Distance (((Component)this).transform.position, val);
-			float num3 = Mathf.InverseLerp (8f, 0f, num2);
-			val += Direction2D (val2, val) * Mathf.Min (num, num3 * 20f);
-			SetDestination (val);
+			Vector3 vector = IdealPathPosition ();
+			Vector3 vector2 = currentPath [currentPathIndex];
+			float a = Vector3.Distance (vector, vector2);
+			float value = Vector3.Distance (base.transform.position, vector);
+			float num = Mathf.InverseLerp (8f, 0f, value);
+			vector += Direction2D (vector2, vector) * Mathf.Min (a, num * 20f);
+			SetDestination (vector);
 		}
 	}
 
 	public bool GetPathToClosestTurnableNode (IAIPathNode start, Vector3 forward, ref List<IAIPathNode> nodes)
 	{
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0075: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0080: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0085: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0089: Unknown result type (might be due to invalid IL or missing references)
 		float num = float.NegativeInfinity;
 		IAIPathNode iAIPathNode = null;
-		Vector3 val;
 		foreach (IAIPathNode item in start.Linked) {
-			val = item.Position - start.Position;
-			float num2 = Vector3.Dot (forward, ((Vector3)(ref val)).normalized);
+			float num2 = Vector3.Dot (forward, (item.Position - start.Position).normalized);
 			if (num2 > num) {
 				num = num2;
 				iAIPathNode = item;
@@ -1450,54 +1112,39 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 			if (!iAIPathNode.Straightaway) {
 				return true;
 			}
-			IAIPathNode start2 = iAIPathNode;
-			val = iAIPathNode.Position - start.Position;
-			return GetPathToClosestTurnableNode (start2, ((Vector3)(ref val)).normalized, ref nodes);
+			return GetPathToClosestTurnableNode (iAIPathNode, (iAIPathNode.Position - start.Position).normalized, ref nodes);
 		}
 		return false;
 	}
 
 	public bool GetEngagementPath (ref List<IAIPathNode> nodes)
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
-		IAIPathNode closestToPoint = patrolPath.GetClosestToPoint (((Component)this).transform.position);
-		Vector3 val = closestToPoint.Position - ((Component)this).transform.position;
-		Vector3 normalized = ((Vector3)(ref val)).normalized;
-		if (Vector3.Dot (((Component)this).transform.forward, normalized) > 0f) {
+		IAIPathNode closestToPoint = patrolPath.GetClosestToPoint (base.transform.position);
+		Vector3 normalized = (closestToPoint.Position - base.transform.position).normalized;
+		if (Vector3.Dot (base.transform.forward, normalized) > 0f) {
 			nodes.Add (closestToPoint);
 			if (!closestToPoint.Straightaway) {
 				return true;
 			}
 		}
-		return GetPathToClosestTurnableNode (closestToPoint, ((Component)this).transform.forward, ref nodes);
+		return GetPathToClosestTurnableNode (closestToPoint, base.transform.forward, ref nodes);
 	}
 
 	public void AddOrUpdateTarget (BaseEntity ent, Vector3 pos, float damageFrom = 0f)
 	{
-		//IL_0084: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0085: Unknown result type (might be due to invalid IL or missing references)
 		if ((AI.ignoreplayers && !ent.IsNpc) || !(ent is BasePlayer)) {
 			return;
 		}
 		TargetInfo targetInfo = null;
 		foreach (TargetInfo target in targetList) {
-			if ((Object)(object)target.entity == (Object)(object)ent) {
+			if (target.entity == ent) {
 				targetInfo = target;
 				break;
 			}
 		}
 		if (targetInfo == null) {
-			targetInfo = Pool.Get<TargetInfo> ();
-			targetInfo.Setup (ent, Time.time - 1f);
+			targetInfo = Facepunch.Pool.Get<TargetInfo> ();
+			targetInfo.Setup (ent, UnityEngine.Time.time - 1f);
 			targetList.Add (targetInfo);
 		}
 		targetInfo.lastSeenPosition = pos;
@@ -1506,10 +1153,9 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 
 	public void UpdateTargetList ()
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		List<BaseEntity> list = Pool.GetList<BaseEntity> ();
-		Vis.Entities (((Component)this).transform.position, searchRange, list, 133120, (QueryTriggerInteraction)2);
-		foreach (BaseEntity item in list) {
+		List<BaseEntity> obj = Facepunch.Pool.GetList<BaseEntity> ();
+		Vis.Entities (base.transform.position, searchRange, obj, 133120);
+		foreach (BaseEntity item in obj) {
 			if ((AI.ignoreplayers && !item.IsNpc) || !(item is BasePlayer)) {
 				continue;
 			}
@@ -1519,27 +1165,27 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 			}
 			bool flag = false;
 			foreach (TargetInfo target in targetList) {
-				if ((Object)(object)target.entity == (Object)(object)item) {
-					target.lastSeenTime = Time.time;
+				if (target.entity == item) {
+					target.lastSeenTime = UnityEngine.Time.time;
 					flag = true;
 					break;
 				}
 			}
 			if (!flag) {
-				TargetInfo targetInfo = Pool.Get<TargetInfo> ();
-				targetInfo.Setup (item, Time.time);
+				TargetInfo targetInfo = Facepunch.Pool.Get<TargetInfo> ();
+				targetInfo.Setup (item, UnityEngine.Time.time);
 				targetList.Add (targetInfo);
 			}
 		}
 		for (int num = targetList.Count - 1; num >= 0; num--) {
-			TargetInfo targetInfo2 = targetList [num];
-			BasePlayer basePlayer2 = targetInfo2.entity as BasePlayer;
-			if ((Object)(object)targetInfo2.entity == (Object)null || Time.time - targetInfo2.lastSeenTime > memoryDuration || basePlayer2.IsDead () || (basePlayer2.InSafeZone () && !basePlayer2.IsHostile ()) || (AI.ignoreplayers && !basePlayer2.IsNpc)) {
-				targetList.Remove (targetInfo2);
-				Pool.Free<TargetInfo> (ref targetInfo2);
+			TargetInfo obj2 = targetList [num];
+			BasePlayer basePlayer2 = obj2.entity as BasePlayer;
+			if (obj2.entity == null || UnityEngine.Time.time - obj2.lastSeenTime > memoryDuration || basePlayer2.IsDead () || (basePlayer2.InSafeZone () && !basePlayer2.IsHostile ()) || (AI.ignoreplayers && !basePlayer2.IsNpc)) {
+				targetList.Remove (obj2);
+				Facepunch.Pool.Free (ref obj2);
 			}
 		}
-		Pool.FreeList<BaseEntity> (ref list);
+		Facepunch.Pool.FreeList (ref obj);
 		targetList.Sort (SortTargets);
 	}
 
@@ -1550,10 +1196,8 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 
 	public Vector3 GetAimPoint (BaseEntity ent)
 	{
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer basePlayer = ent as BasePlayer;
-		if ((Object)(object)basePlayer != (Object)null) {
+		if (basePlayer != null) {
 			return basePlayer.eyes.position;
 		}
 		return ent.CenterPoint ();
@@ -1561,46 +1205,25 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 
 	public bool VisibilityTest (BaseEntity ent)
 	{
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0056: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0063: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0077: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0086: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0090: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0100: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0101: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0106: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0116: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e5: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)ent == (Object)null) {
+		if (ent == null) {
 			return false;
 		}
-		if (!(Vector3.Distance (((Component)ent).transform.position, ((Component)this).transform.position) < viewDistance)) {
+		if (!(Vector3.Distance (ent.transform.position, base.transform.position) < viewDistance)) {
 			return false;
 		}
 		bool flag = false;
 		if (ent is BasePlayer) {
 			BasePlayer basePlayer = ent as BasePlayer;
-			Vector3 position = ((Component)mainTurret).transform.position;
-			flag = IsVisible (basePlayer.eyes.position, position) || IsVisible (((Component)basePlayer).transform.position + Vector3.up * 0.1f, position);
-			if (!flag && basePlayer.isMounted && (Object)(object)basePlayer.GetMounted ().VehicleParent () != (Object)null && basePlayer.GetMounted ().VehicleParent ().AlwaysAllowBradleyTargeting) {
-				flag = IsVisible (((Bounds)(ref basePlayer.GetMounted ().VehicleParent ().bounds)).center, position);
+			Vector3 position = mainTurret.transform.position;
+			flag = IsVisible (basePlayer.eyes.position, position) || IsVisible (basePlayer.transform.position + Vector3.up * 0.1f, position);
+			if (!flag && basePlayer.isMounted && basePlayer.GetMounted ().VehicleParent () != null && basePlayer.GetMounted ().VehicleParent ().AlwaysAllowBradleyTargeting) {
+				flag = IsVisible (basePlayer.GetMounted ().VehicleParent ().bounds.center, position);
 			}
 			if (flag) {
-				flag = !Physics.SphereCast (new Ray (position, Vector3Ex.Direction (basePlayer.eyes.position, position)), 0.05f, Vector3.Distance (basePlayer.eyes.position, position), 10551297);
+				flag = !UnityEngine.Physics.SphereCast (new Ray (position, Vector3Ex.Direction (basePlayer.eyes.position, position)), 0.05f, Vector3.Distance (basePlayer.eyes.position, position), 10551297);
 			}
 		} else {
-			Debug.LogWarning ((object)"Standard vis test!");
+			Debug.LogWarning ("Standard vis test!");
 			flag = IsVisible (ent.CenterPoint ());
 		}
 		return flag;
@@ -1608,41 +1231,17 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 
 	public void UpdateTargetVisibilities ()
 	{
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
 		foreach (TargetInfo target in targetList) {
 			if (target.IsValid () && VisibilityTest (target.entity)) {
-				target.lastSeenTime = Time.time;
-				target.lastSeenPosition = ((Component)target.entity).transform.position;
+				target.lastSeenTime = UnityEngine.Time.time;
+				target.lastSeenPosition = target.entity.transform.position;
 			}
 		}
 	}
 
 	public void DoWeaponAiming ()
 	{
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0101: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0106: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0113: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 normalized;
-		Vector3 val;
-		if (!((Object)(object)mainGunTarget != (Object)null)) {
-			normalized = desiredAimVector;
-		} else {
-			val = GetAimPoint (mainGunTarget) - ((Component)mainTurretEyePos).transform.position;
-			normalized = ((Vector3)(ref val)).normalized;
-		}
-		desiredAimVector = normalized;
+		desiredAimVector = ((mainGunTarget != null) ? (GetAimPoint (mainGunTarget) - mainTurretEyePos.transform.position).normalized : desiredAimVector);
 		BaseEntity baseEntity = null;
 		if (targetList.Count > 0) {
 			if (targetList.Count > 1 && targetList [1].IsValid () && targetList [1].IsVisible ()) {
@@ -1651,124 +1250,66 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 				baseEntity = targetList [0].entity;
 			}
 		}
-		Vector3 val2;
-		if (!((Object)(object)baseEntity != (Object)null)) {
-			val2 = ((Component)this).transform.forward;
-		} else {
-			val = GetAimPoint (baseEntity) - ((Component)topTurretEyePos).transform.position;
-			val2 = ((Vector3)(ref val)).normalized;
-		}
-		desiredTopTurretAimVector = val2;
+		desiredTopTurretAimVector = ((baseEntity != null) ? (GetAimPoint (baseEntity) - topTurretEyePos.transform.position).normalized : base.transform.forward);
 	}
 
 	public void DoWeapons ()
 	{
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0067: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0072: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ac: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015b: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)mainGunTarget != (Object)null) {
-			Vector3 val = turretAimVector;
-			Vector3 val2 = GetAimPoint (mainGunTarget) - ((Component)mainTurretEyePos).transform.position;
-			if (Vector3.Dot (val, ((Vector3)(ref val2)).normalized) >= 0.99f) {
-				bool flag = VisibilityTest (mainGunTarget);
-				float num = Vector3.Distance (((Component)mainGunTarget).transform.position, ((Component)this).transform.position);
-				if (Time.time > nextCoaxTime && flag && num <= 40f) {
-					numCoaxBursted++;
-					FireGun (GetAimPoint (mainGunTarget), 3f, isCoax: true);
-					nextCoaxTime = Time.time + coaxFireRate;
-					if (numCoaxBursted >= coaxBurstLength) {
-						nextCoaxTime = Time.time + 1f;
-						numCoaxBursted = 0;
-					}
+		if (mainGunTarget != null && Vector3.Dot (turretAimVector, (GetAimPoint (mainGunTarget) - mainTurretEyePos.transform.position).normalized) >= 0.99f) {
+			bool flag = VisibilityTest (mainGunTarget);
+			float num = Vector3.Distance (mainGunTarget.transform.position, base.transform.position);
+			if (UnityEngine.Time.time > nextCoaxTime && flag && num <= 40f) {
+				numCoaxBursted++;
+				FireGun (GetAimPoint (mainGunTarget), 3f, isCoax: true);
+				nextCoaxTime = UnityEngine.Time.time + coaxFireRate;
+				if (numCoaxBursted >= coaxBurstLength) {
+					nextCoaxTime = UnityEngine.Time.time + 1f;
+					numCoaxBursted = 0;
 				}
-				if (num >= 10f && flag) {
-					FireGunTest ();
-				}
+			}
+			if (num >= 10f && flag) {
+				FireGunTest ();
 			}
 		}
 		if (targetList.Count > 1) {
 			BaseEntity entity = targetList [1].entity;
-			if ((Object)(object)entity != (Object)null && Time.time > nextTopTurretTime && VisibilityTest (entity)) {
+			if (entity != null && UnityEngine.Time.time > nextTopTurretTime && VisibilityTest (entity)) {
 				FireGun (GetAimPoint (targetList [1].entity), 3f, isCoax: false);
-				nextTopTurretTime = Time.time + topTurretFireRate;
+				nextTopTurretTime = UnityEngine.Time.time + topTurretFireRate;
 			}
 		}
 	}
 
 	public void FireGun (Vector3 targetPos, float aimCone, bool isCoax)
 	{
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0059: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0067: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0069: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0094: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0096: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00da: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fa: Unknown result type (might be due to invalid IL or missing references)
-		Transform val = (isCoax ? coaxMuzzle : topTurretMuzzle);
-		Vector3 val2 = ((Component)val).transform.position - val.forward * 0.25f;
-		Vector3 val3 = targetPos - val2;
-		Vector3 normalized = ((Vector3)(ref val3)).normalized;
+		Transform transform = (isCoax ? coaxMuzzle : topTurretMuzzle);
+		Vector3 vector = transform.transform.position - transform.forward * 0.25f;
+		Vector3 normalized = (targetPos - vector).normalized;
 		Vector3 modifiedAimConeDirection = AimConeUtil.GetModifiedAimConeDirection (aimCone, normalized);
-		targetPos = val2 + modifiedAimConeDirection * 300f;
-		List<RaycastHit> list = Pool.GetList<RaycastHit> ();
-		GamePhysics.TraceAll (new Ray (val2, modifiedAimConeDirection), 0f, list, 300f, 1220225809, (QueryTriggerInteraction)0);
-		for (int i = 0; i < list.Count; i++) {
-			RaycastHit hit = list [i];
+		targetPos = vector + modifiedAimConeDirection * 300f;
+		List<RaycastHit> obj = Facepunch.Pool.GetList<RaycastHit> ();
+		GamePhysics.TraceAll (new Ray (vector, modifiedAimConeDirection), 0f, obj, 300f, 1220225809);
+		for (int i = 0; i < obj.Count; i++) {
+			RaycastHit hit = obj [i];
 			BaseEntity entity = hit.GetEntity ();
-			if (!((Object)(object)entity != (Object)null) || (!((Object)(object)entity == (Object)(object)this) && !entity.EqualNetID ((BaseNetworkable)this))) {
+			if (!(entity != null) || (!(entity == this) && !entity.EqualNetID (this))) {
 				BaseCombatEntity baseCombatEntity = entity as BaseCombatEntity;
-				if ((Object)(object)baseCombatEntity != (Object)null) {
-					ApplyDamage (baseCombatEntity, ((RaycastHit)(ref hit)).point, modifiedAimConeDirection);
+				if (baseCombatEntity != null) {
+					ApplyDamage (baseCombatEntity, hit.point, modifiedAimConeDirection);
 				}
-				if (!((Object)(object)entity != (Object)null) || entity.ShouldBlockProjectiles ()) {
-					targetPos = ((RaycastHit)(ref hit)).point;
+				if (!(entity != null) || entity.ShouldBlockProjectiles ()) {
+					targetPos = hit.point;
 					break;
 				}
 			}
 		}
-		ClientRPC<bool, Vector3> (null, "CLIENT_FireGun", isCoax, targetPos);
-		Pool.FreeList<RaycastHit> (ref list);
+		ClientRPC (null, "CLIENT_FireGun", isCoax, targetPos);
+		Facepunch.Pool.FreeList (ref obj);
 	}
 
 	private void ApplyDamage (BaseCombatEntity entity, Vector3 point, Vector3 normal)
 	{
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-		float damageAmount = bulletDamage * Random.Range (0.9f, 1.1f);
+		float damageAmount = bulletDamage * UnityEngine.Random.Range (0.9f, 1.1f);
 		HitInfo info = new HitInfo (this, entity, DamageType.Bullet, damageAmount, point);
 		entity.OnAttacked (info);
 		if (entity is BasePlayer || entity is BaseNpc) {
@@ -1782,75 +1323,40 @@ public class BradleyAPC : BaseCombatEntity, TriggerHurtNotChild.IHurtTriggerUser
 
 	public void AimWeaponAt (Transform weaponYaw, Transform weaponPitch, Vector3 direction, float minPitch = -360f, float maxPitch = 360f, float maxYaw = 360f, Transform parentOverride = null)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0062: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0077: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0096: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ee: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d5: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 val = direction;
-		val = weaponYaw.parent.InverseTransformDirection (val);
-		Quaternion localRotation = Quaternion.LookRotation (val);
-		Vector3 eulerAngles = ((Quaternion)(ref localRotation)).eulerAngles;
+		Vector3 direction2 = direction;
+		direction2 = weaponYaw.parent.InverseTransformDirection (direction2);
+		Quaternion localRotation = Quaternion.LookRotation (direction2);
+		Vector3 eulerAngles = localRotation.eulerAngles;
 		for (int i = 0; i < 3; i++) {
-			((Vector3)(ref eulerAngles)) [i] = ((Vector3)(ref eulerAngles)) [i] - ((((Vector3)(ref eulerAngles)) [i] > 180f) ? 360f : 0f);
+			eulerAngles [i] -= ((eulerAngles [i] > 180f) ? 360f : 0f);
 		}
 		Quaternion localRotation2 = Quaternion.Euler (0f, Mathf.Clamp (eulerAngles.y, 0f - maxYaw, maxYaw), 0f);
 		Quaternion localRotation3 = Quaternion.Euler (Mathf.Clamp (eulerAngles.x, minPitch, maxPitch), 0f, 0f);
-		if ((Object)(object)weaponYaw == (Object)null && (Object)(object)weaponPitch != (Object)null) {
-			((Component)weaponPitch).transform.localRotation = localRotation3;
+		if (weaponYaw == null && weaponPitch != null) {
+			weaponPitch.transform.localRotation = localRotation3;
 			return;
 		}
-		if ((Object)(object)weaponPitch == (Object)null && (Object)(object)weaponYaw != (Object)null) {
-			((Component)weaponYaw).transform.localRotation = localRotation;
+		if (weaponPitch == null && weaponYaw != null) {
+			weaponYaw.transform.localRotation = localRotation;
 			return;
 		}
-		((Component)weaponYaw).transform.localRotation = localRotation2;
-		((Component)weaponPitch).transform.localRotation = localRotation3;
+		weaponYaw.transform.localRotation = localRotation2;
+		weaponPitch.transform.localRotation = localRotation3;
 	}
 
 	public void LateUpdate ()
 	{
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0064: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0077: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e9: Unknown result type (might be due to invalid IL or missing references)
-		float num = Time.time - lastLateUpdate;
-		lastLateUpdate = Time.time;
+		float num = UnityEngine.Time.time - lastLateUpdate;
+		lastLateUpdate = UnityEngine.Time.time;
 		if (base.isServer) {
-			float num2 = (float)Math.PI * 2f / 3f;
+			float num2 = MathF.PI * 2f / 3f;
 			turretAimVector = Vector3.RotateTowards (turretAimVector, desiredAimVector, num2 * num, 0f);
 		} else {
-			turretAimVector = Vector3.Lerp (turretAimVector, desiredAimVector, Time.deltaTime * 10f);
+			turretAimVector = Vector3.Lerp (turretAimVector, desiredAimVector, UnityEngine.Time.deltaTime * 10f);
 		}
 		AimWeaponAt (mainTurret, coaxPitch, turretAimVector, -90f, 90f);
 		AimWeaponAt (mainTurret, CannonPitch, turretAimVector, -90f, 7f);
-		topTurretAimVector = Vector3.Lerp (topTurretAimVector, desiredTopTurretAimVector, Time.deltaTime * 5f);
+		topTurretAimVector = Vector3.Lerp (topTurretAimVector, desiredTopTurretAimVector, UnityEngine.Time.deltaTime * 5f);
 		AimWeaponAt (topTurretYaw, topTurretPitch, topTurretAimVector, -360f, 360f, 360f, mainTurret);
 	}
 }

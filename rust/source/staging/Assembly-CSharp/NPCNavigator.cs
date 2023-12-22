@@ -19,28 +19,14 @@ public class NPCNavigator : BaseNavigator
 
 	public override void OnFailedToPlaceOnNavmesh ()
 	{
-		//IL_0077: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
 		base.OnFailedToPlaceOnNavmesh ();
-		if ((Object)(object)SingletonComponent<DynamicNavMesh>.Instance == (Object)null || SingletonComponent<DynamicNavMesh>.Instance.IsBuilding) {
+		if (SingletonComponent<DynamicNavMesh>.Instance == null || SingletonComponent<DynamicNavMesh>.Instance.IsBuilding) {
 			return;
 		}
 		sampleFailCount++;
 		if (DestroyOnFailedSampleCount > 0 && sampleFailCount >= DestroyOnFailedSampleCount) {
-			string[] obj = new string[6] {
-				"Failed to sample navmesh ",
-				sampleFailCount.ToString (),
-				" times in a row at: ",
-				null,
-				null,
-				null
-			};
-			Vector3 position = ((Component)this).transform.position;
-			obj [3] = ((object)(Vector3)(ref position)).ToString ();
-			obj [4] = ". Destroying: ";
-			obj [5] = ((Object)((Component)this).gameObject).name;
-			Debug.LogWarning ((object)string.Concat (obj));
-			if ((Object)(object)NPC != (Object)null && !NPC.IsDestroyed) {
+			Debug.LogWarning ("Failed to sample navmesh " + sampleFailCount + " times in a row at: " + base.transform.position.ToString () + ". Destroying: " + base.gameObject.name);
+			if (NPC != null && !NPC.IsDestroyed) {
 				NPC.Kill ();
 			}
 		}
@@ -62,11 +48,10 @@ public class NPCNavigator : BaseNavigator
 
 	protected override bool CanUpdateMovement ()
 	{
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
 		if (!base.CanUpdateMovement ()) {
 			return false;
 		}
-		if ((Object)(object)NPC != (Object)null && (NPC.IsDormant || !NPC.syncPosition) && ((Behaviour)base.Agent).enabled) {
+		if (NPC != null && (NPC.IsDormant || !NPC.syncPosition) && base.Agent.enabled) {
 			SetDestination (NPC.ServerPosition);
 			return false;
 		}
@@ -75,49 +60,25 @@ public class NPCNavigator : BaseNavigator
 
 	protected override void UpdatePositionAndRotation (Vector3 moveToPosition, float delta)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
 		base.UpdatePositionAndRotation (moveToPosition, delta);
 		UpdateRotation (moveToPosition, delta);
 	}
 
 	private void UpdateRotation (Vector3 moveToPosition, float delta)
 	{
-		//IL_0067: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0072: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0077: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0091: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0096: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0099: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b4: Unknown result type (might be due to invalid IL or missing references)
 		if (overrideFacingDirectionMode != 0) {
 			return;
 		}
 		if (traversingNavMeshLink) {
-			Vector3 val = base.Agent.destination - base.BaseEntity.ServerPosition;
-			if (((Vector3)(ref val)).sqrMagnitude > 1f) {
-				val = currentNavMeshLinkEndPos - base.BaseEntity.ServerPosition;
+			Vector3 vector = base.Agent.destination - base.BaseEntity.ServerPosition;
+			if (vector.sqrMagnitude > 1f) {
+				vector = currentNavMeshLinkEndPos - base.BaseEntity.ServerPosition;
 			}
-			_ = ((Vector3)(ref val)).sqrMagnitude;
+			_ = vector.sqrMagnitude;
 			_ = 0.001f;
-			return;
-		}
-		Vector3 val2 = base.Agent.destination - base.BaseEntity.ServerPosition;
-		if (((Vector3)(ref val2)).sqrMagnitude > 1f) {
-			val2 = base.Agent.desiredVelocity;
-			Vector3 normalized = ((Vector3)(ref val2)).normalized;
-			if (((Vector3)(ref normalized)).sqrMagnitude > 0.001f) {
+		} else if ((base.Agent.destination - base.BaseEntity.ServerPosition).sqrMagnitude > 1f) {
+			Vector3 normalized = base.Agent.desiredVelocity.normalized;
+			if (normalized.sqrMagnitude > 0.001f) {
 				base.BaseEntity.ServerRotation = Quaternion.LookRotation (normalized);
 			}
 		}
@@ -125,8 +86,6 @@ public class NPCNavigator : BaseNavigator
 
 	public override void ApplyFacingDirectionOverride ()
 	{
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
 		base.ApplyFacingDirectionOverride ();
 		base.BaseEntity.ServerRotation = Quaternion.LookRotation (base.FacingDirectionOverride);
 	}
@@ -136,7 +95,7 @@ public class NPCNavigator : BaseNavigator
 		if (!AI.npcswimming) {
 			return false;
 		}
-		if ((Object)(object)NPC != (Object)null) {
+		if (NPC != null) {
 			return NPC.swimming;
 		}
 		return false;

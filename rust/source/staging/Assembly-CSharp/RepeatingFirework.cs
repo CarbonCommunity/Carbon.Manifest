@@ -1,4 +1,3 @@
-using System;
 using Network;
 
 public class RepeatingFirework : BaseFirework
@@ -14,8 +13,8 @@ public class RepeatingFirework : BaseFirework
 	public override void Begin ()
 	{
 		base.Begin ();
-		((FacepunchBehaviour)this).InvokeRepeating ((Action)SendFire, 0f, timeBetweenRepeats);
-		((FacepunchBehaviour)this).CancelInvoke ((Action)OnExhausted);
+		InvokeRepeating (SendFire, 0f, timeBetweenRepeats);
+		CancelInvoke (OnExhausted);
 	}
 
 	public void SendFire ()
@@ -23,7 +22,7 @@ public class RepeatingFirework : BaseFirework
 		ClientRPC (null, "RPCFire");
 		numFired++;
 		if (numFired >= maxRepeats) {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)SendFire);
+			CancelInvoke (SendFire);
 			numFired = 0;
 			OnExhausted ();
 		}
@@ -31,10 +30,7 @@ public class RepeatingFirework : BaseFirework
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("RepeatingFirework.OnRpcMessage", 0);
-		try {
-		} finally {
-			((IDisposable)val)?.Dispose ();
+		using (TimeWarning.New ("RepeatingFirework.OnRpcMessage")) {
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}

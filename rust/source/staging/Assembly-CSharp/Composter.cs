@@ -21,7 +21,7 @@ public class Composter : StorageContainer
 		base.ServerInit ();
 		ItemContainer itemContainer = base.inventory;
 		itemContainer.canAcceptItem = (Func<Item, int, bool>)Delegate.Combine (itemContainer.canAcceptItem, new Func<Item, int, bool> (InventoryItemFilter));
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)UpdateComposting, UpdateInterval, UpdateInterval, UpdateInterval * 0.1f);
+		InvokeRandomized (UpdateComposting, UpdateInterval, UpdateInterval, UpdateInterval * 0.1f);
 	}
 
 	public bool InventoryItemFilter (Item item, int targetSlot)
@@ -29,7 +29,7 @@ public class Composter : StorageContainer
 		if (item == null) {
 			return false;
 		}
-		if ((Object)(object)((Component)item.info).GetComponent<ItemModCompostable> () != (Object)null || ItemIsFertilizer (item)) {
+		if (item.info.GetComponent<ItemModCompostable> () != null || ItemIsFertilizer (item)) {
 			return true;
 		}
 		return false;
@@ -38,7 +38,7 @@ public class Composter : StorageContainer
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.composter = Pool.Get<Composter> ();
+		info.msg.composter = Facepunch.Pool.Get<ProtoBuf.Composter> ();
 		info.msg.composter.fertilizerProductionProgress = fertilizerProductionProgress;
 	}
 
@@ -68,8 +68,8 @@ public class Composter : StorageContainer
 	private void CompostItem (Item item)
 	{
 		if (!ItemIsFertilizer (item)) {
-			ItemModCompostable component = ((Component)item.info).GetComponent<ItemModCompostable> ();
-			if (!((Object)(object)component == (Object)null)) {
+			ItemModCompostable component = item.info.GetComponent<ItemModCompostable> ();
+			if (!(component == null)) {
 				int num = ((!CompostEntireStack) ? 1 : item.amount);
 				item.UseItem (num);
 				fertilizerProductionProgress += (float)num * component.TotalFertilizerProduced;
@@ -80,10 +80,6 @@ public class Composter : StorageContainer
 
 	private void ProduceFertilizer (int amount)
 	{
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
 		if (amount > 0) {
 			Item item = ItemManager.Create (FertilizerDef, amount, 0uL);
 			if (!item.MoveToContainer (base.inventory)) {

@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using Facepunch;
-using UnityEngine;
 
-public class EntityLink : IPooled
+public class EntityLink : Pool.IPooled
 {
 	public BaseEntity owner;
 
@@ -79,10 +78,6 @@ public class EntityLink : IPooled
 
 	public bool CanConnect (EntityLink link)
 	{
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0060: Unknown result type (might be due to invalid IL or missing references)
 		if (IsOccupied ()) {
 			return false;
 		}
@@ -92,6 +87,6 @@ public class EntityLink : IPooled
 		if (link.IsOccupied ()) {
 			return false;
 		}
-		return socket.CanConnect (((Component)owner).transform.position, ((Component)owner).transform.rotation, link.socket, ((Component)link.owner).transform.position, ((Component)link.owner).transform.rotation);
+		return socket.CanConnect (owner.transform.position, owner.transform.rotation, link.socket, link.owner.transform.position, link.owner.transform.rotation);
 	}
 }

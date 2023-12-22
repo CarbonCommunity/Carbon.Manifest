@@ -6,15 +6,15 @@ public class ExplosionDemoReactivator : MonoBehaviour
 
 	private void Start ()
 	{
-		((MonoBehaviour)this).InvokeRepeating ("Reactivate", 0f, TimeDelayToReactivate);
+		InvokeRepeating ("Reactivate", 0f, TimeDelayToReactivate);
 	}
 
 	private void Reactivate ()
 	{
-		Transform[] componentsInChildren = ((Component)this).GetComponentsInChildren<Transform> ();
+		Transform[] componentsInChildren = GetComponentsInChildren<Transform> ();
 		foreach (Transform obj in componentsInChildren) {
-			((Component)obj).gameObject.SetActive (false);
-			((Component)obj).gameObject.SetActive (true);
+			obj.gameObject.SetActive (value: false);
+			obj.gameObject.SetActive (value: true);
 		}
 	}
 }

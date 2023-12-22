@@ -16,7 +16,7 @@ public class ExplosionsLightCurves : MonoBehaviour
 
 	private void Awake ()
 	{
-		lightSource = ((Component)this).GetComponent<Light> ();
+		lightSource = GetComponent<Light> ();
 		lightSource.intensity = LightCurve.Evaluate (0f);
 	}
 

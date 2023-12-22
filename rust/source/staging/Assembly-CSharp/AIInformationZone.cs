@@ -69,41 +69,31 @@ public class AIInformationZone : BaseMonoBehaviour, IServerComponent
 
 	public static AIInformationZone Merge (List<AIInformationZone> zones, GameObject newRoot)
 	{
-		//IL_00e6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00eb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0110: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0121: Unknown result type (might be due to invalid IL or missing references)
-		//IL_012c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0131: Unknown result type (might be due to invalid IL or missing references)
 		if (zones == null) {
 			return null;
 		}
 		AIInformationZone aIInformationZone = newRoot.AddComponent<AIInformationZone> ();
 		aIInformationZone.UseCalculatedCoverDistances = false;
 		foreach (AIInformationZone zone in zones) {
-			if ((Object)(object)zone == (Object)null) {
+			if (zone == null) {
 				continue;
 			}
 			foreach (AIMovePoint movePoint in zone.movePoints) {
 				aIInformationZone.AddMovePoint (movePoint);
-				((Component)movePoint).transform.SetParent (newRoot.transform);
+				movePoint.transform.SetParent (newRoot.transform);
 			}
 			foreach (AICoverPoint coverPoint in zone.coverPoints) {
 				aIInformationZone.AddCoverPoint (coverPoint);
-				((Component)coverPoint).transform.SetParent (newRoot.transform);
+				coverPoint.transform.SetParent (newRoot.transform);
 			}
 		}
 		aIInformationZone.bounds = EncapsulateBounds (zones);
-		ref Bounds reference = ref aIInformationZone.bounds;
-		((Bounds)(ref reference)).extents = ((Bounds)(ref reference)).extents + new Vector3 (5f, 0f, 5f);
-		ref Bounds reference2 = ref aIInformationZone.bounds;
-		((Bounds)(ref reference2)).center = ((Bounds)(ref reference2)).center - ((Component)aIInformationZone).transform.position;
+		aIInformationZone.bounds.extents += new Vector3 (5f, 0f, 5f);
+		aIInformationZone.bounds.center -= aIInformationZone.transform.position;
 		for (int num = zones.Count - 1; num >= 0; num--) {
 			AIInformationZone aIInformationZone2 = zones [num];
-			if (!((Object)(object)aIInformationZone2 == (Object)null)) {
-				Object.Destroy ((Object)(object)aIInformationZone2);
+			if (!(aIInformationZone2 == null)) {
+				UnityEngine.Object.Destroy (aIInformationZone2);
 			}
 		}
 		return aIInformationZone;
@@ -111,25 +101,14 @@ public class AIInformationZone : BaseMonoBehaviour, IServerComponent
 
 	public static Bounds EncapsulateBounds (List<AIInformationZone> zones)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0060: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0088: Unknown result type (might be due to invalid IL or missing references)
 		Bounds result = default(Bounds);
-		((Bounds)(ref result)).center = ((Component)zones [0]).transform.position;
+		result.center = zones [0].transform.position;
 		foreach (AIInformationZone zone in zones) {
-			if (!((Object)(object)zone == (Object)null)) {
-				Vector3 center = ((Bounds)(ref zone.bounds)).center + ((Component)zone).transform.position;
-				Bounds val = zone.bounds;
-				((Bounds)(ref val)).center = center;
-				((Bounds)(ref result)).Encapsulate (val);
+			if (!(zone == null)) {
+				Vector3 center = zone.bounds.center + zone.transform.position;
+				Bounds bounds = zone.bounds;
+				bounds.center = center;
+				result.Encapsulate (bounds);
 			}
 		}
 		return result;
@@ -142,19 +121,13 @@ public class AIInformationZone : BaseMonoBehaviour, IServerComponent
 
 	public void Init ()
 	{
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
 		if (!initd) {
 			initd = true;
 			AddInitialPoints ();
-			areaBox = new OBB (((Component)this).transform.position, ((Component)this).transform.lossyScale, ((Component)this).transform.rotation, bounds);
+			areaBox = new OBB (base.transform.position, base.transform.lossyScale, base.transform.rotation, bounds);
 			zones.Add (this);
-			grid = ((Component)this).GetComponent<AIInformationGrid> ();
-			if ((Object)(object)grid != (Object)null) {
+			grid = GetComponent<AIInformationGrid> ();
+			if (grid != null) {
 				grid.Init ();
 			}
 		}
@@ -238,7 +211,7 @@ public class AIInformationZone : BaseMonoBehaviour, IServerComponent
 		if (!completeRefresh) {
 			return;
 		}
-		Debug.Log ((object)"AIInformationZone performing complete refresh, please wait...");
+		Debug.Log ("AIInformationZone performing complete refresh, please wait...");
 		foreach (AIMovePoint movePoint in movePoints) {
 			movePoint.distances.Clear ();
 			movePoint.distancesToCover.Clear ();
@@ -247,7 +220,7 @@ public class AIInformationZone : BaseMonoBehaviour, IServerComponent
 
 	private bool PassesBudget (float startTime, float budgetSeconds)
 	{
-		if (Time.realtimeSinceStartup - startTime > budgetSeconds) {
+		if (UnityEngine.Time.realtimeSinceStartup - startTime > budgetSeconds) {
 			return false;
 		}
 		return true;
@@ -260,79 +233,61 @@ public class AIInformationZone : BaseMonoBehaviour, IServerComponent
 
 	private bool ProcessDistances ()
 	{
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004d: Expected O, but got Unknown
-		//IL_0164: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0170: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0194: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01af: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b5: Invalid comparison between Unknown and I4
-		//IL_0230: Unknown result type (might be due to invalid IL or missing references)
-		//IL_023c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01da: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01fb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0205: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0207: Unknown result type (might be due to invalid IL or missing references)
 		if (!UseCalculatedCoverDistances) {
 			return true;
 		}
-		float realtimeSinceStartup = Time.realtimeSinceStartup;
+		float realtimeSinceStartup = UnityEngine.Time.realtimeSinceStartup;
 		float budgetSeconds = AIThinkManager.framebudgetms / 1000f * 0.25f;
 		if (realtimeSinceStartup < lastNavmeshBuildTime + 60f) {
 			budgetSeconds = 0.1f;
 		}
-		int num = 1 << NavMesh.GetAreaFromName ("HumanNPC");
-		NavMeshPath val = new NavMeshPath ();
+		int areaMask = 1 << NavMesh.GetAreaFromName ("HumanNPC");
+		NavMeshPath navMeshPath = new NavMeshPath ();
 		while (PassesBudget (realtimeSinceStartup, budgetSeconds)) {
 			AIMovePoint aIMovePoint = movePoints [processIndex];
 			bool flag = true;
-			int num2 = 0;
-			for (int num3 = aIMovePoint.distances.Keys.Count - 1; num3 >= 0; num3--) {
-				AIMovePoint aIMovePoint2 = aIMovePoint.distances.Keys [num3];
+			int num = 0;
+			for (int num2 = aIMovePoint.distances.Keys.Count - 1; num2 >= 0; num2--) {
+				AIMovePoint aIMovePoint2 = aIMovePoint.distances.Keys [num2];
 				if (!movePoints.Contains (aIMovePoint2)) {
 					aIMovePoint.distances.Remove (aIMovePoint2);
 				}
 			}
-			for (int num4 = aIMovePoint.distancesToCover.Keys.Count - 1; num4 >= 0; num4--) {
-				AICoverPoint aICoverPoint = aIMovePoint.distancesToCover.Keys [num4];
+			for (int num3 = aIMovePoint.distancesToCover.Keys.Count - 1; num3 >= 0; num3--) {
+				AICoverPoint aICoverPoint = aIMovePoint.distancesToCover.Keys [num3];
 				if (!coverPoints.Contains (aICoverPoint)) {
-					num2++;
+					num++;
 					aIMovePoint.distancesToCover.Remove (aICoverPoint);
 				}
 			}
 			foreach (AICoverPoint coverPoint in coverPoints) {
-				if ((Object)(object)coverPoint == (Object)null || aIMovePoint.distancesToCover.Contains (coverPoint)) {
+				if (coverPoint == null || aIMovePoint.distancesToCover.Contains (coverPoint)) {
 					continue;
 				}
-				float num5 = -1f;
-				if (Vector3.Distance (((Component)aIMovePoint).transform.position, ((Component)coverPoint).transform.position) > 40f) {
-					num5 = -2f;
-				} else if (NavMesh.CalculatePath (((Component)aIMovePoint).transform.position, ((Component)coverPoint).transform.position, num, val) && (int)val.status == 0) {
-					int num6 = val.corners.Length;
-					if (num6 > 1) {
-						Vector3 val2 = val.corners [0];
-						float num7 = 0f;
-						for (int i = 0; i < num6; i++) {
-							Vector3 val3 = val.corners [i];
-							num7 += Vector3.Distance (val2, val3);
-							val2 = val3;
+				float num4 = -1f;
+				if (Vector3.Distance (aIMovePoint.transform.position, coverPoint.transform.position) > 40f) {
+					num4 = -2f;
+				} else if (NavMesh.CalculatePath (aIMovePoint.transform.position, coverPoint.transform.position, areaMask, navMeshPath) && navMeshPath.status == NavMeshPathStatus.PathComplete) {
+					int num5 = navMeshPath.corners.Length;
+					if (num5 > 1) {
+						Vector3 a = navMeshPath.corners [0];
+						float num6 = 0f;
+						for (int i = 0; i < num5; i++) {
+							Vector3 vector = navMeshPath.corners [i];
+							num6 += Vector3.Distance (a, vector);
+							a = vector;
 						}
-						num5 = num7;
+						num4 = num6;
 						pathSuccesses++;
 					} else {
-						num5 = Vector3.Distance (((Component)aIMovePoint).transform.position, ((Component)coverPoint).transform.position);
+						num4 = Vector3.Distance (aIMovePoint.transform.position, coverPoint.transform.position);
 						halfPaths++;
 					}
 				} else {
 					pathFails++;
-					num5 = -2f;
+					num4 = -2f;
 				}
-				aIMovePoint.distancesToCover.Add (coverPoint, num5);
+				aIMovePoint.distancesToCover.Add (coverPoint, num4);
 				if (!PassesBudget (realtimeSinceStartup, budgetSeconds)) {
 					flag = false;
 					break;
@@ -350,7 +305,7 @@ public class AIInformationZone : BaseMonoBehaviour, IServerComponent
 
 	public static void BudgetedTick ()
 	{
-		if (!AI.move || Time.realtimeSinceStartup < buildTimeTest) {
+		if (!AI.move || UnityEngine.Time.realtimeSinceStartup < buildTimeTest) {
 			return;
 		}
 		bool flag = false;
@@ -364,11 +319,11 @@ public class AIInformationZone : BaseMonoBehaviour, IServerComponent
 		}
 		if (Global.developer > 0) {
 			if (flag && !lastFrameAnyDirty) {
-				Debug.Log ((object)"AIInformationZones rebuilding...");
-				rebuildStartTime = Time.realtimeSinceStartup;
+				Debug.Log ("AIInformationZones rebuilding...");
+				rebuildStartTime = UnityEngine.Time.realtimeSinceStartup;
 			}
 			if (lastFrameAnyDirty && !flag) {
-				Debug.Log ((object)("AIInformationZone rebuild complete! Duration : " + (Time.realtimeSinceStartup - rebuildStartTime) + " seconds."));
+				Debug.Log ("AIInformationZone rebuild complete! Duration : " + (UnityEngine.Time.realtimeSinceStartup - rebuildStartTime) + " seconds.");
 			}
 		}
 		lastFrameAnyDirty = flag;
@@ -376,32 +331,30 @@ public class AIInformationZone : BaseMonoBehaviour, IServerComponent
 
 	public void NavmeshBuildingComplete ()
 	{
-		lastNavmeshBuildTime = Time.realtimeSinceStartup;
-		buildTimeTest = Time.realtimeSinceStartup + 15f;
+		lastNavmeshBuildTime = UnityEngine.Time.realtimeSinceStartup;
+		buildTimeTest = UnityEngine.Time.realtimeSinceStartup + 15f;
 		MarkDirty (completeRefresh: true);
 	}
 
 	public Vector3 ClosestPointTo (Vector3 target)
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		return ((OBB)(ref areaBox)).ClosestPoint (target);
+		return areaBox.ClosestPoint (target);
 	}
 
 	public void AddInitialPoints ()
 	{
-		AICoverPoint[] componentsInChildren = ((Component)((Component)this).transform).GetComponentsInChildren<AICoverPoint> ();
+		AICoverPoint[] componentsInChildren = base.transform.GetComponentsInChildren<AICoverPoint> ();
 		foreach (AICoverPoint point in componentsInChildren) {
 			AddCoverPoint (point);
 		}
-		AIMovePoint[] componentsInChildren2 = ((Component)((Component)this).transform).GetComponentsInChildren<AIMovePoint> (true);
+		AIMovePoint[] componentsInChildren2 = base.transform.GetComponentsInChildren<AIMovePoint> (includeInactive: true);
 		foreach (AIMovePoint point2 in componentsInChildren2) {
 			AddMovePoint (point2);
 		}
 		RefreshPointArrays ();
-		NavMeshLink[] componentsInChildren3 = ((Component)((Component)this).transform).GetComponentsInChildren<NavMeshLink> (true);
+		NavMeshLink[] componentsInChildren3 = base.transform.GetComponentsInChildren<NavMeshLink> (includeInactive: true);
 		navMeshLinks.AddRange (componentsInChildren3);
-		AIMovePointPath[] componentsInChildren4 = ((Component)((Component)this).transform).GetComponentsInChildren<AIMovePointPath> ();
+		AIMovePointPath[] componentsInChildren4 = base.transform.GetComponentsInChildren<AIMovePointPath> ();
 		paths.AddRange (componentsInChildren4);
 	}
 
@@ -413,18 +366,16 @@ public class AIInformationZone : BaseMonoBehaviour, IServerComponent
 
 	public void AddDynamicAIPoints (AIMovePoint[] movePoints, AICoverPoint[] coverPoints, Func<Vector3, bool> validatePoint = null)
 	{
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0066: Unknown result type (might be due to invalid IL or missing references)
 		if (movePoints != null) {
 			foreach (AIMovePoint aIMovePoint in movePoints) {
-				if (!((Object)(object)aIMovePoint == (Object)null) && (validatePoint == null || (validatePoint != null && validatePoint (((Component)aIMovePoint).transform.position)))) {
+				if (!(aIMovePoint == null) && (validatePoint == null || (validatePoint != null && validatePoint (aIMovePoint.transform.position)))) {
 					AddMovePoint (aIMovePoint);
 				}
 			}
 		}
 		if (coverPoints != null) {
 			foreach (AICoverPoint aICoverPoint in coverPoints) {
-				if (!((Object)(object)aICoverPoint == (Object)null) && (validatePoint == null || (validatePoint != null && validatePoint (((Component)aICoverPoint).transform.position)))) {
+				if (!(aICoverPoint == null) && (validatePoint == null || (validatePoint != null && validatePoint (aICoverPoint.transform.position)))) {
 					AddCoverPoint (aICoverPoint);
 				}
 			}
@@ -436,14 +387,14 @@ public class AIInformationZone : BaseMonoBehaviour, IServerComponent
 	{
 		if (movePoints != null) {
 			foreach (AIMovePoint aIMovePoint in movePoints) {
-				if (!((Object)(object)aIMovePoint == (Object)null)) {
+				if (!(aIMovePoint == null)) {
 					RemoveMovePoint (aIMovePoint, markDirty: false);
 				}
 			}
 		}
 		if (coverPoints != null) {
 			foreach (AICoverPoint aICoverPoint in coverPoints) {
-				if (!((Object)(object)aICoverPoint == (Object)null)) {
+				if (!(aICoverPoint == null)) {
 					RemoveCoverPoint (aICoverPoint, markDirty: false);
 				}
 			}
@@ -454,9 +405,6 @@ public class AIInformationZone : BaseMonoBehaviour, IServerComponent
 
 	public AIMovePointPath GetNearestPath (Vector3 position)
 	{
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0056: Unknown result type (might be due to invalid IL or missing references)
 		if (paths == null || paths.Count == 0) {
 			return null;
 		}
@@ -464,7 +412,7 @@ public class AIInformationZone : BaseMonoBehaviour, IServerComponent
 		AIMovePointPath result = null;
 		foreach (AIMovePointPath path in paths) {
 			foreach (AIMovePoint point in path.Points) {
-				float num2 = Vector3.SqrMagnitude (((Component)point).transform.position - position);
+				float num2 = Vector3.SqrMagnitude (point.transform.position - position);
 				if (num2 < num) {
 					num = num2;
 					result = path;
@@ -476,14 +424,11 @@ public class AIInformationZone : BaseMonoBehaviour, IServerComponent
 
 	public static AIInformationZone GetForPoint (Vector3 point, bool fallBackToNearest = true)
 	{
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c5: Unknown result type (might be due to invalid IL or missing references)
 		if (zones == null || zones.Count == 0) {
 			return null;
 		}
 		foreach (AIInformationZone zone in zones) {
-			if (!((Object)(object)zone == (Object)null) && !zone.Virtual && ((OBB)(ref zone.areaBox)).Contains (point)) {
+			if (!(zone == null) && !zone.Virtual && zone.areaBox.Contains (point)) {
 				return zone;
 			}
 		}
@@ -493,8 +438,8 @@ public class AIInformationZone : BaseMonoBehaviour, IServerComponent
 		float num = float.PositiveInfinity;
 		AIInformationZone aIInformationZone = zones [0];
 		foreach (AIInformationZone zone2 in zones) {
-			if (!((Object)(object)zone2 == (Object)null) && !((Object)(object)((Component)zone2).transform == (Object)null) && !zone2.Virtual) {
-				float num2 = Vector3.Distance (((Component)zone2).transform.position, point);
+			if (!(zone2 == null) && !(zone2.transform == null) && !zone2.Virtual) {
+				float num2 = Vector3.Distance (zone2.transform.position, point);
 				if (num2 < num) {
 					num = num2;
 					aIInformationZone = zone2;
@@ -509,27 +454,11 @@ public class AIInformationZone : BaseMonoBehaviour, IServerComponent
 
 	public bool PointInside (Vector3 point)
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		return ((OBB)(ref areaBox)).Contains (point);
+		return areaBox.Contains (point);
 	}
 
 	public AIMovePoint GetBestMovePointNear (Vector3 targetPosition, Vector3 fromPosition, float minRange, float maxRange, bool checkLOS = false, BaseEntity forObject = null, bool returnClosest = false)
 	{
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0091: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0092: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ef: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ff: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0104: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0106: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0110: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0115: Unknown result type (might be due to invalid IL or missing references)
 		AIPoint aIPoint = null;
 		AIPoint aIPoint2 = null;
 		float num = -1f;
@@ -541,11 +470,11 @@ public class AIInformationZone : BaseMonoBehaviour, IServerComponent
 		}
 		for (int i = 0; i < pointCount; i++) {
 			AIPoint aIPoint3 = movePointsInRange [i];
-			if (!((Component)((Component)aIPoint3).transform.parent).gameObject.activeSelf || (!(fromPosition.y < WaterSystem.OceanLevel) && ((Component)aIPoint3).transform.position.y < WaterSystem.OceanLevel)) {
+			if (!aIPoint3.transform.parent.gameObject.activeSelf || (!(fromPosition.y < WaterSystem.OceanLevel) && aIPoint3.transform.position.y < WaterSystem.OceanLevel)) {
 				continue;
 			}
 			float num3 = 0f;
-			Vector3 position = ((Component)aIPoint3).transform.position;
+			Vector3 position = aIPoint3.transform.position;
 			float num4 = Vector3.Distance (targetPosition, position);
 			if (num4 < num2) {
 				aIPoint2 = aIPoint3;
@@ -554,13 +483,13 @@ public class AIInformationZone : BaseMonoBehaviour, IServerComponent
 			if (!(num4 > maxRange)) {
 				num3 += (aIPoint3.CanBeUsedBy (forObject) ? 100f : 0f);
 				num3 += (1f - Mathf.InverseLerp (minRange, maxRange, num4)) * 100f;
-				if (!(num3 < num) && (!checkLOS || !Physics.Linecast (targetPosition + Vector3.up * 1f, position + Vector3.up * 1f, 1218519297, (QueryTriggerInteraction)1)) && num3 > num) {
+				if (!(num3 < num) && (!checkLOS || !UnityEngine.Physics.Linecast (targetPosition + Vector3.up * 1f, position + Vector3.up * 1f, 1218519297, QueryTriggerInteraction.Ignore)) && num3 > num) {
 					aIPoint = aIPoint3;
 					num = num3;
 				}
 			}
 		}
-		if ((Object)(object)aIPoint == (Object)null && returnClosest) {
+		if (aIPoint == null && returnClosest) {
 			return aIPoint2 as AIMovePoint;
 		}
 		return aIPoint as AIMovePoint;
@@ -568,10 +497,9 @@ public class AIInformationZone : BaseMonoBehaviour, IServerComponent
 
 	public AIPoint[] GetMovePointsInRange (Vector3 currentPos, float maxRange, out int pointCount)
 	{
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
 		pointCount = 0;
 		AIMovePoint[] movePointsInRange;
-		if ((Object)(object)grid != (Object)null && AI.usegrid) {
+		if (grid != null && AI.usegrid) {
 			movePointsInRange = grid.GetMovePointsInRange (currentPos, maxRange, out pointCount);
 		} else {
 			movePointsInRange = movePointArray;
@@ -584,13 +512,11 @@ public class AIInformationZone : BaseMonoBehaviour, IServerComponent
 
 	private AIMovePoint GetClosestRaw (Vector3 pos, bool onlyIncludeWithCover = false)
 	{
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
 		AIMovePoint result = null;
 		float num = float.PositiveInfinity;
 		foreach (AIMovePoint movePoint in movePoints) {
 			if (!onlyIncludeWithCover || movePoint.distancesToCover.Count != 0) {
-				float num2 = Vector3.Distance (((Component)movePoint).transform.position, pos);
+				float num2 = Vector3.Distance (movePoint.transform.position, pos);
 				if (num2 < num) {
 					num = num2;
 					result = movePoint;
@@ -602,30 +528,6 @@ public class AIInformationZone : BaseMonoBehaviour, IServerComponent
 
 	public AICoverPoint GetBestCoverPoint (Vector3 currentPosition, Vector3 hideFromPosition, float minRange = 0f, float maxRange = 20f, BaseEntity forObject = null, bool allowObjectToReuse = true)
 	{
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0062: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0127: Unknown result type (might be due to invalid IL or missing references)
-		//IL_012e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01c6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01cb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01cc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01da: Unknown result type (might be due to invalid IL or missing references)
 		AICoverPoint aICoverPoint = null;
 		float num = 0f;
 		AIMovePoint closestRaw = GetClosestRaw (currentPosition, onlyIncludeWithCover: true);
@@ -636,15 +538,14 @@ public class AIInformationZone : BaseMonoBehaviour, IServerComponent
 		}
 		for (int i = 0; i < pointCount; i++) {
 			AICoverPoint aICoverPoint2 = coverPointsInRange [i];
-			Vector3 position = ((Component)aICoverPoint2).transform.position;
-			Vector3 val = hideFromPosition - position;
-			Vector3 normalized = ((Vector3)(ref val)).normalized;
-			float num2 = Vector3.Dot (((Component)aICoverPoint2).transform.forward, normalized);
+			Vector3 position = aICoverPoint2.transform.position;
+			Vector3 normalized = (hideFromPosition - position).normalized;
+			float num2 = Vector3.Dot (aICoverPoint2.transform.forward, normalized);
 			if (num2 < 1f - aICoverPoint2.coverDot) {
 				continue;
 			}
 			float num3 = -1f;
-			if (UseCalculatedCoverDistances && (Object)(object)closestRaw != (Object)null && closestRaw.distancesToCover.Contains (aICoverPoint2) && !isDirty) {
+			if (UseCalculatedCoverDistances && closestRaw != null && closestRaw.distancesToCover.Contains (aICoverPoint2) && !isDirty) {
 				num3 = closestRaw.distancesToCover [aICoverPoint2];
 				if (num3 == -2f) {
 					continue;
@@ -662,20 +563,19 @@ public class AIInformationZone : BaseMonoBehaviour, IServerComponent
 			if (minRange > 0f) {
 				num4 -= (1f - Mathf.InverseLerp (0f, minRange, num3)) * 100f;
 			}
-			float num5 = Mathf.Abs (position.y - currentPosition.y);
-			num4 += (1f - Mathf.InverseLerp (1f, 5f, num5)) * 500f;
+			float value = Mathf.Abs (position.y - currentPosition.y);
+			num4 += (1f - Mathf.InverseLerp (1f, 5f, value)) * 500f;
 			num4 += Mathf.InverseLerp (1f - aICoverPoint2.coverDot, 1f, num2) * 50f;
 			num4 += (1f - Mathf.InverseLerp (2f, maxRange, num3)) * 100f;
-			float num6 = 1f - Mathf.InverseLerp (4f, 10f, Vector3.Distance (currentPosition, hideFromPosition));
-			val = ((Component)aICoverPoint2).transform.position - currentPosition;
-			float num7 = Vector3.Dot (((Vector3)(ref val)).normalized, normalized);
-			num4 -= Mathf.InverseLerp (-1f, 0.25f, num7) * 50f * num6;
+			float num5 = 1f - Mathf.InverseLerp (4f, 10f, Vector3.Distance (currentPosition, hideFromPosition));
+			float value2 = Vector3.Dot ((aICoverPoint2.transform.position - currentPosition).normalized, normalized);
+			num4 -= Mathf.InverseLerp (-1f, 0.25f, value2) * 50f * num5;
 			if (num4 > num) {
 				aICoverPoint = aICoverPoint2;
 				num = num4;
 			}
 		}
-		if (Object.op_Implicit ((Object)(object)aICoverPoint)) {
+		if ((bool)aICoverPoint) {
 			return aICoverPoint;
 		}
 		return null;
@@ -683,10 +583,9 @@ public class AIInformationZone : BaseMonoBehaviour, IServerComponent
 
 	private AICoverPoint[] GetCoverPointsInRange (Vector3 position, float maxRange, out int pointCount)
 	{
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
 		pointCount = 0;
 		AICoverPoint[] coverPointsInRange;
-		if ((Object)(object)grid != (Object)null && AI.usegrid) {
+		if (grid != null && AI.usegrid) {
 			coverPointsInRange = grid.GetCoverPointsInRange (position, maxRange, out pointCount);
 		} else {
 			coverPointsInRange = coverPointArray;
@@ -699,12 +598,10 @@ public class AIInformationZone : BaseMonoBehaviour, IServerComponent
 
 	public NavMeshLink GetClosestNavMeshLink (Vector3 pos)
 	{
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
 		NavMeshLink result = null;
 		float num = float.PositiveInfinity;
 		foreach (NavMeshLink navMeshLink in navMeshLinks) {
-			float num2 = Vector3.Distance (((Component)navMeshLink).gameObject.transform.position, pos);
+			float num2 = Vector3.Distance (navMeshLink.gameObject.transform.position, pos);
 			if (num2 < num) {
 				result = navMeshLink;
 				num = num2;

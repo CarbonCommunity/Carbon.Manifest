@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -9,46 +10,34 @@ public class LiquidVessel : HeldEntity
 {
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("LiquidVessel.OnRpcMessage", 0);
-		try {
-			if (rpc == 4034725537u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("LiquidVessel.OnRpcMessage")) {
+			if (rpc == 4034725537u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - DoEmpty "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - DoEmpty ");
 				}
-				TimeWarning val2 = TimeWarning.New ("DoEmpty", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("DoEmpty")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsActiveItem.Test (4034725537u, "DoEmpty", this, player)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							DoEmpty (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in DoEmpty");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -56,7 +45,7 @@ public class LiquidVessel : HeldEntity
 	public bool CanDrink ()
 	{
 		BasePlayer ownerPlayer = GetOwnerPlayer ();
-		if (!Object.op_Implicit ((Object)(object)ownerPlayer)) {
+		if (!ownerPlayer) {
 			return false;
 		}
 		if (!ownerPlayer.metabolism.CanConsume ()) {
@@ -102,14 +91,14 @@ public class LiquidVessel : HeldEntity
 		}
 		Item item = GetItem ();
 		Item item2 = item.contents.GetSlot (0);
-		ItemModContainer component = ((Component)item.info).GetComponent<ItemModContainer> ();
+		ItemModContainer component = item.info.GetComponent<ItemModContainer> ();
 		if (item2 == null) {
 			ItemManager.Create (liquidType, amount, 0uL)?.MoveToContainer (item.contents);
 			return;
 		}
 		int num = Mathf.Clamp (item2.amount + amount, 0, component.maxStackSize);
 		ItemDefinition itemDefinition = WaterResource.Merge (item2.info, liquidType);
-		if ((Object)(object)itemDefinition != (Object)(object)item2.info) {
+		if (itemDefinition != item2.info) {
 			item2.Remove ();
 			item2 = ItemManager.Create (itemDefinition, num, 0uL);
 			item2.MoveToContainer (item.contents);
@@ -123,7 +112,7 @@ public class LiquidVessel : HeldEntity
 	public bool CanFillHere (Vector3 pos)
 	{
 		BasePlayer ownerPlayer = GetOwnerPlayer ();
-		if (!Object.op_Implicit ((Object)(object)ownerPlayer)) {
+		if (!ownerPlayer) {
 			return false;
 		}
 		if ((double)ownerPlayer.WaterFactor () > 0.05) {
@@ -149,6 +138,6 @@ public class LiquidVessel : HeldEntity
 
 	public int MaxHoldable ()
 	{
-		return ((Component)GetItem ().info).GetComponent<ItemModContainer> ().maxStackSize;
+		return GetItem ().info.GetComponent<ItemModContainer> ().maxStackSize;
 	}
 }

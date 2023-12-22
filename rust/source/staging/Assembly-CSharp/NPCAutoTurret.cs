@@ -57,7 +57,6 @@ public class NPCAutoTurret : AutoTurret
 
 	public override void FireGun (Vector3 targetPos, float aimCone, Transform muzzleToUse = null, BaseCombatEntity target = null)
 	{
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
 		muzzleToUse = muzzleRight;
 		base.FireGun (targetPos, aimCone, muzzleToUse, target);
 	}
@@ -73,7 +72,7 @@ public class NPCAutoTurret : AutoTurret
 	public override bool IsEntityHostile (BaseCombatEntity ent)
 	{
 		BasePlayer basePlayer = ent as BasePlayer;
-		if ((Object)(object)basePlayer != (Object)null) {
+		if (basePlayer != null) {
 			if (basePlayer.IsNpc) {
 				if (basePlayer is ScientistNPC || basePlayer is BanditGuard) {
 					return false;

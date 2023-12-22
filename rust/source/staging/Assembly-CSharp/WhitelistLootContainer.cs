@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class WhitelistLootContainer : LootContainer
 {
-	public static readonly Phrase CantLootToast = new Phrase ("whitelistcontainer.noloot", "You are not authorized to access this box");
+	public static readonly Translate.Phrase CantLootToast = new Translate.Phrase ("whitelistcontainer.noloot", "You are not authorized to access this box");
 
 	public List<ulong> whitelist = new List<ulong> ();
 
@@ -19,7 +19,7 @@ public class WhitelistLootContainer : LootContainer
 		info.msg.whitelist.users = Pool.GetList<ulong> ();
 		foreach (ulong item in whitelist) {
 			info.msg.whitelist.users.Add (item);
-			Debug.Log ((object)("Whitelistcontainer saving user " + item));
+			Debug.Log ("Whitelistcontainer saving user " + item);
 		}
 	}
 

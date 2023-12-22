@@ -27,9 +27,6 @@ public class TextureAtlasScheduler
 
 	private int AddTexture (TextureAtlas atlas, Texture texture)
 	{
-		//IL_0097: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a3: Expected O, but got Unknown
 		int num = atlas.Textures.FindIndex ((TextureAtlasItem x) => !x.Occupied);
 		if (num == -1) {
 			atlas.Textures.Add (new TextureAtlasItem ());
@@ -38,10 +35,10 @@ public class TextureAtlasScheduler
 		TextureAtlasItem textureAtlasItem = atlas.Textures [num];
 		textureAtlasItem.Occupied = false;
 		if (atlas.TextureArray.depth < atlas.Textures.Count) {
-			Texture2DArray val = new Texture2DArray (atlas.Resolution, atlas.Resolution, atlas.TextureArray.depth * 2, atlas.TextureArray.format, false);
-			Graphics.CopyTexture ((Texture)(object)atlas.TextureArray, (Texture)(object)val);
-			Object.Destroy ((Object)(object)atlas.TextureArray);
-			atlas.TextureArray = val;
+			Texture2DArray texture2DArray = new Texture2DArray (atlas.Resolution, atlas.Resolution, atlas.TextureArray.depth * 2, atlas.TextureArray.format, mipChain: false);
+			Graphics.CopyTexture (atlas.TextureArray, texture2DArray);
+			UnityEngine.Object.Destroy (atlas.TextureArray);
+			atlas.TextureArray = texture2DArray;
 		}
 		textureAtlasItem.Texture = texture;
 		textureAtlasItem.Occupied = true;
@@ -51,7 +48,7 @@ public class TextureAtlasScheduler
 	private void UpdateTexture (TextureAtlas atlas, Texture texture, int index)
 	{
 		atlas.Textures [index].Texture = texture;
-		Graphics.CopyTexture (texture, (Texture)(object)atlas.TextureArray);
+		Graphics.CopyTexture (texture, atlas.TextureArray);
 	}
 
 	public int AddTextureToAtlas (Texture texture)
@@ -67,15 +64,13 @@ public class TextureAtlasScheduler
 
 	private TextureAtlas GetOrCreateAtlas (int width, int height)
 	{
-		//IL_0031: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Expected O, but got Unknown
 		if (width != height) {
 			throw new NotSupportedException ("Textures must be the same width and height");
 		}
 		if (!textureAtlases.TryGetValue (width, out var value)) {
 			value = new TextureAtlas {
 				Resolution = width,
-				TextureArray = new Texture2DArray (width, height, 8, (TextureFormat)5, false)
+				TextureArray = new Texture2DArray (width, height, 8, TextureFormat.ARGB32, mipChain: false)
 			};
 			textureAtlases [width] = value;
 		}

@@ -7,8 +7,6 @@ public class MaterialCache
 
 	public Material EnableProceduralInstancing (Material material)
 	{
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Expected O, but got Unknown
 		if (modifiedMaterials.TryGetValue (material, out var value)) {
 			return value;
 		}
@@ -45,10 +43,9 @@ public class MaterialCache
 	private void RequestMipmap (Material material, string textureName)
 	{
 		if (material.HasTexture (textureName)) {
-			Texture texture = material.GetTexture (textureName);
-			Texture2D val = (Texture2D)(object)((texture is Texture2D) ? texture : null);
-			if ((Object)(object)val != (Object)null) {
-				val.requestedMipmapLevel = 0;
+			Texture2D texture2D = material.GetTexture (textureName) as Texture2D;
+			if (texture2D != null) {
+				texture2D.requestedMipmapLevel = 0;
 			}
 		}
 	}
@@ -56,7 +53,7 @@ public class MaterialCache
 	public void FreeMemory ()
 	{
 		foreach (Material value in modifiedMaterials.Values) {
-			Object.DestroyImmediate ((Object)(object)value);
+			Object.DestroyImmediate (value);
 		}
 		modifiedMaterials = new Dictionary<Material, Material> ();
 	}

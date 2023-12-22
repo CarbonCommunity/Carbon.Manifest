@@ -13,21 +13,19 @@ public class ItemModVehicleModule : ItemMod, VehicleModuleInformationPanel.IVehi
 
 	public BaseVehicleModule CreateModuleEntity (BaseEntity parent, Vector3 position, Quaternion rotation)
 	{
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
 		if (!entityPrefab.isValid) {
-			Debug.LogError ((object)"Invalid entity prefab for module");
+			Debug.LogError ("Invalid entity prefab for module");
 			return null;
 		}
 		BaseEntity baseEntity = GameManager.server.CreateEntity (entityPrefab.resourcePath, position, rotation);
 		BaseVehicleModule baseVehicleModule = null;
-		if ((Object)(object)baseEntity != (Object)null) {
-			if ((Object)(object)parent != (Object)null) {
+		if (baseEntity != null) {
+			if (parent != null) {
 				baseEntity.SetParent (parent, worldPositionStays: true);
 				baseEntity.canTriggerParent = false;
 			}
 			baseEntity.Spawn ();
-			baseVehicleModule = ((Component)baseEntity).GetComponent<BaseVehicleModule> ();
+			baseVehicleModule = baseEntity.GetComponent<BaseVehicleModule> ();
 			if (doNonUserSpawn) {
 				doNonUserSpawn = false;
 				baseVehicleModule.NonUserSpawn ();

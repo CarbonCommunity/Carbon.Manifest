@@ -4,5 +4,5 @@ public abstract class BaseTip
 
 	public string Type => GetType ().Name;
 
-	public abstract Phrase GetPhrase ();
+	public abstract Translate.Phrase GetPhrase ();
 }

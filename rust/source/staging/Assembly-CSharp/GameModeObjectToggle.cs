@@ -31,16 +31,16 @@ public class GameModeObjectToggle : BaseMonoBehaviour
 	public void SetToggle (bool wantsOn)
 	{
 		GameObject[] array = toToggle;
-		foreach (GameObject val in array) {
-			if ((Object)(object)val != (Object)null) {
-				val.SetActive (wantsOn);
+		foreach (GameObject gameObject in array) {
+			if (gameObject != null) {
+				gameObject.SetActive (wantsOn);
 			}
 		}
 	}
 
 	public bool ShouldBeVisible (BaseGameMode newGameMode)
 	{
-		if ((Object)(object)newGameMode == (Object)null) {
+		if (newGameMode == null) {
 			return defaultState;
 		}
 		if (tagsToDisable.Length != 0 && (newGameMode.HasAnyGameModeTag (tagsToDisable) || tagsToDisable.Contains ("*"))) {

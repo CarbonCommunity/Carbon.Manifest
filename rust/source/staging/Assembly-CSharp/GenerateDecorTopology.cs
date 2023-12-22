@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class GenerateDecorTopology : ProceduralComponent
@@ -9,7 +8,7 @@ public class GenerateDecorTopology : ProceduralComponent
 	{
 		TerrainTopologyMap topomap = TerrainMeta.TopologyMap;
 		int topores = topomap.res;
-		Parallel.For (0, topores, (Action<int>)delegate(int z) {
+		Parallel.For (0, topores, delegate(int z) {
 			for (int i = 0; i < topores; i++) {
 				if (topomap.GetTopology (i, z, 4194306)) {
 					topomap.AddTopology (i, z, 512);

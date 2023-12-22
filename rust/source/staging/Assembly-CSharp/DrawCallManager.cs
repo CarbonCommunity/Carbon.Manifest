@@ -16,7 +16,7 @@ public class DrawCallManager
 
 		public int RendererId;
 
-		public Mesh Mesh;
+		public UnityEngine.Mesh Mesh;
 
 		public int SubmeshIndex;
 
@@ -42,8 +42,6 @@ public class DrawCallManager
 
 		public DrawCallKey CalculateKey ()
 		{
-			//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-			//IL_002a: Unknown result type (might be due to invalid IL or missing references)
 			if (_key == default(DrawCallKey)) {
 				_key = new DrawCallKey (Material, ShadowMode, ReceiveShadows, LightProbes);
 			}
@@ -87,11 +85,6 @@ public class DrawCallManager
 
 	public DrawCallManager (CellMeshAllocator cellAllocator, GeometryBuffers geometryBuffers)
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
 		this.cellAllocator = cellAllocator;
 		GeometryBuffers = geometryBuffers;
 	}
@@ -109,10 +102,8 @@ public class DrawCallManager
 
 	private void AllocateNativeMemory ()
 	{
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
 		IndirectArgCapacity = 1024;
-		DrawCallArray = new NativeArray<DrawCallJobData> (IndirectArgCapacity, (Allocator)4, (NativeArrayOptions)1);
+		DrawCallArray = new NativeArray<DrawCallJobData> (IndirectArgCapacity, Allocator.Persistent);
 		DrawCallBuffer = new GPUBuffer<DrawCallJobData> (IndirectArgCapacity, GPUBuffer.Target.Structured);
 		IndirectArgsBuffer = new GPUBuffer<uint> (IndirectArgCapacity * 5, GPUBuffer.Target.IndirectArgs);
 		IndirectExtraArgBuffer = new GPUBuffer<uint> (IndirectArgCapacity, GPUBuffer.Target.Structured);
@@ -134,10 +125,6 @@ public class DrawCallManager
 
 	public void AddDrawCall (InstancedMeshRenderer renderer, int submeshIndex, uint indicies, uint indiciesIndex, uint vertexIndex, MultidrawMeshInfo multidraw)
 	{
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0077: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
 		int count = DrawCalls.Count;
 		int num = Math.Min (renderer.Materials.Length - 1, submeshIndex);
 		DrawCall drawCall = new DrawCall {
@@ -227,7 +214,6 @@ public class DrawCallManager
 
 	private void EnsureDrawCallCapcity ()
 	{
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
 		if (DrawCalls.Count > IndirectArgCapacity) {
 			IndirectArgCapacity = Mathf.ClosestPowerOfTwo (DrawCalls.Count) * 2;
 			NativeArrayEx.Expand (ref DrawCallArray, IndirectArgCapacity);
@@ -240,13 +226,11 @@ public class DrawCallManager
 
 	public void UpdateComputeBuffers ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
 		DrawCallBuffer.SetData (DrawCallArray);
 	}
 
 	private void SortAndBatchDrawCalls ()
 	{
-		//IL_0139: Unknown result type (might be due to invalid IL or missing references)
 		DrawCalls = DrawCalls.OrderBy ((DrawCall x) => x.CalculateKey ().GetHashCode ()).ToList ();
 		foreach (DrawCall drawCall3 in DrawCalls) {
 			drawCall3.MultiDrawExtraCount = 0;
@@ -276,24 +260,11 @@ public class DrawCallManager
 
 	private void SubmitDrawCallsInternal (Camera camera)
 	{
-		//IL_016a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0183: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0195: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0088: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fc: Invalid comparison between Unknown and I4
-		//IL_0100: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0106: Invalid comparison between Unknown and I4
-		if ((Object)(object)camera == (Object)null) {
+		if (camera == null) {
 			return;
 		}
 		if (Render.IsMultidrawEnabled) {
-			Shader.EnableKeyword (ref InstancingUtil.Keyword_Rust_Procedural_Rendering);
+			Shader.EnableKeyword (in InstancingUtil.Keyword_Rust_Procedural_Rendering);
 		}
 		for (int i = 0; i < DrawCalls.Count; i++) {
 			DrawCall drawCall = DrawCalls [i];
@@ -316,36 +287,35 @@ public class DrawCallManager
 			}
 			DrawCallsLastFrame++;
 			if (Render.IsMultidrawEnabled) {
-				RenderParams val = default(RenderParams);
-				((RenderParams)(ref val)).camera = camera;
-				((RenderParams)(ref val)).layer = renderLayer;
-				((RenderParams)(ref val)).lightProbeUsage = drawCall.LightProbes;
-				((RenderParams)(ref val)).material = drawCall.MultidrawMaterial;
-				((RenderParams)(ref val)).worldBounds = cullingBounds;
-				((RenderParams)(ref val)).shadowCastingMode = drawCall.ShadowMode;
-				((RenderParams)(ref val)).receiveShadows = drawCall.ReceiveShadows;
-				((RenderParams)(ref val)).matProps = drawCall.MaterialBlock;
-				RenderParams val2 = val;
-				if (((int)((RenderParams)(ref val2)).shadowCastingMode != 1 && (int)((RenderParams)(ref val2)).shadowCastingMode != 3) || Render.render_shadows) {
-					Graphics.RenderPrimitivesIndexedIndirect (ref val2, (MeshTopology)0, GeometryBuffers.TriangleBuffer.Buffer, IndirectArgsBuffer.Buffer, 1 + drawCall.MultiDrawExtraCount, i);
+				RenderParams renderParams = default(RenderParams);
+				renderParams.camera = camera;
+				renderParams.layer = renderLayer;
+				renderParams.lightProbeUsage = drawCall.LightProbes;
+				renderParams.material = drawCall.MultidrawMaterial;
+				renderParams.worldBounds = cullingBounds;
+				renderParams.shadowCastingMode = drawCall.ShadowMode;
+				renderParams.receiveShadows = drawCall.ReceiveShadows;
+				renderParams.matProps = drawCall.MaterialBlock;
+				RenderParams rparams = renderParams;
+				if ((rparams.shadowCastingMode != ShadowCastingMode.On && rparams.shadowCastingMode != ShadowCastingMode.ShadowsOnly) || Render.render_shadows) {
+					UnityEngine.Graphics.RenderPrimitivesIndexedIndirect (in rparams, MeshTopology.Triangles, GeometryBuffers.TriangleBuffer.Buffer, IndirectArgsBuffer.Buffer, 1 + drawCall.MultiDrawExtraCount, i);
 				}
 				i += drawCall.MultiDrawExtraCount;
 			} else {
-				int num = drawCall.DrawCallIndex * 5 * 4;
-				Graphics.DrawMeshInstancedIndirect (drawCall.Mesh, drawCall.SubmeshIndex, drawCall.Material, cullingBounds, IndirectArgsBuffer.Buffer, num, drawCall.MaterialBlock, drawCall.ShadowMode, drawCall.ReceiveShadows, renderLayer, camera, drawCall.LightProbes);
+				int argsOffset = drawCall.DrawCallIndex * 5 * 4;
+				UnityEngine.Graphics.DrawMeshInstancedIndirect (drawCall.Mesh, drawCall.SubmeshIndex, drawCall.Material, cullingBounds, IndirectArgsBuffer.Buffer, argsOffset, drawCall.MaterialBlock, drawCall.ShadowMode, drawCall.ReceiveShadows, renderLayer, camera, drawCall.LightProbes);
 			}
 		}
-		Shader.DisableKeyword (ref InstancingUtil.Keyword_Rust_Procedural_Rendering);
+		Shader.DisableKeyword (in InstancingUtil.Keyword_Rust_Procedural_Rendering);
 	}
 
 	public void PrintMemoryUsage (StringBuilder builder)
 	{
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
 		builder.AppendLine ("### DrawCallManager ###");
 		builder.MemoryUsage ("RenderBuffer", RenderBuffer.Buffer);
 		builder.MemoryUsage ("IndirectArgsBuffer", IndirectArgsBuffer.Buffer);
 		builder.MemoryUsage ("IndirectExtraArgsBuffer", IndirectExtraArgBuffer.Buffer);
-		builder.MemoryUsage<DrawCallJobData> ("DrawCallArray", DrawCallArray, DrawCalls.Count);
-		builder.MemoryUsage ("DrawCalls", (ICollection<DrawCall>)DrawCalls);
+		builder.MemoryUsage ("DrawCallArray", DrawCallArray, DrawCalls.Count);
+		builder.MemoryUsage ("DrawCalls", DrawCalls);
 	}
 }

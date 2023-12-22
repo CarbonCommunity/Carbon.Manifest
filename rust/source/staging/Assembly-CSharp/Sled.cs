@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class Sled : BaseVehicle, INotifyTrigger
@@ -69,12 +68,11 @@ public class Sled : BaseVehicle, INotifyTrigger
 
 	public override void ServerInit ()
 	{
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
 		base.ServerInit ();
 		terrainHandler = new VehicleTerrainHandler (this);
 		terrainHandler.RayLength = 0.6f;
 		rigidBody.centerOfMass = CentreOfMassTransform.localPosition;
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)DecayOverTime, Random.Range (30f, 60f), 60f, 6f);
+		InvokeRandomized (DecayOverTime, Random.Range (30f, 60f), 60f, 6f);
 	}
 
 	public override void OnDeployed (BaseEntity parent, BasePlayer deployedBy, Item fromItem)
@@ -87,26 +85,15 @@ public class Sled : BaseVehicle, INotifyTrigger
 
 	public override void VehicleFixedUpdate ()
 	{
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0031: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0071: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0076: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0083: Unknown result type (might be due to invalid IL or missing references)
 		base.VehicleFixedUpdate ();
 		if (!AnyMounted ()) {
 			return;
 		}
 		terrainHandler.FixedUpdate ();
 		if (!terrainHandler.IsGrounded) {
-			Quaternion val = Quaternion.FromToRotation (((Component)this).transform.up, Vector3.up) * rigidBody.rotation;
-			if (Quaternion.Angle (rigidBody.rotation, val) > VerticalAdjustmentAngleThreshold) {
-				rigidBody.MoveRotation (Quaternion.Slerp (rigidBody.rotation, val, Time.fixedDeltaTime * VerticalAdjustmentForce));
+			Quaternion b = Quaternion.FromToRotation (base.transform.up, Vector3.up) * rigidBody.rotation;
+			if (Quaternion.Angle (rigidBody.rotation, b) > VerticalAdjustmentAngleThreshold) {
+				rigidBody.MoveRotation (Quaternion.Slerp (rigidBody.rotation, b, Time.fixedDeltaTime * VerticalAdjustmentForce));
 			}
 		}
 	}
@@ -119,7 +106,7 @@ public class Sled : BaseVehicle, INotifyTrigger
 			physicsMaterialTargets [i].sharedMaterial = cachedMaterial;
 		}
 		if (!AnyMounted () && rigidBody.IsSleeping ()) {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)UpdatePhysicsMaterial);
+			CancelInvoke (UpdatePhysicsMaterial);
 		}
 		SetFlag (Flags.Reserved2, terrainHandler.IsOnSnowOrIce);
 		SetFlag (Flags.Reserved4, terrainHandler.OnSurface == VehicleTerrainHandler.Surface.Sand);
@@ -128,23 +115,20 @@ public class Sled : BaseVehicle, INotifyTrigger
 	private void UpdateGroundedFlag ()
 	{
 		if (!AnyMounted () && rigidBody.IsSleeping ()) {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)UpdateGroundedFlag);
+			CancelInvoke (UpdateGroundedFlag);
 		}
 		SetFlag (Flags.Reserved3, terrainHandler.IsGrounded);
 	}
 
 	private PhysicMaterial GetPhysicMaterial ()
 	{
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
 		if (HasFlag (Flags.Reserved1) || !AnyMounted ()) {
 			return BrakeMaterial;
 		}
 		bool flag = terrainHandler.IsOnSnowOrIce || terrainHandler.OnSurface == VehicleTerrainHandler.Surface.Sand;
 		if (flag) {
-			leftIce = TimeSince.op_Implicit (0f);
-		} else if (TimeSince.op_Implicit (leftIce) < 2f) {
+			leftIce = 0f;
+		} else if ((float)leftIce < 2f) {
 			flag = true;
 		}
 		if (!flag) {
@@ -158,14 +142,14 @@ public class Sled : BaseVehicle, INotifyTrigger
 		base.PlayerMounted (player, seat);
 		if (HasFlag (Flags.Reserved1)) {
 			initialForceScale = 0f;
-			((FacepunchBehaviour)this).InvokeRepeating ((Action)ApplyInitialForce, 0f, 0.1f);
+			InvokeRepeating (ApplyInitialForce, 0f, 0.1f);
 			SetFlag (Flags.Reserved1, b: false);
 		}
-		if (!((FacepunchBehaviour)this).IsInvoking ((Action)UpdatePhysicsMaterial)) {
-			((FacepunchBehaviour)this).InvokeRepeating ((Action)UpdatePhysicsMaterial, 0f, 0.5f);
+		if (!IsInvoking (UpdatePhysicsMaterial)) {
+			InvokeRepeating (UpdatePhysicsMaterial, 0f, 0.5f);
 		}
-		if (!((FacepunchBehaviour)this).IsInvoking ((Action)UpdateGroundedFlag)) {
-			((FacepunchBehaviour)this).InvokeRepeating ((Action)UpdateGroundedFlag, 0f, 0.1f);
+		if (!IsInvoking (UpdateGroundedFlag)) {
+			InvokeRepeating (UpdateGroundedFlag, 0f, 0.1f);
 		}
 		if (rigidBody.IsSleeping ()) {
 			rigidBody.WakeUp ();
@@ -174,91 +158,37 @@ public class Sled : BaseVehicle, INotifyTrigger
 
 	private void ApplyInitialForce ()
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009f: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 forward = ((Component)this).transform.forward;
-		Vector3 val = ((Vector3.Dot (forward, -Vector3.up) > Vector3.Dot (-forward, -Vector3.up)) ? forward : (-forward));
-		rigidBody.AddForce (val * initialForceScale * (terrainHandler.IsOnSnowOrIce ? 1f : 0.25f), (ForceMode)5);
+		Vector3 forward = base.transform.forward;
+		Vector3 vector = ((Vector3.Dot (forward, -Vector3.up) > Vector3.Dot (-forward, -Vector3.up)) ? forward : (-forward));
+		rigidBody.AddForce (vector * initialForceScale * (terrainHandler.IsOnSnowOrIce ? 1f : 0.25f), ForceMode.Acceleration);
 		initialForceScale += InitialForceIncreaseRate;
-		if (initialForceScale >= InitialForceCutoff) {
-			Vector3 velocity = rigidBody.velocity;
-			if (((Vector3)(ref velocity)).magnitude > 1f || !terrainHandler.IsOnSnowOrIce) {
-				((FacepunchBehaviour)this).CancelInvoke ((Action)ApplyInitialForce);
-			}
+		if (initialForceScale >= InitialForceCutoff && (rigidBody.velocity.magnitude > 1f || !terrainHandler.IsOnSnowOrIce)) {
+			CancelInvoke (ApplyInitialForce);
 		}
 	}
 
 	public override void PlayerServerInput (InputState inputState, BasePlayer player)
 	{
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0121: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0074: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0130: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0136: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0140: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0094: Unknown result type (might be due to invalid IL or missing references)
-		//IL_016a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_016f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0172: Unknown result type (might be due to invalid IL or missing references)
-		//IL_017d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00dd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0103: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0108: Unknown result type (might be due to invalid IL or missing references)
-		//IL_019a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01c2: Unknown result type (might be due to invalid IL or missing references)
 		base.PlayerServerInput (inputState, player);
-		if (Vector3.Dot (((Component)this).transform.up, Vector3.up) < 0.1f || WaterFactor () > 0.25f) {
+		if (Vector3.Dot (base.transform.up, Vector3.up) < 0.1f || WaterFactor () > 0.25f) {
 			DismountAllPlayers ();
 			return;
 		}
 		float num = (inputState.IsDown (BUTTON.LEFT) ? (-1f) : 0f);
 		num += (inputState.IsDown (BUTTON.RIGHT) ? 1f : 0f);
-		Vector3 velocity;
-		if (inputState.IsDown (BUTTON.FORWARD) && TimeSince.op_Implicit (lastNudge) > NudgeCooldown) {
-			velocity = rigidBody.velocity;
-			if (((Vector3)(ref velocity)).magnitude < MaxNudgeVelocity) {
-				rigidBody.WakeUp ();
-				rigidBody.AddForce (((Component)this).transform.forward * NudgeForce, (ForceMode)1);
-				rigidBody.AddForce (((Component)this).transform.up * NudgeForce * 0.5f, (ForceMode)1);
-				lastNudge = TimeSince.op_Implicit (0f);
-			}
+		if (inputState.IsDown (BUTTON.FORWARD) && (float)lastNudge > NudgeCooldown && rigidBody.velocity.magnitude < MaxNudgeVelocity) {
+			rigidBody.WakeUp ();
+			rigidBody.AddForce (base.transform.forward * NudgeForce, ForceMode.Impulse);
+			rigidBody.AddForce (base.transform.up * NudgeForce * 0.5f, ForceMode.Impulse);
+			lastNudge = 0f;
 		}
 		num *= TurnForce;
-		Vector3 velocity2 = rigidBody.velocity;
+		Vector3 velocity = rigidBody.velocity;
 		if (num != 0f) {
-			((Component)this).transform.Rotate (Vector3.up * num * Time.deltaTime * ((Vector3)(ref velocity2)).magnitude, (Space)1);
+			base.transform.Rotate (Vector3.up * num * Time.deltaTime * velocity.magnitude, Space.Self);
 		}
-		if (terrainHandler.IsGrounded) {
-			velocity = rigidBody.velocity;
-			if (Vector3.Dot (((Vector3)(ref velocity)).normalized, ((Component)this).transform.forward) >= 0.5f) {
-				rigidBody.velocity = Vector3.Lerp (rigidBody.velocity, ((Component)this).transform.forward * ((Vector3)(ref velocity2)).magnitude, Time.deltaTime * DirectionMatchForce);
-			}
+		if (terrainHandler.IsGrounded && Vector3.Dot (rigidBody.velocity.normalized, base.transform.forward) >= 0.5f) {
+			rigidBody.velocity = Vector3.Lerp (rigidBody.velocity, base.transform.forward * velocity.magnitude, Time.deltaTime * DirectionMatchForce);
 		}
 	}
 
@@ -281,7 +211,7 @@ public class Sled : BaseVehicle, INotifyTrigger
 	{
 		foreach (BaseEntity entityContent in trigger.entityContents) {
 			if (!(entityContent is Sled)) {
-				if (entityContent is BaseVehicleModule baseVehicleModule && (Object)(object)baseVehicleModule.Vehicle != (Object)null && (baseVehicleModule.Vehicle.IsOn () || !baseVehicleModule.Vehicle.IsStationary ())) {
+				if (entityContent is BaseVehicleModule baseVehicleModule && baseVehicleModule.Vehicle != null && (baseVehicleModule.Vehicle.IsOn () || !baseVehicleModule.Vehicle.IsStationary ())) {
 					Kill (DestroyMode.Gib);
 					break;
 				}

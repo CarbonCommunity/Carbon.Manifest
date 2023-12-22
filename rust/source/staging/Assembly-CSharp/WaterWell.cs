@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -30,46 +31,34 @@ public class WaterWell : LiquidContainer
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("WaterWell.OnRpcMessage", 0);
-		try {
-			if (rpc == 2538739344u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("WaterWell.OnRpcMessage")) {
+			if (rpc == 2538739344u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - RPC_Pump "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - RPC_Pump ");
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_Pump", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_Pump")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (2538739344u, "RPC_Pump", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							RPC_Pump (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_Pump");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -86,15 +75,15 @@ public class WaterWell : LiquidContainer
 	public void RPC_Pump (RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
-		if (!((Object)(object)player == (Object)null) && !player.IsDead () && !player.IsSleeping () && !(player.metabolism.calories.value < caloriesPerPump) && !HasFlag (Flags.Reserved2)) {
+		if (!(player == null) && !player.IsDead () && !player.IsSleeping () && !(player.metabolism.calories.value < caloriesPerPump) && !HasFlag (Flags.Reserved2)) {
 			SetFlag (Flags.Reserved2, b: true);
 			player.metabolism.calories.value -= caloriesPerPump;
 			player.metabolism.SendChangesToClient ();
 			currentPressure = Mathf.Clamp01 (currentPressure + pressurePerPump);
-			((FacepunchBehaviour)this).Invoke ((Action)StopPump, 1.8f);
+			Invoke (StopPump, 1.8f);
 			if (currentPressure >= 0f) {
-				((FacepunchBehaviour)this).CancelInvoke ((Action)Produce);
-				((FacepunchBehaviour)this).Invoke ((Action)Produce, 1f);
+				CancelInvoke (Produce);
+				Invoke (Produce, 1f);
 			}
 			SendNetworkUpdateImmediate ();
 		}
@@ -122,8 +111,8 @@ public class WaterWell : LiquidContainer
 
 	public void ScheduleTapOff ()
 	{
-		((FacepunchBehaviour)this).CancelInvoke ((Action)TapOff);
-		((FacepunchBehaviour)this).Invoke ((Action)TapOff, 1f);
+		CancelInvoke (TapOff);
+		Invoke (TapOff, 1f);
 	}
 
 	private void TapOff ()
@@ -133,14 +122,14 @@ public class WaterWell : LiquidContainer
 
 	public void ReducePressure ()
 	{
-		float num = Random.Range (0.1f, 0.2f);
+		float num = UnityEngine.Random.Range (0.1f, 0.2f);
 		currentPressure = Mathf.Clamp01 (currentPressure - num);
 	}
 
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.waterwell = Pool.Get<WaterWell> ();
+		info.msg.waterwell = Facepunch.Pool.Get<ProtoBuf.WaterWell> ();
 		info.msg.waterwell.pressure = currentPressure;
 		info.msg.waterwell.waterLevel = GetWaterAmount ();
 	}

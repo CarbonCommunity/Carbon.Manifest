@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public class LegacyShelterDoor : Door
 {
 	private LegacyShelter shelter;
@@ -16,7 +14,7 @@ public class LegacyShelterDoor : Door
 	protected override void OnPlayerOpenedDoor (BasePlayer p)
 	{
 		base.OnPlayerOpenedDoor (p);
-		if ((Object)(object)shelter != (Object)null) {
+		if (shelter != null) {
 			shelter.HasInteracted ();
 		}
 	}
@@ -35,7 +33,7 @@ public class LegacyShelterDoor : Door
 
 	public override void Hurt (HitInfo info)
 	{
-		if (HasParent () && (Object)(object)shelter != (Object)null) {
+		if (HasParent () && shelter != null) {
 			shelter.ProtectedHurt (info);
 		}
 	}
@@ -43,7 +41,7 @@ public class LegacyShelterDoor : Door
 	public override void OnKilled (HitInfo info)
 	{
 		base.OnKilled (info);
-		if ((Object)(object)shelter != (Object)null && !shelter.IsDead ()) {
+		if (shelter != null && !shelter.IsDead ()) {
 			shelter.Die ();
 		}
 	}
@@ -56,7 +54,7 @@ public class LegacyShelterDoor : Door
 
 	private void UpdateShelterHp ()
 	{
-		if (HasParent () && (Object)(object)shelter != (Object)null) {
+		if (HasParent () && shelter != null) {
 			shelter.SetHealth (base.health);
 		}
 	}
