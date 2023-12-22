@@ -1,11 +1,9 @@
-using System;
 using System.Collections.Generic;
 using CompanionServer;
 using ConVar;
 using Facepunch;
 using Facepunch.Extend;
 using ProtoBuf;
-using UnityEngine;
 
 public class ClanChangeTracker : IClanChangeSink
 {
@@ -48,7 +46,6 @@ public class ClanChangeTracker : IClanChangeSink
 
 		public int Compare (ChatMessageEvent x, ChatMessageEvent y)
 		{
-			//IL_000d: Unknown result type (might be due to invalid IL or missing references)
 			return x.Message.Time.CompareTo (y.Message.Time);
 		}
 	}
@@ -111,16 +108,14 @@ public class ClanChangeTracker : IClanChangeSink
 
 	private void HandleClanChanged (in ClanChangedEvent data)
 	{
-		//IL_005a: Unknown result type (might be due to invalid IL or missing references)
-		IClan clan = default(IClan);
-		if (_clanManager.Backend.TryGet (data.ClanId, ref clan)) {
+		if (_clanManager.Backend.TryGet (data.ClanId, out var clan)) {
 			_clanManager.SendClanChanged (clan);
-			AppBroadcast val = Pool.Get<AppBroadcast> ();
-			val.clanChanged = Pool.Get<AppClanChanged> ();
-			val.clanChanged.clanInfo = clan.ToProto ();
-			CompanionServer.Server.Broadcast (new ClanTarget (data.ClanId), val);
+			AppBroadcast appBroadcast = Facepunch.Pool.Get<AppBroadcast> ();
+			appBroadcast.clanChanged = Facepunch.Pool.Get<AppClanChanged> ();
+			appBroadcast.clanChanged.clanInfo = clan.ToProto ();
+			CompanionServer.Server.Broadcast (new ClanTarget (data.ClanId), appBroadcast);
 		}
-		if (((Enum)data.DataSources).HasFlag ((Enum)(object)(ClanDataSource)16)) {
+		if (data.DataSources.HasFlag (ClanDataSource.Members)) {
 			_clanManager.ClanMemberConnectionsChanged (data.ClanId);
 		}
 	}
@@ -137,10 +132,10 @@ public class ClanChangeTracker : IClanChangeSink
 	private void HandleMembershipChanged (in MembershipChangedEvent data)
 	{
 		BasePlayer basePlayer = BasePlayer.FindByID (data.SteamId);
-		if ((Object)(object)basePlayer == (Object)null) {
+		if (basePlayer == null) {
 			basePlayer = BasePlayer.FindSleeping (data.SteamId);
 		}
-		if ((Object)(object)basePlayer != (Object)null) {
+		if (basePlayer != null) {
 			basePlayer.clanId = data.ClanId;
 			basePlayer.SendNetworkUpdateImmediate ();
 			if (basePlayer.IsConnected) {
@@ -155,26 +150,21 @@ public class ClanChangeTracker : IClanChangeSink
 			string nameColor = Chat.GetNameColor (data.Message.SteamId);
 			ConsoleNetwork.SendClientCommand (connections, "chat.add2", 5, data.Message.SteamId, data.Message.Message, data.Message.Name, nameColor, 1f);
 		}
-		AppBroadcast val = Pool.Get<AppBroadcast> ();
-		val.clanMessage = Pool.Get<AppNewClanMessage> ();
-		val.clanMessage.clanId = data.ClanId;
-		val.clanMessage.message = Pool.Get<AppClanMessage> ();
-		val.clanMessage.message.steamId = data.Message.SteamId;
-		val.clanMessage.message.name = data.Message.Name;
-		val.clanMessage.message.message = data.Message.Message;
-		val.clanMessage.message.time = data.Message.Time;
-		CompanionServer.Server.Broadcast (new ClanTarget (data.ClanId), val);
+		AppBroadcast appBroadcast = Facepunch.Pool.Get<AppBroadcast> ();
+		appBroadcast.clanMessage = Facepunch.Pool.Get<AppNewClanMessage> ();
+		appBroadcast.clanMessage.clanId = data.ClanId;
+		appBroadcast.clanMessage.message = Facepunch.Pool.Get<AppClanMessage> ();
+		appBroadcast.clanMessage.message.steamId = data.Message.SteamId;
+		appBroadcast.clanMessage.message.name = data.Message.Name;
+		appBroadcast.clanMessage.message.message = data.Message.Message;
+		appBroadcast.clanMessage.message.time = data.Message.Time;
+		CompanionServer.Server.Broadcast (new ClanTarget (data.ClanId), appBroadcast);
 	}
 
 	public void ClanChanged (long clanId, ClanDataSource dataSources)
 	{
-		//IL_007f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0080: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0082: Expected I4, but got Unknown
-		//IL_005a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005b: Unknown result type (might be due to invalid IL or missing references)
 		lock (_clanChangedEvents) {
-			int num = List.FindIndexWith<ClanChangedEvent, long> ((IReadOnlyList<ClanChangedEvent>)_clanChangedEvents, (Func<ClanChangedEvent, long>)((ClanChangedEvent e) => e.ClanId), clanId, (IEqualityComparer<long>)null);
+			int num = _clanChangedEvents.FindIndexWith ((ClanChangedEvent e) => e.ClanId, clanId);
 			if (num < 0) {
 				_clanChangedEvents.Add (new ClanChangedEvent {
 					ClanId = clanId,
@@ -182,8 +172,7 @@ public class ClanChangeTracker : IClanChangeSink
 				});
 			} else {
 				ClanChangedEvent value = _clanChangedEvents [num];
-				ref ClanDataSource dataSources2 = ref value.DataSources;
-				dataSources2 |= dataSources;
+				value.DataSources |= dataSources;
 				_clanChangedEvents [num] = value;
 			}
 		}
@@ -220,8 +209,6 @@ public class ClanChangeTracker : IClanChangeSink
 
 	public void ClanChatMessage (long clanId, ClanChatEntry entry)
 	{
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
 		lock (_chatMessageEvents) {
 			ChatMessageEvent chatMessageEvent = default(ChatMessageEvent);
 			chatMessageEvent.ClanId = clanId;

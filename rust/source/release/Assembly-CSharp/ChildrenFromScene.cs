@@ -10,31 +10,29 @@ public class ChildrenFromScene : MonoBehaviour
 
 	private IEnumerator Start ()
 	{
-		Debug.LogWarning ((object)("WARNING: CHILDRENFROMSCENE(" + SceneName + ") - WE SHOULDN'T BE USING THIS SHITTY COMPONENT NOW WE HAVE AWESOME PREFABS"), (Object)(object)((Component)this).gameObject);
-		Scene sceneByName = SceneManager.GetSceneByName (SceneName);
-		if (!((Scene)(ref sceneByName)).isLoaded) {
-			yield return SceneManager.LoadSceneAsync (SceneName, (LoadSceneMode)1);
+		Debug.LogWarning ("WARNING: CHILDRENFROMSCENE(" + SceneName + ") - WE SHOULDN'T BE USING THIS SHITTY COMPONENT NOW WE HAVE AWESOME PREFABS", base.gameObject);
+		if (!SceneManager.GetSceneByName (SceneName).isLoaded) {
+			yield return SceneManager.LoadSceneAsync (SceneName, LoadSceneMode.Additive);
 		}
-		sceneByName = SceneManager.GetSceneByName (SceneName);
-		GameObject[] rootGameObjects = ((Scene)(ref sceneByName)).GetRootGameObjects ();
-		foreach (GameObject val in rootGameObjects) {
-			val.transform.SetParent (((Component)this).transform, false);
-			val.Identity ();
-			Transform transform = val.transform;
-			RectTransform val2 = (RectTransform)(object)((transform is RectTransform) ? transform : null);
-			if (Object.op_Implicit ((Object)(object)val2)) {
-				val2.pivot = Vector2.zero;
-				val2.anchoredPosition = Vector2.zero;
-				val2.anchorMin = Vector2.zero;
-				val2.anchorMax = Vector2.one;
-				val2.sizeDelta = Vector2.one;
+		Scene sceneByName = SceneManager.GetSceneByName (SceneName);
+		GameObject[] rootGameObjects = sceneByName.GetRootGameObjects ();
+		foreach (GameObject gameObject in rootGameObjects) {
+			gameObject.transform.SetParent (base.transform, worldPositionStays: false);
+			gameObject.Identity ();
+			RectTransform rectTransform = gameObject.transform as RectTransform;
+			if ((bool)rectTransform) {
+				rectTransform.pivot = Vector2.zero;
+				rectTransform.anchoredPosition = Vector2.zero;
+				rectTransform.anchorMin = Vector2.zero;
+				rectTransform.anchorMax = Vector2.one;
+				rectTransform.sizeDelta = Vector2.one;
 			}
-			SingletonComponent[] componentsInChildren = val.GetComponentsInChildren<SingletonComponent> (true);
+			SingletonComponent[] componentsInChildren = gameObject.GetComponentsInChildren<SingletonComponent> (includeInactive: true);
 			for (int j = 0; j < componentsInChildren.Length; j++) {
 				componentsInChildren [j].SingletonSetup ();
 			}
 			if (StartChildrenDisabled) {
-				val.SetActive (false);
+				gameObject.SetActive (value: false);
 			}
 		}
 		SceneManager.UnloadSceneAsync (sceneByName);

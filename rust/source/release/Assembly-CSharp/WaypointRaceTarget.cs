@@ -7,9 +7,9 @@ public class WaypointRaceTarget : MonoBehaviour
 
 	private void Start ()
 	{
-		string text = ((Object)((Component)this).gameObject).name.ToLower ();
-		if (!allPoints.TryAdd (text, ((Component)this).transform)) {
-			Debug.Log ((object)("Unable to add waypoint marker " + text + ", needs a unique name"));
+		string text = base.gameObject.name.ToLower ();
+		if (!allPoints.TryAdd (text, base.transform)) {
+			Debug.Log ("Unable to add waypoint marker " + text + ", needs a unique name");
 		}
 	}
 

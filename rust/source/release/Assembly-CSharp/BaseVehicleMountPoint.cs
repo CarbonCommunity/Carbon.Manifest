@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public class BaseVehicleMountPoint : BaseMountable
 {
 	public override bool DirectlyMountable ()
@@ -10,9 +8,9 @@ public class BaseVehicleMountPoint : BaseMountable
 	public override BaseVehicle VehicleParent ()
 	{
 		BaseVehicle baseVehicle = GetParentEntity () as BaseVehicle;
-		while ((Object)(object)baseVehicle != (Object)null && !baseVehicle.IsVehicleRoot ()) {
+		while (baseVehicle != null && !baseVehicle.IsVehicleRoot ()) {
 			BaseVehicle baseVehicle2 = baseVehicle.GetParentEntity () as BaseVehicle;
-			if ((Object)(object)baseVehicle2 == (Object)null) {
+			if (baseVehicle2 == null) {
 				return baseVehicle;
 			}
 			baseVehicle = baseVehicle2;
@@ -23,7 +21,7 @@ public class BaseVehicleMountPoint : BaseMountable
 	public override bool BlocksWaterFor (BasePlayer player)
 	{
 		BaseVehicle baseVehicle = VehicleParent ();
-		if ((Object)(object)baseVehicle == (Object)null) {
+		if (baseVehicle == null) {
 			return false;
 		}
 		return baseVehicle.BlocksWaterFor (player);
@@ -32,7 +30,7 @@ public class BaseVehicleMountPoint : BaseMountable
 	public override float WaterFactorForPlayer (BasePlayer player)
 	{
 		BaseVehicle baseVehicle = VehicleParent ();
-		if ((Object)(object)baseVehicle == (Object)null) {
+		if (baseVehicle == null) {
 			return 0f;
 		}
 		return baseVehicle.WaterFactorForPlayer (player);
@@ -41,7 +39,7 @@ public class BaseVehicleMountPoint : BaseMountable
 	public override float AirFactor ()
 	{
 		BaseVehicle baseVehicle = VehicleParent ();
-		if ((Object)(object)baseVehicle == (Object)null) {
+		if (baseVehicle == null) {
 			return 0f;
 		}
 		return baseVehicle.AirFactor ();

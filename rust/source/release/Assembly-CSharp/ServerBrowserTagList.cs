@@ -10,7 +10,7 @@ public class ServerBrowserTagList : MonoBehaviour
 	private void Initialize ()
 	{
 		if (_groups == null) {
-			_groups = ((Component)this).GetComponentsInChildren<ServerBrowserTagGroup> (true);
+			_groups = GetComponentsInChildren<ServerBrowserTagGroup> (includeInactive: true);
 		}
 	}
 

@@ -10,8 +10,8 @@ public class PlayAudioEx : MonoBehaviour
 
 	private void OnEnable ()
 	{
-		AudioSource component = ((Component)this).GetComponent<AudioSource> ();
-		if (Object.op_Implicit ((Object)(object)component)) {
+		AudioSource component = GetComponent<AudioSource> ();
+		if ((bool)component) {
 			component.PlayDelayed (delay);
 		}
 	}

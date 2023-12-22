@@ -8,11 +8,11 @@ public class KeybindCategory : MonoBehaviour
 
 	private void Awake ()
 	{
-		for (int i = ((Component)this).transform.GetSiblingIndex () + 1; i < ((Component)this).transform.parent.childCount; i++) {
-			Transform child = ((Component)this).transform.parent.GetChild (i);
-			if (!((Object)(object)((Component)child).GetComponent<KeybindCategory> () != (Object)null)) {
-				KeyBindUI component = ((Component)child).GetComponent<KeyBindUI> ();
-				if (!((Object)(object)component == (Object)null)) {
+		for (int i = base.transform.GetSiblingIndex () + 1; i < base.transform.parent.childCount; i++) {
+			Transform child = base.transform.parent.GetChild (i);
+			if (!(child.GetComponent<KeybindCategory> () != null)) {
+				KeyBindUI component = child.GetComponent<KeyBindUI> ();
+				if (!(component == null)) {
 					keybinds.Add (component);
 				}
 				continue;
@@ -23,6 +23,6 @@ public class KeybindCategory : MonoBehaviour
 
 	public void UpdateVisibility ()
 	{
-		((Component)this).gameObject.SetActive (keybinds.Any ((KeyBindUI x) => ((Behaviour)x).isActiveAndEnabled));
+		base.gameObject.SetActive (keybinds.Any ((KeyBindUI x) => x.isActiveAndEnabled));
 	}
 }

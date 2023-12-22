@@ -15,27 +15,22 @@ public class AttackHeliPilotFlare : MonoBehaviour, SeekerTarget.ISeekerTargetOwn
 
 	public void Init (Vector3 initialVelocity)
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		((Component)this).GetComponent<Rigidbody> ().velocity = initialVelocity;
+		GetComponent<Rigidbody> ().velocity = initialVelocity;
 	}
 
 	public Vector3 CenterPoint ()
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		return ((Component)this).transform.position;
+		return base.transform.position;
 	}
 
 	public bool IsVisible (Vector3 from, float maxDistance = float.PositiveInfinity)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
 		return GamePhysics.LineOfSight (from, CenterPoint (), 1218519041);
 	}
 
 	public bool InSafeZone ()
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		return GamePhysics.CheckSphere<TriggerSafeZone> (CenterPoint (), 0.1f, 262144, (QueryTriggerInteraction)2);
+		return GamePhysics.CheckSphere<TriggerSafeZone> (CenterPoint (), 0.1f, 262144, QueryTriggerInteraction.Collide);
 	}
 
 	public bool IsValidHomingTarget ()

@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Network;
@@ -16,77 +17,59 @@ public class VehicleModuleTaxi : VehicleModuleStorage
 	[SerializeField]
 	private float maxKickVelocity = 4f;
 
-	private Vector3 KickButtonPos => ((Component)kickButtonCollider).transform.position + ((Component)kickButtonCollider).transform.rotation * kickButtonCollider.center;
+	private Vector3 KickButtonPos => kickButtonCollider.transform.position + kickButtonCollider.transform.rotation * kickButtonCollider.center;
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("VehicleModuleTaxi.OnRpcMessage", 0);
-		try {
-			if (rpc == 2714639811u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("VehicleModuleTaxi.OnRpcMessage")) {
+			if (rpc == 2714639811u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - RPC_KickPassengers "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - RPC_KickPassengers ");
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_KickPassengers", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_KickPassengers")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (2714639811u, "RPC_KickPassengers", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							RPC_KickPassengers (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_KickPassengers");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
 
 	private bool CanKickPassengers (BasePlayer player)
 	{
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
 		if (!base.IsOnAVehicle) {
 			return false;
 		}
 		if (base.Vehicle.GetSpeed () > maxKickVelocity) {
 			return false;
 		}
-		if ((Object)(object)player == (Object)null) {
+		if (player == null) {
 			return false;
 		}
 		if (!base.Vehicle.PlayerIsMounted (player)) {
 			return false;
 		}
-		Vector3 val = KickButtonPos - ((Component)player).transform.position;
-		if (Vector3.Dot (val, ((Component)player).transform.forward) < 0f) {
-			return ((Vector3)(ref val)).sqrMagnitude < 4f;
+		Vector3 lhs = KickButtonPos - player.transform.position;
+		if (Vector3.Dot (lhs, player.transform.forward) < 0f) {
+			return lhs.sqrMagnitude < 4f;
 		}
 		return false;
 	}
@@ -96,7 +79,7 @@ public class VehicleModuleTaxi : VehicleModuleStorage
 	public void RPC_KickPassengers (RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
-		if (!((Object)(object)player == (Object)null) && CanKickPassengers (player)) {
+		if (!(player == null) && CanKickPassengers (player)) {
 			KickPassengers ();
 		}
 	}
@@ -109,7 +92,7 @@ public class VehicleModuleTaxi : VehicleModuleStorage
 		foreach (MountPointInfo mountPoint in mountPoints) {
 			BaseMountable mountable = mountPoint.mountable;
 			BasePlayer mounted = mountable.GetMounted ();
-			if ((Object)(object)mounted != (Object)null && mountable.HasValidDismountPosition (mounted)) {
+			if (mounted != null && mountable.HasValidDismountPosition (mounted)) {
 				mountable.AttemptDismount (mounted);
 			}
 		}

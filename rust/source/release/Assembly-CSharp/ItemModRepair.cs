@@ -1,5 +1,4 @@
 using Facepunch.Rust;
-using UnityEngine;
 
 public class ItemModRepair : ItemMod
 {
@@ -13,7 +12,7 @@ public class ItemModRepair : ItemMod
 
 	public bool HasCraftLevel (BasePlayer player = null)
 	{
-		if ((Object)(object)player != (Object)null && player.isServer) {
+		if (player != null && player.isServer) {
 			return player.currentCraftLevel >= (float)workbenchLvlRequired;
 		}
 		return false;
@@ -21,9 +20,6 @@ public class ItemModRepair : ItemMod
 
 	public override void ServerCommand (Item item, string command, BasePlayer player)
 	{
-		//IL_0066: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0073: Unknown result type (might be due to invalid IL or missing references)
 		if (command == "refill" && !player.IsSwimming () && HasCraftLevel (player) && !(item.conditionNormalized >= 1f)) {
 			float conditionNormalized = item.conditionNormalized;
 			float maxConditionNormalized = item.maxConditionNormalized;

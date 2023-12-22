@@ -10,34 +10,6 @@ public class PlaceDecorWhiteNoise : ProceduralComponent
 
 	public override void Process (uint seed)
 	{
-		//IL_004f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0059: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0060: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0067: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0082: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0090: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_012c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0131: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0144: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0157: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0159: Unknown result type (might be due to invalid IL or missing references)
-		//IL_016a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_016c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_016e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_017f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0181: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0183: Unknown result type (might be due to invalid IL or missing references)
-		//IL_018f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0191: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0193: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a7: Unknown result type (might be due to invalid IL or missing references)
 		if (World.Networked) {
 			World.Spawn ("Decor", "assets/bundled/prefabs/autospawn/" + ResourceFolder + "/");
 			return;
@@ -52,20 +24,19 @@ public class PlaceDecorWhiteNoise : ProceduralComponent
 		int num = Mathf.RoundToInt (ObjectDensity * size.x * size.z * 1E-06f);
 		float x = position.x;
 		float z = position.z;
-		float num2 = position.x + size.x;
-		float num3 = position.z + size.z;
-		Vector3 pos = default(Vector3);
+		float max = position.x + size.x;
+		float max2 = position.z + size.z;
 		for (int i = 0; i < num; i++) {
-			float num4 = SeedRandom.Range (ref seed, x, num2);
-			float num5 = SeedRandom.Range (ref seed, z, num3);
-			float normX = TerrainMeta.NormalizeX (num4);
-			float normZ = TerrainMeta.NormalizeZ (num5);
-			float num6 = SeedRandom.Value (ref seed);
+			float x2 = SeedRandom.Range (ref seed, x, max);
+			float z2 = SeedRandom.Range (ref seed, z, max2);
+			float normX = TerrainMeta.NormalizeX (x2);
+			float normZ = TerrainMeta.NormalizeZ (z2);
+			float num2 = SeedRandom.Value (ref seed);
 			float factor = Filter.GetFactor (normX, normZ);
 			Prefab random = array.GetRandom (ref seed);
-			if (!(factor * factor < num6)) {
+			if (!(factor * factor < num2)) {
 				float height = heightMap.GetHeight (normX, normZ);
-				((Vector3)(ref pos))..ctor (num4, height, num5);
+				Vector3 pos = new Vector3 (x2, height, z2);
 				Quaternion rot = random.Object.transform.localRotation;
 				Vector3 scale = random.Object.transform.localScale;
 				random.ApplyDecorComponents (ref pos, ref rot, ref scale);

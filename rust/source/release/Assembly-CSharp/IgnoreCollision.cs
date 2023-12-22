@@ -6,6 +6,6 @@ public class IgnoreCollision : MonoBehaviour
 
 	protected void OnTriggerEnter (Collider other)
 	{
-		Physics.IgnoreCollision (other, collider, true);
+		Physics.IgnoreCollision (other, collider, ignore: true);
 	}
 }

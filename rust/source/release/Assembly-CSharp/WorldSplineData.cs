@@ -18,8 +18,6 @@ public class WorldSplineData
 
 			public LUTPoint (float distance, Vector3 pos)
 			{
-				//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-				//IL_0009: Unknown result type (might be due to invalid IL or missing references)
 				this.distance = distance;
 				this.pos = pos;
 			}
@@ -45,9 +43,9 @@ public class WorldSplineData
 	{
 		worldSpline.CheckValidity ();
 		LUTValues = new List<LUTEntry> ();
-		inputPoints = (Vector3[])(object)new Vector3[worldSpline.points.Length];
+		inputPoints = new Vector3[worldSpline.points.Length];
 		worldSpline.points.CopyTo (inputPoints, 0);
-		inputTangents = (Vector3[])(object)new Vector3[worldSpline.tangents.Length];
+		inputTangents = new Vector3[worldSpline.tangents.Length];
 		worldSpline.tangents.CopyTo (inputTangents, 0);
 		inputLUTInterval = worldSpline.lutInterval;
 		maxPointsIndex = inputPoints.Length - 1;
@@ -69,71 +67,38 @@ public class WorldSplineData
 
 	public Vector3 GetStartPoint ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
 		return inputPoints [0];
 	}
 
 	public Vector3 GetEndPoint ()
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
 		return inputPoints [maxPointsIndex];
 	}
 
 	public Vector3 GetStartTangent ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
 		return inputTangents [0];
 	}
 
 	public Vector3 GetEndTangent ()
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
 		return inputTangents [maxPointsIndex];
 	}
 
 	public Vector3 GetPointCubicHermite (float distance)
 	{
-		//IL_0004: Unknown result type (might be due to invalid IL or missing references)
 		Vector3 tangent;
 		return GetPointAndTangentCubicHermite (distance, out tangent);
 	}
 
 	public Vector3 GetTangentCubicHermite (float distance)
 	{
-		//IL_0004: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000a: Unknown result type (might be due to invalid IL or missing references)
 		GetPointAndTangentCubicHermite (distance, out var tangent);
 		return tangent;
 	}
 
 	public Vector3 GetPointAndTangentCubicHermite (float distance, out Vector3 tangent)
 	{
-		//IL_000a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0031: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ae: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00db: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ba: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0178: Unknown result type (might be due to invalid IL or missing references)
-		//IL_017d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0150: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0155: Unknown result type (might be due to invalid IL or missing references)
-		//IL_018b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_018d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_018e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0193: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0197: Unknown result type (might be due to invalid IL or missing references)
-		//IL_019c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a6: Unknown result type (might be due to invalid IL or missing references)
 		if (distance <= 0f) {
 			tangent = GetStartTangent ();
 			return GetStartPoint ();
@@ -154,15 +119,15 @@ public class WorldSplineData
 					num--;
 				}
 			}
-			float num3;
-			Vector3 val;
+			float a;
+			Vector3 vector;
 			if (num2 < 0) {
-				num3 = 0f;
-				val = GetStartPoint ();
+				a = 0f;
+				vector = GetStartPoint ();
 			} else {
 				LUTEntry.LUTPoint lUTPoint = LUTValues [num].points [num2];
-				num3 = lUTPoint.distance;
-				val = lUTPoint.pos;
+				a = lUTPoint.distance;
+				vector = lUTPoint.pos;
 			}
 			num2 = -1;
 			while (num2 < 0 && num < LUTValues.Count) {
@@ -177,20 +142,19 @@ public class WorldSplineData
 					num++;
 				}
 			}
-			float num4;
-			Vector3 val2;
+			float b;
+			Vector3 vector2;
 			if (num2 < 0) {
-				num4 = Length;
-				val2 = GetEndPoint ();
+				b = Length;
+				vector2 = GetEndPoint ();
 			} else {
 				LUTEntry.LUTPoint lUTPoint2 = LUTValues [num].points [num2];
-				num4 = lUTPoint2.distance;
-				val2 = lUTPoint2.pos;
+				b = lUTPoint2.distance;
+				vector2 = lUTPoint2.pos;
 			}
-			float num5 = Mathf.InverseLerp (num3, num4, distance);
-			Vector3 val3 = val2 - val;
-			tangent = ((Vector3)(ref val3)).normalized;
-			return Vector3.Lerp (val, val2, num5);
+			float t = Mathf.InverseLerp (a, b, distance);
+			tangent = (vector2 - vector).normalized;
+			return Vector3.Lerp (vector, vector2, t);
 		}
 		tangent = GetEndTangent ();
 		return GetEndPoint ();
@@ -205,74 +169,46 @@ public class WorldSplineData
 
 	public bool DetectSplineProblems (WorldSpline worldSpline)
 	{
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0092: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0059: Unknown result type (might be due to invalid IL or missing references)
 		bool result = false;
-		Vector3 val = GetTangentCubicHermite (0f);
+		Vector3 to = GetTangentCubicHermite (0f);
 		for (float num = 0.05f; num <= Length; num += 0.05f) {
 			Vector3 tangentCubicHermite = GetTangentCubicHermite (num);
-			float num2 = Vector3.Angle (tangentCubicHermite, val);
+			float num2 = Vector3.Angle (tangentCubicHermite, to);
 			if (num2 > 5f) {
-				if ((Object)(object)worldSpline != (Object)null) {
+				if (worldSpline != null) {
 					Vector3 tangent;
 					Vector3 pointAndTangentCubicHermiteWorld = worldSpline.GetPointAndTangentCubicHermiteWorld (num, out tangent);
 					Debug.DrawRay (pointAndTangentCubicHermiteWorld, tangent, Color.red, 30f);
 					Debug.DrawRay (pointAndTangentCubicHermiteWorld, Vector3.up, Color.red, 30f);
 				}
-				Debug.Log ((object)($"Spline may have a too-sharp bend at {num / Length:P0}. Angle change: " + num2));
+				Debug.Log ($"Spline may have a too-sharp bend at {num / Length:P0}. Angle change: " + num2);
 				result = true;
 			}
-			val = tangentCubicHermite;
+			to = tangentCubicHermite;
 		}
 		return result;
 	}
 
 	private void CreateLookupTable (WorldSpline worldSpline)
 	{
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0072: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0073: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0087: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0094: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0095: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a8: Unknown result type (might be due to invalid IL or missing references)
 		PathInterpolator pathInterpolator = new PathInterpolator (worldSpline.points, worldSpline.tangents);
-		Vector3 val = pathInterpolator.GetPointCubicHermite (0f);
+		Vector3 b = pathInterpolator.GetPointCubicHermite (0f);
 		Length = 0f;
 		AddEntry (0f, GetStartPoint ());
 		Vector3 pointCubicHermite;
 		for (float num = worldSpline.lutInterval; num < pathInterpolator.Length; num += worldSpline.lutInterval) {
 			pointCubicHermite = pathInterpolator.GetPointCubicHermite (num);
-			Length += Vector3.Distance (pointCubicHermite, val);
+			Length += Vector3.Distance (pointCubicHermite, b);
 			AddEntry (Length, pathInterpolator.GetPointCubicHermite (num));
-			val = pointCubicHermite;
+			b = pointCubicHermite;
 		}
 		pointCubicHermite = GetEndPoint ();
-		Length += Vector3.Distance (pointCubicHermite, val);
+		Length += Vector3.Distance (pointCubicHermite, b);
 		AddEntry (Length, pointCubicHermite);
 	}
 
 	private void AddEntry (float distance, Vector3 pos)
 	{
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
 		int num = Mathf.FloorToInt (distance);
 		if (LUTValues.Count < num + 1) {
 			for (int i = LUTValues.Count; i < num + 1; i++) {

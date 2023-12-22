@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 
 [Factory ("env")]
 public class Env : ConsoleSystem
@@ -7,13 +6,13 @@ public class Env : ConsoleSystem
 	[ServerVar]
 	public static bool progresstime {
 		get {
-			if ((Object)(object)TOD_Sky.Instance == (Object)null) {
+			if (TOD_Sky.Instance == null) {
 				return false;
 			}
 			return TOD_Sky.Instance.Components.Time.ProgressTime;
 		}
 		set {
-			if (!((Object)(object)TOD_Sky.Instance == (Object)null)) {
+			if (!(TOD_Sky.Instance == null)) {
 				TOD_Sky.Instance.Components.Time.ProgressTime = value;
 			}
 		}
@@ -22,13 +21,13 @@ public class Env : ConsoleSystem
 	[ServerVar (ShowInAdminUI = true)]
 	public static float time {
 		get {
-			if ((Object)(object)TOD_Sky.Instance == (Object)null) {
+			if (TOD_Sky.Instance == null) {
 				return 0f;
 			}
 			return TOD_Sky.Instance.Cycle.Hour;
 		}
 		set {
-			if (!((Object)(object)TOD_Sky.Instance == (Object)null)) {
+			if (!(TOD_Sky.Instance == null)) {
 				TOD_Sky.Instance.Cycle.Hour = value;
 			}
 		}
@@ -37,13 +36,13 @@ public class Env : ConsoleSystem
 	[ServerVar]
 	public static int day {
 		get {
-			if ((Object)(object)TOD_Sky.Instance == (Object)null) {
+			if (TOD_Sky.Instance == null) {
 				return 0;
 			}
 			return TOD_Sky.Instance.Cycle.Day;
 		}
 		set {
-			if (!((Object)(object)TOD_Sky.Instance == (Object)null)) {
+			if (!(TOD_Sky.Instance == null)) {
 				TOD_Sky.Instance.Cycle.Day = value;
 			}
 		}
@@ -52,13 +51,13 @@ public class Env : ConsoleSystem
 	[ServerVar]
 	public static int month {
 		get {
-			if ((Object)(object)TOD_Sky.Instance == (Object)null) {
+			if (TOD_Sky.Instance == null) {
 				return 0;
 			}
 			return TOD_Sky.Instance.Cycle.Month;
 		}
 		set {
-			if (!((Object)(object)TOD_Sky.Instance == (Object)null)) {
+			if (!(TOD_Sky.Instance == null)) {
 				TOD_Sky.Instance.Cycle.Month = value;
 			}
 		}
@@ -67,13 +66,13 @@ public class Env : ConsoleSystem
 	[ServerVar]
 	public static int year {
 		get {
-			if ((Object)(object)TOD_Sky.Instance == (Object)null) {
+			if (TOD_Sky.Instance == null) {
 				return 0;
 			}
 			return TOD_Sky.Instance.Cycle.Year;
 		}
 		set {
-			if (!((Object)(object)TOD_Sky.Instance == (Object)null)) {
+			if (!(TOD_Sky.Instance == null)) {
 				TOD_Sky.Instance.Cycle.Year = value;
 			}
 		}
@@ -92,7 +91,7 @@ public class Env : ConsoleSystem
 	[ServerVar]
 	public static void addtime (Arg arg)
 	{
-		if (!((Object)(object)TOD_Sky.Instance == (Object)null)) {
+		if (!(TOD_Sky.Instance == null)) {
 			DateTime dateTime = TOD_Sky.Instance.Cycle.DateTime.AddTicks (arg.GetTicks (0, 0L));
 			TOD_Sky.Instance.Cycle.DateTime = dateTime;
 		}

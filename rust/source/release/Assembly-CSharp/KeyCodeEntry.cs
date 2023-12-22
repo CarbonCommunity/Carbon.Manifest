@@ -12,9 +12,9 @@ public class KeyCodeEntry : UIDialog
 
 	public Text typeDisplay;
 
-	public Phrase masterCodePhrase;
+	public Translate.Phrase masterCodePhrase;
 
-	public Phrase guestCodePhrase;
+	public Translate.Phrase guestCodePhrase;
 
 	public GameObject memoryKeycodeButton;
 }

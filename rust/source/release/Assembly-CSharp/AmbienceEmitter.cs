@@ -30,9 +30,9 @@ public class AmbienceEmitter : MonoBehaviour, IClientComponent, IComparable<Ambi
 
 	public bool playAbovewater = true;
 
-	public Enum currentTopology { get; private set; }
+	public TerrainTopology.Enum currentTopology { get; private set; }
 
-	public Enum currentBiome { get; private set; }
+	public TerrainBiome.Enum currentBiome { get; private set; }
 
 	public int CompareTo (AmbienceEmitter other)
 	{

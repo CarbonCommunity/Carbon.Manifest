@@ -198,7 +198,7 @@ public static class Analytics
 			}
 		}
 
-		private class PendingFiredProjectile : IPooled
+		private class PendingFiredProjectile : Facepunch.Pool.IPooled
 		{
 			public EventRecord Record;
 
@@ -247,7 +247,7 @@ public static class Analytics
 			}
 		}
 
-		private class PendingItemsData : IPooled
+		private class PendingItemsData : Facepunch.Pool.IPooled
 		{
 			public PendingItemsKey Key;
 
@@ -281,8 +281,6 @@ public static class Analytics
 
 			public bool Equals (PendingItemsKey other)
 			{
-				//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-				//IL_002d: Unknown result type (might be due to invalid IL or missing references)
 				if (Item == other.Item && Entity == other.Entity && EntityId == other.EntityId && Consumed == other.Consumed) {
 					return Category == other.Category;
 				}
@@ -291,11 +289,11 @@ public static class Analytics
 
 			public override int GetHashCode ()
 			{
-				return ((((17 * 23 + Item.GetHashCode ()) * 31 + Consumed.GetHashCode ()) * 37 + Entity.GetHashCode ()) * 47 + Category.GetHashCode ()) * 53 + ((object)(NetworkableId)(ref EntityId)).GetHashCode ();
+				return ((((17 * 23 + Item.GetHashCode ()) * 31 + Consumed.GetHashCode ()) * 37 + Entity.GetHashCode ()) * 47 + Category.GetHashCode ()) * 53 + EntityId.GetHashCode ();
 			}
 		}
 
-		private class PlayerAggregate : IPooled
+		private class PlayerAggregate : Facepunch.Pool.IPooled
 		{
 			public string UserId;
 
@@ -311,8 +309,6 @@ public static class Analytics
 
 			public void EnterPool ()
 			{
-				//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-				//IL_0019: Unknown result type (might be due to invalid IL or missing references)
 				UserId = null;
 				Position = default(Vector3);
 				Direction = default(Vector3);
@@ -326,7 +322,7 @@ public static class Analytics
 			}
 		}
 
-		private class TeamInfo : IPooled
+		private class TeamInfo : Facepunch.Pool.IPooled
 		{
 			public List<string> online = new List<string> ();
 
@@ -367,7 +363,7 @@ public static class Analytics
 		{
 			PushItemDefinitions ();
 			PushEntityManifest ();
-			((MonoBehaviour)SingletonComponent<ServerMgr>.Instance).StartCoroutine (AggregateLoop ());
+			SingletonComponent<ServerMgr>.Instance.StartCoroutine (AggregateLoop ());
 		}
 
 		private static void PushServerInfo ()
@@ -376,22 +372,23 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord eventRecord = EventRecord.New ("server_info").AddField ("seed", World.Seed).AddField ("size", World.Size)
+				EventRecord.New ("server_info").AddField ("seed", World.Seed).AddField ("size", World.Size)
 					.AddField ("url", World.Url)
 					.AddField ("wipe_id", SaveRestore.WipeId)
-					.AddField ("ip_convar", Net.sv.ip)
-					.AddField ("port_convar", Net.sv.port)
-					.AddField ("net_protocol", Net.sv.ProtocolId)
+					.AddField ("ip_convar", Network.Net.sv.ip)
+					.AddField ("port_convar", Network.Net.sv.port)
+					.AddField ("net_protocol", Network.Net.sv.ProtocolId)
 					.AddField ("protocol_network", 2515)
-					.AddField ("protocol_save", 244);
-				BuildInfo current = BuildInfo.Current;
-				EventRecord eventRecord2 = eventRecord.AddField ("changeset", ((current != null) ? current.Scm.ChangeId : null) ?? "0").AddField ("unity_version", Application.unityVersion);
-				BuildInfo current2 = BuildInfo.Current;
-				eventRecord2.AddField ("branch", ((current2 != null) ? current2.Scm.Branch : null) ?? "empty").AddField ("server_tags", ConVar.Server.tags).AddField ("device_id", SystemInfo.deviceUniqueIdentifier)
-					.AddField ("network_id", Net.sv.GetLastUIDGiven ())
+					.AddField ("protocol_save", 244)
+					.AddField ("changeset", BuildInfo.Current?.Scm.ChangeId ?? "0")
+					.AddField ("unity_version", UnityEngine.Application.unityVersion)
+					.AddField ("branch", BuildInfo.Current?.Scm.Branch ?? "empty")
+					.AddField ("server_tags", ConVar.Server.tags)
+					.AddField ("device_id", SystemInfo.deviceUniqueIdentifier)
+					.AddField ("network_id", Network.Net.sv.GetLastUIDGiven ())
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -401,18 +398,7 @@ public static class Analytics
 				return;
 			}
 			try {
-				if ((Object)(object)GameManifest.Current == (Object)null) {
-					return;
-				}
-				BuildInfo current = BuildInfo.Current;
-				object obj;
-				if (current == null) {
-					obj = null;
-				} else {
-					ScmInfo scm = current.Scm;
-					obj = ((scm != null) ? scm.ChangeId : null);
-				}
-				if (obj == null) {
+				if (GameManifest.Current == null || BuildInfo.Current?.Scm?.ChangeId == null) {
 					return;
 				}
 				EventRecord.New ("item_definitions").AddObject ("items", from x in ItemManager.itemDictionary
@@ -431,8 +417,8 @@ public static class Analytics
 						})
 					}).AddField ("changeset", BuildInfo.Current.Scm.ChangeId)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -442,36 +428,20 @@ public static class Analytics
 				return;
 			}
 			try {
-				if ((Object)(object)GameManifest.Current == (Object)null) {
-					return;
-				}
-				BuildInfo current = BuildInfo.Current;
-				object obj;
-				if (current == null) {
-					obj = null;
-				} else {
-					ScmInfo scm = current.Scm;
-					obj = ((scm != null) ? scm.ChangeId : null);
-				}
-				if (obj != null) {
-					EventRecord eventRecord = EventRecord.New ("entity_manifest").AddObject ("entities", GameManifest.Current.entities.Select ((string x) => new {
+				if (!(GameManifest.Current == null) && BuildInfo.Current?.Scm?.ChangeId != null) {
+					EventRecord.New ("entity_manifest").AddObject ("entities", GameManifest.Current.entities.Select ((string x) => new {
 						shortname = Path.GetFileNameWithoutExtension (x),
 						prefab_id = StringPool.Get (x.ToLower ())
-					}));
-					BuildInfo current2 = BuildInfo.Current;
-					eventRecord.AddField ("changeset", ((current2 != null) ? current2.Scm.ChangeId : null) ?? "editor").Submit ();
+					})).AddField ("changeset", BuildInfo.Current?.Scm.ChangeId ?? "editor")
+						.Submit ();
 				}
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
 		public static void OnFiredProjectile (BasePlayer player, BasePlayer.FiredProjectile projectile, Guid projectileGroupId)
 		{
-			//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0031: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00a3: Unknown result type (might be due to invalid IL or missing references)
 			if (!Stats || !HighFrequencyStats) {
 				return;
 			}
@@ -479,19 +449,19 @@ public static class Analytics
 				EventRecord record = EventRecord.New ("entity_damage").AddField ("start_pos", projectile.position).AddField ("start_vel", projectile.initialVelocity)
 					.AddField ("velocity_inherit", projectile.inheritedVelocity)
 					.AddField ("ammo_item", projectile.itemDef?.shortname)
-					.AddField ("weapon", (BaseEntity)projectile.weaponSource)
+					.AddField ("weapon", projectile.weaponSource)
 					.AddField ("projectile_group", projectileGroupId)
 					.AddField ("projectile_id", projectile.id)
-					.AddField ("attacker", (BaseEntity)player)
+					.AddField ("attacker", player)
 					.AddField ("look_dir", player.tickViewAngles)
 					.AddField ("model_state", (player.modelStateTick ?? player.modelState).flags)
 					.AddField ("burst_mode", projectile.weaponSource?.HasFlag (BaseEntity.Flags.Reserved6) ?? false);
-				PendingFiredProjectile pendingFiredProjectile = Pool.Get<PendingFiredProjectile> ();
+				PendingFiredProjectile pendingFiredProjectile = Facepunch.Pool.Get<PendingFiredProjectile> ();
 				pendingFiredProjectile.Record = record;
 				pendingFiredProjectile.FiredProjectile = projectile;
 				firedProjectiles [new FiredProjectileKey (player.userID, projectile.id)] = pendingFiredProjectile;
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -503,7 +473,7 @@ public static class Analytics
 			try {
 				FiredProjectileKey key = new FiredProjectileKey (player.userID, projectile.id);
 				if (!firedProjectiles.TryGetValue (key, out var value)) {
-					Debug.LogWarning ((object)$"Can't find projectile for player '{player}' with id {projectile.id}");
+					UnityEngine.Debug.LogWarning ($"Can't find projectile for player '{player}' with id {projectile.id}");
 					return;
 				}
 				if (!value.Hit) {
@@ -513,10 +483,10 @@ public static class Analytics
 					}
 					record.Submit ();
 				}
-				Pool.Free<PendingFiredProjectile> (ref value);
+				Facepunch.Pool.Free (ref value);
 				firedProjectiles.Remove (key);
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -527,8 +497,8 @@ public static class Analytics
 			}
 			try {
 				AddPendingItems (sourceEntity, item, amount, "quarry", mode == ResourceMode.Consumed);
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -539,8 +509,8 @@ public static class Analytics
 			}
 			try {
 				AddPendingItems (sourceEntity, item.info.shortname, item.amount, "excavator", consumed: false);
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -551,8 +521,8 @@ public static class Analytics
 			}
 			try {
 				LogResource (ResourceMode.Consumed, "excavator", item.info.shortname, amount, dieselEngine, null, safezone: false, null, 0uL);
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -563,8 +533,8 @@ public static class Analytics
 			}
 			try {
 				LogResource (ResourceMode.Produced, "craft", item, amount, null, null, inSafezone, workbench, player?.userID ?? 0);
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -575,8 +545,8 @@ public static class Analytics
 			}
 			try {
 				LogResource (safezone: inSafezone, workbench: workbench, targetItem: targetItem, mode: ResourceMode.Consumed, category: "craft", itemName: item, amount: amount, sourceEntity: null, tool: null, steamId: player?.userID ?? 0);
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -586,39 +556,37 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("consumeable_used").AddField ("player", (BaseEntity)player).AddField ("item", item)
+				EventRecord.New ("consumeable_used").AddField ("player", player).AddField ("item", item)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
 		public static void OnEntitySpawned (BaseEntity entity)
 		{
-			//IL_0014: Unknown result type (might be due to invalid IL or missing references)
 			if (!Stats) {
 				return;
 			}
 			try {
 				trackedSpawnedIds.Add (entity.net.ID);
 				EventRecord.New ("entity_spawned").AddField ("entity", entity).Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
 		private static void TryLogEntityKilled (BaseNetworkable entity)
 		{
-			//IL_001e: Unknown result type (might be due to invalid IL or missing references)
 			if (!Stats) {
 				return;
 			}
 			try {
 				if (entity.IsValid () && trackedSpawnedIds.Contains (entity.net.ID)) {
-					EventRecord.New ("entity_killed").AddField ("entity", Object.op_Implicit ((Object)(object)entity)).Submit ();
+					EventRecord.New ("entity_killed").AddField ("entity", entity).Submit ();
 				}
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -628,11 +596,11 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("med_used").AddField ("player", (BaseEntity)player).AddField ("target", (BaseEntity)target)
+				EventRecord.New ("med_used").AddField ("player", player).AddField ("target", target)
 					.AddField ("item_name", itemName)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -642,13 +610,13 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("code_change").AddField ("player", (BaseEntity)player).AddField ("codelock", (BaseEntity)codeLock)
+				EventRecord.New ("code_change").AddField ("player", player).AddField ("codelock", codeLock)
 					.AddField ("old_code", oldCode)
 					.AddField ("new_code", newCode)
 					.AddField ("is_guest", isGuest)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -658,11 +626,11 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("code_enter").AddField ("player", (BaseEntity)player).AddField ("codelock", (BaseEntity)codeLock)
+				EventRecord.New ("code_enter").AddField ("player", player).AddField ("codelock", codeLock)
 					.AddField ("is_guest", isGuest)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -671,23 +639,23 @@ public static class Analytics
 			if (!Stats) {
 				return;
 			}
-			List<string> list = Pool.GetList<string> ();
+			List<string> obj = Facepunch.Pool.GetList<string> ();
 			try {
 				if (members != null) {
 					foreach (ulong member in members) {
-						list.Add (SingletonComponent<ServerMgr>.Instance.persistance.GetUserWipeId (member));
+						obj.Add (SingletonComponent<ServerMgr>.Instance.persistance.GetUserWipeId (member));
 					}
 				}
 				EventRecord.New ("team_change").AddField ("team_leader", SingletonComponent<ServerMgr>.Instance.persistance.GetUserWipeId (teamLeader)).AddField ("team", teamId)
 					.AddField ("target_user", SingletonComponent<ServerMgr>.Instance.persistance.GetUserWipeId (user))
 					.AddField ("change", change)
-					.AddObject ("users", list)
+					.AddObject ("users", obj)
 					.AddField ("member_count", members.Count)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
-			Pool.FreeList<string> (ref list);
+			Facepunch.Pool.FreeList (ref obj);
 		}
 
 		public static void OnEntityAuthChanged (BaseEntity entity, BasePlayer player, IEnumerable<ulong> authedList, string change, ulong targetUser)
@@ -697,13 +665,13 @@ public static class Analytics
 			}
 			try {
 				string userWipeId = SingletonComponent<ServerMgr>.Instance.persistance.GetUserWipeId (targetUser);
-				EventRecord.New ("auth_change").AddField ("entity", entity).AddField ("player", (BaseEntity)player)
+				EventRecord.New ("auth_change").AddField ("entity", entity).AddField ("player", player)
 					.AddField ("target", userWipeId)
 					.AddObject ("auth_list", authedList.Select ((ulong x) => SingletonComponent<ServerMgr>.Instance.persistance.GetUserWipeId (x)))
 					.AddField ("change", change)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -714,11 +682,11 @@ public static class Analytics
 			}
 			try {
 				string value = ((targetUser != 0L) ? SingletonComponent<ServerMgr>.Instance.persistance.GetUserWipeId (targetUser) : "");
-				EventRecord.New ("sleeping_bag_assign").AddField ("entity", (BaseEntity)bag).AddField ("player", (BaseEntity)player)
+				EventRecord.New ("sleeping_bag_assign").AddField ("entity", bag).AddField ("player", player)
 					.AddField ("target", value)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -728,11 +696,11 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("fall_damage").AddField ("player", (BaseEntity)player).AddField ("velocity", velocity)
+				EventRecord.New ("fall_damage").AddField ("player", player).AddField ("velocity", velocity)
 					.AddField ("damage", damage)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -742,12 +710,12 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("research_start").AddField ("player", (BaseEntity)player).AddField ("item", item.info.shortname)
+				EventRecord.New ("research_start").AddField ("player", player).AddField ("item", item.info.shortname)
 					.AddField ("scrap", scrapCost)
 					.AddField ("entity", entity)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -757,13 +725,13 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("blueprint_learned").AddField ("player", (BaseEntity)player).AddField ("item", item.shortname)
+				EventRecord.New ("blueprint_learned").AddField ("player", player).AddField ("item", item.shortname)
 					.AddField ("reason", reason)
 					.AddField ("entity", entity)
 					.AddField ("scrap_cost", scrapCost)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -774,8 +742,8 @@ public static class Analytics
 			}
 			try {
 				LogResource (ResourceMode.Consumed, "recycler", item, amount, recycler, null, safezone: false, null, recycler.LastLootedBy);
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -786,8 +754,8 @@ public static class Analytics
 			}
 			try {
 				LogResource (ResourceMode.Produced, "recycler", item, amount, recycler, null, safezone: false, null, recycler.LastLootedBy, null, sourceItem);
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -798,47 +766,44 @@ public static class Analytics
 			}
 			try {
 				LogResource (ResourceMode.Produced, "gather", item, amount, sourceEntity, weapon, safezone: false, null, player.userID);
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
 		public static void OnFirstLooted (BaseEntity entity, BasePlayer player)
 		{
-			//IL_005d: Unknown result type (might be due to invalid IL or missing references)
 			if (!Stats) {
 				return;
 			}
 			try {
 				if (entity is LootContainer lootContainer) {
 					LogItemsLooted (player, entity, lootContainer.inventory);
-					EventRecord.New ("loot_entity").AddField ("entity", entity).AddField ("player", (BaseEntity)player)
+					EventRecord.New ("loot_entity").AddField ("entity", entity).AddField ("player", player)
 						.AddField ("monument", GetMonument (entity))
-						.AddField ("biome", GetBiome (((Component)entity).transform.position))
+						.AddField ("biome", GetBiome (entity.transform.position))
 						.Submit ();
 				} else if (entity is LootableCorpse { containers: var containers }) {
 					foreach (ItemContainer container in containers) {
 						LogItemsLooted (player, entity, container);
 					}
 				}
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
 		public static void OnLootContainerDestroyed (LootContainer entity, BasePlayer player, AttackEntity weapon)
 		{
-			//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-			//IL_002b: Unknown result type (might be due to invalid IL or missing references)
 			if (!Stats) {
 				return;
 			}
 			try {
-				if (entity.DropsLoot && (Object)(object)player != (Object)null && Vector3.Distance (((Component)entity).transform.position, ((Component)player).transform.position) < 50f && entity.inventory?.itemList != null && entity.inventory.itemList.Count > 0) {
+				if (entity.DropsLoot && player != null && Vector3.Distance (entity.transform.position, player.transform.position) < 50f && entity.inventory?.itemList != null && entity.inventory.itemList.Count > 0) {
 					LogItemsLooted (player, entity, entity.inventory, weapon);
 				}
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -855,8 +820,8 @@ public static class Analytics
 				foreach (Item item in lootContainer.inventory.itemList) {
 					OnItemDespawn (lootContainer, item, 3, lootContainer.LastLootedBy);
 				}
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -866,15 +831,15 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord eventRecord = EventRecord.New ("entity_built").AddField ("player", (BaseEntity)player).AddField ("entity", entity);
+				EventRecord eventRecord = EventRecord.New ("entity_built").AddField ("player", player).AddField ("entity", entity);
 				if (entity is SleepingBag) {
 					int sleepingBagCount = SleepingBag.GetSleepingBagCount (player.userID);
 					eventRecord.AddField ("bags_active", sleepingBagCount);
 					eventRecord.AddField ("max_sleeping_bags", ConVar.Server.max_sleeping_bags);
 				}
 				eventRecord.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -884,11 +849,11 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("mount").AddField ("player", (BaseEntity)player).AddField ("vehicle", vehicle)
+				EventRecord.New ("mount").AddField ("player", player).AddField ("vehicle", vehicle)
 					.AddField ("seat", seat)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -898,11 +863,11 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("dismount").AddField ("player", (BaseEntity)player).AddField ("vehicle", vehicle)
+				EventRecord.New ("dismount").AddField ("player", player).AddField ("vehicle", vehicle)
 					.AddField ("seat", seat)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -912,11 +877,11 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("keycard_swiped").AddField ("player", (BaseEntity)player).AddField ("card_level", cardReader.accessLevel)
-					.AddField ("entity", (BaseEntity)cardReader)
+				EventRecord.New ("keycard_swiped").AddField ("player", player).AddField ("card_level", cardReader.accessLevel)
+					.AddField ("entity", cardReader)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -926,10 +891,10 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("hackable_crate_started").AddField ("player", (BaseEntity)player).AddField ("entity", (BaseEntity)crate)
+				EventRecord.New ("hackable_crate_started").AddField ("player", player).AddField ("entity", crate)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -940,10 +905,10 @@ public static class Analytics
 			}
 			try {
 				string userWipeId = SingletonComponent<ServerMgr>.Instance.persistance.GetUserWipeId (player);
-				EventRecord.New ("hackable_crate_ended").AddField ("player_userid", userWipeId).AddField ("entity", (BaseEntity)crate)
+				EventRecord.New ("hackable_crate_ended").AddField ("player_userid", userWipeId).AddField ("entity", crate)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -953,11 +918,11 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("stash_hidden").AddField ("player", (BaseEntity)player).AddField ("entity", (BaseEntity)entity)
+				EventRecord.New ("stash_hidden").AddField ("player", player).AddField ("entity", entity)
 					.AddField ("owner", SingletonComponent<ServerMgr>.Instance.persistance.GetUserWipeId (entity.OwnerID))
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -967,11 +932,11 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("stash_reveal").AddField ("player", (BaseEntity)player).AddField ("entity", (BaseEntity)entity)
+				EventRecord.New ("stash_reveal").AddField ("player", player).AddField ("entity", entity)
 					.AddField ("owner", SingletonComponent<ServerMgr>.Instance.persistance.GetUserWipeId (entity.OwnerID))
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -981,63 +946,58 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("antihack_violation").AddField ("player", (BaseEntity)player).AddField ("violation_type", type)
+				EventRecord.New ("antihack_violation").AddField ("player", player).AddField ("violation_type", type)
 					.AddField ("message", message)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
 		public static void OnEyehackViolation (BasePlayer player, Vector3 eyePos)
 		{
-			//IL_002f: Unknown result type (might be due to invalid IL or missing references)
 			if (!Stats) {
 				return;
 			}
 			try {
-				EventRecord.New ("antihack_violation_detailed").AddField ("player", (BaseEntity)player).AddField ("violation_type", 6)
+				EventRecord.New ("antihack_violation_detailed").AddField ("player", player).AddField ("violation_type", 6)
 					.AddField ("eye_pos", eyePos)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
 		public static void OnNoclipViolation (BasePlayer player, Vector3 startPos, Vector3 endPos, int tickCount, Collider collider)
 		{
-			//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0041: Unknown result type (might be due to invalid IL or missing references)
 			if (!Stats || !HighFrequencyStats) {
 				return;
 			}
 			try {
-				EventRecord.New ("antihack_violation_detailed").AddField ("player", (BaseEntity)player).AddField ("violation_type", 1)
+				EventRecord.New ("antihack_violation_detailed").AddField ("player", player).AddField ("violation_type", 1)
 					.AddField ("start_pos", startPos)
 					.AddField ("end_pos", endPos)
 					.AddField ("tick_count", tickCount)
-					.AddField ("collider_name", ((Object)collider).name)
+					.AddField ("collider_name", collider.name)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
 		public static void OnFlyhackViolation (BasePlayer player, Vector3 startPos, Vector3 endPos, int tickCount)
 		{
-			//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-			//IL_003a: Unknown result type (might be due to invalid IL or missing references)
 			if (!Stats) {
 				return;
 			}
 			try {
-				EventRecord.New ("antihack_violation_detailed").AddField ("player", (BaseEntity)player).AddField ("violation_type", 3)
+				EventRecord.New ("antihack_violation_detailed").AddField ("player", player).AddField ("violation_type", 3)
 					.AddField ("start_pos", startPos)
 					.AddField ("end_pos", endPos)
 					.AddField ("tick_count", tickCount)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -1049,36 +1009,30 @@ public static class Analytics
 			try {
 				FiredProjectileKey key = new FiredProjectileKey (projectile.attacker.userID, projectile.id);
 				if (!firedProjectiles.TryGetValue (key, out var value)) {
-					Debug.LogWarning ((object)$"Can't find projectile for player '{projectile.attacker}' with id {projectile.id}");
+					UnityEngine.Debug.LogWarning ($"Can't find projectile for player '{projectile.attacker}' with id {projectile.id}");
 				} else {
 					value.Record.AddField ("projectile_invalid", value: true).AddObject ("updates", projectile.updates);
 				}
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
 		public static void OnSpeedhackViolation (BasePlayer player, Vector3 startPos, Vector3 endPos, int tickCount)
 		{
-			//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-			//IL_003a: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0050: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0051: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0061: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0062: Unknown result type (might be due to invalid IL or missing references)
 			if (!Stats) {
 				return;
 			}
 			try {
-				EventRecord.New ("antihack_violation_detailed").AddField ("player", (BaseEntity)player).AddField ("violation_type", 2)
+				EventRecord.New ("antihack_violation_detailed").AddField ("player", player).AddField ("violation_type", 2)
 					.AddField ("start_pos", startPos)
 					.AddField ("end_pos", endPos)
 					.AddField ("tick_count", tickCount)
 					.AddField ("distance", Vector3.Distance (startPos, endPos))
 					.AddField ("distance_2d", Vector3Ex.Distance2D (startPos, endPos))
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -1088,49 +1042,32 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("antihack_violation_detailed").AddField ("player", (BaseEntity)player).AddField ("violation_type", 10)
+				EventRecord.New ("antihack_violation_detailed").AddField ("player", player).AddField ("violation_type", 10)
 					.AddField ("seed", World.Seed)
 					.AddField ("size", World.Size)
 					.AddField ("map_url", World.Url)
 					.AddField ("map_checksum", World.Checksum)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
 		public static void OnEntityTakeDamage (HitInfo info, bool isDeath)
 		{
-			//IL_01a6: Unknown result type (might be due to invalid IL or missing references)
-			//IL_01b6: Unknown result type (might be due to invalid IL or missing references)
-			//IL_01c6: Unknown result type (might be due to invalid IL or missing references)
-			//IL_01d6: Unknown result type (might be due to invalid IL or missing references)
-			//IL_01e6: Unknown result type (might be due to invalid IL or missing references)
-			//IL_01f6: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00fe: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0109: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0115: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0120: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00bf: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00cb: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00d7: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00e3: Unknown result type (might be due to invalid IL or missing references)
-			//IL_02ed: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0330: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0347: Unknown result type (might be due to invalid IL or missing references)
 			if (!Stats || !HighFrequencyStats) {
 				return;
 			}
 			try {
 				BasePlayer initiatorPlayer = info.InitiatorPlayer;
 				BasePlayer basePlayer = info.HitEntity as BasePlayer;
-				if (((Object)(object)info.Initiator == (Object)null && !isDeath) || (((Object)(object)initiatorPlayer == (Object)null || initiatorPlayer.IsNpc || initiatorPlayer.IsBot) && ((Object)(object)basePlayer == (Object)null || basePlayer.IsNpc || basePlayer.IsBot))) {
+				if ((info.Initiator == null && !isDeath) || ((initiatorPlayer == null || initiatorPlayer.IsNpc || initiatorPlayer.IsBot) && (basePlayer == null || basePlayer.IsNpc || basePlayer.IsBot))) {
 					return;
 				}
 				EventRecord eventRecord = null;
 				float value = -1f;
 				float value2 = -1f;
-				if ((Object)(object)initiatorPlayer != (Object)null) {
+				if (initiatorPlayer != null) {
 					if (info.IsProjectile ()) {
 						FiredProjectileKey key = new FiredProjectileKey (initiatorPlayer.userID, info.ProjectileID);
 						if (firedProjectiles.TryGetValue (key, out var value3)) {
@@ -1160,7 +1097,7 @@ public static class Analytics
 					.AddField ("distance", value)
 					.AddField ("distance_2d", value2);
 				if (!info.IsProjectile ()) {
-					eventRecord.AddField ("weapon", (BaseEntity)info.Weapon);
+					eventRecord.AddField ("weapon", info.Weapon);
 					eventRecord.AddField ("attacker", info.Initiator);
 				}
 				if (info.HitBone != 0) {
@@ -1171,12 +1108,12 @@ public static class Analytics
 						.AddField ("trajectory_mismatch", info.ProjectileTrajectoryMismatch)
 						.AddField ("travel_time", info.ProjectileTravelTime)
 						.AddField ("projectile_velocity", info.ProjectileVelocity)
-						.AddField ("projectile_prefab", ((Object)info.ProjectilePrefab).name);
+						.AddField ("projectile_prefab", info.ProjectilePrefab.name);
 				}
-				if ((Object)(object)initiatorPlayer != (Object)null && !info.IsProjectile ()) {
+				if (initiatorPlayer != null && !info.IsProjectile ()) {
 					eventRecord.AddField ("attacker_eye_pos", initiatorPlayer.eyes.position);
 					eventRecord.AddField ("attacker_eye_dir", initiatorPlayer.eyes.BodyForward ());
-					if (((object)initiatorPlayer).GetType () == typeof(BasePlayer)) {
+					if (initiatorPlayer.GetType () == typeof(BasePlayer)) {
 						eventRecord.AddField ("attacker_life", initiatorPlayer.respawnId);
 					}
 					if (isDeath) {
@@ -1184,14 +1121,14 @@ public static class Analytics
 						eventRecord.AddObject ("attacker_hotbar", initiatorPlayer.inventory.containerBelt.itemList.Select ((Item x) => new SimpleItemAmount (x)));
 					}
 				}
-				if ((Object)(object)basePlayer != (Object)null) {
+				if (basePlayer != null) {
 					eventRecord.AddField ("victim_life", basePlayer.respawnId);
 					eventRecord.AddObject ("victim_worn", basePlayer.inventory.containerWear.itemList.Select ((Item x) => new SimpleItemAmount (x)));
 					eventRecord.AddObject ("victim_hotbar", basePlayer.inventory.containerBelt.itemList.Select ((Item x) => new SimpleItemAmount (x)));
 				}
 				eventRecord.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -1201,34 +1138,29 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("player_respawn").AddField ("player", (BaseEntity)player).AddField ("bag", targetEntity)
+				EventRecord.New ("player_respawn").AddField ("player", player).AddField ("bag", targetEntity)
 					.AddField ("life_id", player.respawnId)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
 		public static void OnExplosiveLaunched (BasePlayer player, BaseEntity explosive, BaseEntity launcher = null)
 		{
-			//IL_0030: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0048: Unknown result type (might be due to invalid IL or missing references)
 			if (!Stats) {
 				return;
 			}
 			try {
-				EventRecord eventRecord = EventRecord.New ("explosive_launch").AddField ("player", (BaseEntity)player).AddField ("explosive", explosive)
-					.AddField ("explosive_velocity", explosive.GetWorldVelocity ());
-				Vector3 worldVelocity = explosive.GetWorldVelocity ();
-				EventRecord eventRecord2 = eventRecord.AddField ("explosive_direction", ((Vector3)(ref worldVelocity)).normalized);
-				if ((Object)(object)launcher != (Object)null) {
-					eventRecord2.AddField ("launcher", launcher);
+				EventRecord eventRecord = EventRecord.New ("explosive_launch").AddField ("player", player).AddField ("explosive", explosive)
+					.AddField ("explosive_velocity", explosive.GetWorldVelocity ())
+					.AddField ("explosive_direction", explosive.GetWorldVelocity ().normalized);
+				if (launcher != null) {
+					eventRecord.AddField ("launcher", launcher);
 				}
-				eventRecord2.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+				eventRecord.Submit ();
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -1238,9 +1170,9 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("explosion").AddField ("entity", (BaseEntity)explosive).Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+				EventRecord.New ("explosion").AddField ("entity", explosive).Submit ();
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -1256,8 +1188,8 @@ public static class Analytics
 					eventRecord.AddField ("player_userid", userId);
 				}
 				eventRecord.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -1267,12 +1199,12 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("item_drop").AddField ("player", (BaseEntity)player).AddField ("entity", (BaseEntity)entity)
+				EventRecord.New ("item_drop").AddField ("player", player).AddField ("entity", entity)
 					.AddField ("item", entity.GetItem ())
 					.AddField ("drop_reason", (int)dropReason)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -1282,11 +1214,11 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("item_pickup").AddField ("player", (BaseEntity)player).AddField ("entity", (BaseEntity)entity)
+				EventRecord.New ("item_pickup").AddField ("player", player).AddField ("entity", entity)
 					.AddField ("item", entity.GetItem ())
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -1299,8 +1231,8 @@ public static class Analytics
 				string userWipeId = SingletonComponent<ServerMgr>.Instance.persistance.GetUserWipeId (connection.userid);
 				EventRecord.New ("player_connect").AddField ("player_userid", userWipeId).AddField ("username", connection.username)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -1314,8 +1246,8 @@ public static class Analytics
 				EventRecord.New ("player_disconnect").AddField ("player_userid", userWipeId).AddField ("username", connection.username)
 					.AddField ("reason", reason)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -1325,10 +1257,10 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("entity_pickup").AddField ("player", (BaseEntity)player).AddField ("entity", entity)
+				EventRecord.New ("entity_pickup").AddField ("player", player).AddField ("entity", entity)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -1338,11 +1270,11 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("chat").AddField ("player", (BaseEntity)player).AddField ("message", message)
+				EventRecord.New ("chat").AddField ("player", player).AddField ("message", message)
 					.AddField ("channel", channel)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -1354,7 +1286,7 @@ public static class Analytics
 			try {
 				ItemDefinition itemDefinition = ItemManager.FindItemDefinition (sellItemId);
 				ItemDefinition itemDefinition2 = ItemManager.FindItemDefinition (buyItemId);
-				EventRecord.New ("vending_changed").AddField ("player", (BaseEntity)player).AddField ("entity", (BaseEntity)vendingMachine)
+				EventRecord.New ("vending_changed").AddField ("player", player).AddField ("entity", vendingMachine)
 					.AddField ("sell_item", itemDefinition.shortname)
 					.AddField ("sell_amount", sellAmount)
 					.AddField ("buy_item", itemDefinition2.shortname)
@@ -1363,8 +1295,8 @@ public static class Analytics
 					.AddField ("is_buying_bp", buyingBp)
 					.AddField ("change", added ? "added" : "removed")
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -1376,7 +1308,7 @@ public static class Analytics
 			try {
 				ItemDefinition itemDefinition = ItemManager.FindItemDefinition (sellItemId);
 				ItemDefinition itemDefinition2 = ItemManager.FindItemDefinition (buyItemId);
-				EventRecord.New ("vending_sale").AddField ("player", (BaseEntity)player).AddField ("entity", (BaseEntity)vendingMachine)
+				EventRecord.New ("vending_sale").AddField ("player", player).AddField ("entity", vendingMachine)
 					.AddField ("sell_item", itemDefinition.shortname)
 					.AddField ("sell_amount", sellAmount)
 					.AddField ("buy_item", itemDefinition2.shortname)
@@ -1386,8 +1318,8 @@ public static class Analytics
 					.AddField ("is_buying_bp", buyingBp)
 					.AddField ("drone_terminal", drone)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -1397,12 +1329,12 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("npc_vendor").AddField ("player", (BaseEntity)player).AddField ("vendor", (BaseEntity)vendor)
+				EventRecord.New ("npc_vendor").AddField ("player", player).AddField ("vendor", vendor)
 					.AddField ("scrap_amount", scrapCost)
 					.AddField ("action", action)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -1412,7 +1344,7 @@ public static class Analytics
 				return;
 			}
 			try {
-				if ((Object)(object)entity == (Object)null || container == null) {
+				if (entity == null || container == null) {
 					return;
 				}
 				foreach (Item item in container.itemList) {
@@ -1423,15 +1355,13 @@ public static class Analytics
 						LogResource (ResourceMode.Produced, "loot", shortname, amount, entity, tool, safezone: false, null, steamId);
 					}
 				}
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
 		public static void LogResource (ResourceMode mode, string category, string itemName, int amount, BaseEntity sourceEntity = null, AttackEntity tool = null, bool safezone = false, BaseEntity workbench = null, ulong steamId = 0uL, string sourceEntityPrefab = null, Item sourceItem = null, string targetItem = null)
 		{
-			//IL_0073: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0095: Unknown result type (might be due to invalid IL or missing references)
 			if (!Stats || !HighFrequencyStats) {
 				return;
 			}
@@ -1439,13 +1369,13 @@ public static class Analytics
 				EventRecord eventRecord = EventRecord.New ("item_event").AddField ("item_mode", mode.ToString ()).AddField ("category", category)
 					.AddField ("item_name", itemName)
 					.AddField ("amount", amount);
-				if ((Object)(object)sourceEntity != (Object)null) {
+				if (sourceEntity != null) {
 					eventRecord.AddField ("entity", sourceEntity);
-					string biome = GetBiome (((Component)sourceEntity).transform.position);
+					string biome = GetBiome (sourceEntity.transform.position);
 					if (biome != null) {
 						eventRecord.AddField ("biome", biome);
 					}
-					if (IsOcean (((Component)sourceEntity).transform.position)) {
+					if (IsOcean (sourceEntity.transform.position)) {
 						eventRecord.AddField ("ocean", value: true);
 					}
 					string monument = GetMonument (sourceEntity);
@@ -1456,13 +1386,13 @@ public static class Analytics
 				if (sourceEntityPrefab != null) {
 					eventRecord.AddField ("entity_prefab", sourceEntityPrefab);
 				}
-				if ((Object)(object)tool != (Object)null) {
-					eventRecord.AddField ("tool", (BaseEntity)tool);
+				if (tool != null) {
+					eventRecord.AddField ("tool", tool);
 				}
 				if (safezone) {
 					eventRecord.AddField ("safezone", value: true);
 				}
-				if ((Object)(object)workbench != (Object)null) {
+				if (workbench != null) {
 					eventRecord.AddField ("workbench", workbench);
 				}
 				if (sourceEntity is GrowableEntity plant) {
@@ -1479,8 +1409,8 @@ public static class Analytics
 					eventRecord.AddField ("player_userid", userWipeId);
 				}
 				eventRecord.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -1490,12 +1420,12 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("item_skinned").AddField ("player", (BaseEntity)player).AddField ("entity", (BaseEntity)repairBench)
+				EventRecord.New ("item_skinned").AddField ("player", player).AddField ("entity", repairBench)
 					.AddField ("item", item)
 					.AddField ("new_skin", workshopId)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -1505,14 +1435,14 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("item_repair").AddField ("player", (BaseEntity)player).AddField ("entity", repairBench)
+				EventRecord.New ("item_repair").AddField ("player", player).AddField ("entity", repairBench)
 					.AddField ("item", itemToRepair)
 					.AddField ("old_condition", conditionBefore)
 					.AddField ("old_max_condition", maxConditionBefore)
 					.AddField ("max_condition", itemToRepair.maxConditionNormalized)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -1522,33 +1452,32 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("entity_repair").AddField ("player", (BaseEntity)player).AddField ("entity", entity)
+				EventRecord.New ("entity_repair").AddField ("player", player).AddField ("entity", entity)
 					.AddField ("healing", healthAfter - healthBefore)
 					.AddField ("health_before", healthBefore)
 					.AddField ("health_after", healthAfter)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
 		public static void OnBuildingBlockUpgraded (BasePlayer player, BuildingBlock buildingBlock, BuildingGrade.Enum targetGrade, uint targetColor, ulong targetSkin)
 		{
-			//IL_005b: Unknown result type (might be due to invalid IL or missing references)
 			if (!Stats) {
 				return;
 			}
 			try {
-				EventRecord.New ("block_upgrade").AddField ("player", (BaseEntity)player).AddField ("entity", (BaseEntity)buildingBlock)
+				EventRecord.New ("block_upgrade").AddField ("player", player).AddField ("entity", buildingBlock)
 					.AddField ("old_grade", (int)buildingBlock.grade)
 					.AddField ("new_grade", (int)targetGrade)
 					.AddField ("color", targetColor)
-					.AddField ("biome", GetBiome (((Component)buildingBlock).transform.position))
+					.AddField ("biome", GetBiome (buildingBlock.transform.position))
 					.AddField ("skin_old", buildingBlock.skinID)
 					.AddField ("skin", targetSkin)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -1558,10 +1487,10 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("block_demolish").AddField ("player", (BaseEntity)player).AddField ("entity", (BaseEntity)buildingBlock)
+				EventRecord.New ("block_demolish").AddField ("player", player).AddField ("entity", buildingBlock)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -1573,8 +1502,8 @@ public static class Analytics
 			try {
 				EventRecord.New ("player_wipe_id_set").AddField ("user_id", userId).AddField ("player_wipe_id", wipeId)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -1584,10 +1513,10 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("crate_untied").AddField ("player", (BaseEntity)player).AddField ("entity", (BaseEntity)freeableLootContainer)
+				EventRecord.New ("crate_untied").AddField ("player", player).AddField ("entity", freeableLootContainer)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -1597,11 +1526,11 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("vehicle_purchase").AddField ("player", (BaseEntity)player).AddField ("entity", vehicle)
+				EventRecord.New ("vehicle_purchase").AddField ("player", player).AddField ("entity", vehicle)
 					.AddField ("price", vehicle)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -1611,14 +1540,14 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord eventRecord = EventRecord.New ("mission_complete").AddField ("player", (BaseEntity)player).AddField ("mission", mission.shortname)
+				EventRecord eventRecord = EventRecord.New ("mission_complete").AddField ("player", player).AddField ("mission", mission.shortname)
 					.AddField ("mission_succeed", value: true);
 				if (failReason.HasValue) {
 					eventRecord.AddField ("mission_succeed", value: false).AddField ("fail_reason", failReason.Value.ToString ());
 				}
 				eventRecord.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -1628,15 +1557,15 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord eventRecord = EventRecord.New ("gambing").AddField ("player", (BaseEntity)player).AddField ("entity", entity)
+				EventRecord eventRecord = EventRecord.New ("gambing").AddField ("player", player).AddField ("entity", entity)
 					.AddField ("scrap_input", scrapPaid)
 					.AddField ("scrap_output", scrapRecieved);
 				if (gambleGroupId.HasValue) {
 					eventRecord.AddField ("gamble_grouping", gambleGroupId.Value);
 				}
 				eventRecord.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -1646,11 +1575,11 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("player_pinged").AddField ("player", (BaseEntity)player).AddField ("pingType", (int)type)
+				EventRecord.New ("player_pinged").AddField ("player", player).AddField ("pingType", (int)type)
 					.AddField ("viaWheel", wasViaWheel)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -1660,10 +1589,10 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("bag_unclaim").AddField ("player", (BaseEntity)player).AddField ("entity", (BaseEntity)bag)
+				EventRecord.New ("bag_unclaim").AddField ("player", player).AddField ("entity", bag)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -1672,31 +1601,30 @@ public static class Analytics
 			try {
 				EventRecord.New ("steam_auth").AddField ("user", userId).AddField ("owner", ownerUserId)
 					.AddField ("response", authResponse)
-					.AddField ("server_port", Net.sv.port)
-					.AddField ("network_mode", Net.sv.ProtocolId)
+					.AddField ("server_port", Network.Net.sv.port)
+					.AddField ("network_mode", Network.Net.sv.ProtocolId)
 					.AddField ("player_count", BasePlayer.activePlayerList.Count)
 					.AddField ("max_players", ConVar.Server.maxplayers)
 					.AddField ("hostname", ConVar.Server.hostname)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
 		public static void OnBuildingBlockColorChanged (BasePlayer player, BuildingBlock block, uint oldColor, uint newColor)
 		{
-			//IL_004b: Unknown result type (might be due to invalid IL or missing references)
 			if (!Stats) {
 				return;
 			}
 			try {
-				EventRecord.New ("player_pinged").AddField ("player", (BaseEntity)player).AddField ("entity", (BaseEntity)block)
+				EventRecord.New ("player_pinged").AddField ("player", player).AddField ("entity", block)
 					.AddField ("color_old", oldColor)
 					.AddField ("color_new", newColor)
-					.AddField ("biome", GetBiome (((Component)block).transform.position))
+					.AddField ("biome", GetBiome (block.transform.position))
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -1706,11 +1634,11 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("burst_toggle").AddField ("player", (BaseEntity)player).AddField ("weapon", (BaseEntity)gun)
+				EventRecord.New ("burst_toggle").AddField ("player", player).AddField ("weapon", gun)
 					.AddField ("enabled", state)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -1720,12 +1648,12 @@ public static class Analytics
 				return;
 			}
 			try {
-				EventRecord.New ("parachute_used").AddField ("player", (BaseEntity)player).AddField ("distanceTravelled", distanceTravelled)
+				EventRecord.New ("parachute_used").AddField ("player", player).AddField ("distanceTravelled", distanceTravelled)
 					.AddField ("deployHeight", deployHeight)
 					.AddField ("timeInAir", timeInAir)
 					.Submit ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		}
 
@@ -1743,62 +1671,49 @@ public static class Analytics
 
 		private static string GetMonument (BaseEntity entity)
 		{
-			//IL_0085: Unknown result type (might be due to invalid IL or missing references)
-			if ((Object)(object)entity == (Object)null) {
+			if (entity == null) {
 				return null;
 			}
 			SpawnGroup spawnGroup = null;
 			if (entity is BaseCorpse baseCorpse) {
 				spawnGroup = baseCorpse.spawnGroup;
 			}
-			if ((Object)(object)spawnGroup == (Object)null) {
-				SpawnPointInstance component = ((Component)entity).GetComponent<SpawnPointInstance> ();
-				if ((Object)(object)component != (Object)null) {
+			if (spawnGroup == null) {
+				SpawnPointInstance component = entity.GetComponent<SpawnPointInstance> ();
+				if (component != null) {
 					spawnGroup = component.parentSpawnPointUser as SpawnGroup;
 				}
 			}
-			if ((Object)(object)spawnGroup != (Object)null) {
+			if (spawnGroup != null) {
 				if (!string.IsNullOrEmpty (spawnGroup.category)) {
 					return spawnGroup.category;
 				}
-				if ((Object)(object)spawnGroup.Monument != (Object)null) {
-					return ((Object)spawnGroup.Monument).name;
+				if (spawnGroup.Monument != null) {
+					return spawnGroup.Monument.name;
 				}
 			}
-			MonumentInfo monumentInfo = TerrainMeta.Path.FindMonumentWithBoundsOverlap (((Component)entity).transform.position);
-			if ((Object)(object)monumentInfo != (Object)null) {
-				return ((Object)monumentInfo).name;
+			MonumentInfo monumentInfo = TerrainMeta.Path.FindMonumentWithBoundsOverlap (entity.transform.position);
+			if (monumentInfo != null) {
+				return monumentInfo.name;
 			}
 			return null;
 		}
 
 		private static string GetBiome (Vector3 position)
 		{
-			//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-			//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-			//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0027: Expected I4, but got Unknown
-			//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0029: Invalid comparison between Unknown and I4
 			string result = null;
-			Enum val = (Enum)TerrainMeta.BiomeMap.GetBiomeMaxType (position);
-			switch (val - 1) {
-			default:
-				if ((int)val == 8) {
-					result = "arctic";
-				}
-				break;
-			case 0:
+			switch ((TerrainBiome.Enum)TerrainMeta.BiomeMap.GetBiomeMaxType (position)) {
+			case TerrainBiome.Enum.Arid:
 				result = "arid";
 				break;
-			case 1:
+			case TerrainBiome.Enum.Temperate:
 				result = "grass";
 				break;
-			case 3:
+			case TerrainBiome.Enum.Tundra:
 				result = "tundra";
 				break;
-			case 2:
+			case TerrainBiome.Enum.Arctic:
+				result = "arctic";
 				break;
 			}
 			return result;
@@ -1806,14 +1721,13 @@ public static class Analytics
 
 		private static bool IsOcean (Vector3 position)
 		{
-			//IL_0005: Unknown result type (might be due to invalid IL or missing references)
 			return TerrainMeta.TopologyMap.GetTopology (position) == 128;
 		}
 
 		private static IEnumerator AggregateLoop ()
 		{
 			int loop = 0;
-			while (!Application.isQuitting) {
+			while (!Rust.Application.isQuitting) {
 				yield return CoroutineEx.waitForSecondsRealtime (60f);
 				if (Stats) {
 					yield return TryCatch (AggregatePlayers (blueprints: false, positions: true));
@@ -1838,8 +1752,8 @@ public static class Analytics
 					if (!coroutine.MoveNext ()) {
 						break;
 					}
-				} catch (Exception ex) {
-					Debug.LogException (ex);
+				} catch (Exception exception) {
+					UnityEngine.Debug.LogException (exception);
 					break;
 				}
 				yield return coroutine.Current;
@@ -1855,7 +1769,7 @@ public static class Analytics
 			Dictionary<string, int> itemDict = new Dictionary<string, int> ();
 			Dictionary<EntityKey, int> entityDict = new Dictionary<EntityKey, int> ();
 			yield return null;
-			Debug.Log ((object)"Starting to aggregate entities & items...");
+			UnityEngine.Debug.Log ("Starting to aggregate entities & items...");
 			DateTime startTime = DateTime.UtcNow;
 			Stopwatch watch = Stopwatch.StartNew ();
 			foreach (BaseNetworkable entity in entityQueue) {
@@ -1863,7 +1777,7 @@ public static class Analytics
 					yield return null;
 					watch.Restart ();
 				}
-				if ((Object)(object)entity == (Object)null || entity.IsDestroyed) {
+				if (entity == null || entity.IsDestroyed) {
 					continue;
 				}
 				EntityKey entityKey = default(EntityKey);
@@ -1886,7 +1800,7 @@ public static class Analytics
 					}
 				}
 			}
-			Debug.Log ((object)$"Took {Math.Round (DateTime.UtcNow.Subtract (startTime).TotalSeconds, 1)}s to aggregate {totalCount} entities & items...");
+			UnityEngine.Debug.Log ($"Took {Math.Round (DateTime.UtcNow.Subtract (startTime).TotalSeconds, 1)}s to aggregate {totalCount} entities & items...");
 			_ = DateTime.UtcNow;
 			EventRecord.New ("entity_sum").AddObject ("counts", entityDict.Select (delegate(KeyValuePair<EntityKey, int> x) {
 				EntitySumItem result = default(EntitySumItem);
@@ -1921,11 +1835,11 @@ public static class Analytics
 			foreach (PendingItemsData value in dict.Values) {
 				try {
 					LogResource (value.Key.Consumed ? ResourceMode.Consumed : ResourceMode.Produced, value.category, value.Key.Item, value.amount, null, null, safezone: false, null, 0uL, value.Key.Entity);
-				} catch (Exception ex) {
-					Debug.LogException (ex);
+				} catch (Exception exception) {
+					UnityEngine.Debug.LogException (exception);
 				}
-				PendingItemsData pendingItemsData = value;
-				Pool.Free<PendingItemsData> (ref pendingItemsData);
+				PendingItemsData obj = value;
+				Facepunch.Pool.Free (ref obj);
 				if (watch.ElapsedMilliseconds > MaxMSPerFrame) {
 					yield return null;
 					watch.Restart ();
@@ -1936,19 +1850,15 @@ public static class Analytics
 
 		public static void AddPendingItems (BaseEntity entity, string itemName, int amount, string category, bool consumed = true, bool perEntity = false)
 		{
-			//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-			//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-			//IL_004a: Unknown result type (might be due to invalid IL or missing references)
 			PendingItemsKey pendingItemsKey = default(PendingItemsKey);
 			pendingItemsKey.Entity = entity.ShortPrefabName;
 			pendingItemsKey.Category = category;
 			pendingItemsKey.Item = itemName;
 			pendingItemsKey.Consumed = consumed;
-			pendingItemsKey.EntityId = (NetworkableId)(perEntity ? entity.net.ID : default(NetworkableId));
+			pendingItemsKey.EntityId = (perEntity ? entity.net.ID : default(NetworkableId));
 			PendingItemsKey key = pendingItemsKey;
 			if (!pendingItems.TryGetValue (key, out var value)) {
-				value = Pool.Get<PendingItemsData> ();
+				value = Facepunch.Pool.Get<PendingItemsData> ();
 				value.Key = key;
 				value.category = category;
 				pendingItems [key] = value;
@@ -1959,12 +1869,12 @@ public static class Analytics
 		private static IEnumerator AggregatePlayers (bool blueprints = false, bool positions = false)
 		{
 			Stopwatch watch = Stopwatch.StartNew ();
-			List<BasePlayer> list = Pool.GetList<BasePlayer> ();
-			list.AddRange ((IEnumerable<BasePlayer>)BasePlayer.activePlayerList);
+			List<BasePlayer> list = Facepunch.Pool.GetList<BasePlayer> ();
+			list.AddRange (BasePlayer.activePlayerList);
 			Dictionary<int, int> playerBps = (blueprints ? new Dictionary<int, int> () : null);
-			List<PlayerAggregate> playerPositions = (positions ? Pool.GetList<PlayerAggregate> () : null);
+			List<PlayerAggregate> playerPositions = (positions ? Facepunch.Pool.GetList<PlayerAggregate> () : null);
 			foreach (BasePlayer item in list) {
-				if ((Object)(object)item == (Object)null || item.IsDestroyed) {
+				if (item == null || item.IsDestroyed) {
 					continue;
 				}
 				if (blueprints) {
@@ -1974,11 +1884,10 @@ public static class Analytics
 					}
 				}
 				if (positions) {
-					PlayerAggregate playerAggregate = Pool.Get<PlayerAggregate> ();
+					PlayerAggregate playerAggregate = Facepunch.Pool.Get<PlayerAggregate> ();
 					playerAggregate.UserId = item.WipeId;
-					playerAggregate.Position = ((Component)item).transform.position;
-					Quaternion bodyRotation = item.eyes.bodyRotation;
-					playerAggregate.Direction = ((Quaternion)(ref bodyRotation)).eulerAngles;
+					playerAggregate.Position = item.transform.position;
+					playerAggregate.Direction = item.eyes.bodyRotation.eulerAngles;
 					foreach (Item item2 in item.inventory.containerBelt.itemList) {
 						playerAggregate.Hotbar.Add (item2.info.shortname);
 					}
@@ -2005,10 +1914,10 @@ public static class Analytics
 			EventRecord.New ("player_positions").AddObject ("positions", playerPositions).AddObject ("player_count", playerPositions.Count)
 				.Submit ();
 			foreach (PlayerAggregate item4 in playerPositions) {
-				PlayerAggregate current5 = item4;
-				Pool.Free<PlayerAggregate> (ref current5);
+				PlayerAggregate obj = item4;
+				Facepunch.Pool.Free (ref obj);
 			}
-			Pool.FreeList<PlayerAggregate> (ref playerPositions);
+			Facepunch.Pool.FreeList (ref playerPositions);
 		}
 
 		private static IEnumerator AggregateTeams ()
@@ -2017,33 +1926,27 @@ public static class Analytics
 			HashSet<ulong> teamIds = new HashSet<ulong> ();
 			int inTeam = 0;
 			int notInTeam = 0;
-			Enumerator<BasePlayer> enumerator = BasePlayer.activePlayerList.GetEnumerator ();
-			try {
-				while (enumerator.MoveNext ()) {
-					BasePlayer current = enumerator.Current;
-					if ((Object)(object)current != (Object)null && !current.IsDestroyed && current.currentTeam != 0L) {
-						teamIds.Add (current.currentTeam);
-						inTeam++;
-					} else {
-						notInTeam++;
-					}
+			foreach (BasePlayer activePlayer in BasePlayer.activePlayerList) {
+				if (activePlayer != null && !activePlayer.IsDestroyed && activePlayer.currentTeam != 0L) {
+					teamIds.Add (activePlayer.currentTeam);
+					inTeam++;
+				} else {
+					notInTeam++;
 				}
-			} finally {
-				((IDisposable)enumerator).Dispose ();
 			}
 			yield return null;
 			Stopwatch watch = Stopwatch.StartNew ();
-			List<TeamInfo> teams = Pool.GetList<TeamInfo> ();
+			List<TeamInfo> teams = Facepunch.Pool.GetList<TeamInfo> ();
 			foreach (ulong item in teamIds) {
 				RelationshipManager.PlayerTeam playerTeam = RelationshipManager.ServerInstance.FindTeam (item);
 				if (playerTeam == null || !((playerTeam.members != null) & (playerTeam.members.Count > 0))) {
 					continue;
 				}
-				TeamInfo teamInfo = Pool.Get<TeamInfo> ();
+				TeamInfo teamInfo = Facepunch.Pool.Get<TeamInfo> ();
 				teams.Add (teamInfo);
 				foreach (ulong member in playerTeam.members) {
 					BasePlayer basePlayer = RelationshipManager.FindByID (member);
-					if ((Object)(object)basePlayer != (Object)null && !basePlayer.IsDestroyed && basePlayer.IsConnected && !basePlayer.IsSleeping ()) {
+					if (basePlayer != null && !basePlayer.IsDestroyed && basePlayer.IsConnected && !basePlayer.IsSleeping ()) {
 						teamInfo.online.Add (SingletonComponent<ServerMgr>.Instance.persistance.GetUserWipeId (member));
 					} else {
 						teamInfo.offline.Add (SingletonComponent<ServerMgr>.Instance.persistance.GetUserWipeId (member));
@@ -2059,10 +1962,10 @@ public static class Analytics
 				.AddField ("users_not_in_team", notInTeam)
 				.Submit ();
 			foreach (TeamInfo item2 in teams) {
-				TeamInfo current4 = item2;
-				Pool.Free<TeamInfo> (ref current4);
+				TeamInfo obj = item2;
+				Facepunch.Pool.Free (ref obj);
 			}
-			Pool.FreeList<TeamInfo> (ref teams);
+			Facepunch.Pool.FreeList (ref teams);
 		}
 	}
 
@@ -2094,8 +1997,6 @@ public static class Analytics
 
 		public AzureWebInterface (bool isClient)
 		{
-			//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-			//IL_003c: Expected O, but got Unknown
 			IsClient = isClient;
 		}
 
@@ -2109,7 +2010,7 @@ public static class Analytics
 				Task.Run (async delegate {
 					await UploadAsync (toUpload);
 				});
-				pending = Pool.GetList<EventRecord> ();
+				pending = Facepunch.Pool.GetList<EventRecord> ();
 			}
 		}
 
@@ -2128,11 +2029,6 @@ public static class Analytics
 
 		private void SerializeEvent (EventRecord record, StreamWriter writer, int index)
 		{
-			//IL_01f6: Unknown result type (might be due to invalid IL or missing references)
-			//IL_01fb: Unknown result type (might be due to invalid IL or missing references)
-			//IL_01fe: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0213: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0228: Unknown result type (might be due to invalid IL or missing references)
 			if (index > 0) {
 				writer.Write (',');
 			}
@@ -2210,7 +2106,7 @@ public static class Analytics
 
 		private async Task UploadAsync (List<EventRecord> records)
 		{
-			MemoryStream stream = Pool.Get<MemoryStream> ();
+			MemoryStream stream = Facepunch.Pool.Get<MemoryStream> ();
 			stream.Position = 0L;
 			stream.SetLength (0L);
 			try {
@@ -2218,27 +2114,23 @@ public static class Analytics
 				AuthTicket ticket = null;
 				for (int attempt = 0; attempt < MaxRetries; attempt++) {
 					try {
-						ByteArrayContent content = new ByteArrayContent (stream.GetBuffer (), 0, (int)stream.Length);
-						try {
-							((HttpContent)content).Headers.ContentType = JsonContentType;
-							if (!string.IsNullOrEmpty (AnalyticsSecret)) {
-								((HttpHeaders)((HttpContent)content).Headers).Add (AnalyticsHeader, AnalyticsSecret);
-							} else {
-								((HttpHeaders)((HttpContent)content).Headers).Add (AnalyticsHeader, AnalyticsPublicKey);
-							}
-							if (!IsClient) {
-								((HttpHeaders)((HttpContent)content).Headers).Add ("X-SERVER-IP", Net.sv.ip);
-								((HttpHeaders)((HttpContent)content).Headers).Add ("X-SERVER-PORT", Net.sv.port.ToString ());
-							}
-							if (UploadAnalytics) {
-								(await HttpClient.PostAsync (IsClient ? ClientAnalyticsUrl : ServerAnalyticsUrl, (HttpContent)(object)content)).EnsureSuccessStatusCode ();
-							}
-						} finally {
-							((IDisposable)content)?.Dispose ();
+						using ByteArrayContent content = new ByteArrayContent (stream.GetBuffer (), 0, (int)stream.Length);
+						content.Headers.ContentType = JsonContentType;
+						if (!string.IsNullOrEmpty (AnalyticsSecret)) {
+							content.Headers.Add (AnalyticsHeader, AnalyticsSecret);
+						} else {
+							content.Headers.Add (AnalyticsHeader, AnalyticsPublicKey);
+						}
+						if (!IsClient) {
+							content.Headers.Add ("X-SERVER-IP", Network.Net.sv.ip);
+							content.Headers.Add ("X-SERVER-PORT", Network.Net.sv.port.ToString ());
+						}
+						if (UploadAnalytics) {
+							(await HttpClient.PostAsync (IsClient ? ClientAnalyticsUrl : ServerAnalyticsUrl, content)).EnsureSuccessStatusCode ();
 						}
 					} catch (Exception ex) {
 						if (!(ex is HttpRequestException)) {
-							Debug.LogException (ex);
+							UnityEngine.Debug.LogException (ex);
 						}
 						goto IL_01e4;
 					}
@@ -2248,23 +2140,23 @@ public static class Analytics
 						try {
 							ticket.Cancel ();
 						} catch (Exception ex2) {
-							Debug.LogError ((object)("Failed to cancel auth ticket in analytics: " + ex2.ToString ()));
+							UnityEngine.Debug.LogError ("Failed to cancel auth ticket in analytics: " + ex2.ToString ());
 						}
 					}
 				}
 			} catch (Exception ex3) {
 				if (IsClient) {
-					Debug.LogWarning ((object)ex3.ToString ());
+					UnityEngine.Debug.LogWarning (ex3.ToString ());
 				} else {
-					Debug.LogException (ex3);
+					UnityEngine.Debug.LogException (ex3);
 				}
 			} finally {
 				foreach (EventRecord record in records) {
-					EventRecord current = record;
-					Pool.Free<EventRecord> (ref current);
+					EventRecord obj = record;
+					Facepunch.Pool.Free (ref obj);
 				}
-				Pool.FreeList<EventRecord> (ref records);
-				Pool.FreeMemoryStream (ref stream);
+				Facepunch.Pool.FreeList (ref records);
+				Facepunch.Pool.FreeMemoryStream (ref stream);
 			}
 		}
 	}
@@ -2303,21 +2195,17 @@ public static class Analytics
 
 		internal static void Death (BaseEntity initiator, BaseEntity weaponPrefab, Vector3 worldPosition)
 		{
-			//IL_006d: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-			//IL_005f: Unknown result type (might be due to invalid IL or missing references)
-			if (!CanSendAnalytics || !((Object)(object)initiator != (Object)null)) {
+			if (!CanSendAnalytics || !(initiator != null)) {
 				return;
 			}
 			if (initiator is BasePlayer) {
-				if ((Object)(object)weaponPrefab != (Object)null) {
+				if (weaponPrefab != null) {
 					Death (weaponPrefab.ShortPrefabName, worldPosition, initiator.IsNpc ? DeathType.NPC : DeathType.Player);
 				} else {
 					Death ("player", worldPosition);
 				}
 			} else if (initiator is AutoTurret) {
-				if ((Object)(object)weaponPrefab != (Object)null) {
+				if (weaponPrefab != null) {
 					Death (weaponPrefab.ShortPrefabName, worldPosition, DeathType.AutoTurret);
 				}
 			} else {
@@ -2327,7 +2215,6 @@ public static class Analytics
 
 		internal static void Death (string v, Vector3 worldPosition, DeathType deathType = DeathType.Player)
 		{
-			//IL_0008: Unknown result type (might be due to invalid IL or missing references)
 			if (!CanSendAnalytics) {
 				return;
 			}
@@ -2361,13 +2248,11 @@ public static class Analytics
 
 		private static string GetMonumentStringFromPosition (Vector3 worldPosition)
 		{
-			//IL_0005: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0040: Unknown result type (might be due to invalid IL or missing references)
 			MonumentInfo monumentInfo = TerrainMeta.Path.FindMonumentWithBoundsOverlap (worldPosition);
-			if ((Object)(object)monumentInfo != (Object)null && !string.IsNullOrEmpty (monumentInfo.displayPhrase.token)) {
+			if (monumentInfo != null && !string.IsNullOrEmpty (monumentInfo.displayPhrase.token)) {
 				return monumentInfo.displayPhrase.token;
 			}
-			if ((Object)(object)SingletonComponent<EnvironmentManager>.Instance != (Object)null && (EnvironmentManager.Get (worldPosition) & EnvironmentType.TrainTunnels) == EnvironmentType.TrainTunnels) {
+			if (SingletonComponent<EnvironmentManager>.Instance != null && (EnvironmentManager.Get (worldPosition) & EnvironmentType.TrainTunnels) == EnvironmentType.TrainTunnels) {
 				return "train_tunnel_display_name";
 			}
 			return string.Empty;
@@ -2419,15 +2304,15 @@ public static class Analytics
 
 		public static void FishCaught (ItemDefinition fish)
 		{
-			if (CanSendAnalytics && !((Object)(object)fish == (Object)null)) {
+			if (CanSendAnalytics && !(fish == null)) {
 				DesignEvent ("fishCaught:" + fish.shortname);
 			}
 		}
 
 		public static void VendingMachineTransaction (NPCVendingOrder npcVendingOrder, ItemDefinition purchased, int amount)
 		{
-			if (CanSendAnalytics && !((Object)(object)purchased == (Object)null)) {
-				if ((Object)(object)npcVendingOrder == (Object)null) {
+			if (CanSendAnalytics && !(purchased == null)) {
+				if (npcVendingOrder == null) {
 					DesignEvent ("vendingPurchase:player:" + purchased.shortname, amount);
 				} else {
 					DesignEvent ("vendingPurchase:static:" + purchased.shortname, amount);
@@ -2445,7 +2330,7 @@ public static class Analytics
 		public static void TreeKilled (BaseEntity withWeapon)
 		{
 			if (CanSendAnalytics) {
-				if ((Object)(object)withWeapon != (Object)null) {
+				if (withWeapon != null) {
 					DesignEvent ("treekilled:" + withWeapon.ShortPrefabName);
 				} else {
 					DesignEvent ("treekilled");
@@ -2455,12 +2340,11 @@ public static class Analytics
 
 		public static void OreKilled (OreResourceEntity entity, HitInfo info)
 		{
-			ResourceDispenser resourceDispenser = default(ResourceDispenser);
-			if (CanSendAnalytics && ((Component)entity).TryGetComponent<ResourceDispenser> (ref resourceDispenser) && resourceDispenser.containedItems.Count > 0 && (Object)(object)resourceDispenser.containedItems [0].itemDef != (Object)null) {
-				if ((Object)(object)info.WeaponPrefab != (Object)null) {
-					DesignEvent ("orekilled:" + resourceDispenser.containedItems [0].itemDef.shortname + ":" + info.WeaponPrefab.ShortPrefabName);
+			if (CanSendAnalytics && entity.TryGetComponent<ResourceDispenser> (out var component) && component.containedItems.Count > 0 && component.containedItems [0].itemDef != null) {
+				if (info.WeaponPrefab != null) {
+					DesignEvent ("orekilled:" + component.containedItems [0].itemDef.shortname + ":" + info.WeaponPrefab.ShortPrefabName);
 				} else {
-					DesignEvent ($"orekilled:{resourceDispenser.containedItems [0]}");
+					DesignEvent ($"orekilled:{component.containedItems [0]}");
 				}
 			}
 		}
@@ -2488,11 +2372,8 @@ public static class Analytics
 
 		public static void HeldItemDeployed (ItemDefinition def)
 		{
-			//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-			//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-			if (CanSendAnalytics && !(TimeSince.op_Implicit (lastHeldItemEvent) < 0.1f)) {
-				lastHeldItemEvent = TimeSince.op_Implicit (0f);
+			if (CanSendAnalytics && !((float)lastHeldItemEvent < 0.1f)) {
+				lastHeldItemEvent = 0f;
 				DesignEvent ("heldItemDeployed:" + def.shortname);
 			}
 		}
@@ -2548,7 +2429,7 @@ public static class Analytics
 		private static void DesignEvent (string message, int value, bool canBackup = false)
 		{
 			if (CanSendAnalytics && !string.IsNullOrEmpty (message)) {
-				GA.DesignEvent (message, (float)value);
+				GA.DesignEvent (message, value);
 				if (canBackup) {
 					LocalBackup (message, value);
 				}
@@ -2562,11 +2443,6 @@ public static class Analytics
 
 		private static void LocalBackup (string message, float value)
 		{
-			//IL_0068: Unknown result type (might be due to invalid IL or missing references)
-			//IL_006d: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00af: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00c5: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00ca: Unknown result type (might be due to invalid IL or missing references)
 			if (!WriteToFile) {
 				return;
 			}
@@ -2579,7 +2455,7 @@ public static class Analytics
 				if (bufferData == null) {
 					bufferData = new Dictionary<string, float> ();
 				}
-				lastAnalyticsSave = TimeSince.op_Implicit (0f);
+				lastAnalyticsSave = 0f;
 				backupDate = currentDate;
 			}
 			if (bufferData.ContainsKey (message)) {
@@ -2587,8 +2463,8 @@ public static class Analytics
 			} else {
 				bufferData.Add (message, value);
 			}
-			if (TimeSince.op_Implicit (lastAnalyticsSave) > 120f) {
-				lastAnalyticsSave = TimeSince.op_Implicit (0f);
+			if ((float)lastAnalyticsSave > 120f) {
+				lastAnalyticsSave = 0f;
 				SaveBufferIntoDateFile (currentDate);
 				bufferData.Clear ();
 			}
@@ -2611,7 +2487,7 @@ public static class Analytics
 						MergeBuffers (dictionary, bufferData);
 					}
 				}
-				string contents = JsonConvert.SerializeObject ((object)bufferData);
+				string contents = JsonConvert.SerializeObject (bufferData);
 				File.WriteAllText (GetBackupPath (date), contents);
 			}
 		}
@@ -2633,7 +2509,7 @@ public static class Analytics
 			if (string.IsNullOrEmpty (value)) {
 				StatsBlacklist = null;
 			} else {
-				StatsBlacklist = new HashSet<string> (value.Split (',', StringSplitOptions.None));
+				StatsBlacklist = new HashSet<string> (value.Split (','));
 			}
 		}
 	}
@@ -2666,7 +2542,7 @@ public static class Analytics
 
 	[ClientVar (Name = "pending_analytics")]
 	[ServerVar (Name = "pending_analytics")]
-	public static void GetPendingAnalytics (Arg arg)
+	public static void GetPendingAnalytics (ConsoleSystem.Arg arg)
 	{
 		int pendingCount = AzureWebInterface.server.PendingCount;
 		arg.ReplyWith ($"Pending: {pendingCount}");

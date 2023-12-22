@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class FluidSwitch : ElectricSwitch
@@ -40,7 +39,7 @@ public class FluidSwitch : ElectricSwitch
 	public override void SetSwitch (bool wantsOn)
 	{
 		base.SetSwitch (wantsOn);
-		((FacepunchBehaviour)this).Invoke ((Action)DelayedSendChanged, IOEntity.responsetime * 2f);
+		Invoke (DelayedSendChanged, IOEntity.responsetime * 2f);
 	}
 
 	private void DelayedSendChanged ()
@@ -66,7 +65,6 @@ public class FluidSwitch : ElectricSwitch
 
 	public override bool AllowLiquidPassthrough (IOEntity fromSource, Vector3 sourceWorldPosition, bool forPlacement = false)
 	{
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
 		if (!forPlacement && !IsOn ()) {
 			return false;
 		}

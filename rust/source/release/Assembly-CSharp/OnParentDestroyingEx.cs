@@ -6,21 +6,21 @@ public static class OnParentDestroyingEx
 {
 	public static void BroadcastOnParentDestroying (this GameObject go)
 	{
-		List<IOnParentDestroying> list = Pool.GetList<IOnParentDestroying> ();
-		go.GetComponentsInChildren<IOnParentDestroying> (list);
-		for (int i = 0; i < list.Count; i++) {
-			list [i].OnParentDestroying ();
+		List<IOnParentDestroying> obj = Pool.GetList<IOnParentDestroying> ();
+		go.GetComponentsInChildren (obj);
+		for (int i = 0; i < obj.Count; i++) {
+			obj [i].OnParentDestroying ();
 		}
-		Pool.FreeList<IOnParentDestroying> (ref list);
+		Pool.FreeList (ref obj);
 	}
 
 	public static void SendOnParentDestroying (this GameObject go)
 	{
-		List<IOnParentDestroying> list = Pool.GetList<IOnParentDestroying> ();
-		go.GetComponents<IOnParentDestroying> (list);
-		for (int i = 0; i < list.Count; i++) {
-			list [i].OnParentDestroying ();
+		List<IOnParentDestroying> obj = Pool.GetList<IOnParentDestroying> ();
+		go.GetComponents (obj);
+		for (int i = 0; i < obj.Count; i++) {
+			obj [i].OnParentDestroying ();
 		}
-		Pool.FreeList<IOnParentDestroying> (ref list);
+		Pool.FreeList (ref obj);
 	}
 }

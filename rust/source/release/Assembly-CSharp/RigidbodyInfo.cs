@@ -21,8 +21,8 @@ public class RigidbodyInfo : PrefabAttribute, IClientComponent
 	{
 		base.AttributeSetup (rootObj, name, serverside, clientside, bundling);
 		Rigidbody component = rootObj.GetComponent<Rigidbody> ();
-		if ((Object)(object)component == (Object)null) {
-			Debug.LogError ((object)(((object)this).GetType ().Name + ": RigidbodyInfo couldn't find a rigidbody on " + name + "! If a RealmedRemove is removing it, make sure this script is above the RealmedRemove script so that this gets processed first."));
+		if (component == null) {
+			Debug.LogError (GetType ().Name + ": RigidbodyInfo couldn't find a rigidbody on " + name + "! If a RealmedRemove is removing it, make sure this script is above the RealmedRemove script so that this gets processed first.");
 			return;
 		}
 		mass = component.mass;

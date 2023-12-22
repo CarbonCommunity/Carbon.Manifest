@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -190,46 +191,34 @@ public class PlayerHelicopter : BaseHelicopter, IEngineControllerUser, IEntity, 
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("PlayerHelicopter.OnRpcMessage", 0);
-		try {
-			if (rpc == 1851540757 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("PlayerHelicopter.OnRpcMessage")) {
+			if (rpc == 1851540757 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - RPC_OpenFuel "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - RPC_OpenFuel ");
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_OpenFuel", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_OpenFuel")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (1851540757u, "RPC_OpenFuel", this, player, 6f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							RPC_OpenFuel (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_OpenFuel");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -242,12 +231,9 @@ public class PlayerHelicopter : BaseHelicopter, IEngineControllerUser, IEntity, 
 
 	public float GetFuelFraction (bool force = false)
 	{
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		if (base.isServer && (TimeSince.op_Implicit (timeSinceCachedFuelFraction) > 1f || force)) {
+		if (base.isServer && ((float)timeSinceCachedFuelFraction > 1f || force)) {
 			cachedFuelFraction = Mathf.Clamp01 ((float)GetFuelSystem ().GetFuelAmount () / fuelGaugeMax);
-			timeSinceCachedFuelFraction = TimeSince.op_Implicit (0f);
+			timeSinceCachedFuelFraction = 0f;
 		}
 		return cachedFuelFraction;
 	}
@@ -272,7 +258,6 @@ public class PlayerHelicopter : BaseHelicopter, IEngineControllerUser, IEntity, 
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (info.msg.miniCopter != null) {
 			engineController.FuelSystem.fuelStorageInstance.uid = info.msg.miniCopter.fuelStorageID;
@@ -287,7 +272,7 @@ public class PlayerHelicopter : BaseHelicopter, IEngineControllerUser, IEntity, 
 	{
 		base.OnFlagsChanged (old, next);
 		if (base.isServer && CurEngineState == VehicleEngineController<PlayerHelicopter>.EngineState.Off) {
-			lastEngineOnTime = Time.time;
+			lastEngineOnTime = UnityEngine.Time.time;
 		}
 	}
 
@@ -341,13 +326,8 @@ public class PlayerHelicopter : BaseHelicopter, IEngineControllerUser, IEntity, 
 
 	public bool Grounded ()
 	{
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
 		if (wheels.Length == 0) {
-			return Physics.Raycast (((Component)this).transform.position + Vector3.up * 0.1f, Vector3.down, 0.5f);
+			return UnityEngine.Physics.Raycast (base.transform.position + Vector3.up * 0.1f, Vector3.down, 0.5f);
 		}
 		Wheel[] array = wheels;
 		foreach (Wheel wheel in array) {
@@ -360,10 +340,6 @@ public class PlayerHelicopter : BaseHelicopter, IEngineControllerUser, IEntity, 
 
 	public override void SetDefaultInputState ()
 	{
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0056: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0061: Unknown result type (might be due to invalid IL or missing references)
 		currentInputState.Reset ();
 		cachedRoll = 0f;
 		cachedYaw = 0f;
@@ -372,8 +348,8 @@ public class PlayerHelicopter : BaseHelicopter, IEngineControllerUser, IEntity, 
 			return;
 		}
 		if (HasDriver ()) {
-			float num = Vector3.Dot (Vector3.up, ((Component)this).transform.right);
-			float num2 = Vector3.Dot (Vector3.up, ((Component)this).transform.forward);
+			float num = Vector3.Dot (Vector3.up, base.transform.right);
+			float num2 = Vector3.Dot (Vector3.up, base.transform.forward);
 			currentInputState.roll = ((num < 0f) ? 1f : 0f);
 			currentInputState.roll -= ((num > 0f) ? 1f : 0f);
 			if (num2 < -0f) {
@@ -388,7 +364,7 @@ public class PlayerHelicopter : BaseHelicopter, IEngineControllerUser, IEntity, 
 
 	private void ApplyForceAtWheels ()
 	{
-		if (!((Object)(object)rigidBody == (Object)null)) {
+		if (!(rigidBody == null)) {
 			float brakeScale;
 			float num2;
 			float num;
@@ -416,24 +392,15 @@ public class PlayerHelicopter : BaseHelicopter, IEngineControllerUser, IEntity, 
 
 	private void ApplyForceWithoutWheels ()
 	{
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00be: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008f: Unknown result type (might be due to invalid IL or missing references)
 		if (currentInputState.groundControl) {
 			if (currentInputState.throttle != 0f) {
-				rigidBody.AddRelativeForce (Vector3.forward * currentInputState.throttle * motorForceConstant * 15f, (ForceMode)0);
+				rigidBody.AddRelativeForce (Vector3.forward * currentInputState.throttle * motorForceConstant * 15f, ForceMode.Force);
 			}
 			if (currentInputState.yaw != 0f) {
-				rigidBody.AddRelativeTorque (new Vector3 (0f, currentInputState.yaw * torqueScale.y, 0f), (ForceMode)0);
+				rigidBody.AddRelativeTorque (new Vector3 (0f, currentInputState.yaw * torqueScale.y, 0f), ForceMode.Force);
 			}
-			float num = rigidBody.mass * (0f - Physics.gravity.y);
-			rigidBody.AddForce (((Component)this).transform.up * num * hoverForceScale, (ForceMode)0);
+			float num = rigidBody.mass * (0f - UnityEngine.Physics.gravity.y);
+			rigidBody.AddForce (base.transform.up * num * hoverForceScale, ForceMode.Force);
 		}
 	}
 
@@ -471,18 +438,17 @@ public class PlayerHelicopter : BaseHelicopter, IEngineControllerUser, IEntity, 
 
 	public override void ServerInit ()
 	{
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
 		base.ServerInit ();
-		lastEngineOnTime = Time.realtimeSinceStartup;
+		lastEngineOnTime = UnityEngine.Time.realtimeSinceStartup;
 		rigidBody.inertiaTensor = rigidBody.inertiaTensor;
-		preventBuildingObject.SetActive (true);
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)UpdateNetwork, 0f, 0.2f, 0.05f);
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)DecayTick, Random.Range (30f, 60f), 60f, 6f);
+		preventBuildingObject.SetActive (value: true);
+		InvokeRandomized (UpdateNetwork, 0f, 0.2f, 0.05f);
+		InvokeRandomized (DecayTick, UnityEngine.Random.Range (30f, 60f), 60f, 6f);
 	}
 
 	public void DecayTick ()
 	{
-		if (base.healthFraction != 0f && !IsOn () && !(Time.time < lastEngineOnTime + 600f)) {
+		if (base.healthFraction != 0f && !IsOn () && !(UnityEngine.Time.time < lastEngineOnTime + 600f)) {
 			float num = 1f / (IsOutside () ? outsidedecayminutes : insidedecayminutes);
 			Hurt (MaxHealth () * num, DamageType.Decay, this, useProtection: false);
 		}
@@ -507,7 +473,7 @@ public class PlayerHelicopter : BaseHelicopter, IEngineControllerUser, IEntity, 
 			return HasDriver ();
 		}
 		if (!HasDriver ()) {
-			return Time.time <= lastPlayerInputTime + 1f;
+			return UnityEngine.Time.time <= lastPlayerInputTime + 1f;
 		}
 		return true;
 	}
@@ -541,10 +507,10 @@ public class PlayerHelicopter : BaseHelicopter, IEngineControllerUser, IEntity, 
 	{
 		if (msg == "RadarLock") {
 			SetFlag (Flags.Reserved13, b: true);
-			((FacepunchBehaviour)this).Invoke ((Action)ClearRadarLock, 1f);
+			Invoke (ClearRadarLock, 1f);
 		} else if (msg == "RadarWarning") {
 			SetFlag (Flags.Reserved12, b: true);
-			((FacepunchBehaviour)this).Invoke ((Action)ClearRadarWarning, 1f);
+			Invoke (ClearRadarWarning, 1f);
 		} else {
 			base.OnEntityMessage (from, msg);
 		}
@@ -562,16 +528,13 @@ public class PlayerHelicopter : BaseHelicopter, IEngineControllerUser, IEntity, 
 
 	public void UpdateCOM ()
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
 		rigidBody.centerOfMass = com.localPosition;
 	}
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0037: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
-		info.msg.miniCopter = Pool.Get<Minicopter> ();
+		info.msg.miniCopter = Facepunch.Pool.Get<ProtoBuf.Minicopter> ();
 		info.msg.miniCopter.fuelStorageID = engineController.FuelSystem.fuelStorageInstance.uid;
 		info.msg.miniCopter.fuelFraction = GetFuelFraction (force: true);
 		info.msg.miniCopter.pitch = currentInputState.pitch;
@@ -581,12 +544,11 @@ public class PlayerHelicopter : BaseHelicopter, IEngineControllerUser, IEntity, 
 
 	public override void OnKilled (HitInfo info)
 	{
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
 		foreach (MountPointInfo mountPoint in mountPoints) {
-			if ((Object)(object)mountPoint.mountable != (Object)null) {
+			if (mountPoint.mountable != null) {
 				BasePlayer mounted = mountPoint.mountable.GetMounted ();
-				if (Object.op_Implicit ((Object)(object)mounted)) {
-					HitInfo hitInfo = new HitInfo (info.Initiator, this, DamageType.Explosion, 1000f, ((Component)this).transform.position);
+				if ((bool)mounted) {
+					HitInfo hitInfo = new HitInfo (info.Initiator, this, DamageType.Explosion, 1000f, base.transform.position);
 					hitInfo.Weapon = info.Weapon;
 					hitInfo.WeaponPrefab = info.WeaponPrefab;
 					mounted.Hurt (hitInfo);
@@ -598,31 +560,15 @@ public class PlayerHelicopter : BaseHelicopter, IEngineControllerUser, IEntity, 
 
 	protected override void DoPushAction (BasePlayer player)
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0086: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 val = Vector3Ex.Direction2D (((Component)player).transform.position, ((Component)this).transform.position);
-		Vector3 val2 = player.eyes.BodyForward ();
-		val2.y = 0.25f;
-		Vector3 val3 = ((Component)this).transform.position + val * 2f;
+		Vector3 vector = Vector3Ex.Direction2D (player.transform.position, base.transform.position);
+		Vector3 vector2 = player.eyes.BodyForward ();
+		vector2.y = 0.25f;
+		Vector3 position = base.transform.position + vector * 2f;
 		float num = rigidBody.mass * 2f;
-		rigidBody.AddForceAtPosition (val2 * num, val3, (ForceMode)1);
-		rigidBody.AddForce (Vector3.up * 3f, (ForceMode)1);
+		rigidBody.AddForceAtPosition (vector2 * num, position, ForceMode.Impulse);
+		rigidBody.AddForce (Vector3.up * 3f, ForceMode.Impulse);
 		isPushing = true;
-		((FacepunchBehaviour)this).Invoke ((Action)DisablePushing, 0.5f);
+		Invoke (DisablePushing, 0.5f);
 	}
 
 	private void DisablePushing ()
@@ -644,9 +590,9 @@ public class PlayerHelicopter : BaseHelicopter, IEngineControllerUser, IEntity, 
 	public void RPC_OpenFuel (RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
-		if (!((Object)(object)player == (Object)null)) {
+		if (!(player == null)) {
 			BasePlayer driver = GetDriver ();
-			if ((!((Object)(object)driver != (Object)null) || !((Object)(object)driver != (Object)(object)player)) && (!IsSafe () || !((Object)(object)player != (Object)(object)creatorEntity))) {
+			if ((!(driver != null) || !(driver != player)) && (!IsSafe () || !(player != creatorEntity))) {
 				engineController.FuelSystem.LootFuel (player);
 			}
 		}
@@ -654,11 +600,11 @@ public class PlayerHelicopter : BaseHelicopter, IEngineControllerUser, IEntity, 
 
 	void IEngineControllerUser.Invoke (Action action, float time)
 	{
-		((FacepunchBehaviour)this).Invoke (action, time);
+		Invoke (action, time);
 	}
 
 	void IEngineControllerUser.CancelInvoke (Action action)
 	{
-		((FacepunchBehaviour)this).CancelInvoke (action);
+		CancelInvoke (action);
 	}
 }

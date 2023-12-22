@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Network;
@@ -20,36 +21,29 @@ public class Mailbox : StorageContainer
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("Mailbox.OnRpcMessage", 0);
-		try {
-			if (rpc == 131727457 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("Mailbox.OnRpcMessage")) {
+			if (rpc == 131727457 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - RPC_Submit "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - RPC_Submit ");
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_Submit", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Call", 0);
+				using (TimeWarning.New ("RPC_Submit")) {
 					try {
-						RPCMessage rPCMessage = default(RPCMessage);
-						rPCMessage.connection = msg.connection;
-						rPCMessage.player = player;
-						rPCMessage.read = msg.read;
-						RPCMessage msg2 = rPCMessage;
-						RPC_Submit (msg2);
-					} finally {
-						((IDisposable)val3)?.Dispose ();
+						using (TimeWarning.New ("Call")) {
+							RPCMessage rPCMessage = default(RPCMessage);
+							rPCMessage.connection = msg.connection;
+							rPCMessage.player = player;
+							rPCMessage.read = msg.read;
+							RPCMessage msg2 = rPCMessage;
+							RPC_Submit (msg2);
+						}
+					} catch (Exception exception) {
+						Debug.LogException (exception);
+						player.Kick ("RPC Error in RPC_Submit");
 					}
-				} catch (Exception ex) {
-					Debug.LogException (ex);
-					player.Kick ("RPC Error in RPC_Submit");
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -117,10 +111,6 @@ public class Mailbox : StorageContainer
 
 	public override void PlayerStoppedLooting (BasePlayer player)
 	{
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
 		if (autoSubmitWhenClosed) {
 			SubmitInputItems (player);
 		}
@@ -144,13 +134,6 @@ public class Mailbox : StorageContainer
 
 	public void SubmitInputItems (BasePlayer fromPlayer)
 	{
-		//IL_0075: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0082: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0088: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
 		Item slot = base.inventory.GetSlot (mailInputSlot);
 		if (IsFull () || slot == null) {
 			return;
@@ -158,7 +141,7 @@ public class Mailbox : StorageContainer
 		if (MoveItemToStorage (slot)) {
 			if (slot.position != mailInputSlot) {
 				Effect.server.Run (mailDropSound.resourcePath, GetDropPosition ());
-				if ((Object)(object)fromPlayer != (Object)null && !PlayerIsOwner (fromPlayer)) {
+				if (fromPlayer != null && !PlayerIsOwner (fromPlayer)) {
 					SetFlag (Flags.On, b: true);
 				}
 			}
@@ -192,7 +175,7 @@ public class Mailbox : StorageContainer
 		}
 		ItemDefinition[] array = allowedItems;
 		foreach (ItemDefinition itemDefinition in array) {
-			if ((Object)(object)item.info == (Object)(object)itemDefinition) {
+			if (item.info == itemDefinition) {
 				return true;
 			}
 		}
@@ -201,7 +184,7 @@ public class Mailbox : StorageContainer
 
 	public override int GetIdealSlot (BasePlayer player, Item item)
 	{
-		if ((Object)(object)player == (Object)null || PlayerIsOwner (player)) {
+		if (player == null || PlayerIsOwner (player)) {
 			return -1;
 		}
 		return mailInputSlot;

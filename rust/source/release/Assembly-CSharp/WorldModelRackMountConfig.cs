@@ -56,10 +56,7 @@ public class WorldModelRackMountConfig : MonoBehaviour
 
 	public void ApplyTransformDefaults (Transform displayItem)
 	{
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		if (!((Object)(object)displayItem == (Object)null)) {
+		if (!(displayItem == null)) {
 			if (OverrideScale) {
 				displayItem.localScale = Scale;
 			}

@@ -41,27 +41,20 @@ public class WorldSetup : SingletonComponent<WorldSetup>
 
 	private void OnValidate ()
 	{
-		if ((Object)(object)terrain == (Object)null) {
-			Terrain val = Object.FindObjectOfType<Terrain> ();
-			if ((Object)(object)val != (Object)null) {
-				terrain = ((Component)val).gameObject;
+		if (this.terrain == null) {
+			UnityEngine.Terrain terrain = Object.FindObjectOfType<UnityEngine.Terrain> ();
+			if (terrain != null) {
+				this.terrain = terrain.gameObject;
 			}
 		}
 	}
 
 	protected override void Awake ()
 	{
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0031: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0127: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0131: Expected O, but got Unknown
-		//IL_00ef: Unknown result type (might be due to invalid IL or missing references)
-		((SingletonComponent)this).Awake ();
+		base.Awake ();
 		Prefab[] array = Prefab.Load ("assets/bundled/prefabs/world", null, null, useProbabilities: false, useWorldConfig: false);
 		foreach (Prefab prefab in array) {
-			if ((Object)(object)prefab.Object.GetComponent<BaseEntity> () != (Object)null) {
+			if (prefab.Object.GetComponent<BaseEntity> () != null) {
 				prefab.SpawnEntity (Vector3.zero, Quaternion.identity).Spawn ();
 			} else {
 				prefab.Spawn (Vector3.zero, Quaternion.identity);
@@ -71,8 +64,8 @@ public class WorldSetup : SingletonComponent<WorldSetup>
 		for (int i = 0; i < array2.Length; i++) {
 			array2 [i].SingletonSetup ();
 		}
-		if (Object.op_Implicit ((Object)(object)terrain)) {
-			if (Object.op_Implicit ((Object)(object)terrain.GetComponent<TerrainGenerator> ())) {
+		if ((bool)terrain) {
+			if ((bool)terrain.GetComponent<TerrainGenerator> ()) {
 				World.Procedural = true;
 			} else {
 				World.Procedural = false;
@@ -97,16 +90,16 @@ public class WorldSetup : SingletonComponent<WorldSetup>
 			ConVar.World.configFile = EditorConfigFile;
 		}
 		if (AutomaticallySetup) {
-			((MonoBehaviour)this).StartCoroutine (InitCoroutine ());
+			StartCoroutine (InitCoroutine ());
 		}
 	}
 
 	protected void CreateObject (GameObject prefab)
 	{
-		if (!((Object)(object)prefab == (Object)null)) {
-			GameObject val = Object.Instantiate<GameObject> (prefab);
-			if ((Object)(object)val != (Object)null) {
-				val.SetActive (true);
+		if (!(prefab == null)) {
+			GameObject gameObject = Object.Instantiate (prefab);
+			if (gameObject != null) {
+				gameObject.SetActive (value: true);
 			}
 		}
 	}
@@ -114,20 +107,20 @@ public class WorldSetup : SingletonComponent<WorldSetup>
 	public IEnumerator InitCoroutine ()
 	{
 		if (World.CanLoadFromUrl ()) {
-			Debug.Log ((object)("Loading custom map from " + World.Url));
+			Debug.Log ("Loading custom map from " + World.Url);
 		} else {
-			Debug.Log ((object)("Generating procedural map of size " + World.Size + " with seed " + World.Seed));
+			Debug.Log ("Generating procedural map of size " + World.Size + " with seed " + World.Seed);
 		}
 		World.Config = new WorldConfig ();
 		if (!string.IsNullOrEmpty (ConVar.World.configString)) {
-			Debug.Log ((object)"Loading custom world config from world.configstring convar");
+			Debug.Log ("Loading custom world config from world.configstring convar");
 			World.Config.LoadFromJsonString (ConVar.World.configString);
 		} else if (!string.IsNullOrEmpty (ConVar.World.configFile)) {
 			string text = ConVar.Server.rootFolder + "/" + ConVar.World.configFile;
-			Debug.Log ((object)("Loading custom world config from world.configfile convar: " + text));
+			Debug.Log ("Loading custom world config from world.configfile convar: " + text);
 			World.Config.LoadFromJsonFile (text);
 		}
-		ProceduralComponent[] components = ((Component)this).GetComponentsInChildren<ProceduralComponent> (true);
+		ProceduralComponent[] components = GetComponentsInChildren<ProceduralComponent> (includeInactive: true);
 		Timing downloadTimer = Timing.Start ("Downloading World");
 		if (World.Procedural && !World.CanLoadFromDisk () && World.CanLoadFromUrl ()) {
 			LoadingScreen.Update ("DOWNLOADING WORLD");
@@ -135,7 +128,7 @@ public class WorldSetup : SingletonComponent<WorldSetup>
 			yield return CoroutineEx.waitForEndOfFrame;
 			yield return CoroutineEx.waitForEndOfFrame;
 			UnityWebRequest request = UnityWebRequest.Get (World.Url);
-			request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer ();
+			request.downloadHandler = new DownloadHandlerBuffer ();
 			request.Send ();
 			while (!request.isDone) {
 				LoadingScreen.Update ("DOWNLOADING WORLD " + (request.downloadProgress * 100f).ToString ("0.0") + "%");
@@ -159,7 +152,7 @@ public class WorldSetup : SingletonComponent<WorldSetup>
 		}
 		loadTimer.End ();
 		if (World.Cached && 9 != World.Serialization.Version) {
-			Debug.LogWarning ((object)("World cache version mismatch: " + 9u + " != " + World.Serialization.Version));
+			Debug.LogWarning ("World cache version mismatch: " + 9u + " != " + World.Serialization.Version);
 			World.Serialization.Clear ();
 			World.Cached = false;
 			if (World.CanLoadFromUrl ()) {
@@ -172,9 +165,9 @@ public class WorldSetup : SingletonComponent<WorldSetup>
 		if (World.Cached) {
 			World.InitSize (World.Serialization.world.size);
 		}
-		if (Object.op_Implicit ((Object)(object)terrain)) {
+		if ((bool)terrain) {
 			TerrainGenerator component2 = terrain.GetComponent<TerrainGenerator> ();
-			if (Object.op_Implicit ((Object)(object)component2)) {
+			if ((bool)component2) {
 				if (World.Cached) {
 					int cachedHeightMapResolution = World.GetCachedHeightMapResolution ();
 					int cachedSplatMapResolution = World.GetCachedSplatMapResolution ();
@@ -202,7 +195,7 @@ public class WorldSetup : SingletonComponent<WorldSetup>
 			TerrainMeta.TopologyMap.FromByteArray (World.GetMap ("topology"));
 			TerrainMeta.AlphaMap.FromByteArray (World.GetMap ("alpha"));
 			TerrainMeta.WaterMap.FromByteArray (World.GetMap ("water"));
-			IEnumerator worldSpawn = ((Global.preloadConcurrency > 1) ? World.SpawnAsync (0.2f, delegate(string str) {
+			IEnumerator worldSpawn = ((ConVar.Global.preloadConcurrency > 1) ? World.SpawnAsync (0.2f, delegate(string str) {
 				LoadingScreen.Update (str);
 			}) : World.Spawn (0.2f, delegate(string str) {
 				LoadingScreen.Update (str);
@@ -216,9 +209,9 @@ public class WorldSetup : SingletonComponent<WorldSetup>
 			TerrainMeta.Path.Powerlines.AddRange (World.GetPaths ("Powerline"));
 			TerrainMeta.Path.Rails.AddRange (World.GetPaths ("Rail"));
 		}
-		if ((Object)(object)TerrainMeta.Path != (Object)null) {
+		if (TerrainMeta.Path != null) {
 			foreach (DungeonBaseLink dungeonBaseLink in TerrainMeta.Path.DungeonBaseLinks) {
-				if ((Object)(object)dungeonBaseLink != (Object)null) {
+				if (dungeonBaseLink != null) {
 					dungeonBaseLink.Initialize ();
 				}
 			}
@@ -228,14 +221,14 @@ public class WorldSetup : SingletonComponent<WorldSetup>
 		if (components.Length != 0) {
 			for (int i = 0; i < components.Length; i++) {
 				ProceduralComponent component = components [i];
-				if (Object.op_Implicit ((Object)(object)component) && component.ShouldRun ()) {
+				if ((bool)component && component.ShouldRun ()) {
 					uint seed = (uint)(World.Seed + i);
 					LoadingScreen.Update (component.Description.ToUpper ());
 					yield return CoroutineEx.waitForEndOfFrame;
 					yield return CoroutineEx.waitForEndOfFrame;
 					yield return CoroutineEx.waitForEndOfFrame;
 					Timing timing = Timing.Start (component.Description);
-					if (Object.op_Implicit ((Object)(object)component)) {
+					if ((bool)component) {
 						component.Process (seed);
 					}
 					timing.End ();
@@ -274,10 +267,10 @@ public class WorldSetup : SingletonComponent<WorldSetup>
 		yield return CoroutineEx.waitForEndOfFrame;
 		yield return CoroutineEx.waitForEndOfFrame;
 		yield return CoroutineEx.waitForEndOfFrame;
-		if (BaseBoat.generate_paths && (Object)(object)TerrainMeta.Path != (Object)null) {
+		if (BaseBoat.generate_paths && TerrainMeta.Path != null) {
 			TerrainMeta.Path.OceanPatrolFar = BaseBoat.GenerateOceanPatrolPath (200f);
 		} else {
-			Debug.Log ((object)"Skipping ocean patrol paths, baseboat.generate_paths == false");
+			Debug.Log ("Skipping ocean patrol paths, baseboat.generate_paths == false");
 		}
 		oceanTimer.End ();
 		Timing finalizeTimer = Timing.Start ("Finalizing World");
@@ -285,7 +278,7 @@ public class WorldSetup : SingletonComponent<WorldSetup>
 		yield return CoroutineEx.waitForEndOfFrame;
 		yield return CoroutineEx.waitForEndOfFrame;
 		yield return CoroutineEx.waitForEndOfFrame;
-		if (Object.op_Implicit ((Object)(object)terrainMeta)) {
+		if ((bool)terrainMeta) {
 			terrainMeta.BindShaderProperties ();
 			terrainMeta.PostSetupComponents ();
 			TerrainMargin.Create ();
@@ -307,14 +300,14 @@ public class WorldSetup : SingletonComponent<WorldSetup>
 		yield return CoroutineEx.waitForEndOfFrame;
 		yield return CoroutineEx.waitForEndOfFrame;
 		yield return CoroutineEx.waitForEndOfFrame;
-		if (Object.op_Implicit ((Object)(object)this)) {
-			GameManager.Destroy (((Component)this).gameObject);
+		if ((bool)this) {
+			GameManager.Destroy (base.gameObject);
 		}
 	}
 
 	private void CancelSetup (string msg)
 	{
-		Debug.LogError ((object)msg);
-		Application.Quit ();
+		Debug.LogError (msg);
+		Rust.Application.Quit ();
 	}
 }

@@ -7,9 +7,9 @@ public class VehicleLiftOccupantTrigger : TriggerBase
 
 	protected override void OnDisable ()
 	{
-		if (!Application.isQuitting) {
+		if (!Rust.Application.isQuitting) {
 			base.OnDisable ();
-			if ((Object)(object)carOccupant != (Object)null) {
+			if (carOccupant != null) {
 				carOccupant = null;
 			}
 		}
@@ -17,11 +17,11 @@ public class VehicleLiftOccupantTrigger : TriggerBase
 
 	internal override GameObject InterestedInObject (GameObject obj)
 	{
-		if ((Object)(object)base.InterestedInObject (obj) == (Object)null) {
+		if (base.InterestedInObject (obj) == null) {
 			return null;
 		}
 		BaseEntity baseEntity = obj.ToBaseEntity ();
-		if ((Object)(object)baseEntity == (Object)null || baseEntity.isClient) {
+		if (baseEntity == null || baseEntity.isClient) {
 			return null;
 		}
 		if (!(baseEntity is ModularCar)) {
@@ -33,7 +33,7 @@ public class VehicleLiftOccupantTrigger : TriggerBase
 	internal override void OnEntityEnter (BaseEntity ent)
 	{
 		base.OnEntityEnter (ent);
-		if ((Object)(object)carOccupant == (Object)null && ent.isServer) {
+		if (carOccupant == null && ent.isServer) {
 			carOccupant = (ModularCar)ent;
 		}
 	}
@@ -41,7 +41,7 @@ public class VehicleLiftOccupantTrigger : TriggerBase
 	internal override void OnEntityLeave (BaseEntity ent)
 	{
 		base.OnEntityLeave (ent);
-		if (!((Object)(object)carOccupant == (Object)(object)ent)) {
+		if (!(carOccupant == ent)) {
 			return;
 		}
 		carOccupant = null;
@@ -49,7 +49,7 @@ public class VehicleLiftOccupantTrigger : TriggerBase
 			return;
 		}
 		foreach (BaseEntity entityContent in entityContents) {
-			if ((Object)(object)entityContent != (Object)null) {
+			if (entityContent != null) {
 				carOccupant = (ModularCar)entityContent;
 				break;
 			}

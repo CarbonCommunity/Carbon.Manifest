@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Facepunch;
-using UnityEngine;
 
 public class BaseResourceExtractor : BaseCombatEntity
 {
@@ -10,18 +9,17 @@ public class BaseResourceExtractor : BaseCombatEntity
 
 	public override void ServerInit ()
 	{
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
 		base.ServerInit ();
 		if (base.isClient) {
 			return;
 		}
-		List<SurveyCrater> list = Pool.GetList<SurveyCrater> ();
-		Vis.Entities (((Component)this).transform.position, 3f, list, 1, (QueryTriggerInteraction)2);
-		foreach (SurveyCrater item in list) {
+		List<SurveyCrater> obj = Pool.GetList<SurveyCrater> ();
+		Vis.Entities (base.transform.position, 3f, obj, 1);
+		foreach (SurveyCrater item in obj) {
 			if (item.isServer) {
 				item.Kill ();
 			}
 		}
-		Pool.FreeList<SurveyCrater> (ref list);
+		Pool.FreeList (ref obj);
 	}
 }

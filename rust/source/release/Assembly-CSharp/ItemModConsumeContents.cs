@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public class ItemModConsumeContents : ItemMod
 {
 	public GameObjectRef consumeEffect;
@@ -7,8 +5,8 @@ public class ItemModConsumeContents : ItemMod
 	public override void DoAction (Item item, BasePlayer player)
 	{
 		foreach (Item item2 in item.contents.itemList) {
-			ItemModConsume component = ((Component)item2.info).GetComponent<ItemModConsume> ();
-			if (!((Object)(object)component == (Object)null) && component.CanDoAction (item2, player)) {
+			ItemModConsume component = item2.info.GetComponent<ItemModConsume> ();
+			if (!(component == null) && component.CanDoAction (item2, player)) {
 				component.DoAction (item2, player);
 				break;
 			}
@@ -24,8 +22,8 @@ public class ItemModConsumeContents : ItemMod
 			return false;
 		}
 		foreach (Item item2 in item.contents.itemList) {
-			ItemModConsume component = ((Component)item2.info).GetComponent<ItemModConsume> ();
-			if (!((Object)(object)component == (Object)null) && component.CanDoAction (item2, player)) {
+			ItemModConsume component = item2.info.GetComponent<ItemModConsume> ();
+			if (!(component == null) && component.CanDoAction (item2, player)) {
 				return true;
 			}
 		}

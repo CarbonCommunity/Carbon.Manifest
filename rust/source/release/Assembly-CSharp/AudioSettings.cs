@@ -10,23 +10,22 @@ public class AudioSettings : MonoBehaviour
 
 	private void Update ()
 	{
-		if (!((Object)(object)mixer == (Object)null)) {
+		if (!(mixer == null)) {
 			mixer.SetFloat ("MasterVol", LinearToDecibel (Audio.master * duckingFactor));
-			float num = default(float);
-			mixer.GetFloat ("MusicVol", ref num);
+			mixer.GetFloat ("MusicVol", out var value);
 			if (!LevelManager.isLoaded || !MainCamera.isValid) {
-				mixer.SetFloat ("MusicVol", Mathf.Lerp (num, LinearToDecibel (Audio.musicvolumemenu), Time.deltaTime));
+				mixer.SetFloat ("MusicVol", Mathf.Lerp (value, LinearToDecibel (Audio.musicvolumemenu), UnityEngine.Time.deltaTime));
 			} else {
-				mixer.SetFloat ("MusicVol", Mathf.Lerp (num, LinearToDecibel (Audio.musicvolume), Time.deltaTime));
+				mixer.SetFloat ("MusicVol", Mathf.Lerp (value, LinearToDecibel (Audio.musicvolume), UnityEngine.Time.deltaTime));
 			}
-			float num2 = 1f - (((Object)(object)SingletonComponent<MixerSnapshotManager>.Instance == (Object)null) ? 0f : SingletonComponent<MixerSnapshotManager>.Instance.deafness);
-			mixer.SetFloat ("WorldVol", LinearToDecibel (Audio.game * num2));
+			float num = 1f - ((SingletonComponent<MixerSnapshotManager>.Instance == null) ? 0f : SingletonComponent<MixerSnapshotManager>.Instance.deafness);
+			mixer.SetFloat ("WorldVol", LinearToDecibel (Audio.game * num));
 			mixer.SetFloat ("WorldVolFlashbang", LinearToDecibel (Audio.game));
-			mixer.SetFloat ("VoiceVol", LinearToDecibel (Audio.voices * num2));
-			mixer.SetFloat ("InstrumentVol", LinearToDecibel (Audio.instruments * num2));
-			float num3 = LinearToDecibel (Audio.voiceProps * num2) - 28.7f;
-			mixer.SetFloat ("VoicePropsVol", num3 * num2);
-			mixer.SetFloat ("SeasonalEventsVol", LinearToDecibel (Audio.eventAudio * num2));
+			mixer.SetFloat ("VoiceVol", LinearToDecibel (Audio.voices * num));
+			mixer.SetFloat ("InstrumentVol", LinearToDecibel (Audio.instruments * num));
+			float num2 = LinearToDecibel (Audio.voiceProps * num) - 28.7f;
+			mixer.SetFloat ("VoicePropsVol", num2 * num);
+			mixer.SetFloat ("SeasonalEventsVol", LinearToDecibel (Audio.eventAudio * num));
 		}
 	}
 

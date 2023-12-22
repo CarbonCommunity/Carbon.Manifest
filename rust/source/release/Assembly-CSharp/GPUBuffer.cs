@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class GPUBuffer<T> : GPUBuffer, IDisposable where T : unmanaged
 {
-	private Target _type;
+	private GraphicsBuffer.Target _type;
 
 	public int BufferVersion { get; private set; }
 
@@ -23,32 +23,24 @@ public class GPUBuffer<T> : GPUBuffer, IDisposable where T : unmanaged
 
 	public GPUBuffer (int length, Target target)
 	{
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0067: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0086: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0092: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009c: Expected O, but got Unknown
 		count = length;
 		stride = Marshal.SizeOf<T> ();
 		Type = target;
 		switch (target) {
 		case Target.Structured:
-			_type = (Target)16;
+			_type = GraphicsBuffer.Target.Structured;
 			break;
 		case Target.IndirectArgs:
-			_type = (Target)256;
+			_type = GraphicsBuffer.Target.IndirectArguments;
 			break;
 		case Target.Vertex:
-			_type = (Target)1;
+			_type = GraphicsBuffer.Target.Vertex;
 			break;
 		case Target.Index:
-			_type = (Target)2;
+			_type = GraphicsBuffer.Target.Index;
 			break;
 		case Target.Raw:
-			_type = (Target)32;
+			_type = GraphicsBuffer.Target.Raw;
 			break;
 		default:
 			throw new NotImplementedException ($"GPUBuffer Target '{target}'");
@@ -59,62 +51,51 @@ public class GPUBuffer<T> : GPUBuffer, IDisposable where T : unmanaged
 
 	public void SetData (List<T> data)
 	{
-		Buffer.SetData<T> (data);
+		Buffer.SetData (data);
 	}
 
 	public void SetData (List<int> data, int nativeArrayIndex, int computeBufferIndex, int length)
 	{
-		Buffer.SetData<int> (data, nativeArrayIndex, computeBufferIndex, length);
+		Buffer.SetData (data, nativeArrayIndex, computeBufferIndex, length);
 	}
 
 	public void SetData (T[] data)
 	{
-		Buffer.SetData ((Array)data);
+		Buffer.SetData (data);
 	}
 
 	public void SetData (T[] data, int nativeArrayIndex, int computeBufferIndex, int length)
 	{
-		Buffer.SetData ((Array)data, nativeArrayIndex, computeBufferIndex, length);
+		Buffer.SetData (data, nativeArrayIndex, computeBufferIndex, length);
 	}
 
 	public void SetData (NativeArray<T> data)
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		Buffer.SetData<T> (data);
+		Buffer.SetData (data);
 	}
 
 	public void SetData (NativeArray<T> data, int nativeArrayIndex, int computeBufferIndex, int length)
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		Buffer.SetData<T> (data, nativeArrayIndex, computeBufferIndex, length);
+		Buffer.SetData (data, nativeArrayIndex, computeBufferIndex, length);
 	}
 
 	public void ClearData ()
 	{
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		NativeArray<T> data = default(NativeArray<T>);
-		data..ctor (count, (Allocator)2, (NativeArrayOptions)1);
-		try {
-			Buffer.SetData<T> (data);
-		} finally {
-			((IDisposable)data).Dispose ();
-		}
+		using NativeArray<T> data = new NativeArray<T> (count, Allocator.Temp);
+		Buffer.SetData (data);
 	}
 
 	public void Expand (int newCapacity, bool preserveData = false)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Expected O, but got Unknown
-		GraphicsBuffer val = new GraphicsBuffer (_type, newCapacity, stride);
+		GraphicsBuffer graphicsBuffer = new GraphicsBuffer (_type, newCapacity, stride);
 		BufferVersion++;
 		if (preserveData) {
-			T[] array = new T[newCapacity];
-			Buffer.GetData ((Array)array, 0, 0, count);
-			val.SetData ((Array)array);
+			T[] data = new T[newCapacity];
+			Buffer.GetData (data, 0, 0, count);
+			graphicsBuffer.SetData (data);
 		}
 		Dispose ();
-		Buffer = val;
+		Buffer = graphicsBuffer;
 		count = newCapacity;
 		if (!preserveData) {
 			ClearData ();
@@ -131,10 +112,7 @@ public class GPUBuffer<T> : GPUBuffer, IDisposable where T : unmanaged
 
 	public void Dispose ()
 	{
-		GraphicsBuffer buffer = Buffer;
-		if (buffer != null) {
-			buffer.Dispose ();
-		}
+		Buffer?.Dispose ();
 		Buffer = null;
 	}
 }

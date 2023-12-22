@@ -6,8 +6,8 @@ public class AttackHeliGunnerSeat : BaseVehicleSeat
 
 	private AttackHelicopter Owner {
 		get {
-			if ((Object)(object)_owner == (Object)null) {
-				_owner = ((Component)this).GetComponentInParent<AttackHelicopter> ();
+			if (_owner == null) {
+				_owner = GetComponentInParent<AttackHelicopter> ();
 			}
 			return _owner;
 		}
@@ -15,7 +15,7 @@ public class AttackHeliGunnerSeat : BaseVehicleSeat
 
 	public override bool CanHoldItems ()
 	{
-		if ((Object)(object)Owner != (Object)null) {
+		if (Owner != null) {
 			return !Owner.GunnerIsInGunnerView;
 		}
 		return false;
@@ -23,7 +23,7 @@ public class AttackHeliGunnerSeat : BaseVehicleSeat
 
 	public override Transform GetEyeOverride ()
 	{
-		if ((Object)(object)Owner != (Object)null && Owner.GunnerIsInGunnerView) {
+		if (Owner != null && Owner.GunnerIsInGunnerView) {
 			return Owner.gunnerEyePos;
 		}
 		return base.GetEyeOverride ();
@@ -31,9 +31,7 @@ public class AttackHeliGunnerSeat : BaseVehicleSeat
 
 	public override Vector3 EyePositionForPlayer (BasePlayer player, Quaternion lookRot)
 	{
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)player.GetMounted () != (Object)(object)this) {
+		if (player.GetMounted () != this) {
 			return Vector3.zero;
 		}
 		return GetEyeOverride ().position;
@@ -41,9 +39,7 @@ public class AttackHeliGunnerSeat : BaseVehicleSeat
 
 	public override Vector3 EyeCenterForPlayer (BasePlayer player, Quaternion lookRot)
 	{
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)player.GetMounted () != (Object)(object)this) {
+		if (player.GetMounted () != this) {
 			return Vector3.zero;
 		}
 		return GetEyeOverride ().position;
@@ -51,9 +47,7 @@ public class AttackHeliGunnerSeat : BaseVehicleSeat
 
 	public override Vector2 GetPitchClamp ()
 	{
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)Owner != (Object)null && Owner.GunnerIsInGunnerView) {
+		if (Owner != null && Owner.GunnerIsInGunnerView) {
 			return Owner.turretPitchClamp;
 		}
 		return pitchClamp;
@@ -61,9 +55,7 @@ public class AttackHeliGunnerSeat : BaseVehicleSeat
 
 	public override Vector2 GetYawClamp ()
 	{
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)Owner != (Object)null && Owner.GunnerIsInGunnerView) {
+		if (Owner != null && Owner.GunnerIsInGunnerView) {
 			return Owner.turretYawClamp;
 		}
 		return yawClamp;

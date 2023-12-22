@@ -1,5 +1,5 @@
+#define UNITY_ASSERTIONS
 using System;
-using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Rendering.PostProcessing;
 
@@ -14,7 +14,7 @@ public sealed class PostProcessBundle
 	internal PostProcessEffectRenderer renderer {
 		get {
 			if (m_Renderer == null) {
-				Assert.IsNotNull<Type> (attribute.renderer);
+				Assert.IsNotNull (attribute.renderer);
 				Type type = attribute.renderer;
 				m_Renderer = (PostProcessEffectRenderer)Activator.CreateInstance (type);
 				m_Renderer.SetSettings (settings);
@@ -26,9 +26,9 @@ public sealed class PostProcessBundle
 
 	internal PostProcessBundle (PostProcessEffectSettings settings)
 	{
-		Assert.IsNotNull<PostProcessEffectSettings> (settings);
+		Assert.IsNotNull (settings);
 		this.settings = settings;
-		attribute = ((object)settings).GetType ().GetAttribute<PostProcessAttribute> ();
+		attribute = settings.GetType ().GetAttribute<PostProcessAttribute> ();
 	}
 
 	internal void Release ()
@@ -36,7 +36,7 @@ public sealed class PostProcessBundle
 		if (m_Renderer != null) {
 			m_Renderer.Release ();
 		}
-		RuntimeUtilities.Destroy ((Object)(object)settings);
+		RuntimeUtilities.Destroy (settings);
 	}
 
 	internal void ResetHistory ()

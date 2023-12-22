@@ -54,7 +54,7 @@ public class BasePet : NPCPlayer, IThinker
 		float num = movementupdatebudgetms / 1000f;
 		while (_movementProcessQueue.Count > 0 && Time.realtimeSinceStartup < realtimeSinceStartup + num) {
 			BasePet basePet = _movementProcessQueue.Dequeue ();
-			if ((Object)(object)basePet != (Object)null) {
+			if (basePet != null) {
 				basePet.DoBudgetedMoveUpdate ();
 				basePet.inQueue = false;
 			}
@@ -63,7 +63,7 @@ public class BasePet : NPCPlayer, IThinker
 
 	public void DoBudgetedMoveUpdate ()
 	{
-		if ((Object)(object)Brain != (Object)null) {
+		if (Brain != null) {
 			Brain.DoMovementTick ();
 		}
 	}
@@ -76,7 +76,7 @@ public class BasePet : NPCPlayer, IThinker
 	public override void ServerInit ()
 	{
 		base.ServerInit ();
-		Brain = ((Component)this).GetComponent<PetBrain> ();
+		Brain = GetComponent<PetBrain> ();
 		if (!base.isClient) {
 			AIThinkManager.AddPet (this);
 		}
@@ -84,9 +84,7 @@ public class BasePet : NPCPlayer, IThinker
 
 	public void CreateMapMarker ()
 	{
-		//IL_0031: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)_mapMarkerInstance != (Object)null) {
+		if (_mapMarkerInstance != null) {
 			_mapMarkerInstance.Kill ();
 		}
 		BaseEntity baseEntity = GameManager.server.CreateEntity (mapMarkerPrefab?.resourcePath, Vector3.zero, Quaternion.identity);
@@ -98,7 +96,7 @@ public class BasePet : NPCPlayer, IThinker
 
 	internal override void DoServerDestroy ()
 	{
-		if ((Object)(object)Brain.OwningPlayer != (Object)null) {
+		if (Brain.OwningPlayer != null) {
 			Brain.OwningPlayer.ClearClientPetLink ();
 		}
 		AIThinkManager.RemovePet (this);
@@ -120,14 +118,14 @@ public class BasePet : NPCPlayer, IThinker
 
 	public void ApplyPetStatModifiers ()
 	{
-		if ((Object)(object)inventory == (Object)null) {
+		if (inventory == null) {
 			return;
 		}
 		for (int i = 0; i < inventory.containerWear.capacity; i++) {
 			Item slot = inventory.containerWear.GetSlot (i);
 			if (slot != null) {
-				ItemModPetStats component = ((Component)slot.info).GetComponent<ItemModPetStats> ();
-				if ((Object)(object)component != (Object)null) {
+				ItemModPetStats component = slot.info.GetComponent<ItemModPetStats> ();
+				if (component != null) {
 					component.Apply (this);
 				}
 			}
@@ -137,7 +135,7 @@ public class BasePet : NPCPlayer, IThinker
 
 	private void OnPhysicsNeighbourChanged ()
 	{
-		if ((Object)(object)Brain != (Object)null && (Object)(object)Brain.Navigator != (Object)null) {
+		if (Brain != null && Brain.Navigator != null) {
 			Brain.Navigator.ForceToGround ();
 		}
 	}

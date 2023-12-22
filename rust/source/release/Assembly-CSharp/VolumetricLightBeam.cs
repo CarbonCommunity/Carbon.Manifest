@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections;
 using UnityEngine;
@@ -114,13 +115,13 @@ public class VolumetricLightBeam : MonoBehaviour
 
 	public float coneAngle => Mathf.Atan2 (coneRadiusEnd - coneRadiusStart, fadeEnd) * 57.29578f * 2f;
 
-	public float coneRadiusEnd => fadeEnd * Mathf.Tan (spotAngle * ((float)Math.PI / 180f) * 0.5f);
+	public float coneRadiusEnd => fadeEnd * Mathf.Tan (spotAngle * (MathF.PI / 180f) * 0.5f);
 
 	public float coneVolume {
 		get {
 			float num = coneRadiusStart;
 			float num2 = coneRadiusEnd;
-			return (float)Math.PI / 3f * (num * num + num * num2 + num2 * num2) * fadeEnd;
+			return MathF.PI / 3f * (num * num + num * num2 + num2 * num2) * fadeEnd;
 		}
 	}
 
@@ -143,7 +144,7 @@ public class VolumetricLightBeam : MonoBehaviour
 		}
 		set {
 			geomCustomSides = value;
-			Debug.LogWarning ((object)"The setter VLB.VolumetricLightBeam.geomSides is OBSOLETE and has been renamed to geomCustomSides.");
+			Debug.LogWarning ("The setter VLB.VolumetricLightBeam.geomSides is OBSOLETE and has been renamed to geomCustomSides.");
 		}
 	}
 
@@ -156,7 +157,7 @@ public class VolumetricLightBeam : MonoBehaviour
 		}
 		set {
 			geomCustomSegments = value;
-			Debug.LogWarning ((object)"The setter VLB.VolumetricLightBeam.geomSegments is OBSOLETE and has been renamed to geomCustomSegments.");
+			Debug.LogWarning ("The setter VLB.VolumetricLightBeam.geomSegments is OBSOLETE and has been renamed to geomCustomSegments.");
 		}
 	}
 
@@ -178,7 +179,7 @@ public class VolumetricLightBeam : MonoBehaviour
 		}
 		set {
 			_SortingLayerID = value;
-			if (Object.op_Implicit ((Object)(object)m_BeamGeom)) {
+			if ((bool)m_BeamGeom) {
 				m_BeamGeom.sortingLayerID = value;
 			}
 		}
@@ -199,7 +200,7 @@ public class VolumetricLightBeam : MonoBehaviour
 		}
 		set {
 			_SortingOrder = value;
-			if (Object.op_Implicit ((Object)(object)m_BeamGeom)) {
+			if ((bool)m_BeamGeom) {
 				m_BeamGeom.sortingOrder = value;
 			}
 		}
@@ -217,18 +218,14 @@ public class VolumetricLightBeam : MonoBehaviour
 
 	public bool isCurrentlyTrackingChanges => m_CoPlaytimeUpdate != null;
 
-	public bool hasGeometry => (Object)(object)m_BeamGeom != (Object)null;
+	public bool hasGeometry => m_BeamGeom != null;
 
 	public Bounds bounds {
 		get {
-			//IL_0029: Unknown result type (might be due to invalid IL or missing references)
-			//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-			if (!((Object)(object)m_BeamGeom != (Object)null)) {
+			if (!(m_BeamGeom != null)) {
 				return new Bounds (Vector3.zero, Vector3.zero);
 			}
-			return ((Renderer)m_BeamGeom.meshRenderer).bounds;
+			return m_BeamGeom.meshRenderer.bounds;
 		}
 	}
 
@@ -236,7 +233,7 @@ public class VolumetricLightBeam : MonoBehaviour
 
 	public MeshRenderer Renderer {
 		get {
-			if (!((Object)(object)m_BeamGeom != (Object)null)) {
+			if (!(m_BeamGeom != null)) {
 				return null;
 			}
 			return m_BeamGeom.meshRenderer;
@@ -245,9 +242,9 @@ public class VolumetricLightBeam : MonoBehaviour
 
 	public string meshStats {
 		get {
-			Mesh val = (Object.op_Implicit ((Object)(object)m_BeamGeom) ? m_BeamGeom.coneMesh : null);
-			if (Object.op_Implicit ((Object)(object)val)) {
-				return $"Cone angle: {coneAngle:0.0} degrees\nMesh: {val.vertexCount} vertices, {val.triangles.Length / 3} triangles";
+			Mesh mesh = (m_BeamGeom ? m_BeamGeom.coneMesh : null);
+			if ((bool)mesh) {
+				return $"Cone angle: {coneAngle:0.0} degrees\nMesh: {mesh.vertexCount} vertices, {mesh.triangles.Length / 3} triangles";
 			}
 			return "no mesh available";
 		}
@@ -255,7 +252,7 @@ public class VolumetricLightBeam : MonoBehaviour
 
 	public int meshVerticesCount {
 		get {
-			if (!Object.op_Implicit ((Object)(object)m_BeamGeom) || !Object.op_Implicit ((Object)(object)m_BeamGeom.coneMesh)) {
+			if (!m_BeamGeom || !m_BeamGeom.coneMesh) {
 				return 0;
 			}
 			return m_BeamGeom.coneMesh.vertexCount;
@@ -264,7 +261,7 @@ public class VolumetricLightBeam : MonoBehaviour
 
 	public int meshTrianglesCount {
 		get {
-			if (!Object.op_Implicit ((Object)(object)m_BeamGeom) || !Object.op_Implicit ((Object)(object)m_BeamGeom.coneMesh)) {
+			if (!m_BeamGeom || !m_BeamGeom.coneMesh) {
 				return 0;
 			}
 			return m_BeamGeom.coneMesh.triangles.Length / 3;
@@ -273,11 +270,10 @@ public class VolumetricLightBeam : MonoBehaviour
 
 	private Light lightSpotAttached {
 		get {
-			//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-			if ((Object)(object)_CachedLight == (Object)null) {
-				_CachedLight = ((Component)this).GetComponent<Light> ();
+			if (_CachedLight == null) {
+				_CachedLight = GetComponent<Light> ();
 			}
-			if (Object.op_Implicit ((Object)(object)_CachedLight) && (int)_CachedLight.type == 0) {
+			if ((bool)_CachedLight && _CachedLight.type == LightType.Spot) {
 				return _CachedLight;
 			}
 			return null;
@@ -286,10 +282,7 @@ public class VolumetricLightBeam : MonoBehaviour
 
 	public void SetClippingPlane (Plane planeWS)
 	{
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		if (Object.op_Implicit ((Object)(object)m_BeamGeom)) {
+		if ((bool)m_BeamGeom) {
 			m_BeamGeom.SetClippingPlane (planeWS);
 		}
 		m_PlaneWS = planeWS;
@@ -297,8 +290,7 @@ public class VolumetricLightBeam : MonoBehaviour
 
 	public void SetClippingPlaneOff ()
 	{
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		if (Object.op_Implicit ((Object)(object)m_BeamGeom)) {
+		if ((bool)m_BeamGeom) {
 			m_BeamGeom.SetClippingPlaneOff ();
 		}
 		m_PlaneWS = default(Plane);
@@ -306,43 +298,25 @@ public class VolumetricLightBeam : MonoBehaviour
 
 	public bool IsColliderHiddenByDynamicOccluder (Collider collider)
 	{
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
-		Debug.Assert (Object.op_Implicit ((Object)(object)collider), "You should pass a valid Collider to VLB.VolumetricLightBeam.IsColliderHiddenByDynamicOccluder");
+		Debug.Assert (collider, "You should pass a valid Collider to VLB.VolumetricLightBeam.IsColliderHiddenByDynamicOccluder");
 		if (!m_PlaneWS.IsValid ()) {
 			return false;
 		}
-		return !GeometryUtility.TestPlanesAABB ((Plane[])(object)new Plane[1] { m_PlaneWS }, collider.bounds);
+		return !GeometryUtility.TestPlanesAABB (new Plane[1] { m_PlaneWS }, collider.bounds);
 	}
 
 	public float GetInsideBeamFactor (Vector3 posWS)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		return GetInsideBeamFactorFromObjectSpacePos (((Component)this).transform.InverseTransformPoint (posWS));
+		return GetInsideBeamFactorFromObjectSpacePos (base.transform.InverseTransformPoint (posWS));
 	}
 
 	public float GetInsideBeamFactorFromObjectSpacePos (Vector3 posOS)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
 		if (posOS.z < 0f) {
 			return -1f;
 		}
-		Vector2 val = posOS.xy ();
-		val = new Vector2 (((Vector2)(ref val)).magnitude, posOS.z + coneApexOffsetZ);
-		Vector2 normalized = ((Vector2)(ref val)).normalized;
-		return Mathf.Clamp ((Mathf.Abs (Mathf.Sin (coneAngle * ((float)Math.PI / 180f) / 2f)) - Mathf.Abs (normalized.x)) / 0.1f, -1f, 1f);
+		Vector2 normalized = new Vector2 (posOS.xy ().magnitude, posOS.z + coneApexOffsetZ).normalized;
+		return Mathf.Clamp ((Mathf.Abs (Mathf.Sin (coneAngle * (MathF.PI / 180f) / 2f)) - Mathf.Abs (normalized.x)) / 0.1f, -1f, 1f);
 	}
 
 	[Obsolete ("Use 'GenerateGeometry()' instead")]
@@ -356,23 +330,23 @@ public class VolumetricLightBeam : MonoBehaviour
 		HandleBackwardCompatibility (pluginVersion, 1510);
 		pluginVersion = 1510;
 		ValidateProperties ();
-		if ((Object)(object)m_BeamGeom == (Object)null) {
+		if (m_BeamGeom == null) {
 			Shader beamShader = Config.Instance.beamShader;
-			if (!Object.op_Implicit ((Object)(object)beamShader)) {
-				Debug.LogError ((object)"Invalid BeamShader set in VLB Config");
+			if (!beamShader) {
+				Debug.LogError ("Invalid BeamShader set in VLB Config");
 				return;
 			}
 			m_BeamGeom = Utils.NewWithComponent<BeamGeometry> ("Beam Geometry");
 			m_BeamGeom.Initialize (this, beamShader);
 		}
 		m_BeamGeom.RegenerateMesh ();
-		m_BeamGeom.visible = ((Behaviour)this).enabled;
+		m_BeamGeom.visible = base.enabled;
 	}
 
 	public virtual void UpdateAfterManualPropertyChange ()
 	{
 		ValidateProperties ();
-		if (Object.op_Implicit ((Object)(object)m_BeamGeom)) {
+		if ((bool)m_BeamGeom) {
 			m_BeamGeom.UpdateMaterialAndBounds ();
 		}
 	}
@@ -384,7 +358,7 @@ public class VolumetricLightBeam : MonoBehaviour
 
 	private void OnEnable ()
 	{
-		if (Object.op_Implicit ((Object)(object)m_BeamGeom)) {
+		if ((bool)m_BeamGeom) {
 			m_BeamGeom.visible = true;
 		}
 		StartPlaytimeUpdateIfNeeded ();
@@ -392,7 +366,7 @@ public class VolumetricLightBeam : MonoBehaviour
 
 	private void OnDisable ()
 	{
-		if (Object.op_Implicit ((Object)(object)m_BeamGeom)) {
+		if ((bool)m_BeamGeom) {
 			m_BeamGeom.visible = false;
 		}
 		m_CoPlaytimeUpdate = null;
@@ -404,7 +378,7 @@ public class VolumetricLightBeam : MonoBehaviour
 
 	private IEnumerator CoPlaytimeUpdate ()
 	{
-		while (trackChangesDuringPlaytime && ((Behaviour)this).enabled) {
+		while (trackChangesDuringPlaytime && base.enabled) {
 			UpdateAfterManualPropertyChange ();
 			yield return null;
 		}
@@ -418,18 +392,15 @@ public class VolumetricLightBeam : MonoBehaviour
 
 	private void DestroyBeam ()
 	{
-		if (Object.op_Implicit ((Object)(object)m_BeamGeom)) {
-			Object.DestroyImmediate ((Object)(object)((Component)m_BeamGeom).gameObject);
+		if ((bool)m_BeamGeom) {
+			UnityEngine.Object.DestroyImmediate (m_BeamGeom.gameObject);
 		}
 		m_BeamGeom = null;
 	}
 
 	private void AssignPropertiesFromSpotLight (Light lightSpot)
 	{
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		if (Object.op_Implicit ((Object)(object)lightSpot) && (int)lightSpot.type == 0) {
+		if ((bool)lightSpot && lightSpot.type == LightType.Spot) {
 			if (fadeEndFromLight) {
 				fadeEnd = lightSpot.range;
 			}

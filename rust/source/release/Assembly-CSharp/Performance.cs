@@ -68,11 +68,8 @@ public class Performance : SingletonComponent<Performance>
 	private void Update ()
 	{
 		frameTimes [Time.frameCount % 1000] = (int)(1000f * Time.deltaTime);
-		TimeWarning val = TimeWarning.New ("FPSTimer", 0);
-		try {
+		using (TimeWarning.New ("FPSTimer")) {
 			FPSTimer ();
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 	}
 
@@ -106,7 +103,7 @@ public class Performance : SingletonComponent<Performance>
 			current.memoryCollections = Rust.GC.CollectionCount ();
 			current.loadBalancerTasks = LoadBalancer.Count ();
 			current.invokeHandlerTasks = InvokeHandler.Count ();
-			current.workshopSkinsQueued = WorkshopSkin.QueuedCount;
+			current.workshopSkinsQueued = Rust.Workshop.WorkshopSkin.QueuedCount;
 			current.gcTriggered = memoryCollections != current.memoryCollections;
 			frames = 0;
 			time = 0f;

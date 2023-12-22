@@ -10,7 +10,7 @@ public class Hierarchy : ConsoleSystem
 
 	private static Transform[] GetCurrent ()
 	{
-		if ((Object)(object)currentDir == (Object)null) {
+		if (currentDir == null) {
 			return TransformUtil.GetRootObjects ().ToArray ();
 		}
 		List<Transform> list = new List<Transform> ();
@@ -24,12 +24,12 @@ public class Hierarchy : ConsoleSystem
 	public static void ls (Arg args)
 	{
 		string text = "";
-		string filter = args.GetString (0, "");
-		text = ((!Object.op_Implicit ((Object)(object)currentDir)) ? (text + "Listing .\n\n") : (text + "Listing " + currentDir.transform.GetRecursiveName () + "\n\n"));
+		string filter = args.GetString (0);
+		text = ((!currentDir) ? (text + "Listing .\n\n") : (text + "Listing " + currentDir.transform.GetRecursiveName () + "\n\n"));
 		foreach (Transform item in (from x in GetCurrent ()
-			where string.IsNullOrEmpty (filter) || ((Object)x).name.Contains (filter)
+			where string.IsNullOrEmpty (filter) || x.name.Contains (filter)
 			select x).Take (40)) {
-			text += $"   {((Object)item).name} [{item.childCount}]\n";
+			text += $"   {item.name} [{item.childCount}]\n";
 		}
 		text += "\n";
 		args.ReplyWith (text);
@@ -44,23 +44,23 @@ public class Hierarchy : ConsoleSystem
 			return;
 		}
 		if (args.FullString == "..") {
-			if (Object.op_Implicit ((Object)(object)currentDir)) {
-				currentDir = (Object.op_Implicit ((Object)(object)currentDir.transform.parent) ? ((Component)currentDir.transform.parent).gameObject : null);
+			if ((bool)currentDir) {
+				currentDir = (currentDir.transform.parent ? currentDir.transform.parent.gameObject : null);
 			}
 			currentDir = null;
-			if (Object.op_Implicit ((Object)(object)currentDir)) {
+			if ((bool)currentDir) {
 				args.ReplyWith ("Changed to " + currentDir.transform.GetRecursiveName ());
 			} else {
 				args.ReplyWith ("Changed to .");
 			}
 			return;
 		}
-		Transform val = GetCurrent ().FirstOrDefault ((Transform x) => ((Object)x).name.ToLower () == args.FullString.ToLower ());
-		if ((Object)(object)val == (Object)null) {
-			val = GetCurrent ().FirstOrDefault ((Transform x) => ((Object)x).name.StartsWith (args.FullString, StringComparison.CurrentCultureIgnoreCase));
+		Transform transform = GetCurrent ().FirstOrDefault ((Transform x) => x.name.ToLower () == args.FullString.ToLower ());
+		if (transform == null) {
+			transform = GetCurrent ().FirstOrDefault ((Transform x) => x.name.StartsWith (args.FullString, StringComparison.CurrentCultureIgnoreCase));
 		}
-		if (Object.op_Implicit ((Object)(object)val)) {
-			currentDir = ((Component)val).gameObject;
+		if ((bool)transform) {
+			currentDir = transform.gameObject;
 			args.ReplyWith ("Changed to " + currentDir.transform.GetRecursiveName ());
 		} else {
 			args.ReplyWith ("Couldn't find \"" + args.FullString + "\"");
@@ -70,15 +70,15 @@ public class Hierarchy : ConsoleSystem
 	[ServerVar]
 	public static void del (Arg args)
 	{
-		if (!args.HasArgs (1)) {
+		if (!args.HasArgs ()) {
 			return;
 		}
 		IEnumerable<Transform> enumerable = from x in GetCurrent ()
-			where ((Object)x).name.ToLower () == args.FullString.ToLower ()
+			where x.name.ToLower () == args.FullString.ToLower ()
 			select x;
 		if (enumerable.Count () == 0) {
 			enumerable = from x in GetCurrent ()
-				where ((Object)x).name.StartsWith (args.FullString, StringComparison.CurrentCultureIgnoreCase)
+				where x.name.StartsWith (args.FullString, StringComparison.CurrentCultureIgnoreCase)
 				select x;
 		}
 		if (enumerable.Count () == 0) {
@@ -86,13 +86,13 @@ public class Hierarchy : ConsoleSystem
 			return;
 		}
 		foreach (Transform item in enumerable) {
-			BaseEntity baseEntity = ((Component)item).gameObject.ToBaseEntity ();
+			BaseEntity baseEntity = item.gameObject.ToBaseEntity ();
 			if (baseEntity.IsValid ()) {
 				if (baseEntity.isServer) {
 					baseEntity.Kill ();
 				}
 			} else {
-				GameManager.Destroy (((Component)item).gameObject);
+				GameManager.Destroy (item.gameObject);
 			}
 		}
 		args.ReplyWith ("Deleted " + enumerable.Count () + " objects");

@@ -7,12 +7,12 @@ public class MaterialOverlay : MonoBehaviour
 
 	private void OnRenderImage (RenderTexture source, RenderTexture destination)
 	{
-		if (!Object.op_Implicit ((Object)(object)material)) {
-			Graphics.Blit ((Texture)(object)source, destination);
+		if (!material) {
+			Graphics.Blit (source, destination);
 			return;
 		}
 		for (int i = 0; i < material.passCount; i++) {
-			Graphics.Blit ((Texture)(object)source, destination, material, i);
+			Graphics.Blit (source, destination, material, i);
 		}
 	}
 }

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEngine;
 
 public static class RecipeDictionary
 {
@@ -37,7 +36,7 @@ public static class RecipeDictionary
 			return null;
 		}
 		foreach (Recipe item2 in recipesByFirstIngredient) {
-			if ((Object)(object)item2 == (Object)null || item2.Ingredients.Length != orderedIngredients.Count) {
+			if (item2 == null || item2.Ingredients.Length != orderedIngredients.Count) {
 				continue;
 			}
 			bool flag = true;
@@ -47,7 +46,7 @@ public static class RecipeDictionary
 			for (int i = 0; i < ingredients.Length; i++) {
 				Recipe.RecipeIngredient recipeIngredient = ingredients [i];
 				Item item = orderedIngredients [num2];
-				if ((Object)(object)recipeIngredient.Ingredient != (Object)(object)item.info || item.amount < recipeIngredient.Count) {
+				if (recipeIngredient.Ingredient != item.info || item.amount < recipeIngredient.Count) {
 					flag = false;
 					break;
 				}
@@ -100,7 +99,7 @@ public static class RecipeDictionary
 		}
 		Recipe[] recipes = recipeList.Recipes;
 		foreach (Recipe recipe in recipes) {
-			if (!((Object)(object)recipe == (Object)null) && recipe.ContainsItem (ingredient)) {
+			if (!(recipe == null) && recipe.ContainsItem (ingredient)) {
 				return true;
 			}
 		}

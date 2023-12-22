@@ -79,46 +79,46 @@ public class VehicleEditingPanel : LootPanel
 	private Text destroyChassisCountdown;
 
 	[SerializeField]
-	private Phrase phraseEditingInfo;
+	private Translate.Phrase phraseEditingInfo;
 
 	[SerializeField]
-	private Phrase phraseNoOccupant;
+	private Translate.Phrase phraseNoOccupant;
 
 	[SerializeField]
-	private Phrase phraseBadOccupant;
+	private Translate.Phrase phraseBadOccupant;
 
 	[SerializeField]
-	private Phrase phrasePlayerObstructing;
+	private Translate.Phrase phrasePlayerObstructing;
 
 	[SerializeField]
-	private Phrase phraseNotDriveable;
+	private Translate.Phrase phraseNotDriveable;
 
 	[SerializeField]
-	private Phrase phraseNotRepairable;
+	private Translate.Phrase phraseNotRepairable;
 
 	[SerializeField]
-	private Phrase phraseRepairNotNeeded;
+	private Translate.Phrase phraseRepairNotNeeded;
 
 	[SerializeField]
-	private Phrase phraseRepairSelectInfo;
+	private Translate.Phrase phraseRepairSelectInfo;
 
 	[SerializeField]
-	private Phrase phraseRepairEnactInfo;
+	private Translate.Phrase phraseRepairEnactInfo;
 
 	[SerializeField]
-	private Phrase phraseHasLock;
+	private Translate.Phrase phraseHasLock;
 
 	[SerializeField]
-	private Phrase phraseHasNoLock;
+	private Translate.Phrase phraseHasNoLock;
 
 	[SerializeField]
-	private Phrase phraseAddLock;
+	private Translate.Phrase phraseAddLock;
 
 	[SerializeField]
-	private Phrase phraseAddLockButton;
+	private Translate.Phrase phraseAddLockButton;
 
 	[SerializeField]
-	private Phrase phraseChangeLockCodeButton;
+	private Translate.Phrase phraseChangeLockCodeButton;
 
 	[SerializeField]
 	private Text carLockInfoText;
@@ -136,7 +136,7 @@ public class VehicleEditingPanel : LootPanel
 	private GameObjectRef keyEnterDialog;
 
 	[SerializeField]
-	private Phrase phraseEmptyStorage;
+	private Translate.Phrase phraseEmptyStorage;
 
 	[Header ("Create Chassis")]
 	[SerializeField]

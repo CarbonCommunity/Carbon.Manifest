@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class LockedByEntCrate : LootContainer
@@ -7,11 +6,11 @@ public class LockedByEntCrate : LootContainer
 
 	public void SetLockingEnt (GameObject ent)
 	{
-		((FacepunchBehaviour)this).CancelInvoke ((Action)Think);
+		CancelInvoke (Think);
 		SetLocked (isLocked: false);
 		lockingEnt = ent;
-		if ((Object)(object)lockingEnt != (Object)null) {
-			((FacepunchBehaviour)this).InvokeRepeating ((Action)Think, Random.Range (0f, 1f), 1f);
+		if (lockingEnt != null) {
+			InvokeRepeating (Think, Random.Range (0f, 1f), 1f);
 			SetLocked (isLocked: true);
 		}
 	}
@@ -24,7 +23,7 @@ public class LockedByEntCrate : LootContainer
 
 	public void Think ()
 	{
-		if ((Object)(object)lockingEnt == (Object)null && IsLocked ()) {
+		if (lockingEnt == null && IsLocked ()) {
 			SetLockingEnt (null);
 		}
 	}

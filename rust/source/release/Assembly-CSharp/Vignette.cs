@@ -60,7 +60,7 @@ public sealed class Vignette : PostProcessEffectSettings
 		if (enabled.value) {
 			if (mode.value != 0 || !(intensity.value > 0f)) {
 				if (mode.value == VignetteMode.Masked && opacity.value > 0f) {
-					return (Object)(object)mask.value != (Object)null;
+					return mask.value != null;
 				}
 				return false;
 			}

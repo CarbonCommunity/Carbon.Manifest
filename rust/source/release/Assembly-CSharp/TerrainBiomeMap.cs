@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class TerrainBiomeMap : TerrainMap<byte>
@@ -9,60 +8,50 @@ public class TerrainBiomeMap : TerrainMap<byte>
 
 	public override void Setup ()
 	{
-		//IL_00a6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ab: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0109: Unknown result type (might be due to invalid IL or missing references)
-		//IL_012b: Unknown result type (might be due to invalid IL or missing references)
 		res = terrain.terrainData.alphamapResolution;
 		this.num = 4;
 		src = (dst = new byte[this.num * res * res]);
-		if (!((Object)(object)BiomeTexture != (Object)null)) {
+		if (!(BiomeTexture != null)) {
 			return;
 		}
-		if (((Texture)BiomeTexture).width == ((Texture)BiomeTexture).height && ((Texture)BiomeTexture).width == res) {
+		if (BiomeTexture.width == BiomeTexture.height && BiomeTexture.width == res) {
 			Color32[] pixels = BiomeTexture.GetPixels32 ();
 			int i = 0;
 			int num = 0;
 			for (; i < res; i++) {
 				int num2 = 0;
 				while (num2 < res) {
-					Color32 val = pixels [num];
+					Color32 color = pixels [num];
 					byte[] array = dst;
 					_ = res;
-					array [(0 + i) * res + num2] = val.r;
-					dst [(res + i) * res + num2] = val.g;
-					dst [(2 * res + i) * res + num2] = val.b;
-					dst [(3 * res + i) * res + num2] = val.a;
+					array [(0 + i) * res + num2] = color.r;
+					dst [(res + i) * res + num2] = color.g;
+					dst [(2 * res + i) * res + num2] = color.b;
+					dst [(3 * res + i) * res + num2] = color.a;
 					num2++;
 					num++;
 				}
 			}
 		} else {
-			Debug.LogError ((object)("Invalid biome texture: " + ((Object)BiomeTexture).name));
+			Debug.LogError ("Invalid biome texture: " + BiomeTexture.name);
 		}
 	}
 
 	public void GenerateTextures ()
 	{
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Expected O, but got Unknown
-		BiomeTexture = new Texture2D (res, res, (TextureFormat)4, true, true);
-		((Object)BiomeTexture).name = "BiomeTexture";
-		((Texture)BiomeTexture).wrapMode = (TextureWrapMode)1;
-		Color32[] col = (Color32[])(object)new Color32[res * res];
-		Parallel.For (0, res, (Action<int>)delegate(int z) {
-			//IL_00c8: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00cd: Unknown result type (might be due to invalid IL or missing references)
+		BiomeTexture = new Texture2D (res, res, TextureFormat.RGBA32, mipChain: true, linear: true);
+		BiomeTexture.name = "BiomeTexture";
+		BiomeTexture.wrapMode = TextureWrapMode.Clamp;
+		Color32[] col = new Color32[res * res];
+		Parallel.For (0, res, delegate(int z) {
 			for (int i = 0; i < res; i++) {
 				byte[] array = src;
 				_ = res;
-				byte b = array [(0 + z) * res + i];
-				byte b2 = src [(res + z) * res + i];
-				byte b3 = src [(2 * res + z) * res + i];
-				byte b4 = src [(3 * res + z) * res + i];
-				col [z * res + i] = new Color32 (b, b2, b3, b4);
+				byte r = array [(0 + z) * res + i];
+				byte g = src [(res + z) * res + i];
+				byte b = src [(2 * res + z) * res + i];
+				byte a = src [(3 * res + z) * res + i];
+				col [z * res + i] = new Color32 (r, g, b, a);
 			}
 		});
 		BiomeTexture.SetPixels32 (col);
@@ -70,15 +59,13 @@ public class TerrainBiomeMap : TerrainMap<byte>
 
 	public void ApplyTextures ()
 	{
-		BiomeTexture.Apply (true, false);
-		BiomeTexture.Compress (false);
-		BiomeTexture.Apply (false, true);
+		BiomeTexture.Apply (updateMipmaps: true, makeNoLongerReadable: false);
+		BiomeTexture.Compress (highQuality: false);
+		BiomeTexture.Apply (updateMipmaps: false, makeNoLongerReadable: true);
 	}
 
 	public float GetBiomeMax (Vector3 worldPos, int mask = -1)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
 		float normX = TerrainMeta.NormalizeX (worldPos.x);
 		float normZ = TerrainMeta.NormalizeZ (worldPos.z);
 		return GetBiomeMax (normX, normZ, mask);
@@ -107,8 +94,6 @@ public class TerrainBiomeMap : TerrainMap<byte>
 
 	public int GetBiomeMaxIndex (Vector3 worldPos, int mask = -1)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
 		float normX = TerrainMeta.NormalizeX (worldPos.x);
 		float normZ = TerrainMeta.NormalizeZ (worldPos.z);
 		return GetBiomeMaxIndex (normX, normZ, mask);
@@ -139,7 +124,6 @@ public class TerrainBiomeMap : TerrainMap<byte>
 
 	public int GetBiomeMaxType (Vector3 worldPos, int mask = -1)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
 		return TerrainBiome.IndexToType (GetBiomeMaxIndex (worldPos, mask));
 	}
 
@@ -155,8 +139,6 @@ public class TerrainBiomeMap : TerrainMap<byte>
 
 	public float GetBiome (Vector3 worldPos, int mask)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
 		float normX = TerrainMeta.NormalizeX (worldPos.x);
 		float normZ = TerrainMeta.NormalizeZ (worldPos.z);
 		return GetBiome (normX, normZ, mask);
@@ -172,7 +154,7 @@ public class TerrainBiomeMap : TerrainMap<byte>
 	public float GetBiome (int x, int z, int mask)
 	{
 		if (Mathf.IsPowerOfTwo (mask)) {
-			return BitUtility.Byte2Float ((int)src [(TerrainBiome.TypeToIndex (mask) * res + z) * res + x]);
+			return BitUtility.Byte2Float (src [(TerrainBiome.TypeToIndex (mask) * res + z) * res + x]);
 		}
 		int num = 0;
 		for (int i = 0; i < this.num; i++) {
@@ -185,8 +167,6 @@ public class TerrainBiomeMap : TerrainMap<byte>
 
 	public void SetBiome (Vector3 worldPos, int id)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
 		float normX = TerrainMeta.NormalizeX (worldPos.x);
 		float normZ = TerrainMeta.NormalizeZ (worldPos.z);
 		SetBiome (normX, normZ, id);
@@ -213,8 +193,6 @@ public class TerrainBiomeMap : TerrainMap<byte>
 
 	public void SetBiome (Vector3 worldPos, int id, float v)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
 		float normX = TerrainMeta.NormalizeX (worldPos.x);
 		float normZ = TerrainMeta.NormalizeZ (worldPos.z);
 		SetBiome (normX, normZ, id, v);
@@ -234,18 +212,6 @@ public class TerrainBiomeMap : TerrainMap<byte>
 
 	public void SetBiomeRaw (int x, int z, Vector4 v, float opacity)
 	{
-		//IL_000a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0125: Unknown result type (might be due to invalid IL or missing references)
-		//IL_016a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01fc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0071: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0094: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00de: Unknown result type (might be due to invalid IL or missing references)
 		if (opacity == 0f) {
 			return;
 		}
@@ -265,10 +231,10 @@ public class TerrainBiomeMap : TerrainMap<byte>
 				int num3 = (0 + z) * res + x;
 				byte[] array3 = src;
 				_ = res;
-				array2 [num3] = BitUtility.Float2Byte (BitUtility.Byte2Float ((int)array3 [(0 + z) * res + x]) * num2 + v.x * opacity);
-				dst [(res + z) * res + x] = BitUtility.Float2Byte (BitUtility.Byte2Float ((int)src [(res + z) * res + x]) * num2 + v.y * opacity);
-				dst [(2 * res + z) * res + x] = BitUtility.Float2Byte (BitUtility.Byte2Float ((int)src [(2 * res + z) * res + x]) * num2 + v.z * opacity);
-				dst [(3 * res + z) * res + x] = BitUtility.Float2Byte (BitUtility.Byte2Float ((int)src [(3 * res + z) * res + x]) * num2 + v.w * opacity);
+				array2 [num3] = BitUtility.Float2Byte (BitUtility.Byte2Float (array3 [(0 + z) * res + x]) * num2 + v.x * opacity);
+				dst [(res + z) * res + x] = BitUtility.Float2Byte (BitUtility.Byte2Float (src [(res + z) * res + x]) * num2 + v.y * opacity);
+				dst [(2 * res + z) * res + x] = BitUtility.Float2Byte (BitUtility.Byte2Float (src [(2 * res + z) * res + x]) * num2 + v.z * opacity);
+				dst [(3 * res + z) * res + x] = BitUtility.Float2Byte (BitUtility.Byte2Float (src [(3 * res + z) * res + x]) * num2 + v.w * opacity);
 			}
 		}
 	}
@@ -284,7 +250,7 @@ public class TerrainBiomeMap : TerrainMap<byte>
 			if (i == num) {
 				dst [(i * res + z) * res + x] = BitUtility.Float2Byte (new_val);
 			} else {
-				dst [(i * res + z) * res + x] = BitUtility.Float2Byte (num2 * BitUtility.Byte2Float ((int)dst [(i * res + z) * res + x]));
+				dst [(i * res + z) * res + x] = BitUtility.Float2Byte (num2 * BitUtility.Byte2Float (dst [(i * res + z) * res + x]));
 			}
 		}
 	}

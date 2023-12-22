@@ -13,50 +13,41 @@ public class TriggerForce : TriggerBase, IServerComponent
 	internal override GameObject InterestedInObject (GameObject obj)
 	{
 		obj = base.InterestedInObject (obj);
-		if ((Object)(object)obj == (Object)null) {
+		if (obj == null) {
 			return null;
 		}
 		BaseEntity baseEntity = obj.ToBaseEntity ();
-		if ((Object)(object)baseEntity == (Object)null) {
+		if (baseEntity == null) {
 			return null;
 		}
 		if (baseEntity.isClient) {
 			return null;
 		}
-		return ((Component)baseEntity).gameObject;
+		return baseEntity.gameObject;
 	}
 
 	internal override void OnEntityEnter (BaseEntity ent)
 	{
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
 		base.OnEntityEnter (ent);
-		Vector3 val = ((Component)this).transform.TransformDirection (velocity);
-		ent.ApplyInheritedVelocity (val);
+		Vector3 vector = base.transform.TransformDirection (velocity);
+		ent.ApplyInheritedVelocity (vector);
 	}
 
 	internal override void OnEntityLeave (BaseEntity ent)
 	{
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
 		base.OnEntityLeave (ent);
 		ent.ApplyInheritedVelocity (Vector3.zero);
 	}
 
 	protected void FixedUpdate ()
 	{
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
 		if (entityContents == null) {
 			return;
 		}
-		Vector3 val = ((Component)this).transform.TransformDirection (velocity);
+		Vector3 vector = base.transform.TransformDirection (velocity);
 		foreach (BaseEntity entityContent in entityContents) {
-			if ((Object)(object)entityContent != (Object)null) {
-				entityContent.ApplyInheritedVelocity (val);
+			if (entityContent != null) {
+				entityContent.ApplyInheritedVelocity (vector);
 			}
 		}
 	}

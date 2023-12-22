@@ -9,8 +9,8 @@ public class UISleepingScreen : SingletonComponent<UISleepingScreen>, IUIScreen
 
 	protected override void Awake ()
 	{
-		((SingletonComponent)this).Awake ();
-		canvasGroup = ((Component)this).GetComponent<CanvasGroup> ();
+		base.Awake ();
+		canvasGroup = GetComponent<CanvasGroup> ();
 		visible = true;
 	}
 
@@ -19,7 +19,7 @@ public class UISleepingScreen : SingletonComponent<UISleepingScreen>, IUIScreen
 		if (visible != b) {
 			visible = b;
 			canvasGroup.alpha = (visible ? 1f : 0f);
-			((Component)SingletonComponent<UISleepingScreen>.Instance).gameObject.SetChildComponentsEnabled<TMP_Text> (visible);
+			SingletonComponent<UISleepingScreen>.Instance.gameObject.SetChildComponentsEnabled<TMP_Text> (visible);
 		}
 	}
 }

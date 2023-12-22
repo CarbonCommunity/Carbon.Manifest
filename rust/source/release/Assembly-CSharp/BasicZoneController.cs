@@ -17,27 +17,19 @@ public class BasicZoneController : ZoneController
 			return ZoneClient.Zone.Key;
 		}
 		string key = ZoneClient.Zone.Key;
-		List<NexusZoneDetails> list = Pool.GetList<NexusZoneDetails> ();
-		GetStarterZones (list);
-		if (list.Count > 0) {
-			int index = Random.Range (0, list.Count);
-			key = list [index].Key;
+		List<NexusZoneDetails> obj = Pool.GetList<NexusZoneDetails> ();
+		GetStarterZones (obj);
+		if (obj.Count > 0) {
+			int index = Random.Range (0, obj.Count);
+			key = obj [index].Key;
 		}
-		Pool.FreeList<NexusZoneDetails> (ref list);
+		Pool.FreeList (ref obj);
 		return key;
 	}
 
 	private void GetStarterZones (List<NexusZoneDetails> zones)
 	{
-		NexusZoneClient zoneClient = ZoneClient;
-		object obj;
-		if (zoneClient == null) {
-			obj = null;
-		} else {
-			NexusDetails nexus = zoneClient.Nexus;
-			obj = ((nexus != null) ? nexus.Zones : null);
-		}
-		if (obj == null) {
+		if (ZoneClient?.Nexus?.Zones == null) {
 			return;
 		}
 		foreach (NexusZoneDetails zone in ZoneClient.Nexus.Zones) {

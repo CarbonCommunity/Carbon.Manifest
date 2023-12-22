@@ -1,4 +1,3 @@
-using System;
 using Facepunch;
 using ProtoBuf;
 using UnityEngine;
@@ -31,7 +30,7 @@ public class LockOnLauncher : BaseLauncher
 
 	private float lastSentLockTime;
 
-	private bool HasProjectile => (Object)(object)projectile != (Object)null;
+	private bool HasProjectile => projectile != null;
 
 	public override void OnHeldChanged ()
 	{
@@ -39,18 +38,18 @@ public class LockOnLauncher : BaseLauncher
 		currentLockTarget = null;
 		currentLockTime = 0f;
 		if (IsDisabled ()) {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)UpdateLockedEntity);
+			CancelInvoke (UpdateLockedEntity);
 			SetFlag (Flags.Reserved9, b: false);
 			SetFlag (Flags.Reserved10, b: false);
 			LetExistingProjectileGo ();
 		} else {
-			((FacepunchBehaviour)this).InvokeRepeating ((Action)UpdateLockedEntity, 0f, lockTickRate);
+			InvokeRepeating (UpdateLockedEntity, 0f, lockTickRate);
 		}
 	}
 
 	public virtual bool CanLock ()
 	{
-		if (!Object.op_Implicit ((Object)(object)GetOwnerPlayer ())) {
+		if (!GetOwnerPlayer ()) {
 			return false;
 		}
 		if (!HasProjectile) {
@@ -64,15 +63,13 @@ public class LockOnLauncher : BaseLauncher
 
 	public void UpdateLockedEntity ()
 	{
-		//IL_0081: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008c: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer ownerPlayer = GetOwnerPlayer ();
-		if ((Object)(object)ownerPlayer != (Object)null && (ownerPlayer.IsSleeping () || ownerPlayer.IsDead ())) {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)UpdateLockedEntity);
+		if (ownerPlayer != null && (ownerPlayer.IsSleeping () || ownerPlayer.IsDead ())) {
+			CancelInvoke (UpdateLockedEntity);
 			SetFlag (Flags.Reserved9, b: false);
 			SetFlag (Flags.Reserved10, b: false);
 		} else {
-			if ((Object)(object)ownerPlayer == (Object)null || ownerPlayer.IsSleeping () || ownerPlayer.IsDead () || ownerPlayer.IsWounded ()) {
+			if (ownerPlayer == null || ownerPlayer.IsSleeping () || ownerPlayer.IsDead () || ownerPlayer.IsWounded ()) {
 				return;
 			}
 			SeekerTarget seekerTarget = null;
@@ -122,7 +119,7 @@ public class LockOnLauncher : BaseLauncher
 	public override void ProjectileLaunched_Server (ServerProjectile justLaunched)
 	{
 		base.ProjectileLaunched_Server (justLaunched);
-		SeekingServerProjectile component = ((Component)justLaunched).GetComponent<SeekingServerProjectile> ();
+		SeekingServerProjectile component = justLaunched.GetComponent<SeekingServerProjectile> ();
 		component.lockedTarget = currentLockTarget;
 		LetExistingProjectileGo ();
 		projectile = component;
@@ -132,7 +129,7 @@ public class LockOnLauncher : BaseLauncher
 	{
 		base.Save (info);
 		if (!info.forDisk) {
-			info.msg.ioEntity = Pool.Get<IOEntity> ();
+			info.msg.ioEntity = Pool.Get<ProtoBuf.IOEntity> ();
 			info.msg.ioEntity.genericFloat1 = currentLockTime;
 			lastSentLockTime = currentLockTime;
 		}

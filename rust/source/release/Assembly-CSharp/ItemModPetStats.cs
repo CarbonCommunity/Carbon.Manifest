@@ -16,9 +16,9 @@ public class ItemModPetStats : ItemMod
 
 	public void Apply (BasePet pet)
 	{
-		if (!((Object)(object)pet == (Object)null)) {
+		if (!(pet == null)) {
 			pet.SetMaxHealth (pet.MaxHealth () + MaxHealthModifier);
-			if ((Object)(object)pet.Brain != (Object)null && (Object)(object)pet.Brain.Navigator != (Object)null) {
+			if (pet.Brain != null && pet.Brain.Navigator != null) {
 				pet.Brain.Navigator.Speed += SpeedModifier;
 			}
 			pet.BaseAttackRate += AttackRateModifier;

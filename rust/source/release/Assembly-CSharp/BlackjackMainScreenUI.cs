@@ -59,5 +59,5 @@ public class BlackjackMainScreenUI : FacepunchBehaviour
 	private BlackjackScreenCardUI[] cards;
 
 	[SerializeField]
-	private Phrase phraseBust;
+	private Translate.Phrase phraseBust;
 }

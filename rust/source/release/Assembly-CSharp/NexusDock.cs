@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Facepunch.Extend;
 using UnityEngine;
 
@@ -28,7 +27,7 @@ public class NexusDock : SingletonComponent<NexusDock>
 
 	public float TraceHeight = 100f;
 
-	public LayerMask TraceLayerMask = LayerMask.op_Implicit (429990145);
+	public LayerMask TraceLayerMask = 429990145;
 
 	[NonSerialized]
 	public NexusFerry[] QueuedFerries;
@@ -38,17 +37,17 @@ public class NexusDock : SingletonComponent<NexusDock>
 
 	public Transform GetEntryPoint (NexusFerry ferry, out bool entered)
 	{
-		if ((Object)(object)ferry == (Object)null) {
+		if (ferry == null) {
 			throw new ArgumentNullException ("ferry");
 		}
 		CleanupQueuedFerries ();
-		if ((Object)(object)ferry == (Object)(object)CurrentFerry) {
+		if (ferry == CurrentFerry) {
 			entered = true;
 			return Arrival;
 		}
-		int num = List.FindIndex<NexusFerry> ((IReadOnlyList<NexusFerry>)QueuedFerries, ferry, (IEqualityComparer<NexusFerry>)null);
+		int num = QueuedFerries.FindIndex (ferry);
 		if (num < 0) {
-			if ((Object)(object)QueuedFerries [0] == (Object)null) {
+			if (QueuedFerries [0] == null) {
 				QueuedFerries [0] = ferry;
 				entered = false;
 				return QueuePoints [0];
@@ -58,7 +57,7 @@ public class NexusDock : SingletonComponent<NexusDock>
 		}
 		int num2 = QueuedFerries.Length - 1;
 		if (num == num2) {
-			if ((Object)(object)CurrentFerry == (Object)null) {
+			if (CurrentFerry == null) {
 				QueuedFerries [num] = null;
 				CurrentFerry = ferry;
 				entered = true;
@@ -68,7 +67,7 @@ public class NexusDock : SingletonComponent<NexusDock>
 			return QueuePoints [num];
 		}
 		if (num < num2) {
-			if ((Object)(object)QueuedFerries [num + 1] == (Object)null) {
+			if (QueuedFerries [num + 1] == null) {
 				QueuedFerries [num] = null;
 				QueuedFerries [num + 1] = ferry;
 				entered = false;
@@ -83,7 +82,7 @@ public class NexusDock : SingletonComponent<NexusDock>
 
 	public bool Depart (NexusFerry ferry)
 	{
-		if ((Object)(object)ferry != (Object)(object)CurrentFerry) {
+		if (ferry != CurrentFerry) {
 			return false;
 		}
 		CurrentFerry = null;
@@ -92,50 +91,21 @@ public class NexusDock : SingletonComponent<NexusDock>
 
 	public bool TryFindEjectionPosition (out Vector3 position, float radius = 5f)
 	{
-		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0082: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0084: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0089: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0095: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ab: Unknown result type (might be due to invalid IL or missing references)
-		//IL_012a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_012f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00db: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ec: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0100: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0111: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0116: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)EjectionZone == (Object)null) {
-			Debug.LogError ((object)"EjectionZone is null, cannot find an eject position", (Object)(object)this);
+		if (EjectionZone == null) {
+			Debug.LogError ("EjectionZone is null, cannot find an eject position", this);
 			position = Vector3.zero;
 			return false;
 		}
-		Transform transform = ((Component)EjectionZone).transform;
+		Transform transform = EjectionZone.transform;
 		Vector3 size = EjectionZone.size;
 		float num = transform.position.y - size.y / 2f;
-		RaycastHit val3 = default(RaycastHit);
 		for (int i = 0; i < 10; i++) {
-			Vector3 val = Vector3Ex.Scale (size, Random.value - 0.5f, 0f, Random.value - 0.5f);
-			Vector3 val2 = transform.TransformPoint (val);
-			if (Physics.SphereCast (Vector3Ex.WithY (val2, num + TraceHeight), radius, Vector3.down, ref val3, TraceHeight + radius, LayerMask.op_Implicit (TraceLayerMask), (QueryTriggerInteraction)1) && !(((RaycastHit)(ref val3)).point.y < val2.y - size.y) && !(((RaycastHit)(ref val3)).point.y > val2.y + size.y)) {
-				float height = WaterSystem.GetHeight (val2);
-				if (!(((RaycastHit)(ref val3)).point.y < height)) {
-					position = ((RaycastHit)(ref val3)).point;
+			Vector3 position2 = size.Scale (UnityEngine.Random.value - 0.5f, 0f, UnityEngine.Random.value - 0.5f);
+			Vector3 vector = transform.TransformPoint (position2);
+			if (Physics.SphereCast (vector.WithY (num + TraceHeight), radius, Vector3.down, out var hitInfo, TraceHeight + radius, TraceLayerMask, QueryTriggerInteraction.Ignore) && !(hitInfo.point.y < vector.y - size.y) && !(hitInfo.point.y > vector.y + size.y)) {
+				float height = WaterSystem.GetHeight (vector);
+				if (!(hitInfo.point.y < height)) {
+					position = hitInfo.point;
 					return true;
 				}
 			}
@@ -148,11 +118,11 @@ public class NexusDock : SingletonComponent<NexusDock>
 	{
 		Array.Resize (ref QueuedFerries, QueuePoints.Length);
 		for (int i = 0; i < QueuedFerries.Length; i++) {
-			if (!Object.op_Implicit ((Object)(object)QueuedFerries [i])) {
+			if (!QueuedFerries [i]) {
 				QueuedFerries [i] = null;
 			}
 		}
-		if (!Object.op_Implicit ((Object)(object)CurrentFerry)) {
+		if (!CurrentFerry) {
 			CurrentFerry = null;
 		}
 	}

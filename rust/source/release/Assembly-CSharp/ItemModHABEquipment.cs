@@ -18,9 +18,9 @@ public class ItemModHABEquipment : ItemMod
 
 	public float DelayNextUpgradeOnRemoveDuration = 60f;
 
-	public Phrase MenuOptionTitle;
+	public Translate.Phrase MenuOptionTitle;
 
-	public Phrase MenuOptionDesc;
+	public Translate.Phrase MenuOptionDesc;
 
 	public bool CanEquipToHAB (HotAirBalloon hab)
 	{
@@ -41,11 +41,9 @@ public class ItemModHABEquipment : ItemMod
 
 	public void ApplyToHAB (HotAirBalloon hab)
 	{
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
 		if (hab.isServer && CanEquipToHAB (hab) && Prefab.isValid) {
-			HotAirBalloonEquipment hotAirBalloonEquipment = GameManager.server.CreateEntity (Prefab.resourcePath, ((Component)hab).transform.position, ((Component)hab).transform.rotation) as HotAirBalloonEquipment;
-			if (Object.op_Implicit ((Object)(object)hotAirBalloonEquipment)) {
+			HotAirBalloonEquipment hotAirBalloonEquipment = GameManager.server.CreateEntity (Prefab.resourcePath, hab.transform.position, hab.transform.rotation) as HotAirBalloonEquipment;
+			if ((bool)hotAirBalloonEquipment) {
 				hotAirBalloonEquipment.SetParent (hab, worldPositionStays: true);
 				hotAirBalloonEquipment.Spawn ();
 				hotAirBalloonEquipment.DelayNextUpgradeOnRemoveDuration = DelayNextUpgradeOnRemoveDuration;

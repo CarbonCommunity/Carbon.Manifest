@@ -20,45 +20,37 @@ public class StatusLightRenderer : MonoBehaviour, IClientComponent
 
 	protected void Awake ()
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000b: Expected O, but got Unknown
 		propertyBlock = new MaterialPropertyBlock ();
-		targetRenderer = ((Component)this).GetComponent<Renderer> ();
-		targetLight = ((Component)this).GetComponent<Light> ();
+		targetRenderer = GetComponent<Renderer> ();
+		targetLight = GetComponent<Light> ();
 		colorID = Shader.PropertyToID ("_Color");
 		emissionID = Shader.PropertyToID ("_EmissionColor");
 	}
 
 	public void SetOff ()
 	{
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
-		if (Object.op_Implicit ((Object)(object)targetRenderer)) {
+		if ((bool)targetRenderer) {
 			targetRenderer.sharedMaterial = offMaterial;
-			targetRenderer.SetPropertyBlock ((MaterialPropertyBlock)null);
+			targetRenderer.SetPropertyBlock (null);
 		}
-		if (Object.op_Implicit ((Object)(object)targetLight)) {
+		if ((bool)targetLight) {
 			targetLight.color = Color.clear;
 		}
 	}
 
 	public void SetOn ()
 	{
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		if (Object.op_Implicit ((Object)(object)targetRenderer)) {
+		if ((bool)targetRenderer) {
 			targetRenderer.sharedMaterial = onMaterial;
 			targetRenderer.SetPropertyBlock (propertyBlock);
 		}
-		if (Object.op_Implicit ((Object)(object)targetLight)) {
+		if ((bool)targetLight) {
 			targetLight.color = lightColor;
 		}
 	}
 
 	public void SetRed ()
 	{
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0067: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006c: Unknown result type (might be due to invalid IL or missing references)
 		propertyBlock.Clear ();
 		propertyBlock.SetColor (colorID, GetColor (197, 46, 0, byte.MaxValue));
 		propertyBlock.SetColor (emissionID, GetColor (191, 0, 2, byte.MaxValue, 2.916925f));
@@ -68,10 +60,6 @@ public class StatusLightRenderer : MonoBehaviour, IClientComponent
 
 	public void SetGreen ()
 	{
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0072: Unknown result type (might be due to invalid IL or missing references)
 		propertyBlock.Clear ();
 		propertyBlock.SetColor (colorID, GetColor (19, 191, 13, byte.MaxValue));
 		propertyBlock.SetColor (emissionID, GetColor (19, 191, 13, byte.MaxValue, 2.5f));
@@ -81,16 +69,11 @@ public class StatusLightRenderer : MonoBehaviour, IClientComponent
 
 	private Color GetColor (byte r, byte g, byte b, byte a)
 	{
-		//IL_0005: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000a: Unknown result type (might be due to invalid IL or missing references)
-		return Color32.op_Implicit (new Color32 (r, g, b, a));
+		return new Color32 (r, g, b, a);
 	}
 
 	private Color GetColor (byte r, byte g, byte b, byte a, float intensity)
 	{
-		//IL_0005: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		return Color32.op_Implicit (new Color32 (r, g, b, a)) * intensity;
+		return (Color)new Color32 (r, g, b, a) * intensity;
 	}
 }

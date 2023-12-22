@@ -10,7 +10,7 @@ public class BaseAnimalNPC : BaseNpc, IAIAttack, IAITirednessAbove, IAISleep, IA
 	public override void ServerInit ()
 	{
 		base.ServerInit ();
-		brain = ((Component)this).GetComponent<AnimalBrain> ();
+		brain = GetComponent<AnimalBrain> ();
 		if (!base.isClient) {
 			AIThinkManager.AddAnimal (this);
 		}
@@ -35,7 +35,7 @@ public class BaseAnimalNPC : BaseNpc, IAIAttack, IAITirednessAbove, IAISleep, IA
 	{
 		if (hitInfo != null) {
 			BasePlayer initiatorPlayer = hitInfo.InitiatorPlayer;
-			if ((Object)(object)initiatorPlayer != (Object)null) {
+			if (initiatorPlayer != null) {
 				initiatorPlayer.GiveAchievement ("KILL_ANIMAL");
 				if (!string.IsNullOrEmpty (deathStatName)) {
 					initiatorPlayer.stats.Add (deathStatName, 1, (Stats)5);
@@ -50,7 +50,7 @@ public class BaseAnimalNPC : BaseNpc, IAIAttack, IAITirednessAbove, IAISleep, IA
 	public override void OnAttacked (HitInfo info)
 	{
 		base.OnAttacked (info);
-		if (base.isServer && Object.op_Implicit ((Object)(object)info.InitiatorPlayer) && !info.damageTypes.IsMeleeType ()) {
+		if (base.isServer && (bool)info.InitiatorPlayer && !info.damageTypes.IsMeleeType ()) {
 			info.InitiatorPlayer.LifeStoryShotHit (info.Weapon);
 		}
 	}
@@ -63,7 +63,7 @@ public class BaseAnimalNPC : BaseNpc, IAIAttack, IAITirednessAbove, IAISleep, IA
 
 	public bool CanAttack (BaseEntity entity)
 	{
-		if ((Object)(object)entity == (Object)null) {
+		if (entity == null) {
 			return false;
 		}
 		if (NeedsToReload ()) {
@@ -79,8 +79,8 @@ public class BaseAnimalNPC : BaseNpc, IAIAttack, IAITirednessAbove, IAISleep, IA
 			return false;
 		}
 		BasePlayer basePlayer = entity as BasePlayer;
-		BaseVehicle baseVehicle = (((Object)(object)basePlayer != (Object)null) ? basePlayer.GetMountedVehicle () : null);
-		if ((Object)(object)baseVehicle != (Object)null && baseVehicle is BaseModularVehicle) {
+		BaseVehicle baseVehicle = ((basePlayer != null) ? basePlayer.GetMountedVehicle () : null);
+		if (baseVehicle != null && baseVehicle is BaseModularVehicle) {
 			return false;
 		}
 		return true;
@@ -98,17 +98,13 @@ public class BaseAnimalNPC : BaseNpc, IAIAttack, IAITirednessAbove, IAISleep, IA
 
 	public bool IsTargetInRange (BaseEntity entity, out float dist)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		dist = Vector3.Distance (((Component)entity).transform.position, base.AttackPosition);
+		dist = Vector3.Distance (entity.transform.position, base.AttackPosition);
 		return dist <= EngagementRange ();
 	}
 
 	public bool CanSeeTarget (BaseEntity entity)
 	{
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)entity == (Object)null) {
+		if (entity == null) {
 			return false;
 		}
 		return entity.IsVisible (GetEntity ().CenterPoint (), entity.CenterPoint ());
@@ -122,7 +118,7 @@ public class BaseAnimalNPC : BaseNpc, IAIAttack, IAITirednessAbove, IAISleep, IA
 	public bool StartAttacking (BaseEntity target)
 	{
 		BaseCombatEntity baseCombatEntity = target as BaseCombatEntity;
-		if ((Object)(object)baseCombatEntity == (Object)null) {
+		if (baseCombatEntity == null) {
 			return false;
 		}
 		Attack (baseCombatEntity);
@@ -166,14 +162,14 @@ public class BaseAnimalNPC : BaseNpc, IAIAttack, IAITirednessAbove, IAISleep, IA
 	public bool IsThreat (BaseEntity entity)
 	{
 		BaseNpc baseNpc = entity as BaseNpc;
-		if ((Object)(object)baseNpc != (Object)null) {
+		if (baseNpc != null) {
 			if (baseNpc.Stats.Family == Stats.Family) {
 				return false;
 			}
 			return IsAfraidOf (baseNpc.Stats.Family);
 		}
 		BasePlayer basePlayer = entity as BasePlayer;
-		if ((Object)(object)basePlayer != (Object)null) {
+		if (basePlayer != null) {
 			return IsAfraidOf (basePlayer.Family);
 		}
 		return false;
@@ -182,7 +178,7 @@ public class BaseAnimalNPC : BaseNpc, IAIAttack, IAITirednessAbove, IAISleep, IA
 	public bool IsTarget (BaseEntity entity)
 	{
 		BaseNpc baseNpc = entity as BaseNpc;
-		if ((Object)(object)baseNpc != (Object)null && baseNpc.Stats.Family == Stats.Family) {
+		if (baseNpc != null && baseNpc.Stats.Family == Stats.Family) {
 			return false;
 		}
 		return !IsThreat (entity);
@@ -190,7 +186,7 @@ public class BaseAnimalNPC : BaseNpc, IAIAttack, IAITirednessAbove, IAISleep, IA
 
 	public bool IsFriendly (BaseEntity entity)
 	{
-		if ((Object)(object)entity == (Object)null) {
+		if (entity == null) {
 			return false;
 		}
 		return entity.prefabID == prefabID;

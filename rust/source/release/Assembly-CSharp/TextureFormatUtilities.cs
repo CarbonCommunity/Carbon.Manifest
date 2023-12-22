@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,160 +14,158 @@ public static class TextureFormatUtilities
 
 	static TextureFormatUtilities ()
 	{
-		//IL_019c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0211: Unknown result type (might be due to invalid IL or missing references)
 		s_FormatAliasMap = new Dictionary<int, RenderTextureFormat> {
 			{
 				1,
-				(RenderTextureFormat)0
+				RenderTextureFormat.ARGB32
 			},
 			{
 				2,
-				(RenderTextureFormat)5
+				RenderTextureFormat.ARGB4444
 			},
 			{
 				3,
-				(RenderTextureFormat)0
+				RenderTextureFormat.ARGB32
 			},
 			{
 				4,
-				(RenderTextureFormat)0
+				RenderTextureFormat.ARGB32
 			},
 			{
 				5,
-				(RenderTextureFormat)0
+				RenderTextureFormat.ARGB32
 			},
 			{
 				7,
-				(RenderTextureFormat)4
+				RenderTextureFormat.RGB565
 			},
 			{
 				9,
-				(RenderTextureFormat)15
+				RenderTextureFormat.RHalf
 			},
 			{
 				10,
-				(RenderTextureFormat)0
+				RenderTextureFormat.ARGB32
 			},
 			{
 				12,
-				(RenderTextureFormat)0
+				RenderTextureFormat.ARGB32
 			},
 			{
 				13,
-				(RenderTextureFormat)5
+				RenderTextureFormat.ARGB4444
 			},
 			{
 				14,
-				(RenderTextureFormat)0
+				RenderTextureFormat.ARGB32
 			},
 			{
 				15,
-				(RenderTextureFormat)15
+				RenderTextureFormat.RHalf
 			},
 			{
 				16,
-				(RenderTextureFormat)13
+				RenderTextureFormat.RGHalf
 			},
 			{
 				17,
-				(RenderTextureFormat)2
+				RenderTextureFormat.ARGBHalf
 			},
 			{
 				18,
-				(RenderTextureFormat)14
+				RenderTextureFormat.RFloat
 			},
 			{
 				19,
-				(RenderTextureFormat)12
+				RenderTextureFormat.RGFloat
 			},
 			{
 				20,
-				(RenderTextureFormat)11
+				RenderTextureFormat.ARGBFloat
 			},
 			{
 				22,
-				(RenderTextureFormat)2
+				RenderTextureFormat.ARGBHalf
 			},
 			{
 				26,
-				(RenderTextureFormat)16
+				RenderTextureFormat.R8
 			},
 			{
 				27,
-				(RenderTextureFormat)13
+				RenderTextureFormat.RGHalf
 			},
 			{
 				24,
-				(RenderTextureFormat)2
+				RenderTextureFormat.ARGBHalf
 			},
 			{
 				25,
-				(RenderTextureFormat)0
+				RenderTextureFormat.ARGB32
 			},
 			{
 				28,
-				(RenderTextureFormat)0
+				RenderTextureFormat.ARGB32
 			},
 			{
 				29,
-				(RenderTextureFormat)0
+				RenderTextureFormat.ARGB32
 			},
 			{
 				30,
-				(RenderTextureFormat)0
+				RenderTextureFormat.ARGB32
 			},
 			{
 				31,
-				(RenderTextureFormat)0
+				RenderTextureFormat.ARGB32
 			},
 			{
 				32,
-				(RenderTextureFormat)0
+				RenderTextureFormat.ARGB32
 			},
 			{
 				33,
-				(RenderTextureFormat)0
+				RenderTextureFormat.ARGB32
 			},
 			{
 				34,
-				(RenderTextureFormat)0
+				RenderTextureFormat.ARGB32
 			},
 			{
 				45,
-				(RenderTextureFormat)0
+				RenderTextureFormat.ARGB32
 			},
 			{
 				46,
-				(RenderTextureFormat)0
+				RenderTextureFormat.ARGB32
 			},
 			{
 				47,
-				(RenderTextureFormat)0
+				RenderTextureFormat.ARGB32
 			},
 			{
 				48,
-				(RenderTextureFormat)0
+				RenderTextureFormat.ARGB32
 			},
 			{
 				49,
-				(RenderTextureFormat)0
+				RenderTextureFormat.ARGB32
 			},
 			{
 				50,
-				(RenderTextureFormat)0
+				RenderTextureFormat.ARGB32
 			},
 			{
 				51,
-				(RenderTextureFormat)0
+				RenderTextureFormat.ARGB32
 			},
 			{
 				52,
-				(RenderTextureFormat)0
+				RenderTextureFormat.ARGB32
 			},
 			{
 				53,
-				(RenderTextureFormat)0
+				RenderTextureFormat.ARGB32
 			}
 		};
 		s_SupportedRenderTextureFormats = new Dictionary<int, bool> ();
@@ -196,16 +195,9 @@ public static class TextureFormatUtilities
 
 	public static RenderTextureFormat GetUncompressedRenderTextureFormat (Texture texture)
 	{
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Expected I4, but got Unknown
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
-		Assert.IsNotNull<Texture> (texture);
+		Assert.IsNotNull (texture);
 		if (texture is RenderTexture) {
-			return ((RenderTexture)((texture is RenderTexture) ? texture : null)).format;
+			return (texture as RenderTexture).format;
 		}
 		if (texture is Texture2D) {
 			TextureFormat format = ((Texture2D)texture).format;
@@ -214,21 +206,17 @@ public static class TextureFormatUtilities
 			}
 			return value;
 		}
-		return (RenderTextureFormat)7;
+		return RenderTextureFormat.Default;
 	}
 
 	internal static bool IsSupported (this RenderTextureFormat format)
 	{
-		//IL_0005: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Expected I4, but got Unknown
 		s_SupportedRenderTextureFormats.TryGetValue ((int)format, out var value);
 		return value;
 	}
 
 	internal static bool IsSupported (this TextureFormat format)
 	{
-		//IL_0005: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Expected I4, but got Unknown
 		s_SupportedTextureFormats.TryGetValue ((int)format, out var value);
 		return value;
 	}

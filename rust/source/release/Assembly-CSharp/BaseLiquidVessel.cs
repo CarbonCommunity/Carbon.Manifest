@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Network;
@@ -45,98 +46,78 @@ public class BaseLiquidVessel : AttackEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("BaseLiquidVessel.OnRpcMessage", 0);
-		try {
-			if (rpc == 4013436649u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("BaseLiquidVessel.OnRpcMessage")) {
+			if (rpc == 4013436649u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - DoDrink "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - DoDrink ");
 				}
-				TimeWarning val2 = TimeWarning.New ("DoDrink", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("DoDrink")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsActiveItem.Test (4013436649u, "DoDrink", this, player)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							DoDrink (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in DoDrink");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 2781345828u && (Object)(object)player != (Object)null) {
+			if (rpc == 2781345828u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - SendFilling "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - SendFilling ");
 				}
-				TimeWarning val2 = TimeWarning.New ("SendFilling", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Call", 0);
+				using (TimeWarning.New ("SendFilling")) {
 					try {
-						RPCMessage rPCMessage = default(RPCMessage);
-						rPCMessage.connection = msg.connection;
-						rPCMessage.player = player;
-						rPCMessage.read = msg.read;
-						RPCMessage msg3 = rPCMessage;
-						SendFilling (msg3);
-					} finally {
-						((IDisposable)val3)?.Dispose ();
+						using (TimeWarning.New ("Call")) {
+							RPCMessage rPCMessage = default(RPCMessage);
+							rPCMessage.connection = msg.connection;
+							rPCMessage.player = player;
+							rPCMessage.read = msg.read;
+							RPCMessage msg3 = rPCMessage;
+							SendFilling (msg3);
+						}
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
+						player.Kick ("RPC Error in SendFilling");
 					}
-				} catch (Exception ex2) {
-					Debug.LogException (ex2);
-					player.Kick ("RPC Error in SendFilling");
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 3038767821u && (Object)(object)player != (Object)null) {
+			if (rpc == 3038767821u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - ThrowContents "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - ThrowContents ");
 				}
-				TimeWarning val2 = TimeWarning.New ("ThrowContents", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Call", 0);
+				using (TimeWarning.New ("ThrowContents")) {
 					try {
-						RPCMessage rPCMessage = default(RPCMessage);
-						rPCMessage.connection = msg.connection;
-						rPCMessage.player = player;
-						rPCMessage.read = msg.read;
-						RPCMessage msg4 = rPCMessage;
-						ThrowContents (msg4);
-					} finally {
-						((IDisposable)val3)?.Dispose ();
+						using (TimeWarning.New ("Call")) {
+							RPCMessage rPCMessage = default(RPCMessage);
+							rPCMessage.connection = msg.connection;
+							rPCMessage.player = player;
+							rPCMessage.read = msg.read;
+							RPCMessage msg4 = rPCMessage;
+							ThrowContents (msg4);
+						}
+					} catch (Exception exception3) {
+						Debug.LogException (exception3);
+						player.Kick ("RPC Error in ThrowContents");
 					}
-				} catch (Exception ex3) {
-					Debug.LogException (ex3);
-					player.Kick ("RPC Error in ThrowContents");
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -144,19 +125,17 @@ public class BaseLiquidVessel : AttackEntity
 	public override void ServerInit ()
 	{
 		base.ServerInit ();
-		((FacepunchBehaviour)this).InvokeRepeating ((Action)FillCheck, 1f, 1f);
+		InvokeRepeating (FillCheck, 1f, 1f);
 	}
 
 	public override void OnHeldChanged ()
 	{
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
 		base.OnHeldChanged ();
 		if (IsDisabled ()) {
 			StopFilling ();
 		}
 		if (!hasLid) {
-			DoThrow (((Component)this).transform.position, Vector3.zero);
+			DoThrow (base.transform.position, Vector3.zero);
 			Item item = GetItem ();
 			if (item != null && item.contents != null) {
 				item.contents.SetLocked (IsDisabled ());
@@ -182,18 +161,14 @@ public class BaseLiquidVessel : AttackEntity
 
 	public void StartFilling ()
 	{
-		//IL_00b4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0073: Unknown result type (might be due to invalid IL or missing references)
-		float num = Time.realtimeSinceStartup - lastFillTime;
+		float num = UnityEngine.Time.realtimeSinceStartup - lastFillTime;
 		StopFilling ();
-		((FacepunchBehaviour)this).InvokeRepeating ((Action)FillCheck, 0f, 0.3f);
+		InvokeRepeating (FillCheck, 0f, 0.3f);
 		if (num > 1f) {
 			LiquidContainer facingLiquidContainer = GetFacingLiquidContainer ();
-			if ((Object)(object)facingLiquidContainer != (Object)null && facingLiquidContainer.GetLiquidItem () != null) {
+			if (facingLiquidContainer != null && facingLiquidContainer.GetLiquidItem () != null) {
 				if (fillFromContainer.isValid) {
-					Effect.server.Run (fillFromContainer.resourcePath, ((Component)facingLiquidContainer).transform.position, Vector3.up);
+					Effect.server.Run (fillFromContainer.resourcePath, facingLiquidContainer.transform.position, Vector3.up);
 				}
 				ClientRPC (null, "CLIENT_StartFillingSoundsContainer");
 			} else if (CanFillFromWorld ()) {
@@ -203,45 +178,40 @@ public class BaseLiquidVessel : AttackEntity
 				ClientRPC (null, "CLIENT_StartFillingSoundsWorld");
 			}
 		}
-		lastFillTime = Time.realtimeSinceStartup;
+		lastFillTime = UnityEngine.Time.realtimeSinceStartup;
 	}
 
 	public void StopFilling ()
 	{
 		ClientRPC (null, "CLIENT_StopFillingSounds");
-		((FacepunchBehaviour)this).CancelInvoke ((Action)FillCheck);
+		CancelInvoke (FillCheck);
 	}
 
 	public void FillCheck ()
 	{
-		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006b: Unknown result type (might be due to invalid IL or missing references)
 		if (base.isClient) {
 			return;
 		}
 		BasePlayer ownerPlayer = GetOwnerPlayer ();
-		if (!Object.op_Implicit ((Object)(object)ownerPlayer)) {
+		if (!ownerPlayer) {
 			return;
 		}
-		float num = (Time.realtimeSinceStartup - lastFillTime) * fillMlPerSec;
-		Vector3 pos = ((Component)ownerPlayer).transform.position - new Vector3 (0f, 1f, 0f);
+		float f = (UnityEngine.Time.realtimeSinceStartup - lastFillTime) * fillMlPerSec;
+		Vector3 pos = ownerPlayer.transform.position - new Vector3 (0f, 1f, 0f);
 		LiquidContainer facingLiquidContainer = GetFacingLiquidContainer ();
-		if ((Object)(object)facingLiquidContainer == (Object)null && CanFillFromWorld ()) {
-			AddLiquid (WaterResource.GetAtPoint (pos), Mathf.FloorToInt (num));
-		} else if ((Object)(object)facingLiquidContainer != (Object)null && facingLiquidContainer.HasLiquidItem ()) {
-			int num2 = Mathf.CeilToInt ((1f - HeldFraction ()) * (float)MaxHoldable ());
-			if (num2 > 0) {
+		if (facingLiquidContainer == null && CanFillFromWorld ()) {
+			AddLiquid (WaterResource.GetAtPoint (pos), Mathf.FloorToInt (f));
+		} else if (facingLiquidContainer != null && facingLiquidContainer.HasLiquidItem ()) {
+			int num = Mathf.CeilToInt ((1f - HeldFraction ()) * (float)MaxHoldable ());
+			if (num > 0) {
 				Item liquidItem = facingLiquidContainer.GetLiquidItem ();
-				int num3 = Mathf.Min (Mathf.CeilToInt (num), Mathf.Min (liquidItem.amount, num2));
-				AddLiquid (liquidItem.info, num3);
-				liquidItem.UseItem (num3);
+				int num2 = Mathf.Min (Mathf.CeilToInt (f), Mathf.Min (liquidItem.amount, num));
+				AddLiquid (liquidItem.info, num2);
+				liquidItem.UseItem (num2);
 				facingLiquidContainer.OpenTap (2f);
 			}
 		}
-		lastFillTime = Time.realtimeSinceStartup;
+		lastFillTime = UnityEngine.Time.realtimeSinceStartup;
 	}
 
 	public void LoseWater (int amount)
@@ -263,14 +233,14 @@ public class BaseLiquidVessel : AttackEntity
 		}
 		Item item = GetItem ();
 		Item item2 = item.contents.GetSlot (0);
-		ItemModContainer component = ((Component)item.info).GetComponent<ItemModContainer> ();
+		ItemModContainer component = item.info.GetComponent<ItemModContainer> ();
 		if (item2 == null) {
 			ItemManager.Create (liquidType, amount, 0uL)?.MoveToContainer (item.contents);
 			return;
 		}
 		int num = Mathf.Clamp (item2.amount + amount, 0, component.maxStackSize);
 		ItemDefinition itemDefinition = WaterResource.Merge (item2.info, liquidType);
-		if ((Object)(object)itemDefinition != (Object)(object)item2.info) {
+		if (itemDefinition != item2.info) {
 			item2.Remove ();
 			item2 = ItemManager.Create (itemDefinition, num, 0uL);
 			item2.MoveToContainer (item.contents);
@@ -305,13 +275,13 @@ public class BaseLiquidVessel : AttackEntity
 		if (item == null || item.contents == null) {
 			return 1;
 		}
-		return ((Component)GetItem ().info).GetComponent<ItemModContainer> ().maxStackSize;
+		return GetItem ().info.GetComponent<ItemModContainer> ().maxStackSize;
 	}
 
 	public bool CanDrink ()
 	{
 		BasePlayer ownerPlayer = GetOwnerPlayer ();
-		if (!Object.op_Implicit ((Object)(object)ownerPlayer)) {
+		if (!ownerPlayer) {
 			return false;
 		}
 		if (!ownerPlayer.metabolism.CanConsume ()) {
@@ -338,17 +308,17 @@ public class BaseLiquidVessel : AttackEntity
 
 	private bool IsWeaponBusy ()
 	{
-		return Time.realtimeSinceStartup < nextFreeTime;
+		return UnityEngine.Time.realtimeSinceStartup < nextFreeTime;
 	}
 
 	private void SetBusyFor (float dur)
 	{
-		nextFreeTime = Time.realtimeSinceStartup + dur;
+		nextFreeTime = UnityEngine.Time.realtimeSinceStartup + dur;
 	}
 
 	private void ClearBusy ()
 	{
-		nextFreeTime = Time.realtimeSinceStartup - 1f;
+		nextFreeTime = UnityEngine.Time.realtimeSinceStartup - 1f;
 	}
 
 	[RPC_Server]
@@ -363,8 +333,8 @@ public class BaseLiquidVessel : AttackEntity
 			return;
 		}
 		foreach (Item item2 in item.contents.itemList) {
-			ItemModConsume component = ((Component)item2.info).GetComponent<ItemModConsume> ();
-			if (!((Object)(object)component == (Object)null) && component.CanDoAction (item2, msg.player)) {
+			ItemModConsume component = item2.info.GetComponent<ItemModConsume> ();
+			if (!(component == null) && component.CanDoAction (item2, msg.player)) {
 				component.DoAction (item2, msg.player);
 				break;
 			}
@@ -374,36 +344,17 @@ public class BaseLiquidVessel : AttackEntity
 	[RPC_Server]
 	private void ThrowContents (RPCMessage msg)
 	{
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0079: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer ownerPlayer = GetOwnerPlayer ();
-		if (!((Object)(object)ownerPlayer == (Object)null)) {
+		if (!(ownerPlayer == null)) {
 			DoThrow (ownerPlayer.eyes.position + ownerPlayer.eyes.BodyForward () * 1f, ownerPlayer.estimatedVelocity + ownerPlayer.eyes.BodyForward () * throwScale);
-			Effect.server.Run (ThrowEffect3P.resourcePath, ((Component)ownerPlayer).transform.position, ownerPlayer.eyes.BodyForward (), ownerPlayer.net.connection);
+			Effect.server.Run (ThrowEffect3P.resourcePath, ownerPlayer.transform.position, ownerPlayer.eyes.BodyForward (), ownerPlayer.net.connection);
 		}
 	}
 
 	public void DoThrow (Vector3 pos, Vector3 velocity)
 	{
-		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0064: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0069: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bf: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer ownerPlayer = GetOwnerPlayer ();
-		if ((Object)(object)ownerPlayer == (Object)null) {
+		if (ownerPlayer == null) {
 			return;
 		}
 		Item item = GetItem ();
@@ -412,12 +363,12 @@ public class BaseLiquidVessel : AttackEntity
 		}
 		Item slot = item.contents.GetSlot (0);
 		if (slot != null && slot.amount > 0) {
-			Vector3 val = ownerPlayer.eyes.position + ownerPlayer.eyes.BodyForward () * 1f;
-			WaterBall waterBall = GameManager.server.CreateEntity (thrownWaterObject.resourcePath, val, Quaternion.identity) as WaterBall;
-			if (Object.op_Implicit ((Object)(object)waterBall)) {
+			Vector3 vector = ownerPlayer.eyes.position + ownerPlayer.eyes.BodyForward () * 1f;
+			WaterBall waterBall = GameManager.server.CreateEntity (thrownWaterObject.resourcePath, vector, Quaternion.identity) as WaterBall;
+			if ((bool)waterBall) {
 				waterBall.liquidType = slot.info;
 				waterBall.waterAmount = slot.amount;
-				((Component)waterBall).transform.position = val;
+				waterBall.transform.position = vector;
 				waterBall.SetVelocity (velocity);
 				waterBall.Spawn ();
 			}
@@ -436,12 +387,11 @@ public class BaseLiquidVessel : AttackEntity
 
 	public bool CanFillFromWorld ()
 	{
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer ownerPlayer = GetOwnerPlayer ();
-		if (!Object.op_Implicit ((Object)(object)ownerPlayer)) {
+		if (!ownerPlayer) {
 			return false;
 		}
-		if (ownerPlayer.IsInWaterVolume (((Component)this).transform.position)) {
+		if (ownerPlayer.IsInWaterVolume (base.transform.position)) {
 			return false;
 		}
 		return ownerPlayer.WaterFactor () >= 0.05f;
@@ -454,18 +404,15 @@ public class BaseLiquidVessel : AttackEntity
 
 	public LiquidContainer GetFacingLiquidContainer ()
 	{
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer ownerPlayer = GetOwnerPlayer ();
-		if (!Object.op_Implicit ((Object)(object)ownerPlayer)) {
+		if (!ownerPlayer) {
 			return null;
 		}
-		RaycastHit hit = default(RaycastHit);
-		if (Physics.Raycast (ownerPlayer.eyes.HeadRay (), ref hit, 2f, 1237003025)) {
-			BaseEntity entity = hit.GetEntity ();
-			if (Object.op_Implicit ((Object)(object)entity) && !((Component)((RaycastHit)(ref hit)).collider).gameObject.CompareTag ("Not Player Usable") && !((Component)((RaycastHit)(ref hit)).collider).gameObject.CompareTag ("Usable Primary")) {
+		if (UnityEngine.Physics.Raycast (ownerPlayer.eyes.HeadRay (), out var hitInfo, 2f, 1237003025)) {
+			BaseEntity entity = hitInfo.GetEntity ();
+			if ((bool)entity && !hitInfo.collider.gameObject.CompareTag ("Not Player Usable") && !hitInfo.collider.gameObject.CompareTag ("Usable Primary")) {
 				entity = entity.ToServer<BaseEntity> ();
-				return ((Component)entity).GetComponent<LiquidContainer> ();
+				return entity.GetComponent<LiquidContainer> ();
 			}
 		}
 		return null;

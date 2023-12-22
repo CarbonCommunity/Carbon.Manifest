@@ -9,28 +9,20 @@ public sealed class TextureParameter : ParameterOverride<Texture>
 
 	public override void Interp (Texture from, Texture to, float t)
 	{
-		//IL_00a2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ad: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ba: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0144: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)from == (Object)null && (Object)(object)to == (Object)null) {
+		if (from == null && to == null) {
 			value = null;
 			return;
 		}
-		if ((Object)(object)from != (Object)null && (Object)(object)to != (Object)null) {
+		if (from != null && to != null) {
 			value = TextureLerper.instance.Lerp (from, to, t);
 			return;
 		}
 		if (defaultState == TextureParameterDefault.Lut2D) {
-			Texture lutStrip = (Texture)(object)RuntimeUtilities.GetLutStrip (((Object)(object)from != (Object)null) ? from.height : to.height);
-			if ((Object)(object)from == (Object)null) {
+			Texture lutStrip = RuntimeUtilities.GetLutStrip ((from != null) ? from.height : to.height);
+			if (from == null) {
 				from = lutStrip;
 			}
-			if ((Object)(object)to == (Object)null) {
+			if (to == null) {
 				to = lutStrip;
 			}
 		}
@@ -46,11 +38,11 @@ public sealed class TextureParameter : ParameterOverride<Texture>
 			to2 = Color.clear;
 			break;
 		case TextureParameterDefault.Lut2D: {
-			Texture lutStrip2 = (Texture)(object)RuntimeUtilities.GetLutStrip (((Object)(object)from != (Object)null) ? from.height : to.height);
-			if ((Object)(object)from == (Object)null) {
+			Texture lutStrip2 = RuntimeUtilities.GetLutStrip ((from != null) ? from.height : to.height);
+			if (from == null) {
 				from = lutStrip2;
 			}
-			if ((Object)(object)to == (Object)null) {
+			if (to == null) {
 				to = lutStrip2;
 			}
 			if (from.width != to.width || from.height != to.height) {
@@ -64,7 +56,7 @@ public sealed class TextureParameter : ParameterOverride<Texture>
 			base.Interp (from, to, t);
 			return;
 		}
-		if ((Object)(object)from == (Object)null) {
+		if (from == null) {
 			value = TextureLerper.instance.Lerp (to, to2, 1f - t);
 		} else {
 			value = TextureLerper.instance.Lerp (from, to2, t);

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEngine;
 
 public class ProcessProceduralObjects : ProceduralComponent
 {
@@ -11,7 +10,7 @@ public class ProcessProceduralObjects : ProceduralComponent
 		if (!World.Cached) {
 			for (int i = 0; i < proceduralObjects.Count; i++) {
 				ProceduralObject proceduralObject = proceduralObjects [i];
-				if (Object.op_Implicit ((Object)(object)proceduralObject)) {
+				if ((bool)proceduralObject) {
 					proceduralObject.Process ();
 				}
 			}

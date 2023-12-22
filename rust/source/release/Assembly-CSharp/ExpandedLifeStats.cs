@@ -12,7 +12,7 @@ public class ExpandedLifeStats : MonoBehaviour
 
 		public Sprite statSprite;
 
-		public Phrase displayPhrase;
+		public Translate.Phrase displayPhrase;
 	}
 
 	public GameObject DisplayRoot;

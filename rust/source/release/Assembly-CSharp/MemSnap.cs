@@ -18,20 +18,20 @@ public class MemSnap : ConsoleSystem
 	[ServerVar]
 	public static void managed (Arg arg)
 	{
-		MemoryProfiler.TakeSnapshot (NeedProfileFolder () + "/memdump-" + DateTime.Now.ToString ("MM-dd-yyyy-h-mm-ss") + ".snap", (Action<string, bool>)null, (CaptureFlags)1);
+		MemoryProfiler.TakeSnapshot (NeedProfileFolder () + "/memdump-" + DateTime.Now.ToString ("MM-dd-yyyy-h-mm-ss") + ".snap", null, CaptureFlags.ManagedObjects);
 	}
 
 	[ClientVar]
 	[ServerVar]
 	public static void native (Arg arg)
 	{
-		MemoryProfiler.TakeSnapshot (NeedProfileFolder () + "/memdump-" + DateTime.Now.ToString ("MM-dd-yyyy-h-mm-ss") + ".snap", (Action<string, bool>)null, (CaptureFlags)2);
+		MemoryProfiler.TakeSnapshot (NeedProfileFolder () + "/memdump-" + DateTime.Now.ToString ("MM-dd-yyyy-h-mm-ss") + ".snap", null, CaptureFlags.NativeObjects);
 	}
 
 	[ClientVar]
 	[ServerVar]
 	public static void full (Arg arg)
 	{
-		MemoryProfiler.TakeSnapshot (NeedProfileFolder () + "/memdump-" + DateTime.Now.ToString ("MM-dd-yyyy-h-mm-ss") + ".snap", (Action<string, bool>)null, (CaptureFlags)31);
+		MemoryProfiler.TakeSnapshot (NeedProfileFolder () + "/memdump-" + DateTime.Now.ToString ("MM-dd-yyyy-h-mm-ss") + ".snap", null, CaptureFlags.ManagedObjects | CaptureFlags.NativeObjects | CaptureFlags.NativeAllocations | CaptureFlags.NativeAllocationSites | CaptureFlags.NativeStackTraces);
 	}
 }

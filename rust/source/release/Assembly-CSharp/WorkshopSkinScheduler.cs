@@ -82,9 +82,7 @@ public class WorkshopSkinScheduler
 
 	private void LoadTextureAsync (string path, int resolution, int textureIndex)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0008: Expected O, but got Unknown
-		Texture texture = (Texture)new Texture2D (resolution, resolution);
+		Texture texture = new Texture2D (resolution, resolution);
 		TextureAtlasScheduler.Instanced.ReplaceTextureInAtlas (texture, textureIndex);
 	}
 }

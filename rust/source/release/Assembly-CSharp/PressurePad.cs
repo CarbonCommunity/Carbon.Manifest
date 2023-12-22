@@ -1,5 +1,3 @@
-using System;
-
 public class PressurePad : BaseDetector
 {
 	public float pressPowerTime = 0.5f;
@@ -26,7 +24,7 @@ public class PressurePad : BaseDetector
 	public override void OnDetectorTriggered ()
 	{
 		base.OnDetectorTriggered ();
-		((FacepunchBehaviour)this).Invoke ((Action)UnpowerTime, pressPowerTime);
+		Invoke (UnpowerTime, pressPowerTime);
 		SetFlag (Flags.Reserved3, b: true);
 	}
 

@@ -40,7 +40,7 @@ public class ItemBlueprint : MonoBehaviour
 
 	public string RecycleStat;
 
-	public ItemDefinition targetItem => ((Component)this).GetComponent<ItemDefinition> ();
+	public ItemDefinition targetItem => GetComponent<ItemDefinition> ();
 
-	public bool NeedsSteamDLC => (Object)(object)targetItem.steamDlc != (Object)null;
+	public bool NeedsSteamDLC => targetItem.steamDlc != null;
 }

@@ -21,7 +21,7 @@ public class ModularVehicleInventory : IDisposable
 		ModuleContainer = CreateModuleInventory (vehicle, giveUID);
 		ChassisContainer = CreateChassisInventory (vehicle, giveUID);
 		vehicle.AssociatedItemInstance = ItemManager.Create (chassisItemDef, 1, 0uL);
-		if (!Application.isLoadingSave) {
+		if (!Rust.Application.isLoadingSave) {
 			vehicle.AssociatedItemInstance.MoveToContainer (ChassisContainer, 0, allowStack: false);
 		}
 	}
@@ -49,7 +49,7 @@ public class ModularVehicleInventory : IDisposable
 				if (item == moduleItem) {
 					return true;
 				}
-				ItemModVehicleModule component = ((Component)item.info).GetComponent<ItemModVehicleModule> ();
+				ItemModVehicleModule component = item.info.GetComponent<ItemModVehicleModule> ();
 				return num + component.socketsTaken - 1 < socketIndex;
 			}
 			num--;
@@ -65,7 +65,7 @@ public class ModularVehicleInventory : IDisposable
 	public bool TryAddModuleItem (Item moduleItem, int socketIndex)
 	{
 		if (moduleItem == null) {
-			Debug.LogError ((object)(GetType ().Name + ": Can't add null item."));
+			Debug.LogError (GetType ().Name + ": Can't add null item.");
 			return false;
 		}
 		return moduleItem.MoveToContainer (ModuleContainer, socketIndex, allowStack: false);
@@ -109,13 +109,13 @@ public class ModularVehicleInventory : IDisposable
 	public bool TrySyncModuleInventory (BaseVehicleModule moduleEntity, int firstSocketIndex)
 	{
 		if (firstSocketIndex < 0) {
-			Debug.LogError ((object)$"{GetType ().Name}: Invalid socket index ({firstSocketIndex}) for new module entity.", (Object)(object)((Component)vehicle).gameObject);
+			Debug.LogError ($"{GetType ().Name}: Invalid socket index ({firstSocketIndex}) for new module entity.", vehicle.gameObject);
 			return false;
 		}
 		Item slot = ModuleContainer.GetSlot (firstSocketIndex);
 		int numSocketsTaken = moduleEntity.GetNumSocketsTaken ();
 		if (!SocketsAreFree (firstSocketIndex, numSocketsTaken) && (slot == null || moduleEntity.AssociatedItemInstance != slot)) {
-			Debug.LogError ((object)$"{GetType ().Name}: Sockets are not free for new module entity. First: {firstSocketIndex} Taken: {numSocketsTaken}", (Object)(object)((Component)vehicle).gameObject);
+			Debug.LogError ($"{GetType ().Name}: Sockets are not free for new module entity. First: {firstSocketIndex} Taken: {numSocketsTaken}", vehicle.gameObject);
 			return false;
 		}
 		if (slot == null) {
@@ -186,8 +186,8 @@ public class ModularVehicleInventory : IDisposable
 
 	private void ModuleItemAdded (Item moduleItem, int socketIndex)
 	{
-		ItemModVehicleModule component = ((Component)moduleItem.info).GetComponent<ItemModVehicleModule> ();
-		if (!Application.isLoadingSave && (Object)(object)vehicle.GetModuleForItem (moduleItem) == (Object)null) {
+		ItemModVehicleModule component = moduleItem.info.GetComponent<ItemModVehicleModule> ();
+		if (!Rust.Application.isLoadingSave && vehicle.GetModuleForItem (moduleItem) == null) {
 			vehicle.CreatePhysicalModuleEntity (moduleItem, component, socketIndex);
 		}
 		moduleItem.OnDirty += OnModuleItemChanged;
@@ -196,25 +196,25 @@ public class ModularVehicleInventory : IDisposable
 	private void ModuleItemRemoved (Item moduleItem)
 	{
 		if (moduleItem == null) {
-			Debug.LogError ((object)"Null module item removed.", (Object)(object)((Component)vehicle).gameObject);
+			Debug.LogError ("Null module item removed.", vehicle.gameObject);
 			return;
 		}
 		moduleItem.OnDirty -= OnModuleItemChanged;
 		BaseVehicleModule moduleForItem = vehicle.GetModuleForItem (moduleItem);
-		if ((Object)(object)moduleForItem != (Object)null) {
+		if (moduleForItem != null) {
 			if (!moduleForItem.IsFullySpawned ()) {
-				Debug.LogError ((object)"Module entity being removed before it's fully spawned. This could cause errors.", (Object)(object)((Component)vehicle).gameObject);
+				Debug.LogError ("Module entity being removed before it's fully spawned. This could cause errors.", vehicle.gameObject);
 			}
 			moduleForItem.Kill ();
 		} else {
-			Debug.Log ((object)"Couldn't find entity for this item.");
+			Debug.Log ("Couldn't find entity for this item.");
 		}
 	}
 
 	private void OnModuleItemChanged (Item moduleItem)
 	{
 		BaseVehicleModule moduleForItem = vehicle.GetModuleForItem (moduleItem);
-		if ((Object)(object)moduleForItem != (Object)null) {
+		if (moduleForItem != null) {
 			moduleForItem.SetHealth (moduleItem.condition);
 			if (moduleForItem.FirstSocketIndex != moduleItem.position) {
 				ModuleItemRemoved (moduleItem);

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Facepunch;
 using ProtoBuf.Nexus;
 
-public class NexusRpcResult : IDisposable, IPooled
+public class NexusRpcResult : IDisposable, Pool.IPooled
 {
 	public readonly Dictionary<string, Response> Responses;
 
@@ -14,8 +14,8 @@ public class NexusRpcResult : IDisposable, IPooled
 
 	public void Dispose ()
 	{
-		NexusRpcResult nexusRpcResult = this;
-		Pool.Free<NexusRpcResult> (ref nexusRpcResult);
+		NexusRpcResult obj = this;
+		Pool.Free (ref obj);
 	}
 
 	public void EnterPool ()

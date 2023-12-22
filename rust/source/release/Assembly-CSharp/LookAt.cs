@@ -7,8 +7,8 @@ public class LookAt : MonoBehaviour, IClientComponent
 
 	private void Update ()
 	{
-		if (!((Object)(object)target == (Object)null)) {
-			((Component)this).transform.LookAt (target);
+		if (!(target == null)) {
+			base.transform.LookAt (target);
 		}
 	}
 }

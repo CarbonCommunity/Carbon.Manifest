@@ -1,4 +1,3 @@
-using System;
 using Facepunch;
 using ProtoBuf;
 using Rust;
@@ -66,7 +65,7 @@ public class Elevator : IOEntity, IFlagNotify
 		if (info.msg.elevator != null) {
 			Floor = info.msg.elevator.floor;
 		}
-		if ((Object)(object)FloorBlockerVolume != (Object)null) {
+		if (FloorBlockerVolume != null) {
 			FloorBlockerVolume.SetActive (Floor > 0);
 		}
 	}
@@ -75,7 +74,7 @@ public class Elevator : IOEntity, IFlagNotify
 	{
 		base.OnDeployed (parent, deployedBy, fromItem);
 		Elevator elevatorInDirection = GetElevatorInDirection (Direction.Down);
-		if ((Object)(object)elevatorInDirection != (Object)null) {
+		if (elevatorInDirection != null) {
 			elevatorInDirection.SetFlag (Flags.Reserved1, b: false);
 			Floor = elevatorInDirection.Floor + 1;
 		}
@@ -116,21 +115,11 @@ public class Elevator : IOEntity, IFlagNotify
 
 	protected bool RequestMoveLiftTo (int targetFloor, out float timeToTravel, Elevator fromElevator)
 	{
-		//IL_0072: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0077: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0083: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0088: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00aa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00df: Unknown result type (might be due to invalid IL or missing references)
 		timeToTravel = 0f;
 		if (IsBusy ()) {
 			return false;
 		}
-		if (!IsStatic && (Object)(object)ioEntity != (Object)null && !ioEntity.IsPowered ()) {
+		if (!IsStatic && ioEntity != null && !ioEntity.IsPowered ()) {
 			return false;
 		}
 		if (!IsValidFloor (targetFloor)) {
@@ -147,21 +136,21 @@ public class Elevator : IOEntity, IFlagNotify
 			return false;
 		}
 		Vector3 worldSpaceFloorPosition = GetWorldSpaceFloorPosition (targetFloor);
-		if (!GamePhysics.LineOfSight (((Component)liftEntity).transform.position, worldSpaceFloorPosition, 2097152)) {
+		if (!GamePhysics.LineOfSight (liftEntity.transform.position, worldSpaceFloorPosition, 2097152)) {
 			return false;
 		}
 		OnMoveBegin ();
-		Vector3 val = ((Component)this).transform.InverseTransformPoint (worldSpaceFloorPosition);
-		timeToTravel = TimeToTravelDistance (Mathf.Abs (((Component)liftEntity).transform.localPosition.y - val.y));
-		LeanTween.moveLocalY (((Component)liftEntity).gameObject, val.y, timeToTravel).delay = LiftMoveDelay;
+		Vector3 vector = base.transform.InverseTransformPoint (worldSpaceFloorPosition);
+		timeToTravel = TimeToTravelDistance (Mathf.Abs (liftEntity.transform.localPosition.y - vector.y));
+		LeanTween.moveLocalY (liftEntity.gameObject, vector.y, timeToTravel).delay = LiftMoveDelay;
 		timeToTravel += LiftMoveDelay;
 		SetFlag (Flags.Busy, b: true);
 		if (targetFloor < Floor) {
 			liftEntity.ToggleHurtTrigger (state: true);
 		}
-		((FacepunchBehaviour)this).Invoke ((Action)ClearBusy, timeToTravel + 1f);
+		Invoke (ClearBusy, timeToTravel + 1f);
 		liftEntity.NotifyNewFloor (targetFloor, Floor);
-		if ((Object)(object)ioEntity != (Object)null) {
+		if (ioEntity != null) {
 			ioEntity.SetFlag (Flags.Busy, b: true);
 			ioEntity.SendChangedToRoot (forceUpdate: true);
 		}
@@ -184,25 +173,19 @@ public class Elevator : IOEntity, IFlagNotify
 
 	protected virtual Vector3 GetWorldSpaceFloorPosition (int targetFloor)
 	{
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
 		int num = Floor - targetFloor;
-		Vector3 val = Vector3.up * ((float)num * FloorHeight);
-		val.y -= 1f;
-		return ((Component)this).transform.position - val;
+		Vector3 vector = Vector3.up * ((float)num * FloorHeight);
+		vector.y -= 1f;
+		return base.transform.position - vector;
 	}
 
 	protected virtual void ClearBusy ()
 	{
 		SetFlag (Flags.Busy, b: false);
-		if ((Object)(object)liftEntity != (Object)null) {
+		if (liftEntity != null) {
 			liftEntity.ToggleHurtTrigger (state: false);
 		}
-		if ((Object)(object)ioEntity != (Object)null) {
+		if (ioEntity != null) {
 			ioEntity.SetFlag (Flags.Busy, b: false);
 			ioEntity.SendChangedToRoot (forceUpdate: true);
 		}
@@ -221,7 +204,7 @@ public class Elevator : IOEntity, IFlagNotify
 		EntityLink entityLink = FindLink ((dir == Direction.Down) ? "elevator/sockets/elevator-male" : "elevator/sockets/elevator-female");
 		if (entityLink != null && !entityLink.IsEmpty ()) {
 			BaseEntity owner = entityLink.connections [0].owner;
-			if ((Object)(object)owner != (Object)null && owner.isServer && owner is Elevator elevator && (Object)(object)elevator != (Object)(object)this) {
+			if (owner != null && owner.isServer && owner is Elevator elevator && elevator != this) {
 				return elevator;
 			}
 		}
@@ -230,32 +213,28 @@ public class Elevator : IOEntity, IFlagNotify
 
 	public void UpdateChildEntities (bool isTop)
 	{
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d0: Unknown result type (might be due to invalid IL or missing references)
 		if (isTop) {
-			if ((Object)(object)liftEntity == (Object)null) {
+			if (liftEntity == null) {
 				FindExistingLiftChild ();
 			}
-			if ((Object)(object)liftEntity == (Object)null) {
+			if (liftEntity == null) {
 				liftEntity = GameManager.server.CreateEntity (LiftEntityPrefab.resourcePath, GetWorldSpaceFloorPosition (Floor), LiftRoot.rotation) as ElevatorLift;
 				liftEntity.SetParent (this, worldPositionStays: true);
 				liftEntity.Spawn ();
 			}
-			if ((Object)(object)ioEntity == (Object)null) {
+			if (ioEntity == null) {
 				FindExistingIOChild ();
 			}
-			if ((Object)(object)ioEntity == (Object)null && IoEntityPrefab.isValid) {
+			if (ioEntity == null && IoEntityPrefab.isValid) {
 				ioEntity = GameManager.server.CreateEntity (IoEntityPrefab.resourcePath, IoEntitySpawnPoint.position, IoEntitySpawnPoint.rotation) as IOEntity;
 				ioEntity.SetParent (this, worldPositionStays: true);
 				ioEntity.Spawn ();
 			}
 		} else {
-			if ((Object)(object)liftEntity != (Object)null) {
+			if (liftEntity != null) {
 				liftEntity.Kill ();
 			}
-			if ((Object)(object)ioEntity != (Object)null) {
+			if (ioEntity != null) {
 				ioEntity.Kill ();
 			}
 		}
@@ -275,18 +254,14 @@ public class Elevator : IOEntity, IFlagNotify
 	{
 		base.Save (info);
 		if (info.msg.elevator == null) {
-			info.msg.elevator = Pool.Get<Elevator> ();
+			info.msg.elevator = Pool.Get<ProtoBuf.Elevator> ();
 		}
 		info.msg.elevator.floor = Floor;
 	}
 
 	protected int LiftPositionToFloor ()
 	{
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 position = ((Component)liftEntity).transform.position;
+		Vector3 position = liftEntity.transform.position;
 		int result = -1;
 		float num = float.MaxValue;
 		for (int i = 0; i <= Floor; i++) {
@@ -308,11 +283,11 @@ public class Elevator : IOEntity, IFlagNotify
 	private void Cleanup ()
 	{
 		Elevator elevatorInDirection = GetElevatorInDirection (Direction.Down);
-		if ((Object)(object)elevatorInDirection != (Object)null) {
+		if (elevatorInDirection != null) {
 			elevatorInDirection.SetFlag (Flags.Reserved1, b: true);
 		}
 		Elevator elevatorInDirection2 = GetElevatorInDirection (Direction.Up);
-		if ((Object)(object)elevatorInDirection2 != (Object)null) {
+		if (elevatorInDirection2 != null) {
 			elevatorInDirection2.Kill (DestroyMode.Gib);
 		}
 	}
@@ -322,7 +297,7 @@ public class Elevator : IOEntity, IFlagNotify
 		base.PostServerLoad ();
 		SetFlag (Flags.Busy, b: false);
 		UpdateChildEntities (IsTop);
-		if ((Object)(object)ioEntity != (Object)null) {
+		if (ioEntity != null) {
 			ioEntity.SetFlag (Flags.Busy, b: false);
 		}
 	}
@@ -338,7 +313,7 @@ public class Elevator : IOEntity, IFlagNotify
 
 	private void OnPhysicsNeighbourChanged ()
 	{
-		if (!IsStatic && (Object)(object)GetElevatorInDirection (Direction.Down) == (Object)null && !HasFloorSocketConnection ()) {
+		if (!IsStatic && GetElevatorInDirection (Direction.Down) == null && !HasFloorSocketConnection ()) {
 			Kill (DestroyMode.Gib);
 		}
 	}
@@ -354,7 +329,7 @@ public class Elevator : IOEntity, IFlagNotify
 
 	public void NotifyLiftEntityDoorsOpen (bool state)
 	{
-		if (!((Object)(object)liftEntity != (Object)null)) {
+		if (!(liftEntity != null)) {
 			return;
 		}
 		foreach (BaseEntity child in liftEntity.children) {
@@ -371,18 +346,18 @@ public class Elevator : IOEntity, IFlagNotify
 	public override void OnFlagsChanged (Flags old, Flags next)
 	{
 		base.OnFlagsChanged (old, next);
-		if (!Application.isLoading && base.isServer && old.HasFlag (Flags.Reserved1) != next.HasFlag (Flags.Reserved1)) {
+		if (!Rust.Application.isLoading && base.isServer && old.HasFlag (Flags.Reserved1) != next.HasFlag (Flags.Reserved1)) {
 			UpdateChildEntities (next.HasFlag (Flags.Reserved1));
 		}
 		if (old.HasFlag (Flags.Busy) != next.HasFlag (Flags.Busy)) {
-			if ((Object)(object)liftEntity == (Object)null) {
+			if (liftEntity == null) {
 				FindExistingLiftChild ();
 			}
-			if ((Object)(object)liftEntity != (Object)null) {
+			if (liftEntity != null) {
 				liftEntity.ToggleMovementCollider (!next.HasFlag (Flags.Busy));
 			}
 		}
-		if (old.HasFlag (Flags.Reserved1) != next.HasFlag (Flags.Reserved1) && (Object)(object)FloorBlockerVolume != (Object)null) {
+		if (old.HasFlag (Flags.Reserved1) != next.HasFlag (Flags.Reserved1) && FloorBlockerVolume != null) {
 			FloorBlockerVolume.SetActive (next.HasFlag (Flags.Reserved1));
 		}
 	}

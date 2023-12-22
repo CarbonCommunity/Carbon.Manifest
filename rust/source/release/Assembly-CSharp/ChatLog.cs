@@ -17,14 +17,14 @@ public class ChatLog
 		public uint Time;
 	}
 
-	private class ChatState : IPooled
+	private class ChatState : Pool.IPooled
 	{
 		public List<Entry> History;
 
 		public void EnterPool ()
 		{
 			if (History != null) {
-				Pool.FreeList<Entry> (ref History);
+				Pool.FreeList (ref History);
 			}
 		}
 
@@ -60,7 +60,7 @@ public class ChatLog
 	{
 		if (States.TryGetValue (teamId, out var value)) {
 			States.Remove (teamId);
-			Pool.Free<ChatState> (ref value);
+			Pool.Free (ref value);
 		}
 	}
 

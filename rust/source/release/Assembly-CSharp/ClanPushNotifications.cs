@@ -10,7 +10,7 @@ public static class ClanPushNotifications
 		if (ClanUtility.Timestamp () - previousTimestamp < 300000) {
 			return;
 		}
-		List<ulong> steamIds = Pool.GetList<ulong> ();
+		List<ulong> steamIds = Facepunch.Pool.GetList<ulong> ();
 		foreach (ClanMember member in clan.Members) {
 			if (member.SteamId != ignorePlayer) {
 				steamIds.Add (member.SteamId);
@@ -20,6 +20,6 @@ public static class ClanPushNotifications
 		serverPairingData.Add ("type", "clan");
 		serverPairingData.Add ("fromId", ignorePlayer.ToString ("G"));
 		await NotificationList.SendNotificationTo (steamIds, NotificationChannel.ClanAnnouncement, "[" + clan.Name + "] Announcement was updated", ConVar.Server.hostname, serverPairingData);
-		Pool.FreeList<ulong> (ref steamIds);
+		Facepunch.Pool.FreeList (ref steamIds);
 	}
 }

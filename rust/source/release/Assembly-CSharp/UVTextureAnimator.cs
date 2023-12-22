@@ -36,7 +36,7 @@ internal class UVTextureAnimator : MonoBehaviour
 
 	private void Start ()
 	{
-		currentRenderer = ((Component)this).GetComponent<Renderer> ();
+		currentRenderer = GetComponent<Renderer> ();
 		InitDefaultVariables ();
 		isInizialised = true;
 		isVisible = true;
@@ -45,13 +45,8 @@ internal class UVTextureAnimator : MonoBehaviour
 
 	private void InitDefaultVariables ()
 	{
-		//IL_0078: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ea: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fc: Unknown result type (might be due to invalid IL or missing references)
-		currentRenderer = ((Component)this).GetComponent<Renderer> ();
-		if ((Object)(object)currentRenderer == (Object)null) {
+		currentRenderer = GetComponent<Renderer> ();
+		if (currentRenderer == null) {
 			throw new Exception ("UvTextureAnimator can't get renderer");
 		}
 		if (!currentRenderer.enabled) {
@@ -63,12 +58,11 @@ internal class UVTextureAnimator : MonoBehaviour
 		index = Columns - 1;
 		Vector3 zero = Vector3.zero;
 		OffsetMat -= OffsetMat / count * count;
-		Vector2 val = default(Vector2);
-		((Vector2)(ref val))..ctor (1f / (float)Columns, 1f / (float)Rows);
-		if ((Object)(object)currentRenderer != (Object)null) {
+		Vector2 value = new Vector2 (1f / (float)Columns, 1f / (float)Rows);
+		if (currentRenderer != null) {
 			instanceMaterial = currentRenderer.material;
-			instanceMaterial.SetTextureScale ("_MainTex", val);
-			instanceMaterial.SetTextureOffset ("_MainTex", Vector2.op_Implicit (zero));
+			instanceMaterial.SetTextureScale ("_MainTex", value);
+			instanceMaterial.SetTextureOffset ("_MainTex", zero);
 		}
 	}
 
@@ -76,9 +70,9 @@ internal class UVTextureAnimator : MonoBehaviour
 	{
 		if (!isCorutineStarted) {
 			if (StartDelay > 0.0001f) {
-				((MonoBehaviour)this).Invoke ("PlayDelay", StartDelay);
+				Invoke ("PlayDelay", StartDelay);
 			} else {
-				((MonoBehaviour)this).StartCoroutine (UpdateCorutine ());
+				StartCoroutine (UpdateCorutine ());
 			}
 			isCorutineStarted = true;
 		}
@@ -86,7 +80,7 @@ internal class UVTextureAnimator : MonoBehaviour
 
 	private void PlayDelay ()
 	{
-		((MonoBehaviour)this).StartCoroutine (UpdateCorutine ());
+		StartCoroutine (UpdateCorutine ());
 	}
 
 	private void OnEnable ()
@@ -102,8 +96,8 @@ internal class UVTextureAnimator : MonoBehaviour
 	{
 		isCorutineStarted = false;
 		isVisible = false;
-		((MonoBehaviour)this).StopAllCoroutines ();
-		((MonoBehaviour)this).CancelInvoke ("PlayDelay");
+		StopAllCoroutines ();
+		CancelInvoke ("PlayDelay");
 	}
 
 	private IEnumerator UpdateCorutine ()
@@ -113,7 +107,7 @@ internal class UVTextureAnimator : MonoBehaviour
 			if (!IsLoop && allCount == count) {
 				break;
 			}
-			yield return (object)new WaitForSeconds (deltaFps);
+			yield return new WaitForSeconds (deltaFps);
 		}
 		isCorutineStarted = false;
 		currentRenderer.enabled = false;
@@ -121,23 +115,21 @@ internal class UVTextureAnimator : MonoBehaviour
 
 	private void UpdateCorutineFrame ()
 	{
-		//IL_008b: Unknown result type (might be due to invalid IL or missing references)
 		allCount++;
 		index++;
 		if (index >= count) {
 			index = 0;
 		}
-		Vector2 val = default(Vector2);
-		((Vector2)(ref val))..ctor ((float)index / (float)Columns - (float)(index / Columns), 1f - (float)(index / Columns) / (float)Rows);
-		if ((Object)(object)currentRenderer != (Object)null) {
-			instanceMaterial.SetTextureOffset ("_MainTex", val);
+		Vector2 value = new Vector2 ((float)index / (float)Columns - (float)(index / Columns), 1f - (float)(index / Columns) / (float)Rows);
+		if (currentRenderer != null) {
+			instanceMaterial.SetTextureOffset ("_MainTex", value);
 		}
 	}
 
 	private void OnDestroy ()
 	{
-		if ((Object)(object)instanceMaterial != (Object)null) {
-			Object.Destroy ((Object)(object)instanceMaterial);
+		if (instanceMaterial != null) {
+			UnityEngine.Object.Destroy (instanceMaterial);
 			instanceMaterial = null;
 		}
 	}

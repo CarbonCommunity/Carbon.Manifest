@@ -7,22 +7,20 @@ public class TargetTrigger : TriggerBase
 
 	internal override GameObject InterestedInObject (GameObject obj)
 	{
-		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
 		obj = base.InterestedInObject (obj);
-		if ((Object)(object)obj == (Object)null) {
+		if (obj == null) {
 			return null;
 		}
 		BaseEntity baseEntity = obj.ToBaseEntity ();
-		if ((Object)(object)baseEntity == (Object)null) {
+		if (baseEntity == null) {
 			return null;
 		}
 		if (baseEntity.isClient) {
 			return null;
 		}
-		if ((Object)(object)losEyes != (Object)null && !baseEntity.IsVisible (((Component)losEyes).transform.position, baseEntity.CenterPoint ())) {
+		if (losEyes != null && !baseEntity.IsVisible (losEyes.transform.position, baseEntity.CenterPoint ())) {
 			return null;
 		}
-		return ((Component)baseEntity).gameObject;
+		return baseEntity.gameObject;
 	}
 }

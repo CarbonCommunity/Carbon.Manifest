@@ -16,11 +16,11 @@ public class SelectedContact : SingletonComponent<SelectedContact>
 
 	public GameObject[] relationshipTypeTags;
 
-	public Phrase lastSeenPrefix;
+	public Translate.Phrase lastSeenPrefix;
 
-	public Phrase nowPhrase;
+	public Translate.Phrase nowPhrase;
 
-	public Phrase agoSuffix;
+	public Translate.Phrase agoSuffix;
 
 	public RustButton FriendlyButton;
 

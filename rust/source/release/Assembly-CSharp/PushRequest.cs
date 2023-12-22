@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using CompanionServer;
 using Facepunch;
 
-public class PushRequest : IPooled
+public class PushRequest : Pool.IPooled
 {
 	public string ServerToken;
 
@@ -18,7 +18,7 @@ public class PushRequest : IPooled
 
 	public void EnterPool ()
 	{
-		Pool.FreeList<ulong> (ref SteamIds);
+		Pool.FreeList (ref SteamIds);
 		Channel = (NotificationChannel)0;
 		Title = null;
 		Body = null;

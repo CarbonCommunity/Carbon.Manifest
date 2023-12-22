@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Facepunch;
 using Facepunch.Rust;
@@ -12,7 +11,7 @@ public class FlameTurret : StorageContainer
 	{
 		protected override void RunJob (FlameTurret entity)
 		{
-			if (((ObjectWorkQueue<FlameTurret>)this).ShouldAdd (entity)) {
+			if (ShouldAdd (entity)) {
 				entity.ServerThink ();
 			}
 		}
@@ -72,10 +71,7 @@ public class FlameTurret : StorageContainer
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("FlameTurret.OnRpcMessage", 0);
-		try {
-		} finally {
-			((IDisposable)val)?.Dispose ();
+		using (TimeWarning.New ("FlameTurret.OnRpcMessage")) {
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -87,7 +83,6 @@ public class FlameTurret : StorageContainer
 
 	public Vector3 GetEyePosition ()
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
 		return eyeTransform.position;
 	}
 
@@ -110,17 +105,16 @@ public class FlameTurret : StorageContainer
 	public override void ServerInit ()
 	{
 		base.ServerInit ();
-		((FacepunchBehaviour)this).InvokeRepeating ((Action)SendAimDir, 0f, 0.1f);
+		InvokeRepeating (SendAimDir, 0f, 0.1f);
 	}
 
 	public void SendAimDir ()
 	{
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
 		float delta = Time.realtimeSinceStartup - lastMovementUpdate;
 		lastMovementUpdate = Time.realtimeSinceStartup;
 		MovementUpdate (delta);
-		ClientRPC<Vector3> (null, "CLIENT_ReceiveAimDir", aimDir);
-		((ObjectWorkQueue<FlameTurret>)updateFlameTurretQueueServer).Add (this);
+		ClientRPC (null, "CLIENT_ReceiveAimDir", aimDir);
+		updateFlameTurretQueueServer.Add (this);
 	}
 
 	public float GetSpinSpeed ()
@@ -140,12 +134,7 @@ public class FlameTurret : StorageContainer
 
 	public void MovementUpdate (float delta)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		aimDir += new Vector3 (0f, delta * GetSpinSpeed (), 0f) * (float)turnDir;
+		aimDir += new Vector3 (0f, delta * GetSpinSpeed (), 0f) * turnDir;
 		if (aimDir.y >= arc || aimDir.y <= 0f - arc) {
 			turnDir *= -1;
 			aimDir.y = Mathf.Clamp (aimDir.y, 0f - arc, arc);
@@ -154,8 +143,6 @@ public class FlameTurret : StorageContainer
 
 	public void ServerThink ()
 	{
-		//IL_0079: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007e: Unknown result type (might be due to invalid IL or missing references)
 		bool num = IsTriggered ();
 		float delta = Time.realtimeSinceStartup - lastServerThink;
 		lastServerThink = Time.realtimeSinceStartup;
@@ -164,7 +151,7 @@ public class FlameTurret : StorageContainer
 		}
 		if (!IsTriggered () && HasFuel () && CheckTrigger ()) {
 			SetTriggered (triggered: true);
-			Effect.server.Run (triggeredEffect.resourcePath, ((Component)this).transform.position, Vector3.up);
+			Effect.server.Run (triggeredEffect.resourcePath, base.transform.position, Vector3.up);
 		}
 		if (num != IsTriggered ()) {
 			SendNetworkUpdateImmediate ();
@@ -176,40 +163,28 @@ public class FlameTurret : StorageContainer
 
 	public bool CheckTrigger ()
 	{
-		//IL_007a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0085: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ca: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fc: Unknown result type (might be due to invalid IL or missing references)
 		if (Time.realtimeSinceStartup < nextTriggerCheckTime) {
 			return false;
 		}
 		nextTriggerCheckTime = Time.realtimeSinceStartup + 1f / triggerCheckRate;
-		List<RaycastHit> list = Pool.GetList<RaycastHit> ();
+		List<RaycastHit> obj = Pool.GetList<RaycastHit> ();
 		HashSet<BaseEntity> entityContents = trigger.entityContents;
 		bool flag = false;
 		if (entityContents != null) {
 			foreach (BaseEntity item in entityContents) {
-				BasePlayer component = ((Component)item).GetComponent<BasePlayer> ();
-				if (component.IsSleeping () || !component.IsAlive () || !(((Component)component).transform.position.y <= GetEyePosition ().y + 0.5f) || component.IsBuildingAuthed ()) {
+				BasePlayer component = item.GetComponent<BasePlayer> ();
+				if (component.IsSleeping () || !component.IsAlive () || !(component.transform.position.y <= GetEyePosition ().y + 0.5f) || component.IsBuildingAuthed ()) {
 					continue;
 				}
-				list.Clear ();
-				Vector3 position = component.eyes.position;
-				Vector3 val = GetEyePosition () - component.eyes.position;
-				GamePhysics.TraceAll (new Ray (position, ((Vector3)(ref val)).normalized), 0f, list, 9f, 1218519297, (QueryTriggerInteraction)0);
-				for (int i = 0; i < list.Count; i++) {
-					BaseEntity entity = list [i].GetEntity ();
-					if ((Object)(object)entity != (Object)null && ((Object)(object)entity == (Object)(object)this || entity.EqualNetID ((BaseNetworkable)this))) {
+				obj.Clear ();
+				GamePhysics.TraceAll (new Ray (component.eyes.position, (GetEyePosition () - component.eyes.position).normalized), 0f, obj, 9f, 1218519297);
+				for (int i = 0; i < obj.Count; i++) {
+					BaseEntity entity = obj [i].GetEntity ();
+					if (entity != null && (entity == this || entity.EqualNetID (this))) {
 						flag = true;
 						break;
 					}
-					if (!((Object)(object)entity != (Object)null) || entity.ShouldBlockProjectiles ()) {
+					if (!(entity != null) || entity.ShouldBlockProjectiles ()) {
 						break;
 					}
 				}
@@ -218,38 +193,23 @@ public class FlameTurret : StorageContainer
 				}
 			}
 		}
-		Pool.FreeList<RaycastHit> (ref list);
+		Pool.FreeList (ref obj);
 		return flag;
 	}
 
 	public override void OnKilled (HitInfo info)
 	{
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ae: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00de: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ee: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0104: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010e: Unknown result type (might be due to invalid IL or missing references)
 		float num = (float)GetFuelAmount () / 500f;
 		DamageUtil.RadiusDamage (this, LookupPrefab (), GetEyePosition (), 2f, 6f, damagePerSec, 133120, useLineOfSight: true);
-		Effect.server.Run (explosionEffect.resourcePath, ((Component)this).transform.position, Vector3.up);
+		Effect.server.Run (explosionEffect.resourcePath, base.transform.position, Vector3.up);
 		int num2 = Mathf.CeilToInt (Mathf.Clamp (num * 8f, 1f, 8f));
 		for (int i = 0; i < num2; i++) {
-			BaseEntity baseEntity = GameManager.server.CreateEntity (fireballPrefab.resourcePath, ((Component)this).transform.position, ((Component)this).transform.rotation);
-			if (Object.op_Implicit ((Object)(object)baseEntity)) {
+			BaseEntity baseEntity = GameManager.server.CreateEntity (fireballPrefab.resourcePath, base.transform.position, base.transform.rotation);
+			if ((bool)baseEntity) {
 				Vector3 onUnitSphere = Random.onUnitSphere;
-				((Component)baseEntity).transform.position = ((Component)this).transform.position + new Vector3 (0f, 1.5f, 0f) + onUnitSphere * Random.Range (-1f, 1f);
+				baseEntity.transform.position = base.transform.position + new Vector3 (0f, 1.5f, 0f) + onUnitSphere * Random.Range (-1f, 1f);
 				baseEntity.Spawn ();
-				baseEntity.SetVelocity (onUnitSphere * (float)Random.Range (3, 10));
+				baseEntity.SetVelocity (onUnitSphere * Random.Range (3, 10));
 			}
 		}
 		base.OnKilled (info);
@@ -287,60 +247,26 @@ public class FlameTurret : StorageContainer
 
 	public void DoFlame (float delta)
 	{
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ab: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0060: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0070: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01c1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0181: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0188: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01c6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01dc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01eb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_019f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b8: Unknown result type (might be due to invalid IL or missing references)
 		if (!UseFuel (delta)) {
 			return;
 		}
-		Ray val = default(Ray);
-		((Ray)(ref val))..ctor (GetEyePosition (), ((Component)this).transform.TransformDirection (Quaternion.Euler (aimDir) * Vector3.forward));
-		Vector3 origin = ((Ray)(ref val)).origin;
-		RaycastHit val2 = default(RaycastHit);
-		bool flag = Physics.SphereCast (val, 0.4f, ref val2, flameRange, 1218652417);
+		Ray ray = new Ray (GetEyePosition (), base.transform.TransformDirection (Quaternion.Euler (aimDir) * Vector3.forward));
+		Vector3 origin = ray.origin;
+		RaycastHit hitInfo;
+		bool flag = Physics.SphereCast (ray, 0.4f, out hitInfo, flameRange, 1218652417);
 		if (!flag) {
-			((RaycastHit)(ref val2)).point = origin + ((Ray)(ref val)).direction * flameRange;
+			hitInfo.point = origin + ray.direction * flameRange;
 		}
 		float amount = damagePerSec [0].amount;
 		damagePerSec [0].amount = amount * delta;
-		DamageUtil.RadiusDamage (this, LookupPrefab (), ((RaycastHit)(ref val2)).point - ((Ray)(ref val)).direction * 0.1f, flameRadius * 0.5f, flameRadius, damagePerSec, 2230272, useLineOfSight: true);
-		DamageUtil.RadiusDamage (this, LookupPrefab (), ((Component)this).transform.position + new Vector3 (0f, 1.25f, 0f), 0.25f, 0.25f, damagePerSec, 133120, useLineOfSight: false);
+		DamageUtil.RadiusDamage (this, LookupPrefab (), hitInfo.point - ray.direction * 0.1f, flameRadius * 0.5f, flameRadius, damagePerSec, 2230272, useLineOfSight: true);
+		DamageUtil.RadiusDamage (this, LookupPrefab (), base.transform.position + new Vector3 (0f, 1.25f, 0f), 0.25f, 0.25f, damagePerSec, 133120, useLineOfSight: false);
 		damagePerSec [0].amount = amount;
 		if (Time.realtimeSinceStartup >= nextFireballTime) {
 			nextFireballTime = Time.realtimeSinceStartup + Random.Range (1f, 2f);
-			Vector3 val3 = ((Random.Range (0, 10) <= 7 && flag) ? ((RaycastHit)(ref val2)).point : (((Ray)(ref val)).origin + ((Ray)(ref val)).direction * (flag ? ((RaycastHit)(ref val2)).distance : flameRange) * Random.Range (0.4f, 1f)));
-			BaseEntity baseEntity = GameManager.server.CreateEntity (fireballPrefab.resourcePath, val3 - ((Ray)(ref val)).direction * 0.25f);
-			if (Object.op_Implicit ((Object)(object)baseEntity)) {
+			Vector3 vector = ((Random.Range (0, 10) <= 7 && flag) ? hitInfo.point : (ray.origin + ray.direction * (flag ? hitInfo.distance : flameRange) * Random.Range (0.4f, 1f)));
+			BaseEntity baseEntity = GameManager.server.CreateEntity (fireballPrefab.resourcePath, vector - ray.direction * 0.25f);
+			if ((bool)baseEntity) {
 				baseEntity.creatorEntity = this;
 				baseEntity.Spawn ();
 			}

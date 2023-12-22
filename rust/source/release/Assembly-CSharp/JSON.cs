@@ -19,15 +19,15 @@ public static class JSON
 
 	private const BindingFlags staticBindingFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 
-	private static readonly MethodInfo decodeTypeMethod = typeof(JSON).GetMethod ("DecodeType", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+	private static readonly MethodInfo decodeTypeMethod = typeof(TinyJSON.JSON).GetMethod ("DecodeType", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
 
-	private static readonly MethodInfo decodeListMethod = typeof(JSON).GetMethod ("DecodeList", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+	private static readonly MethodInfo decodeListMethod = typeof(TinyJSON.JSON).GetMethod ("DecodeList", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
 
-	private static readonly MethodInfo decodeDictionaryMethod = typeof(JSON).GetMethod ("DecodeDictionary", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+	private static readonly MethodInfo decodeDictionaryMethod = typeof(TinyJSON.JSON).GetMethod ("DecodeDictionary", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
 
-	private static readonly MethodInfo decodeArrayMethod = typeof(JSON).GetMethod ("DecodeArray", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+	private static readonly MethodInfo decodeArrayMethod = typeof(TinyJSON.JSON).GetMethod ("DecodeArray", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
 
-	private static readonly MethodInfo decodeMultiRankArrayMethod = typeof(JSON).GetMethod ("DecodeMultiRankArray", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+	private static readonly MethodInfo decodeMultiRankArrayMethod = typeof(TinyJSON.JSON).GetMethod ("DecodeMultiRankArray", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
 
 	public static Variant Load (string json)
 	{

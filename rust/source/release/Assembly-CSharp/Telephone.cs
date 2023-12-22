@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -58,7 +59,7 @@ public class Telephone : ContainerIOEntity, ICassettePlayer
 
 	public uint AnsweringMessageId {
 		get {
-			if (!((Object)(object)cachedCassette != (Object)null)) {
+			if (!(cachedCassette != null)) {
 				return 0u;
 			}
 			return cachedCassette.AudioId;
@@ -67,496 +68,380 @@ public class Telephone : ContainerIOEntity, ICassettePlayer
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("Telephone.OnRpcMessage", 0);
-		try {
-			if (rpc == 1529322558 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("Telephone.OnRpcMessage")) {
+			if (rpc == 1529322558 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - AnswerPhone "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - AnswerPhone ");
 				}
-				TimeWarning val2 = TimeWarning.New ("AnswerPhone", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("AnswerPhone")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (1529322558u, "AnswerPhone", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							AnswerPhone (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in AnswerPhone");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 2754362156u && (Object)(object)player != (Object)null) {
+			if (rpc == 2754362156u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - ClearCurrentUser "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - ClearCurrentUser ");
 				}
-				TimeWarning val2 = TimeWarning.New ("ClearCurrentUser", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("ClearCurrentUser")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (2754362156u, "ClearCurrentUser", this, player, 9f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg3 = rPCMessage;
 							ClearCurrentUser (msg3);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in ClearCurrentUser");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 1095090232 && (Object)(object)player != (Object)null) {
+			if (rpc == 1095090232 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - InitiateCall "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - InitiateCall ");
 				}
-				TimeWarning val2 = TimeWarning.New ("InitiateCall", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("InitiateCall")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (1095090232u, "InitiateCall", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg4 = rPCMessage;
 							InitiateCall (msg4);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex3) {
-						Debug.LogException (ex3);
+					} catch (Exception exception3) {
+						Debug.LogException (exception3);
 						player.Kick ("RPC Error in InitiateCall");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 2606442785u && (Object)(object)player != (Object)null) {
+			if (rpc == 2606442785u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - Server_AddSavedNumber "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - Server_AddSavedNumber ");
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_AddSavedNumber", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_AddSavedNumber")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (2606442785u, "Server_AddSavedNumber", this, player, 5uL)) {
 							return true;
 						}
 						if (!RPC_Server.MaxDistance.Test (2606442785u, "Server_AddSavedNumber", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg5 = rPCMessage;
 							Server_AddSavedNumber (msg5);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex4) {
-						Debug.LogException (ex4);
+					} catch (Exception exception4) {
+						Debug.LogException (exception4);
 						player.Kick ("RPC Error in Server_AddSavedNumber");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 1402406333 && (Object)(object)player != (Object)null) {
+			if (rpc == 1402406333 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - Server_RemoveSavedNumber "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - Server_RemoveSavedNumber ");
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_RemoveSavedNumber", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_RemoveSavedNumber")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (1402406333u, "Server_RemoveSavedNumber", this, player, 5uL)) {
 							return true;
 						}
 						if (!RPC_Server.MaxDistance.Test (1402406333u, "Server_RemoveSavedNumber", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg6 = rPCMessage;
 							Server_RemoveSavedNumber (msg6);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex5) {
-						Debug.LogException (ex5);
+					} catch (Exception exception5) {
+						Debug.LogException (exception5);
 						player.Kick ("RPC Error in Server_RemoveSavedNumber");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 942544266 && (Object)(object)player != (Object)null) {
+			if (rpc == 942544266 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - Server_RequestPhoneDirectory "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - Server_RequestPhoneDirectory ");
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_RequestPhoneDirectory", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_RequestPhoneDirectory")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (942544266u, "Server_RequestPhoneDirectory", this, player, 5uL)) {
 							return true;
 						}
 						if (!RPC_Server.MaxDistance.Test (942544266u, "Server_RequestPhoneDirectory", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg7 = rPCMessage;
 							Server_RequestPhoneDirectory (msg7);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex6) {
-						Debug.LogException (ex6);
+					} catch (Exception exception6) {
+						Debug.LogException (exception6);
 						player.Kick ("RPC Error in Server_RequestPhoneDirectory");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 1240133378 && (Object)(object)player != (Object)null) {
+			if (rpc == 1240133378 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - ServerDeleteVoicemail "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - ServerDeleteVoicemail ");
 				}
-				TimeWarning val2 = TimeWarning.New ("ServerDeleteVoicemail", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("ServerDeleteVoicemail")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (1240133378u, "ServerDeleteVoicemail", this, player, 5uL)) {
 							return true;
 						}
 						if (!RPC_Server.IsVisible.Test (1240133378u, "ServerDeleteVoicemail", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg8 = rPCMessage;
 							ServerDeleteVoicemail (msg8);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex7) {
-						Debug.LogException (ex7);
+					} catch (Exception exception7) {
+						Debug.LogException (exception7);
 						player.Kick ("RPC Error in ServerDeleteVoicemail");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 1221129498 && (Object)(object)player != (Object)null) {
+			if (rpc == 1221129498 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - ServerHangUp "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - ServerHangUp ");
 				}
-				TimeWarning val2 = TimeWarning.New ("ServerHangUp", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Call", 0);
+				using (TimeWarning.New ("ServerHangUp")) {
 					try {
-						RPCMessage rPCMessage = default(RPCMessage);
-						rPCMessage.connection = msg.connection;
-						rPCMessage.player = player;
-						rPCMessage.read = msg.read;
-						RPCMessage msg9 = rPCMessage;
-						ServerHangUp (msg9);
-					} finally {
-						((IDisposable)val3)?.Dispose ();
+						using (TimeWarning.New ("Call")) {
+							RPCMessage rPCMessage = default(RPCMessage);
+							rPCMessage.connection = msg.connection;
+							rPCMessage.player = player;
+							rPCMessage.read = msg.read;
+							RPCMessage msg9 = rPCMessage;
+							ServerHangUp (msg9);
+						}
+					} catch (Exception exception8) {
+						Debug.LogException (exception8);
+						player.Kick ("RPC Error in ServerHangUp");
 					}
-				} catch (Exception ex8) {
-					Debug.LogException (ex8);
-					player.Kick ("RPC Error in ServerHangUp");
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 239260010 && (Object)(object)player != (Object)null) {
+			if (rpc == 239260010 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - ServerPlayVoicemail "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - ServerPlayVoicemail ");
 				}
-				TimeWarning val2 = TimeWarning.New ("ServerPlayVoicemail", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("ServerPlayVoicemail")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (239260010u, "ServerPlayVoicemail", this, player, 5uL)) {
 							return true;
 						}
 						if (!RPC_Server.IsVisible.Test (239260010u, "ServerPlayVoicemail", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg10 = rPCMessage;
 							ServerPlayVoicemail (msg10);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex9) {
-						Debug.LogException (ex9);
+					} catch (Exception exception9) {
+						Debug.LogException (exception9);
 						player.Kick ("RPC Error in ServerPlayVoicemail");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 189198880 && (Object)(object)player != (Object)null) {
+			if (rpc == 189198880 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - ServerSendVoicemail "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - ServerSendVoicemail ");
 				}
-				TimeWarning val2 = TimeWarning.New ("ServerSendVoicemail", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("ServerSendVoicemail")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (189198880u, "ServerSendVoicemail", this, player, 5uL)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg11 = rPCMessage;
 							ServerSendVoicemail (msg11);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex10) {
-						Debug.LogException (ex10);
+					} catch (Exception exception10) {
+						Debug.LogException (exception10);
 						player.Kick ("RPC Error in ServerSendVoicemail");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 2760189029u && (Object)(object)player != (Object)null) {
+			if (rpc == 2760189029u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - ServerStopVoicemail "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - ServerStopVoicemail ");
 				}
-				TimeWarning val2 = TimeWarning.New ("ServerStopVoicemail", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("ServerStopVoicemail")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (2760189029u, "ServerStopVoicemail", this, player, 5uL)) {
 							return true;
 						}
 						if (!RPC_Server.IsVisible.Test (2760189029u, "ServerStopVoicemail", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg12 = rPCMessage;
 							ServerStopVoicemail (msg12);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex11) {
-						Debug.LogException (ex11);
+					} catch (Exception exception11) {
+						Debug.LogException (exception11);
 						player.Kick ("RPC Error in ServerStopVoicemail");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 3900772076u && (Object)(object)player != (Object)null) {
+			if (rpc == 3900772076u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - SetCurrentUser "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - SetCurrentUser ");
 				}
-				TimeWarning val2 = TimeWarning.New ("SetCurrentUser", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("SetCurrentUser")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (3900772076u, "SetCurrentUser", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage currentUser = rPCMessage;
 							SetCurrentUser (currentUser);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex12) {
-						Debug.LogException (ex12);
+					} catch (Exception exception12) {
+						Debug.LogException (exception12);
 						player.Kick ("RPC Error in SetCurrentUser");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 2760249627u && (Object)(object)player != (Object)null) {
+			if (rpc == 2760249627u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - UpdatePhoneName "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - UpdatePhoneName ");
 				}
-				TimeWarning val2 = TimeWarning.New ("UpdatePhoneName", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("UpdatePhoneName")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (2760249627u, "UpdatePhoneName", this, player, 5uL)) {
 							return true;
 						}
 						if (!RPC_Server.MaxDistance.Test (2760249627u, "UpdatePhoneName", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg13 = rPCMessage;
 							UpdatePhoneName (msg13);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex13) {
-						Debug.LogException (ex13);
+					} catch (Exception exception13) {
+						Debug.LogException (exception13);
 						player.Kick ("RPC Error in UpdatePhoneName");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_00ee: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (info.msg?.telephone == null) {
 			return;
@@ -564,18 +449,15 @@ public class Telephone : ContainerIOEntity, ICassettePlayer
 		Controller.PhoneNumber = info.msg.telephone.phoneNumber;
 		Controller.PhoneName = info.msg.telephone.phoneName;
 		Controller.lastDialedNumber = info.msg.telephone.lastNumber;
-		Controller.savedVoicemail = Pool.GetList<VoicemailEntry> ();
-		foreach (VoicemailEntry item in info.msg.telephone.voicemail) {
+		Controller.savedVoicemail = Facepunch.Pool.GetList<ProtoBuf.VoicemailEntry> ();
+		foreach (ProtoBuf.VoicemailEntry item in info.msg.telephone.voicemail) {
 			Controller.savedVoicemail.Add (item);
 			item.ShouldPool = false;
 		}
 		if (!info.fromDisk) {
 			Controller.currentPlayerRef.uid = info.msg.telephone.usingPlayer;
 		}
-		PhoneDirectory savedNumbers = Controller.savedNumbers;
-		if (savedNumbers != null) {
-			savedNumbers.ResetToPool ();
-		}
+		Controller.savedNumbers?.ResetToPool ();
 		Controller.savedNumbers = info.msg.telephone.savedNumbers;
 		if (Controller.savedNumbers != null) {
 			Controller.savedNumbers.ShouldPool = false;
@@ -590,7 +472,7 @@ public class Telephone : ContainerIOEntity, ICassettePlayer
 		if (!base.CanPickup (player)) {
 			return false;
 		}
-		return (Object)(object)Controller.currentPlayer == (Object)null;
+		return Controller.currentPlayer == null;
 	}
 
 	public override void OnFlagsChanged (Flags old, Flags next)
@@ -602,11 +484,11 @@ public class Telephone : ContainerIOEntity, ICassettePlayer
 			}
 			if (old.HasFlag (Flags.Busy) != next.HasFlag (Flags.Busy)) {
 				if (next.HasFlag (Flags.Busy)) {
-					if (!((FacepunchBehaviour)this).IsInvoking ((Action)Controller.WatchForDisconnects)) {
-						((FacepunchBehaviour)this).InvokeRepeating ((Action)Controller.WatchForDisconnects, 0f, 0.1f);
+					if (!IsInvoking (Controller.WatchForDisconnects)) {
+						InvokeRepeating (Controller.WatchForDisconnects, 0f, 0.1f);
 					}
 				} else {
-					((FacepunchBehaviour)this).CancelInvoke ((Action)Controller.WatchForDisconnects);
+					CancelInvoke (Controller.WatchForDisconnects);
 				}
 			}
 		}
@@ -615,19 +497,17 @@ public class Telephone : ContainerIOEntity, ICassettePlayer
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_011a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011f: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
 		if (info.msg.telephone == null) {
-			info.msg.telephone = Pool.Get<Telephone> ();
+			info.msg.telephone = Facepunch.Pool.Get<ProtoBuf.Telephone> ();
 		}
 		info.msg.telephone.phoneNumber = Controller.PhoneNumber;
 		info.msg.telephone.phoneName = Controller.PhoneName;
 		info.msg.telephone.lastNumber = Controller.lastDialedNumber;
 		info.msg.telephone.savedNumbers = Controller.savedNumbers;
 		if (Controller.savedVoicemail != null) {
-			info.msg.telephone.voicemail = Pool.GetList<VoicemailEntry> ();
-			foreach (VoicemailEntry item in Controller.savedVoicemail) {
+			info.msg.telephone.voicemail = Facepunch.Pool.GetList<ProtoBuf.VoicemailEntry> ();
+			foreach (ProtoBuf.VoicemailEntry item in Controller.savedVoicemail) {
 				info.msg.telephone.voicemail.Add (item);
 			}
 		}
@@ -692,25 +572,22 @@ public class Telephone : ContainerIOEntity, ICassettePlayer
 
 	public void OnCassetteInserted (Cassette c)
 	{
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
 		cachedCassette = c;
-		ClientRPC<NetworkableId> (null, "ClientOnCassetteChanged", c.net.ID);
+		ClientRPC (null, "ClientOnCassetteChanged", c.net.ID);
 	}
 
 	public void OnCassetteRemoved (Cassette c)
 	{
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
 		cachedCassette = null;
 		Controller.DeleteAllVoicemail ();
-		ClientRPC<NetworkableId> (null, "ClientOnCassetteChanged", default(NetworkableId));
+		ClientRPC (null, "ClientOnCassetteChanged", default(NetworkableId));
 	}
 
 	private bool CanAcceptItem (Item item, int targetSlot)
 	{
 		ItemDefinition[] validCassettes = ValidCassettes;
 		for (int i = 0; i < validCassettes.Length; i++) {
-			if ((Object)(object)validCassettes [i] == (Object)(object)item.info) {
+			if (validCassettes [i] == item.info) {
 				return true;
 			}
 		}

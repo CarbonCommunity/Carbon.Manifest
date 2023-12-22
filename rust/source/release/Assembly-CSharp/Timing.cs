@@ -15,7 +15,7 @@ public struct Timing
 	public void End ()
 	{
 		if (sw.Elapsed.TotalSeconds > 0.30000001192092896) {
-			Debug.Log ((object)("[" + sw.Elapsed.TotalSeconds.ToString ("0.0") + "s] " + name));
+			UnityEngine.Debug.Log ("[" + sw.Elapsed.TotalSeconds.ToString ("0.0") + "s] " + name);
 		}
 	}
 

@@ -38,7 +38,7 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 
 	public ConnectionQueue connectionQueue = new ConnectionQueue ();
 
-	public TimeAverageValueLookup<Type> packetHistory = new TimeAverageValueLookup<Type> ();
+	public TimeAverageValueLookup<Message.Type> packetHistory = new TimeAverageValueLookup<Message.Type> ();
 
 	public TimeAverageValueLookup<uint> rpcHistory = new TimeAverageValueLookup<uint> ();
 
@@ -48,15 +48,13 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 
 	private string AssemblyHash {
 		get {
-			//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0032: Expected O, but got Unknown
 			if (_AssemblyHash == null) {
 				string location = typeof(ServerMgr).Assembly.Location;
 				if (!string.IsNullOrEmpty (location)) {
 					byte[] array = File.ReadAllBytes (location);
-					CRC32 val = new CRC32 ();
-					val.SlurpBlock (array, 0, array.Length);
-					_AssemblyHash = val.Crc32Result.ToString ("x");
+					CRC32 cRC = new CRC32 ();
+					cRC.SlurpBlock (array, 0, array.Length);
+					_AssemblyHash = cRC.Crc32Result.ToString ("x");
 				} else {
 					_AssemblyHash = "il2cpp";
 				}
@@ -72,12 +70,9 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 		persistance = new UserPersistance (ConVar.Server.rootFolder);
 		playerStateManager = new PlayerStateManager (persistance);
 		SpawnMapEntities ();
-		if (Object.op_Implicit ((Object)(object)SingletonComponent<SpawnHandler>.Instance)) {
-			TimeWarning val = TimeWarning.New ("SpawnHandler.UpdateDistributions", 0);
-			try {
+		if ((bool)SingletonComponent<SpawnHandler>.Instance) {
+			using (TimeWarning.New ("SpawnHandler.UpdateDistributions")) {
 				SingletonComponent<SpawnHandler>.Instance.UpdateDistributions ();
-			} finally {
-				((IDisposable)val)?.Dispose ();
 			}
 		}
 		if (loadSave) {
@@ -88,25 +83,18 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 			World.LoadedFromSave = false;
 		}
 		SaveRestore.InitializeWipeId ();
-		if (Object.op_Implicit ((Object)(object)SingletonComponent<SpawnHandler>.Instance)) {
-			TimeWarning val;
+		if ((bool)SingletonComponent<SpawnHandler>.Instance) {
 			if (!skipInitialSpawn) {
-				val = TimeWarning.New ("SpawnHandler.InitialSpawn", 200);
-				try {
+				using (TimeWarning.New ("SpawnHandler.InitialSpawn", 200)) {
 					SingletonComponent<SpawnHandler>.Instance.InitialSpawn ();
-				} finally {
-					((IDisposable)val)?.Dispose ();
 				}
 			}
-			val = TimeWarning.New ("SpawnHandler.StartSpawnTick", 200);
-			try {
+			using (TimeWarning.New ("SpawnHandler.StartSpawnTick", 200)) {
 				SingletonComponent<SpawnHandler>.Instance.StartSpawnTick ();
-			} finally {
-				((IDisposable)val)?.Dispose ();
 			}
 		}
 		CreateImportantEntities ();
-		auth = ((Component)this).GetComponent<ConnectionAuth> ();
+		auth = GetComponent<ConnectionAuth> ();
 		Analytics.Azure.Initialize ();
 		return World.LoadedFromSave;
 	}
@@ -116,19 +104,19 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 		if (ConVar.Server.queryport <= 0 || ConVar.Server.queryport == ConVar.Server.port) {
 			ConVar.Server.queryport = Math.Max (ConVar.Server.port, RCon.Port) + 1;
 		}
-		Net.sv.ip = ConVar.Server.ip;
-		Net.sv.port = ConVar.Server.port;
+		Network.Net.sv.ip = ConVar.Server.ip;
+		Network.Net.sv.port = ConVar.Server.port;
 		StartSteamServer ();
-		if (!Net.sv.Start ()) {
-			Debug.LogWarning ((object)"Couldn't Start Server.");
+		if (!Network.Net.sv.Start ()) {
+			Debug.LogWarning ("Couldn't Start Server.");
 			CloseConnection ();
 			return;
 		}
-		Net.sv.callbackHandler = (IServerCallback)(object)this;
-		((BaseNetwork)Net.sv).cryptography = (INetworkCryptography)(object)new NetworkCryptographyServer ();
+		Network.Net.sv.callbackHandler = this;
+		Network.Net.sv.cryptography = new NetworkCryptographyServer ();
 		EACServer.DoStartup ();
-		((MonoBehaviour)this).InvokeRepeating ("DoTick", 1f, 1f / (float)ConVar.Server.tickrate);
-		((MonoBehaviour)this).InvokeRepeating ("DoHeartbeat", 1f, 1f);
+		InvokeRepeating ("DoTick", 1f, 1f / (float)ConVar.Server.tickrate);
+		InvokeRepeating ("DoHeartbeat", 1f, 1f);
 		runFrameUpdate = true;
 		ConsoleSystem.OnReplicatedVarChanged += OnReplicatedVarChanged;
 	}
@@ -140,53 +128,35 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 			persistance = null;
 		}
 		EACServer.DoShutdown ();
-		Net.sv.callbackHandler = null;
-		TimeWarning val = TimeWarning.New ("sv.Stop", 0);
-		try {
-			Net.sv.Stop ("Shutting Down");
-		} finally {
-			((IDisposable)val)?.Dispose ();
+		Network.Net.sv.callbackHandler = null;
+		using (TimeWarning.New ("sv.Stop")) {
+			Network.Net.sv.Stop ("Shutting Down");
 		}
-		val = TimeWarning.New ("RCon.Shutdown", 0);
-		try {
+		using (TimeWarning.New ("RCon.Shutdown")) {
 			RCon.Shutdown ();
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
-		val = TimeWarning.New ("PlatformService.Shutdown", 0);
-		try {
-			IPlatformService instance = PlatformService.Instance;
-			if (instance != null) {
-				instance.Shutdown ();
-			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
+		using (TimeWarning.New ("PlatformService.Shutdown")) {
+			PlatformService.Instance?.Shutdown ();
 		}
-		val = TimeWarning.New ("CompanionServer.Shutdown", 0);
-		try {
+		using (TimeWarning.New ("CompanionServer.Shutdown")) {
 			CompanionServer.Server.Shutdown ();
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
-		val = TimeWarning.New ("NexusServer.Shutdown", 0);
-		try {
+		using (TimeWarning.New ("NexusServer.Shutdown")) {
 			NexusServer.Shutdown ();
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		ConsoleSystem.OnReplicatedVarChanged -= OnReplicatedVarChanged;
 	}
 
 	private void OnDisable ()
 	{
-		if (!Application.isQuitting) {
+		if (!Rust.Application.isQuitting) {
 			CloseConnection ();
 		}
 	}
 
 	private void OnApplicationQuit ()
 	{
-		Application.isQuitting = true;
+		Rust.Application.isQuitting = true;
 		CloseConnection ();
 	}
 
@@ -196,7 +166,7 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 		CreateImportantEntity<CommunityEntity> ("assets/bundled/prefabs/system/server/community.prefab");
 		CreateImportantEntity<ResourceDepositManager> ("assets/bundled/prefabs/system/server/resourcedepositmanager.prefab");
 		CreateImportantEntity<RelationshipManager> ("assets/bundled/prefabs/system/server/relationship_manager.prefab");
-		if (Clan.enabled) {
+		if (ConVar.Clan.enabled) {
 			CreateImportantEntity<ClanManager> ("assets/bundled/prefabs/system/server/clan_manager.prefab");
 		}
 		CreateImportantEntity<TreeManager> ("assets/bundled/prefabs/system/tree_manager.prefab");
@@ -205,15 +175,11 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 
 	public void CreateImportantEntity<T> (string prefabName) where T : BaseEntity
 	{
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0056: Unknown result type (might be due to invalid IL or missing references)
-		if (!Object.op_Implicit ((Object)(object)BaseNetworkable.serverEntities.OfType<T> ().FirstOrDefault ())) {
-			Debug.LogWarning ((object)("Missing " + typeof(T).Name + " - creating"));
+		if (!BaseNetworkable.serverEntities.OfType<T> ().FirstOrDefault ()) {
+			Debug.LogWarning ("Missing " + typeof(T).Name + " - creating");
 			BaseEntity baseEntity = GameManager.server.CreateEntity (prefabName);
-			if ((Object)(object)baseEntity == (Object)null) {
-				Debug.LogWarning ((object)"Couldn't create");
+			if (baseEntity == null) {
+				Debug.LogWarning ("Couldn't create");
 			} else {
 				baseEntity.Spawn ();
 			}
@@ -222,47 +188,45 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 
 	private void StartSteamServer ()
 	{
-		PlatformService.Instance.Initialize ((IPlatformHooks)(object)RustPlatformHooks.Instance);
-		((MonoBehaviour)this).InvokeRepeating ("UpdateServerInformation", 2f, 30f);
-		((MonoBehaviour)this).InvokeRepeating ("UpdateItemDefinitions", 10f, 3600f);
-		DebugEx.Log ((object)"SteamServer Initialized", (StackTraceLogType)0);
+		PlatformService.Instance.Initialize (RustPlatformHooks.Instance);
+		InvokeRepeating ("UpdateServerInformation", 2f, 30f);
+		InvokeRepeating ("UpdateItemDefinitions", 10f, 3600f);
+		DebugEx.Log ("SteamServer Initialized");
 	}
 
 	private void UpdateItemDefinitions ()
 	{
-		Debug.Log ((object)"Checking for new Steam Item Definitions..");
+		Debug.Log ("Checking for new Steam Item Definitions..");
 		PlatformService.Instance.RefreshItemDefinitions ();
 	}
 
 	internal void OnValidateAuthTicketResponse (ulong SteamId, ulong OwnerId, AuthResponse Status)
 	{
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005f: Invalid comparison between Unknown and I4
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007e: Invalid comparison between Unknown and I4
-		//IL_0081: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0083: Invalid comparison between Unknown and I4
-		//IL_0085: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0087: Invalid comparison between Unknown and I4
 		if (Auth_Steam.ValidateConnecting (SteamId, OwnerId, Status)) {
 			return;
 		}
-		Connection val = Net.sv.connections.FirstOrDefault ((Connection x) => x.userid == SteamId);
-		if (val == null) {
-			Debug.LogWarning ((object)$"Steam gave us a {Status} ticket response for unconnected id {SteamId}");
-		} else if ((int)Status == 2) {
-			Debug.LogWarning ((object)$"Steam gave us a 'ok' ticket response for already connected id {SteamId}");
-		} else if ((int)Status != 1) {
-			if (((int)Status == 4 || (int)Status == 3) && !bannedPlayerNotices.Contains (SteamId)) {
-				ConsoleNetwork.BroadcastToAllClients ("chat.add", 2, 0, "<color=#fff>SERVER</color> Kicking " + StringEx.EscapeRichText (val.username) + " (banned by anticheat)");
+		Network.Connection connection = Network.Net.sv.connections.FirstOrDefault ((Network.Connection x) => x.userid == SteamId);
+		if (connection == null) {
+			Debug.LogWarning ($"Steam gave us a {Status} ticket response for unconnected id {SteamId}");
+			return;
+		}
+		switch (Status) {
+		case AuthResponse.OK:
+			Debug.LogWarning ($"Steam gave us a 'ok' ticket response for already connected id {SteamId}");
+			return;
+		case AuthResponse.TimedOut:
+			return;
+		case AuthResponse.VACBanned:
+		case AuthResponse.PublisherBanned:
+			if (!bannedPlayerNotices.Contains (SteamId)) {
+				ConsoleNetwork.BroadcastToAllClients ("chat.add", 2, 0, "<color=#fff>SERVER</color> Kicking " + connection.username.EscapeRichText () + " (banned by anticheat)");
 				bannedPlayerNotices.Add (SteamId);
 			}
-			Debug.Log ((object)$"Kicking {val.ipaddress}/{val.userid}/{val.username} (Steam Status \"{((object)(AuthResponse)(ref Status)).ToString ()}\")");
-			val.authStatus = ((object)(AuthResponse)(ref Status)).ToString ();
-			Net.sv.Kick (val, "Steam: " + ((object)(AuthResponse)(ref Status)).ToString (), false);
+			break;
 		}
+		Debug.Log ($"Kicking {connection.ipaddress}/{connection.userid}/{connection.username} (Steam Status \"{Status.ToString ()}\")");
+		connection.authStatus = Status.ToString ();
+		Network.Net.sv.Kick (connection, "Steam: " + Status);
 	}
 
 	private void Update ()
@@ -270,161 +234,124 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 		if (!runFrameUpdate) {
 			return;
 		}
-		Manifest manifest = Application.Manifest;
+		Facepunch.Models.Manifest manifest = Facepunch.Application.Manifest;
 		if (manifest != null && manifest.Features.ServerAnalytics) {
 			try {
 				PerformanceLogging.server.OnFrame ();
-			} catch (Exception ex) {
-				Debug.LogException (ex);
+			} catch (Exception exception) {
+				Debug.LogException (exception);
 			}
 		}
-		TimeWarning val = TimeWarning.New ("ServerMgr.Update", 500);
-		try {
+		using (TimeWarning.New ("ServerMgr.Update", 500)) {
 			try {
-				TimeWarning val2 = TimeWarning.New ("EACServer.DoUpdate", 100);
-				try {
+				using (TimeWarning.New ("EACServer.DoUpdate", 100)) {
 					EACServer.DoUpdate ();
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
-			} catch (Exception ex2) {
-				Debug.LogWarning ((object)"Server Exception: EACServer.DoUpdate");
-				Debug.LogException (ex2, (Object)(object)this);
+			} catch (Exception exception2) {
+				Debug.LogWarning ("Server Exception: EACServer.DoUpdate");
+				Debug.LogException (exception2, this);
 			}
 			try {
-				TimeWarning val2 = TimeWarning.New ("PlatformService.Update", 100);
-				try {
+				using (TimeWarning.New ("PlatformService.Update", 100)) {
 					PlatformService.Instance.Update ();
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
-			} catch (Exception ex3) {
-				Debug.LogWarning ((object)"Server Exception: Platform Service Update");
-				Debug.LogException (ex3, (Object)(object)this);
+			} catch (Exception exception3) {
+				Debug.LogWarning ("Server Exception: Platform Service Update");
+				Debug.LogException (exception3, this);
 			}
 			try {
-				TimeWarning val2 = TimeWarning.New ("Net.sv.Cycle", 100);
-				try {
-					((BaseNetwork)Net.sv).Cycle ();
-				} finally {
-					((IDisposable)val2)?.Dispose ();
+				using (TimeWarning.New ("Net.sv.Cycle", 100)) {
+					Network.Net.sv.Cycle ();
 				}
-			} catch (Exception ex4) {
-				Debug.LogWarning ((object)"Server Exception: Network Cycle");
-				Debug.LogException (ex4, (Object)(object)this);
+			} catch (Exception exception4) {
+				Debug.LogWarning ("Server Exception: Network Cycle");
+				Debug.LogException (exception4, this);
 			}
 			try {
-				TimeWarning val2 = TimeWarning.New ("ServerBuildingManager.Cycle", 0);
-				try {
+				using (TimeWarning.New ("ServerBuildingManager.Cycle")) {
 					BuildingManager.server.Cycle ();
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
-			} catch (Exception ex5) {
-				Debug.LogWarning ((object)"Server Exception: Building Manager");
-				Debug.LogException (ex5, (Object)(object)this);
+			} catch (Exception exception5) {
+				Debug.LogWarning ("Server Exception: Building Manager");
+				Debug.LogException (exception5, this);
 			}
 			try {
-				TimeWarning val2 = TimeWarning.New ("BasePlayer.ServerCycle", 0);
-				try {
-					bool batchsynctransforms = Physics.batchsynctransforms;
-					bool autosynctransforms = Physics.autosynctransforms;
+				using (TimeWarning.New ("BasePlayer.ServerCycle")) {
+					bool batchsynctransforms = ConVar.Physics.batchsynctransforms;
+					bool autosynctransforms = ConVar.Physics.autosynctransforms;
 					if (batchsynctransforms && autosynctransforms) {
-						Physics.autoSyncTransforms = false;
+						UnityEngine.Physics.autoSyncTransforms = false;
 					}
-					if (!Physics.autoSyncTransforms) {
-						Physics.SyncTransforms ();
+					if (!UnityEngine.Physics.autoSyncTransforms) {
+						UnityEngine.Physics.SyncTransforms ();
 					}
 					try {
-						TimeWarning val3 = TimeWarning.New ("CameraRendererManager.Tick", 100);
-						try {
+						using (TimeWarning.New ("CameraRendererManager.Tick", 100)) {
 							CameraRendererManager instance = SingletonComponent<CameraRendererManager>.Instance;
-							if ((Object)(object)instance != (Object)null) {
+							if (instance != null) {
 								instance.Tick ();
 							}
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex6) {
-						Debug.LogWarning ((object)"Server Exception: CameraRendererManager.Tick");
-						Debug.LogException (ex6, (Object)(object)this);
+					} catch (Exception exception6) {
+						Debug.LogWarning ("Server Exception: CameraRendererManager.Tick");
+						Debug.LogException (exception6, this);
 					}
-					BasePlayer.ServerCycle (Time.deltaTime);
+					BasePlayer.ServerCycle (UnityEngine.Time.deltaTime);
 					try {
-						TimeWarning val3 = TimeWarning.New ("FlameTurret.BudgetedUpdate", 0);
-						try {
-							((ObjectWorkQueue<FlameTurret>)FlameTurret.updateFlameTurretQueueServer).RunQueue (0.25);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
+						using (TimeWarning.New ("FlameTurret.BudgetedUpdate")) {
+							FlameTurret.updateFlameTurretQueueServer.RunQueue (0.25);
 						}
-					} catch (Exception ex7) {
-						Debug.LogWarning ((object)"Server Exception: FlameTurret.BudgetedUpdate");
-						Debug.LogException (ex7, (Object)(object)this);
+					} catch (Exception exception7) {
+						Debug.LogWarning ("Server Exception: FlameTurret.BudgetedUpdate");
+						Debug.LogException (exception7, this);
 					}
 					try {
-						TimeWarning val3 = TimeWarning.New ("AutoTurret.BudgetedUpdate", 0);
-						try {
-							((PersistentObjectWorkQueue<AutoTurret>)AutoTurret.updateAutoTurretScanQueue).RunList ((double)AutoTurret.auto_turret_budget_ms);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
+						using (TimeWarning.New ("AutoTurret.BudgetedUpdate")) {
+							AutoTurret.updateAutoTurretScanQueue.RunList (AutoTurret.auto_turret_budget_ms);
 						}
-					} catch (Exception ex8) {
-						Debug.LogWarning ((object)"Server Exception: AutoTurret.BudgetedUpdate");
-						Debug.LogException (ex8, (Object)(object)this);
+					} catch (Exception exception8) {
+						Debug.LogWarning ("Server Exception: AutoTurret.BudgetedUpdate");
+						Debug.LogException (exception8, this);
 					}
 					try {
-						TimeWarning val3 = TimeWarning.New ("GunTrap.BudgetedUpdate", 0);
-						try {
-							((PersistentObjectWorkQueue<GunTrap>)GunTrap.updateGunTrapWorkQueue).RunList ((double)GunTrap.gun_trap_budget_ms);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
+						using (TimeWarning.New ("GunTrap.BudgetedUpdate")) {
+							GunTrap.updateGunTrapWorkQueue.RunList (GunTrap.gun_trap_budget_ms);
 						}
-					} catch (Exception ex9) {
-						Debug.LogWarning ((object)"Server Exception: GunTrap.BudgetedUpdate");
-						Debug.LogException (ex9, (Object)(object)this);
+					} catch (Exception exception9) {
+						Debug.LogWarning ("Server Exception: GunTrap.BudgetedUpdate");
+						Debug.LogException (exception9, this);
 					}
 					try {
-						TimeWarning val3 = TimeWarning.New ("BaseFishingRod.BudgetedUpdate", 0);
-						try {
-							((ObjectWorkQueue<BaseFishingRod>)BaseFishingRod.updateFishingRodQueue).RunQueue (1.0);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
+						using (TimeWarning.New ("BaseFishingRod.BudgetedUpdate")) {
+							BaseFishingRod.updateFishingRodQueue.RunQueue (1.0);
 						}
-					} catch (Exception ex10) {
-						Debug.LogWarning ((object)"Server Exception: BaseFishingRod.BudgetedUpdate");
-						Debug.LogException (ex10, (Object)(object)this);
+					} catch (Exception exception10) {
+						Debug.LogWarning ("Server Exception: BaseFishingRod.BudgetedUpdate");
+						Debug.LogException (exception10, this);
 					}
 					if (batchsynctransforms && autosynctransforms) {
-						Physics.autoSyncTransforms = true;
+						UnityEngine.Physics.autoSyncTransforms = true;
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
-			} catch (Exception ex11) {
-				Debug.LogWarning ((object)"Server Exception: Player Update");
-				Debug.LogException (ex11, (Object)(object)this);
+			} catch (Exception exception11) {
+				Debug.LogWarning ("Server Exception: Player Update");
+				Debug.LogException (exception11, this);
 			}
 			try {
-				TimeWarning val2 = TimeWarning.New ("connectionQueue.Cycle", 0);
-				try {
+				using (TimeWarning.New ("connectionQueue.Cycle")) {
 					connectionQueue.Cycle (AvailableSlots);
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
-			} catch (Exception ex12) {
-				Debug.LogWarning ((object)"Server Exception: Connection Queue");
-				Debug.LogException (ex12, (Object)(object)this);
+			} catch (Exception exception12) {
+				Debug.LogWarning ("Server Exception: Connection Queue");
+				Debug.LogException (exception12, this);
 			}
 			try {
-				TimeWarning val2 = TimeWarning.New ("IOEntity.ProcessQueue", 0);
-				try {
+				using (TimeWarning.New ("IOEntity.ProcessQueue")) {
 					IOEntity.ProcessQueue ();
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
-			} catch (Exception ex13) {
-				Debug.LogWarning ((object)"Server Exception: IOEntity.ProcessQueue");
-				Debug.LogException (ex13, (Object)(object)this);
+			} catch (Exception exception13) {
+				Debug.LogWarning ("Server Exception: IOEntity.ProcessQueue");
+				Debug.LogException (exception13, this);
 			}
 			if (!AI.spliceupdates) {
 				aiTick = AIThinkManager.QueueType.Human;
@@ -433,15 +360,12 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 			}
 			if (aiTick == AIThinkManager.QueueType.Human) {
 				try {
-					TimeWarning val2 = TimeWarning.New ("AIThinkManager.ProcessQueue", 0);
-					try {
+					using (TimeWarning.New ("AIThinkManager.ProcessQueue")) {
 						AIThinkManager.ProcessQueue (AIThinkManager.QueueType.Human);
-					} finally {
-						((IDisposable)val2)?.Dispose ();
 					}
-				} catch (Exception ex14) {
-					Debug.LogWarning ((object)"Server Exception: AIThinkManager.ProcessQueue");
-					Debug.LogException (ex14, (Object)(object)this);
+				} catch (Exception exception14) {
+					Debug.LogWarning ("Server Exception: AIThinkManager.ProcessQueue");
+					Debug.LogException (exception14, this);
 				}
 				if (!AI.spliceupdates) {
 					aiTick = AIThinkManager.QueueType.Animal;
@@ -449,107 +373,78 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 			}
 			if (aiTick == AIThinkManager.QueueType.Animal) {
 				try {
-					TimeWarning val2 = TimeWarning.New ("AIThinkManager.ProcessAnimalQueue", 0);
-					try {
+					using (TimeWarning.New ("AIThinkManager.ProcessAnimalQueue")) {
 						AIThinkManager.ProcessQueue (AIThinkManager.QueueType.Animal);
-					} finally {
-						((IDisposable)val2)?.Dispose ();
 					}
-				} catch (Exception ex15) {
-					Debug.LogWarning ((object)"Server Exception: AIThinkManager.ProcessAnimalQueue");
-					Debug.LogException (ex15, (Object)(object)this);
+				} catch (Exception exception15) {
+					Debug.LogWarning ("Server Exception: AIThinkManager.ProcessAnimalQueue");
+					Debug.LogException (exception15, this);
 				}
 			}
 			try {
-				TimeWarning val2 = TimeWarning.New ("AIThinkManager.ProcessPetQueue", 0);
-				try {
+				using (TimeWarning.New ("AIThinkManager.ProcessPetQueue")) {
 					AIThinkManager.ProcessQueue (AIThinkManager.QueueType.Pets);
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
-			} catch (Exception ex16) {
-				Debug.LogWarning ((object)"Server Exception: AIThinkManager.ProcessPetQueue");
-				Debug.LogException (ex16, (Object)(object)this);
+			} catch (Exception exception16) {
+				Debug.LogWarning ("Server Exception: AIThinkManager.ProcessPetQueue");
+				Debug.LogException (exception16, this);
 			}
 			try {
-				TimeWarning val2 = TimeWarning.New ("AIThinkManager.ProcessPetMovementQueue", 0);
-				try {
+				using (TimeWarning.New ("AIThinkManager.ProcessPetMovementQueue")) {
 					BasePet.ProcessMovementQueue ();
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
-			} catch (Exception ex17) {
-				Debug.LogWarning ((object)"Server Exception: AIThinkManager.ProcessPetMovementQueue");
-				Debug.LogException (ex17, (Object)(object)this);
+			} catch (Exception exception17) {
+				Debug.LogWarning ("Server Exception: AIThinkManager.ProcessPetMovementQueue");
+				Debug.LogException (exception17, this);
 			}
 			try {
-				TimeWarning val2 = TimeWarning.New ("BaseRidableAnimal.ProcessQueue", 0);
-				try {
+				using (TimeWarning.New ("BaseRidableAnimal.ProcessQueue")) {
 					BaseRidableAnimal.ProcessQueue ();
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
-			} catch (Exception ex18) {
-				Debug.LogWarning ((object)"Server Exception: BaseRidableAnimal.ProcessQueue");
-				Debug.LogException (ex18, (Object)(object)this);
+			} catch (Exception exception18) {
+				Debug.LogWarning ("Server Exception: BaseRidableAnimal.ProcessQueue");
+				Debug.LogException (exception18, this);
 			}
 			try {
-				TimeWarning val2 = TimeWarning.New ("GrowableEntity.BudgetedUpdate", 0);
-				try {
-					((ObjectWorkQueue<GrowableEntity>)GrowableEntity.growableEntityUpdateQueue).RunQueue ((double)GrowableEntity.framebudgetms);
-				} finally {
-					((IDisposable)val2)?.Dispose ();
+				using (TimeWarning.New ("GrowableEntity.BudgetedUpdate")) {
+					GrowableEntity.growableEntityUpdateQueue.RunQueue (GrowableEntity.framebudgetms);
 				}
-			} catch (Exception ex19) {
-				Debug.LogWarning ((object)"Server Exception: GrowableEntity.BudgetedUpdate");
-				Debug.LogException (ex19, (Object)(object)this);
+			} catch (Exception exception19) {
+				Debug.LogWarning ("Server Exception: GrowableEntity.BudgetedUpdate");
+				Debug.LogException (exception19, this);
 			}
 			try {
-				TimeWarning val2 = TimeWarning.New ("BasePlayer.BudgetedLifeStoryUpdate", 0);
-				try {
-					((ObjectWorkQueue<BasePlayer>)BasePlayer.lifeStoryQueue).RunQueue ((double)BasePlayer.lifeStoryFramebudgetms);
-				} finally {
-					((IDisposable)val2)?.Dispose ();
+				using (TimeWarning.New ("BasePlayer.BudgetedLifeStoryUpdate")) {
+					BasePlayer.lifeStoryQueue.RunQueue (BasePlayer.lifeStoryFramebudgetms);
 				}
-			} catch (Exception ex20) {
-				Debug.LogWarning ((object)"Server Exception: BasePlayer.BudgetedLifeStoryUpdate");
-				Debug.LogException (ex20, (Object)(object)this);
+			} catch (Exception exception20) {
+				Debug.LogWarning ("Server Exception: BasePlayer.BudgetedLifeStoryUpdate");
+				Debug.LogException (exception20, this);
 			}
 			try {
-				TimeWarning val2 = TimeWarning.New ("JunkPileWater.UpdateNearbyPlayers", 0);
-				try {
-					((ObjectWorkQueue<JunkPileWater>)JunkPileWater.junkpileWaterWorkQueue).RunQueue ((double)JunkPileWater.framebudgetms);
-				} finally {
-					((IDisposable)val2)?.Dispose ();
+				using (TimeWarning.New ("JunkPileWater.UpdateNearbyPlayers")) {
+					JunkPileWater.junkpileWaterWorkQueue.RunQueue (JunkPileWater.framebudgetms);
 				}
-			} catch (Exception ex21) {
-				Debug.LogWarning ((object)"Server Exception: JunkPileWater.UpdateNearbyPlayers");
-				Debug.LogException (ex21, (Object)(object)this);
+			} catch (Exception exception21) {
+				Debug.LogWarning ("Server Exception: JunkPileWater.UpdateNearbyPlayers");
+				Debug.LogException (exception21, this);
 			}
 			try {
-				TimeWarning val2 = TimeWarning.New ("IndustrialEntity.RunQueue", 0);
-				try {
-					((ObjectWorkQueue<IndustrialEntity>)IndustrialEntity.Queue).RunQueue ((double)ConVar.Server.industrialFrameBudgetMs);
-				} finally {
-					((IDisposable)val2)?.Dispose ();
+				using (TimeWarning.New ("IndustrialEntity.RunQueue")) {
+					IndustrialEntity.Queue.RunQueue (ConVar.Server.industrialFrameBudgetMs);
 				}
-			} catch (Exception ex22) {
-				Debug.LogWarning ((object)"Server Exception: IndustrialEntity.RunQueue");
-				Debug.LogException (ex22, (Object)(object)this);
+			} catch (Exception exception22) {
+				Debug.LogWarning ("Server Exception: IndustrialEntity.RunQueue");
+				Debug.LogException (exception22, this);
 			}
 			try {
-				TimeWarning val2 = TimeWarning.New ("AntiHack.Cycle", 0);
-				try {
+				using (TimeWarning.New ("AntiHack.Cycle")) {
 					AntiHack.Cycle ();
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
-			} catch (Exception ex23) {
-				Debug.LogWarning ((object)"Server Exception: AntiHack.Cycle");
-				Debug.LogException (ex23, (Object)(object)this);
+			} catch (Exception exception23) {
+				Debug.LogWarning ("Server Exception: AntiHack.Cycle");
+				Debug.LogException (exception23, this);
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 	}
 
@@ -558,57 +453,42 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 		if (!runFrameUpdate) {
 			return;
 		}
-		TimeWarning val = TimeWarning.New ("ServerMgr.LateUpdate", 500);
-		try {
-			if (!SteamNetworking.steamnagleflush) {
+		using (TimeWarning.New ("ServerMgr.LateUpdate", 500)) {
+			if (!Facepunch.Network.SteamNetworking.steamnagleflush) {
 				return;
 			}
 			try {
-				TimeWarning val2 = TimeWarning.New ("Connection.Flush", 0);
-				try {
-					for (int i = 0; i < Net.sv.connections.Count; i++) {
-						Net.sv.Flush (Net.sv.connections [i]);
+				using (TimeWarning.New ("Connection.Flush")) {
+					for (int i = 0; i < Network.Net.sv.connections.Count; i++) {
+						Network.Net.sv.Flush (Network.Net.sv.connections [i]);
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
-			} catch (Exception ex) {
-				Debug.LogWarning ((object)"Server Exception: Connection.Flush");
-				Debug.LogException (ex, (Object)(object)this);
+			} catch (Exception exception) {
+				Debug.LogWarning ("Server Exception: Connection.Flush");
+				Debug.LogException (exception, this);
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 	}
 
 	private void FixedUpdate ()
 	{
-		TimeWarning val = TimeWarning.New ("ServerMgr.FixedUpdate", 0);
-		try {
+		using (TimeWarning.New ("ServerMgr.FixedUpdate")) {
 			try {
-				TimeWarning val2 = TimeWarning.New ("BaseMountable.FixedUpdateCycle", 0);
-				try {
+				using (TimeWarning.New ("BaseMountable.FixedUpdateCycle")) {
 					BaseMountable.FixedUpdateCycle ();
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
-			} catch (Exception ex) {
-				Debug.LogWarning ((object)"Server Exception: Mountable Cycle");
-				Debug.LogException (ex, (Object)(object)this);
+			} catch (Exception exception) {
+				Debug.LogWarning ("Server Exception: Mountable Cycle");
+				Debug.LogException (exception, this);
 			}
 			try {
-				TimeWarning val2 = TimeWarning.New ("Buoyancy.Cycle", 0);
-				try {
+				using (TimeWarning.New ("Buoyancy.Cycle")) {
 					Buoyancy.Cycle ();
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
-			} catch (Exception ex2) {
-				Debug.LogWarning ((object)"Server Exception: Buoyancy Cycle");
-				Debug.LogException (ex2, (Object)(object)this);
+			} catch (Exception exception2) {
+				Debug.LogWarning ("Server Exception: Buoyancy Cycle");
+				Debug.LogException (exception2, this);
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 	}
 
@@ -617,10 +497,10 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 		RCon.Update ();
 		CompanionServer.Server.Update ();
 		NexusServer.Update ();
-		for (int i = 0; i < Net.sv.connections.Count; i++) {
-			Connection val = Net.sv.connections [i];
-			if (!val.isAuthenticated && !(val.GetSecondsConnected () < (float)ConVar.Server.authtimeout)) {
-				Net.sv.Kick (val, "Authentication Timed Out", false);
+		for (int i = 0; i < Network.Net.sv.connections.Count; i++) {
+			Network.Connection connection = Network.Net.sv.connections [i];
+			if (!connection.isAuthenticated && !(connection.GetSecondsConnected () < (float)ConVar.Server.authtimeout)) {
+				Network.Net.sv.Kick (connection, "Authentication Timed Out");
 			}
 		}
 	}
@@ -633,7 +513,7 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 	private static BaseGameMode Gamemode ()
 	{
 		BaseGameMode activeGameMode = BaseGameMode.GetActiveGameMode (serverside: true);
-		if (!((Object)(object)activeGameMode != (Object)null)) {
+		if (!(activeGameMode != null)) {
 			return null;
 		}
 		return activeGameMode;
@@ -654,8 +534,7 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 		if (!SteamServer.IsValid) {
 			return;
 		}
-		TimeWarning val = TimeWarning.New ("UpdateServerInformation", 0);
-		try {
+		using (TimeWarning.New ("UpdateServerInformation")) {
 			SteamServer.ServerName = ConVar.Server.hostname;
 			SteamServer.MaxPlayers = ConVar.Server.maxplayers;
 			SteamServer.Passworded = false;
@@ -669,21 +548,10 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 			string text4 = (ConVar.Server.pve ? ",pve" : string.Empty);
 			string text5 = ConVar.Server.tags?.Trim (',') ?? "";
 			string text6 = ((!string.IsNullOrWhiteSpace (text5)) ? ("," + text5) : "");
-			BuildInfo current = BuildInfo.Current;
-			object obj;
-			if (current == null) {
-				obj = null;
-			} else {
-				ScmInfo scm = current.Scm;
-				obj = ((scm != null) ? scm.ChangeId : null);
-			}
-			if (obj == null) {
-				obj = "0";
-			}
-			string text7 = (string)obj;
-			SteamServer.GameTags = $"mp{ConVar.Server.maxplayers},cp{BasePlayer.activePlayerList.Count},pt{Net.sv.ProtocolId},qp{SingletonComponent<ServerMgr>.Instance.connectionQueue.Queued},v{2515}{text4}{text6},h{AssemblyHash},{text},{text2},{text3},cs{text7}";
+			string text7 = BuildInfo.Current?.Scm?.ChangeId ?? "0";
+			SteamServer.GameTags = $"mp{ConVar.Server.maxplayers},cp{BasePlayer.activePlayerList.Count},pt{Network.Net.sv.ProtocolId},qp{SingletonComponent<ServerMgr>.Instance.connectionQueue.Queued},v{2515}{text4}{text6},h{AssemblyHash},{text},{text2},{text3},cs{text7}";
 			if (ConVar.Server.description != null && ConVar.Server.description.Length > 100) {
-				string[] array = StringEx.SplitToChunks (ConVar.Server.description, 100).ToArray ();
+				string[] array = ConVar.Server.description.SplitToChunks (100).ToArray ();
 				for (int i = 0; i < 16; i++) {
 					if (i < array.Length) {
 						SteamServer.SetKey ($"description_{i:00}", array [i]);
@@ -698,12 +566,12 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 				}
 			}
 			SteamServer.SetKey ("hash", AssemblyHash);
-			string text8 = World.Seed.ToString ();
+			string value = World.Seed.ToString ();
 			BaseGameMode activeGameMode = BaseGameMode.GetActiveGameMode (serverside: true);
-			if ((Object)(object)activeGameMode != (Object)null && !activeGameMode.ingameMap) {
-				text8 = "0";
+			if (activeGameMode != null && !activeGameMode.ingameMap) {
+				value = "0";
 			}
-			SteamServer.SetKey ("world.seed", text8);
+			SteamServer.SetKey ("world.seed", value);
 			SteamServer.SetKey ("world.size", World.Size.ToString ());
 			SteamServer.SetKey ("pve", ConVar.Server.pve.ToString ());
 			SteamServer.SetKey ("headerimage", ConVar.Server.headerimage);
@@ -711,7 +579,7 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 			SteamServer.SetKey ("url", ConVar.Server.url);
 			SteamServer.SetKey ("gmn", GamemodeName ());
 			SteamServer.SetKey ("gmt", GamemodeTitle ());
-			SteamServer.SetKey ("uptime", ((int)Time.realtimeSinceStartup).ToString ());
+			SteamServer.SetKey ("uptime", ((int)UnityEngine.Time.realtimeSinceStartup).ToString ());
 			SteamServer.SetKey ("gc_mb", Performance.report.memoryAllocations.ToString ());
 			SteamServer.SetKey ("gc_cl", Performance.report.memoryCollections.ToString ());
 			SteamServer.SetKey ("ram_sys", (Performance.report.memoryUsageSystem / 1000000).ToString ());
@@ -719,12 +587,10 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 			SteamServer.SetKey ("fps_avg", Performance.report.frameRateAverage.ToString ("0.00"));
 			SteamServer.SetKey ("ent_cnt", BaseNetworkable.serverEntities.Count.ToString ());
 			SteamServer.SetKey ("build", BuildInfo.Current.Scm.ChangeId);
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 	}
 
-	public void OnDisconnected (string strReason, Connection connection)
+	public void OnDisconnected (string strReason, Network.Connection connection)
 	{
 		Analytics.Azure.OnPlayerDisconnected (connection, strReason);
 		GlobalNetworkHandler.server.OnClientDisconnected (connection);
@@ -733,51 +599,48 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 		PlatformService.Instance.EndPlayerSession (connection.userid);
 		EACServer.OnLeaveGame (connection);
 		BasePlayer basePlayer = connection.player as BasePlayer;
-		if ((Object)(object)basePlayer != (Object)null) {
+		if (basePlayer != null) {
 			basePlayer.OnDisconnected ();
 		}
 		NexusServer.Logout (connection.userid);
 	}
 
-	public static void OnEnterVisibility (Connection connection, Group group)
+	public static void OnEnterVisibility (Network.Connection connection, Group group)
 	{
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		if (((BaseNetwork)Net.sv).IsConnected ()) {
-			NetWrite obj = ((BaseNetwork)Net.sv).StartWrite ();
-			obj.PacketID ((Type)19);
-			obj.GroupID (group.ID);
-			obj.Send (new SendInfo (connection));
+		if (Network.Net.sv.IsConnected ()) {
+			NetWrite netWrite = Network.Net.sv.StartWrite ();
+			netWrite.PacketID (Message.Type.GroupEnter);
+			netWrite.GroupID (group.ID);
+			netWrite.Send (new SendInfo (connection));
 		}
 	}
 
-	public static void OnLeaveVisibility (Connection connection, Group group)
+	public static void OnLeaveVisibility (Network.Connection connection, Group group)
 	{
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-		if (((BaseNetwork)Net.sv).IsConnected ()) {
-			NetWrite obj = ((BaseNetwork)Net.sv).StartWrite ();
-			obj.PacketID ((Type)20);
-			obj.GroupID (group.ID);
-			obj.Send (new SendInfo (connection));
-			NetWrite obj2 = ((BaseNetwork)Net.sv).StartWrite ();
-			obj2.PacketID ((Type)8);
-			obj2.GroupID (group.ID);
-			obj2.Send (new SendInfo (connection));
+		if (Network.Net.sv.IsConnected ()) {
+			NetWrite netWrite = Network.Net.sv.StartWrite ();
+			netWrite.PacketID (Message.Type.GroupLeave);
+			netWrite.GroupID (group.ID);
+			netWrite.Send (new SendInfo (connection));
+			NetWrite netWrite2 = Network.Net.sv.StartWrite ();
+			netWrite2.PacketID (Message.Type.GroupDestroy);
+			netWrite2.GroupID (group.ID);
+			netWrite2.Send (new SendInfo (connection));
 		}
 	}
 
 	public void SpawnMapEntities ()
 	{
 		new PrefabPreProcess (clientside: false, serverside: true);
-		BaseEntity[] array = Object.FindObjectsOfType<BaseEntity> ();
+		BaseEntity[] array = UnityEngine.Object.FindObjectsOfType<BaseEntity> ();
 		BaseEntity[] array2 = array;
 		for (int i = 0; i < array2.Length; i++) {
 			array2 [i].SpawnAsMapEntity ();
 		}
-		DebugEx.Log ((object)$"Map Spawned {array.Length} entities", (StackTraceLogType)0);
+		DebugEx.Log ($"Map Spawned {array.Length} entities");
 		array2 = array;
 		foreach (BaseEntity baseEntity in array2) {
-			if ((Object)(object)baseEntity != (Object)null) {
+			if (baseEntity != null) {
 				baseEntity.PostMapEntitySpawn ();
 			}
 		}
@@ -785,28 +648,15 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 
 	public static BasePlayer.SpawnPoint FindSpawnPoint (BasePlayer forPlayer = null)
 	{
-		//IL_0072: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0077: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0084: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0089: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00be: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ad: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e8: Unknown result type (might be due to invalid IL or missing references)
 		bool flag = false;
 		BaseGameMode baseGameMode = Gamemode ();
-		if (Object.op_Implicit ((Object)(object)baseGameMode) && baseGameMode.useCustomSpawns) {
+		if ((bool)baseGameMode && baseGameMode.useCustomSpawns) {
 			BasePlayer.SpawnPoint playerSpawn = baseGameMode.GetPlayerSpawn (forPlayer);
 			if (playerSpawn != null) {
 				return playerSpawn;
 			}
 		}
-		if ((Object)(object)SingletonComponent<SpawnHandler>.Instance != (Object)null && !flag) {
+		if (SingletonComponent<SpawnHandler>.Instance != null && !flag) {
 			BasePlayer.SpawnPoint spawnPoint = SpawnHandler.GetSpawnPoint ();
 			if (spawnPoint != null) {
 				return spawnPoint;
@@ -815,28 +665,25 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 		BasePlayer.SpawnPoint spawnPoint2 = new BasePlayer.SpawnPoint ();
 		GameObject[] array = GameObject.FindGameObjectsWithTag ("spawnpoint");
 		if (array.Length != 0) {
-			GameObject val = array [Random.Range (0, array.Length)];
-			spawnPoint2.pos = val.transform.position;
-			spawnPoint2.rot = val.transform.rotation;
+			GameObject gameObject = array [UnityEngine.Random.Range (0, array.Length)];
+			spawnPoint2.pos = gameObject.transform.position;
+			spawnPoint2.rot = gameObject.transform.rotation;
 		} else {
-			Debug.Log ((object)"Couldn't find an appropriate spawnpoint for the player - so spawning at camera");
-			if ((Object)(object)MainCamera.mainCamera != (Object)null) {
+			Debug.Log ("Couldn't find an appropriate spawnpoint for the player - so spawning at camera");
+			if (MainCamera.mainCamera != null) {
 				spawnPoint2.pos = MainCamera.position;
 				spawnPoint2.rot = MainCamera.rotation;
 			}
 		}
-		RaycastHit val2 = default(RaycastHit);
-		if (Physics.Raycast (new Ray (spawnPoint2.pos, Vector3.down), ref val2, 32f, 1537286401)) {
-			spawnPoint2.pos = ((RaycastHit)(ref val2)).point;
+		if (UnityEngine.Physics.Raycast (new Ray (spawnPoint2.pos, Vector3.down), out var hitInfo, 32f, 1537286401)) {
+			spawnPoint2.pos = hitInfo.point;
 		}
 		return spawnPoint2;
 	}
 
-	public void JoinGame (Connection connection)
+	public void JoinGame (Network.Connection connection)
 	{
-		//IL_011f: Unknown result type (might be due to invalid IL or missing references)
-		Approval val = Pool.Get<Approval> ();
-		try {
+		using (Approval approval = Facepunch.Pool.Get<Approval> ()) {
 			uint num = (uint)ConVar.Server.encryption;
 			if (num > 1 && connection.os == "editor" && DeveloperList.Contains (connection.ownerid)) {
 				num = 1u;
@@ -844,41 +691,37 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 			if (num > 1 && !ConVar.Server.secure) {
 				num = 1u;
 			}
-			val.level = Application.loadedLevelName;
-			val.levelConfig = World.Config.JsonString;
-			val.levelTransfer = World.Transfer;
-			val.levelUrl = World.Url;
-			val.levelSeed = World.Seed;
-			val.levelSize = World.Size;
-			val.checksum = World.Checksum;
-			val.hostname = ConVar.Server.hostname;
-			val.official = ConVar.Server.official;
-			val.encryption = num;
-			val.version = BuildInfo.Current.Scm.Branch + "#" + BuildInfo.Current.Scm.ChangeId;
-			val.nexus = World.Nexus;
-			val.nexusEndpoint = Nexus.endpoint;
-			val.nexusId = NexusServer.NexusId.GetValueOrDefault ();
-			NetWrite val2 = ((BaseNetwork)Net.sv).StartWrite ();
-			val2.PacketID ((Type)3);
-			val.WriteToStream ((Stream)(object)val2);
-			val2.Send (new SendInfo (connection));
+			approval.level = UnityEngine.Application.loadedLevelName;
+			approval.levelConfig = World.Config.JsonString;
+			approval.levelTransfer = World.Transfer;
+			approval.levelUrl = World.Url;
+			approval.levelSeed = World.Seed;
+			approval.levelSize = World.Size;
+			approval.checksum = World.Checksum;
+			approval.hostname = ConVar.Server.hostname;
+			approval.official = ConVar.Server.official;
+			approval.encryption = num;
+			approval.version = BuildInfo.Current.Scm.Branch + "#" + BuildInfo.Current.Scm.ChangeId;
+			approval.nexus = World.Nexus;
+			approval.nexusEndpoint = Nexus.endpoint;
+			approval.nexusId = NexusServer.NexusId.GetValueOrDefault ();
+			NetWrite netWrite = Network.Net.sv.StartWrite ();
+			netWrite.PacketID (Message.Type.Approved);
+			approval.WriteToStream (netWrite);
+			netWrite.Send (new SendInfo (connection));
 			connection.encryptionLevel = num;
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		connection.connected = true;
 	}
 
 	internal void Shutdown ()
 	{
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		BasePlayer[] array = ((IEnumerable<BasePlayer>)BasePlayer.activePlayerList).ToArray ();
+		BasePlayer[] array = BasePlayer.activePlayerList.ToArray ();
 		for (int i = 0; i < array.Length; i++) {
 			array [i].Kick ("Server Shutting Down");
 		}
-		ConsoleSystem.Run (Option.Server, "server.save", Array.Empty<object> ());
-		ConsoleSystem.Run (Option.Server, "server.writecfg", Array.Empty<object> ());
+		ConsoleSystem.Run (ConsoleSystem.Option.Server, "server.save");
+		ConsoleSystem.Run (ConsoleSystem.Option.Server, "server.writecfg");
 	}
 
 	private IEnumerator ServerRestartWarning (string info, int iSeconds)
@@ -892,355 +735,298 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 		for (int i = iSeconds; i > 0; i--) {
 			if (i == iSeconds || i % 60 == 0 || (i < 300 && i % 30 == 0) || (i < 60 && i % 10 == 0) || i < 10) {
 				ConsoleNetwork.BroadcastToAllClients ("chat.add", 2, 0, $"<color=#fff>SERVER</color> Restarting in {i} seconds ({info})!");
-				Debug.Log ((object)$"Restarting in {i} seconds");
+				Debug.Log ($"Restarting in {i} seconds");
 			}
 			yield return CoroutineEx.waitForSeconds (1f);
 		}
 		ConsoleNetwork.BroadcastToAllClients ("chat.add", 2, 0, "<color=#fff>SERVER</color> Restarting (" + info + ")");
 		yield return CoroutineEx.waitForSeconds (2f);
-		BasePlayer[] array = ((IEnumerable<BasePlayer>)BasePlayer.activePlayerList).ToArray ();
+		BasePlayer[] array = BasePlayer.activePlayerList.ToArray ();
 		for (int j = 0; j < array.Length; j++) {
 			array [j].Kick ("Server Restarting");
 		}
 		yield return CoroutineEx.waitForSeconds (1f);
-		ConsoleSystem.Run (Option.Server, "quit", Array.Empty<object> ());
+		ConsoleSystem.Run (ConsoleSystem.Option.Server, "quit");
 	}
 
 	public static void RestartServer (string strNotice, int iSeconds)
 	{
-		if (!((Object)(object)SingletonComponent<ServerMgr>.Instance == (Object)null)) {
+		if (!(SingletonComponent<ServerMgr>.Instance == null)) {
 			if (SingletonComponent<ServerMgr>.Instance.restartCoroutine != null) {
 				ConsoleNetwork.BroadcastToAllClients ("chat.add", 2, 0, "<color=#fff>SERVER</color> Restart interrupted!");
-				((MonoBehaviour)SingletonComponent<ServerMgr>.Instance).StopCoroutine (SingletonComponent<ServerMgr>.Instance.restartCoroutine);
+				SingletonComponent<ServerMgr>.Instance.StopCoroutine (SingletonComponent<ServerMgr>.Instance.restartCoroutine);
 				SingletonComponent<ServerMgr>.Instance.restartCoroutine = null;
 			}
 			SingletonComponent<ServerMgr>.Instance.restartCoroutine = SingletonComponent<ServerMgr>.Instance.ServerRestartWarning (strNotice, iSeconds);
-			((MonoBehaviour)SingletonComponent<ServerMgr>.Instance).StartCoroutine (SingletonComponent<ServerMgr>.Instance.restartCoroutine);
+			SingletonComponent<ServerMgr>.Instance.StartCoroutine (SingletonComponent<ServerMgr>.Instance.restartCoroutine);
 			SingletonComponent<ServerMgr>.Instance.UpdateServerInformation ();
 		}
 	}
 
 	public static void SendReplicatedVars (string filter)
 	{
-		//IL_0101: Unknown result type (might be due to invalid IL or missing references)
-		NetWrite val = ((BaseNetwork)Net.sv).StartWrite ();
-		List<Connection> list = Pool.GetList<Connection> ();
-		foreach (Connection connection in Net.sv.connections) {
+		NetWrite netWrite = Network.Net.sv.StartWrite ();
+		List<Network.Connection> obj = Facepunch.Pool.GetList<Network.Connection> ();
+		foreach (Network.Connection connection in Network.Net.sv.connections) {
 			if (connection.connected) {
-				list.Add (connection);
+				obj.Add (connection);
 			}
 		}
-		List<Command> list2 = Pool.GetList<Command> ();
-		foreach (Command item in Server.Replicated) {
+		List<ConsoleSystem.Command> obj2 = Facepunch.Pool.GetList<ConsoleSystem.Command> ();
+		foreach (ConsoleSystem.Command item in ConsoleSystem.Index.Server.Replicated) {
 			if (item.FullName.StartsWith (filter)) {
-				list2.Add (item);
+				obj2.Add (item);
 			}
 		}
-		val.PacketID ((Type)25);
-		val.Int32 (list2.Count);
-		foreach (Command item2 in list2) {
-			val.String (item2.FullName, false);
-			val.String (item2.String, false);
+		netWrite.PacketID (Message.Type.ConsoleReplicatedVars);
+		netWrite.Int32 (obj2.Count);
+		foreach (ConsoleSystem.Command item2 in obj2) {
+			netWrite.String (item2.FullName);
+			netWrite.String (item2.String);
 		}
-		val.Send (new SendInfo (list));
-		Pool.FreeList<Command> (ref list2);
-		Pool.FreeList<Connection> (ref list);
+		netWrite.Send (new SendInfo (obj));
+		Facepunch.Pool.FreeList (ref obj2);
+		Facepunch.Pool.FreeList (ref obj);
 	}
 
-	public static void SendReplicatedVars (Connection connection)
+	public static void SendReplicatedVars (Network.Connection connection)
 	{
-		//IL_006b: Unknown result type (might be due to invalid IL or missing references)
-		NetWrite val = ((BaseNetwork)Net.sv).StartWrite ();
-		List<Command> replicated = Server.Replicated;
-		val.PacketID ((Type)25);
-		val.Int32 (replicated.Count);
-		foreach (Command item in replicated) {
-			val.String (item.FullName, false);
-			val.String (item.String, false);
+		NetWrite netWrite = Network.Net.sv.StartWrite ();
+		List<ConsoleSystem.Command> replicated = ConsoleSystem.Index.Server.Replicated;
+		netWrite.PacketID (Message.Type.ConsoleReplicatedVars);
+		netWrite.Int32 (replicated.Count);
+		foreach (ConsoleSystem.Command item in replicated) {
+			netWrite.String (item.FullName);
+			netWrite.String (item.String);
 		}
-		val.Send (new SendInfo (connection));
+		netWrite.Send (new SendInfo (connection));
 	}
 
 	private static void OnReplicatedVarChanged (string fullName, string value)
 	{
-		//IL_0074: Unknown result type (might be due to invalid IL or missing references)
-		NetWrite val = ((BaseNetwork)Net.sv).StartWrite ();
-		List<Connection> list = Pool.GetList<Connection> ();
-		foreach (Connection connection in Net.sv.connections) {
+		NetWrite netWrite = Network.Net.sv.StartWrite ();
+		List<Network.Connection> obj = Facepunch.Pool.GetList<Network.Connection> ();
+		foreach (Network.Connection connection in Network.Net.sv.connections) {
 			if (connection.connected) {
-				list.Add (connection);
+				obj.Add (connection);
 			}
 		}
-		val.PacketID ((Type)25);
-		val.Int32 (1);
-		val.String (fullName, false);
-		val.String (value, false);
-		val.Send (new SendInfo (list));
-		Pool.FreeList<Connection> (ref list);
+		netWrite.PacketID (Message.Type.ConsoleReplicatedVars);
+		netWrite.Int32 (1);
+		netWrite.String (fullName);
+		netWrite.String (value);
+		netWrite.Send (new SendInfo (obj));
+		Facepunch.Pool.FreeList (ref obj);
 	}
 
 	private void Log (Exception e)
 	{
-		if (Global.developer > 0) {
+		if (ConVar.Global.developer > 0) {
 			Debug.LogException (e);
 		}
 	}
 
 	public void OnNetworkMessage (Message packet)
 	{
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Invalid comparison between Unknown and I4
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0188: Unknown result type (might be due to invalid IL or missing references)
-		//IL_021a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02b5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_035d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03f9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0569: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Expected I4, but got Unknown
-		//IL_0112: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0070: Expected I4, but got Unknown
-		//IL_01a8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_023a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02d5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_037d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_04ed: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0463: Unknown result type (might be due to invalid IL or missing references)
 		if (ConVar.Server.packetlog_enabled) {
 			packetHistory.Increment (packet.type);
 		}
-		Type type = packet.type;
-		if ((int)type != 4) {
-			switch (type - 9) {
-			default:
-				switch (type - 18) {
-				case 0: {
-					if (packet.connection.GetPacketsPerSecond (packet.type) >= 1) {
-						Net.sv.Kick (packet.connection, "Packet Flooding: User Information", packet.connection.connected);
-						return;
-					}
-					TimeWarning val = TimeWarning.New ("GiveUserInformation", 20);
-					try {
-						OnGiveUserInformation (packet);
-					} catch (Exception e4) {
-						Log (e4);
-						Net.sv.Kick (packet.connection, "Invalid Packet: User Information", false);
-					} finally {
-						((IDisposable)val)?.Dispose ();
-					}
-					packet.connection.AddPacketsPerSecond (packet.type);
-					return;
-				}
-				case 4: {
-					TimeWarning val = TimeWarning.New ("OnEACMessage", 20);
-					try {
-						EACServer.OnMessageReceived (packet);
-						return;
-					} catch (Exception e6) {
-						Log (e6);
-						Net.sv.Kick (packet.connection, "Invalid Packet: EAC", false);
-						return;
-					} finally {
-						((IDisposable)val)?.Dispose ();
-					}
-				}
-				case 6: {
-					if (!World.Transfer || !packet.connection.connected) {
-						return;
-					}
-					if (packet.connection.GetPacketsPerSecond (packet.type) >= (ulong)ConVar.Server.maxpacketspersecond_world) {
-						Net.sv.Kick (packet.connection, "Packet Flooding: World", packet.connection.connected);
-						return;
-					}
-					TimeWarning val = TimeWarning.New ("OnWorldMessage", 20);
-					try {
-						WorldNetworking.OnMessageReceived (packet);
-						return;
-					} catch (Exception e5) {
-						Log (e5);
-						Net.sv.Kick (packet.connection, "Invalid Packet: World", false);
-						return;
-					} finally {
-						((IDisposable)val)?.Dispose ();
-					}
-				}
-				case 3: {
-					if (!packet.connection.connected) {
-						return;
-					}
-					if (packet.connection.GetPacketsPerSecond (packet.type) >= (ulong)ConVar.Server.maxpacketspersecond_voice) {
-						Net.sv.Kick (packet.connection, "Packet Flooding: Disconnect Reason", packet.connection.connected);
-						return;
-					}
-					TimeWarning val = TimeWarning.New ("OnPlayerVoice", 20);
-					try {
-						OnPlayerVoice (packet);
-					} catch (Exception e3) {
-						Log (e3);
-						Net.sv.Kick (packet.connection, "Invalid Packet: Player Voice", false);
-					} finally {
-						((IDisposable)val)?.Dispose ();
-					}
-					packet.connection.AddPacketsPerSecond (packet.type);
-					return;
-				}
-				}
+		switch (packet.type) {
+		case Message.Type.GiveUserInformation:
+			if (packet.connection.GetPacketsPerSecond (packet.type) >= 1) {
+				Network.Net.sv.Kick (packet.connection, "Packet Flooding: User Information", packet.connection.connected);
 				break;
-			case 0: {
-				if (!packet.connection.connected) {
-					return;
+			}
+			using (TimeWarning.New ("GiveUserInformation", 20)) {
+				try {
+					OnGiveUserInformation (packet);
+				} catch (Exception e7) {
+					Log (e7);
+					Network.Net.sv.Kick (packet.connection, "Invalid Packet: User Information");
 				}
-				if (packet.connection.GetPacketsPerSecond (packet.type) >= (ulong)ConVar.Server.maxpacketspersecond_rpc) {
-					Net.sv.Kick (packet.connection, "Packet Flooding: RPC Message", false);
-					return;
+			}
+			packet.connection.AddPacketsPerSecond (packet.type);
+			break;
+		case Message.Type.Ready:
+			if (!packet.connection.connected) {
+				break;
+			}
+			if (packet.connection.GetPacketsPerSecond (packet.type) >= 1) {
+				Network.Net.sv.Kick (packet.connection, "Packet Flooding: Client Ready", packet.connection.connected);
+				break;
+			}
+			using (TimeWarning.New ("ClientReady", 20)) {
+				try {
+					ClientReady (packet);
+				} catch (Exception e9) {
+					Log (e9);
+					Network.Net.sv.Kick (packet.connection, "Invalid Packet: Client Ready");
 				}
-				TimeWarning val = TimeWarning.New ("OnRPCMessage", 20);
+			}
+			packet.connection.AddPacketsPerSecond (packet.type);
+			break;
+		case Message.Type.RPCMessage:
+			if (!packet.connection.connected) {
+				break;
+			}
+			if (packet.connection.GetPacketsPerSecond (packet.type) >= (ulong)ConVar.Server.maxpacketspersecond_rpc) {
+				Network.Net.sv.Kick (packet.connection, "Packet Flooding: RPC Message");
+				break;
+			}
+			using (TimeWarning.New ("OnRPCMessage", 20)) {
 				try {
 					OnRPCMessage (packet);
 				} catch (Exception e8) {
 					Log (e8);
-					Net.sv.Kick (packet.connection, "Invalid Packet: RPC Message", false);
-				} finally {
-					((IDisposable)val)?.Dispose ();
+					Network.Net.sv.Kick (packet.connection, "Invalid Packet: RPC Message");
 				}
-				packet.connection.AddPacketsPerSecond (packet.type);
-				return;
-			}
-			case 3: {
-				if (!packet.connection.connected) {
-					return;
-				}
-				if (packet.connection.GetPacketsPerSecond (packet.type) >= (ulong)ConVar.Server.maxpacketspersecond_command) {
-					Net.sv.Kick (packet.connection, "Packet Flooding: Client Command", packet.connection.connected);
-					return;
-				}
-				TimeWarning val = TimeWarning.New ("OnClientCommand", 20);
-				try {
-					ConsoleNetwork.OnClientCommand (packet);
-				} catch (Exception e7) {
-					Log (e7);
-					Net.sv.Kick (packet.connection, "Invalid Packet: Client Command", false);
-				} finally {
-					((IDisposable)val)?.Dispose ();
-				}
-				packet.connection.AddPacketsPerSecond (packet.type);
-				return;
-			}
-			case 5: {
-				if (!packet.connection.connected) {
-					return;
-				}
-				if (packet.connection.GetPacketsPerSecond (packet.type) >= 1) {
-					Net.sv.Kick (packet.connection, "Packet Flooding: Disconnect Reason", packet.connection.connected);
-					return;
-				}
-				TimeWarning val = TimeWarning.New ("ReadDisconnectReason", 20);
-				try {
-					ReadDisconnectReason (packet);
-					Net.sv.Disconnect (packet.connection);
-				} catch (Exception e2) {
-					Log (e2);
-					Net.sv.Kick (packet.connection, "Invalid Packet: Disconnect Reason", false);
-				} finally {
-					((IDisposable)val)?.Dispose ();
-				}
-				packet.connection.AddPacketsPerSecond (packet.type);
-				return;
-			}
-			case 6: {
-				if (!packet.connection.connected) {
-					return;
-				}
-				if (packet.connection.GetPacketsPerSecond (packet.type) >= (ulong)ConVar.Server.maxpacketspersecond_tick) {
-					Net.sv.Kick (packet.connection, "Packet Flooding: Player Tick", packet.connection.connected);
-					return;
-				}
-				TimeWarning val = TimeWarning.New ("OnPlayerTick", 20);
-				try {
-					OnPlayerTick (packet);
-				} catch (Exception e) {
-					Log (e);
-					Net.sv.Kick (packet.connection, "Invalid Packet: Player Tick", false);
-				} finally {
-					((IDisposable)val)?.Dispose ();
-				}
-				packet.connection.AddPacketsPerSecond (packet.type);
-				return;
-			}
-			case 1:
-			case 2:
-			case 4:
-				break;
-			}
-			ProcessUnhandledPacket (packet);
-		} else {
-			if (!packet.connection.connected) {
-				return;
-			}
-			if (packet.connection.GetPacketsPerSecond (packet.type) >= 1) {
-				Net.sv.Kick (packet.connection, "Packet Flooding: Client Ready", packet.connection.connected);
-				return;
-			}
-			TimeWarning val = TimeWarning.New ("ClientReady", 20);
-			try {
-				ClientReady (packet);
-			} catch (Exception e9) {
-				Log (e9);
-				Net.sv.Kick (packet.connection, "Invalid Packet: Client Ready", false);
-			} finally {
-				((IDisposable)val)?.Dispose ();
 			}
 			packet.connection.AddPacketsPerSecond (packet.type);
+			break;
+		case Message.Type.ConsoleCommand:
+			if (!packet.connection.connected) {
+				break;
+			}
+			if (packet.connection.GetPacketsPerSecond (packet.type) >= (ulong)ConVar.Server.maxpacketspersecond_command) {
+				Network.Net.sv.Kick (packet.connection, "Packet Flooding: Client Command", packet.connection.connected);
+				break;
+			}
+			using (TimeWarning.New ("OnClientCommand", 20)) {
+				try {
+					ConsoleNetwork.OnClientCommand (packet);
+				} catch (Exception e5) {
+					Log (e5);
+					Network.Net.sv.Kick (packet.connection, "Invalid Packet: Client Command");
+				}
+			}
+			packet.connection.AddPacketsPerSecond (packet.type);
+			break;
+		case Message.Type.DisconnectReason:
+			if (!packet.connection.connected) {
+				break;
+			}
+			if (packet.connection.GetPacketsPerSecond (packet.type) >= 1) {
+				Network.Net.sv.Kick (packet.connection, "Packet Flooding: Disconnect Reason", packet.connection.connected);
+				break;
+			}
+			using (TimeWarning.New ("ReadDisconnectReason", 20)) {
+				try {
+					ReadDisconnectReason (packet);
+					Network.Net.sv.Disconnect (packet.connection);
+				} catch (Exception e2) {
+					Log (e2);
+					Network.Net.sv.Kick (packet.connection, "Invalid Packet: Disconnect Reason");
+				}
+			}
+			packet.connection.AddPacketsPerSecond (packet.type);
+			break;
+		case Message.Type.Tick:
+			if (!packet.connection.connected) {
+				break;
+			}
+			if (packet.connection.GetPacketsPerSecond (packet.type) >= (ulong)ConVar.Server.maxpacketspersecond_tick) {
+				Network.Net.sv.Kick (packet.connection, "Packet Flooding: Player Tick", packet.connection.connected);
+				break;
+			}
+			using (TimeWarning.New ("OnPlayerTick", 20)) {
+				try {
+					OnPlayerTick (packet);
+				} catch (Exception e4) {
+					Log (e4);
+					Network.Net.sv.Kick (packet.connection, "Invalid Packet: Player Tick");
+				}
+			}
+			packet.connection.AddPacketsPerSecond (packet.type);
+			break;
+		case Message.Type.EAC:
+			using (TimeWarning.New ("OnEACMessage", 20)) {
+				try {
+					EACServer.OnMessageReceived (packet);
+					break;
+				} catch (Exception e3) {
+					Log (e3);
+					Network.Net.sv.Kick (packet.connection, "Invalid Packet: EAC");
+					break;
+				}
+			}
+		case Message.Type.World:
+			if (!World.Transfer || !packet.connection.connected) {
+				break;
+			}
+			if (packet.connection.GetPacketsPerSecond (packet.type) >= (ulong)ConVar.Server.maxpacketspersecond_world) {
+				Network.Net.sv.Kick (packet.connection, "Packet Flooding: World", packet.connection.connected);
+				break;
+			}
+			using (TimeWarning.New ("OnWorldMessage", 20)) {
+				try {
+					WorldNetworking.OnMessageReceived (packet);
+					break;
+				} catch (Exception e6) {
+					Log (e6);
+					Network.Net.sv.Kick (packet.connection, "Invalid Packet: World");
+					break;
+				}
+			}
+		case Message.Type.VoiceData:
+			if (!packet.connection.connected) {
+				break;
+			}
+			if (packet.connection.GetPacketsPerSecond (packet.type) >= (ulong)ConVar.Server.maxpacketspersecond_voice) {
+				Network.Net.sv.Kick (packet.connection, "Packet Flooding: Disconnect Reason", packet.connection.connected);
+				break;
+			}
+			using (TimeWarning.New ("OnPlayerVoice", 20)) {
+				try {
+					OnPlayerVoice (packet);
+				} catch (Exception e) {
+					Log (e);
+					Network.Net.sv.Kick (packet.connection, "Invalid Packet: Player Voice");
+				}
+			}
+			packet.connection.AddPacketsPerSecond (packet.type);
+			break;
+		default:
+			ProcessUnhandledPacket (packet);
+			break;
 		}
 	}
 
 	public void ProcessUnhandledPacket (Message packet)
 	{
-		if (Global.developer > 0) {
-			Debug.LogWarning ((object)("[SERVER][UNHANDLED] " + ((object)(Type)(ref packet.type)).ToString ()));
+		if (ConVar.Global.developer > 0) {
+			Debug.LogWarning ("[SERVER][UNHANDLED] " + packet.type);
 		}
-		Net.sv.Kick (packet.connection, "Sent Unhandled Message", false);
+		Network.Net.sv.Kick (packet.connection, "Sent Unhandled Message");
 	}
 
 	public void ReadDisconnectReason (Message packet)
 	{
-		string text = packet.read.String (4096, false);
-		string text2 = ((object)packet.connection).ToString ();
+		string text = packet.read.String (4096);
+		string text2 = packet.connection.ToString ();
 		if (!string.IsNullOrEmpty (text) && !string.IsNullOrEmpty (text2)) {
-			DebugEx.Log ((object)(text2 + " disconnecting: " + text), (StackTraceLogType)0);
+			DebugEx.Log (text2 + " disconnecting: " + text);
 		}
 	}
 
-	private BasePlayer SpawnPlayerSleeping (Connection connection)
+	private BasePlayer SpawnPlayerSleeping (Network.Connection connection)
 	{
 		BasePlayer basePlayer = BasePlayer.FindSleeping (connection.userid);
-		if ((Object)(object)basePlayer == (Object)null) {
+		if (basePlayer == null) {
 			return null;
 		}
 		if (!basePlayer.IsSleeping ()) {
-			Debug.LogWarning ((object)"Player spawning into sleeper that isn't sleeping!");
+			Debug.LogWarning ("Player spawning into sleeper that isn't sleeping!");
 			basePlayer.Kill ();
 			return null;
 		}
 		basePlayer.PlayerInit (connection);
 		basePlayer.inventory.SendSnapshot ();
-		DebugEx.Log ((object)(((object)basePlayer.net.connection).ToString () + " joined [" + basePlayer.net.connection.os + "/" + basePlayer.net.connection.ownerid + "]"), (StackTraceLogType)0);
+		DebugEx.Log (basePlayer.net.connection.ToString () + " joined [" + basePlayer.net.connection.os + "/" + basePlayer.net.connection.ownerid + "]");
 		return basePlayer;
 	}
 
-	public BasePlayer SpawnNewPlayer (Connection connection)
+	public BasePlayer SpawnNewPlayer (Network.Connection connection)
 	{
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f2: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer.SpawnPoint spawnPoint = FindSpawnPoint ();
 		BasePlayer basePlayer = GameManager.server.CreateEntity ("assets/prefabs/player/player.prefab", spawnPoint.pos, spawnPoint.rot).ToPlayer ();
 		basePlayer.health = 0f;
@@ -1254,15 +1040,15 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 		basePlayer.limitNetworking = false;
 		if (connection != null) {
 			basePlayer.PlayerInit (connection);
-			if (Object.op_Implicit ((Object)(object)BaseGameMode.GetActiveGameMode (serverside: true))) {
+			if ((bool)BaseGameMode.GetActiveGameMode (serverside: true)) {
 				BaseGameMode.GetActiveGameMode (serverside: true).OnNewPlayer (basePlayer);
-			} else if (Application.isEditor || (SleepingBag.FindForPlayer (basePlayer.userID, ignoreTimers: true).Length == 0 && !basePlayer.hasPreviousLife)) {
+			} else if (UnityEngine.Application.isEditor || (SleepingBag.FindForPlayer (basePlayer.userID, ignoreTimers: true).Length == 0 && !basePlayer.hasPreviousLife)) {
 				basePlayer.Respawn ();
 			}
-			DebugEx.Log ((object)$"{basePlayer.displayName} with steamid {basePlayer.userID} joined from ip {basePlayer.net.connection.ipaddress}", (StackTraceLogType)0);
-			DebugEx.Log ((object)$"\tNetworkId {basePlayer.userID} is {basePlayer.net.ID} ({basePlayer.displayName})", (StackTraceLogType)0);
+			DebugEx.Log ($"{basePlayer.displayName} with steamid {basePlayer.userID} joined from ip {basePlayer.net.connection.ipaddress}");
+			DebugEx.Log ($"\tNetworkId {basePlayer.userID} is {basePlayer.net.ID} ({basePlayer.displayName})");
 			if (basePlayer.net.connection.ownerid != basePlayer.net.connection.userid) {
-				DebugEx.Log ((object)$"\t{basePlayer} is sharing the account {basePlayer.net.connection.ownerid}", (StackTraceLogType)0);
+				DebugEx.Log ($"\t{basePlayer} is sharing the account {basePlayer.net.connection.ownerid}");
 			}
 		}
 		return basePlayer;
@@ -1270,63 +1056,46 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 
 	private void ClientReady (Message packet)
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Invalid comparison between Unknown and I4
-		if ((int)packet.connection.state != 3) {
-			Net.sv.Kick (packet.connection, "Invalid connection state", false);
+		if (packet.connection.state != Network.Connection.State.Welcoming) {
+			Network.Net.sv.Kick (packet.connection, "Invalid connection state");
 			return;
 		}
-		ClientReady val = ClientReady.Deserialize ((Stream)(object)packet.read);
-		try {
-			foreach (ClientInfo item in val.clientInfo) {
+		using (ClientReady clientReady = ProtoBuf.ClientReady.Deserialize (packet.read)) {
+			foreach (ClientReady.ClientInfo item in clientReady.clientInfo) {
 				packet.connection.info.Set (item.name, item.value);
 			}
-			packet.connection.globalNetworking = val.globalNetworking;
+			packet.connection.globalNetworking = clientReady.globalNetworking;
 			connectionQueue.JoinedGame (packet.connection);
 			Analytics.Azure.OnPlayerConnected (packet.connection);
-			TimeWarning val2 = TimeWarning.New ("ClientReady", 0);
-			try {
-				TimeWarning val3 = TimeWarning.New ("SpawnPlayerSleeping", 0);
+			using (TimeWarning.New ("ClientReady")) {
 				BasePlayer basePlayer;
-				try {
+				using (TimeWarning.New ("SpawnPlayerSleeping")) {
 					basePlayer = SpawnPlayerSleeping (packet.connection);
-				} finally {
-					((IDisposable)val3)?.Dispose ();
 				}
-				if ((Object)(object)basePlayer == (Object)null) {
-					val3 = TimeWarning.New ("SpawnNewPlayer", 0);
-					try {
+				if (basePlayer == null) {
+					using (TimeWarning.New ("SpawnNewPlayer")) {
 						basePlayer = SpawnNewPlayer (packet.connection);
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 				}
 				basePlayer.SendRespawnOptions ();
 				basePlayer.LoadClanInfo ();
-				if ((Object)(object)basePlayer != (Object)null) {
+				if (basePlayer != null) {
 					Util.SendSignedInNotification (basePlayer);
 				}
-			} finally {
-				((IDisposable)val2)?.Dispose ();
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		SendReplicatedVars (packet.connection);
 	}
 
 	private void OnRPCMessage (Message packet)
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
 		NetworkableId uid = packet.read.EntityID ();
 		uint num = packet.read.UInt32 ();
 		if (ConVar.Server.rpclog_enabled) {
 			rpcHistory.Increment (num);
 		}
 		BaseEntity baseEntity = BaseNetworkable.serverEntities.Find (uid) as BaseEntity;
-		if (!((Object)(object)baseEntity == (Object)null)) {
+		if (!(baseEntity == null)) {
 			baseEntity.SV_RPCMessage (num, packet);
 		}
 	}
@@ -1334,71 +1103,69 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 	private void OnPlayerTick (Message packet)
 	{
 		BasePlayer basePlayer = packet.Player ();
-		if (!((Object)(object)basePlayer == (Object)null)) {
-			basePlayer.OnReceivedTick ((Stream)(object)packet.read);
+		if (!(basePlayer == null)) {
+			basePlayer.OnReceivedTick (packet.read);
 		}
 	}
 
 	private void OnPlayerVoice (Message packet)
 	{
 		BasePlayer basePlayer = packet.Player ();
-		if (!((Object)(object)basePlayer == (Object)null)) {
-			basePlayer.OnReceivedVoice (packet.read.BytesWithSize (10485760u, false));
+		if (!(basePlayer == null)) {
+			basePlayer.OnReceivedVoice (packet.read.BytesWithSize ());
 		}
 	}
 
 	private void OnGiveUserInformation (Message packet)
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		if ((int)packet.connection.state != 0) {
-			Net.sv.Kick (packet.connection, "Invalid connection state", false);
+		if (packet.connection.state != 0) {
+			Network.Net.sv.Kick (packet.connection, "Invalid connection state");
 			return;
 		}
-		packet.connection.state = (State)1;
+		packet.connection.state = Network.Connection.State.Connecting;
 		if (packet.read.UInt8 () != 228) {
-			Net.sv.Kick (packet.connection, "Invalid Connection Protocol", false);
+			Network.Net.sv.Kick (packet.connection, "Invalid Connection Protocol");
 			return;
 		}
 		packet.connection.userid = packet.read.UInt64 ();
 		packet.connection.protocol = packet.read.UInt32 ();
-		packet.connection.os = packet.read.String (128, false);
-		packet.connection.username = packet.read.String (256, false);
+		packet.connection.os = packet.read.String (128);
+		packet.connection.username = packet.read.String ();
 		if (string.IsNullOrEmpty (packet.connection.os)) {
 			throw new Exception ("Invalid OS");
 		}
 		if (string.IsNullOrEmpty (packet.connection.username)) {
-			Net.sv.Kick (packet.connection, "Invalid Username", false);
+			Network.Net.sv.Kick (packet.connection, "Invalid Username");
 			return;
 		}
 		packet.connection.username = packet.connection.username.Replace ('\n', ' ').Replace ('\r', ' ').Replace ('\t', ' ')
 			.Trim ();
 		if (string.IsNullOrEmpty (packet.connection.username)) {
-			Net.sv.Kick (packet.connection, "Invalid Username", false);
+			Network.Net.sv.Kick (packet.connection, "Invalid Username");
 			return;
 		}
 		string text = string.Empty;
 		string branch = ConVar.Server.branch;
 		if (packet.read.Unread >= 4) {
-			text = packet.read.String (128, false);
+			text = packet.read.String (128);
 		}
 		if (branch != string.Empty && branch != text) {
-			DebugEx.Log ((object)("Kicking " + ((object)packet.connection)?.ToString () + " - their branch is '" + text + "' not '" + branch + "'"), (StackTraceLogType)0);
-			Net.sv.Kick (packet.connection, "Wrong Steam Beta: Requires '" + branch + "' branch!", false);
+			DebugEx.Log ("Kicking " + packet.connection?.ToString () + " - their branch is '" + text + "' not '" + branch + "'");
+			Network.Net.sv.Kick (packet.connection, "Wrong Steam Beta: Requires '" + branch + "' branch!");
 		} else if (packet.connection.protocol > 2515) {
-			DebugEx.Log ((object)("Kicking " + ((object)packet.connection)?.ToString () + " - their protocol is " + packet.connection.protocol + " not " + 2515), (StackTraceLogType)0);
-			Net.sv.Kick (packet.connection, "Wrong Connection Protocol: Server update required!", false);
+			DebugEx.Log ("Kicking " + packet.connection?.ToString () + " - their protocol is " + packet.connection.protocol + " not " + 2515);
+			Network.Net.sv.Kick (packet.connection, "Wrong Connection Protocol: Server update required!");
 		} else if (packet.connection.protocol < 2515) {
-			DebugEx.Log ((object)("Kicking " + ((object)packet.connection)?.ToString () + " - their protocol is " + packet.connection.protocol + " not " + 2515), (StackTraceLogType)0);
-			Net.sv.Kick (packet.connection, "Wrong Connection Protocol: Client update required!", false);
+			DebugEx.Log ("Kicking " + packet.connection?.ToString () + " - their protocol is " + packet.connection.protocol + " not " + 2515);
+			Network.Net.sv.Kick (packet.connection, "Wrong Connection Protocol: Client update required!");
 		} else {
-			packet.connection.token = packet.read.BytesWithSize (512u, false);
+			packet.connection.token = packet.read.BytesWithSize (512u);
 			if (packet.connection.token == null || packet.connection.token.Length < 1) {
-				Net.sv.Kick (packet.connection, "Invalid Token", false);
+				Network.Net.sv.Kick (packet.connection, "Invalid Token");
 				return;
 			}
-			packet.connection.anticheatId = packet.read.StringRaw (128, false);
-			packet.connection.anticheatToken = packet.read.StringRaw (2048, false);
+			packet.connection.anticheatId = packet.read.StringRaw (128);
+			packet.connection.anticheatToken = packet.read.StringRaw (2048);
 			auth.OnNewConnection (packet.connection);
 		}
 	}

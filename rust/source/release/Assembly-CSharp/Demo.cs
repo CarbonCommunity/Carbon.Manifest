@@ -10,16 +10,16 @@ public class Demo : ConsoleSystem
 	{
 		long IDemoHeader.Length {
 			get {
-				return base.length;
+				return length;
 			}
 			set {
-				base.length = value;
+				length = value;
 			}
 		}
 
 		public void Write (BinaryWriter writer)
 		{
-			byte[] array = ((DemoHeader)this).ToProtoBytes ();
+			byte[] array = ToProtoBytes ();
 			writer.Write ("RUST DEMO FORMAT");
 			writer.Write (array.Length);
 			writer.Write (array);
@@ -54,7 +54,7 @@ public class Demo : ConsoleSystem
 	public static string record (Arg arg)
 	{
 		BasePlayer playerOrSleeper = arg.GetPlayerOrSleeper (0);
-		if (!Object.op_Implicit ((Object)(object)playerOrSleeper) || playerOrSleeper.net == null || playerOrSleeper.net.connection == null) {
+		if (!playerOrSleeper || playerOrSleeper.net == null || playerOrSleeper.net.connection == null) {
 			return "Player not found";
 		}
 		if (playerOrSleeper.net.connection.IsRecording) {
@@ -68,7 +68,7 @@ public class Demo : ConsoleSystem
 	public static string stop (Arg arg)
 	{
 		BasePlayer playerOrSleeper = arg.GetPlayerOrSleeper (0);
-		if (!Object.op_Implicit ((Object)(object)playerOrSleeper) || playerOrSleeper.net == null || playerOrSleeper.net.connection == null) {
+		if (!playerOrSleeper || playerOrSleeper.net == null || playerOrSleeper.net.connection == null) {
 			return "Player not found";
 		}
 		if (!playerOrSleeper.net.connection.IsRecording) {

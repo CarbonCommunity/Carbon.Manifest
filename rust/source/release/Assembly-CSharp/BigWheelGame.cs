@@ -39,14 +39,14 @@ public class BigWheelGame : SpinnerWheel
 	public override void ServerInit ()
 	{
 		base.ServerInit ();
-		((FacepunchBehaviour)this).Invoke ((Action)InitBettingTerminals, 3f);
-		((FacepunchBehaviour)this).Invoke ((Action)DoSpin, 10f);
+		Invoke (InitBettingTerminals, 3f);
+		Invoke (DoSpin, 10f);
 	}
 
 	public void DoSpin ()
 	{
 		if (!(velocity > 0f)) {
-			velocity += Random.Range (7f, 16f);
+			velocity += UnityEngine.Random.Range (7f, 16f);
 			spinNumber++;
 			SetTerminalsLocked (isLocked: true);
 		}
@@ -66,9 +66,8 @@ public class BigWheelGame : SpinnerWheel
 
 	protected void InitBettingTerminals ()
 	{
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
 		terminals.Clear ();
-		Vis.Entities (((Component)this).transform.position, 30f, terminals, 256, (QueryTriggerInteraction)2);
+		Vis.Entities (base.transform.position, 30f, terminals, 256);
 		terminals = terminals.Distinct ().ToList ();
 	}
 
@@ -94,7 +93,7 @@ public class BigWheelGame : SpinnerWheel
 		foreach (BigWheelBettingTerminal terminal in terminals) {
 			terminal.ClientRPC (null, "SetTimeUntilNextSpin", SpinSpacing ());
 		}
-		((FacepunchBehaviour)this).Invoke ((Action)DoSpin, SpinSpacing ());
+		Invoke (DoSpin, SpinSpacing ());
 	}
 
 	public void Payout ()
@@ -135,13 +134,11 @@ public class BigWheelGame : SpinnerWheel
 
 	public HitNumber GetCurrentHitType ()
 	{
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
 		HitNumber result = null;
 		float num = float.PositiveInfinity;
 		HitNumber[] array = hitNumbers;
 		foreach (HitNumber hitNumber in array) {
-			float num2 = Vector3.Distance (indicator.transform.position, ((Component)hitNumber).transform.position);
+			float num2 = Vector3.Distance (indicator.transform.position, hitNumber.transform.position);
 			if (num2 < num) {
 				result = hitNumber;
 				num = num2;
@@ -153,7 +150,7 @@ public class BigWheelGame : SpinnerWheel
 	[ContextMenu ("LoadHitNumbers")]
 	private void LoadHitNumbers ()
 	{
-		HitNumber[] componentsInChildren = ((Component)this).GetComponentsInChildren<HitNumber> ();
+		HitNumber[] componentsInChildren = GetComponentsInChildren<HitNumber> ();
 		hitNumbers = componentsInChildren;
 	}
 }

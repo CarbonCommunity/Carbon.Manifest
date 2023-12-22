@@ -24,8 +24,8 @@ public class AttackHeliDriverSeat : BaseVehicleSeat
 
 	private AttackHelicopter Owner {
 		get {
-			if ((Object)(object)_owner == (Object)null) {
-				_owner = ((Component)this).GetComponentInParent<AttackHelicopter> ();
+			if (_owner == null) {
+				_owner = GetComponentInParent<AttackHelicopter> ();
 			}
 			return _owner;
 		}

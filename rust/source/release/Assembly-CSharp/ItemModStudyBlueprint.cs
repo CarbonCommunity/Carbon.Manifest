@@ -7,9 +7,7 @@ public class ItemModStudyBlueprint : ItemMod
 
 	public override void ServerCommand (Item item, string command, BasePlayer player)
 	{
-		//IL_0150: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0155: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)item.GetOwnerPlayer () != (Object)(object)player) {
+		if (item.GetOwnerPlayer () != player) {
 			bool flag = false;
 			foreach (ItemContainer container in player.inventory.loot.containers) {
 				if (item.GetRootContainer () == container) {
@@ -31,7 +29,7 @@ public class ItemModStudyBlueprint : ItemMod
 		item2.UseItem ();
 		player.blueprints.Unlock (blueprintTargetDef);
 		Analytics.Azure.OnBlueprintLearned (player, blueprintTargetDef, "blueprint", ResearchTable.ScrapForResearch (blueprintTargetDef), player);
-		if ((Object)(object)blueprint != (Object)null && blueprint.additionalUnlocks != null && blueprint.additionalUnlocks.Count > 0) {
+		if (blueprint != null && blueprint.additionalUnlocks != null && blueprint.additionalUnlocks.Count > 0) {
 			foreach (ItemDefinition additionalUnlock in blueprint.additionalUnlocks) {
 				player.blueprints.Unlock (additionalUnlock);
 				Analytics.Azure.OnBlueprintLearned (player, additionalUnlock, "blueprint", 0, player);
@@ -47,14 +45,14 @@ public class ItemModStudyBlueprint : ItemMod
 		blueprintTargetDef = item.blueprintTargetDef;
 		blueprint = blueprintTargetDef.Blueprint;
 		bool flag = IsBlueprintUnlocked (blueprintTargetDef, player);
-		if (flag && (Object)(object)blueprint != (Object)null && blueprint.additionalUnlocks != null && blueprint.additionalUnlocks.Count > 0) {
+		if (flag && blueprint != null && blueprint.additionalUnlocks != null && blueprint.additionalUnlocks.Count > 0) {
 			foreach (ItemDefinition additionalUnlock in blueprint.additionalUnlocks) {
 				if (!IsBlueprintUnlocked (additionalUnlock, player)) {
 					flag = false;
 				}
 			}
 		}
-		if ((Object)(object)blueprint != (Object)null && blueprint.defaultBlueprint) {
+		if (blueprint != null && blueprint.defaultBlueprint) {
 			flag = true;
 		}
 		if (flag) {

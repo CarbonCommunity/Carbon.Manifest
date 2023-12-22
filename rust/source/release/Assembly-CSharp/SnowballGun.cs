@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public class SnowballGun : BaseProjectile
 {
 	public ItemDefinition OverrideProjectile;
@@ -10,7 +8,7 @@ public class SnowballGun : BaseProjectile
 
 	public static ItemDefinition SnowballInventoryItem {
 		get {
-			if ((Object)(object)_snowballInventoryItem == (Object)null) {
+			if (_snowballInventoryItem == null) {
 				_snowballInventoryItem = ItemManager.FindItemDefinition ("snowball");
 			}
 			return _snowballInventoryItem;
@@ -19,7 +17,7 @@ public class SnowballGun : BaseProjectile
 
 	public static ItemDefinition SnowballAmmoItem {
 		get {
-			if ((Object)(object)_snowballAmmoItem == (Object)null) {
+			if (_snowballAmmoItem == null) {
 				_snowballAmmoItem = ItemManager.FindItemDefinition ("ammo.snowballgun");
 			}
 			return _snowballAmmoItem;
@@ -28,7 +26,7 @@ public class SnowballGun : BaseProjectile
 
 	protected override ItemDefinition PrimaryMagazineAmmo {
 		get {
-			if (!((Object)(object)OverrideProjectile != (Object)null)) {
+			if (!(OverrideProjectile != null)) {
 				return base.PrimaryMagazineAmmo;
 			}
 			return OverrideProjectile;
@@ -48,7 +46,7 @@ public class SnowballGun : BaseProjectile
 		SendNetworkUpdateImmediate ();
 		ItemManager.DoRemoves ();
 		BasePlayer ownerPlayer = GetOwnerPlayer ();
-		if ((Object)(object)ownerPlayer != (Object)null) {
+		if (ownerPlayer != null) {
 			ownerPlayer.inventory.ServerUpdate (0f);
 		}
 		return true;

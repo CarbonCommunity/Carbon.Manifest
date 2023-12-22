@@ -18,7 +18,7 @@ public class NPCDwelling : BaseEntity
 	{
 		base.ServerInit ();
 		UpdateInformationZone (remove: false);
-		if ((Object)(object)npcSpawner != (Object)null && Random.Range (0f, 1f) <= NPCSpawnChance) {
+		if (npcSpawner != null && Random.Range (0f, 1f) <= NPCSpawnChance) {
 			npcSpawner.SpawnInitial ();
 		}
 		SpawnGroup[] array = spawnGroups;
@@ -40,21 +40,16 @@ public class NPCDwelling : BaseEntity
 
 	public bool ValidateAIPoint (Vector3 pos)
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		((Component)this).gameObject.SetActive (false);
-		bool result = !GamePhysics.CheckSphere (pos + Vector3.up * 0.6f, 0.5f, 65537, (QueryTriggerInteraction)0);
-		((Component)this).gameObject.SetActive (true);
+		base.gameObject.SetActive (value: false);
+		bool result = !GamePhysics.CheckSphere (pos + Vector3.up * 0.6f, 0.5f, 65537);
+		base.gameObject.SetActive (value: true);
 		return result;
 	}
 
 	public void UpdateInformationZone (bool remove)
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		AIInformationZone forPoint = AIInformationZone.GetForPoint (((Component)this).transform.position);
-		if (!((Object)(object)forPoint == (Object)null)) {
+		AIInformationZone forPoint = AIInformationZone.GetForPoint (base.transform.position);
+		if (!(forPoint == null)) {
 			if (remove) {
 				forPoint.RemoveDynamicAIPoints (movePoints, coverPoints);
 			} else {
@@ -65,7 +60,7 @@ public class NPCDwelling : BaseEntity
 
 	public void CheckDespawn ()
 	{
-		if (!PlayersNearby () && (!Object.op_Implicit ((Object)(object)npcSpawner) || npcSpawner.currentPopulation <= 0)) {
+		if (!PlayersNearby () && (!npcSpawner || npcSpawner.currentPopulation <= 0)) {
 			CleanupSpawned ();
 			Kill ();
 		}
@@ -79,24 +74,23 @@ public class NPCDwelling : BaseEntity
 				array [i].Clear ();
 			}
 		}
-		if (Object.op_Implicit ((Object)(object)npcSpawner)) {
+		if ((bool)npcSpawner) {
 			npcSpawner.Clear ();
 		}
 	}
 
 	public bool PlayersNearby ()
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		List<BasePlayer> list = Pool.GetList<BasePlayer> ();
-		Vis.Entities (((Component)this).transform.position, TimeoutPlayerCheckRadius (), list, 131072, (QueryTriggerInteraction)2);
+		List<BasePlayer> obj = Pool.GetList<BasePlayer> ();
+		Vis.Entities (base.transform.position, TimeoutPlayerCheckRadius (), obj, 131072);
 		bool result = false;
-		foreach (BasePlayer item in list) {
+		foreach (BasePlayer item in obj) {
 			if (!item.IsSleeping () && item.IsAlive ()) {
 				result = true;
 				break;
 			}
 		}
-		Pool.FreeList<BasePlayer> (ref list);
+		Pool.FreeList (ref obj);
 		return result;
 	}
 

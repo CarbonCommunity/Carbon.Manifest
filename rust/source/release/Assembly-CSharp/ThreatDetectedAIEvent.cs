@@ -1,5 +1,4 @@
 using ProtoBuf;
-using UnityEngine;
 
 public class ThreatDetectedAIEvent : BaseAIEvent
 {
@@ -20,12 +19,10 @@ public class ThreatDetectedAIEvent : BaseAIEvent
 
 	public override AIEventData ToProto ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Expected O, but got Unknown
-		AIEventData obj = base.ToProto ();
-		obj.threatDetectedData = new ThreatDetectedAIEventData ();
-		obj.threatDetectedData.range = Range;
-		return obj;
+		AIEventData aIEventData = base.ToProto ();
+		aIEventData.threatDetectedData = new ThreatDetectedAIEventData ();
+		aIEventData.threatDetectedData.range = Range;
+		return aIEventData;
 	}
 
 	public override void Execute (AIMemory memory, AIBrainSenses senses, StateStatus stateStatus)
@@ -33,15 +30,15 @@ public class ThreatDetectedAIEvent : BaseAIEvent
 		base.Result = base.Inverted;
 		BaseEntity nearestThreat = senses.GetNearestThreat (Range);
 		if (base.Inverted) {
-			if ((Object)(object)nearestThreat == (Object)null && base.ShouldSetOutputEntityMemory) {
+			if (nearestThreat == null && base.ShouldSetOutputEntityMemory) {
 				memory.Entity.Remove (base.OutputEntityMemorySlot);
 			}
-			base.Result = (Object)(object)nearestThreat == (Object)null;
+			base.Result = nearestThreat == null;
 		} else {
-			if ((Object)(object)nearestThreat != (Object)null && base.ShouldSetOutputEntityMemory) {
+			if (nearestThreat != null && base.ShouldSetOutputEntityMemory) {
 				memory.Entity.Set (nearestThreat, base.OutputEntityMemorySlot);
 			}
-			base.Result = (Object)(object)nearestThreat != (Object)null;
+			base.Result = nearestThreat != null;
 		}
 	}
 }

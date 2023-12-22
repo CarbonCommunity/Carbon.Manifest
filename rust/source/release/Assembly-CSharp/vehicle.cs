@@ -24,16 +24,16 @@ public class vehicle : ConsoleSystem
 	{
 		int targetSeat = 0;
 		BasePlayer basePlayer = arg.Player ();
-		if ((Object)(object)basePlayer == (Object)null || basePlayer.SwapSeatCooldown ()) {
+		if (basePlayer == null || basePlayer.SwapSeatCooldown ()) {
 			return;
 		}
 		BaseMountable mounted = basePlayer.GetMounted ();
-		if (!((Object)(object)mounted == (Object)null)) {
-			BaseVehicle baseVehicle = ((Component)mounted).GetComponent<BaseVehicle> ();
-			if ((Object)(object)baseVehicle == (Object)null) {
+		if (!(mounted == null)) {
+			BaseVehicle baseVehicle = mounted.GetComponent<BaseVehicle> ();
+			if (baseVehicle == null) {
 				baseVehicle = mounted.VehicleParent ();
 			}
-			if (!((Object)(object)baseVehicle == (Object)null)) {
+			if (!(baseVehicle == null)) {
 				baseVehicle.SwapSeats (basePlayer, targetSeat);
 			}
 		}
@@ -42,12 +42,8 @@ public class vehicle : ConsoleSystem
 	[ServerVar]
 	public static void fixcars (Arg arg)
 	{
-		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0070: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ca: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer basePlayer = arg.Player ();
-		if ((Object)(object)basePlayer == (Object)null) {
+		if (basePlayer == null) {
 			arg.ReplyWith ("Null player.");
 			return;
 		}
@@ -61,13 +57,13 @@ public class vehicle : ConsoleSystem
 		int num = 0;
 		BaseVehicle[] array2 = array;
 		foreach (BaseVehicle baseVehicle in array2) {
-			if (baseVehicle.isServer && Vector3.Distance (((Component)baseVehicle).transform.position, ((Component)basePlayer).transform.position) <= 10f && baseVehicle.AdminFixUp (@int)) {
+			if (baseVehicle.isServer && Vector3.Distance (baseVehicle.transform.position, basePlayer.transform.position) <= 10f && baseVehicle.AdminFixUp (@int)) {
 				num++;
 			}
 		}
 		MLRS[] array3 = BaseEntity.Util.FindAll<MLRS> ();
 		foreach (MLRS mLRS in array3) {
-			if (mLRS.isServer && Vector3.Distance (((Component)mLRS).transform.position, ((Component)basePlayer).transform.position) <= 10f && mLRS.AdminFixUp ()) {
+			if (mLRS.isServer && Vector3.Distance (mLRS.transform.position, basePlayer.transform.position) <= 10f && mLRS.AdminFixUp ()) {
 				num++;
 			}
 		}
@@ -78,7 +74,7 @@ public class vehicle : ConsoleSystem
 	public static void autohover (Arg arg)
 	{
 		BasePlayer basePlayer = arg.Player ();
-		if ((Object)(object)basePlayer == (Object)null) {
+		if (basePlayer == null) {
 			arg.ReplyWith ("Null player.");
 			return;
 		}
@@ -87,7 +83,7 @@ public class vehicle : ConsoleSystem
 			return;
 		}
 		BaseHelicopter baseHelicopter = basePlayer.GetMountedVehicle () as BaseHelicopter;
-		if ((Object)(object)baseHelicopter != (Object)null) {
+		if (baseHelicopter != null) {
 			bool flag = baseHelicopter.ToggleAutoHover (basePlayer);
 			arg.ReplyWith ($"Toggled auto-hover to {flag}.");
 		} else {
@@ -119,7 +115,7 @@ public class vehicle : ConsoleSystem
 	{
 		PlayerHelicopter[] array = BaseEntity.Util.FindAll<PlayerHelicopter> ();
 		foreach (PlayerHelicopter playerHelicopter in array) {
-			if (((Object)playerHelicopter).name.ToLower ().Contains ("minicopter")) {
+			if (playerHelicopter.name.ToLower ().Contains ("minicopter")) {
 				playerHelicopter.Kill ();
 			}
 		}
@@ -166,39 +162,24 @@ public class vehicle : ConsoleSystem
 	[ServerVar (Help = "Print out boat drift status for all boats")]
 	public static void boatdriftinfo (Arg args)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Expected O, but got Unknown
-		//IL_00ae: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b3: Unknown result type (might be due to invalid IL or missing references)
-		TextTable val = new TextTable ();
-		val.AddColumn ("id");
-		val.AddColumn ("name");
-		val.AddColumn ("position");
-		val.AddColumn ("status");
-		val.AddColumn ("drift");
+		TextTable textTable = new TextTable ();
+		textTable.AddColumn ("id");
+		textTable.AddColumn ("name");
+		textTable.AddColumn ("position");
+		textTable.AddColumn ("status");
+		textTable.AddColumn ("drift");
 		BaseBoat[] array = BaseEntity.Util.FindAll<BaseBoat> ();
 		BaseBoat[] array2 = array;
 		foreach (BaseBoat baseBoat in array2) {
 			if (baseBoat.IsValid ()) {
 				string text = (baseBoat.IsAlive () ? "alive" : "dead");
 				string driftStatus = baseBoat.GetDriftStatus ();
-				string[] obj = new string[5] {
-					((object)(NetworkableId)(ref baseBoat.net.ID)).ToString (),
-					baseBoat.ShortPrefabName,
-					null,
-					null,
-					null
-				};
-				Vector3 position = ((Component)baseBoat).transform.position;
-				obj [2] = ((object)(Vector3)(ref position)).ToString ();
-				obj [3] = text;
-				obj [4] = driftStatus;
-				val.AddRow (obj);
+				textTable.AddRow (baseBoat.net.ID.ToString (), baseBoat.ShortPrefabName, baseBoat.transform.position.ToString (), text, driftStatus);
 			}
 		}
 		if (array.Length == 0) {
 			args.ReplyWith ("No boats in world");
 		}
-		args.ReplyWith (((object)val).ToString ());
+		args.ReplyWith (textTable.ToString ());
 	}
 }

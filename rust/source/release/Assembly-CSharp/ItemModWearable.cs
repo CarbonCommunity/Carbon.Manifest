@@ -47,23 +47,23 @@ public class ItemModWearable : ItemMod
 	private void DoPrepare ()
 	{
 		if (!entityPrefab.isValid) {
-			Debug.LogWarning ((object)("ItemModWearable: entityPrefab is null! " + (object)((Component)this).gameObject), (Object)(object)((Component)this).gameObject);
+			Debug.LogWarning ("ItemModWearable: entityPrefab is null! " + base.gameObject, base.gameObject);
 		}
-		if (entityPrefab.isValid && (Object)(object)targetWearable == (Object)null) {
-			Debug.LogWarning ((object)("ItemModWearable: entityPrefab doesn't have a Wearable component! " + (object)((Component)this).gameObject), (Object)(object)entityPrefab.Get ());
+		if (entityPrefab.isValid && targetWearable == null) {
+			Debug.LogWarning ("ItemModWearable: entityPrefab doesn't have a Wearable component! " + base.gameObject, entityPrefab.Get ());
 		}
 	}
 
 	public override void ModInit ()
 	{
 		if (string.IsNullOrEmpty (entityPrefab.resourcePath)) {
-			Debug.LogWarning ((object)(((object)this)?.ToString () + " - entityPrefab is null or something.. - " + entityPrefab.guid));
+			Debug.LogWarning (this?.ToString () + " - entityPrefab is null or something.. - " + entityPrefab.guid);
 		}
 	}
 
 	public bool ProtectsArea (HitArea area)
 	{
-		if ((Object)(object)armorProperties == (Object)null) {
+		if (armorProperties == null) {
 			return false;
 		}
 		return armorProperties.Contains (area);
@@ -71,12 +71,12 @@ public class ItemModWearable : ItemMod
 
 	public bool HasProtections ()
 	{
-		return (Object)(object)protectionProperties != (Object)null;
+		return protectionProperties != null;
 	}
 
 	internal float GetProtection (Item item, DamageType damageType)
 	{
-		if ((Object)(object)protectionProperties == (Object)null) {
+		if (protectionProperties == null) {
 			return 0f;
 		}
 		return protectionProperties.Get (damageType) * ConditionProtectionScale (item);
@@ -92,7 +92,7 @@ public class ItemModWearable : ItemMod
 
 	public void CollectProtection (Item item, ProtectionProperties protection)
 	{
-		if (!((Object)(object)protectionProperties == (Object)null)) {
+		if (!(protectionProperties == null)) {
 			protection.Add (protectionProperties, ConditionProtectionScale (item));
 		}
 	}
@@ -100,7 +100,7 @@ public class ItemModWearable : ItemMod
 	private bool IsHeadgear ()
 	{
 		Wearable component = entityPrefab.Get ().GetComponent<Wearable> ();
-		if ((Object)(object)component != (Object)null && (component.occupationOver & (Wearable.OccupationSlots.HeadTop | Wearable.OccupationSlots.Face | Wearable.OccupationSlots.HeadBack)) != 0) {
+		if (component != null && (component.occupationOver & (Wearable.OccupationSlots.HeadTop | Wearable.OccupationSlots.Face | Wearable.OccupationSlots.HeadBack)) != 0) {
 			return true;
 		}
 		return false;
@@ -109,7 +109,7 @@ public class ItemModWearable : ItemMod
 	public bool IsFootwear ()
 	{
 		Wearable component = entityPrefab.Get ().GetComponent<Wearable> ();
-		if ((Object)(object)component != (Object)null && (component.occupationOver & (Wearable.OccupationSlots.LeftFoot | Wearable.OccupationSlots.RightFoot)) != 0) {
+		if (component != null && (component.occupationOver & (Wearable.OccupationSlots.LeftFoot | Wearable.OccupationSlots.RightFoot)) != 0) {
 			return true;
 		}
 		return false;
@@ -117,19 +117,6 @@ public class ItemModWearable : ItemMod
 
 	public override void OnAttacked (Item item, HitInfo info)
 	{
-		//IL_00b5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ce: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00de: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ed: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0100: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0105: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0108: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0112: Unknown result type (might be due to invalid IL or missing references)
 		if (!item.hasCondition) {
 			return;
 		}
@@ -144,19 +131,14 @@ public class ItemModWearable : ItemMod
 			}
 		}
 		item.LoseCondition (num);
-		if (item != null && item.isBroken && Object.op_Implicit ((Object)(object)item.GetOwnerPlayer ()) && IsHeadgear () && info.damageTypes.Total () >= item.GetOwnerPlayer ().health) {
-			Vector3 vPos = ((Component)item.GetOwnerPlayer ()).transform.position + new Vector3 (0f, 1.8f, 0f);
-			Vector3 vVelocity = item.GetOwnerPlayer ().GetInheritedDropVelocity () + Vector3.up * 3f;
-			Quaternion rotation = default(Quaternion);
-			BaseEntity baseEntity = item.Drop (vPos, vVelocity, rotation);
-			rotation = Random.rotation;
-			baseEntity.SetAngularVelocity (((Quaternion)(ref rotation)).eulerAngles * 5f);
+		if (item != null && item.isBroken && (bool)item.GetOwnerPlayer () && IsHeadgear () && info.damageTypes.Total () >= item.GetOwnerPlayer ().health) {
+			item.Drop (item.GetOwnerPlayer ().transform.position + new Vector3 (0f, 1.8f, 0f), item.GetOwnerPlayer ().GetInheritedDropVelocity () + Vector3.up * 3f).SetAngularVelocity (Random.rotation.eulerAngles * 5f);
 		}
 	}
 
 	public bool CanExistWith (ItemModWearable wearable)
 	{
-		if ((Object)(object)wearable == (Object)null) {
+		if (wearable == null) {
 			return true;
 		}
 		Wearable wearable2 = targetWearable;

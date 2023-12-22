@@ -9,11 +9,9 @@ public class MissionObjective_SpeakWith : MissionObjective
 
 	public override void ObjectiveStarted (BasePlayer playerFor, int index, BaseMission.MissionInstance instance)
 	{
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
 		BaseEntity baseEntity = instance.ProviderEntity ();
-		if (Object.op_Implicit ((Object)(object)baseEntity)) {
-			instance.missionLocation = ((Component)baseEntity).transform.position;
+		if ((bool)baseEntity) {
+			instance.missionLocation = baseEntity.transform.position;
 			playerFor.MissionDirty ();
 		}
 		base.ObjectiveStarted (playerFor, index, instance);
@@ -21,15 +19,13 @@ public class MissionObjective_SpeakWith : MissionObjective
 
 	public override void ProcessMissionEvent (BasePlayer playerFor, BaseMission.MissionInstance instance, int index, BaseMission.MissionEventType type, string identifier, float amount)
 	{
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
 		if (IsCompleted (index, instance) || !CanProgress (index, instance)) {
 			return;
 		}
 		if (type == BaseMission.MissionEventType.CONVERSATION) {
 			BaseEntity baseEntity = instance.ProviderEntity ();
-			if (Object.op_Implicit ((Object)(object)baseEntity)) {
-				IMissionProvider component = ((Component)baseEntity).GetComponent<IMissionProvider> ();
+			if ((bool)baseEntity) {
+				IMissionProvider component = baseEntity.GetComponent<IMissionProvider> ();
 				if (component != null && component.ProviderID ().Value.ToString () == identifier && amount == 1f) {
 					bool flag = true;
 					if (requiredReturnItems != null && requiredReturnItems.Length != 0) {

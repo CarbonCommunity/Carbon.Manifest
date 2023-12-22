@@ -19,13 +19,13 @@ public abstract class TerrainPlacement : PrefabAttribute
 	public bool WaterMap;
 
 	[InspectorFlags]
-	public Enum SplatMask;
+	public TerrainSplat.Enum SplatMask;
 
 	[InspectorFlags]
-	public Enum BiomeMask;
+	public TerrainBiome.Enum BiomeMask;
 
 	[InspectorFlags]
-	public Enum TopologyMask;
+	public TerrainTopology.Enum TopologyMask;
 
 	[HideInInspector]
 	public Texture2DRef heightmap;
@@ -53,18 +53,6 @@ public abstract class TerrainPlacement : PrefabAttribute
 
 	public void Apply (Matrix4x4 localToWorld, Matrix4x4 worldToLocal)
 	{
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005d: Unknown result type (might be due to invalid IL or missing references)
 		if (ShouldHeight ()) {
 			ApplyHeight (localToWorld, worldToLocal);
 		}
@@ -95,11 +83,8 @@ public abstract class TerrainPlacement : PrefabAttribute
 
 	protected bool ShouldSplat (int id = -1)
 	{
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Invalid comparison between Unknown and I4
 		if (splatmap0.isValid && splatmap1.isValid) {
-			return (SplatMask & id) > 0;
+			return ((uint)SplatMask & (uint)id) != 0;
 		}
 		return false;
 	}
@@ -114,22 +99,16 @@ public abstract class TerrainPlacement : PrefabAttribute
 
 	protected bool ShouldBiome (int id = -1)
 	{
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Invalid comparison between Unknown and I4
 		if (biomemap.isValid) {
-			return (BiomeMask & id) > 0;
+			return ((uint)BiomeMask & (uint)id) != 0;
 		}
 		return false;
 	}
 
 	protected bool ShouldTopology (int id = -1)
 	{
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Invalid comparison between Unknown and I4
 		if (topologymap.isValid) {
-			return (TopologyMask & id) > 0;
+			return ((uint)TopologyMask & (uint)id) != 0;
 		}
 		return false;
 	}

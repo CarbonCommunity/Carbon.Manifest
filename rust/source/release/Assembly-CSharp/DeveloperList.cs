@@ -1,7 +1,6 @@
 using System.Linq;
 using Facepunch;
 using Facepunch.Models;
-using UnityEngine;
 
 public static class DeveloperList
 {
@@ -13,7 +12,7 @@ public static class DeveloperList
 		if (Application.Manifest.Administrators == null) {
 			return false;
 		}
-		return Application.Manifest.Administrators.Any ((Administrator x) => x.UserId == steamid);
+		return Application.Manifest.Administrators.Any ((Facepunch.Models.Manifest.Administrator x) => x.UserId == steamid);
 	}
 
 	public static bool Contains (ulong steamid)
@@ -23,7 +22,7 @@ public static class DeveloperList
 
 	public static bool IsDeveloper (BasePlayer ply)
 	{
-		if ((Object)(object)ply != (Object)null) {
+		if (ply != null) {
 			return Contains (ply.UserIDString);
 		}
 		return false;

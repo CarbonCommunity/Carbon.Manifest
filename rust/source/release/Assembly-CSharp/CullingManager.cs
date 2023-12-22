@@ -21,11 +21,9 @@ public class CullingManager
 
 	private void AllocateNativeMemory ()
 	{
-		//IL_000a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		int num = 512;
-		RenderSlicesArray = new NativeArray<RenderSlice> (num, (Allocator)4, (NativeArrayOptions)1);
-		RenderSlicesBuffer = new GPUBuffer<RenderSlice> (num, GPUBuffer.Target.Structured);
+		int length = 512;
+		RenderSlicesArray = new NativeArray<RenderSlice> (length, Allocator.Persistent);
+		RenderSlicesBuffer = new GPUBuffer<RenderSlice> (length, GPUBuffer.Target.Structured);
 	}
 
 	private void FreeNativeMemory ()
@@ -37,7 +35,6 @@ public class CullingManager
 
 	public void EnsureCapacity (int rendererCount)
 	{
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
 		if (RenderSlicesArray.Length < rendererCount + 1) {
 			int newCapacity = Mathf.ClosestPowerOfTwo (rendererCount) * 2;
 			NativeArrayEx.Expand (ref RenderSlicesArray, newCapacity);
@@ -48,14 +45,12 @@ public class CullingManager
 
 	public void PrintMemoryUsage (StringBuilder builder)
 	{
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
 		builder.AppendLine ("### CullingManager ###");
-		builder.MemoryUsage<RenderSlice> ("PostCullInstanceCounts", RenderSlicesArray);
+		builder.MemoryUsage ("PostCullInstanceCounts", RenderSlicesArray);
 	}
 
 	public void UpdateComputeBuffers ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
 		RenderSlicesBuffer.SetData (RenderSlicesArray);
 	}
 }

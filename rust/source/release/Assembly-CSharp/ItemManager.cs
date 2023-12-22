@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -52,15 +53,15 @@ public class ItemManager
 			throw new Exception ("items.preload.bundle has no items!");
 		}
 		if (stopwatch.Elapsed.TotalSeconds > 1.0) {
-			Debug.Log ((object)("Loading Items Took: " + stopwatch.Elapsed.TotalMilliseconds / 1000.0 + " seconds"));
+			UnityEngine.Debug.Log ("Loading Items Took: " + stopwatch.Elapsed.TotalMilliseconds / 1000.0 + " seconds");
 		}
 		List<ItemDefinition> list = (from x in array
 			select x.GetComponent<ItemDefinition> () into x
-			where (Object)(object)x != (Object)null
+			where x != null
 			select x).ToList ();
 		List<ItemBlueprint> list2 = (from x in array
 			select x.GetComponent<ItemBlueprint> () into x
-			where (Object)(object)x != (Object)null && x.userCraftable
+			where x != null && x.userCraftable
 			select x).ToList ();
 		Dictionary<int, ItemDefinition> dictionary = new Dictionary<int, ItemDefinition> ();
 		Dictionary<string, ItemDefinition> dictionary2 = new Dictionary<string, ItemDefinition> (StringComparer.OrdinalIgnoreCase);
@@ -68,10 +69,10 @@ public class ItemManager
 			item.Initialize (list);
 			if (dictionary.ContainsKey (item.itemid)) {
 				ItemDefinition itemDefinition = dictionary [item.itemid];
-				Debug.LogWarning ((object)("Item ID duplicate " + item.itemid + " (" + ((Object)item).name + ") - have you given your items unique shortnames?"), (Object)(object)((Component)item).gameObject);
-				Debug.LogWarning ((object)("Other item is " + ((Object)itemDefinition).name), (Object)(object)itemDefinition);
+				UnityEngine.Debug.LogWarning ("Item ID duplicate " + item.itemid + " (" + item.name + ") - have you given your items unique shortnames?", item.gameObject);
+				UnityEngine.Debug.LogWarning ("Other item is " + itemDefinition.name, itemDefinition);
 			} else if (string.IsNullOrEmpty (item.shortname)) {
-				Debug.LogWarning ((object)$"{item} has a null short name! id: {item.itemid} {item.displayName.english}");
+				UnityEngine.Debug.LogWarning ($"{item} has a null short name! id: {item.itemid} {item.displayName.english}");
 			} else {
 				dictionary.Add (item.itemid, item);
 				dictionary2.Add (item.shortname, item);
@@ -79,7 +80,7 @@ public class ItemManager
 		}
 		stopwatch.Stop ();
 		if (stopwatch.Elapsed.TotalSeconds > 1.0) {
-			Debug.Log ((object)("Building Items Took: " + stopwatch.Elapsed.TotalMilliseconds / 1000.0 + " seconds / Items: " + list.Count + " / Blueprints: " + list2.Count));
+			UnityEngine.Debug.Log ("Building Items Took: " + stopwatch.Elapsed.TotalMilliseconds / 1000.0 + " seconds / Items: " + list.Count + " / Blueprints: " + list2.Count);
 		}
 		defaultBlueprints = (from x in list2
 			where !x.NeedsSteamItem && !x.NeedsSteamDLC && x.defaultBlueprint
@@ -94,7 +95,7 @@ public class ItemManager
 	public static Item CreateByName (string strName, int iAmount = 1, ulong skin = 0uL)
 	{
 		ItemDefinition itemDefinition = itemList.Find ((ItemDefinition x) => x.shortname == strName);
-		if ((Object)(object)itemDefinition == (Object)null) {
+		if (itemDefinition == null) {
 			return null;
 		}
 		return CreateByItemID (itemDefinition.itemid, iAmount, skin);
@@ -103,10 +104,10 @@ public class ItemManager
 	public static Item CreateByPartialName (string strName, int iAmount = 1, ulong skin = 0uL)
 	{
 		ItemDefinition itemDefinition = itemList.Find ((ItemDefinition x) => x.shortname == strName);
-		if ((Object)(object)itemDefinition == (Object)null) {
-			itemDefinition = itemList.Find ((ItemDefinition x) => StringEx.Contains (x.shortname, strName, CompareOptions.IgnoreCase));
+		if (itemDefinition == null) {
+			itemDefinition = itemList.Find ((ItemDefinition x) => x.shortname.Contains (strName, CompareOptions.IgnoreCase));
 		}
-		if ((Object)(object)itemDefinition == (Object)null) {
+		if (itemDefinition == null) {
 			return null;
 		}
 		return CreateByItemID (itemDefinition.itemid, iAmount, skin);
@@ -115,8 +116,8 @@ public class ItemManager
 	public static ItemDefinition FindDefinitionByPartialName (string strName, int iAmount = 1, ulong skin = 0uL)
 	{
 		ItemDefinition itemDefinition = itemList.Find ((ItemDefinition x) => x.shortname == strName);
-		if ((Object)(object)itemDefinition == (Object)null) {
-			itemDefinition = itemList.Find ((ItemDefinition x) => StringEx.Contains (x.shortname, strName, CompareOptions.IgnoreCase));
+		if (itemDefinition == null) {
+			itemDefinition = itemList.Find ((ItemDefinition x) => x.shortname.Contains (strName, CompareOptions.IgnoreCase));
 		}
 		return itemDefinition;
 	}
@@ -124,7 +125,7 @@ public class ItemManager
 	public static Item CreateByItemID (int itemID, int iAmount = 1, ulong skin = 0uL)
 	{
 		ItemDefinition itemDefinition = FindItemDefinition (itemID);
-		if ((Object)(object)itemDefinition == (Object)null) {
+		if (itemDefinition == null) {
 			return null;
 		}
 		return Create (itemDefinition, iAmount, skin);
@@ -133,14 +134,14 @@ public class ItemManager
 	public static Item Create (ItemDefinition template, int iAmount = 1, ulong skin = 0uL)
 	{
 		TrySkinChangeItem (ref template, ref skin);
-		if ((Object)(object)template == (Object)null) {
-			Debug.LogWarning ((object)"Creating invalid/missing item!");
+		if (template == null) {
+			UnityEngine.Debug.LogWarning ("Creating invalid/missing item!");
 			return null;
 		}
 		Item item = new Item ();
 		item.isServer = true;
 		if (iAmount <= 0) {
-			Debug.LogError ((object)("Creating item with less than 1 amount! (" + template.displayName.english + ")"));
+			UnityEngine.Debug.LogError ("Creating item with less than 1 amount! (" + template.displayName.english + ")");
 			return null;
 		}
 		item.info = template;
@@ -158,26 +159,26 @@ public class ItemManager
 		ItemSkinDirectory.Skin skin = ItemSkinDirectory.FindByInventoryDefinitionId ((int)skinId);
 		if (skin.id != 0) {
 			ItemSkin itemSkin = skin.invItem as ItemSkin;
-			if (!((Object)(object)itemSkin == (Object)null) && !((Object)(object)itemSkin.Redirect == (Object)null)) {
+			if (!(itemSkin == null) && !(itemSkin.Redirect == null)) {
 				template = itemSkin.Redirect;
 				skinId = 0uL;
 			}
 		}
 	}
 
-	public static Item Load (Item load, Item created, bool isServer)
+	public static Item Load (ProtoBuf.Item load, Item created, bool isServer)
 	{
 		if (created == null) {
 			created = new Item ();
 		}
 		created.isServer = isServer;
 		created.Load (load);
-		if ((Object)(object)created.info == (Object)null) {
-			Debug.LogWarning ((object)"Item loading failed - item is invalid");
+		if (created.info == null) {
+			UnityEngine.Debug.LogWarning ("Item loading failed - item is invalid");
 			return null;
 		}
-		if ((Object)(object)created.info == (Object)(object)blueprintBaseDef && (Object)(object)created.blueprintTargetDef == (Object)null) {
-			Debug.LogWarning ((object)"Blueprint item loading failed - invalid item target");
+		if (created.info == blueprintBaseDef && created.blueprintTargetDef == null) {
+			UnityEngine.Debug.LogWarning ("Blueprint item loading failed - invalid item target");
 			return null;
 		}
 		return created;
@@ -203,7 +204,7 @@ public class ItemManager
 
 	public static ItemBlueprint FindBlueprint (ItemDefinition item)
 	{
-		return ((Component)item).GetComponent<ItemBlueprint> ();
+		return item.GetComponent<ItemBlueprint> ();
 	}
 
 	public static List<ItemDefinition> GetItemDefinitions ()
@@ -220,8 +221,7 @@ public class ItemManager
 
 	public static void DoRemoves ()
 	{
-		TimeWarning val = TimeWarning.New ("DoRemoves", 0);
-		try {
+		using (TimeWarning.New ("DoRemoves")) {
 			for (int i = 0; i < ItemRemoves.Count; i++) {
 				if (!(ItemRemoves [i].time > Time.time)) {
 					Item item = ItemRemoves [i].item;
@@ -229,8 +229,6 @@ public class ItemManager
 					item.DoRemove ();
 				}
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 	}
 

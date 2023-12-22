@@ -7,7 +7,7 @@ public class GameObjectRef : ResourceRef<GameObject>
 {
 	public GameObject Instantiate (Transform parent = null)
 	{
-		return Instantiate.GameObject (Get (), parent);
+		return Facepunch.Instantiate.GameObject (Get (), parent);
 	}
 
 	public BaseEntity GetEntity ()

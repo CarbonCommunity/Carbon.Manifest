@@ -16,12 +16,7 @@ public class SocketMod_Attraction : SocketMod
 
 	private void OnDrawGizmosSelected ()
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005c: Unknown result type (might be due to invalid IL or missing references)
-		Gizmos.matrix = ((Component)this).transform.localToWorldMatrix;
+		Gizmos.matrix = base.transform.localToWorldMatrix;
 		Gizmos.color = new Color (1f, 1f, 0f, 0.3f);
 		Gizmos.DrawSphere (Vector3.zero, outerRadius);
 		Gizmos.color = new Color (0f, 1f, 0f, 0.6f);
@@ -35,93 +30,14 @@ public class SocketMod_Attraction : SocketMod
 
 	public override void ModifyPlacement (Construction.Placement place)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02a6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02a7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02ad: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02af: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00da: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00df: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00eb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ed: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ee: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0114: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0128: Unknown result type (might be due to invalid IL or missing references)
-		//IL_012d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0132: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0134: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0136: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0166: Unknown result type (might be due to invalid IL or missing references)
-		//IL_016b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_016e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0173: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0178: Unknown result type (might be due to invalid IL or missing references)
-		//IL_017d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0182: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0147: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0149: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0151: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0156: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0214: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0219: Unknown result type (might be due to invalid IL or missing references)
-		//IL_021d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0222: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01bb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01bd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01bf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01cc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01eb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01fc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0201: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0206: Unknown result type (might be due to invalid IL or missing references)
-		//IL_020b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0228: Unknown result type (might be due to invalid IL or missing references)
-		//IL_022e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0234: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0239: Unknown result type (might be due to invalid IL or missing references)
-		//IL_023e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0243: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0244: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0246: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0247: Unknown result type (might be due to invalid IL or missing references)
-		//IL_024c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0250: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0255: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0259: Unknown result type (might be due to invalid IL or missing references)
-		//IL_025e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0263: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 val = place.position + place.rotation * worldPosition;
-		List<BaseEntity> list = Pool.GetList<BaseEntity> ();
-		Vis.Entities (val, outerRadius * 2f, list, -1, (QueryTriggerInteraction)2);
+		Vector3 vector = place.position + place.rotation * worldPosition;
+		List<BaseEntity> obj = Pool.GetList<BaseEntity> ();
+		Vis.Entities (vector, outerRadius * 2f, obj);
 		Vector3 position = Vector3.zero;
 		float num = float.MaxValue;
 		Vector3 position2 = place.position;
 		Quaternion rotation = Quaternion.identity;
-		foreach (BaseEntity item in list) {
+		foreach (BaseEntity item in obj) {
 			if (item.isServer != isServer) {
 				continue;
 			}
@@ -134,34 +50,33 @@ public class SocketMod_Attraction : SocketMod
 				if (attractionPoint.groupName != groupName) {
 					continue;
 				}
-				Vector3 val2 = ((Component)item).transform.position + ((Component)item).transform.rotation * attractionPoint.worldPosition;
-				Vector3 val3 = val2 - val;
-				float magnitude = ((Vector3)(ref val3)).magnitude;
+				Vector3 vector2 = item.transform.position + item.transform.rotation * attractionPoint.worldPosition;
+				float magnitude = (vector2 - vector).magnitude;
 				if (ignoreRotationForRadiusCheck) {
-					Vector3 val4 = ((Component)item).transform.TransformPoint (Vector3.LerpUnclamped (Vector3.zero, Vector3Ex.WithY (attractionPoint.worldPosition, 0f), 2f));
-					float num2 = Vector3.Distance (val4, position2);
+					Vector3 vector3 = item.transform.TransformPoint (Vector3.LerpUnclamped (Vector3.zero, attractionPoint.worldPosition.WithY (0f), 2f));
+					float num2 = Vector3.Distance (vector3, position2);
 					if (num2 < num) {
 						num = num2;
-						position = val4;
-						rotation = ((Component)item).transform.rotation;
+						position = vector3;
+						rotation = item.transform.rotation;
 					}
 				}
 				if (!(magnitude > outerRadius)) {
-					Quaternion val5 = QuaternionEx.LookRotationWithOffset (worldPosition, val2 - place.position, Vector3.up);
+					Quaternion b = QuaternionEx.LookRotationWithOffset (worldPosition, vector2 - place.position, Vector3.up);
 					float num3 = Mathf.InverseLerp (outerRadius, innerRadius, magnitude);
 					if (lockRotation) {
 						num3 = 1f;
 					}
 					if (lockRotation) {
-						Vector3 eulerAngles = ((Quaternion)(ref place.rotation)).eulerAngles;
+						Vector3 eulerAngles = place.rotation.eulerAngles;
 						eulerAngles -= new Vector3 (eulerAngles.x % 90f, eulerAngles.y % 90f, eulerAngles.z % 90f);
-						place.rotation = Quaternion.Euler (eulerAngles + ((Component)item).transform.eulerAngles);
+						place.rotation = Quaternion.Euler (eulerAngles + item.transform.eulerAngles);
 					} else {
-						place.rotation = Quaternion.Lerp (place.rotation, val5, num3);
+						place.rotation = Quaternion.Lerp (place.rotation, b, num3);
 					}
-					val = place.position + place.rotation * worldPosition;
-					val3 = val2 - val;
-					place.position += val3 * num3;
+					vector = place.position + place.rotation * worldPosition;
+					Vector3 vector4 = vector2 - vector;
+					place.position += vector4 * num3;
 				}
 			}
 		}
@@ -169,6 +84,6 @@ public class SocketMod_Attraction : SocketMod
 			place.position = position;
 			place.rotation = rotation;
 		}
-		Pool.FreeList<BaseEntity> (ref list);
+		Pool.FreeList (ref obj);
 	}
 }

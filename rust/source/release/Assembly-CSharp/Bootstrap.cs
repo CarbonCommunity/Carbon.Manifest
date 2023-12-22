@@ -44,7 +44,7 @@ public class Bootstrap : SingletonComponent<Bootstrap>
 			if (bootstrapInitRun) {
 				return true;
 			}
-			if (Object.FindObjectsOfType<GameSetup> ().Count () > 0) {
+			if (UnityEngine.Object.FindObjectsOfType<GameSetup> ().Count () > 0) {
 				return true;
 			}
 			return false;
@@ -55,9 +55,9 @@ public class Bootstrap : SingletonComponent<Bootstrap>
 	{
 		Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 		Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
-		Application.targetFrameRate = 256;
-		Time.fixedDeltaTime = 0.0625f;
-		Time.maximumDeltaTime = 0.125f;
+		UnityEngine.Application.targetFrameRate = 256;
+		UnityEngine.Time.fixedDeltaTime = 0.0625f;
+		UnityEngine.Time.maximumDeltaTime = 0.125f;
 	}
 
 	public static void Init_Tier0 ()
@@ -65,205 +65,166 @@ public class Bootstrap : SingletonComponent<Bootstrap>
 		RunDefaults ();
 		GameSetup.RunOnce = true;
 		bootstrapInitRun = true;
-		Index.Initialize (ConsoleGen.All);
+		ConsoleSystem.Index.Initialize (ConsoleGen.All);
 		UnityButtons.Register ();
 		Output.Install ();
-		Pool.ResizeBuffer<NetRead> (16384);
-		Pool.ResizeBuffer<NetWrite> (16384);
-		Pool.ResizeBuffer<Networkable> (65536);
-		Pool.ResizeBuffer<EntityLink> (65536);
-		Pool.FillBuffer<Networkable> ();
-		Pool.FillBuffer<EntityLink> ();
-		if (CommandLine.HasSwitch ("-nonetworkthread")) {
+		Facepunch.Pool.ResizeBuffer<NetRead> (16384);
+		Facepunch.Pool.ResizeBuffer<NetWrite> (16384);
+		Facepunch.Pool.ResizeBuffer<Networkable> (65536);
+		Facepunch.Pool.ResizeBuffer<EntityLink> (65536);
+		Facepunch.Pool.FillBuffer<Networkable> ();
+		Facepunch.Pool.FillBuffer<EntityLink> ();
+		if (Facepunch.CommandLine.HasSwitch ("-nonetworkthread")) {
 			BaseNetwork.Multithreading = false;
 		}
 		SteamNetworking.SetDebugFunction ();
-		if (CommandLine.HasSwitch ("-swnet")) {
+		if (Facepunch.CommandLine.HasSwitch ("-swnet")) {
 			NetworkInitSteamworks (enableSteamDatagramRelay: false);
-		} else if (CommandLine.HasSwitch ("-sdrnet")) {
+		} else if (Facepunch.CommandLine.HasSwitch ("-sdrnet")) {
 			NetworkInitSteamworks (enableSteamDatagramRelay: true);
-		} else if (CommandLine.HasSwitch ("-raknet")) {
+		} else if (Facepunch.CommandLine.HasSwitch ("-raknet")) {
 			NetworkInitRaknet ();
 		} else {
 			NetworkInitRaknet ();
 		}
-		if (!Application.isEditor) {
-			string text = CommandLine.Full.Replace (CommandLine.GetSwitch ("-rcon.password", CommandLine.GetSwitch ("+rcon.password", "RCONPASSWORD")), "******");
+		if (!UnityEngine.Application.isEditor) {
+			string text = Facepunch.CommandLine.Full.Replace (Facepunch.CommandLine.GetSwitch ("-rcon.password", Facepunch.CommandLine.GetSwitch ("+rcon.password", "RCONPASSWORD")), "******");
 			WriteToLog ("Command Line: " + text);
 		}
 	}
 
 	public static void Init_Systems ()
 	{
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004f: Expected O, but got Unknown
-		Global.Init ();
+		Rust.Global.Init ();
 		if (GameInfo.IsOfficialServer && ConVar.Server.stats) {
 			GA.Logging = false;
 			GA.Build = BuildInfo.Current.Scm.ChangeId;
 			GA.Initialize ("218faecaf1ad400a4e15c53392ebeebc", "0c9803ce52c38671278899538b9c54c8d4e19849");
 			Analytics.Server.Enabled = true;
 		}
-		Application.Initialize ((BaseIntegration)new Integration ());
-		Performance.GetMemoryUsage = () => SystemInfoEx.systemMemoryUsed;
+		Facepunch.Application.Initialize (new Integration ());
+		Facepunch.Performance.GetMemoryUsage = () => SystemInfoEx.systemMemoryUsed;
 	}
 
 	public static void Init_Config ()
 	{
-		//IL_000a: Unknown result type (might be due to invalid IL or missing references)
 		ConsoleNetwork.Init ();
 		ConsoleSystem.UpdateValuesFromCommandLine ();
-		ConsoleSystem.Run (Option.Server, "server.readcfg", Array.Empty<object> ());
+		ConsoleSystem.Run (ConsoleSystem.Option.Server, "server.readcfg");
 		ServerUsers.Load ();
 	}
 
 	public static void NetworkInitRaknet ()
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000a: Expected O, but got Unknown
-		Net.sv = (Server)new Server ();
+		Network.Net.sv = new Facepunch.Network.Raknet.Server ();
 	}
 
 	public static void NetworkInitSteamworks (bool enableSteamDatagramRelay)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000b: Expected O, but got Unknown
-		Net.sv = (Server)new Server (enableSteamDatagramRelay);
+		Network.Net.sv = new SteamNetworking.Server (enableSteamDatagramRelay);
 	}
 
 	private IEnumerator Start ()
 	{
 		WriteToLog ("Bootstrap Startup");
-		BenchmarkTimer.Enabled = CommandLine.Full.Contains ("+autobench");
+		BenchmarkTimer.Enabled = Facepunch.Utility.CommandLine.Full.Contains ("+autobench");
 		BenchmarkTimer timer = BenchmarkTimer.New ("bootstrap");
-		if (!Application.isEditor) {
+		if (!UnityEngine.Application.isEditor) {
 			BuildInfo current = BuildInfo.Current;
 			if ((current.Scm.Branch == null || !(current.Scm.Branch == "experimental/release")) && !(current.Scm.Branch == "release")) {
 				ExceptionReporter.InitializeFromUrl ("https://0654eb77d1e04d6babad83201b6b6b95:d2098f1d15834cae90501548bd5dbd0d@sentry.io/1836389");
 			} else {
 				ExceptionReporter.InitializeFromUrl ("https://83df169465e84da091c1a3cd2fbffeee:3671b903f9a840ecb68411cf946ab9b6@sentry.io/51080");
 			}
-			bool num = CommandLine.Full.Contains ("-official") || CommandLine.Full.Contains ("-server.official") || CommandLine.Full.Contains ("+official") || CommandLine.Full.Contains ("+server.official");
-			bool flag = CommandLine.Full.Contains ("-stats") || CommandLine.Full.Contains ("-server.stats") || CommandLine.Full.Contains ("+stats") || CommandLine.Full.Contains ("+server.stats");
+			bool num = Facepunch.Utility.CommandLine.Full.Contains ("-official") || Facepunch.Utility.CommandLine.Full.Contains ("-server.official") || Facepunch.Utility.CommandLine.Full.Contains ("+official") || Facepunch.Utility.CommandLine.Full.Contains ("+server.official");
+			bool flag = Facepunch.Utility.CommandLine.Full.Contains ("-stats") || Facepunch.Utility.CommandLine.Full.Contains ("-server.stats") || Facepunch.Utility.CommandLine.Full.Contains ("+stats") || Facepunch.Utility.CommandLine.Full.Contains ("+server.stats");
 			ExceptionReporter.Disabled = !(num && flag);
 		}
-		BenchmarkTimer val;
-		BenchmarkTimer val2;
 		if (AssetBundleBackend.Enabled) {
 			AssetBundleBackend newBackend = new AssetBundleBackend ();
-			val = BenchmarkTimer.New ("bootstrap;bundles");
-			try {
-				yield return ((MonoBehaviour)this).StartCoroutine (LoadingUpdate ("Opening Bundles"));
+			using (BenchmarkTimer.New ("bootstrap;bundles")) {
+				yield return StartCoroutine (LoadingUpdate ("Opening Bundles"));
 				newBackend.Load ("Bundles/Bundles");
-				FileSystem.Backend = (FileSystemBackend)(object)newBackend;
-			} finally {
-				((IDisposable)val)?.Dispose ();
+				FileSystem.Backend = newBackend;
 			}
 			if (FileSystem.Backend.isError) {
 				ThrowError (FileSystem.Backend.loadingError);
 				yield break;
 			}
-			val2 = BenchmarkTimer.New ("bootstrap;bundlesindex");
-			try {
+			using (BenchmarkTimer.New ("bootstrap;bundlesindex")) {
 				newBackend.BuildFileIndex ();
-			} finally {
-				((IDisposable)val2)?.Dispose ();
 			}
 		}
 		if (FileSystem.Backend.isError) {
 			ThrowError (FileSystem.Backend.loadingError);
 			yield break;
 		}
-		if (!Application.isEditor) {
+		if (!UnityEngine.Application.isEditor) {
 			WriteToLog (SystemInfoGeneralText.currentInfo);
 		}
-		Texture.SetGlobalAnisotropicFilteringLimits (1, 16);
+		UnityEngine.Texture.SetGlobalAnisotropicFilteringLimits (1, 16);
 		if (isErrored) {
 			yield break;
 		}
-		val = BenchmarkTimer.New ("bootstrap;gamemanifest");
-		try {
-			yield return ((MonoBehaviour)this).StartCoroutine (LoadingUpdate ("Loading Game Manifest"));
+		using (BenchmarkTimer.New ("bootstrap;gamemanifest")) {
+			yield return StartCoroutine (LoadingUpdate ("Loading Game Manifest"));
 			GameManifest.Load ();
-			yield return ((MonoBehaviour)this).StartCoroutine (LoadingUpdate ("DONE!"));
-		} finally {
-			((IDisposable)val)?.Dispose ();
+			yield return StartCoroutine (LoadingUpdate ("DONE!"));
 		}
-		val = BenchmarkTimer.New ("bootstrap;selfcheck");
-		try {
-			yield return ((MonoBehaviour)this).StartCoroutine (LoadingUpdate ("Running Self Check"));
+		using (BenchmarkTimer.New ("bootstrap;selfcheck")) {
+			yield return StartCoroutine (LoadingUpdate ("Running Self Check"));
 			SelfCheck.Run ();
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		if (isErrored) {
 			yield break;
 		}
-		yield return ((MonoBehaviour)this).StartCoroutine (LoadingUpdate ("Bootstrap Tier0"));
-		val2 = BenchmarkTimer.New ("bootstrap;tier0");
-		try {
+		yield return StartCoroutine (LoadingUpdate ("Bootstrap Tier0"));
+		using (BenchmarkTimer.New ("bootstrap;tier0")) {
 			Init_Tier0 ();
-		} finally {
-			((IDisposable)val2)?.Dispose ();
 		}
-		val2 = BenchmarkTimer.New ("bootstrap;commandlinevalues");
-		try {
+		using (BenchmarkTimer.New ("bootstrap;commandlinevalues")) {
 			ConsoleSystem.UpdateValuesFromCommandLine ();
-		} finally {
-			((IDisposable)val2)?.Dispose ();
 		}
-		yield return ((MonoBehaviour)this).StartCoroutine (LoadingUpdate ("Bootstrap Systems"));
-		val2 = BenchmarkTimer.New ("bootstrap;init_systems");
-		try {
+		yield return StartCoroutine (LoadingUpdate ("Bootstrap Systems"));
+		using (BenchmarkTimer.New ("bootstrap;init_systems")) {
 			Init_Systems ();
-		} finally {
-			((IDisposable)val2)?.Dispose ();
 		}
-		yield return ((MonoBehaviour)this).StartCoroutine (LoadingUpdate ("Bootstrap Config"));
-		val2 = BenchmarkTimer.New ("bootstrap;init_config");
-		try {
+		yield return StartCoroutine (LoadingUpdate ("Bootstrap Config"));
+		using (BenchmarkTimer.New ("bootstrap;init_config")) {
 			Init_Config ();
-		} finally {
-			((IDisposable)val2)?.Dispose ();
-		}
-		if (isErrored) {
-			yield break;
-		}
-		yield return ((MonoBehaviour)this).StartCoroutine (LoadingUpdate ("Loading Items"));
-		val2 = BenchmarkTimer.New ("bootstrap;itemmanager");
-		try {
-			ItemManager.Initialize ();
-		} finally {
-			((IDisposable)val2)?.Dispose ();
 		}
 		if (!isErrored) {
-			yield return ((MonoBehaviour)this).StartCoroutine (DedicatedServerStartup ());
-			if (timer != null) {
-				timer.Dispose ();
+			yield return StartCoroutine (LoadingUpdate ("Loading Items"));
+			using (BenchmarkTimer.New ("bootstrap;itemmanager")) {
+				ItemManager.Initialize ();
 			}
-			GameManager.Destroy (((Component)this).gameObject);
+			if (!isErrored) {
+				yield return StartCoroutine (DedicatedServerStartup ());
+				timer?.Dispose ();
+				GameManager.Destroy (base.gameObject);
+			}
 		}
 	}
 
 	private IEnumerator DedicatedServerStartup ()
 	{
-		Application.isLoading = true;
-		Application.backgroundLoadingPriority = (ThreadPriority)4;
+		Rust.Application.isLoading = true;
+		UnityEngine.Application.backgroundLoadingPriority = UnityEngine.ThreadPriority.High;
 		WriteToLog ("Skinnable Warmup");
 		yield return CoroutineEx.waitForEndOfFrame;
 		yield return CoroutineEx.waitForEndOfFrame;
 		GameManifest.LoadAssets ();
 		WriteToLog ("Initializing Nexus");
-		yield return ((MonoBehaviour)this).StartCoroutine (StartNexusServer ());
+		yield return StartCoroutine (StartNexusServer ());
 		WriteToLog ("Loading Scene");
 		yield return CoroutineEx.waitForEndOfFrame;
 		yield return CoroutineEx.waitForEndOfFrame;
-		Physics.defaultSolverIterations = 3;
+		UnityEngine.Physics.defaultSolverIterations = 3;
 		int @int = PlayerPrefs.GetInt ("UnityGraphicsQuality");
 		QualitySettings.SetQualityLevel (0);
 		PlayerPrefs.SetInt ("UnityGraphicsQuality", @int);
-		Object.DontDestroyOnLoad ((Object)(object)((Component)this).gameObject);
-		Object.DontDestroyOnLoad ((Object)(object)GameManager.server.CreatePrefab ("assets/bundled/prefabs/system/server_console.prefab"));
+		UnityEngine.Object.DontDestroyOnLoad (base.gameObject);
+		UnityEngine.Object.DontDestroyOnLoad (GameManager.server.CreatePrefab ("assets/bundled/prefabs/system/server_console.prefab"));
 		StartupShared ();
 		World.InitSize (ConVar.Server.worldsize);
 		World.InitSeed (ConVar.Server.seed);
@@ -274,13 +235,13 @@ public class Bootstrap : SingletonComponent<Bootstrap>
 		yield return CoroutineEx.waitForEndOfFrame;
 		yield return CoroutineEx.waitForEndOfFrame;
 		string[] assetList = FileSystem_Warmup.GetAssetList ();
-		yield return ((MonoBehaviour)this).StartCoroutine (FileSystem_Warmup.Run (assetList, WriteToLog, "Asset Warmup ({0}/{1})"));
-		yield return ((MonoBehaviour)this).StartCoroutine (StartServer (!CommandLine.HasSwitch ("-skipload"), "", allowOutOfDateSaves: false));
-		if (!Object.op_Implicit ((Object)(object)Object.FindObjectOfType<Performance> ())) {
-			Object.DontDestroyOnLoad ((Object)(object)GameManager.server.CreatePrefab ("assets/bundled/prefabs/system/performance.prefab"));
+		yield return StartCoroutine (FileSystem_Warmup.Run (assetList, WriteToLog, "Asset Warmup ({0}/{1})"));
+		yield return StartCoroutine (StartServer (!Facepunch.CommandLine.HasSwitch ("-skipload"), "", allowOutOfDateSaves: false));
+		if (!UnityEngine.Object.FindObjectOfType<Performance> ()) {
+			UnityEngine.Object.DontDestroyOnLoad (GameManager.server.CreatePrefab ("assets/bundled/prefabs/system/performance.prefab"));
 		}
 		Rust.GC.Collect ();
-		Application.isLoading = false;
+		Rust.Application.isLoading = false;
 	}
 
 	private static void EnsureRootFolderCreated ()
@@ -288,7 +249,7 @@ public class Bootstrap : SingletonComponent<Bootstrap>
 		try {
 			Directory.CreateDirectory (ConVar.Server.rootFolder);
 		} catch (Exception arg) {
-			Debug.LogWarning ((object)$"Failed to automatically create the save directory: {ConVar.Server.rootFolder}\n\n{arg}");
+			Debug.LogWarning ($"Failed to automatically create the save directory: {ConVar.Server.rootFolder}\n\n{arg}");
 		}
 	}
 
@@ -297,57 +258,57 @@ public class Bootstrap : SingletonComponent<Bootstrap>
 		EnsureRootFolderCreated ();
 		yield return NexusServer.Initialize ();
 		if (NexusServer.FailedToStart) {
-			Debug.LogError ((object)"Nexus server failed to start, terminating");
-			Application.Quit ();
+			Debug.LogError ("Nexus server failed to start, terminating");
+			Rust.Application.Quit ();
 		}
 	}
 
 	public static IEnumerator StartServer (bool doLoad, string saveFileOverride, bool allowOutOfDateSaves)
 	{
-		float timeScale = Time.timeScale;
-		if (Time.pausewhileloading) {
-			Time.timeScale = 0f;
+		float timeScale = UnityEngine.Time.timeScale;
+		if (ConVar.Time.pausewhileloading) {
+			UnityEngine.Time.timeScale = 0f;
 		}
 		RCon.Initialize ();
 		BaseEntity.Query.Server = new BaseEntity.Query.EntityTree (8096f);
 		EnsureRootFolderCreated ();
-		if (Object.op_Implicit ((Object)(object)SingletonComponent<WorldSetup>.Instance)) {
-			yield return ((MonoBehaviour)SingletonComponent<WorldSetup>.Instance).StartCoroutine (SingletonComponent<WorldSetup>.Instance.InitCoroutine ());
+		if ((bool)SingletonComponent<WorldSetup>.Instance) {
+			yield return SingletonComponent<WorldSetup>.Instance.StartCoroutine (SingletonComponent<WorldSetup>.Instance.InitCoroutine ());
 		}
-		if (Object.op_Implicit ((Object)(object)SingletonComponent<DynamicNavMesh>.Instance) && ((Behaviour)SingletonComponent<DynamicNavMesh>.Instance).enabled && !AiManager.nav_disable) {
-			yield return ((MonoBehaviour)SingletonComponent<DynamicNavMesh>.Instance).StartCoroutine (SingletonComponent<DynamicNavMesh>.Instance.UpdateNavMeshAndWait ());
+		if ((bool)SingletonComponent<DynamicNavMesh>.Instance && SingletonComponent<DynamicNavMesh>.Instance.enabled && !AiManager.nav_disable) {
+			yield return SingletonComponent<DynamicNavMesh>.Instance.StartCoroutine (SingletonComponent<DynamicNavMesh>.Instance.UpdateNavMeshAndWait ());
 		}
-		if (Object.op_Implicit ((Object)(object)SingletonComponent<AiManager>.Instance) && ((Behaviour)SingletonComponent<AiManager>.Instance).enabled) {
+		if ((bool)SingletonComponent<AiManager>.Instance && SingletonComponent<AiManager>.Instance.enabled) {
 			SingletonComponent<AiManager>.Instance.Initialize ();
-			if (!AiManager.nav_disable && AI.npc_enable && (Object)(object)TerrainMeta.Path != (Object)null) {
+			if (!AiManager.nav_disable && AI.npc_enable && TerrainMeta.Path != null) {
 				foreach (MonumentInfo monument in TerrainMeta.Path.Monuments) {
 					if (monument.HasNavmesh) {
-						yield return ((MonoBehaviour)monument).StartCoroutine (monument.GetMonumentNavMesh ().UpdateNavMeshAndWait ());
+						yield return monument.StartCoroutine (monument.GetMonumentNavMesh ().UpdateNavMeshAndWait ());
 					}
 				}
-				if (Object.op_Implicit ((Object)(object)TerrainMeta.Path) && Object.op_Implicit ((Object)(object)TerrainMeta.Path.DungeonGridRoot)) {
+				if ((bool)TerrainMeta.Path && (bool)TerrainMeta.Path.DungeonGridRoot) {
 					DungeonNavmesh dungeonNavmesh = TerrainMeta.Path.DungeonGridRoot.AddComponent<DungeonNavmesh> ();
-					dungeonNavmesh.NavMeshCollectGeometry = (NavMeshCollectGeometry)1;
-					dungeonNavmesh.LayerMask = LayerMask.op_Implicit (65537);
-					yield return ((MonoBehaviour)dungeonNavmesh).StartCoroutine (dungeonNavmesh.UpdateNavMeshAndWait ());
+					dungeonNavmesh.NavMeshCollectGeometry = NavMeshCollectGeometry.PhysicsColliders;
+					dungeonNavmesh.LayerMask = 65537;
+					yield return dungeonNavmesh.StartCoroutine (dungeonNavmesh.UpdateNavMeshAndWait ());
 				} else {
-					Debug.LogError ((object)"Failed to find DungeonGridRoot, NOT generating Dungeon navmesh");
+					Debug.LogError ("Failed to find DungeonGridRoot, NOT generating Dungeon navmesh");
 				}
-				if (Object.op_Implicit ((Object)(object)TerrainMeta.Path) && Object.op_Implicit ((Object)(object)TerrainMeta.Path.DungeonBaseRoot)) {
+				if ((bool)TerrainMeta.Path && (bool)TerrainMeta.Path.DungeonBaseRoot) {
 					DungeonNavmesh dungeonNavmesh2 = TerrainMeta.Path.DungeonBaseRoot.AddComponent<DungeonNavmesh> ();
 					dungeonNavmesh2.NavmeshResolutionModifier = 0.3f;
-					dungeonNavmesh2.NavMeshCollectGeometry = (NavMeshCollectGeometry)1;
-					dungeonNavmesh2.LayerMask = LayerMask.op_Implicit (65537);
-					yield return ((MonoBehaviour)dungeonNavmesh2).StartCoroutine (dungeonNavmesh2.UpdateNavMeshAndWait ());
+					dungeonNavmesh2.NavMeshCollectGeometry = NavMeshCollectGeometry.PhysicsColliders;
+					dungeonNavmesh2.LayerMask = 65537;
+					yield return dungeonNavmesh2.StartCoroutine (dungeonNavmesh2.UpdateNavMeshAndWait ());
 				} else {
-					Debug.LogError ((object)"Failed to find DungeonBaseRoot , NOT generating Dungeon navmesh");
+					Debug.LogError ("Failed to find DungeonBaseRoot , NOT generating Dungeon navmesh");
 				}
 				GenerateDungeonBase.SetupAI ();
 			}
 		}
-		GameObject val = GameManager.server.CreatePrefab ("assets/bundled/prefabs/system/server.prefab");
-		Object.DontDestroyOnLoad ((Object)(object)val);
-		ServerMgr serverMgr = val.GetComponent<ServerMgr> ();
+		GameObject gameObject = GameManager.server.CreatePrefab ("assets/bundled/prefabs/system/server.prefab");
+		UnityEngine.Object.DontDestroyOnLoad (gameObject);
+		ServerMgr serverMgr = gameObject.GetComponent<ServerMgr> ();
 		bool saveWasLoaded = serverMgr.Initialize (doLoad, saveFileOverride, allowOutOfDateSaves);
 		yield return CoroutineEx.waitForSecondsRealtime (0.1f);
 		SaveRestore.InitializeEntityLinks ();
@@ -364,13 +325,13 @@ public class Bootstrap : SingletonComponent<Bootstrap>
 		yield return CoroutineEx.waitForSecondsRealtime (0.1f);
 		if (Clan.enabled) {
 			ClanManager clanManager = ClanManager.ServerInstance;
-			if ((Object)(object)clanManager == (Object)null) {
-				Debug.LogError ((object)"ClanManager was not spawned!");
-				Application.Quit ();
+			if (clanManager == null) {
+				Debug.LogError ("ClanManager was not spawned!");
+				Rust.Application.Quit ();
 				yield break;
 			}
 			Task initializeTask = clanManager.Initialize ();
-			yield return (object)new WaitUntil ((Func<bool>)(() => initializeTask.IsCompleted));
+			yield return new WaitUntil (() => initializeTask.IsCompleted);
 			initializeTask.Wait ();
 			clanManager.LoadClanInfoForSleepers ();
 		}
@@ -384,15 +345,12 @@ public class Bootstrap : SingletonComponent<Bootstrap>
 		}
 		serverMgr.OpenConnection ();
 		CompanionServer.Server.Initialize ();
-		BenchmarkTimer val2 = BenchmarkTimer.New ("Boombox.LoadStations");
-		try {
+		using (BenchmarkTimer.New ("Boombox.LoadStations")) {
 			BoomBox.LoadStations ();
-		} finally {
-			((IDisposable)val2)?.Dispose ();
 		}
 		RustEmojiLibrary.FindAllServerEmoji ();
-		if (Time.pausewhileloading) {
-			Time.timeScale = timeScale;
+		if (ConVar.Time.pausewhileloading) {
+			UnityEngine.Time.timeScale = timeScale;
 		}
 		WriteToLog ("Server startup complete");
 	}
@@ -404,21 +362,21 @@ public class Bootstrap : SingletonComponent<Bootstrap>
 
 	public void ThrowError (string error)
 	{
-		Debug.Log ((object)("ThrowError: " + error));
-		errorPanel.SetActive (true);
-		((TMP_Text)errorText).text = error;
+		Debug.Log ("ThrowError: " + error);
+		errorPanel.SetActive (value: true);
+		errorText.text = error;
 		isErrored = true;
 	}
 
 	public void ExitGame ()
 	{
-		Debug.Log ((object)"Exiting due to Exit Game button on bootstrap error panel");
-		Application.Quit ();
+		Debug.Log ("Exiting due to Exit Game button on bootstrap error panel");
+		Rust.Application.Quit ();
 	}
 
 	public static IEnumerator LoadingUpdate (string str)
 	{
-		if (Object.op_Implicit ((Object)(object)SingletonComponent<Bootstrap>.Instance)) {
+		if ((bool)SingletonComponent<Bootstrap>.Instance) {
 			SingletonComponent<Bootstrap>.Instance.messageString = str;
 			yield return CoroutineEx.waitForEndOfFrame;
 			yield return CoroutineEx.waitForEndOfFrame;
@@ -428,7 +386,7 @@ public class Bootstrap : SingletonComponent<Bootstrap>
 	public static void WriteToLog (string str)
 	{
 		if (!(lastWrittenValue == str)) {
-			DebugEx.Log ((object)str, (StackTraceLogType)0);
+			DebugEx.Log (str);
 			lastWrittenValue = str;
 		}
 	}

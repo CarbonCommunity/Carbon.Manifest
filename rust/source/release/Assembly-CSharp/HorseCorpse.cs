@@ -5,14 +5,14 @@ public class HorseCorpse : LootableCorpse
 {
 	public int breedIndex;
 
-	public Phrase lootPanelTitle;
+	public Translate.Phrase lootPanelTitle;
 
 	public override string playerName => lootPanelTitle.translated;
 
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.horse = Pool.Get<Horse> ();
+		info.msg.horse = Pool.Get<ProtoBuf.Horse> ();
 		info.msg.horse.breedIndex = breedIndex;
 	}
 

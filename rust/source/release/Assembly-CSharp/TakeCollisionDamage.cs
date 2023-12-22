@@ -1,4 +1,3 @@
-using System;
 using Rust;
 using UnityEngine;
 
@@ -36,35 +35,30 @@ public class TakeCollisionDamage : FacepunchBehaviour
 
 	protected void OnCollisionEnter (Collision collision)
 	{
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00df: Unknown result type (might be due to invalid IL or missing references)
-		if (IsClient || collision == null || (Object)(object)collision.gameObject == (Object)null || (Object)(object)collision.gameObject == (Object)null) {
+		if (IsClient || collision == null || collision.gameObject == null || collision.gameObject == null) {
 			return;
 		}
 		Rigidbody rigidbody = collision.rigidbody;
-		float num = (((Object)(object)rigidbody == (Object)null) ? 100f : rigidbody.mass);
-		Vector3 relativeVelocity = collision.relativeVelocity;
-		float num2 = ((Vector3)(ref relativeVelocity)).magnitude * (entity.RealisticMass + num) / Time.fixedDeltaTime;
-		float num3 = Mathf.InverseLerp (forceForAnyDamage, forceForMaxDamage, num2);
-		if (num3 > 0f) {
-			pendingDamage = Mathf.Max (pendingDamage, Mathf.Lerp (minDamage, maxDamage, num3));
+		float num = ((rigidbody == null) ? 100f : rigidbody.mass);
+		float value = collision.relativeVelocity.magnitude * (entity.RealisticMass + num) / Time.fixedDeltaTime;
+		float num2 = Mathf.InverseLerp (forceForAnyDamage, forceForMaxDamage, value);
+		if (num2 > 0f) {
+			pendingDamage = Mathf.Max (pendingDamage, Mathf.Lerp (minDamage, maxDamage, num2));
 			if (pendingDamage > entity.Health () && collision.gameObject.ToBaseEntity () is ICanRestoreVelocity canRestoreVelocity) {
 				canRestoreVelocity.RestoreVelocity (collision.relativeVelocity * velocityRestorePercent);
 			}
-			((FacepunchBehaviour)this).Invoke ((Action)DoDamage, 0f);
+			Invoke (DoDamage, 0f);
 		}
 	}
 
 	protected void OnDestroy ()
 	{
-		((FacepunchBehaviour)this).CancelInvoke ((Action)DoDamage);
+		CancelInvoke (DoDamage);
 	}
 
 	private void DoDamage ()
 	{
-		if (!((Object)(object)entity == (Object)null) && !entity.IsDead () && !entity.IsDestroyed && pendingDamage > 0f) {
+		if (!(entity == null) && !entity.IsDead () && !entity.IsDestroyed && pendingDamage > 0f) {
 			entity.Hurt (pendingDamage, DamageType.Collision, null, useProtection: false);
 			pendingDamage = 0f;
 		}

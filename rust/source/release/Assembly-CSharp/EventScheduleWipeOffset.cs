@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public class EventScheduleWipeOffset : EventSchedule
 {
 	[ServerVar (Name = "event_hours_before_wipe")]
@@ -7,7 +5,7 @@ public class EventScheduleWipeOffset : EventSchedule
 
 	public override void RunSchedule ()
 	{
-		if (!((Object)(object)WipeTimer.serverinstance == (Object)null) && !(WipeTimer.serverinstance.GetTimeSpanUntilWipe ().TotalHours > (double)hoursBeforeWipeRealtime)) {
+		if (!(WipeTimer.serverinstance == null) && !(WipeTimer.serverinstance.GetTimeSpanUntilWipe ().TotalHours > (double)hoursBeforeWipeRealtime)) {
 			base.RunSchedule ();
 		}
 	}

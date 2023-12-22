@@ -10,35 +10,31 @@ public class PatternFireworkStar : MonoBehaviour, IClientComponent
 
 	public void Initialize (Color color)
 	{
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)Pixel != (Object)null) {
-			Pixel.SetActive (true);
+		if (Pixel != null) {
+			Pixel.SetActive (value: true);
 		}
-		if ((Object)(object)Explosion != (Object)null) {
-			Explosion.SetActive (false);
+		if (Explosion != null) {
+			Explosion.SetActive (value: false);
 		}
 		if (ParticleSystems == null) {
 			return;
 		}
 		ParticleSystem[] particleSystems = ParticleSystems;
-		foreach (ParticleSystem val in particleSystems) {
-			if (!((Object)(object)val == (Object)null)) {
-				MainModule main = val.main;
-				((MainModule)(ref main)).startColor = new MinMaxGradient (color);
+		foreach (ParticleSystem particleSystem in particleSystems) {
+			if (!(particleSystem == null)) {
+				ParticleSystem.MainModule main = particleSystem.main;
+				main.startColor = new ParticleSystem.MinMaxGradient (color);
 			}
 		}
 	}
 
 	public void Explode ()
 	{
-		if ((Object)(object)Pixel != (Object)null) {
-			Pixel.SetActive (false);
+		if (Pixel != null) {
+			Pixel.SetActive (value: false);
 		}
-		if ((Object)(object)Explosion != (Object)null) {
-			Explosion.SetActive (true);
+		if (Explosion != null) {
+			Explosion.SetActive (value: true);
 		}
 	}
 }

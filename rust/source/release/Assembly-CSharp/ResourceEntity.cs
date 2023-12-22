@@ -1,7 +1,6 @@
 using System;
 using Facepunch;
 using ProtoBuf;
-using UnityEngine;
 using UnityEngine.Serialization;
 
 public class ResourceEntity : BaseEntity
@@ -32,14 +31,14 @@ public class ResourceEntity : BaseEntity
 		base.InitShared ();
 		if (base.isServer) {
 			DecorComponent[] components = PrefabAttribute.server.FindAll<DecorComponent> (prefabID);
-			((Component)this).transform.ApplyDecorComponentsScaleOnly (components);
+			base.transform.ApplyDecorComponentsScaleOnly (components);
 		}
 	}
 
 	public override void ServerInit ()
 	{
 		base.ServerInit ();
-		resourceDispenser = ((Component)this).GetComponent<ResourceDispenser> ();
+		resourceDispenser = GetComponent<ResourceDispenser> ();
 		if (health == 0f) {
 			health = startHealth;
 		}
@@ -73,11 +72,11 @@ public class ResourceEntity : BaseEntity
 		if (!base.isServer || isKilled) {
 			return;
 		}
-		if ((Object)(object)resourceDispenser != (Object)null) {
+		if (resourceDispenser != null) {
 			resourceDispenser.OnAttacked (info);
 		}
 		if (!info.DidGather) {
-			if (Object.op_Implicit ((Object)(object)baseProtection)) {
+			if ((bool)baseProtection) {
 				baseProtection.Scale (info.damageTypes);
 			}
 			float num = info.damageTypes.Total ();

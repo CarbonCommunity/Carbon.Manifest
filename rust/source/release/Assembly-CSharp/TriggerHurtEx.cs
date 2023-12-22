@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Rust;
@@ -58,11 +57,11 @@ public class TriggerHurtEx : TriggerBase, IServerComponent, IHurtTrigger
 	internal override GameObject InterestedInObject (GameObject obj)
 	{
 		obj = base.InterestedInObject (obj);
-		if ((Object)(object)obj == (Object)null) {
+		if (obj == null) {
 			return null;
 		}
 		BaseEntity baseEntity = obj.ToBaseEntity ();
-		if ((Object)(object)baseEntity == (Object)null) {
+		if (baseEntity == null) {
 			return null;
 		}
 		if (!(baseEntity is BaseCombatEntity)) {
@@ -71,33 +70,26 @@ public class TriggerHurtEx : TriggerBase, IServerComponent, IHurtTrigger
 		if (baseEntity.isClient) {
 			return null;
 		}
-		return ((Component)baseEntity).gameObject;
+		return baseEntity.gameObject;
 	}
 
 	internal void DoDamage (BaseEntity ent, HurtType type, List<DamageTypeEntry> damage, GameObjectRef effect, float multiply = 1f)
 	{
-		//IL_00c5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ca: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0080: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0091: Unknown result type (might be due to invalid IL or missing references)
 		if (!damageEnabled) {
 			return;
 		}
-		TimeWarning val = TimeWarning.New ("TriggerHurtEx.DoDamage", 0);
-		try {
+		using (TimeWarning.New ("TriggerHurtEx.DoDamage")) {
 			if (damage != null && damage.Count > 0) {
 				BaseCombatEntity baseCombatEntity = ent as BaseCombatEntity;
-				if (Object.op_Implicit ((Object)(object)baseCombatEntity)) {
+				if ((bool)baseCombatEntity) {
 					HitInfo hitInfo = new HitInfo ();
 					hitInfo.damageTypes.Add (damage);
 					hitInfo.damageTypes.ScaleAll (multiply);
 					hitInfo.DoHitEffects = true;
 					hitInfo.DidHit = true;
-					hitInfo.Initiator = ((Component)this).gameObject.ToBaseEntity ();
-					hitInfo.PointStart = ((Component)this).transform.position;
-					hitInfo.PointEnd = ((Component)baseCombatEntity).transform.position;
+					hitInfo.Initiator = base.gameObject.ToBaseEntity ();
+					hitInfo.PointStart = base.transform.position;
+					hitInfo.PointEnd = baseCombatEntity.transform.position;
 					if (type == HurtType.Simple) {
 						baseCombatEntity.Hurt (hitInfo);
 					} else {
@@ -106,57 +98,47 @@ public class TriggerHurtEx : TriggerBase, IServerComponent, IHurtTrigger
 				}
 			}
 			if (effect.isValid) {
-				Effect.server.Run (effect.resourcePath, ent, StringPool.closest, ((Component)this).transform.position, Vector3.up);
+				Effect.server.Run (effect.resourcePath, ent, StringPool.closest, base.transform.position, Vector3.up);
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 	}
 
 	internal override void OnEntityEnter (BaseEntity ent)
 	{
 		base.OnEntityEnter (ent);
-		if (!((Object)(object)ent == (Object)null)) {
+		if (!(ent == null)) {
 			if (entityAddList == null) {
 				entityAddList = new List<BaseEntity> ();
 			}
 			entityAddList.Add (ent);
-			((FacepunchBehaviour)this).Invoke ((Action)ProcessQueues, 0.1f);
+			Invoke (ProcessQueues, 0.1f);
 		}
 	}
 
 	internal override void OnEntityLeave (BaseEntity ent)
 	{
 		base.OnEntityLeave (ent);
-		if (!((Object)(object)ent == (Object)null)) {
+		if (!(ent == null)) {
 			if (entityLeaveList == null) {
 				entityLeaveList = new List<BaseEntity> ();
 			}
 			entityLeaveList.Add (ent);
-			((FacepunchBehaviour)this).Invoke ((Action)ProcessQueues, 0.1f);
+			Invoke (ProcessQueues, 0.1f);
 		}
 	}
 
 	internal override void OnObjects ()
 	{
-		((FacepunchBehaviour)this).InvokeRepeating ((Action)OnTick, repeatRate, repeatRate);
+		InvokeRepeating (OnTick, repeatRate, repeatRate);
 	}
 
 	internal override void OnEmpty ()
 	{
-		((FacepunchBehaviour)this).CancelInvoke ((Action)OnTick);
+		CancelInvoke (OnTick);
 	}
 
 	private void OnTick ()
 	{
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0061: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007d: Unknown result type (might be due to invalid IL or missing references)
 		ProcessQueues ();
 		if (entityInfo == null) {
 			return;
@@ -165,9 +147,8 @@ public class TriggerHurtEx : TriggerBase, IServerComponent, IHurtTrigger
 		for (int i = 0; i < array.Length; i++) {
 			KeyValuePair<BaseEntity, EntityTriggerInfo> keyValuePair = array [i];
 			if (keyValuePair.Key.IsValid ()) {
-				Vector3 position = ((Component)keyValuePair.Key).transform.position;
-				Vector3 val = position - keyValuePair.Value.lastPosition;
-				float magnitude = ((Vector3)(ref val)).magnitude;
+				Vector3 position = keyValuePair.Key.transform.position;
+				float magnitude = (position - keyValuePair.Value.lastPosition).magnitude;
 				if (magnitude > 0.01f) {
 					keyValuePair.Value.lastPosition = position;
 					DoDamage (keyValuePair.Key, hurtTypeOnMove, damageOnMove, effectOnMove, magnitude);
@@ -179,8 +160,6 @@ public class TriggerHurtEx : TriggerBase, IServerComponent, IHurtTrigger
 
 	private void ProcessQueues ()
 	{
-		//IL_007b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0080: Unknown result type (might be due to invalid IL or missing references)
 		if (entityAddList != null) {
 			foreach (BaseEntity entityAdd in entityAddList) {
 				if (entityAdd.IsValid ()) {
@@ -190,7 +169,7 @@ public class TriggerHurtEx : TriggerBase, IServerComponent, IHurtTrigger
 					}
 					if (!entityInfo.ContainsKey (entityAdd)) {
 						entityInfo.Add (entityAdd, new EntityTriggerInfo {
-							lastPosition = ((Component)entityAdd).transform.position
+							lastPosition = entityAdd.transform.position
 						});
 					}
 				}

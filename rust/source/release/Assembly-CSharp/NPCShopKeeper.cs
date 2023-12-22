@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Facepunch;
 using ProtoBuf;
@@ -21,7 +20,7 @@ public class NPCShopKeeper : NPCPlayer
 		if (!invisibleVendingMachineRef.IsValid (base.isServer)) {
 			return null;
 		}
-		return ((Component)invisibleVendingMachineRef.Get (base.isServer)).GetComponent<InvisibleVendingMachine> ();
+		return invisibleVendingMachineRef.Get (base.isServer).GetComponent<InvisibleVendingMachine> ();
 	}
 
 	public override void UpdateProtectionFromClothing ()
@@ -34,29 +33,20 @@ public class NPCShopKeeper : NPCPlayer
 
 	public override void ServerInit ()
 	{
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
 		base.ServerInit ();
-		initialFacingDir = ((Component)this).transform.rotation * Vector3.forward;
-		((FacepunchBehaviour)this).Invoke ((Action)DelayedSleepEnd, 3f);
-		SetAimDirection (((Component)this).transform.rotation * Vector3.forward);
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)Greeting, Random.Range (5f, 10f), 5f, Random.Range (0f, 2f));
-		if (invisibleVendingMachineRef.IsValid (serverside: true) && (Object)(object)machine == (Object)null) {
+		initialFacingDir = base.transform.rotation * Vector3.forward;
+		Invoke (DelayedSleepEnd, 3f);
+		SetAimDirection (base.transform.rotation * Vector3.forward);
+		InvokeRandomized (Greeting, Random.Range (5f, 10f), 5f, Random.Range (0f, 2f));
+		if (invisibleVendingMachineRef.IsValid (serverside: true) && machine == null) {
 			machine = GetVendingMachine ();
-		} else if ((Object)(object)machine != (Object)null && !invisibleVendingMachineRef.IsValid (serverside: true)) {
+		} else if (machine != null && !invisibleVendingMachineRef.IsValid (serverside: true)) {
 			invisibleVendingMachineRef.Set (machine);
 		}
 	}
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
 		info.msg.shopKeeper = Pool.Get<ShopKeeper> ();
 		info.msg.shopKeeper.vendingRef = invisibleVendingMachineRef.uid;
@@ -64,7 +54,6 @@ public class NPCShopKeeper : NPCPlayer
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (info.msg.shopKeeper != null) {
 			invisibleVendingMachineRef.uid = info.msg.shopKeeper.vendingRef;
@@ -83,11 +72,7 @@ public class NPCShopKeeper : NPCPlayer
 
 	public void GreetPlayer (BasePlayer player)
 	{
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)player != (Object)null) {
+		if (player != null) {
 			SignalBroadcast (Signal.Gesture, "wave");
 			SetAimDirection (Vector3Ex.Direction2D (player.eyes.position, eyes.position));
 			lastWavedAtPlayer = player;
@@ -98,37 +83,26 @@ public class NPCShopKeeper : NPCPlayer
 
 	public void Greeting ()
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0061: Unknown result type (might be due to invalid IL or missing references)
-		//IL_012e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0109: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0114: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0119: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0086: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0091: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0096: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009c: Unknown result type (might be due to invalid IL or missing references)
-		List<BasePlayer> list = Pool.GetList<BasePlayer> ();
-		Vis.Entities (((Component)this).transform.position, 10f, list, 131072, (QueryTriggerInteraction)2);
-		_ = ((Component)this).transform.position;
+		List<BasePlayer> obj = Pool.GetList<BasePlayer> ();
+		Vis.Entities (base.transform.position, 10f, obj, 131072);
+		_ = base.transform.position;
 		BasePlayer basePlayer = null;
-		foreach (BasePlayer item in list) {
-			if (!item.isClient && !item.IsNpc && !((Object)(object)item == (Object)(object)this) && item.IsVisible (eyes.position) && !((Object)(object)item == (Object)(object)lastWavedAtPlayer) && !(Vector3.Dot (Vector3Ex.Direction2D (item.eyes.position, eyes.position), initialFacingDir) < 0.2f)) {
+		foreach (BasePlayer item in obj) {
+			if (!item.isClient && !item.IsNpc && !(item == this) && item.IsVisible (eyes.position) && !(item == lastWavedAtPlayer) && !(Vector3.Dot (Vector3Ex.Direction2D (item.eyes.position, eyes.position), initialFacingDir) < 0.2f)) {
 				basePlayer = item;
 				break;
 			}
 		}
-		if ((Object)(object)basePlayer == (Object)null && !list.Contains (lastWavedAtPlayer)) {
+		if (basePlayer == null && !obj.Contains (lastWavedAtPlayer)) {
 			lastWavedAtPlayer = null;
 		}
-		if ((Object)(object)basePlayer != (Object)null) {
+		if (basePlayer != null) {
 			SignalBroadcast (Signal.Gesture, "wave");
 			SetAimDirection (Vector3Ex.Direction2D (basePlayer.eyes.position, eyes.position));
 			lastWavedAtPlayer = basePlayer;
 		} else {
 			SetAimDirection (initialFacingDir);
 		}
-		Pool.FreeList<BasePlayer> (ref list);
+		Pool.FreeList (ref obj);
 	}
 }

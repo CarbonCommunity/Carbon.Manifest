@@ -1,4 +1,3 @@
-using System;
 using Network;
 using Rust;
 using UnityEngine;
@@ -27,10 +26,7 @@ public class PetBrain : BaseAIBrain
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("PetBrain.OnRpcMessage", 0);
-		try {
-		} finally {
-			((IDisposable)val)?.Dispose ();
+		using (TimeWarning.New ("PetBrain.OnRpcMessage")) {
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -61,7 +57,7 @@ public class PetBrain : BaseAIBrain
 		base.Think (delta);
 		if (DrownInDeepWater) {
 			BaseCombatEntity baseCombatEntity = GetBaseEntity () as BaseCombatEntity;
-			if ((Object)(object)baseCombatEntity != (Object)null && baseCombatEntity.WaterFactor () > 0.85f && !baseCombatEntity.IsDestroyed) {
+			if (baseCombatEntity != null && baseCombatEntity.WaterFactor () > 0.85f && !baseCombatEntity.IsDestroyed) {
 				baseCombatEntity.Hurt (delta * (baseCombatEntity.MaxHealth () / DrownTimer), DamageType.Drowned);
 			}
 		}
@@ -70,19 +66,17 @@ public class PetBrain : BaseAIBrain
 
 	private bool EvaluateLoadDefaultDesignTriggers ()
 	{
-		//IL_007f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008f: Unknown result type (might be due to invalid IL or missing references)
 		if (loadedDesignIndex == 0) {
 			return true;
 		}
 		bool flag = false;
 		if (IdleWhenOwnerOfflineOrDead) {
-			flag = (IdleWhenOwnerOfflineOrDead && (Object)(object)base.OwningPlayer == (Object)null) || base.OwningPlayer.IsSleeping () || base.OwningPlayer.IsDead ();
+			flag = (IdleWhenOwnerOfflineOrDead && base.OwningPlayer == null) || base.OwningPlayer.IsSleeping () || base.OwningPlayer.IsDead ();
 		}
 		if (IdleWhenOwnerMounted && !flag) {
-			flag = (Object)(object)base.OwningPlayer != (Object)null && base.OwningPlayer.isMounted;
+			flag = base.OwningPlayer != null && base.OwningPlayer.isMounted;
 		}
-		if ((Object)(object)base.OwningPlayer != (Object)null && Vector3.Distance (((Component)this).transform.position, ((Component)base.OwningPlayer).transform.position) > ControlDistance) {
+		if (base.OwningPlayer != null && Vector3.Distance (base.transform.position, base.OwningPlayer.transform.position) > ControlDistance) {
 			flag = true;
 		}
 		if (flag) {
@@ -96,9 +90,9 @@ public class PetBrain : BaseAIBrain
 	{
 		base.OnAIDesignLoadedAtIndex (index);
 		BaseEntity baseEntity = GetBaseEntity ();
-		if ((Object)(object)baseEntity != (Object)null) {
+		if (baseEntity != null) {
 			BasePlayer basePlayer = BasePlayer.FindByID (baseEntity.OwnerID);
-			if ((Object)(object)basePlayer != (Object)null) {
+			if (basePlayer != null) {
 				basePlayer.SendClientPetStateIndex ();
 			}
 			baseEntity.ClientRPC (null, "OnCommandGiven");

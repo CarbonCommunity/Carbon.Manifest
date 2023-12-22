@@ -23,10 +23,8 @@ public struct JobInt
 
 	public static JobInt Create ()
 	{
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
 		JobInt result = default(JobInt);
-		result.Array = new NativeArray<int> (1, (Allocator)4, (NativeArrayOptions)1);
+		result.Array = new NativeArray<int> (1, Allocator.Persistent);
 		return result;
 	}
 

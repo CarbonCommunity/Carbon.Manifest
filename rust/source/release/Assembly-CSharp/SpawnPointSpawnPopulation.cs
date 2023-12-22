@@ -26,17 +26,15 @@ public class SpawnPointSpawnPopulation : SpawnPopulationBase
 
 	public override void SubFill (SpawnHandler spawnHandler, SpawnDistribution distribution, int numToFill, bool initialSpawn)
 	{
-		//IL_0070: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0071: Unknown result type (might be due to invalid IL or missing references)
 		if (numToFill == 0) {
 			return;
 		}
 		if (!TryGetSpawnPoints (out var result)) {
-			Debug.LogWarning ((object)(((Object)this).name + " couldn't find any spawn points of type: " + spawnPointType), (Object)(object)this);
+			Debug.LogWarning (base.name + " couldn't find any spawn points of type: " + spawnPointType, this);
 			return;
 		}
 		foreach (BaseSpawnPoint item in result) {
-			if ((Object)(object)item != (Object)null && item.IsAvailableTo (resource)) {
+			if (item != null && item.IsAvailableTo (resource)) {
 				item.GetLocation (out var pos, out var rot);
 				spawnHandler.Spawn (this, prefab, pos, rot);
 				numToFill--;
@@ -73,7 +71,7 @@ public class SpawnPointSpawnPopulation : SpawnPopulationBase
 	public override void GetReportString (StringBuilder sb, bool detailed)
 	{
 		if (detailed) {
-			sb.AppendLine (((Object)this).name + ": " + prefab.Name + " - " + (object)prefab.Object);
+			sb.AppendLine (base.name + ": " + prefab.Name + " - " + prefab.Object);
 		}
 	}
 }

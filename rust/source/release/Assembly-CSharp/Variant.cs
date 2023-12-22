@@ -26,18 +26,18 @@ public abstract class Variant : IConvertible
 
 	public void Make<T> (out T item)
 	{
-		JSON.MakeInto<T> (this, out item);
+		TinyJSON.JSON.MakeInto<T> (this, out item);
 	}
 
 	public T Make<T> ()
 	{
-		JSON.MakeInto<T> (this, out var item);
+		TinyJSON.JSON.MakeInto<T> (this, out var item);
 		return item;
 	}
 
 	public string ToJSON ()
 	{
-		return JSON.Dump (this);
+		return TinyJSON.JSON.Dump (this);
 	}
 
 	public virtual TypeCode GetTypeCode ()

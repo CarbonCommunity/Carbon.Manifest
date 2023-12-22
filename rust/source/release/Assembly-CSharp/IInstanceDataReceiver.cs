@@ -2,5 +2,5 @@ using ProtoBuf;
 
 public interface IInstanceDataReceiver
 {
-	void ReceiveInstanceData (InstanceData data);
+	void ReceiveInstanceData (ProtoBuf.Item.InstanceData data);
 }

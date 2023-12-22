@@ -117,7 +117,6 @@ public class BaseHelicopter : BaseVehicle, SeekerTarget.ISeekerTargetOwner
 
 	public override void ServerInit ()
 	{
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
 		base.ServerInit ();
 		rigidBody.centerOfMass = com.localPosition;
 		SeekerTarget.SetSeekerTarget (this, SeekerTarget.SeekerStrength.MEDIUM);
@@ -173,14 +172,10 @@ public class BaseHelicopter : BaseVehicle, SeekerTarget.ISeekerTargetOwner
 
 	public virtual void SetDefaultInputState ()
 	{
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0037: Unknown result type (might be due to invalid IL or missing references)
 		currentInputState.Reset ();
 		if (HasDriver ()) {
-			float num = Vector3.Dot (Vector3.up, ((Component)this).transform.right);
-			float num2 = Vector3.Dot (Vector3.up, ((Component)this).transform.forward);
+			float num = Vector3.Dot (Vector3.up, base.transform.right);
+			float num2 = Vector3.Dot (Vector3.up, base.transform.forward);
 			currentInputState.roll = ((num < 0f) ? 1f : 0f);
 			currentInputState.roll -= ((num > 0f) ? 1f : 0f);
 			if (num2 < -0f) {
@@ -200,7 +195,6 @@ public class BaseHelicopter : BaseVehicle, SeekerTarget.ISeekerTargetOwner
 
 	public override void VehicleFixedUpdate ()
 	{
-		//IL_006c: Unknown result type (might be due to invalid IL or missing references)
 		base.VehicleFixedUpdate ();
 		if (Time.time > lastPlayerInputTime + 0.5f) {
 			SetDefaultInputState ();
@@ -235,62 +229,24 @@ public class BaseHelicopter : BaseVehicle, SeekerTarget.ISeekerTargetOwner
 
 	public void ClearDamageTorque ()
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
 		SetDamageTorque (Vector3.zero);
 	}
 
 	public void SetDamageTorque (Vector3 newTorque)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
 		damageTorque = newTorque;
 	}
 
 	public void AddDamageTorque (Vector3 torqueToAdd)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
 		damageTorque += torqueToAdd;
 	}
 
 	public virtual void MovementUpdate ()
 	{
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0129: Unknown result type (might be due to invalid IL or missing references)
-		//IL_012e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_019c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01dc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0216: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0246: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0251: Unknown result type (might be due to invalid IL or missing references)
-		//IL_025c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0267: Unknown result type (might be due to invalid IL or missing references)
-		//IL_026d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0272: Unknown result type (might be due to invalid IL or missing references)
-		//IL_027a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_027f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0284: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0289: Unknown result type (might be due to invalid IL or missing references)
-		//IL_028d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0298: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02a3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02aa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02af: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02bc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02d6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02dd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02e3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02ee: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02ff: Unknown result type (might be due to invalid IL or missing references)
-		//IL_030d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0161: Unknown result type (might be due to invalid IL or missing references)
 		HelicopterInputState helicopterInputState = currentInputState;
 		if (autoHover) {
-			float num = 50f - ((Component)this).transform.position.y;
+			float num = 50f - base.transform.position.y;
 			helicopterInputState.throttle = Mathf.Clamp (num * 0.01f, -1f, 1f);
 			helicopterInputState.pitch = 0f;
 			helicopterInputState.roll = 0f;
@@ -302,27 +258,26 @@ public class BaseHelicopter : BaseVehicle, SeekerTarget.ISeekerTargetOwner
 			currentThrottle = Mathf.Lerp (currentThrottle, helicopterInputState.throttle, 2f * Time.fixedDeltaTime);
 			currentThrottle = Mathf.Clamp (currentThrottle, -0.8f, 1f);
 			if (helicopterInputState.pitch != 0f || helicopterInputState.roll != 0f || helicopterInputState.yaw != 0f) {
-				rigidBody.AddRelativeTorque (new Vector3 (helicopterInputState.pitch * torqueScale.x, helicopterInputState.yaw * torqueScale.y, helicopterInputState.roll * torqueScale.z), (ForceMode)0);
+				rigidBody.AddRelativeTorque (new Vector3 (helicopterInputState.pitch * torqueScale.x, helicopterInputState.yaw * torqueScale.y, helicopterInputState.roll * torqueScale.z), ForceMode.Force);
 			}
 		}
 		if (damageTorque != Vector3.zero) {
-			rigidBody.AddRelativeTorque (new Vector3 (damageTorque.x, damageTorque.y, damageTorque.z), (ForceMode)0);
+			rigidBody.AddRelativeTorque (new Vector3 (damageTorque.x, damageTorque.y, damageTorque.z), ForceMode.Force);
 		}
 		avgThrust = Mathf.Lerp (avgThrust, engineThrustMax * currentThrottle, Time.fixedDeltaTime * thrustLerpSpeed);
-		float num2 = Mathf.Clamp01 (Vector3.Dot (((Component)this).transform.up, Vector3.up));
-		float num3 = Mathf.InverseLerp (liftDotMax, 1f, num2);
+		float value = Mathf.Clamp01 (Vector3.Dot (base.transform.up, Vector3.up));
+		float num2 = Mathf.InverseLerp (liftDotMax, 1f, value);
 		float serviceCeiling = GetServiceCeiling ();
-		avgTerrainHeight = Mathf.Lerp (avgTerrainHeight, TerrainMeta.HeightMap.GetHeight (((Component)this).transform.position), Time.deltaTime);
-		float num4 = 1f - Mathf.InverseLerp (avgTerrainHeight + serviceCeiling - 20f, avgTerrainHeight + serviceCeiling, ((Component)this).transform.position.y);
-		num3 *= num4;
-		float num5 = 1f - Mathf.InverseLerp (altForceDotMin, 1f, num2);
-		Vector3 val = Vector3.up * engineThrustMax * liftFraction * currentThrottle * num3;
-		Vector3 val2 = ((Component)this).transform.up - Vector3.up;
-		Vector3 val3 = ((Vector3)(ref val2)).normalized * engineThrustMax * currentThrottle * num5;
-		float num6 = rigidBody.mass * (0f - Physics.gravity.y);
-		rigidBody.AddForce (((Component)this).transform.up * num6 * num3 * hoverForceScale, (ForceMode)0);
-		rigidBody.AddForce (val, (ForceMode)0);
-		rigidBody.AddForce (val3, (ForceMode)0);
+		avgTerrainHeight = Mathf.Lerp (avgTerrainHeight, TerrainMeta.HeightMap.GetHeight (base.transform.position), Time.deltaTime);
+		float num3 = 1f - Mathf.InverseLerp (avgTerrainHeight + serviceCeiling - 20f, avgTerrainHeight + serviceCeiling, base.transform.position.y);
+		num2 *= num3;
+		float num4 = 1f - Mathf.InverseLerp (altForceDotMin, 1f, value);
+		Vector3 force = Vector3.up * engineThrustMax * liftFraction * currentThrottle * num2;
+		Vector3 force2 = (base.transform.up - Vector3.up).normalized * engineThrustMax * currentThrottle * num4;
+		float num5 = rigidBody.mass * (0f - Physics.gravity.y);
+		rigidBody.AddForce (base.transform.up * num5 * num2 * hoverForceScale, ForceMode.Force);
+		rigidBody.AddForce (force, ForceMode.Force);
+		rigidBody.AddForce (force2, ForceMode.Force);
 	}
 
 	public void DelayedImpactDamage ()
@@ -341,41 +296,16 @@ public class BaseHelicopter : BaseVehicle, SeekerTarget.ISeekerTargetOwner
 
 	public void ProcessCollision (Collision collision)
 	{
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0161: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0166: Unknown result type (might be due to invalid IL or missing references)
-		//IL_016a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_017c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0183: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0188: Unknown result type (might be due to invalid IL or missing references)
-		//IL_018c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0105: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0113: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0115: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0122: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0124: Unknown result type (might be due to invalid IL or missing references)
-		//IL_012e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0133: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0138: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0145: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014d: Unknown result type (might be due to invalid IL or missing references)
 		if (base.isClient || !CollisionDamageEnabled () || Time.time < nextDamageTime) {
 			return;
 		}
-		Vector3 relativeVelocity = collision.relativeVelocity;
-		float magnitude = ((Vector3)(ref relativeVelocity)).magnitude;
-		if (Object.op_Implicit ((Object)(object)collision.gameObject)) {
-			if (((1 << ((Component)collision.collider).gameObject.layer) & 0x48A18101) <= 0) {
+		float magnitude = collision.relativeVelocity.magnitude;
+		if ((bool)collision.gameObject) {
+			if (((1 << collision.collider.gameObject.layer) & 0x48A18101) <= 0) {
 				return;
 			}
 			BaseEntity entity = collision.GetEntity ();
-			if ((Object)(object)entity != (Object)null && entity is Parachute) {
+			if (entity != null && entity is Parachute) {
 				return;
 			}
 		}
@@ -384,25 +314,20 @@ public class BaseHelicopter : BaseVehicle, SeekerTarget.ISeekerTargetOwner
 			return;
 		}
 		pendingImpactDamage += Mathf.Max (num, 0.15f);
-		if (Vector3.Dot (((Component)this).transform.up, Vector3.up) < 0.5f) {
+		if (Vector3.Dot (base.transform.up, Vector3.up) < 0.5f) {
 			pendingImpactDamage *= 5f;
 		}
 		if (Time.time > nextEffectTime) {
 			nextEffectTime = Time.time + 0.25f;
 			if (crashEffect.isValid) {
-				ContactPoint contact = collision.GetContact (0);
-				Vector3 point = ((ContactPoint)(ref contact)).point;
-				point += (((Component)this).transform.position - point) * 0.25f;
-				Effect.server.Run (crashEffect.resourcePath, point, ((Component)this).transform.up);
+				Vector3 point = collision.GetContact (0).point;
+				point += (base.transform.position - point) * 0.25f;
+				Effect.server.Run (crashEffect.resourcePath, point, base.transform.up);
 			}
 		}
-		Rigidbody obj = rigidBody;
-		ContactPoint contact2 = collision.GetContact (0);
-		Vector3 val = ((ContactPoint)(ref contact2)).normal * (1f + 3f * num);
-		contact2 = collision.GetContact (0);
-		obj.AddForceAtPosition (val, ((ContactPoint)(ref contact2)).point, (ForceMode)2);
+		rigidBody.AddForceAtPosition (collision.GetContact (0).normal * (1f + 3f * num), collision.GetContact (0).point, ForceMode.VelocityChange);
 		nextDamageTime = Time.time + 0.333f;
-		((FacepunchBehaviour)this).Invoke ((Action)DelayedImpactDamage, 0.015f);
+		Invoke (DelayedImpactDamage, 0.015f);
 	}
 
 	protected void OnCollisionEnter (Collision collision)
@@ -412,78 +337,47 @@ public class BaseHelicopter : BaseVehicle, SeekerTarget.ISeekerTargetOwner
 
 	public override void OnKilled (HitInfo info)
 	{
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0099: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0100: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0105: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0120: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0132: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0137: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0155: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0168: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0181: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0182: Unknown result type (might be due to invalid IL or missing references)
-		//IL_018d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0192: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0140: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0145: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014a: Unknown result type (might be due to invalid IL or missing references)
 		if (base.isClient) {
 			base.OnKilled (info);
 			return;
 		}
 		if (explosionEffect.isValid) {
-			Effect.server.Run (explosionEffect.resourcePath, ((Component)this).transform.position, Vector3.up, null, broadcast: true);
+			Effect.server.Run (explosionEffect.resourcePath, base.transform.position, Vector3.up, null, broadcast: true);
 		}
-		Vector3 val = rigidBody.velocity * 0.25f;
+		Vector3 vector = rigidBody.velocity * 0.25f;
 		List<ServerGib> list = null;
 		if (serverGibs.isValid) {
 			GameObject gibSource = serverGibs.Get ().GetComponent<ServerGib> ()._gibSource;
-			list = ServerGib.CreateGibs (serverGibs.resourcePath, ((Component)this).gameObject, gibSource, val, 3f);
+			list = ServerGib.CreateGibs (serverGibs.resourcePath, base.gameObject, gibSource, vector, 3f);
 		}
-		Vector3 val2 = CenterPoint ();
+		Vector3 vector2 = CenterPoint ();
 		if (fireBall.isValid && !InSafeZone ()) {
-			RaycastHit val3 = default(RaycastHit);
 			for (int i = 0; i < 12; i++) {
-				BaseEntity baseEntity = GameManager.server.CreateEntity (fireBall.resourcePath, val2, ((Component)this).transform.rotation);
-				if (!Object.op_Implicit ((Object)(object)baseEntity)) {
+				BaseEntity baseEntity = GameManager.server.CreateEntity (fireBall.resourcePath, vector2, base.transform.rotation);
+				if (!baseEntity) {
 					continue;
 				}
-				float num = 3f;
-				float num2 = 10f;
-				Vector3 onUnitSphere = Random.onUnitSphere;
-				((Vector3)(ref onUnitSphere)).Normalize ();
-				float num3 = Random.Range (0.5f, 4f);
-				bool num4 = Physics.Raycast (val2, onUnitSphere, ref val3, num3, 1218652417);
-				Vector3 val4 = ((RaycastHit)(ref val3)).point;
-				if (!num4) {
-					val4 = val2 + onUnitSphere * num3;
+				float minInclusive = 3f;
+				float maxInclusive = 10f;
+				Vector3 onUnitSphere = UnityEngine.Random.onUnitSphere;
+				onUnitSphere.Normalize ();
+				float num = UnityEngine.Random.Range (0.5f, 4f);
+				RaycastHit hitInfo;
+				bool num2 = Physics.Raycast (vector2, onUnitSphere, out hitInfo, num, 1218652417);
+				Vector3 position = hitInfo.point;
+				if (!num2) {
+					position = vector2 + onUnitSphere * num;
 				}
-				val4 -= onUnitSphere * 0.5f;
-				((Component)baseEntity).transform.position = val4;
-				Collider component = ((Component)baseEntity).GetComponent<Collider> ();
+				position -= onUnitSphere * 0.5f;
+				baseEntity.transform.position = position;
+				Collider component = baseEntity.GetComponent<Collider> ();
 				baseEntity.Spawn ();
-				baseEntity.SetVelocity (val + onUnitSphere * Random.Range (num, num2));
+				baseEntity.SetVelocity (vector + onUnitSphere * UnityEngine.Random.Range (minInclusive, maxInclusive));
 				if (list == null) {
 					continue;
 				}
 				foreach (ServerGib item in list) {
-					Physics.IgnoreCollision (component, (Collider)(object)item.GetCollider (), true);
+					Physics.IgnoreCollision (component, item.GetCollider (), ignore: true);
 				}
 			}
 		}

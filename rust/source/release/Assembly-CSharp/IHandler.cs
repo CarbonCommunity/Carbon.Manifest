@@ -2,7 +2,7 @@ using CompanionServer.Handlers;
 using Facepunch;
 using ProtoBuf;
 
-public interface IHandler : IPooled
+public interface IHandler : Pool.IPooled
 {
 	AppRequest Request { get; }
 

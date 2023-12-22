@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Facepunch;
 using Rust;
@@ -80,19 +79,18 @@ public class MissionPoint : MonoBehaviour
 	private void Start ()
 	{
 		if (dropToGround) {
-			((FacepunchBehaviour)SingletonComponent<InvokeHandler>.Instance).Invoke ((Action)DropToGround, 0.5f);
+			SingletonComponent<InvokeHandler>.Instance.Invoke (DropToGround, 0.5f);
 		}
 	}
 
 	private void DropToGround ()
 	{
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
-		if (Application.isLoading) {
-			((FacepunchBehaviour)SingletonComponent<InvokeHandler>.Instance).Invoke ((Action)DropToGround, 0.5f);
+		if (Rust.Application.isLoading) {
+			SingletonComponent<InvokeHandler>.Instance.Invoke (DropToGround, 0.5f);
 			return;
 		}
-		_ = ((Component)this).transform.position;
-		((Component)this).transform.DropToGround ();
+		_ = base.transform.position;
+		base.transform.DropToGround ();
 	}
 
 	public void OnDisable ()
@@ -104,35 +102,29 @@ public class MissionPoint : MonoBehaviour
 
 	public virtual Vector3 GetPosition ()
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		return ((Component)this).transform.position;
+		return base.transform.position;
 	}
 
 	public virtual Quaternion GetRotation ()
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		return ((Component)this).transform.rotation;
+		return base.transform.rotation;
 	}
 
 	public static bool GetMissionPoints (ref List<MissionPoint> points, Vector3 near, float minDistance, float maxDistance, int flags, int exclusionFlags)
 	{
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0077: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0082: Unknown result type (might be due to invalid IL or missing references)
-		List<MissionPoint> list = Pool.GetList<MissionPoint> ();
+		List<MissionPoint> obj = Pool.GetList<MissionPoint> ();
 		foreach (MissionPoint item in all) {
 			if (((uint)item.Flags & (uint)flags) != (uint)flags || (exclusionFlags != 0 && ((uint)item.Flags & (uint)exclusionFlags) != 0)) {
 				continue;
 			}
-			float num = Vector3.Distance (((Component)item).transform.position, near);
+			float num = Vector3.Distance (item.transform.position, near);
 			if (!(num <= maxDistance) || !(num > minDistance)) {
 				continue;
 			}
 			if (BaseMission.blockedPoints.Count > 0) {
 				bool flag = false;
 				foreach (Vector3 blockedPoint in BaseMission.blockedPoints) {
-					if (Vector3.Distance (blockedPoint, ((Component)item).transform.position) < 5f) {
+					if (Vector3.Distance (blockedPoint, item.transform.position) < 5f) {
 						flag = true;
 						break;
 					}
@@ -141,15 +133,15 @@ public class MissionPoint : MonoBehaviour
 					continue;
 				}
 			}
-			list.Add (item);
+			obj.Add (item);
 		}
-		if (list.Count == 0) {
+		if (obj.Count == 0) {
 			return false;
 		}
-		foreach (MissionPoint item2 in list) {
+		foreach (MissionPoint item2 in obj) {
 			points.Add (item2);
 		}
-		Pool.FreeList<MissionPoint> (ref list);
+		Pool.FreeList (ref obj);
 		return true;
 	}
 }

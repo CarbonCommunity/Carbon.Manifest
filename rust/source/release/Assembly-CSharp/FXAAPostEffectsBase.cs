@@ -8,24 +8,22 @@ public class FXAAPostEffectsBase : MonoBehaviour
 
 	public Material CheckShaderAndCreateMaterial (Shader s, Material m2Create)
 	{
-		//IL_0091: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0098: Expected O, but got Unknown
-		if (!Object.op_Implicit ((Object)(object)s)) {
-			Debug.Log ((object)("Missing shader in " + ((object)this).ToString ()));
-			((Behaviour)this).enabled = false;
+		if (!s) {
+			Debug.Log ("Missing shader in " + ToString ());
+			base.enabled = false;
 			return null;
 		}
-		if (s.isSupported && Object.op_Implicit ((Object)(object)m2Create) && (Object)(object)m2Create.shader == (Object)(object)s) {
+		if (s.isSupported && (bool)m2Create && m2Create.shader == s) {
 			return m2Create;
 		}
 		if (!s.isSupported) {
 			NotSupported ();
-			Debug.LogError ((object)("The shader " + ((object)s).ToString () + " on effect " + ((object)this).ToString () + " is not supported on this platform!"));
+			Debug.LogError ("The shader " + s.ToString () + " on effect " + ToString () + " is not supported on this platform!");
 			return null;
 		}
 		m2Create = new Material (s);
-		((Object)m2Create).hideFlags = (HideFlags)52;
-		if (Object.op_Implicit ((Object)(object)m2Create)) {
+		m2Create.hideFlags = HideFlags.DontSave;
+		if ((bool)m2Create) {
 			return m2Create;
 		}
 		return null;
@@ -33,21 +31,19 @@ public class FXAAPostEffectsBase : MonoBehaviour
 
 	private Material CreateMaterial (Shader s, Material m2Create)
 	{
-		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0051: Expected O, but got Unknown
-		if (!Object.op_Implicit ((Object)(object)s)) {
-			Debug.Log ((object)("Missing shader in " + ((object)this).ToString ()));
+		if (!s) {
+			Debug.Log ("Missing shader in " + ToString ());
 			return null;
 		}
-		if (Object.op_Implicit ((Object)(object)m2Create) && (Object)(object)m2Create.shader == (Object)(object)s && s.isSupported) {
+		if ((bool)m2Create && m2Create.shader == s && s.isSupported) {
 			return m2Create;
 		}
 		if (!s.isSupported) {
 			return null;
 		}
 		m2Create = new Material (s);
-		((Object)m2Create).hideFlags = (HideFlags)52;
-		if (Object.op_Implicit ((Object)(object)m2Create)) {
+		m2Create.hideFlags = HideFlags.DontSave;
+		if ((bool)m2Create) {
 			return m2Create;
 		}
 		return null;
@@ -65,7 +61,7 @@ public class FXAAPostEffectsBase : MonoBehaviour
 
 	private bool CheckResources ()
 	{
-		Debug.LogWarning ((object)("CheckResources () for " + ((object)this).ToString () + " should be overwritten."));
+		Debug.LogWarning ("CheckResources () for " + ToString () + " should be overwritten.");
 		return isSupported;
 	}
 
@@ -76,21 +72,18 @@ public class FXAAPostEffectsBase : MonoBehaviour
 
 	public bool CheckSupport (bool needDepth)
 	{
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
 		isSupported = true;
-		supportHDRTextures = SystemInfo.SupportsRenderTextureFormat ((RenderTextureFormat)2);
+		supportHDRTextures = SystemInfo.SupportsRenderTextureFormat (RenderTextureFormat.ARGBHalf);
 		if (!SystemInfo.supportsImageEffects || !SystemInfo.supportsRenderTextures) {
 			NotSupported ();
 			return false;
 		}
-		if (needDepth && !SystemInfo.SupportsRenderTextureFormat ((RenderTextureFormat)1)) {
+		if (needDepth && !SystemInfo.SupportsRenderTextureFormat (RenderTextureFormat.Depth)) {
 			NotSupported ();
 			return false;
 		}
 		if (needDepth) {
-			Camera component = ((Component)this).GetComponent<Camera> ();
-			component.depthTextureMode = (DepthTextureMode)(component.depthTextureMode | 1);
+			GetComponent<Camera> ().depthTextureMode |= DepthTextureMode.Depth;
 		}
 		return true;
 	}
@@ -109,12 +102,12 @@ public class FXAAPostEffectsBase : MonoBehaviour
 
 	private void ReportAutoDisable ()
 	{
-		Debug.LogWarning ((object)("The image effect " + ((object)this).ToString () + " has been disabled as it's not supported on the current platform."));
+		Debug.LogWarning ("The image effect " + ToString () + " has been disabled as it's not supported on the current platform.");
 	}
 
 	private bool CheckShader (Shader s)
 	{
-		Debug.Log ((object)("The shader " + ((object)s).ToString () + " on effect " + ((object)this).ToString () + " is not part of the Unity 3.2+ effects suite anymore. For best performance and quality, please ensure you are using the latest Standard Assets Image Effects (Pro only) package."));
+		Debug.Log ("The shader " + s.ToString () + " on effect " + ToString () + " is not part of the Unity 3.2+ effects suite anymore. For best performance and quality, please ensure you are using the latest Standard Assets Image Effects (Pro only) package.");
 		if (!s.isSupported) {
 			NotSupported ();
 			return false;
@@ -124,7 +117,7 @@ public class FXAAPostEffectsBase : MonoBehaviour
 
 	private void NotSupported ()
 	{
-		((Behaviour)this).enabled = false;
+		base.enabled = false;
 		isSupported = false;
 	}
 
@@ -136,61 +129,61 @@ public class FXAAPostEffectsBase : MonoBehaviour
 		GL.LoadOrtho ();
 		for (int i = 0; i < material.passCount; i++) {
 			material.SetPass (i);
-			float num;
-			float num2;
+			float y;
+			float y2;
 			if (flag) {
-				num = 1f;
-				num2 = 0f;
+				y = 1f;
+				y2 = 0f;
 			} else {
-				num = 0f;
-				num2 = 1f;
+				y = 0f;
+				y2 = 1f;
 			}
-			float num3 = 0f + 1f / ((float)((Texture)dest).width * 1f);
-			float num4 = 0f;
-			float num5 = 1f;
+			float x = 0f + 1f / ((float)dest.width * 1f);
+			float y3 = 0f;
+			float y4 = 1f;
 			GL.Begin (7);
-			GL.TexCoord2 (0f, num);
-			GL.Vertex3 (0f, num4, 0.1f);
-			GL.TexCoord2 (1f, num);
-			GL.Vertex3 (num3, num4, 0.1f);
-			GL.TexCoord2 (1f, num2);
-			GL.Vertex3 (num3, num5, 0.1f);
-			GL.TexCoord2 (0f, num2);
-			GL.Vertex3 (0f, num5, 0.1f);
-			float num6 = 1f - 1f / ((float)((Texture)dest).width * 1f);
-			num3 = 1f;
-			num4 = 0f;
-			num5 = 1f;
-			GL.TexCoord2 (0f, num);
-			GL.Vertex3 (num6, num4, 0.1f);
-			GL.TexCoord2 (1f, num);
-			GL.Vertex3 (num3, num4, 0.1f);
-			GL.TexCoord2 (1f, num2);
-			GL.Vertex3 (num3, num5, 0.1f);
-			GL.TexCoord2 (0f, num2);
-			GL.Vertex3 (num6, num5, 0.1f);
-			num3 = 1f;
-			num4 = 0f;
-			num5 = 0f + 1f / ((float)((Texture)dest).height * 1f);
-			GL.TexCoord2 (0f, num);
-			GL.Vertex3 (0f, num4, 0.1f);
-			GL.TexCoord2 (1f, num);
-			GL.Vertex3 (num3, num4, 0.1f);
-			GL.TexCoord2 (1f, num2);
-			GL.Vertex3 (num3, num5, 0.1f);
-			GL.TexCoord2 (0f, num2);
-			GL.Vertex3 (0f, num5, 0.1f);
-			num3 = 1f;
-			num4 = 1f - 1f / ((float)((Texture)dest).height * 1f);
-			num5 = 1f;
-			GL.TexCoord2 (0f, num);
-			GL.Vertex3 (0f, num4, 0.1f);
-			GL.TexCoord2 (1f, num);
-			GL.Vertex3 (num3, num4, 0.1f);
-			GL.TexCoord2 (1f, num2);
-			GL.Vertex3 (num3, num5, 0.1f);
-			GL.TexCoord2 (0f, num2);
-			GL.Vertex3 (0f, num5, 0.1f);
+			GL.TexCoord2 (0f, y);
+			GL.Vertex3 (0f, y3, 0.1f);
+			GL.TexCoord2 (1f, y);
+			GL.Vertex3 (x, y3, 0.1f);
+			GL.TexCoord2 (1f, y2);
+			GL.Vertex3 (x, y4, 0.1f);
+			GL.TexCoord2 (0f, y2);
+			GL.Vertex3 (0f, y4, 0.1f);
+			float x2 = 1f - 1f / ((float)dest.width * 1f);
+			x = 1f;
+			y3 = 0f;
+			y4 = 1f;
+			GL.TexCoord2 (0f, y);
+			GL.Vertex3 (x2, y3, 0.1f);
+			GL.TexCoord2 (1f, y);
+			GL.Vertex3 (x, y3, 0.1f);
+			GL.TexCoord2 (1f, y2);
+			GL.Vertex3 (x, y4, 0.1f);
+			GL.TexCoord2 (0f, y2);
+			GL.Vertex3 (x2, y4, 0.1f);
+			x = 1f;
+			y3 = 0f;
+			y4 = 0f + 1f / ((float)dest.height * 1f);
+			GL.TexCoord2 (0f, y);
+			GL.Vertex3 (0f, y3, 0.1f);
+			GL.TexCoord2 (1f, y);
+			GL.Vertex3 (x, y3, 0.1f);
+			GL.TexCoord2 (1f, y2);
+			GL.Vertex3 (x, y4, 0.1f);
+			GL.TexCoord2 (0f, y2);
+			GL.Vertex3 (0f, y4, 0.1f);
+			x = 1f;
+			y3 = 1f - 1f / ((float)dest.height * 1f);
+			y4 = 1f;
+			GL.TexCoord2 (0f, y);
+			GL.Vertex3 (0f, y3, 0.1f);
+			GL.TexCoord2 (1f, y);
+			GL.Vertex3 (x, y3, 0.1f);
+			GL.TexCoord2 (1f, y2);
+			GL.Vertex3 (x, y4, 0.1f);
+			GL.TexCoord2 (0f, y2);
+			GL.Vertex3 (0f, y4, 0.1f);
 			GL.End ();
 		}
 		GL.PopMatrix ();

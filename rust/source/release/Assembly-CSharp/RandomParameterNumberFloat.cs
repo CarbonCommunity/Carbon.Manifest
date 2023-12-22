@@ -11,7 +11,7 @@ public class RandomParameterNumberFloat : StateMachineBehaviour
 	public override void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
 	{
 		if (!string.IsNullOrEmpty (parameterName)) {
-			animator.SetFloat (parameterName, Mathf.Floor (Random.Range ((float)min, (float)max + 0.5f)));
+			animator.SetFloat (parameterName, Mathf.Floor (Random.Range (min, (float)max + 0.5f)));
 		}
 	}
 }

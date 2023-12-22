@@ -272,7 +272,7 @@ public class BlackjackController : CardGameController
 
 	public override void Save (CardGame syncData)
 	{
-		syncData.blackjack = Pool.Get<Blackjack> ();
+		syncData.blackjack = Pool.Get<CardGame.Blackjack> ();
 		syncData.blackjack.dealerCards = Pool.GetList<int> ();
 		syncData.lastActionId = (int)LastAction;
 		syncData.lastActionTarget = LastActionTarget;
@@ -291,34 +291,34 @@ public class BlackjackController : CardGameController
 
 	private void EditorMakeRandomMove (CardPlayerDataBlackjack pdBlackjack)
 	{
-		List<BlackjackInputOption> list = Pool.GetList<BlackjackInputOption> ();
-		InputsToList (pdBlackjack.availableInputs, list);
-		if (list.Count == 0) {
-			Debug.Log ((object)"No moves currently available.");
-			Pool.FreeList<BlackjackInputOption> (ref list);
+		List<BlackjackInputOption> obj = Pool.GetList<BlackjackInputOption> ();
+		InputsToList (pdBlackjack.availableInputs, obj);
+		if (obj.Count == 0) {
+			Debug.Log ("No moves currently available.");
+			Pool.FreeList (ref obj);
 			return;
 		}
-		BlackjackInputOption blackjackInputOption = list [Random.Range (0, list.Count)];
+		BlackjackInputOption blackjackInputOption = obj [UnityEngine.Random.Range (0, obj.Count)];
 		if (AllBetsPlaced) {
-			if (GetOptimalCardsValue (pdBlackjack.Cards) < 17 && list.Contains (BlackjackInputOption.Hit)) {
+			if (GetOptimalCardsValue (pdBlackjack.Cards) < 17 && obj.Contains (BlackjackInputOption.Hit)) {
 				blackjackInputOption = BlackjackInputOption.Hit;
-			} else if (list.Contains (BlackjackInputOption.Stand)) {
+			} else if (obj.Contains (BlackjackInputOption.Stand)) {
 				blackjackInputOption = BlackjackInputOption.Stand;
 			}
-		} else if (list.Contains (BlackjackInputOption.SubmitBet)) {
+		} else if (obj.Contains (BlackjackInputOption.SubmitBet)) {
 			blackjackInputOption = BlackjackInputOption.SubmitBet;
 		}
-		if (list.Count > 0) {
+		if (obj.Count > 0) {
 			int value = 0;
 			if (blackjackInputOption == BlackjackInputOption.SubmitBet) {
 				value = MinBuyIn;
 			}
-			Debug.Log ((object)(pdBlackjack.UserID + " Taking random action: " + blackjackInputOption.ToString () + " with value " + value));
+			Debug.Log (pdBlackjack.UserID + " Taking random action: " + blackjackInputOption.ToString () + " with value " + value);
 			ReceivedInputFromPlayer (pdBlackjack, (int)blackjackInputOption, countAsAction: true, value);
 		} else {
-			Debug.LogWarning ((object)(GetType ().Name + ": No input options are available for the current player."));
+			Debug.LogWarning (GetType ().Name + ": No input options are available for the current player.");
 		}
-		Pool.FreeList<BlackjackInputOption> (ref list);
+		Pool.FreeList (ref obj);
 	}
 
 	protected override int GetAvailableInputsForPlayer (CardPlayerData pData)
@@ -365,7 +365,7 @@ public class BlackjackController : CardGameController
 		}
 		base.resultInfo.winningScore = dealerCardsVal;
 		if (NumPlayersInCurrentRound () == 0) {
-			base.Owner.ClientRPC<RoundResults> (null, "OnResultsDeclared", base.resultInfo);
+			base.Owner.ClientRPC (null, "OnResultsDeclared", base.resultInfo);
 			return;
 		}
 		bool dealerHasBlackjack = HasBlackjack (dealerCards);
@@ -388,7 +388,7 @@ public class BlackjackController : CardGameController
 			PayOut (item, num);
 		}
 		ClearPot ();
-		base.Owner.ClientRPC<RoundResults> (null, "OnResultsDeclared", base.resultInfo);
+		base.Owner.ClientRPC (null, "OnResultsDeclared", base.resultInfo);
 		BlackjackRoundResult CheckResult (List<PlayingCard> cards, int betAmount, out int winnings)
 		{
 			if (cards.Count == 0) {
@@ -438,7 +438,7 @@ public class BlackjackController : CardGameController
 			return 0;
 		}
 		StorageContainer storage = pData.GetStorage ();
-		if ((Object)(object)storage == (Object)null) {
+		if (storage == null) {
 			return 0;
 		}
 		storage.inventory.AddItem (base.Owner.scrapItemDef, winnings, 0uL, ItemContainer.LimitStack.None);
@@ -685,7 +685,7 @@ public class BlackjackController : CardGameController
 		}
 		ServerPlaySound (CardGameSounds.SoundType.Draw);
 		if (NumPlayersInCurrentRound () > 0 && !flag && !flag2) {
-			((FacepunchBehaviour)base.Owner).Invoke ((Action)DealerPlayInvoke, 1f);
+			base.Owner.Invoke (DealerPlayInvoke, 1f);
 			BeginRoundEnd ();
 		} else {
 			EndRoundWithDelay ();
@@ -699,7 +699,7 @@ public class BlackjackController : CardGameController
 			cardStack.TryTakeCard (out var card);
 			dealerCards.Add (card);
 			ServerPlaySound (CardGameSounds.SoundType.Draw);
-			((FacepunchBehaviour)base.Owner).Invoke ((Action)DealerPlayInvoke, 1f);
+			base.Owner.Invoke (DealerPlayInvoke, 1f);
 			base.Owner.SendNetworkUpdate ();
 		} else {
 			EndRoundWithDelay ();

@@ -28,7 +28,7 @@ public class ConsoleWindow
 				AutoFlush = true
 			});
 		} catch (Exception ex) {
-			Debug.Log ((object)("Couldn't redirect output: " + ex.Message));
+			Debug.Log ("Couldn't redirect output: " + ex.Message);
 		}
 	}
 

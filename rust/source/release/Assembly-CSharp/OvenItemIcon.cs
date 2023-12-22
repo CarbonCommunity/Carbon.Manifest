@@ -13,7 +13,7 @@ public class OvenItemIcon : MonoBehaviour
 
 		public Sprite BackgroundImage;
 
-		public Phrase SlotPhrase;
+		public Translate.Phrase SlotPhrase;
 	}
 
 	public ItemIcon ItemIcon;
@@ -24,7 +24,7 @@ public class OvenItemIcon : MonoBehaviour
 
 	public OvenSlotType SlotType;
 
-	public Phrase EmptyPhrase = new Phrase ("empty", "empty");
+	public Translate.Phrase EmptyPhrase = new Translate.Phrase ("empty", "empty");
 
 	public List<OvenSlotConfig> SlotConfigs = new List<OvenSlotConfig> ();
 
@@ -38,7 +38,7 @@ public class OvenItemIcon : MonoBehaviour
 	{
 		OvenSlotConfig ovenSlotConfig = SlotConfigs.FirstOrDefault ((OvenSlotConfig x) => x.Type == SlotType);
 		if (ovenSlotConfig == null) {
-			Debug.LogError ((object)$"Can't find slot config for '{SlotType}'");
+			Debug.LogError ($"Can't find slot config for '{SlotType}'");
 			return;
 		}
 		ItemIcon.emptySlotBackgroundSprite = ovenSlotConfig.BackgroundImage;
@@ -57,9 +57,6 @@ public class OvenItemIcon : MonoBehaviour
 	private void UpdateLabels ()
 	{
 		CanvasGroup.alpha = ((_item != null) ? 1f : DisabledAlphaScale);
-		RustText itemLabel = ItemLabel;
-		if (itemLabel != null) {
-			itemLabel.SetPhrase ((_item == null) ? EmptyPhrase : _item.info.displayName);
-		}
+		ItemLabel?.SetPhrase ((_item == null) ? EmptyPhrase : _item.info.displayName);
 	}
 }

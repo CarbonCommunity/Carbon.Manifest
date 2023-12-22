@@ -22,17 +22,13 @@ public static class NativeArrayEx
 
 	public static void Expand<T> (this ref NativeArray<T> array, int newCapacity) where T : unmanaged
 	{
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0037: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
 		if (newCapacity > array.Length) {
-			NativeArray<T> val = default(NativeArray<T>);
-			val..ctor (newCapacity, (Allocator)4, (NativeArrayOptions)1);
+			NativeArray<T> nativeArray = new NativeArray<T> (newCapacity, Allocator.Persistent);
 			if (array.IsCreated) {
-				array.CopyTo (val.GetSubArray (0, array.Length));
+				array.CopyTo (nativeArray.GetSubArray (0, array.Length));
 				array.Dispose ();
 			}
-			array = val;
+			array = nativeArray;
 		}
 	}
 

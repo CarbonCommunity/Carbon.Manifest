@@ -14,13 +14,13 @@ public class ConvarComponent : MonoBehaviour
 
 		public MonoBehaviour component;
 
-		internal Command cmd;
+		internal ConsoleSystem.Command cmd;
 
 		public void OnEnable ()
 		{
-			cmd = Client.Find (convar);
+			cmd = ConsoleSystem.Index.Client.Find (convar);
 			if (cmd == null) {
-				cmd = Server.Find (convar);
+				cmd = ConsoleSystem.Index.Server.Find (convar);
 			}
 			if (cmd != null) {
 				cmd.OnValueChanged += cmd_OnValueChanged;
@@ -28,19 +28,19 @@ public class ConvarComponent : MonoBehaviour
 			}
 		}
 
-		private void cmd_OnValueChanged (Command obj)
+		private void cmd_OnValueChanged (ConsoleSystem.Command obj)
 		{
-			if (!((Object)(object)component == (Object)null)) {
+			if (!(component == null)) {
 				bool flag = obj.String == on;
-				if (((Behaviour)component).enabled != flag) {
-					((Behaviour)component).enabled = flag;
+				if (component.enabled != flag) {
+					component.enabled = flag;
 				}
 			}
 		}
 
 		public void OnDisable ()
 		{
-			if (!Application.isQuitting && cmd != null) {
+			if (!Rust.Application.isQuitting && cmd != null) {
 				cmd.OnValueChanged -= cmd_OnValueChanged;
 			}
 		}
@@ -64,7 +64,7 @@ public class ConvarComponent : MonoBehaviour
 
 	protected void OnDisable ()
 	{
-		if (Application.isQuitting || !ShouldRun ()) {
+		if (Rust.Application.isQuitting || !ShouldRun ()) {
 			return;
 		}
 		foreach (ConvarEvent item in List) {

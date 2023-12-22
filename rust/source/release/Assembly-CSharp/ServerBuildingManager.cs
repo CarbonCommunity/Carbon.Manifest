@@ -1,4 +1,3 @@
-using System;
 using ConVar;
 using UnityEngine;
 using UnityEngine.AI;
@@ -27,19 +26,12 @@ public class ServerBuildingManager : BuildingManager
 
 	private bool ShouldSplit (Building building)
 	{
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
 		if (building.HasBuildingBlocks ()) {
 			building.buildingBlocks [0].EntityLinkBroadcast ();
-			Enumerator<BuildingBlock> enumerator = building.buildingBlocks.GetEnumerator ();
-			try {
-				while (enumerator.MoveNext ()) {
-					if (!enumerator.Current.ReceivedEntityLinkBroadcast ()) {
-						return true;
-					}
+			foreach (BuildingBlock buildingBlock in building.buildingBlocks) {
+				if (!buildingBlock.ReceivedEntityLinkBroadcast ()) {
+					return true;
 				}
-			} finally {
-				((IDisposable)enumerator).Dispose ();
 			}
 		}
 		return false;
@@ -57,12 +49,12 @@ public class ServerBuildingManager : BuildingManager
 		while (building.HasBuildingPrivileges ()) {
 			BuildingPrivlidge buildingPrivlidge = building.buildingPrivileges [0];
 			BuildingBlock nearbyBuildingBlock = buildingPrivlidge.GetNearbyBuildingBlock ();
-			buildingPrivlidge.AttachToBuilding (Object.op_Implicit ((Object)(object)nearbyBuildingBlock) ? nearbyBuildingBlock.buildingID : 0u);
+			buildingPrivlidge.AttachToBuilding (nearbyBuildingBlock ? nearbyBuildingBlock.buildingID : 0u);
 		}
 		while (building.HasDecayEntities ()) {
 			DecayEntity decayEntity = building.decayEntities [0];
 			BuildingBlock nearbyBuildingBlock2 = decayEntity.GetNearbyBuildingBlock ();
-			decayEntity.AttachToBuilding (Object.op_Implicit ((Object)(object)nearbyBuildingBlock2) ? nearbyBuildingBlock2.buildingID : 0u);
+			decayEntity.AttachToBuilding (nearbyBuildingBlock2 ? nearbyBuildingBlock2.buildingID : 0u);
 		}
 		if (AI.nav_carve_use_building_optimization) {
 			building.isNavMeshCarvingDirty = true;
@@ -111,26 +103,16 @@ public class ServerBuildingManager : BuildingManager
 
 	public void Cycle ()
 	{
-		TimeWarning val = TimeWarning.New ("StabilityCheckQueue", 0);
-		try {
-			((ObjectWorkQueue<StabilityEntity>)StabilityEntity.stabilityCheckQueue).RunQueue ((double)Stability.stabilityqueue);
-		} finally {
-			((IDisposable)val)?.Dispose ();
+		using (TimeWarning.New ("StabilityCheckQueue")) {
+			StabilityEntity.stabilityCheckQueue.RunQueue (Stability.stabilityqueue);
 		}
-		val = TimeWarning.New ("UpdateSurroundingsQueue", 0);
-		try {
-			((ObjectWorkQueue<Bounds>)StabilityEntity.updateSurroundingsQueue).RunQueue ((double)Stability.surroundingsqueue);
-		} finally {
-			((IDisposable)val)?.Dispose ();
+		using (TimeWarning.New ("UpdateSurroundingsQueue")) {
+			StabilityEntity.updateSurroundingsQueue.RunQueue (Stability.surroundingsqueue);
 		}
-		val = TimeWarning.New ("UpdateSkinQueue", 0);
-		try {
-			((ObjectWorkQueue<BuildingBlock>)BuildingBlock.updateSkinQueueServer).RunQueue (1.0);
-		} finally {
-			((IDisposable)val)?.Dispose ();
+		using (TimeWarning.New ("UpdateSkinQueue")) {
+			BuildingBlock.updateSkinQueueServer.RunQueue (1.0);
 		}
-		val = TimeWarning.New ("BuildingDecayTick", 0);
-		try {
+		using (TimeWarning.New ("BuildingDecayTick")) {
 			int num = 5;
 			BufferList<Building> values = buildingDictionary.Values;
 			for (int i = decayTickBuildingIndex; i < values.Count; i++) {
@@ -156,11 +138,8 @@ public class ServerBuildingManager : BuildingManager
 			if (num > 0) {
 				decayTickBuildingIndex = 0;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
-		val = TimeWarning.New ("WorldDecayTick", 0);
-		try {
+		using (TimeWarning.New ("WorldDecayTick")) {
 			int num2 = 5;
 			BufferList<DecayEntity> values3 = decayEntities.Values;
 			for (int k = decayTickWorldIndex; k < values3.Count; k++) {
@@ -176,14 +155,11 @@ public class ServerBuildingManager : BuildingManager
 			if (num2 > 0) {
 				decayTickWorldIndex = 0;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		if (!AI.nav_carve_use_building_optimization) {
 			return;
 		}
-		val = TimeWarning.New ("NavMeshCarving", 0);
-		try {
+		using (TimeWarning.New ("NavMeshCarving")) {
 			int ticks = 5;
 			BufferList<Building> values4 = buildingDictionary.Values;
 			for (int l = navmeshCarveTickBuildingIndex; l < values4.Count; l++) {
@@ -196,118 +172,76 @@ public class ServerBuildingManager : BuildingManager
 			if (ticks > 0) {
 				navmeshCarveTickBuildingIndex = 0;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 	}
 
 	public void UpdateNavMeshCarver (Building building, ref int ticks, int i)
 	{
-		//IL_0187: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0188: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0189: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0193: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0198: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0199: Unknown result type (might be due to invalid IL or missing references)
-		//IL_019e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ba: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01c8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ce: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01dc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0204: Unknown result type (might be due to invalid IL or missing references)
-		//IL_020a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ee: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0130: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0135: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0114: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0119: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0156: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0284: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0291: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0296: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0274: Unknown result type (might be due to invalid IL or missing references)
-		//IL_027b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0280: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02cd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0330: Unknown result type (might be due to invalid IL or missing references)
-		//IL_033c: Unknown result type (might be due to invalid IL or missing references)
 		if (!AI.nav_carve_use_building_optimization || (!building.isNavMeshCarveOptimized && building.navmeshCarvers.Count < AI.nav_carve_min_building_blocks_to_apply_optimization) || !building.isNavMeshCarvingDirty) {
 			return;
 		}
 		building.isNavMeshCarvingDirty = false;
 		if (building.navmeshCarvers == null) {
-			if ((Object)(object)building.buildingNavMeshObstacle != (Object)null) {
-				Object.Destroy ((Object)(object)((Component)building.buildingNavMeshObstacle).gameObject);
+			if (building.buildingNavMeshObstacle != null) {
+				Object.Destroy (building.buildingNavMeshObstacle.gameObject);
 				building.buildingNavMeshObstacle = null;
 				building.isNavMeshCarveOptimized = false;
 			}
 			return;
 		}
-		Vector3 val = default(Vector3);
-		((Vector3)(ref val))..ctor ((float)World.Size, (float)World.Size, (float)World.Size);
-		Vector3 val2 = default(Vector3);
-		((Vector3)(ref val2))..ctor ((float)(0L - (long)World.Size), (float)(0L - (long)World.Size), (float)(0L - (long)World.Size));
+		Vector3 vector = new Vector3 (World.Size, World.Size, World.Size);
+		Vector3 vector2 = new Vector3 (0L - (long)World.Size, 0L - (long)World.Size, 0L - (long)World.Size);
 		int count = building.navmeshCarvers.Count;
 		if (count > 0) {
 			for (int j = 0; j < count; j++) {
-				NavMeshObstacle val3 = building.navmeshCarvers [j];
-				if (((Behaviour)val3).enabled) {
-					((Behaviour)val3).enabled = false;
+				NavMeshObstacle navMeshObstacle = building.navmeshCarvers [j];
+				if (navMeshObstacle.enabled) {
+					navMeshObstacle.enabled = false;
 				}
 				for (int k = 0; k < 3; k++) {
-					Vector3 position = ((Component)val3).transform.position;
-					if (((Vector3)(ref position)) [k] < ((Vector3)(ref val)) [k]) {
-						int num = k;
-						position = ((Component)val3).transform.position;
-						((Vector3)(ref val)) [num] = ((Vector3)(ref position)) [k];
+					if (navMeshObstacle.transform.position [k] < vector [k]) {
+						vector [k] = navMeshObstacle.transform.position [k];
 					}
-					position = ((Component)val3).transform.position;
-					if (((Vector3)(ref position)) [k] > ((Vector3)(ref val2)) [k]) {
-						int num2 = k;
-						position = ((Component)val3).transform.position;
-						((Vector3)(ref val2)) [num2] = ((Vector3)(ref position)) [k];
+					if (navMeshObstacle.transform.position [k] > vector2 [k]) {
+						vector2 [k] = navMeshObstacle.transform.position [k];
 					}
 				}
 			}
-			Vector3 val4 = (val2 + val) * 0.5f;
+			Vector3 position = (vector2 + vector) * 0.5f;
 			Vector3 zero = Vector3.zero;
-			float num3 = Mathf.Abs (val4.x - val.x);
-			float num4 = Mathf.Abs (val4.y - val.y);
-			float num5 = Mathf.Abs (val4.z - val.z);
-			float num6 = Mathf.Abs (val2.x - val4.x);
-			float num7 = Mathf.Abs (val2.y - val4.y);
-			float num8 = Mathf.Abs (val2.z - val4.z);
-			zero.x = Mathf.Max ((num3 > num6) ? num3 : num6, AI.nav_carve_min_base_size);
-			zero.y = Mathf.Max ((num4 > num7) ? num4 : num7, AI.nav_carve_min_base_size);
-			zero.z = Mathf.Max ((num5 > num8) ? num5 : num8, AI.nav_carve_min_base_size);
-			zero = ((count >= 10) ? (zero * (AI.nav_carve_size_multiplier - 1f)) : (zero * AI.nav_carve_size_multiplier));
+			float num = Mathf.Abs (position.x - vector.x);
+			float num2 = Mathf.Abs (position.y - vector.y);
+			float num3 = Mathf.Abs (position.z - vector.z);
+			float num4 = Mathf.Abs (vector2.x - position.x);
+			float num5 = Mathf.Abs (vector2.y - position.y);
+			float num6 = Mathf.Abs (vector2.z - position.z);
+			zero.x = Mathf.Max ((num > num4) ? num : num4, AI.nav_carve_min_base_size);
+			zero.y = Mathf.Max ((num2 > num5) ? num2 : num5, AI.nav_carve_min_base_size);
+			zero.z = Mathf.Max ((num3 > num6) ? num3 : num6, AI.nav_carve_min_base_size);
+			if (count < 10) {
+				zero *= AI.nav_carve_size_multiplier;
+			} else {
+				zero *= AI.nav_carve_size_multiplier - 1f;
+			}
 			if (building.navmeshCarvers.Count > 0) {
-				if ((Object)(object)building.buildingNavMeshObstacle == (Object)null) {
+				if (building.buildingNavMeshObstacle == null) {
 					building.buildingNavMeshObstacle = new GameObject ($"Building ({building.ID}) NavMesh Carver").AddComponent<NavMeshObstacle> ();
-					((Behaviour)building.buildingNavMeshObstacle).enabled = false;
+					building.buildingNavMeshObstacle.enabled = false;
 					building.buildingNavMeshObstacle.carving = true;
-					building.buildingNavMeshObstacle.shape = (NavMeshObstacleShape)1;
+					building.buildingNavMeshObstacle.shape = NavMeshObstacleShape.Box;
 					building.buildingNavMeshObstacle.height = AI.nav_carve_height;
 					building.isNavMeshCarveOptimized = true;
 				}
-				if ((Object)(object)building.buildingNavMeshObstacle != (Object)null) {
-					((Component)building.buildingNavMeshObstacle).transform.position = val4;
+				if (building.buildingNavMeshObstacle != null) {
+					building.buildingNavMeshObstacle.transform.position = position;
 					building.buildingNavMeshObstacle.size = zero;
-					if (!((Behaviour)building.buildingNavMeshObstacle).enabled) {
-						((Behaviour)building.buildingNavMeshObstacle).enabled = true;
+					if (!building.buildingNavMeshObstacle.enabled) {
+						building.buildingNavMeshObstacle.enabled = true;
 					}
 				}
 			}
-		} else if ((Object)(object)building.buildingNavMeshObstacle != (Object)null) {
-			Object.Destroy ((Object)(object)((Component)building.buildingNavMeshObstacle).gameObject);
+		} else if (building.buildingNavMeshObstacle != null) {
+			Object.Destroy (building.buildingNavMeshObstacle.gameObject);
 			building.buildingNavMeshObstacle = null;
 			building.isNavMeshCarveOptimized = false;
 		}

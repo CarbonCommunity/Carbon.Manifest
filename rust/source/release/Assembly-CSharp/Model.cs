@@ -33,7 +33,7 @@ public class Model : MonoBehaviour, IPrefabPreProcess
 	public void BuildBoneDictionary ()
 	{
 		if (boneDict == null) {
-			boneDict = new BoneDictionary (((Component)this).transform, boneTransforms, boneNames);
+			boneDict = new BoneDictionary (base.transform, boneTransforms, boneNames);
 		}
 	}
 
@@ -82,16 +82,14 @@ public class Model : MonoBehaviour, IPrefabPreProcess
 
 	public Transform FindClosestBone (Vector3 worldPos)
 	{
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
 		Transform result = rootBone;
 		float num = float.MaxValue;
 		for (int i = 0; i < boneTransforms.Length; i++) {
-			Transform val = boneTransforms [i];
-			if (!((Object)(object)val == (Object)null)) {
-				float num2 = Vector3.Distance (val.position, worldPos);
+			Transform transform = boneTransforms [i];
+			if (!(transform == null)) {
+				float num2 = Vector3.Distance (transform.position, worldPos);
 				if (!(num2 >= num)) {
-					result = val;
+					result = transform;
 					num = num2;
 				}
 			}
@@ -101,17 +99,17 @@ public class Model : MonoBehaviour, IPrefabPreProcess
 
 	public void PreProcess (IPrefabProcessor process, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
 	{
-		if (!((Object)(object)this == (Object)null)) {
-			if ((Object)(object)animator == (Object)null) {
-				animator = ((Component)this).GetComponent<Animator> ();
+		if (!(this == null)) {
+			if (animator == null) {
+				animator = GetComponent<Animator> ();
 			}
-			if ((Object)(object)rootBone == (Object)null) {
-				rootBone = ((Component)this).transform;
+			if (rootBone == null) {
+				rootBone = base.transform;
 			}
-			boneTransforms = ((Component)rootBone).GetComponentsInChildren<Transform> (true);
+			boneTransforms = rootBone.GetComponentsInChildren<Transform> (includeInactive: true);
 			boneNames = new string[boneTransforms.Length];
 			for (int i = 0; i < boneTransforms.Length; i++) {
-				boneNames [i] = ((Object)boneTransforms [i]).name;
+				boneNames [i] = boneTransforms [i].name;
 			}
 		}
 	}

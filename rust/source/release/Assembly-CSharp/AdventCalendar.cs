@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -25,9 +26,9 @@ public class AdventCalendar : BaseCombatEntity
 
 	public static Dictionary<ulong, List<int>> playerRewardHistory = new Dictionary<ulong, List<int>> ();
 
-	public static readonly Phrase CheckLater = new Phrase ("adventcalendar.checklater", "You've already claimed today's gift. Come back tomorrow.");
+	public static readonly Translate.Phrase CheckLater = new Translate.Phrase ("adventcalendar.checklater", "You've already claimed today's gift. Come back tomorrow.");
 
-	public static readonly Phrase EventOver = new Phrase ("adventcalendar.eventover", "The Advent Calendar event is over. See you next year.");
+	public static readonly Translate.Phrase EventOver = new Translate.Phrase ("adventcalendar.eventover", "The Advent Calendar event is over. See you next year.");
 
 	public GameObjectRef giftEffect;
 
@@ -41,49 +42,37 @@ public class AdventCalendar : BaseCombatEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("AdventCalendar.OnRpcMessage", 0);
-		try {
-			if (rpc == 1911254136 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("AdventCalendar.OnRpcMessage")) {
+			if (rpc == 1911254136 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - RPC_RequestGift "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - RPC_RequestGift ");
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_RequestGift", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_RequestGift")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (1911254136u, "RPC_RequestGift", this, player, 1uL)) {
 							return true;
 						}
 						if (!RPC_Server.IsVisible.Test (1911254136u, "RPC_RequestGift", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							RPC_RequestGift (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_RequestGift");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -102,15 +91,6 @@ public class AdventCalendar : BaseCombatEntity
 
 	public void AwardGift (BasePlayer player)
 	{
-		//IL_00a1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ae: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00db: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ea: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f7: Unknown result type (might be due to invalid IL or missing references)
 		DateTime now = DateTime.Now;
 		int num = ((overrideAdventCalendarDay > 0) ? overrideAdventCalendarDay : now.Day) - startDay;
 		if (((overrideAdventCalendarMonth > 0) ? overrideAdventCalendarMonth : now.Month) == startMonth && num >= 0 && num < days.Length) {
@@ -118,9 +98,9 @@ public class AdventCalendar : BaseCombatEntity
 				playerRewardHistory.Add (player.userID, new List<int> ());
 			}
 			playerRewardHistory [player.userID].Add (num);
-			Effect.server.Run (giftEffect.resourcePath, ((Component)player).transform.position);
+			Effect.server.Run (giftEffect.resourcePath, player.transform.position);
 			if (num >= 0 && num < crosses.Length) {
-				Effect.server.Run (boxCloseEffect.resourcePath, ((Component)this).transform.position + Vector3.up * 1.5f);
+				Effect.server.Run (boxCloseEffect.resourcePath, base.transform.position + Vector3.up * 1.5f);
 			}
 			DayReward dayReward = days [num];
 			for (int i = 0; i < dayReward.rewards.Length; i++) {
