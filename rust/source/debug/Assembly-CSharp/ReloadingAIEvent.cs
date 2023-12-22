@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public class ReloadingAIEvent : BaseAIEvent
 {
 	public ReloadingAIEvent ()
@@ -13,7 +11,7 @@ public class ReloadingAIEvent : BaseAIEvent
 		BaseEntity baseEntity = memory.Entity.Get (base.InputEntityMemorySlot);
 		base.Result = false;
 		NPCPlayer nPCPlayer = baseEntity as NPCPlayer;
-		if (!((Object)(object)nPCPlayer == (Object)null)) {
+		if (!(nPCPlayer == null)) {
 			bool flag = nPCPlayer.IsReloading ();
 			base.Result = (base.Inverted ? (!flag) : flag);
 		}

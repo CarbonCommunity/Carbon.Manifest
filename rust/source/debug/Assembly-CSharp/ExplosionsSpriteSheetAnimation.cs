@@ -46,7 +46,7 @@ internal class ExplosionsSpriteSheetAnimation : MonoBehaviour
 
 	private void Start ()
 	{
-		currentRenderer = ((Component)this).GetComponent<Renderer> ();
+		currentRenderer = GetComponent<Renderer> ();
 		InitDefaultVariables ();
 		isInizialised = true;
 		isVisible = true;
@@ -55,13 +55,8 @@ internal class ExplosionsSpriteSheetAnimation : MonoBehaviour
 
 	private void InitDefaultVariables ()
 	{
-		//IL_0091: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0096: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0108: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011b: Unknown result type (might be due to invalid IL or missing references)
-		currentRenderer = ((Component)this).GetComponent<Renderer> ();
-		if ((Object)(object)currentRenderer == (Object)null) {
+		currentRenderer = GetComponent<Renderer> ();
+		if (currentRenderer == null) {
 			throw new Exception ("UvTextureAnimator can't get renderer");
 		}
 		if (!currentRenderer.enabled) {
@@ -74,12 +69,11 @@ internal class ExplosionsSpriteSheetAnimation : MonoBehaviour
 		index = TilesX - 1;
 		Vector3 zero = Vector3.zero;
 		StartFrameOffset -= StartFrameOffset / count * count;
-		Vector2 val = default(Vector2);
-		((Vector2)(ref val))..ctor (1f / (float)TilesX, 1f / (float)TilesY);
-		if ((Object)(object)currentRenderer != (Object)null) {
+		Vector2 value = new Vector2 (1f / (float)TilesX, 1f / (float)TilesY);
+		if (currentRenderer != null) {
 			instanceMaterial = currentRenderer.material;
-			instanceMaterial.SetTextureScale ("_MainTex", val);
-			instanceMaterial.SetTextureOffset ("_MainTex", Vector2.op_Implicit (zero));
+			instanceMaterial.SetTextureScale ("_MainTex", value);
+			instanceMaterial.SetTextureOffset ("_MainTex", zero);
 		}
 	}
 
@@ -87,9 +81,9 @@ internal class ExplosionsSpriteSheetAnimation : MonoBehaviour
 	{
 		if (!isCorutineStarted) {
 			if (StartDelay > 0.0001f) {
-				((MonoBehaviour)this).Invoke ("PlayDelay", StartDelay);
+				Invoke ("PlayDelay", StartDelay);
 			} else {
-				((MonoBehaviour)this).StartCoroutine (UpdateCorutine ());
+				StartCoroutine (UpdateCorutine ());
 			}
 			isCorutineStarted = true;
 		}
@@ -97,7 +91,7 @@ internal class ExplosionsSpriteSheetAnimation : MonoBehaviour
 
 	private void PlayDelay ()
 	{
-		((MonoBehaviour)this).StartCoroutine (UpdateCorutine ());
+		StartCoroutine (UpdateCorutine ());
 	}
 
 	private void OnEnable ()
@@ -113,8 +107,8 @@ internal class ExplosionsSpriteSheetAnimation : MonoBehaviour
 	{
 		isCorutineStarted = false;
 		isVisible = false;
-		((MonoBehaviour)this).StopAllCoroutines ();
-		((MonoBehaviour)this).CancelInvoke ("PlayDelay");
+		StopAllCoroutines ();
+		CancelInvoke ("PlayDelay");
 	}
 
 	private IEnumerator UpdateCorutine ()
@@ -127,7 +121,7 @@ internal class ExplosionsSpriteSheetAnimation : MonoBehaviour
 			}
 			float frameTime = (Time.time - animationStartTime) / animationLifeTime;
 			float currentSpeedFps = FrameOverTime.Evaluate (Mathf.Clamp01 (frameTime));
-			yield return (object)new WaitForSeconds (1f / (AnimationFPS * currentSpeedFps));
+			yield return new WaitForSeconds (1f / (AnimationFPS * currentSpeedFps));
 		}
 		isCorutineStarted = false;
 		currentRenderer.enabled = false;
@@ -135,7 +129,6 @@ internal class ExplosionsSpriteSheetAnimation : MonoBehaviour
 
 	private void UpdateFrame ()
 	{
-		//IL_00c2: Unknown result type (might be due to invalid IL or missing references)
 		allCount++;
 		index++;
 		if (index >= count) {
@@ -146,10 +139,9 @@ internal class ExplosionsSpriteSheetAnimation : MonoBehaviour
 			allCount = 0;
 			animationStoped = true;
 		}
-		Vector2 val = default(Vector2);
-		((Vector2)(ref val))..ctor ((float)index / (float)TilesX - (float)(index / TilesX), 1f - (float)(index / TilesX) / (float)TilesY);
-		if ((Object)(object)currentRenderer != (Object)null) {
-			instanceMaterial.SetTextureOffset ("_MainTex", val);
+		Vector2 value = new Vector2 ((float)index / (float)TilesX - (float)(index / TilesX), 1f - (float)(index / TilesX) / (float)TilesY);
+		if (currentRenderer != null) {
+			instanceMaterial.SetTextureOffset ("_MainTex", value);
 		}
 		if (IsInterpolateFrames) {
 			currentInterpolatedTime = 0f;
@@ -158,28 +150,26 @@ internal class ExplosionsSpriteSheetAnimation : MonoBehaviour
 
 	private void Update ()
 	{
-		//IL_00ac: Unknown result type (might be due to invalid IL or missing references)
 		if (IsInterpolateFrames) {
 			currentInterpolatedTime += Time.deltaTime;
 			int num = index + 1;
 			if (allCount == 0) {
 				num = index;
 			}
-			Vector4 val = default(Vector4);
-			((Vector4)(ref val))..ctor (1f / (float)TilesX, 1f / (float)TilesY, (float)num / (float)TilesX - (float)(num / TilesX), 1f - (float)(num / TilesX) / (float)TilesY);
-			if ((Object)(object)currentRenderer != (Object)null) {
-				instanceMaterial.SetVector ("_MainTex_NextFrame", val);
-				float num2 = (Time.time - animationStartTime) / animationLifeTime;
-				float num3 = FrameOverTime.Evaluate (Mathf.Clamp01 (num2));
-				instanceMaterial.SetFloat ("InterpolationValue", Mathf.Clamp01 (currentInterpolatedTime * AnimationFPS * num3));
+			Vector4 value = new Vector4 (1f / (float)TilesX, 1f / (float)TilesY, (float)num / (float)TilesX - (float)(num / TilesX), 1f - (float)(num / TilesX) / (float)TilesY);
+			if (currentRenderer != null) {
+				instanceMaterial.SetVector ("_MainTex_NextFrame", value);
+				float value2 = (Time.time - animationStartTime) / animationLifeTime;
+				float num2 = FrameOverTime.Evaluate (Mathf.Clamp01 (value2));
+				instanceMaterial.SetFloat ("InterpolationValue", Mathf.Clamp01 (currentInterpolatedTime * AnimationFPS * num2));
 			}
 		}
 	}
 
 	private void OnDestroy ()
 	{
-		if ((Object)(object)instanceMaterial != (Object)null) {
-			Object.Destroy ((Object)(object)instanceMaterial);
+		if (instanceMaterial != null) {
+			UnityEngine.Object.Destroy (instanceMaterial);
 			instanceMaterial = null;
 		}
 	}

@@ -46,7 +46,7 @@ public sealed class ColorGrading : PostProcessEffectSettings
 	};
 
 	[DisplayName ("Shoulder Length")]
-	[Min (0f)]
+	[UnityEngine.Rendering.PostProcessing.Min (0f)]
 	[Tooltip ("Affects how many F-stops (EV) to add to the dynamic range of the curve.")]
 	public FloatParameter toneCurveShoulderLength = new FloatParameter {
 		value = 0.5f
@@ -60,7 +60,7 @@ public sealed class ColorGrading : PostProcessEffectSettings
 	};
 
 	[DisplayName ("Gamma")]
-	[Min (0.001f)]
+	[UnityEngine.Rendering.PostProcessing.Min (0.001f)]
 	[Tooltip ("Applies a gamma function to the curve.")]
 	public FloatParameter toneCurveGamma = new FloatParameter {
 		value = 1f
@@ -220,31 +220,19 @@ public sealed class ColorGrading : PostProcessEffectSettings
 	};
 
 	public SplineParameter masterCurve = new SplineParameter {
-		value = new Spline (new AnimationCurve ((Keyframe[])(object)new Keyframe[2] {
-			new Keyframe (0f, 0f, 1f, 1f),
-			new Keyframe (1f, 1f, 1f, 1f)
-		}), 0f, loop: false, new Vector2 (0f, 1f))
+		value = new Spline (new AnimationCurve (new Keyframe (0f, 0f, 1f, 1f), new Keyframe (1f, 1f, 1f, 1f)), 0f, loop: false, new Vector2 (0f, 1f))
 	};
 
 	public SplineParameter redCurve = new SplineParameter {
-		value = new Spline (new AnimationCurve ((Keyframe[])(object)new Keyframe[2] {
-			new Keyframe (0f, 0f, 1f, 1f),
-			new Keyframe (1f, 1f, 1f, 1f)
-		}), 0f, loop: false, new Vector2 (0f, 1f))
+		value = new Spline (new AnimationCurve (new Keyframe (0f, 0f, 1f, 1f), new Keyframe (1f, 1f, 1f, 1f)), 0f, loop: false, new Vector2 (0f, 1f))
 	};
 
 	public SplineParameter greenCurve = new SplineParameter {
-		value = new Spline (new AnimationCurve ((Keyframe[])(object)new Keyframe[2] {
-			new Keyframe (0f, 0f, 1f, 1f),
-			new Keyframe (1f, 1f, 1f, 1f)
-		}), 0f, loop: false, new Vector2 (0f, 1f))
+		value = new Spline (new AnimationCurve (new Keyframe (0f, 0f, 1f, 1f), new Keyframe (1f, 1f, 1f, 1f)), 0f, loop: false, new Vector2 (0f, 1f))
 	};
 
 	public SplineParameter blueCurve = new SplineParameter {
-		value = new Spline (new AnimationCurve ((Keyframe[])(object)new Keyframe[2] {
-			new Keyframe (0f, 0f, 1f, 1f),
-			new Keyframe (1f, 1f, 1f, 1f)
-		}), 0f, loop: false, new Vector2 (0f, 1f))
+		value = new Spline (new AnimationCurve (new Keyframe (0f, 0f, 1f, 1f), new Keyframe (1f, 1f, 1f, 1f)), 0f, loop: false, new Vector2 (0f, 1f))
 	};
 
 	public SplineParameter hueVsHueCurve = new SplineParameter {

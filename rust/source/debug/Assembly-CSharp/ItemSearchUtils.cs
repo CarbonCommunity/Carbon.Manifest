@@ -17,10 +17,10 @@ public static class ItemSearchUtils
 
 	private static bool IsValidSearchResult (string search, ItemDefinition target)
 	{
-		if ((!((Object)(object)target.isRedirectOf != (Object)null) || target.redirectVendingBehaviour != ItemDefinition.RedirectVendingBehaviour.ListAsUniqueItem) && target.hidden) {
+		if ((!(target.isRedirectOf != null) || target.redirectVendingBehaviour != ItemDefinition.RedirectVendingBehaviour.ListAsUniqueItem) && target.hidden) {
 			return false;
 		}
-		return StringEx.Contains (target.shortname, search, CompareOptions.IgnoreCase) || StringEx.Contains (target.displayName.translated, search, CompareOptions.IgnoreCase) || StringEx.Contains (target.displayDescription.translated, search, CompareOptions.IgnoreCase);
+		return target.shortname.Contains (search, CompareOptions.IgnoreCase) || target.displayName.translated.Contains (search, CompareOptions.IgnoreCase) || target.displayDescription.translated.Contains (search, CompareOptions.IgnoreCase);
 	}
 
 	private static float ScoreSearchResult (string search, ItemDefinition target)
@@ -29,11 +29,11 @@ public static class ItemSearchUtils
 		if (target.shortname.Equals (search, StringComparison.CurrentCultureIgnoreCase) || target.displayName.translated.Equals (search, StringComparison.CurrentCultureIgnoreCase)) {
 			num -= (float)(500 - search.Length);
 		}
-		float num2 = (StringEx.Contains (target.shortname, search, CompareOptions.IgnoreCase) ? ((float)search.Length / (float)target.shortname.Length) : 0f);
-		float num3 = (StringEx.Contains (target.displayName.translated, search, CompareOptions.IgnoreCase) ? ((float)search.Length / (float)target.displayName.translated.Length) : 0f);
-		float num4 = Mathf.Max (num2, num3);
-		num -= 50f * num4;
-		if (StringEx.Contains (target.displayDescription.translated, search, CompareOptions.IgnoreCase)) {
+		float a = (target.shortname.Contains (search, CompareOptions.IgnoreCase) ? ((float)search.Length / (float)target.shortname.Length) : 0f);
+		float b = (target.displayName.translated.Contains (search, CompareOptions.IgnoreCase) ? ((float)search.Length / (float)target.displayName.translated.Length) : 0f);
+		float num2 = Mathf.Max (a, b);
+		num -= 50f * num2;
+		if (target.displayDescription.translated.Contains (search, CompareOptions.IgnoreCase)) {
 			num -= (float)search.Length;
 		}
 		return num;

@@ -21,13 +21,8 @@ public class FishBrain : BaseAIBrain
 
 		public override void StateEnter (BaseAIBrain brain, BaseEntity entity)
 		{
-			//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-			//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0061: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0066: Unknown result type (might be due to invalid IL or missing references)
 			base.StateEnter (brain, entity);
-			idleRootPos = ((Component)brain.Navigator).transform.position;
+			idleRootPos = brain.Navigator.transform.position;
 			GenerateIdlePoints (20f, 0f);
 			currentPointIndex = 0;
 			status = StateStatus.Error;
@@ -47,15 +42,8 @@ public class FishBrain : BaseAIBrain
 
 		public override StateStatus StateThink (float delta, BaseAIBrain brain, BaseEntity entity)
 		{
-			//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-			//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-			//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-			//IL_007d: Unknown result type (might be due to invalid IL or missing references)
-			//IL_008e: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0093: Unknown result type (might be due to invalid IL or missing references)
 			base.StateThink (delta, brain, entity);
-			if (Vector3.Distance (((Component)brain.Navigator).transform.position, idleRootPos + idlePoints [currentPointIndex]) < 4f) {
+			if (Vector3.Distance (brain.Navigator.transform.position, idleRootPos + idlePoints [currentPointIndex]) < 4f) {
 				currentPointIndex++;
 			}
 			if (currentPointIndex >= idlePoints.Count) {
@@ -71,19 +59,12 @@ public class FishBrain : BaseAIBrain
 
 		private void GenerateIdlePoints (float radius, float heightOffset)
 		{
-			//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-			//IL_005e: Unknown result type (might be due to invalid IL or missing references)
-			//IL_007a: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0081: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0086: Unknown result type (might be due to invalid IL or missing references)
-			//IL_009d: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00b6: Unknown result type (might be due to invalid IL or missing references)
 			if (idlePoints == null) {
 				idlePoints = new List<Vector3> ();
 				float num = 0f;
 				int num2 = 32;
-				float height = TerrainMeta.WaterMap.GetHeight (((Component)brain.Navigator).transform.position);
-				float height2 = TerrainMeta.HeightMap.GetHeight (((Component)brain.Navigator).transform.position);
+				float height = TerrainMeta.WaterMap.GetHeight (brain.Navigator.transform.position);
+				float height2 = TerrainMeta.HeightMap.GetHeight (brain.Navigator.transform.position);
 				for (int i = 0; i < num2; i++) {
 					num += 360f / (float)num2;
 					Vector3 pointOnCircle = BasePathFinder.GetPointOnCircle (Vector3.zero, radius, num);
@@ -112,12 +93,6 @@ public class FishBrain : BaseAIBrain
 
 		public override void StateEnter (BaseAIBrain brain, BaseEntity entity)
 		{
-			//IL_0031: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0059: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0060: Unknown result type (might be due to invalid IL or missing references)
 			base.StateEnter (brain, entity);
 			status = StateStatus.Error;
 			if (brain.PathFinder != null) {

@@ -12,24 +12,21 @@ public class UIBuffs : SingletonComponent<UIBuffs>
 			return;
 		}
 		RemoveAll ();
-		if ((Object)(object)modifiers == (Object)null) {
+		if (modifiers == null) {
 			return;
 		}
 		foreach (Modifier item in modifiers.All) {
 			if (item != null) {
-				Transform val = Object.Instantiate<Transform> (PrefabBuffIcon);
-				val.SetParent (((Component)this).transform);
+				Transform transform = Object.Instantiate (PrefabBuffIcon);
+				transform.SetParent (base.transform);
 			}
 		}
 	}
 
 	private void RemoveAll ()
 	{
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Expected O, but got Unknown
-		foreach (Transform item in ((Component)this).transform) {
-			Transform val = item;
-			Object.Destroy ((Object)(object)((Component)val).gameObject);
+		foreach (Transform item in base.transform) {
+			Object.Destroy (item.gameObject);
 		}
 	}
 }

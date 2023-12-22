@@ -27,10 +27,10 @@ public class AmbienceDefinition : ScriptableObject
 
 	[Header ("Environment")]
 	[InspectorFlags]
-	public Enum biomes = (Enum)(-1);
+	public TerrainBiome.Enum biomes = (TerrainBiome.Enum)(-1);
 
 	[InspectorFlags]
-	public Enum topologies = (Enum)(-1);
+	public TerrainTopology.Enum topologies = (TerrainTopology.Enum)(-1);
 
 	public EnvironmentType environmentType = EnvironmentType.Underground;
 

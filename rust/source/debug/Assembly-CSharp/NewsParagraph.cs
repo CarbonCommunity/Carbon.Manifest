@@ -13,21 +13,15 @@ public class NewsParagraph : MonoBehaviour, IPointerClickHandler, IEventSystemHa
 
 	public void OnPointerClick (PointerEventData eventData)
 	{
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001e: Invalid comparison between Unknown and I4
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0083: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0088: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)Text == (Object)null || Links == null || (int)eventData.button > 0) {
+		if (Text == null || Links == null || eventData.button != 0) {
 			return;
 		}
-		int num = TMP_TextUtilities.FindIntersectingLink ((TMP_Text)(object)Text, Vector2.op_Implicit (eventData.position), eventData.pressEventCamera);
-		if (num < 0 || num >= ((TMP_Text)Text).textInfo.linkCount) {
+		int num = TMP_TextUtilities.FindIntersectingLink (Text, eventData.position, eventData.pressEventCamera);
+		if (num < 0 || num >= Text.textInfo.linkCount) {
 			return;
 		}
-		TMP_LinkInfo val = ((TMP_Text)Text).textInfo.linkInfo [num];
-		if (int.TryParse (((TMP_LinkInfo)(ref val)).GetLinkID (), out var result) && result >= 0 && result < Links.Count) {
+		TMP_LinkInfo tMP_LinkInfo = Text.textInfo.linkInfo [num];
+		if (int.TryParse (tMP_LinkInfo.GetLinkID (), out var result) && result >= 0 && result < Links.Count) {
 			string text = Links [result];
 			if (text.StartsWith ("http", StringComparison.InvariantCultureIgnoreCase)) {
 				Application.OpenURL (text);

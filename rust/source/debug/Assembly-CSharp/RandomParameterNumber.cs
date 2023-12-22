@@ -23,7 +23,7 @@ public class RandomParameterNumber : StateMachineBehaviour
 			num2++;
 		}
 		if (isFloat) {
-			animator.SetFloat (parameterName, (float)num);
+			animator.SetFloat (parameterName, num);
 		} else {
 			animator.SetInteger (parameterName, num);
 		}

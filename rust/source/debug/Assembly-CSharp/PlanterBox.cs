@@ -1,3 +1,5 @@
+#define ENABLE_PROFILER
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -47,54 +49,40 @@ public class PlanterBox : StorageContainer, ISplashable
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("PlanterBox.OnRpcMessage", 0);
-		try {
-			if (rpc == 2965786167u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("PlanterBox.OnRpcMessage")) {
+			if (rpc == 2965786167u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_RequestSaturationUpdate "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_RequestSaturationUpdate "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_RequestSaturationUpdate", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_RequestSaturationUpdate")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (2965786167u, "RPC_RequestSaturationUpdate", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							RPC_RequestSaturationUpdate (msg2);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_RequestSaturationUpdate");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
 
 	public override void ServerInit ()
 	{
-		//IL_012b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0130: Unknown result type (might be due to invalid IL or missing references)
 		base.ServerInit ();
 		base.inventory.onItemAddedRemoved = OnItemAddedOrRemoved;
 		base.inventory.SetOnlyAllowedItem (allowedItem);
@@ -120,8 +108,8 @@ public class PlanterBox : StorageContainer, ISplashable
 			refreshRandomRange = 5f,
 			updateValue = CalculateArtificialTemperature
 		};
-		lastRainCheck = TimeSince.op_Implicit (0f);
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)CalculateRainFactor, 20f, 30f, 15f);
+		lastRainCheck = 0f;
+		InvokeRandomized (CalculateRainFactor, 20f, 30f, 15f);
 	}
 
 	public override void OnItemAddedOrRemoved (Item item, bool added)
@@ -151,7 +139,7 @@ public class PlanterBox : StorageContainer, ISplashable
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.resource = Pool.Get<BaseResource> ();
+		info.msg.resource = Facepunch.Pool.Get<BaseResource> ();
 		info.msg.resource.stage = soilSaturation;
 	}
 
@@ -170,11 +158,11 @@ public class PlanterBox : StorageContainer, ISplashable
 			return;
 		}
 		foreach (BaseEntity child in children) {
-			if ((Object)(object)child == (Object)null) {
+			if (child == null) {
 				continue;
 			}
 			GrowableEntity growableEntity = child as GrowableEntity;
-			if (!((Object)(object)growableEntity == (Object)null) && !growableEntity.Fertilized && ConsumeFertilizer ()) {
+			if (!(growableEntity == null) && !growableEntity.Fertilized && ConsumeFertilizer ()) {
 				growableEntity.Fertilize ();
 				num--;
 				if (num == 0) {
@@ -225,7 +213,7 @@ public class PlanterBox : StorageContainer, ISplashable
 		if (base.IsDestroyed) {
 			return false;
 		}
-		if ((Object)(object)splashType == (Object)null || splashType.shortname == null) {
+		if (splashType == null || splashType.shortname == null) {
 			return false;
 		}
 		return splashType.shortname == "water.salt" || soilSaturation < soilSaturationMax;
@@ -233,27 +221,21 @@ public class PlanterBox : StorageContainer, ISplashable
 
 	public int DoSplash (ItemDefinition splashType, int amount)
 	{
-		//IL_007d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004f: Unknown result type (might be due to invalid IL or missing references)
 		if (splashType.shortname == "water.salt") {
 			soilSaturation = 0;
 			RefreshGrowables ();
-			if (TimeSince.op_Implicit (lastSplashNetworkUpdate) > 60f) {
+			if ((float)lastSplashNetworkUpdate > 60f) {
 				SendNetworkUpdate ();
-				lastSplashNetworkUpdate = TimeSince.op_Implicit (0f);
+				lastSplashNetworkUpdate = 0f;
 			}
 			return amount;
 		}
 		int num = Mathf.Min (availableWaterCapacity, amount);
 		soilSaturation += num;
 		RefreshGrowables ();
-		if (TimeSince.op_Implicit (lastSplashNetworkUpdate) > 60f) {
+		if ((float)lastSplashNetworkUpdate > 60f) {
 			SendNetworkUpdate ();
-			lastSplashNetworkUpdate = TimeSince.op_Implicit (0f);
+			lastSplashNetworkUpdate = 0f;
 		}
 		return num;
 	}
@@ -265,7 +247,7 @@ public class PlanterBox : StorageContainer, ISplashable
 		}
 		Profiler.BeginSample ("UpdateGrowableChildren");
 		foreach (BaseEntity child in children) {
-			if (!((Object)(object)child == (Object)null) && !((Object)(object)child == (Object)(object)ignoreEntity) && child is GrowableEntity growableEntity) {
+			if (!(child == null) && !(child == ignoreEntity) && child is GrowableEntity growableEntity) {
 				Profiler.BeginSample ("QueueGrowable");
 				growableEntity.QueueForQualityUpdate ();
 				Profiler.EndSample ();
@@ -292,10 +274,7 @@ public class PlanterBox : StorageContainer, ISplashable
 
 	private float CalculateSunExposure ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		return GrowableEntity.SunRaycast (((Component)this).transform.position + new Vector3 (0f, 1f, 0f));
+		return GrowableEntity.SunRaycast (base.transform.position + new Vector3 (0f, 1f, 0f));
 	}
 
 	public float GetArtificialLightExposure ()
@@ -305,7 +284,7 @@ public class PlanterBox : StorageContainer, ISplashable
 
 	private float CalculateArtificialLightExposure ()
 	{
-		return GrowableEntity.CalculateArtificialLightExposure (((Component)this).transform);
+		return GrowableEntity.CalculateArtificialLightExposure (base.transform);
 	}
 
 	public float GetPlantTemperature ()
@@ -315,33 +294,28 @@ public class PlanterBox : StorageContainer, ISplashable
 
 	private float CalculatePlantTemperature ()
 	{
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
 		Profiler.BeginSample ("GetPlantTemperature_Planter");
-		float temperature = Climate.GetTemperature (((Component)this).transform.position);
+		float temperature = Climate.GetTemperature (base.transform.position);
 		Profiler.EndSample ();
 		return Mathf.Max (temperature, 15f);
 	}
 
 	private void CalculateRainFactor ()
 	{
-		//IL_0080: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0085: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
 		if (sunExposure.Get (force: false) > 0f) {
-			float rain = Climate.GetRain (((Component)this).transform.position);
+			float rain = Climate.GetRain (base.transform.position);
 			if (rain > 0f) {
-				soilSaturation = Mathf.Clamp (soilSaturation + Mathf.RoundToInt (4f * rain * TimeSince.op_Implicit (lastRainCheck)), 0, soilSaturationMax);
+				soilSaturation = Mathf.Clamp (soilSaturation + Mathf.RoundToInt (4f * rain * (float)lastRainCheck), 0, soilSaturationMax);
 				RefreshGrowables ();
 				SendNetworkUpdate ();
 			}
 		}
-		lastRainCheck = TimeSince.op_Implicit (0f);
+		lastRainCheck = 0f;
 	}
 
 	private float CalculateArtificialTemperature ()
 	{
-		return GrowableEntity.CalculateArtificialTemperature (((Component)this).transform);
+		return GrowableEntity.CalculateArtificialTemperature (base.transform);
 	}
 
 	public void OnPlantInserted (GrowableEntity entity, BasePlayer byPlayer)
@@ -349,23 +323,23 @@ public class PlanterBox : StorageContainer, ISplashable
 		if (!GameInfo.HasAchievements) {
 			return;
 		}
-		List<uint> list = Pool.GetList<uint> ();
+		List<uint> obj = Facepunch.Pool.GetList<uint> ();
 		foreach (BaseEntity child in children) {
-			if (child is GrowableEntity growableEntity && !list.Contains (growableEntity.prefabID)) {
-				list.Add (growableEntity.prefabID);
+			if (child is GrowableEntity growableEntity && !obj.Contains (growableEntity.prefabID)) {
+				obj.Add (growableEntity.prefabID);
 			}
 		}
-		if (list.Count == 9) {
+		if (obj.Count == 9) {
 			byPlayer.GiveAchievement ("HONEST_WORK");
 		}
-		Pool.FreeList<uint> (ref list);
+		Facepunch.Pool.FreeList (ref obj);
 	}
 
 	[RPC_Server]
 	[RPC_Server.MaxDistance (3f)]
 	private void RPC_RequestSaturationUpdate (RPCMessage msg)
 	{
-		if ((Object)(object)msg.player != (Object)null) {
+		if (msg.player != null) {
 			ClientRPCPlayer (null, msg.player, "RPC_ReceiveSaturationUpdate", soilSaturation);
 		}
 	}

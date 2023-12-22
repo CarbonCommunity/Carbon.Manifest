@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Network;
@@ -14,46 +15,34 @@ public class ElectricalBranch : IOEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("ElectricalBranch.OnRpcMessage", 0);
-		try {
-			if (rpc == 643124146 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("ElectricalBranch.OnRpcMessage")) {
+			if (rpc == 643124146 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - SetBranchOffPower "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - SetBranchOffPower "));
 				}
-				TimeWarning val2 = TimeWarning.New ("SetBranchOffPower", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("SetBranchOffPower")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (643124146u, "SetBranchOffPower", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage branchOffPower = rPCMessage;
 							SetBranchOffPower (branchOffPower);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in SetBranchOffPower");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -63,11 +52,11 @@ public class ElectricalBranch : IOEntity
 	public void SetBranchOffPower (RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
-		if (!((Object)(object)player == (Object)null) && player.CanBuild () && !(Time.time < nextChangeTime)) {
-			nextChangeTime = Time.time + 1f;
-			int num = msg.read.Int32 ();
-			num = Mathf.Clamp (num, 2, 10000000);
-			branchAmount = num;
+		if (!(player == null) && player.CanBuild () && !(UnityEngine.Time.time < nextChangeTime)) {
+			nextChangeTime = UnityEngine.Time.time + 1f;
+			int value = msg.read.Int32 ();
+			value = Mathf.Clamp (value, 2, 10000000);
+			branchAmount = value;
 			MarkDirtyForceUpdateOutputs ();
 			SendNetworkUpdate ();
 		}

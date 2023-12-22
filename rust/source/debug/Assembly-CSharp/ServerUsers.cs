@@ -93,29 +93,20 @@ public static class ServerUsers
 
 	public static void Load ()
 	{
-		//IL_005c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0061: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cc: Unknown result type (might be due to invalid IL or missing references)
 		Clear ();
 		string serverFolder = Server.GetServerFolder ("cfg");
-		Option server;
 		if (File.Exists (serverFolder + "/bans.cfg")) {
 			string text = File.ReadAllText (serverFolder + "/bans.cfg");
 			if (!string.IsNullOrEmpty (text)) {
-				Debug.Log ((object)("Running " + serverFolder + "/bans.cfg"));
-				server = Option.Server;
-				ConsoleSystem.RunFile (((Option)(ref server)).Quiet (), text);
+				Debug.Log ("Running " + serverFolder + "/bans.cfg");
+				ConsoleSystem.RunFile (ConsoleSystem.Option.Server.Quiet (), text);
 			}
 		}
 		if (File.Exists (serverFolder + "/users.cfg")) {
 			string text2 = File.ReadAllText (serverFolder + "/users.cfg");
 			if (!string.IsNullOrEmpty (text2)) {
-				Debug.Log ((object)("Running " + serverFolder + "/users.cfg"));
-				server = Option.Server;
-				ConsoleSystem.RunFile (((Option)(ref server)).Quiet (), text2);
+				Debug.Log ("Running " + serverFolder + "/users.cfg");
+				ConsoleSystem.RunFile (ConsoleSystem.Option.Server.Quiet (), text2);
 			}
 		}
 	}
@@ -137,9 +128,9 @@ public static class ServerUsers
 				stringBuilder.Append ("banid ");
 				stringBuilder.Append (item2.steamid);
 				stringBuilder.Append (' ');
-				stringBuilder.Append (StringExtensions.QuoteSafe (item2.username));
+				stringBuilder.Append (item2.username.QuoteSafe ());
 				stringBuilder.Append (' ');
-				stringBuilder.Append (StringExtensions.QuoteSafe (item2.notes));
+				stringBuilder.Append (item2.notes.QuoteSafe ());
 				stringBuilder.Append (' ');
 				stringBuilder.Append (item2.expiry);
 				stringBuilder.Append ("\r\n");
@@ -151,27 +142,27 @@ public static class ServerUsers
 			stringBuilder.Append ("ownerid ");
 			stringBuilder.Append (item3.steamid);
 			stringBuilder.Append (' ');
-			stringBuilder.Append (StringExtensions.QuoteSafe (item3.username));
+			stringBuilder.Append (item3.username.QuoteSafe ());
 			stringBuilder.Append (' ');
-			stringBuilder.Append (StringExtensions.QuoteSafe (item3.notes));
+			stringBuilder.Append (item3.notes.QuoteSafe ());
 			stringBuilder.Append ("\r\n");
 		}
 		foreach (User item4 in GetAll (UserGroup.Moderator)) {
 			stringBuilder.Append ("moderatorid ");
 			stringBuilder.Append (item4.steamid);
 			stringBuilder.Append (' ');
-			stringBuilder.Append (StringExtensions.QuoteSafe (item4.username));
+			stringBuilder.Append (item4.username.QuoteSafe ());
 			stringBuilder.Append (' ');
-			stringBuilder.Append (StringExtensions.QuoteSafe (item4.notes));
+			stringBuilder.Append (item4.notes.QuoteSafe ());
 			stringBuilder.Append ("\r\n");
 		}
 		foreach (User item5 in GetAll (UserGroup.SkipQueue)) {
 			stringBuilder.Append ("skipqueueid ");
 			stringBuilder.Append (item5.steamid);
 			stringBuilder.Append (' ');
-			stringBuilder.Append (StringExtensions.QuoteSafe (item5.username));
+			stringBuilder.Append (item5.username.QuoteSafe ());
 			stringBuilder.Append (' ');
-			stringBuilder.Append (StringExtensions.QuoteSafe (item5.notes));
+			stringBuilder.Append (item5.notes.QuoteSafe ());
 			stringBuilder.Append ("\r\n");
 		}
 		File.WriteAllText (serverFolder + "/users.cfg", stringBuilder.ToString ());
@@ -219,9 +210,9 @@ public static class ServerUsers
 			stringBuilder.Append (' ');
 			stringBuilder.Append (item.steamid);
 			stringBuilder.Append (' ');
-			stringBuilder.Append (StringExtensions.QuoteSafe (item.username));
+			stringBuilder.Append (item.username.QuoteSafe ());
 			stringBuilder.Append (' ');
-			stringBuilder.Append (StringExtensions.QuoteSafe (item.notes));
+			stringBuilder.Append (item.notes.QuoteSafe ());
 			stringBuilder.Append (' ');
 			stringBuilder.Append (item.expiry);
 			stringBuilder.Append ('\n');

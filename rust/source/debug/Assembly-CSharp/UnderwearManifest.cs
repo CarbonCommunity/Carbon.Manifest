@@ -10,7 +10,7 @@ public class UnderwearManifest : ScriptableObject
 
 	public static UnderwearManifest Get ()
 	{
-		if ((Object)(object)instance == (Object)null) {
+		if (instance == null) {
 			instance = Resources.Load<UnderwearManifest> ("UnderwearManifest");
 		}
 		return instance;
@@ -18,9 +18,9 @@ public class UnderwearManifest : ScriptableObject
 
 	public void PrintManifest ()
 	{
-		Debug.Log ((object)"MANIFEST CONTENTS");
+		Debug.Log ("MANIFEST CONTENTS");
 		foreach (Underwear underwear in underwears) {
-			Debug.Log ((object)("Underwear name : " + underwear.shortname + " underwear ID : " + underwear.GetID ()));
+			Debug.Log ("Underwear name : " + underwear.shortname + " underwear ID : " + underwear.GetID ());
 		}
 	}
 

@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,8 +13,7 @@ public class HudElement : MonoBehaviour
 
 	public void SetValue (float value, float max = 1f)
 	{
-		TimeWarning val = TimeWarning.New ("HudElement.SetValue", 0);
-		try {
+		using (TimeWarning.New ("HudElement.SetValue")) {
 			value = Mathf.CeilToInt (value);
 			if (value != lastValue || max != lastMax) {
 				lastValue = value;
@@ -24,8 +22,6 @@ public class HudElement : MonoBehaviour
 				SetText (value.ToString ("0"));
 				SetImage (image);
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 	}
 

@@ -24,7 +24,7 @@ public class ExplosionsScaleCurves : MonoBehaviour
 
 	private void Awake ()
 	{
-		t = ((Component)this).transform;
+		t = base.transform;
 	}
 
 	private void OnEnable ()
@@ -37,7 +37,6 @@ public class ExplosionsScaleCurves : MonoBehaviour
 
 	private void Update ()
 	{
-		//IL_00e9: Unknown result type (might be due to invalid IL or missing references)
 		float num = Time.time - startTime;
 		if (num <= GraphTimeMultiplier.x) {
 			evalX = ScaleCurveX.Evaluate (num / GraphTimeMultiplier.x) * GraphScaleMultiplier.x;

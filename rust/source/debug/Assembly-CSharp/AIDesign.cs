@@ -19,7 +19,7 @@ public class AIDesign
 		AvailableStates.AddRange (states);
 	}
 
-	public void Load (AIDesign design, BaseEntity owner)
+	public void Load (ProtoBuf.AIDesign design, BaseEntity owner)
 	{
 		Scope = (AIDesignScope)design.scope;
 		DefaultStateContainerID = design.defaultStateContainer;
@@ -27,13 +27,13 @@ public class AIDesign
 		InitStateContainers (design, owner);
 	}
 
-	private void InitStateContainers (AIDesign design, BaseEntity owner)
+	private void InitStateContainers (ProtoBuf.AIDesign design, BaseEntity owner)
 	{
 		stateContainers = new Dictionary<int, AIStateContainer> ();
 		if (design.stateContainers == null) {
 			return;
 		}
-		foreach (AIStateContainer stateContainer in design.stateContainers) {
+		foreach (ProtoBuf.AIStateContainer stateContainer in design.stateContainers) {
 			AIStateContainer aIStateContainer = new AIStateContainer ();
 			aIStateContainer.Init (stateContainer, owner);
 			stateContainers.Add (aIStateContainer.ID, aIStateContainer);
@@ -63,23 +63,21 @@ public class AIDesign
 		return null;
 	}
 
-	public AIDesign ToProto (int currentStateID)
+	public ProtoBuf.AIDesign ToProto (int currentStateID)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Expected O, but got Unknown
-		AIDesign val = new AIDesign ();
-		val.description = Description;
-		val.scope = (int)Scope;
-		val.defaultStateContainer = DefaultStateContainerID;
-		val.availableStates = new List<int> ();
+		ProtoBuf.AIDesign aIDesign = new ProtoBuf.AIDesign ();
+		aIDesign.description = Description;
+		aIDesign.scope = (int)Scope;
+		aIDesign.defaultStateContainer = DefaultStateContainerID;
+		aIDesign.availableStates = new List<int> ();
 		foreach (AIState availableState in AvailableStates) {
-			val.availableStates.Add ((int)availableState);
+			aIDesign.availableStates.Add ((int)availableState);
 		}
-		val.stateContainers = new List<AIStateContainer> ();
+		aIDesign.stateContainers = new List<ProtoBuf.AIStateContainer> ();
 		foreach (AIStateContainer value in stateContainers.Values) {
-			val.stateContainers.Add (value.ToProto ());
+			aIDesign.stateContainers.Add (value.ToProto ());
 		}
-		val.intialViewStateID = currentStateID;
-		return val;
+		aIDesign.intialViewStateID = currentStateID;
+		return aIDesign;
 	}
 }

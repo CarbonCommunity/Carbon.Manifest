@@ -4,15 +4,12 @@ public class ItemModWrap : ItemMod
 
 	public ItemDefinition wrappedDefinition;
 
-	public static Phrase wrap_gift = new Phrase ("wrap_gift", "Wrap Gift");
+	public static Translate.Phrase wrap_gift = new Translate.Phrase ("wrap_gift", "Wrap Gift");
 
-	public static Phrase wrap_gift_desc = new Phrase ("wrap_gift_desc", "Wrap this item and turn it in to an openable gift");
+	public static Translate.Phrase wrap_gift_desc = new Translate.Phrase ("wrap_gift_desc", "Wrap this item and turn it in to an openable gift");
 
 	public override void ServerCommand (Item item, string command, BasePlayer player)
 	{
-		//IL_00bf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cc: Unknown result type (might be due to invalid IL or missing references)
 		if (!(command == "wrap") || item.amount <= 0) {
 			return;
 		}

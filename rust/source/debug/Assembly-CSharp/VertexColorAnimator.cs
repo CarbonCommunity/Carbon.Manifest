@@ -45,14 +45,10 @@ public class VertexColorAnimator : MonoBehaviour
 
 	public void scrobble (float scrobblePos)
 	{
-		//IL_00fa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0114: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0120: Unknown result type (might be due to invalid IL or missing references)
 		if (animationMeshes.Count == 0) {
 			return;
 		}
-		Color[] array = (Color[])(object)new Color[((Component)this).GetComponent<MeshFilter> ().sharedMesh.colors.Length];
+		Color[] array = new Color[GetComponent<MeshFilter> ().sharedMesh.colors.Length];
 		int num = 0;
 		for (int i = 0; i < animationKeyframes.Count; i++) {
 			if (scrobblePos >= animationKeyframes [i]) {
@@ -60,24 +56,20 @@ public class VertexColorAnimator : MonoBehaviour
 			}
 		}
 		if (num >= animationKeyframes.Count - 1) {
-			((Component)this).GetComponent<VertexColorStream> ().setColors (animationMeshes [num]._colors);
+			GetComponent<VertexColorStream> ().setColors (animationMeshes [num]._colors);
 			return;
 		}
 		float num2 = animationKeyframes [num + 1] - animationKeyframes [num];
 		float num3 = animationKeyframes [num];
-		float num4 = (scrobblePos - num3) / num2;
+		float t = (scrobblePos - num3) / num2;
 		for (int j = 0; j < array.Length; j++) {
-			array [j] = Color.Lerp (animationMeshes [num]._colors [j], animationMeshes [num + 1]._colors [j], num4);
+			array [j] = Color.Lerp (animationMeshes [num]._colors [j], animationMeshes [num + 1]._colors [j], t);
 		}
-		((Component)this).GetComponent<VertexColorStream> ().setColors (array);
+		GetComponent<VertexColorStream> ().setColors (array);
 	}
 
 	private void Update ()
 	{
-		//IL_01a7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01c1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01c8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01cd: Unknown result type (might be due to invalid IL or missing references)
 		if (mode == 0) {
 			elapsedTime += Time.fixedDeltaTime / timeScale;
 		} else if (mode == 1) {
@@ -92,7 +84,7 @@ public class VertexColorAnimator : MonoBehaviour
 				elapsedTime -= Time.fixedDeltaTime / timeScale;
 			}
 		}
-		Color[] array = (Color[])(object)new Color[((Component)this).GetComponent<MeshFilter> ().sharedMesh.colors.Length];
+		Color[] array = new Color[GetComponent<MeshFilter> ().sharedMesh.colors.Length];
 		int num = 0;
 		for (int i = 0; i < animationKeyframes.Count; i++) {
 			if (elapsedTime >= animationKeyframes [i]) {
@@ -102,13 +94,13 @@ public class VertexColorAnimator : MonoBehaviour
 		if (num < animationKeyframes.Count - 1) {
 			float num2 = animationKeyframes [num + 1] - animationKeyframes [num];
 			float num3 = animationKeyframes [num];
-			float num4 = (elapsedTime - num3) / num2;
+			float t = (elapsedTime - num3) / num2;
 			for (int j = 0; j < array.Length; j++) {
-				array [j] = Color.Lerp (animationMeshes [num]._colors [j], animationMeshes [num + 1]._colors [j], num4);
+				array [j] = Color.Lerp (animationMeshes [num]._colors [j], animationMeshes [num + 1]._colors [j], t);
 			}
 		} else {
 			array = animationMeshes [num]._colors;
 		}
-		((Component)this).GetComponent<VertexColorStream> ().setColors (array);
+		GetComponent<VertexColorStream> ().setColors (array);
 	}
 }

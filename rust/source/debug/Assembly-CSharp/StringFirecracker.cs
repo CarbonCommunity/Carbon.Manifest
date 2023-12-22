@@ -19,29 +19,27 @@ public class StringFirecracker : TimedExplosive
 			return;
 		}
 		Rigidbody[] array = clientParts;
-		foreach (Rigidbody val in array) {
-			if ((Object)(object)val != (Object)null) {
-				val.isKinematic = true;
+		foreach (Rigidbody rigidbody in array) {
+			if (rigidbody != null) {
+				rigidbody.isKinematic = true;
 			}
 		}
 	}
 
 	public void CreatePinJoint ()
 	{
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005d: Unknown result type (might be due to invalid IL or missing references)
-		if (!((Object)(object)serverClientJoint != (Object)null)) {
-			serverClientJoint = ((Component)this).gameObject.AddComponent<SpringJoint> ();
-			((Joint)serverClientJoint).connectedBody = clientMiddleBody;
-			((Joint)serverClientJoint).autoConfigureConnectedAnchor = false;
-			((Joint)serverClientJoint).anchor = Vector3.zero;
-			((Joint)serverClientJoint).connectedAnchor = Vector3.zero;
+		if (!(serverClientJoint != null)) {
+			serverClientJoint = base.gameObject.AddComponent<SpringJoint> ();
+			serverClientJoint.connectedBody = clientMiddleBody;
+			serverClientJoint.autoConfigureConnectedAnchor = false;
+			serverClientJoint.anchor = Vector3.zero;
+			serverClientJoint.connectedAnchor = Vector3.zero;
 			serverClientJoint.minDistance = 0f;
 			serverClientJoint.maxDistance = 1f;
 			serverClientJoint.damper = 1000f;
 			serverClientJoint.spring = 5000f;
-			((Joint)serverClientJoint).enableCollision = false;
-			((Joint)serverClientJoint).enablePreprocessing = false;
+			serverClientJoint.enableCollision = false;
+			serverClientJoint.enablePreprocessing = false;
 		}
 	}
 }

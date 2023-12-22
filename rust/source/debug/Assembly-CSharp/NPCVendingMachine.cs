@@ -1,4 +1,3 @@
-using System;
 using Facepunch.Rust;
 using UnityEngine;
 
@@ -38,7 +37,7 @@ public class NPCVendingMachine : VendingMachine
 	public override void PostServerLoad ()
 	{
 		base.PostServerLoad ();
-		((FacepunchBehaviour)this).Invoke ((Action)InstallFromVendingOrders, 1f);
+		Invoke (InstallFromVendingOrders, 1f);
 	}
 
 	public override void ServerInit ()
@@ -46,14 +45,14 @@ public class NPCVendingMachine : VendingMachine
 		base.ServerInit ();
 		skinID = 861142659uL;
 		SendNetworkUpdate ();
-		((FacepunchBehaviour)this).Invoke ((Action)InstallFromVendingOrders, 1f);
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)Refill, 1f, 1f, 0.1f);
+		Invoke (InstallFromVendingOrders, 1f);
+		InvokeRandomized (Refill, 1f, 1f, 0.1f);
 	}
 
 	public virtual void InstallFromVendingOrders ()
 	{
-		if ((Object)(object)vendingOrders == (Object)null) {
-			Debug.LogError ((object)"No vending orders!");
+		if (vendingOrders == null) {
+			Debug.LogError ("No vending orders!");
 			return;
 		}
 		ClearSellOrders ();
@@ -72,7 +71,7 @@ public class NPCVendingMachine : VendingMachine
 
 	public void Refill ()
 	{
-		if ((Object)(object)vendingOrders == (Object)null || vendingOrders.orders == null || base.inventory == null) {
+		if (vendingOrders == null || vendingOrders.orders == null || base.inventory == null) {
 			return;
 		}
 		if (refillTimes == null) {
@@ -83,7 +82,7 @@ public class NPCVendingMachine : VendingMachine
 			if (!(Time.realtimeSinceStartup > refillTimes [i])) {
 				continue;
 			}
-			int num = Mathf.FloorToInt ((float)(base.inventory.GetAmount (entry.sellItem.itemid, onlyUsableAmounts: false) / entry.sellItemAmount));
+			int num = Mathf.FloorToInt (base.inventory.GetAmount (entry.sellItem.itemid, onlyUsableAmounts: false) / entry.sellItemAmount);
 			int num2 = Mathf.Min (10 - num, entry.refillAmount);
 			int num3 = num2 * entry.sellItemAmount;
 			if (num3 > 0) {

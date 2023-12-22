@@ -1,3 +1,4 @@
+#define ENABLE_PROFILER
 using System;
 using ConVar;
 using Facepunch;
@@ -29,18 +30,16 @@ public class BaseCorpse : BaseCombatEntity
 	{
 		SetupRigidBody ();
 		ResetRemovalTime ();
-		resourceDispenser = ((Component)this).GetComponent<ResourceDispenser> ();
+		resourceDispenser = GetComponent<ResourceDispenser> ();
 		base.ServerInit ();
 	}
 
 	public virtual void InitCorpse (BaseEntity pr)
 	{
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
 		parentEnt = pr;
-		((Component)this).transform.SetPositionAndRotation (parentEnt.CenterPoint (), ((Component)parentEnt).transform.rotation);
-		SpawnPointInstance component = ((Component)this).GetComponent<SpawnPointInstance> ();
-		if ((Object)(object)component != (Object)null) {
+		base.transform.SetPositionAndRotation (parentEnt.CenterPoint (), parentEnt.transform.rotation);
+		SpawnPointInstance component = GetComponent<SpawnPointInstance> ();
+		if (component != null) {
 			spawnGroup = component.parentSpawnPointUser as SpawnGroup;
 		}
 	}
@@ -61,21 +60,18 @@ public class BaseCorpse : BaseCombatEntity
 
 	public void ResetRemovalTime (float dur)
 	{
-		TimeWarning val = TimeWarning.New ("ResetRemovalTime", 0);
-		try {
-			if (((FacepunchBehaviour)this).IsInvoking ((Action)RemoveCorpse)) {
-				((FacepunchBehaviour)this).CancelInvoke ((Action)RemoveCorpse);
+		using (TimeWarning.New ("ResetRemovalTime")) {
+			if (IsInvoking (RemoveCorpse)) {
+				CancelInvoke (RemoveCorpse);
 			}
-			((FacepunchBehaviour)this).Invoke ((Action)RemoveCorpse, dur);
-		} finally {
-			((IDisposable)val)?.Dispose ();
+			Invoke (RemoveCorpse, dur);
 		}
 	}
 
 	public virtual float GetRemovalTime ()
 	{
 		BaseGameMode activeGameMode = BaseGameMode.GetActiveGameMode (serverside: true);
-		if ((Object)(object)activeGameMode != (Object)null) {
+		if (activeGameMode != null) {
 			return activeGameMode.CorpseRemovalTime (this);
 		}
 		return Server.corpsedespawn;
@@ -88,10 +84,8 @@ public class BaseCorpse : BaseCombatEntity
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
-		info.msg.corpse = Pool.Get<Corpse> ();
+		info.msg.corpse = Facepunch.Pool.Get<Corpse> ();
 		if (parentEnt.IsValid ()) {
 			info.msg.corpse.parentID = parentEnt.net.ID;
 		}
@@ -102,14 +96,11 @@ public class BaseCorpse : BaseCombatEntity
 		if (takeChildrenFrom.children == null) {
 			return;
 		}
-		TimeWarning val = TimeWarning.New ("Corpse.TakeChildren", 0);
-		try {
+		using (TimeWarning.New ("Corpse.TakeChildren")) {
 			BaseEntity[] array = takeChildrenFrom.children.ToArray ();
 			foreach (BaseEntity baseEntity in array) {
 				baseEntity.SwitchParent (this);
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 	}
 
@@ -119,63 +110,56 @@ public class BaseCorpse : BaseCombatEntity
 
 	private Rigidbody SetupRigidBody ()
 	{
-		//IL_01c9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ce: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01fc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ea: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0103: Unknown result type (might be due to invalid IL or missing references)
 		if (base.isServer) {
-			GameObject val = base.gameManager.FindPrefab (prefabRagdoll.resourcePath);
-			if ((Object)(object)val == (Object)null) {
+			GameObject gameObject = base.gameManager.FindPrefab (prefabRagdoll.resourcePath);
+			if (gameObject == null) {
 				return null;
 			}
-			Ragdoll component = val.GetComponent<Ragdoll> ();
-			if ((Object)(object)component == (Object)null) {
+			Ragdoll component = gameObject.GetComponent<Ragdoll> ();
+			if (component == null) {
 				return null;
 			}
-			if ((Object)(object)component.primaryBody == (Object)null) {
-				Debug.LogError ((object)("[BaseCorpse] ragdoll.primaryBody isn't set!" + ((Object)((Component)component).gameObject).name));
+			if (component.primaryBody == null) {
+				Debug.LogError ("[BaseCorpse] ragdoll.primaryBody isn't set!" + component.gameObject.name);
 				return null;
 			}
-			Collider component2 = ((Component)this).gameObject.GetComponent<Collider> ();
-			if ((Object)(object)component2 == (Object)null) {
-				BoxCollider component3 = ((Component)component.primaryBody).GetComponent<BoxCollider> ();
-				if ((Object)(object)component3 == (Object)null) {
-					Debug.LogError ((object)"Ragdoll has unsupported primary collider (make it supported) ", (Object)(object)component);
+			Collider component2 = base.gameObject.GetComponent<Collider> ();
+			if (component2 == null) {
+				BoxCollider component3 = component.primaryBody.GetComponent<BoxCollider> ();
+				if (component3 == null) {
+					Debug.LogError ("Ragdoll has unsupported primary collider (make it supported) ", component);
 					return null;
 				}
-				BoxCollider val2 = ((Component)this).gameObject.AddComponent<BoxCollider> ();
-				val2.size = component3.size * 2f;
-				val2.center = component3.center;
-				((Collider)val2).sharedMaterial = ((Collider)component3).sharedMaterial;
+				BoxCollider boxCollider = base.gameObject.AddComponent<BoxCollider> ();
+				boxCollider.size = component3.size * 2f;
+				boxCollider.center = component3.center;
+				boxCollider.sharedMaterial = component3.sharedMaterial;
 			}
 		}
-		Rigidbody val3 = ((Component)this).GetComponent<Rigidbody> ();
-		if ((Object)(object)val3 == (Object)null) {
-			val3 = ((Component)this).gameObject.AddComponent<Rigidbody> ();
+		Rigidbody rigidbody = GetComponent<Rigidbody> ();
+		if (rigidbody == null) {
+			rigidbody = base.gameObject.AddComponent<Rigidbody> ();
 		}
-		val3.mass = 10f;
-		val3.useGravity = true;
-		val3.drag = 0.5f;
-		val3.angularDrag = 0.5f;
-		val3.collisionDetectionMode = (CollisionDetectionMode)0;
-		val3.sleepThreshold = 0.05f;
+		rigidbody.mass = 10f;
+		rigidbody.useGravity = true;
+		rigidbody.drag = 0.5f;
+		rigidbody.angularDrag = 0.5f;
+		rigidbody.collisionDetectionMode = CollisionDetectionMode.Discrete;
+		rigidbody.sleepThreshold = 0.05f;
 		if (base.isServer) {
 			Profiler.BeginSample ("BaseCorpse.Setup");
-			Buoyancy component4 = ((Component)this).GetComponent<Buoyancy> ();
-			if ((Object)(object)component4 != (Object)null) {
-				component4.rigidBody = val3;
+			Buoyancy component4 = GetComponent<Buoyancy> ();
+			if (component4 != null) {
+				component4.rigidBody = rigidbody;
 			}
 			Profiler.EndSample ();
 			Vector3 velocity = Vector3Ex.Range (-1f, 1f);
 			velocity.y += 1f;
-			val3.velocity = velocity;
-			val3.collisionDetectionMode = (CollisionDetectionMode)3;
-			val3.angularVelocity = Vector3Ex.Range (-10f, 10f);
+			rigidbody.velocity = velocity;
+			rigidbody.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
+			rigidbody.angularVelocity = Vector3Ex.Range (-10f, 10f);
 		}
-		return val3;
+		return rigidbody;
 	}
 
 	public override void Load (LoadInfo info)
@@ -188,7 +172,6 @@ public class BaseCorpse : BaseCombatEntity
 
 	private void Load (Corpse corpse)
 	{
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
 		if (base.isServer) {
 			parentEnt = BaseNetworkable.serverEntities.Find (corpse.parentID) as BaseEntity;
 		}
@@ -200,7 +183,7 @@ public class BaseCorpse : BaseCombatEntity
 	{
 		if (base.isServer) {
 			ResetRemovalTime ();
-			if (Object.op_Implicit ((Object)(object)resourceDispenser)) {
+			if ((bool)resourceDispenser) {
 				resourceDispenser.OnAttacked (info);
 			}
 			if (!info.DidGather) {

@@ -35,10 +35,10 @@ public class Ragdoll : BaseMonoBehaviour, IPrefabPreProcess
 			characterJoints.Clear ();
 			configurableJoints.Clear ();
 			rigidbodies.Clear ();
-			((Component)this).GetComponentsInChildren<Joint> (true, joints);
-			((Component)this).GetComponentsInChildren<CharacterJoint> (true, characterJoints);
-			((Component)this).GetComponentsInChildren<ConfigurableJoint> (true, configurableJoints);
-			((Component)this).GetComponentsInChildren<Rigidbody> (true, rigidbodies);
+			GetComponentsInChildren (includeInactive: true, joints);
+			GetComponentsInChildren (includeInactive: true, characterJoints);
+			GetComponentsInChildren (includeInactive: true, configurableJoints);
+			GetComponentsInChildren (includeInactive: true, rigidbodies);
 		}
 	}
 }

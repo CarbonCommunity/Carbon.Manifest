@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,28 +11,27 @@ public class DestroyOutsideMonument : FacepunchBehaviour
 
 	private MonumentInfo ourMonument;
 
-	private Vector3 OurPos => ((Component)baseCombatEntity).transform.position;
+	private Vector3 OurPos => baseCombatEntity.transform.position;
 
 	protected void OnEnable ()
 	{
-		if ((Object)(object)ourMonument == (Object)null) {
+		if (ourMonument == null) {
 			ourMonument = GetOurMonument ();
 		}
-		if ((Object)(object)ourMonument == (Object)null) {
+		if (ourMonument == null) {
 			DoOutsideMonument ();
 		} else {
-			((FacepunchBehaviour)this).InvokeRandomized ((Action)CheckPosition, checkEvery, checkEvery, checkEvery * 0.1f);
+			InvokeRandomized (CheckPosition, checkEvery, checkEvery, checkEvery * 0.1f);
 		}
 	}
 
 	protected void OnDisable ()
 	{
-		((FacepunchBehaviour)this).CancelInvoke ((Action)CheckPosition);
+		CancelInvoke (CheckPosition);
 	}
 
 	private MonumentInfo GetOurMonument ()
 	{
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
 		List<MonumentInfo> monuments = TerrainMeta.Path.Monuments;
 		foreach (MonumentInfo item in monuments) {
 			if (item.IsInBounds (OurPos)) {
@@ -45,8 +43,7 @@ public class DestroyOutsideMonument : FacepunchBehaviour
 
 	private void CheckPosition ()
 	{
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)ourMonument == (Object)null) {
+		if (ourMonument == null) {
 			DoOutsideMonument ();
 		}
 		if (!ourMonument.IsInBounds (OurPos)) {

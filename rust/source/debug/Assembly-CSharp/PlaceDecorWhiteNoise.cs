@@ -10,36 +10,6 @@ public class PlaceDecorWhiteNoise : ProceduralComponent
 
 	public override void Process (uint seed)
 	{
-		//IL_0067: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0072: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0079: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0080: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0094: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00aa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0155: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0168: Unknown result type (might be due to invalid IL or missing references)
-		//IL_016d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0181: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0183: Unknown result type (might be due to invalid IL or missing references)
-		//IL_019d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_019f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01bb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01bd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01bf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f5: Unknown result type (might be due to invalid IL or missing references)
 		if (World.Networked) {
 			World.Spawn ("Decor", "assets/bundled/prefabs/autospawn/" + ResourceFolder + "/");
 			return;
@@ -54,20 +24,19 @@ public class PlaceDecorWhiteNoise : ProceduralComponent
 		int num = Mathf.RoundToInt (ObjectDensity * size.x * size.z * 1E-06f);
 		float x = position.x;
 		float z = position.z;
-		float num2 = position.x + size.x;
-		float num3 = position.z + size.z;
-		Vector3 pos = default(Vector3);
+		float max = position.x + size.x;
+		float max2 = position.z + size.z;
 		for (int i = 0; i < num; i++) {
-			float num4 = SeedRandom.Range (ref seed, x, num2);
-			float num5 = SeedRandom.Range (ref seed, z, num3);
-			float normX = TerrainMeta.NormalizeX (num4);
-			float normZ = TerrainMeta.NormalizeZ (num5);
-			float num6 = SeedRandom.Value (ref seed);
+			float x2 = SeedRandom.Range (ref seed, x, max);
+			float z2 = SeedRandom.Range (ref seed, z, max2);
+			float normX = TerrainMeta.NormalizeX (x2);
+			float normZ = TerrainMeta.NormalizeZ (z2);
+			float num2 = SeedRandom.Value (ref seed);
 			float factor = Filter.GetFactor (normX, normZ);
 			Prefab random = array.GetRandom (ref seed);
-			if (!(factor * factor < num6)) {
+			if (!(factor * factor < num2)) {
 				float height = heightMap.GetHeight (normX, normZ);
-				((Vector3)(ref pos))..ctor (num4, height, num5);
+				Vector3 pos = new Vector3 (x2, height, z2);
 				Quaternion rot = random.Object.transform.localRotation;
 				Vector3 scale = random.Object.transform.localScale;
 				random.ApplyDecorComponents (ref pos, ref rot, ref scale);

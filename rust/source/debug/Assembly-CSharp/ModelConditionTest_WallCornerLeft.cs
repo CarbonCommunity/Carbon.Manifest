@@ -8,25 +8,22 @@ public class ModelConditionTest_WallCornerLeft : ModelConditionTest
 
 	public override bool DoTest (BaseEntity ent)
 	{
-		//IL_007a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0086: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008b: Unknown result type (might be due to invalid IL or missing references)
 		EntityLink entityLink = ent.FindLink (sockets);
 		if (entityLink == null) {
 			return false;
 		}
 		BuildingBlock buildingBlock = ent as BuildingBlock;
-		if ((Object)(object)buildingBlock == (Object)null) {
+		if (buildingBlock == null) {
 			return false;
 		}
 		bool result = false;
 		for (int i = 0; i < entityLink.connections.Count; i++) {
 			EntityLink entityLink2 = entityLink.connections [i];
 			BuildingBlock buildingBlock2 = entityLink2.owner as BuildingBlock;
-			if ((Object)(object)buildingBlock2 == (Object)null) {
+			if (buildingBlock2 == null) {
 				continue;
 			}
-			float num = Vector3.SignedAngle (((Component)ent).transform.forward, ((Component)buildingBlock2).transform.forward, Vector3.up);
+			float num = Vector3.SignedAngle (ent.transform.forward, buildingBlock2.transform.forward, Vector3.up);
 			if (entityLink2.name.EndsWith ("sockets/stability/2")) {
 				if (num > -10f || num < -100f) {
 					return false;

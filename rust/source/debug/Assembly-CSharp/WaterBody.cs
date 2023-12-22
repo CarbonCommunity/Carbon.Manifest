@@ -27,7 +27,7 @@ public class WaterBody : MonoBehaviour
 
 	private void Awake ()
 	{
-		Transform = ((Component)this).transform;
+		Transform = base.transform;
 	}
 
 	private void OnEnable ()
@@ -42,18 +42,15 @@ public class WaterBody : MonoBehaviour
 
 	public void OnOceanLevelChanged (float newLevel)
 	{
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0056: Unknown result type (might be due to invalid IL or missing references)
 		if (!IsOcean || Triggers == null) {
 			return;
 		}
 		Collider[] triggers = Triggers;
-		foreach (Collider val in triggers) {
-			if (!((Object)(object)val == (Object)null)) {
-				Vector3 position = ((Component)val).transform.position;
+		foreach (Collider collider in triggers) {
+			if (!(collider == null)) {
+				Vector3 position = collider.transform.position;
 				position.y = newLevel;
-				((Component)val).transform.position = position;
+				collider.transform.position = position;
 			}
 		}
 	}

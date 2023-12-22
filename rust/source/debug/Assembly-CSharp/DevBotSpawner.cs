@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,7 +21,7 @@ public class DevBotSpawner : FacepunchBehaviour
 	{
 		for (int num = _spawned.Count - 1; num >= 0; num--) {
 			BaseEntity baseEntity = _spawned [num];
-			if ((Object)(object)baseEntity == (Object)null || baseEntity.Health () <= 0f) {
+			if (baseEntity == null || baseEntity.Health () <= 0f) {
 				_spawned.Remove (baseEntity);
 			}
 		}
@@ -34,26 +33,21 @@ public class DevBotSpawner : FacepunchBehaviour
 
 	public void SpawnBot ()
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
 		while (HasFreePopulation ()) {
 			Vector3 position = waypoints [0].position;
 			BaseEntity baseEntity = GameManager.server.CreateEntity (bot.resourcePath, position);
-			if ((Object)(object)baseEntity == (Object)null) {
+			if (baseEntity == null) {
 				break;
 			}
 			_spawned.Add (baseEntity);
-			((Component)baseEntity).SendMessage ("SetWaypoints", (object)waypoints, (SendMessageOptions)1);
+			baseEntity.SendMessage ("SetWaypoints", waypoints, SendMessageOptions.DontRequireReceiver);
 			baseEntity.Spawn ();
 		}
 	}
 
 	public void Start ()
 	{
-		waypoints = ((Component)waypointParent).GetComponentsInChildren<Transform> ();
-		((FacepunchBehaviour)this).InvokeRepeating ((Action)SpawnBot, 5f, spawnRate);
+		waypoints = waypointParent.GetComponentsInChildren<Transform> ();
+		InvokeRepeating (SpawnBot, 5f, spawnRate);
 	}
 }

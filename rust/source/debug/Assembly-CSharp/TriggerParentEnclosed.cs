@@ -20,7 +20,7 @@ public class TriggerParentEnclosed : TriggerParent
 
 	protected void OnEnable ()
 	{
-		boxCollider = ((Component)this).GetComponent<BoxCollider> ();
+		boxCollider = GetComponent<BoxCollider> ();
 	}
 
 	public override bool ShouldParent (BaseEntity ent, bool bypassOtherTriggerCheck = false)
@@ -40,7 +40,7 @@ public class TriggerParentEnclosed : TriggerParent
 			return false;
 		}
 		BaseEntity baseEntity = collider.ToBaseEntity ();
-		if ((Object)(object)baseEntity == (Object)null) {
+		if (baseEntity == null) {
 			return false;
 		}
 		return IsInside (baseEntity, 0f);
@@ -48,21 +48,12 @@ public class TriggerParentEnclosed : TriggerParent
 
 	private bool IsInside (BaseEntity ent, float padding)
 	{
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005f: Unknown result type (might be due to invalid IL or missing references)
-		Bounds val = default(Bounds);
-		((Bounds)(ref val))..ctor (boxCollider.center, boxCollider.size);
+		Bounds bounds = new Bounds (boxCollider.center, boxCollider.size);
 		if (padding > 0f) {
-			((Bounds)(ref val)).Expand (padding);
+			bounds.Expand (padding);
 		}
-		OBB val2 = default(OBB);
-		((OBB)(ref val2))..ctor (((Component)boxCollider).transform, val);
-		Vector3 val3 = ((intersectionMode == TriggerMode.TriggerPoint) ? ent.TriggerPoint () : ent.PivotPoint ());
-		return ((OBB)(ref val2)).Contains (val3);
+		OBB oBB = new OBB (boxCollider.transform, bounds);
+		Vector3 target = ((intersectionMode == TriggerMode.TriggerPoint) ? ent.TriggerPoint () : ent.PivotPoint ());
+		return oBB.Contains (target);
 	}
 }

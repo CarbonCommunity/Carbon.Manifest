@@ -149,8 +149,8 @@ public class Projectile : BaseMonoBehaviour
 		foreach (DamageTypeEntry damageType in damageTypes) {
 			info.damageTypes.Add (damageType.type, damageType.amount * num2);
 		}
-		if (Global.developer > 0) {
-			Debug.Log ((object)(" Projectile damage: " + info.damageTypes.Total () + " (scalar=" + num2 + ")"));
+		if (ConVar.Global.developer > 0) {
+			Debug.Log (" Projectile damage: " + info.damageTypes.Total () + " (scalar=" + num2 + ")");
 		}
 	}
 
@@ -183,9 +183,8 @@ public class Projectile : BaseMonoBehaviour
 
 	public static bool ShouldStopProjectile (RaycastHit hit)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
 		BaseEntity entity = hit.GetEntity ();
-		if ((Object)(object)entity != (Object)null && !entity.ShouldBlockProjectiles ()) {
+		if (entity != null && !entity.ShouldBlockProjectiles ()) {
 			return false;
 		}
 		return true;

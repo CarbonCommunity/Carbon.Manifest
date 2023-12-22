@@ -75,116 +75,6 @@ public class PlaceMonumentsRailside : ProceduralComponent
 
 	public override void Process (uint seed)
 	{
-		//IL_01ef: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01fb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01fd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0202: Unknown result type (might be due to invalid IL or missing references)
-		//IL_029c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_029e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02a0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02a5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02a9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02ae: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02b0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02b5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02b7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02bc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_097b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0982: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0989: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02ca: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02cf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02d4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_024d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0252: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02e7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02e9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02f2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02f7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02fc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0272: Unknown result type (might be due to invalid IL or missing references)
-		//IL_027b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0280: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0285: Unknown result type (might be due to invalid IL or missing references)
-		//IL_026a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_026f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_05b5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_05bc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_05c3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0384: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0379: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0389: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0392: Unknown result type (might be due to invalid IL or missing references)
-		//IL_039e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03a3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03a8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03ac: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03b1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0712: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0719: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03bf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03c1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03c6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03cb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03d0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03d2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03d4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03d6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03d8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03e6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03eb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03ed: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03ef: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03f1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03f6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03fb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03fd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03ff: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0401: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0403: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0408: Unknown result type (might be due to invalid IL or missing references)
-		//IL_040d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0422: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0424: Unknown result type (might be due to invalid IL or missing references)
-		//IL_042b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_042d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0434: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0436: Unknown result type (might be due to invalid IL or missing references)
-		//IL_073b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0742: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0749: Unknown result type (might be due to invalid IL or missing references)
-		//IL_07e8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_07ef: Unknown result type (might be due to invalid IL or missing references)
-		//IL_07f6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0771: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0778: Unknown result type (might be due to invalid IL or missing references)
-		//IL_077f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_078b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0790: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0795: Unknown result type (might be due to invalid IL or missing references)
-		//IL_079a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_079f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_07a3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_07a5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_07aa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_07b4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_07b9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_07bb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_07bd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_07c2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_07c7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_07ce: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0818: Unknown result type (might be due to invalid IL or missing references)
-		//IL_081f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0826: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0840: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0847: Unknown result type (might be due to invalid IL or missing references)
-		//IL_084e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0867: Unknown result type (might be due to invalid IL or missing references)
-		//IL_086e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0875: Unknown result type (might be due to invalid IL or missing references)
 		string[] array = (from folder in ResourceFolder.Split (',')
 			select "assets/bundled/prefabs/autospawn/" + folder + "/").ToArray ();
 		if (World.Networked) {
@@ -197,7 +87,7 @@ public class PlaceMonumentsRailside : ProceduralComponent
 			List<Prefab<MonumentInfo>> list = new List<Prefab<MonumentInfo>> ();
 			string[] array2 = array;
 			foreach (string folder2 in array2) {
-				Prefab<MonumentInfo>[] array3 = Prefab.Load<MonumentInfo> (folder2, (GameManager)null, (PrefabAttribute.Library)null, useProbabilities: true);
+				Prefab<MonumentInfo>[] array3 = Prefab.Load<MonumentInfo> (folder2);
 				array3.Shuffle (ref seed);
 				list.AddRange (array3);
 			}
@@ -232,37 +122,36 @@ public class PlaceMonumentsRailside : ProceduralComponent
 				}
 				Prefab<MonumentInfo> prefab3 = spawnInfoGroup3.prefab;
 				MonumentInfo component = prefab3.Component;
-				if ((Object)(object)component == (Object)null || World.Size < component.MinWorldSize) {
+				if (component == null || World.Size < component.MinWorldSize) {
 					continue;
 				}
 				int num = 0;
-				Vector3 val = Vector3.zero;
-				Vector3 val2 = Vector3.zero;
-				Vector3 val3 = Vector3.zero;
-				TerrainPathConnect[] componentsInChildren = prefab3.Object.GetComponentsInChildren<TerrainPathConnect> (true);
+				Vector3 zero = Vector3.zero;
+				Vector3 vector = Vector3.zero;
+				Vector3 vector2 = Vector3.zero;
+				TerrainPathConnect[] componentsInChildren = prefab3.Object.GetComponentsInChildren<TerrainPathConnect> (includeInactive: true);
 				TerrainPathConnect[] array7 = componentsInChildren;
 				foreach (TerrainPathConnect terrainPathConnect in array7) {
 					if (terrainPathConnect.Type == InfrastructureType.Rail) {
 						switch (num) {
 						case 0:
-							val2 = ((Component)terrainPathConnect).transform.position;
+							vector = terrainPathConnect.transform.position;
 							break;
 						case 1:
-							val3 = ((Component)terrainPathConnect).transform.position;
+							vector2 = terrainPathConnect.transform.position;
 							break;
 						}
-						val += ((Component)terrainPathConnect).transform.position;
+						zero += terrainPathConnect.transform.position;
 						num++;
 					}
 				}
-				Vector3 val4 = val3 - val2;
-				Vector3 normalized = ((Vector3)(ref val4)).normalized;
-				Vector3 val5 = rot90 * normalized;
+				Vector3 normalized = (vector2 - vector).normalized;
+				Vector3 vector3 = rot90 * normalized;
 				if (num > 1) {
-					val /= (float)num;
+					zero /= (float)num;
 				}
 				if (PositionOffset > 0) {
-					val += val5 * (float)PositionOffset;
+					zero += vector3 * PositionOffset;
 				}
 				foreach (PathList rail in TerrainMeta.Path.Rails) {
 					PathInterpolator path = rail.Path;
@@ -272,20 +161,19 @@ public class PlaceMonumentsRailside : ProceduralComponent
 					float num5 = path.StartOffset + num4;
 					float num6 = path.Length - path.EndOffset - num4;
 					for (float num7 = num5; num7 <= num6; num7 += num3) {
-						Vector3 val6 = (rail.Spline ? path.GetPointCubicHermite (num7) : path.GetPoint (num7));
-						val4 = path.GetPoint (num7 + num2) - path.GetPoint (num7 - num2);
-						Vector3 normalized2 = ((Vector3)(ref val4)).normalized;
+						Vector3 vector4 = (rail.Spline ? path.GetPointCubicHermite (num7) : path.GetPoint (num7));
+						Vector3 normalized2 = (path.GetPoint (num7 + num2) - path.GetPoint (num7 - num2)).normalized;
 						for (int n = -1; n <= 1; n += 2) {
-							Quaternion val7 = Quaternion.LookRotation ((float)n * Vector3Ex.XZ3D (normalized2));
-							Vector3 val8 = val6;
-							Quaternion val9 = val7;
+							Quaternion quaternion = Quaternion.LookRotation (n * normalized2.XZ3D ());
+							Vector3 position = vector4;
+							Quaternion quaternion2 = quaternion;
 							Vector3 localScale = prefab3.Object.transform.localScale;
-							val9 *= Quaternion.LookRotation (normalized);
-							val8 -= val9 * val;
+							quaternion2 *= Quaternion.LookRotation (normalized);
+							position -= quaternion2 * zero;
 							SpawnInfo item = default(SpawnInfo);
 							item.prefab = prefab3;
-							item.position = val8;
-							item.rotation = val9;
+							item.position = position;
+							item.rotation = quaternion2;
 							item.scale = localScale;
 							spawnInfoGroup3.candidates.Add (item);
 						}
@@ -294,30 +182,30 @@ public class PlaceMonumentsRailside : ProceduralComponent
 				spawnInfoGroup3.processed = true;
 			}
 			int num8 = 0;
-			List<SpawnInfo> list2 = new List<SpawnInfo> ();
+			List<SpawnInfo> a = new List<SpawnInfo> ();
 			int num9 = 0;
-			List<SpawnInfo> list3 = new List<SpawnInfo> ();
+			List<SpawnInfo> b = new List<SpawnInfo> ();
 			for (int num10 = 0; num10 < 8; num10++) {
 				num8 = 0;
-				list2.Clear ();
+				a.Clear ();
 				array5.Shuffle (ref seed);
 				SpawnInfoGroup[] array8 = array5;
 				foreach (SpawnInfoGroup spawnInfoGroup4 in array8) {
 					Prefab<MonumentInfo> prefab4 = spawnInfoGroup4.prefab;
 					MonumentInfo component2 = prefab4.Component;
-					if ((Object)(object)component2 == (Object)null || World.Size < component2.MinWorldSize) {
+					if (component2 == null || World.Size < component2.MinWorldSize) {
 						continue;
 					}
 					DungeonGridInfo dungeonEntrance = component2.DungeonEntrance;
-					int num12 = (int)((!Object.op_Implicit ((Object)(object)prefab4.Parameters)) ? PrefabPriority.Low : (prefab4.Parameters.Priority + 1));
+					int num12 = (int)((!prefab4.Parameters) ? PrefabPriority.Low : (prefab4.Parameters.Priority + 1));
 					int num13 = 100000 * num12 * num12 * num12 * num12;
 					int num14 = 0;
 					int num15 = 0;
 					SpawnInfo item2 = default(SpawnInfo);
-					ListEx.Shuffle<SpawnInfo> (spawnInfoGroup4.candidates, ref seed);
+					spawnInfoGroup4.candidates.Shuffle (ref seed);
 					for (int num16 = 0; num16 < spawnInfoGroup4.candidates.Count; num16++) {
 						SpawnInfo spawnInfo = spawnInfoGroup4.candidates [num16];
-						DistanceInfo distanceInfo = GetDistanceInfo (list2, prefab4, spawnInfo.position, spawnInfo.rotation, spawnInfo.scale);
+						DistanceInfo distanceInfo = GetDistanceInfo (a, prefab4, spawnInfo.position, spawnInfo.rotation, spawnInfo.scale);
 						if (distanceInfo.minDistanceSameType < (float)MinDistanceSameType || distanceInfo.minDistanceDifferentType < (float)MinDistanceDifferentType) {
 							continue;
 						}
@@ -339,12 +227,11 @@ public class PlaceMonumentsRailside : ProceduralComponent
 						if (num17 <= num15 || !prefab4.ApplyTerrainAnchors (ref spawnInfo.position, spawnInfo.rotation, spawnInfo.scale, Filter) || !component2.CheckPlacement (spawnInfo.position, spawnInfo.rotation, spawnInfo.scale)) {
 							continue;
 						}
-						if (Object.op_Implicit ((Object)(object)dungeonEntrance)) {
-							Vector3 val10 = spawnInfo.position + spawnInfo.rotation * Vector3.Scale (spawnInfo.scale, ((Component)dungeonEntrance).transform.position);
-							Vector3 val11 = dungeonEntrance.SnapPosition (val10);
-							ref Vector3 position = ref spawnInfo.position;
-							position += val11 - val10;
-							if (!dungeonEntrance.IsValidSpawnPosition (val11)) {
+						if ((bool)dungeonEntrance) {
+							Vector3 vector5 = spawnInfo.position + spawnInfo.rotation * Vector3.Scale (spawnInfo.scale, dungeonEntrance.transform.position);
+							Vector3 vector6 = dungeonEntrance.SnapPosition (vector5);
+							spawnInfo.position += vector6 - vector5;
+							if (!dungeonEntrance.IsValidSpawnPosition (vector6)) {
 								continue;
 							}
 						}
@@ -358,19 +245,19 @@ public class PlaceMonumentsRailside : ProceduralComponent
 						}
 					}
 					if (num15 > 0) {
-						list2.Add (item2);
+						a.Add (item2);
 						num8 += num15;
 					}
-					if (TargetCount > 0 && list2.Count >= TargetCount) {
+					if (TargetCount > 0 && a.Count >= TargetCount) {
 						break;
 					}
 				}
 				if (num8 > num9) {
 					num9 = num8;
-					GenericsUtil.Swap<List<SpawnInfo>> (ref list2, ref list3);
+					GenericsUtil.Swap (ref a, ref b);
 				}
 			}
-			foreach (SpawnInfo item3 in list3) {
+			foreach (SpawnInfo item3 in b) {
 				World.AddPrefab ("Monument", item3.prefab, item3.position, item3.rotation, item3.scale);
 			}
 		}
@@ -378,31 +265,16 @@ public class PlaceMonumentsRailside : ProceduralComponent
 
 	private DistanceInfo GetDistanceInfo (List<SpawnInfo> spawns, Prefab<MonumentInfo> prefab, Vector3 monumentPos, Quaternion monumentRot, Vector3 monumentScale)
 	{
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0185: Unknown result type (might be due to invalid IL or missing references)
-		//IL_018c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0193: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ae: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0259: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02cf: Unknown result type (might be due to invalid IL or missing references)
 		DistanceInfo result = default(DistanceInfo);
 		result.minDistanceDifferentType = float.MaxValue;
 		result.maxDistanceDifferentType = float.MinValue;
 		result.minDistanceSameType = float.MaxValue;
 		result.maxDistanceSameType = float.MinValue;
-		OBB val = default(OBB);
-		((OBB)(ref val))..ctor (monumentPos, monumentScale, monumentRot, prefab.Component.Bounds);
-		if ((Object)(object)TerrainMeta.Path != (Object)null) {
+		OBB oBB = new OBB (monumentPos, monumentScale, monumentRot, prefab.Component.Bounds);
+		if (TerrainMeta.Path != null) {
 			foreach (MonumentInfo monument in TerrainMeta.Path.Monuments) {
 				if (!prefab.Component.HasDungeonLink || (!monument.HasDungeonLink && monument.WantsDungeonLink)) {
-					float num = monument.SqrDistance (val);
+					float num = monument.SqrDistance (oBB);
 					if (num < result.minDistanceDifferentType) {
 						result.minDistanceDifferentType = num;
 					}
@@ -420,8 +292,7 @@ public class PlaceMonumentsRailside : ProceduralComponent
 		}
 		if (spawns != null) {
 			foreach (SpawnInfo spawn in spawns) {
-				OBB val2 = new OBB (spawn.position, spawn.scale, spawn.rotation, spawn.prefab.Component.Bounds);
-				float num2 = ((OBB)(ref val2)).SqrDistance (val);
+				float num2 = new OBB (spawn.position, spawn.scale, spawn.rotation, spawn.prefab.Component.Bounds).SqrDistance (oBB);
 				if (num2 < result.minDistanceSameType) {
 					result.minDistanceSameType = num2;
 				}
@@ -432,7 +303,7 @@ public class PlaceMonumentsRailside : ProceduralComponent
 			if (prefab.Component.HasDungeonLink) {
 				foreach (MonumentInfo monument2 in TerrainMeta.Path.Monuments) {
 					if (monument2.HasDungeonLink || !monument2.WantsDungeonLink) {
-						float num3 = monument2.SqrDistance (val);
+						float num3 = monument2.SqrDistance (oBB);
 						if (num3 < result.minDistanceSameType) {
 							result.minDistanceSameType = num3;
 						}

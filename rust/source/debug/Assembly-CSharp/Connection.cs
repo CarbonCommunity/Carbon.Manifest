@@ -1,3 +1,4 @@
+#define ENABLE_PROFILER
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -67,45 +68,37 @@ public class Connection : IConnection
 		_isControllingCamera = false;
 	}
 
-	public void OnMessage (System.Span<byte> data)
+	public void OnMessage (Span<byte> data)
 	{
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
 		if (App.update && App.queuelimit > 0 && data.Length <= App.maxmessagesize) {
 			Profiler.BeginSample ("CompanionServer.OnMessage");
-			MemoryBuffer val = default(MemoryBuffer);
-			((MemoryBuffer)(ref val))..ctor (data.Length);
-			data.CopyTo (MemoryBuffer.op_Implicit (val));
-			_listener.Enqueue (this, ((MemoryBuffer)(ref val)).Slice (data.Length));
+			MemoryBuffer memoryBuffer = new MemoryBuffer (data.Length);
+			data.CopyTo (memoryBuffer);
+			_listener.Enqueue (this, memoryBuffer.Slice (data.Length));
 			Profiler.EndSample ();
 		}
 	}
 
 	public void Close ()
 	{
-		IWebSocketConnection connection = _connection;
-		if (connection != null) {
-			connection.Close ();
-		}
+		_connection?.Close ();
 	}
 
 	public void Send (AppResponse response)
 	{
-		//IL_007e: Unknown result type (might be due to invalid IL or missing references)
 		Profiler.BeginSample ("CompanionServer.Send");
-		AppMessage val = Pool.Get<AppMessage> ();
-		val.response = response;
+		AppMessage appMessage = Facepunch.Pool.Get<AppMessage> ();
+		appMessage.response = response;
 		MessageStream.Position = 0L;
-		val.ToProto ((Stream)MessageStream);
+		appMessage.ToProto (MessageStream);
 		int num = (int)MessageStream.Position;
 		MessageStream.Position = 0L;
-		MemoryBuffer val2 = default(MemoryBuffer);
-		((MemoryBuffer)(ref val2))..ctor (num);
-		MessageStream.Read (((MemoryBuffer)(ref val2)).Data, 0, num);
-		if (val.ShouldPool) {
-			val.Dispose ();
+		MemoryBuffer memoryBuffer = new MemoryBuffer (num);
+		MessageStream.Read (memoryBuffer.Data, 0, num);
+		if (appMessage.ShouldPool) {
+			appMessage.Dispose ();
 		}
-		SendRaw (((MemoryBuffer)(ref val2)).Slice (num));
+		SendRaw (memoryBuffer.Slice (num));
 		Profiler.EndSample ();
 	}
 
@@ -179,19 +172,17 @@ public class Connection : IConnection
 
 	public void SendRaw (MemoryBuffer data)
 	{
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
 		try {
 			_connection.Send (data);
 		} catch (Exception arg) {
-			Debug.LogError ((object)$"Failed to send message to app client {_connection.ConnectionInfo.ClientIpAddress}: {arg}");
+			Debug.LogError ($"Failed to send message to app client {_connection.ConnectionInfo.ClientIpAddress}: {arg}");
 		}
 	}
 
 	private static bool TryGetCameraTarget (IRemoteControllable camera, out CameraTarget target)
 	{
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
 		BaseEntity baseEntity = camera?.GetEnt ();
-		if (camera.IsUnityNull () || (Object)(object)baseEntity == (Object)null || !baseEntity.IsValid ()) {
+		if (camera.IsUnityNull () || baseEntity == null || !baseEntity.IsValid ()) {
 			target = default(CameraTarget);
 			return false;
 		}

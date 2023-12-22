@@ -22,6 +22,6 @@ public class ProceduralDungeonCell : BaseMonoBehaviour
 
 	public void Awake ()
 	{
-		spawnGroups = ((Component)this).GetComponentsInChildren<SpawnGroup> ();
+		spawnGroups = GetComponentsInChildren<SpawnGroup> ();
 	}
 }

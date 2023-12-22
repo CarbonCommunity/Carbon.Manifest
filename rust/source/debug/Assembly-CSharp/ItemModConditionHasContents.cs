@@ -16,7 +16,7 @@ public class ItemModConditionHasContents : ItemMod
 		if (item.contents.itemList.Count == 0) {
 			return !requiredState;
 		}
-		if (Object.op_Implicit ((Object)(object)itemDef) && !item.contents.itemList.Any ((Item x) => (Object)(object)x.info == (Object)(object)itemDef)) {
+		if ((bool)itemDef && !item.contents.itemList.Any ((Item x) => x.info == itemDef)) {
 			return !requiredState;
 		}
 		return requiredState;

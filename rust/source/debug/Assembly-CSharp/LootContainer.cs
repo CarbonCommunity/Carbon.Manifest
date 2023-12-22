@@ -69,7 +69,7 @@ public class LootContainer : StorageContainer
 		if (initialLootSpawn) {
 			SpawnLoot ();
 		}
-		if (BlockPlayerItemInput && !Application.isLoadingSave && base.inventory != null) {
+		if (BlockPlayerItemInput && !Rust.Application.isLoadingSave && base.inventory != null) {
 			base.inventory.SetFlag (ItemContainer.Flag.NoItemInput, b: true);
 		}
 		SetFlag (Flags.Reserved6, PlayerInventory.IsBirthday ());
@@ -86,29 +86,24 @@ public class LootContainer : StorageContainer
 	public virtual void SpawnLoot ()
 	{
 		if (base.inventory == null) {
-			Debug.Log ((object)"CONTACT DEVELOPERS! LootContainer::PopulateLoot has null inventory!!!");
+			Debug.Log ("CONTACT DEVELOPERS! LootContainer::PopulateLoot has null inventory!!!");
 			return;
 		}
 		base.inventory.Clear ();
 		ItemManager.DoRemoves ();
 		PopulateLoot ();
 		if (shouldRefreshContents) {
-			((FacepunchBehaviour)this).Invoke ((Action)SpawnLoot, Random.Range (minSecondsBetweenRefresh, maxSecondsBetweenRefresh));
+			Invoke (SpawnLoot, UnityEngine.Random.Range (minSecondsBetweenRefresh, maxSecondsBetweenRefresh));
 		}
 	}
 
 	public int ScoreForRarity (Rarity rarity)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0005: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Expected I4, but got Unknown
-		return (rarity - 1) switch {
-			0 => 1, 
-			1 => 2, 
-			2 => 3, 
-			3 => 4, 
+		return rarity switch {
+			Rarity.Common => 1, 
+			Rarity.Uncommon => 2, 
+			Rarity.Rare => 3, 
+			Rarity.VeryRare => 4, 
 			_ => 5000, 
 		};
 	}
@@ -120,13 +115,13 @@ public class LootContainer : StorageContainer
 			for (int i = 0; i < lootSpawnSlots.Length; i++) {
 				LootSpawnSlot lootSpawnSlot = lootSpawnSlots [i];
 				for (int j = 0; j < lootSpawnSlot.numberToSpawn; j++) {
-					float num = Random.Range (0f, 1f);
+					float num = UnityEngine.Random.Range (0f, 1f);
 					if (num <= lootSpawnSlot.probability) {
 						lootSpawnSlot.definition.SpawnIntoContainer (base.inventory);
 					}
 				}
 			}
-		} else if ((Object)(object)lootDefinition != (Object)null) {
+		} else if (lootDefinition != null) {
 			for (int k = 0; k < maxDefinitionsToSpawn; k++) {
 				lootDefinition.SpawnIntoContainer (base.inventory);
 			}
@@ -134,7 +129,7 @@ public class LootContainer : StorageContainer
 		if (SpawnType == spawnType.ROADSIDE || SpawnType == spawnType.TOWN) {
 			foreach (Item item in base.inventory.itemList) {
 				if (item.hasCondition) {
-					item.condition = Random.Range (item.info.condition.foundCondition.fractionMin, item.info.condition.foundCondition.fractionMax) * item.info.condition.max;
+					item.condition = UnityEngine.Random.Range (item.info.condition.foundCondition.fractionMin, item.info.condition.foundCondition.fractionMax) * item.info.condition.max;
 				}
 			}
 		}
@@ -143,42 +138,32 @@ public class LootContainer : StorageContainer
 
 	public void GenerateScrap ()
 	{
-		//IL_0073: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0079: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0080: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0086: Unknown result type (might be due to invalid IL or missing references)
 		if (scrapAmount <= 0) {
 			return;
 		}
-		if ((Object)(object)scrapDef == (Object)null) {
+		if (scrapDef == null) {
 			scrapDef = ItemManager.FindItemDefinition ("scrap");
 		}
 		int num = scrapAmount;
 		if (num > 0) {
 			Item item = ItemManager.Create (scrapDef, num, 0uL);
 			if (!item.MoveToContainer (base.inventory)) {
-				item.Drop (((Component)this).transform.position, GetInheritedDropVelocity ());
+				item.Drop (base.transform.position, GetInheritedDropVelocity ());
 			}
 		}
 	}
 
 	public override void DropBonusItems (BaseEntity initiator, ItemContainer container)
 	{
-		//IL_0130: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0144: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0149: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0156: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015c: Unknown result type (might be due to invalid IL or missing references)
 		base.DropBonusItems (initiator, container);
-		if ((Object)(object)initiator == (Object)null || container == null) {
+		if (initiator == null || container == null) {
 			return;
 		}
 		BasePlayer basePlayer = initiator as BasePlayer;
-		if ((Object)(object)basePlayer == (Object)null || scrapAmount <= 0 || !((Object)(object)scrapDef != (Object)null)) {
+		if (basePlayer == null || scrapAmount <= 0 || !(scrapDef != null)) {
 			return;
 		}
-		float num = (((Object)(object)basePlayer.modifiers != (Object)null) ? (1f + basePlayer.modifiers.GetValue (Modifier.ModifierType.Scrap_Yield)) : 0f);
+		float num = ((basePlayer.modifiers != null) ? (1f + basePlayer.modifiers.GetValue (Modifier.ModifierType.Scrap_Yield)) : 0f);
 		if (!(num > 1f)) {
 			return;
 		}
@@ -231,7 +216,7 @@ public class LootContainer : StorageContainer
 	{
 		Analytics.Azure.OnLootContainerDestroyed (this, info.InitiatorPlayer, info.Weapon);
 		base.OnKilled (info);
-		if (info != null && (Object)(object)info.InitiatorPlayer != (Object)null && !string.IsNullOrEmpty (deathStat)) {
+		if (info != null && info.InitiatorPlayer != null && !string.IsNullOrEmpty (deathStat)) {
 			info.InitiatorPlayer.stats.Add (deathStat, 1, Stats.Life);
 		}
 	}

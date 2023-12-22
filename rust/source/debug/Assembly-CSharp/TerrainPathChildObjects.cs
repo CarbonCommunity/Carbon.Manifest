@@ -12,31 +12,19 @@ public class TerrainPathChildObjects : MonoBehaviour
 	public float Fade = 0f;
 
 	[InspectorFlags]
-	public Enum Splat = (Enum)1;
+	public TerrainSplat.Enum Splat = TerrainSplat.Enum.Dirt;
 
 	[InspectorFlags]
-	public Enum Topology = (Enum)2048;
+	public TerrainTopology.Enum Topology = TerrainTopology.Enum.Road;
 
 	public InfrastructureType Type = InfrastructureType.Road;
 
 	protected void Awake ()
 	{
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Expected O, but got Unknown
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0126: Expected I4, but got Unknown
-		//IL_0129: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0133: Expected I4, but got Unknown
-		//IL_01e5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ef: Expected I4, but got Unknown
-		//IL_01f2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01fc: Expected I4, but got Unknown
 		if (!World.Cached && !World.Networked) {
 			List<Vector3> list = new List<Vector3> ();
-			foreach (Transform item in ((Component)this).transform) {
-				Transform val = item;
-				list.Add (val.position);
+			foreach (Transform item in base.transform) {
+				list.Add (item.position);
 			}
 			if (list.Count >= 2) {
 				switch (Type) {
@@ -71,27 +59,15 @@ public class TerrainPathChildObjects : MonoBehaviour
 				}
 			}
 		}
-		GameManager.Destroy (((Component)this).gameObject);
+		GameManager.Destroy (base.gameObject);
 	}
 
 	protected void OnDrawGizmos ()
 	{
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Expected O, but got Unknown
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
 		bool flag = false;
 		Vector3 a = Vector3.zero;
-		foreach (Transform item in ((Component)this).transform) {
-			Transform val = item;
-			Vector3 position = val.position;
+		foreach (Transform item in base.transform) {
+			Vector3 position = item.position;
 			if (flag) {
 				Gizmos.color = new Color (0.5f, 0.5f, 0.5f, 1f);
 				GizmosUtil.DrawWirePath (a, position, 0.5f * Width);

@@ -46,9 +46,6 @@ public class VehicleModuleSlidingComponent
 
 	private void CheckPosition (BaseEntity parentEntity, float dt)
 	{
-		//IL_009f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b1: Unknown result type (might be due to invalid IL or missing references)
 		bool flag = WantsOpenPos (parentEntity);
 		if ((flag && positionPercent == 1f) || (!flag && positionPercent == 0f)) {
 			return;
@@ -57,7 +54,7 @@ public class VehicleModuleSlidingComponent
 		positionPercent = Mathf.Clamp01 (positionPercent + num);
 		SlidingPart[] array = slidingParts;
 		foreach (SlidingPart slidingPart in array) {
-			if (!((Object)(object)slidingPart.transform == (Object)null)) {
+			if (!(slidingPart.transform == null)) {
 				slidingPart.transform.localPosition = Vector3.Lerp (slidingPart.closedPosition, slidingPart.openPosition, positionPercent);
 			}
 		}

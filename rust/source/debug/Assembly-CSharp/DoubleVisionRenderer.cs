@@ -18,15 +18,11 @@ public class DoubleVisionRenderer : PostProcessEffectRenderer<DoubleVision>
 
 	public override void Render (PostProcessRenderContext context)
 	{
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0083: Unknown result type (might be due to invalid IL or missing references)
 		CommandBuffer command = context.command;
 		command.BeginSample ("DoubleVision");
 		PropertySheet propertySheet = context.propertySheets.Get (doubleVisionShader);
 		propertySheet.properties.Clear ();
-		propertySheet.properties.SetVector (displaceProperty, Vector4.op_Implicit (base.settings.displace.value));
+		propertySheet.properties.SetVector (displaceProperty, base.settings.displace.value);
 		propertySheet.properties.SetFloat (amountProperty, base.settings.amount.value);
 		command.BlitFullscreenTriangle (context.source, context.destination, propertySheet, 0);
 		command.EndSample ("DoubleVision");

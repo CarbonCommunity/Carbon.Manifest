@@ -1,4 +1,4 @@
-using System;
+#define ENABLE_PROFILER
 using System.Collections.Generic;
 using ConVar;
 using Facepunch;
@@ -9,7 +9,7 @@ public class GroundWatch : BaseMonoBehaviour, IServerComponent
 {
 	public Vector3 groundPosition = Vector3.zero;
 
-	public LayerMask layers = LayerMask.op_Implicit (161546240);
+	public LayerMask layers = 161546240;
 
 	public float radius = 0.1f;
 
@@ -20,72 +20,61 @@ public class GroundWatch : BaseMonoBehaviour, IServerComponent
 
 	private void OnDrawGizmosSelected ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		Gizmos.matrix = ((Component)this).transform.localToWorldMatrix;
+		Gizmos.matrix = base.transform.localToWorldMatrix;
 		Gizmos.color = Color.green;
 		Gizmos.DrawSphere (groundPosition, radius);
 	}
 
 	public static void PhysicsChanged (GameObject obj)
 	{
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)obj == (Object)null) {
+		if (obj == null) {
 			return;
 		}
 		Collider component = obj.GetComponent<Collider> ();
-		if (!Object.op_Implicit ((Object)(object)component)) {
+		if (!component) {
 			return;
 		}
 		Bounds bounds = component.bounds;
-		List<BaseEntity> list = Pool.GetList<BaseEntity> ();
-		Vector3 center = ((Bounds)(ref bounds)).center;
-		Vector3 extents = ((Bounds)(ref bounds)).extents;
-		Vis.Entities (center, ((Vector3)(ref extents)).magnitude + 1f, list, 2263296, (QueryTriggerInteraction)2);
-		foreach (BaseEntity item in list) {
+		List<BaseEntity> obj2 = Facepunch.Pool.GetList<BaseEntity> ();
+		Vis.Entities (bounds.center, bounds.extents.magnitude + 1f, obj2, 2263296);
+		foreach (BaseEntity item in obj2) {
 			if (!item.IsDestroyed && !item.isClient && !(item is BuildingBlock)) {
 				Profiler.BeginSample ("BroadcastMessage OnPhysicsNeighbourChanged");
-				((Component)item).BroadcastMessage ("OnPhysicsNeighbourChanged", (SendMessageOptions)1);
+				item.BroadcastMessage ("OnPhysicsNeighbourChanged", SendMessageOptions.DontRequireReceiver);
 				Profiler.EndSample ();
 			}
 		}
-		Pool.FreeList<BaseEntity> (ref list);
+		Facepunch.Pool.FreeList (ref obj2);
 	}
 
 	public static void PhysicsChanged (Vector3 origin, float radius, int layerMask)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		List<BaseEntity> list = Pool.GetList<BaseEntity> ();
-		Vis.Entities (origin, radius, list, layerMask, (QueryTriggerInteraction)2);
-		foreach (BaseEntity item in list) {
+		List<BaseEntity> obj = Facepunch.Pool.GetList<BaseEntity> ();
+		Vis.Entities (origin, radius, obj, layerMask);
+		foreach (BaseEntity item in obj) {
 			if (!item.IsDestroyed && !item.isClient && !(item is BuildingBlock)) {
 				Profiler.BeginSample ("BroadcastMessage OnPhysicsNeighbourChanged - Deployables");
-				((Component)item).BroadcastMessage ("OnPhysicsNeighbourChanged", (SendMessageOptions)1);
+				item.BroadcastMessage ("OnPhysicsNeighbourChanged", SendMessageOptions.DontRequireReceiver);
 				Profiler.EndSample ();
 			}
 		}
-		Pool.FreeList<BaseEntity> (ref list);
+		Facepunch.Pool.FreeList (ref obj);
 	}
 
 	private void OnPhysicsNeighbourChanged ()
 	{
 		if (!OnGround ()) {
 			fails++;
-			if (fails >= Physics.groundwatchfails) {
-				BaseEntity baseEntity = ((Component)this).gameObject.ToBaseEntity ();
-				if (Object.op_Implicit ((Object)(object)baseEntity)) {
-					((Component)((Component)baseEntity).transform).BroadcastMessage ("OnGroundMissing", (SendMessageOptions)1);
+			if (fails >= ConVar.Physics.groundwatchfails) {
+				BaseEntity baseEntity = base.gameObject.ToBaseEntity ();
+				if ((bool)baseEntity) {
+					baseEntity.transform.BroadcastMessage ("OnGroundMissing", SendMessageOptions.DontRequireReceiver);
 				}
 			} else {
-				if (Physics.groundwatchdebug) {
-					Debug.Log ((object)("GroundWatch retry: " + fails));
+				if (ConVar.Physics.groundwatchdebug) {
+					Debug.Log ("GroundWatch retry: " + fails);
 				}
-				((FacepunchBehaviour)this).Invoke ((Action)OnPhysicsNeighbourChanged, Physics.groundwatchdelay);
+				Invoke (OnPhysicsNeighbourChanged, ConVar.Physics.groundwatchdelay);
 			}
 		} else {
 			fails = 0;
@@ -94,13 +83,8 @@ public class GroundWatch : BaseMonoBehaviour, IServerComponent
 
 	private bool OnGround ()
 	{
-		//IL_0132: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0137: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0144: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00be: Unknown result type (might be due to invalid IL or missing references)
-		BaseEntity component = ((Component)this).GetComponent<BaseEntity> ();
-		if (Object.op_Implicit ((Object)(object)component)) {
+		BaseEntity component = GetComponent<BaseEntity> ();
+		if ((bool)component) {
 			if (component.HasParent ()) {
 				return true;
 			}
@@ -111,9 +95,9 @@ public class GroundWatch : BaseMonoBehaviour, IServerComponent
 					SocketMod[] socketMods = socket_Base.socketMods;
 					foreach (SocketMod socketMod in socketMods) {
 						SocketMod_AreaCheck socketMod_AreaCheck = socketMod as SocketMod_AreaCheck;
-						if ((bool)socketMod_AreaCheck && socketMod_AreaCheck.wantsInside && !socketMod_AreaCheck.DoCheck (((Component)component).transform.position, ((Component)component).transform.rotation, component)) {
-							if (Physics.groundwatchdebug) {
-								Debug.Log ((object)("GroundWatch failed: " + socketMod_AreaCheck.hierachyName));
+						if ((bool)socketMod_AreaCheck && socketMod_AreaCheck.wantsInside && !socketMod_AreaCheck.DoCheck (component.transform.position, component.transform.rotation, component)) {
+							if (ConVar.Physics.groundwatchdebug) {
+								Debug.Log ("GroundWatch failed: " + socketMod_AreaCheck.hierachyName);
 							}
 							return false;
 						}
@@ -121,11 +105,11 @@ public class GroundWatch : BaseMonoBehaviour, IServerComponent
 				}
 			}
 		}
-		List<Collider> list = Pool.GetList<Collider> ();
-		Vis.Colliders<Collider> (((Component)this).transform.TransformPoint (groundPosition), radius, list, LayerMask.op_Implicit (layers), (QueryTriggerInteraction)2);
-		foreach (Collider item in list) {
-			BaseEntity baseEntity = ((Component)item).gameObject.ToBaseEntity ();
-			if (Object.op_Implicit ((Object)(object)baseEntity) && ((Object)(object)baseEntity == (Object)(object)component || baseEntity.IsDestroyed || baseEntity.isClient)) {
+		List<Collider> obj = Facepunch.Pool.GetList<Collider> ();
+		Vis.Colliders (base.transform.TransformPoint (groundPosition), radius, obj, layers);
+		foreach (Collider item in obj) {
+			BaseEntity baseEntity = item.gameObject.ToBaseEntity ();
+			if ((bool)baseEntity && (baseEntity == component || baseEntity.IsDestroyed || baseEntity.isClient)) {
 				continue;
 			}
 			if (whitelist != null && whitelist.Length != 0) {
@@ -143,16 +127,16 @@ public class GroundWatch : BaseMonoBehaviour, IServerComponent
 			}
 			DecayEntity decayEntity = component as DecayEntity;
 			DecayEntity decayEntity2 = baseEntity as DecayEntity;
-			if (Object.op_Implicit ((Object)(object)decayEntity) && decayEntity.buildingID != 0 && Object.op_Implicit ((Object)(object)decayEntity2) && decayEntity2.buildingID != 0 && decayEntity.buildingID != decayEntity2.buildingID) {
+			if ((bool)decayEntity && decayEntity.buildingID != 0 && (bool)decayEntity2 && decayEntity2.buildingID != 0 && decayEntity.buildingID != decayEntity2.buildingID) {
 				continue;
 			}
-			Pool.FreeList<Collider> (ref list);
+			Facepunch.Pool.FreeList (ref obj);
 			return true;
 		}
-		if (Physics.groundwatchdebug) {
-			Debug.Log ((object)"GroundWatch failed: Legacy radius check");
+		if (ConVar.Physics.groundwatchdebug) {
+			Debug.Log ("GroundWatch failed: Legacy radius check");
 		}
-		Pool.FreeList<Collider> (ref list);
+		Facepunch.Pool.FreeList (ref obj);
 		return false;
 	}
 }

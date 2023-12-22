@@ -1,3 +1,4 @@
+#define ENABLE_PROFILER
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,13 +23,13 @@ public class BoneDictionary
 	public BoneDictionary (Transform rootBone)
 	{
 		Profiler.BeginSample ("BuildBoneDictionary");
-		transform = rootBone;
-		transforms = ((Component)rootBone).GetComponentsInChildren<Transform> (true);
+		this.transform = rootBone;
+		transforms = rootBone.GetComponentsInChildren<Transform> (includeInactive: true);
 		names = new string[transforms.Length];
 		for (int i = 0; i < transforms.Length; i++) {
-			Transform val = transforms [i];
-			if ((Object)(object)val != (Object)null) {
-				names [i] = ((Object)val).name;
+			Transform transform = transforms [i];
+			if (transform != null) {
+				names [i] = transform.name;
 			}
 		}
 		BuildBoneDictionary ();
@@ -48,17 +49,17 @@ public class BoneDictionary
 	private void BuildBoneDictionary ()
 	{
 		for (int i = 0; i < transforms.Length; i++) {
-			Transform val = transforms [i];
+			Transform transform = transforms [i];
 			string text = names [i];
 			uint num = StringPool.Get (text);
 			if (!nameDict.ContainsKey (text)) {
-				nameDict.Add (text, val);
+				nameDict.Add (text, transform);
 			}
 			if (!hashDict.ContainsKey (num)) {
-				hashDict.Add (num, val);
+				hashDict.Add (num, transform);
 			}
-			if ((Object)(object)val != (Object)null && !transformDict.ContainsKey (val)) {
-				transformDict.Add (val, num);
+			if (transform != null && !transformDict.ContainsKey (transform)) {
+				transformDict.Add (transform, num);
 			}
 		}
 	}

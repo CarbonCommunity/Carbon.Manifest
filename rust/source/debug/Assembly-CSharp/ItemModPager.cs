@@ -1,13 +1,11 @@
-using UnityEngine;
-
 public class ItemModPager : ItemModRFListener
 {
 	public override void ServerCommand (Item item, string command, BasePlayer player)
 	{
 		base.ServerCommand (item, command, player);
 		BaseEntity associatedEntity = ItemModAssociatedEntity<BaseEntity>.GetAssociatedEntity (item);
-		PagerEntity component = ((Component)associatedEntity).GetComponent<PagerEntity> ();
-		if (Object.op_Implicit ((Object)(object)component)) {
+		PagerEntity component = associatedEntity.GetComponent<PagerEntity> ();
+		if ((bool)component) {
 			switch (command) {
 			case "stop":
 				component.SetOff ();

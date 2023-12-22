@@ -7,8 +7,8 @@ public class HideIfScoped : MonoBehaviour
 	public void SetVisible (bool vis)
 	{
 		Renderer[] array = renderers;
-		foreach (Renderer val in array) {
-			val.enabled = vis;
+		foreach (Renderer renderer in array) {
+			renderer.enabled = vis;
 		}
 	}
 }

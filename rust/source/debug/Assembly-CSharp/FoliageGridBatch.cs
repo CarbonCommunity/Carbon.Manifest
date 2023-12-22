@@ -6,7 +6,7 @@ public class FoliageGridBatch : MeshBatch
 {
 	private Vector3 position;
 
-	private Mesh meshBatch;
+	private UnityEngine.Mesh meshBatch;
 
 	private MeshFilter meshFilter;
 
@@ -22,48 +22,35 @@ public class FoliageGridBatch : MeshBatch
 
 	protected void Awake ()
 	{
-		meshFilter = ((Component)this).GetComponent<MeshFilter> ();
-		meshRenderer = ((Component)this).GetComponent<MeshRenderer> ();
+		meshFilter = GetComponent<MeshFilter> ();
+		meshRenderer = GetComponent<MeshRenderer> ();
 		meshData = new FoliageGridMeshData ();
 		meshGroup = new MeshGroup ();
 	}
 
 	public void Setup (Vector3 position, Material material, ShadowCastingMode shadows, int layer)
 	{
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Invalid comparison between Unknown and I4
-		Vector3 val2 = (((Component)this).transform.position = position);
-		this.position = val2;
-		((Component)this).gameObject.layer = layer;
-		((Renderer)meshRenderer).sharedMaterial = material;
-		((Renderer)meshRenderer).shadowCastingMode = shadows;
-		if ((int)shadows == 3) {
-			((Renderer)meshRenderer).receiveShadows = false;
-			((Renderer)meshRenderer).motionVectors = false;
-			((Renderer)meshRenderer).lightProbeUsage = (LightProbeUsage)0;
-			((Renderer)meshRenderer).reflectionProbeUsage = (ReflectionProbeUsage)0;
+		Vector3 vector2 = (base.transform.position = position);
+		this.position = vector2;
+		base.gameObject.layer = layer;
+		meshRenderer.sharedMaterial = material;
+		meshRenderer.shadowCastingMode = shadows;
+		if (shadows == ShadowCastingMode.ShadowsOnly) {
+			meshRenderer.receiveShadows = false;
+			meshRenderer.motionVectors = false;
+			meshRenderer.lightProbeUsage = LightProbeUsage.Off;
+			meshRenderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
 		} else {
-			((Renderer)meshRenderer).receiveShadows = true;
-			((Renderer)meshRenderer).motionVectors = true;
-			((Renderer)meshRenderer).lightProbeUsage = (LightProbeUsage)1;
-			((Renderer)meshRenderer).reflectionProbeUsage = (ReflectionProbeUsage)1;
+			meshRenderer.receiveShadows = true;
+			meshRenderer.motionVectors = true;
+			meshRenderer.lightProbeUsage = LightProbeUsage.BlendProbes;
+			meshRenderer.reflectionProbeUsage = ReflectionProbeUsage.BlendProbes;
 		}
 	}
 
 	public void Add (MeshInstance instance)
 	{
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-		ref Vector3 reference = ref instance.position;
-		reference -= position;
+		instance.position -= position;
 		meshGroup.data.Add (instance);
 		AddVertices (instance.mesh.vertexCount);
 	}
@@ -88,38 +75,38 @@ public class FoliageGridBatch : MeshBatch
 
 	protected override void ApplyMesh ()
 	{
-		if (!Object.op_Implicit ((Object)(object)meshBatch)) {
-			meshBatch = AssetPool.Get<Mesh> ();
+		if (!meshBatch) {
+			meshBatch = AssetPool.Get<UnityEngine.Mesh> ();
 		}
 		meshData.Apply (meshBatch);
-		meshBatch.UploadMeshData (false);
+		meshBatch.UploadMeshData (markNoLongerReadable: false);
 	}
 
 	protected override void ToggleMesh (bool state)
 	{
 		if (state) {
-			if (Object.op_Implicit ((Object)(object)meshFilter)) {
+			if ((bool)meshFilter) {
 				meshFilter.sharedMesh = meshBatch;
 			}
-			if (Object.op_Implicit ((Object)(object)meshRenderer)) {
-				((Renderer)meshRenderer).enabled = true;
+			if ((bool)meshRenderer) {
+				meshRenderer.enabled = true;
 			}
 		} else {
-			if (Object.op_Implicit ((Object)(object)meshFilter)) {
+			if ((bool)meshFilter) {
 				meshFilter.sharedMesh = null;
 			}
-			if (Object.op_Implicit ((Object)(object)meshRenderer)) {
-				((Renderer)meshRenderer).enabled = false;
+			if ((bool)meshRenderer) {
+				meshRenderer.enabled = false;
 			}
 		}
 	}
 
 	protected override void OnPooled ()
 	{
-		if (Object.op_Implicit ((Object)(object)meshFilter)) {
+		if ((bool)meshFilter) {
 			meshFilter.sharedMesh = null;
 		}
-		if (Object.op_Implicit ((Object)(object)meshBatch)) {
+		if ((bool)meshBatch) {
 			AssetPool.Free (ref meshBatch);
 		}
 		meshData.Free ();

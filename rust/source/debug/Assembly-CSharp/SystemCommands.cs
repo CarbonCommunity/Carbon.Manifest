@@ -4,19 +4,19 @@ using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
 
-[Factory ("system")]
+[ConsoleSystem.Factory ("system")]
 public static class SystemCommands
 {
 	[ServerVar]
 	[ClientVar]
-	public static void cpu_affinity (Arg arg)
+	public static void cpu_affinity (ConsoleSystem.Arg arg)
 	{
 		long num = 0L;
-		if (!arg.HasArgs (1)) {
+		if (!arg.HasArgs ()) {
 			arg.ReplyWith ("Format is 'cpu_affinity {core,core1-core2,etc}'");
 			return;
 		}
-		string[] array = arg.GetString (0, "").Split (',');
+		string[] array = arg.GetString (0).Split (',');
 		HashSet<int> hashSet = new HashSet<int> ();
 		string[] array2 = array;
 		foreach (string text in array2) {
@@ -65,7 +65,7 @@ public static class SystemCommands
 			Process currentProcess = Process.GetCurrentProcess ();
 			WindowsAffinityShim.SetProcessAffinityMask (currentProcess.Handle, new IntPtr (num));
 		} catch (Exception arg2) {
-			Debug.LogWarning ((object)$"Unable to set cpu affinity: {arg2}");
+			UnityEngine.Debug.LogWarning ($"Unable to set cpu affinity: {arg2}");
 			return;
 		}
 		arg.ReplyWith ("Successfully changed cpu affinity");
@@ -73,15 +73,13 @@ public static class SystemCommands
 
 	[ServerVar]
 	[ClientVar]
-	public static void cpu_priority (Arg arg)
+	public static void cpu_priority (ConsoleSystem.Arg arg)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Invalid comparison between Unknown and I4
-		if ((int)Application.platform == 1) {
+		if (Application.platform == RuntimePlatform.OSXPlayer) {
 			arg.ReplyWith ("OSX is not a supported platform");
 			return;
 		}
-		string @string = arg.GetString (0, "");
+		string @string = arg.GetString (0);
 		ProcessPriorityClass mask;
 		switch (@string.Replace ("-", "").Replace ("_", "")) {
 		case "belownormal":
@@ -104,7 +102,7 @@ public static class SystemCommands
 			Process currentProcess = Process.GetCurrentProcess ();
 			WindowsAffinityShim.SetPriorityClass (currentProcess.Handle, (uint)mask);
 		} catch (Exception arg2) {
-			Debug.LogWarning ((object)$"Unable to set cpu priority: {arg2}");
+			UnityEngine.Debug.LogWarning ($"Unable to set cpu priority: {arg2}");
 			return;
 		}
 		arg.ReplyWith ("Successfully changed cpu priority to " + mask);

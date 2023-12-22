@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using UnityEngine;
 
 public class EntityDebug : EntityComponent<BaseEntity>
 {
@@ -8,7 +7,7 @@ public class EntityDebug : EntityComponent<BaseEntity>
 	private void Update ()
 	{
 		if (!base.baseEntity.IsValid () || !base.baseEntity.IsDebugging ()) {
-			((Behaviour)this).enabled = false;
+			base.enabled = false;
 		} else if (!(stopwatch.Elapsed.TotalSeconds < 0.5)) {
 			if (base.baseEntity.isClient) {
 			}

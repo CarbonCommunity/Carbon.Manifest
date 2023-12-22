@@ -37,7 +37,7 @@ public class ch47Animator : MonoBehaviour
 	private void Start ()
 	{
 		EnableBlurredRotorBlades (enabled: false);
-		animator.SetBool ("rotorblade_stop", false);
+		animator.SetBool ("rotorblade_stop", value: false);
 	}
 
 	public void SetDropDoorOpen (bool isOpen)
@@ -59,26 +59,14 @@ public class ch47Animator : MonoBehaviour
 			EnableBlurredRotorBlades (enabled: false);
 		}
 		if (rotorBladeSpeed <= 0f) {
-			animator.SetBool ("rotorblade_stop", true);
+			animator.SetBool ("rotorblade_stop", value: true);
 		} else {
-			animator.SetBool ("rotorblade_stop", false);
+			animator.SetBool ("rotorblade_stop", value: false);
 		}
 	}
 
 	private void LateUpdate ()
 	{
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006b: Unknown result type (might be due to invalid IL or missing references)
 		float num = Time.deltaTime * rotorBladeSpeed * 15f;
 		Vector3 localEulerAngles = frontRotorBlade.localEulerAngles;
 		frontRotorBlade.localEulerAngles = new Vector3 (localEulerAngles.x, localEulerAngles.y + num, localEulerAngles.z);
@@ -90,12 +78,12 @@ public class ch47Animator : MonoBehaviour
 	{
 		blurredRotorBladesEnabled = enabled;
 		SkinnedMeshRenderer[] array = blurredRotorBlades;
-		foreach (SkinnedMeshRenderer val in array) {
-			((Renderer)val).enabled = enabled;
+		foreach (SkinnedMeshRenderer skinnedMeshRenderer in array) {
+			skinnedMeshRenderer.enabled = enabled;
 		}
 		SkinnedMeshRenderer[] rotorBlades = RotorBlades;
-		foreach (SkinnedMeshRenderer val2 in rotorBlades) {
-			((Renderer)val2).enabled = !enabled;
+		foreach (SkinnedMeshRenderer skinnedMeshRenderer2 in rotorBlades) {
+			skinnedMeshRenderer2.enabled = !enabled;
 		}
 	}
 }

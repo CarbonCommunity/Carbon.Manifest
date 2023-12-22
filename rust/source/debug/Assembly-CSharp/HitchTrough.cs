@@ -37,7 +37,7 @@ public class HitchTrough : StorageContainer
 	public Item GetFoodItem ()
 	{
 		foreach (Item item in base.inventory.itemList) {
-			if (item.info.category == ItemCategory.Food && Object.op_Implicit ((Object)(object)((Component)item.info).GetComponent<ItemModConsumable> ())) {
+			if (item.info.category == ItemCategory.Food && (bool)item.info.GetComponent<ItemModConsumable> ()) {
 				return item;
 			}
 		}
@@ -46,7 +46,6 @@ public class HitchTrough : StorageContainer
 
 	public bool ValidHitchPosition (Vector3 pos)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
 		if (GetClosest (pos, includeOccupied: false, 1f) != null) {
 			return true;
 		}
@@ -66,8 +65,6 @@ public class HitchTrough : StorageContainer
 
 	public HitchSpot GetClosest (Vector3 testPos, bool includeOccupied = false, float maxRadius = -1f)
 	{
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
 		float num = 10000f;
 		HitchSpot result = null;
 		for (int i = 0; i < hitchSpots.Length; i++) {
@@ -84,7 +81,7 @@ public class HitchTrough : StorageContainer
 	{
 		HitchSpot[] array = hitchSpots;
 		foreach (HitchSpot hitchSpot in array) {
-			if ((Object)(object)hitchSpot.GetHorse (base.isServer) == (Object)(object)horse) {
+			if (hitchSpot.GetHorse (base.isServer) == horse) {
 				hitchSpot.SetOccupiedBy (null);
 				horse.SetHitch (null);
 			}
@@ -105,19 +102,16 @@ public class HitchTrough : StorageContainer
 
 	public bool AttemptToHitch (RidableHorse horse, HitchSpot hitch = null)
 	{
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0056: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0061: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)horse == (Object)null) {
+		if (horse == null) {
 			return false;
 		}
 		if (hitch == null) {
-			hitch = GetClosest (((Component)horse).transform.position);
+			hitch = GetClosest (horse.transform.position);
 		}
 		if (hitch != null) {
 			hitch.SetOccupiedBy (horse);
 			horse.SetHitch (this);
-			((Component)horse).transform.SetPositionAndRotation (hitch.spot.position, hitch.spot.rotation);
+			horse.transform.SetPositionAndRotation (hitch.spot.position, hitch.spot.rotation);
 			horse.DismountAllPlayers ();
 			return true;
 		}
@@ -126,12 +120,8 @@ public class HitchTrough : StorageContainer
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_0031: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
-		info.msg.ioEntity = Pool.Get<IOEntity> ();
+		info.msg.ioEntity = Pool.Get<ProtoBuf.IOEntity> ();
 		info.msg.ioEntity.genericEntRef1 = hitchSpots [0].horse.uid;
 		info.msg.ioEntity.genericEntRef2 = hitchSpots [1].horse.uid;
 	}
@@ -149,7 +139,7 @@ public class HitchTrough : StorageContainer
 		HitchSpot[] array = hitchSpots;
 		foreach (HitchSpot hitchSpot in array) {
 			RidableHorse horse = hitchSpot.GetHorse ();
-			if (Object.op_Implicit ((Object)(object)horse)) {
+			if ((bool)horse) {
 				Unhitch (horse);
 			}
 		}
@@ -170,8 +160,6 @@ public class HitchTrough : StorageContainer
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (info.msg.ioEntity != null) {
 			hitchSpots [0].horse.uid = info.msg.ioEntity.genericEntRef1;

@@ -40,8 +40,6 @@ public class TerrainPlacementMap : TerrainMap<bool>
 
 	public bool GetBlocked (Vector3 worldPos)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
 		float normX = TerrainMeta.NormalizeX (worldPos.x);
 		float normZ = TerrainMeta.NormalizeZ (worldPos.z);
 		return GetBlocked (normX, normZ);
@@ -61,8 +59,6 @@ public class TerrainPlacementMap : TerrainMap<bool>
 
 	public void SetBlocked (Vector3 worldPos)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
 		float normX = TerrainMeta.NormalizeX (worldPos.x);
 		float normZ = TerrainMeta.NormalizeZ (worldPos.z);
 		SetBlocked (normX, normZ);
@@ -82,8 +78,6 @@ public class TerrainPlacementMap : TerrainMap<bool>
 
 	public bool GetBlocked (Vector3 worldPos, float radius)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
 		float normX = TerrainMeta.NormalizeX (worldPos.x);
 		float normZ = TerrainMeta.NormalizeZ (worldPos.z);
 		return GetBlocked (normX, normZ, radius);
@@ -91,7 +85,6 @@ public class TerrainPlacementMap : TerrainMap<bool>
 
 	public bool GetBlocked (float normX, float normZ, float radius)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
 		float num = TerrainMeta.OneOverSize.x * radius;
 		int num2 = Index (normX - num);
 		int num3 = Index (normX + num);
@@ -109,8 +102,6 @@ public class TerrainPlacementMap : TerrainMap<bool>
 
 	public void SetBlocked (Vector3 worldPos, float radius, float fade = 0f)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
 		float normX = TerrainMeta.NormalizeX (worldPos.x);
 		float normZ = TerrainMeta.NormalizeZ (worldPos.z);
 		SetBlocked (normX, normZ, radius, fade);

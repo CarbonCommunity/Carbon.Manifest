@@ -11,29 +11,28 @@ public class RustPlatformHooks : IPlatformHooks
 {
 	public static readonly RustPlatformHooks Instance = new RustPlatformHooks ();
 
-	public uint SteamAppId => Defines.appID;
+	public uint SteamAppId => Rust.Defines.appID;
 
 	public ServerParameters? ServerParameters {
 		get {
-			//IL_00b1: Unknown result type (might be due to invalid IL or missing references)
-			if (Net.sv == null) {
+			if (Network.Net.sv == null) {
 				return null;
 			}
-			IPAddress iPAddress = null;
+			IPAddress address = null;
 			if (!string.IsNullOrEmpty (ConVar.Server.ip)) {
-				iPAddress = IPAddress.Parse (ConVar.Server.ip);
+				address = IPAddress.Parse (ConVar.Server.ip);
 			}
 			if (ConVar.Server.queryport <= 0 || ConVar.Server.queryport == ConVar.Server.port) {
 				int num = Math.Max (ConVar.Server.port, RCon.Port);
 				ConVar.Server.queryport = num + 1;
 			}
-			return new ServerParameters ("rust", "Rust", 2402.ToString (), ConVar.Server.secure, CommandLine.HasSwitch ("-sdrnet"), iPAddress, (ushort)Net.sv.port, (ushort)ConVar.Server.queryport);
+			return new ServerParameters ("rust", "Rust", 2402.ToString (), ConVar.Server.secure, CommandLine.HasSwitch ("-sdrnet"), address, (ushort)Network.Net.sv.port, (ushort)ConVar.Server.queryport);
 		}
 	}
 
 	public void Abort ()
 	{
-		Application.Quit ();
+		Rust.Application.Quit ();
 	}
 
 	public void OnItemDefinitionsChanged ()
@@ -43,7 +42,6 @@ public class RustPlatformHooks : IPlatformHooks
 
 	public void AuthSessionValidated (ulong userId, ulong ownerUserId, AuthResponse response, string rawResponse)
 	{
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
 		Analytics.Azure.OnSteamAuth (userId, ownerUserId, rawResponse);
 		SingletonComponent<ServerMgr>.Instance.OnValidateAuthTicketResponse (userId, ownerUserId, response);
 	}

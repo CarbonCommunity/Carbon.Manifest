@@ -1,3 +1,4 @@
+#define ENABLE_PROFILER
 using UnityEngine;
 using UnityEngine.Profiling;
 
@@ -8,7 +9,7 @@ public class BaseFishNPC : BaseNpc, IAIAttack, IAISenses, IThinker
 	public override void ServerInit ()
 	{
 		base.ServerInit ();
-		brain = ((Component)this).GetComponent<FishBrain> ();
+		brain = GetComponent<FishBrain> ();
 		if (!base.isClient) {
 			AIThinkManager.AddAnimal (this);
 		}
@@ -57,17 +58,13 @@ public class BaseFishNPC : BaseNpc, IAIAttack, IAISenses, IThinker
 
 	public bool IsTargetInRange (BaseEntity entity, out float dist)
 	{
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		dist = Vector3.Distance (((Component)entity).transform.position, base.AttackPosition);
+		dist = Vector3.Distance (entity.transform.position, base.AttackPosition);
 		return dist <= EngagementRange ();
 	}
 
 	public bool CanSeeTarget (BaseEntity entity)
 	{
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)entity == (Object)null) {
+		if (entity == null) {
 			return false;
 		}
 		Profiler.BeginSample ("BaseFishNPC.CanSeeTarget");
@@ -84,7 +81,7 @@ public class BaseFishNPC : BaseNpc, IAIAttack, IAISenses, IThinker
 	public bool StartAttacking (BaseEntity target)
 	{
 		BaseCombatEntity baseCombatEntity = target as BaseCombatEntity;
-		if ((Object)(object)baseCombatEntity == (Object)null) {
+		if (baseCombatEntity == null) {
 			return false;
 		}
 		Attack (baseCombatEntity);
@@ -108,14 +105,14 @@ public class BaseFishNPC : BaseNpc, IAIAttack, IAISenses, IThinker
 	public bool IsThreat (BaseEntity entity)
 	{
 		BaseNpc baseNpc = entity as BaseNpc;
-		if ((Object)(object)baseNpc != (Object)null) {
+		if (baseNpc != null) {
 			if (baseNpc.Stats.Family == Stats.Family) {
 				return false;
 			}
 			return IsAfraidOf (baseNpc.Stats.Family);
 		}
 		BasePlayer basePlayer = entity as BasePlayer;
-		if ((Object)(object)basePlayer != (Object)null) {
+		if (basePlayer != null) {
 			return IsAfraidOf (basePlayer.Family);
 		}
 		return false;
@@ -124,7 +121,7 @@ public class BaseFishNPC : BaseNpc, IAIAttack, IAISenses, IThinker
 	public bool IsTarget (BaseEntity entity)
 	{
 		BaseNpc baseNpc = entity as BaseNpc;
-		if ((Object)(object)baseNpc != (Object)null && baseNpc.Stats.Family == Stats.Family) {
+		if (baseNpc != null && baseNpc.Stats.Family == Stats.Family) {
 			return false;
 		}
 		return !IsThreat (entity);
@@ -132,7 +129,7 @@ public class BaseFishNPC : BaseNpc, IAIAttack, IAISenses, IThinker
 
 	public bool IsFriendly (BaseEntity entity)
 	{
-		if ((Object)(object)entity == (Object)null) {
+		if (entity == null) {
 			return false;
 		}
 		return entity.prefabID == prefabID;

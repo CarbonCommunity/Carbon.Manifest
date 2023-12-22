@@ -1,3 +1,4 @@
+#define ENABLE_PROFILER
 using UnityEngine;
 using UnityEngine.Profiling;
 
@@ -13,14 +14,14 @@ public class MissionManifest : ScriptableObject
 	public static MissionManifest Get ()
 	{
 		Profiler.BeginSample ("MissionManifestGet");
-		if ((Object)(object)instance == (Object)null) {
+		if (instance == null) {
 			Profiler.BeginSample ("ResourcesLoadManifest");
 			instance = Resources.Load<MissionManifest> ("MissionManifest");
 			Profiler.EndSample ();
 			Profiler.BeginSample ("PositionGeneratorLoop");
 			WorldPositionGenerator[] array = instance.positionGenerators;
 			foreach (WorldPositionGenerator worldPositionGenerator in array) {
-				if ((Object)(object)worldPositionGenerator != (Object)null) {
+				if (worldPositionGenerator != null) {
 					worldPositionGenerator.PrecalculatePositions ();
 				}
 			}

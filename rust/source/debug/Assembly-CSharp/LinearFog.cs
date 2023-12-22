@@ -17,9 +17,8 @@ public class LinearFog : MonoBehaviour
 
 	private void OnRenderImage (RenderTexture source, RenderTexture destination)
 	{
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		if (!Object.op_Implicit ((Object)(object)fogMaterial)) {
-			Graphics.Blit ((Texture)(object)source, destination);
+		if (!fogMaterial) {
+			Graphics.Blit (source, destination);
 			return;
 		}
 		fogMaterial.SetColor ("_FogColor", fogColor);
@@ -32,7 +31,7 @@ public class LinearFog : MonoBehaviour
 			fogMaterial.SetFloat ("_CutOff", 1f);
 		}
 		for (int i = 0; i < fogMaterial.passCount; i++) {
-			Graphics.Blit ((Texture)(object)source, destination, fogMaterial, i);
+			Graphics.Blit (source, destination, fogMaterial, i);
 		}
 	}
 }

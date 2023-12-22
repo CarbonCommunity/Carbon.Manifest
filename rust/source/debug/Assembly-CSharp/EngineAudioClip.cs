@@ -41,27 +41,27 @@ public class EngineAudioClip : MonoBehaviour, IClientComponent
 			this.RPM = RPM;
 		}
 
-		public EngineCycle GetCycle (Random random, int lastCycleId)
+		public EngineCycle GetCycle (System.Random random, int lastCycleId)
 		{
 			if (remainingCycles.Count == 0) {
 				ResetRemainingCycles (random);
 			}
-			int index = Extensions.Pop<int> (remainingCycles);
+			int index = remainingCycles.Pop ();
 			if (cycles [index].id == lastCycleId) {
 				if (remainingCycles.Count == 0) {
 					ResetRemainingCycles (random);
 				}
-				index = Extensions.Pop<int> (remainingCycles);
+				index = remainingCycles.Pop ();
 			}
 			return cycles [index];
 		}
 
-		private void ResetRemainingCycles (Random random)
+		private void ResetRemainingCycles (System.Random random)
 		{
 			for (int i = 0; i < cycles.Count; i++) {
 				remainingCycles.Add (i);
 			}
-			ListEx.Shuffle<int> (remainingCycles, (uint)random.Next ());
+			remainingCycles.Shuffle ((uint)random.Next ());
 		}
 
 		public void Add (EngineCycle cycle)
@@ -181,6 +181,6 @@ public class EngineAudioClip : MonoBehaviour, IClientComponent
 
 	private int GetBucketRPM (int RPM)
 	{
-		return Mathf.RoundToInt ((float)(RPM / 25)) * 25;
+		return Mathf.RoundToInt (RPM / 25) * 25;
 	}
 }

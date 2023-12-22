@@ -59,8 +59,7 @@ public class HairDye
 
 	public void Apply (HairDyeCollection collection, MaterialPropertyBlock block)
 	{
-		//IL_0088: Unknown result type (might be due to invalid IL or missing references)
-		if (!((Object)(object)sourceMaterial != (Object)null)) {
+		if (!(sourceMaterial != null)) {
 			return;
 		}
 		for (int i = 0; i < 8; i++) {
@@ -80,15 +79,13 @@ public class HairDye
 
 	public void ApplyCap (HairDyeCollection collection, HairType type, MaterialPropertyBlock block)
 	{
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0078: Unknown result type (might be due to invalid IL or missing references)
 		if (collection.applyCap) {
 			if (type == HairType.Head || type == HairType.Armpit || type == HairType.Pubic) {
-				block.SetColor (_HairBaseColorUV1, ((Color)(ref capBaseColor)).gamma);
-				block.SetTexture (_HairPackedMapUV1, (Texture)(((Object)(object)collection.capMask != (Object)null) ? ((object)collection.capMask) : ((object)Texture2D.blackTexture)));
+				block.SetColor (_HairBaseColorUV1, capBaseColor.gamma);
+				block.SetTexture (_HairPackedMapUV1, (collection.capMask != null) ? collection.capMask : Texture2D.blackTexture);
 			} else if (type == HairType.Facial) {
-				block.SetColor (_HairBaseColorUV2, ((Color)(ref capBaseColor)).gamma);
-				block.SetTexture (_HairPackedMapUV2, (Texture)(((Object)(object)collection.capMask != (Object)null) ? ((object)collection.capMask) : ((object)Texture2D.blackTexture)));
+				block.SetColor (_HairBaseColorUV2, capBaseColor.gamma);
+				block.SetTexture (_HairPackedMapUV2, (collection.capMask != null) ? collection.capMask : Texture2D.blackTexture);
 			}
 		}
 	}

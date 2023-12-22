@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using UnityEngine;
 using UnityEngine.Serialization;
 using VLB;
@@ -48,7 +49,7 @@ public class Config : ScriptableObject
 
 	public static Config Instance {
 		get {
-			if ((Object)(object)m_Instance == (Object)null) {
+			if (m_Instance == null) {
 				Config[] array = Resources.LoadAll<Config> ("Config");
 				Debug.Assert (array.Length != 0, $"Can't find any resource of type '{typeof(Config)}'. Make sure you have a ScriptableObject of this type in a 'Resources' folder.");
 				m_Instance = array [0];
@@ -59,8 +60,6 @@ public class Config : ScriptableObject
 
 	public void Reset ()
 	{
-		//IL_0059: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
 		geometryLayerID = 1;
 		geometryTag = "Untagged";
 		geometryRenderQueue = 3000;
@@ -70,29 +69,24 @@ public class Config : ScriptableObject
 		sharedMeshSegments = 5;
 		globalNoiseScale = 0.5f;
 		globalNoiseVelocity = Consts.NoiseVelocityDefault;
-		ref TextAsset reference = ref noise3DData;
-		Object obj = Resources.Load ("Noise3D_64x64x64");
-		reference = (TextAsset)(object)((obj is TextAsset) ? obj : null);
+		noise3DData = Resources.Load ("Noise3D_64x64x64") as TextAsset;
 		noise3DSize = 64;
-		ref ParticleSystem reference2 = ref dustParticlesPrefab;
-		Object obj2 = Resources.Load ("DustParticles", typeof(ParticleSystem));
-		reference2 = (ParticleSystem)(object)((obj2 is ParticleSystem) ? obj2 : null);
+		dustParticlesPrefab = Resources.Load ("DustParticles", typeof(ParticleSystem)) as ParticleSystem;
 	}
 
 	public ParticleSystem NewVolumetricDustParticles ()
 	{
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-		if (!Object.op_Implicit ((Object)(object)dustParticlesPrefab)) {
+		if (!dustParticlesPrefab) {
 			if (Application.isPlaying) {
-				Debug.LogError ((object)"Failed to instantiate VolumetricDustParticles prefab.");
+				Debug.LogError ("Failed to instantiate VolumetricDustParticles prefab.");
 			}
 			return null;
 		}
-		ParticleSystem val = Object.Instantiate<ParticleSystem> (dustParticlesPrefab);
-		val.useAutoRandomSeed = false;
-		((Object)val).name = "Dust Particles";
-		((Object)((Component)val).gameObject).hideFlags = Consts.ProceduralObjectsHideFlags;
-		((Component)val).gameObject.SetActive (true);
-		return val;
+		ParticleSystem particleSystem = Object.Instantiate (dustParticlesPrefab);
+		particleSystem.useAutoRandomSeed = false;
+		particleSystem.name = "Dust Particles";
+		particleSystem.gameObject.hideFlags = Consts.ProceduralObjectsHideFlags;
+		particleSystem.gameObject.SetActive (value: true);
+		return particleSystem;
 	}
 }

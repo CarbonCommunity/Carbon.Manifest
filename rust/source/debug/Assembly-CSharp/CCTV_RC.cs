@@ -1,3 +1,5 @@
+#define ENABLE_PROFILER
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -71,36 +73,29 @@ public class CCTV_RC : PoweredRemoteControlEntity, IRemoteControllableClientCall
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("CCTV_RC.OnRpcMessage", 0);
-		try {
-			if (rpc == 3353964129u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("CCTV_RC.OnRpcMessage")) {
+			if (rpc == 3353964129u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_SetDir "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_SetDir "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_SetDir", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Call", 0);
+				using (TimeWarning.New ("Server_SetDir")) {
 					try {
-						RPCMessage rPCMessage = default(RPCMessage);
-						rPCMessage.connection = msg.connection;
-						rPCMessage.player = player;
-						rPCMessage.read = msg.read;
-						RPCMessage msg2 = rPCMessage;
-						Server_SetDir (msg2);
-					} finally {
-						((IDisposable)val3)?.Dispose ();
+						using (TimeWarning.New ("Call")) {
+							RPCMessage rPCMessage = default(RPCMessage);
+							rPCMessage.connection = msg.connection;
+							rPCMessage.player = player;
+							rPCMessage.read = msg.read;
+							RPCMessage msg2 = rPCMessage;
+							Server_SetDir (msg2);
+						}
+					} catch (Exception exception) {
+						Debug.LogException (exception);
+						player.Kick ("RPC Error in Server_SetDir");
 					}
-				} catch (Exception ex) {
-					Debug.LogException (ex);
-					player.Kick ("RPC Error in Server_SetDir");
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -112,8 +107,6 @@ public class CCTV_RC : PoweredRemoteControlEntity, IRemoteControllableClientCall
 
 	public override void ServerInit ()
 	{
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
 		base.ServerInit ();
 		if (!base.isClient) {
 			if (IsStatic ()) {
@@ -122,7 +115,7 @@ public class CCTV_RC : PoweredRemoteControlEntity, IRemoteControllableClientCall
 				UpdateRCAccess (isOnline: true);
 			}
 			timeSinceLastServerTick = 0.0;
-			((FacepunchBehaviour)this).InvokeRandomized ((Action)ServerTick, Random.Range (0f, 1f), 0.015f, 0.01f);
+			InvokeRandomized (ServerTick, UnityEngine.Random.Range (0f, 1f), 0.015f, 0.01f);
 		}
 	}
 
@@ -143,7 +136,7 @@ public class CCTV_RC : PoweredRemoteControlEntity, IRemoteControllableClientCall
 	{
 		base.Save (info);
 		if (info.msg.rcEntity == null) {
-			info.msg.rcEntity = Pool.Get<RCEntity> ();
+			info.msg.rcEntity = Facepunch.Pool.Get<RCEntity> ();
 		}
 		info.msg.rcEntity.aim.x = pitchAmount;
 		info.msg.rcEntity.aim.y = yawAmount;
@@ -154,30 +147,14 @@ public class CCTV_RC : PoweredRemoteControlEntity, IRemoteControllableClientCall
 	[RPC_Server]
 	public void Server_SetDir (RPCMessage msg)
 	{
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0060: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0066: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0067: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0074: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0079: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a2: Unknown result type (might be due to invalid IL or missing references)
 		if (!IsStatic ()) {
 			BasePlayer player = msg.player;
 			if (player.CanBuild () && player.IsBuildingAuthed ()) {
-				Vector3 val = Vector3Ex.Direction (player.eyes.position, ((Component)yaw).transform.position);
-				val = ((Component)this).transform.InverseTransformDirection (val);
-				Quaternion val2 = Quaternion.LookRotation (val);
-				Vector3 val3 = BaseMountable.ConvertVector (((Quaternion)(ref val2)).eulerAngles);
-				pitchAmount = Mathf.Clamp (val3.x, pitchClamp.x, pitchClamp.y);
-				yawAmount = Mathf.Clamp (val3.y, yawClamp.x, yawClamp.y);
+				Vector3 direction = Vector3Ex.Direction (player.eyes.position, yaw.transform.position);
+				direction = base.transform.InverseTransformDirection (direction);
+				Vector3 vector = BaseMountable.ConvertVector (Quaternion.LookRotation (direction).eulerAngles);
+				pitchAmount = Mathf.Clamp (vector.x, pitchClamp.x, pitchClamp.y);
+				yawAmount = Mathf.Clamp (vector.y, yawClamp.x, yawClamp.y);
 				SendNetworkUpdate ();
 			}
 		}
@@ -230,21 +207,11 @@ public class CCTV_RC : PoweredRemoteControlEntity, IRemoteControllableClientCall
 
 	public void UpdateRotation (float delta)
 	{
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0062: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0067: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0090: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0093: Unknown result type (might be due to invalid IL or missing references)
-		Quaternion val = Quaternion.Euler (pitchAmount, 0f, 0f);
-		Quaternion val2 = Quaternion.Euler (0f, yawAmount, 0f);
-		float num = ((base.isServer && !base.IsBeingControlled) ? serverLerpSpeed : clientLerpSpeed);
-		((Component)pitch).transform.localRotation = Mathx.Lerp (((Component)pitch).transform.localRotation, val, num, delta);
-		((Component)yaw).transform.localRotation = Mathx.Lerp (((Component)yaw).transform.localRotation, val2, num, delta);
+		Quaternion to = Quaternion.Euler (pitchAmount, 0f, 0f);
+		Quaternion to2 = Quaternion.Euler (0f, yawAmount, 0f);
+		float speed = ((base.isServer && !base.IsBeingControlled) ? serverLerpSpeed : clientLerpSpeed);
+		pitch.transform.localRotation = Mathx.Lerp (pitch.transform.localRotation, to, speed, delta);
+		yaw.transform.localRotation = Mathx.Lerp (yaw.transform.localRotation, to2, speed, delta);
 		if (fovScales != null && fovScales.Length != 0) {
 			if (fovScales.Length > 1) {
 				fovScaleLerped = Mathx.Lerp (fovScaleLerped, fovScales [fovScaleIndex], zoomLerpSpeed, delta);

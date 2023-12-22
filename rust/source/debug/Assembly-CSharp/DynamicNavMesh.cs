@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -54,46 +53,37 @@ public class DynamicNavMesh : SingletonComponent<DynamicNavMesh>, IServerCompone
 
 	private void OnEnable ()
 	{
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Expected O, but got Unknown
-		NavMeshBuildSettings settingsByIndex = NavMesh.GetSettingsByIndex (NavMeshAgentTypeIndex);
-		agentTypeId = ((NavMeshBuildSettings)(ref settingsByIndex)).agentTypeID;
+		agentTypeId = NavMesh.GetSettingsByIndex (NavMeshAgentTypeIndex).agentTypeID;
 		NavMeshData = new NavMeshData (agentTypeId);
 		sources = new List<NavMeshBuildSource> ();
 		defaultArea = NavMesh.GetAreaFromName (DefaultAreaName);
-		((FacepunchBehaviour)this).InvokeRepeating ((Action)FinishBuildingNavmesh, 0f, 1f);
+		InvokeRepeating (FinishBuildingNavmesh, 0f, 1f);
 	}
 
 	private void OnDisable ()
 	{
-		if (!Application.isQuitting) {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)FinishBuildingNavmesh);
-			((NavMeshDataInstance)(ref NavMeshDataInstance)).Remove ();
+		if (!Rust.Application.isQuitting) {
+			CancelInvoke (FinishBuildingNavmesh);
+			NavMeshDataInstance.Remove ();
 		}
 	}
 
 	[ContextMenu ("Update Nav Mesh")]
 	public void UpdateNavMeshAsync ()
 	{
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0056: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0084: Unknown result type (might be due to invalid IL or missing references)
 		if (!HasBuildOperationStarted && !AiManager.nav_disable) {
 			float realtimeSinceStartup = Time.realtimeSinceStartup;
-			Debug.Log ((object)("Starting Navmesh Build with " + sources.Count + " sources"));
+			UnityEngine.Debug.Log ("Starting Navmesh Build with " + sources.Count + " sources");
 			NavMeshBuildSettings settingsByIndex = NavMesh.GetSettingsByIndex (NavMeshAgentTypeIndex);
-			((NavMeshBuildSettings)(ref settingsByIndex)).overrideVoxelSize = true;
-			((NavMeshBuildSettings)(ref settingsByIndex)).voxelSize = ((NavMeshBuildSettings)(ref settingsByIndex)).voxelSize * 2f;
+			settingsByIndex.overrideVoxelSize = true;
+			settingsByIndex.voxelSize *= 2f;
 			BuildingOperation = NavMeshBuilder.UpdateNavMeshDataAsync (NavMeshData, settingsByIndex, sources, Bounds);
 			BuildTimer.Reset ();
 			BuildTimer.Start ();
 			HasBuildOperationStarted = true;
 			float num = Time.realtimeSinceStartup - realtimeSinceStartup;
 			if (num > 0.1f) {
-				Debug.LogWarning ((object)("Calling UpdateNavMesh took " + num));
+				UnityEngine.Debug.LogWarning ("Calling UpdateNavMesh took " + num);
 			}
 		}
 	}
@@ -104,16 +94,16 @@ public class DynamicNavMesh : SingletonComponent<DynamicNavMesh>, IServerCompone
 			yield break;
 		}
 		HasBuildOperationStarted = false;
-		((Bounds)(ref Bounds)).size = TerrainMeta.Size;
+		Bounds.size = TerrainMeta.Size;
 		NavMesh.pathfindingIterationsPerFrame = AiManager.pathfindingIterationsPerFrame;
-		IEnumerator collectSourcesAsync = NavMeshTools.CollectSourcesAsync (Bounds, LayerMask.op_Implicit (LayerMask), NavMeshCollectGeometry, defaultArea, use_baked_terrain_mesh, AsyncTerrainNavMeshBakeCellSize, sources, AppendModifierVolumes, UpdateNavMeshAsync, null);
+		IEnumerator collectSourcesAsync = NavMeshTools.CollectSourcesAsync (Bounds, LayerMask, NavMeshCollectGeometry, defaultArea, use_baked_terrain_mesh, AsyncTerrainNavMeshBakeCellSize, sources, AppendModifierVolumes, UpdateNavMeshAsync, null);
 		if (AiManager.nav_wait) {
 			yield return collectSourcesAsync;
 		} else {
-			((MonoBehaviour)this).StartCoroutine (collectSourcesAsync);
+			StartCoroutine (collectSourcesAsync);
 		}
 		if (!AiManager.nav_wait) {
-			Debug.Log ((object)"nav_wait is false, so we're not waiting for the navmesh to finish generating. This might cause your server to sputter while it's generating.");
+			UnityEngine.Debug.Log ("nav_wait is false, so we're not waiting for the navmesh to finish generating. This might cause your server to sputter while it's generating.");
 			yield break;
 		}
 		int lastPct = 0;
@@ -123,7 +113,7 @@ public class DynamicNavMesh : SingletonComponent<DynamicNavMesh>, IServerCompone
 		while (BuildingOperation != null) {
 			int pctDone = (int)(BuildingOperation.progress * 100f);
 			if (lastPct != pctDone) {
-				Debug.LogFormat ("{0}%", new object[1] { pctDone });
+				UnityEngine.Debug.LogFormat ("{0}%", pctDone);
 				lastPct = pctDone;
 			}
 			yield return CoroutineEx.waitForSecondsRealtime (0.25f);
@@ -133,37 +123,17 @@ public class DynamicNavMesh : SingletonComponent<DynamicNavMesh>, IServerCompone
 
 	private void AppendModifierVolumes (List<NavMeshBuildSource> sources)
 	{
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0072: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0079: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0083: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ee: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0100: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0117: Unknown result type (might be due to invalid IL or missing references)
 		List<NavMeshModifierVolume> activeModifiers = NavMeshModifierVolume.activeModifiers;
-		Vector3 size = default(Vector3);
 		foreach (NavMeshModifierVolume item2 in activeModifiers) {
-			if ((LayerMask.op_Implicit (LayerMask) & (1 << ((Component)item2).gameObject.layer)) != 0 && item2.AffectsAgentType (agentTypeId)) {
-				Vector3 val = ((Component)item2).transform.TransformPoint (item2.center);
-				Vector3 lossyScale = ((Component)item2).transform.lossyScale;
-				((Vector3)(ref size))..ctor (item2.size.x * Mathf.Abs (lossyScale.x), item2.size.y * Mathf.Abs (lossyScale.y), item2.size.z * Mathf.Abs (lossyScale.z));
+			if (((int)LayerMask & (1 << item2.gameObject.layer)) != 0 && item2.AffectsAgentType (agentTypeId)) {
+				Vector3 pos = item2.transform.TransformPoint (item2.center);
+				Vector3 lossyScale = item2.transform.lossyScale;
+				Vector3 size = new Vector3 (item2.size.x * Mathf.Abs (lossyScale.x), item2.size.y * Mathf.Abs (lossyScale.y), item2.size.z * Mathf.Abs (lossyScale.z));
 				NavMeshBuildSource item = default(NavMeshBuildSource);
-				((NavMeshBuildSource)(ref item)).shape = (NavMeshBuildSourceShape)5;
-				((NavMeshBuildSource)(ref item)).transform = Matrix4x4.TRS (val, ((Component)item2).transform.rotation, Vector3.one);
-				((NavMeshBuildSource)(ref item)).size = size;
-				((NavMeshBuildSource)(ref item)).area = item2.area;
+				item.shape = NavMeshBuildSourceShape.ModifierBox;
+				item.transform = Matrix4x4.TRS (pos, item2.transform.rotation, Vector3.one);
+				item.size = size;
+				item.area = item2.area;
 				sources.Add (item);
 			}
 		}
@@ -171,13 +141,11 @@ public class DynamicNavMesh : SingletonComponent<DynamicNavMesh>, IServerCompone
 
 	public void FinishBuildingNavmesh ()
 	{
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
 		if (BuildingOperation != null && BuildingOperation.isDone) {
-			if (!((NavMeshDataInstance)(ref NavMeshDataInstance)).valid) {
+			if (!NavMeshDataInstance.valid) {
 				NavMeshDataInstance = NavMesh.AddNavMeshData (NavMeshData);
 			}
-			Debug.Log ((object)$"Navmesh Build took {BuildTimer.Elapsed.TotalSeconds:0.00} seconds");
+			UnityEngine.Debug.Log ($"Navmesh Build took {BuildTimer.Elapsed.TotalSeconds:0.00} seconds");
 			BuildingOperation = null;
 		}
 	}

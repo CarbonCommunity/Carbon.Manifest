@@ -64,64 +64,6 @@ public class GenerateRailLayout : ProceduralComponent
 
 	public override void Process (uint seed)
 	{
-		//IL_01c1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01c6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01cf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01de: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0735: Unknown result type (might be due to invalid IL or missing references)
-		//IL_075f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01fc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01fe: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0200: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0205: Unknown result type (might be due to invalid IL or missing references)
-		//IL_020a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03d4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_040f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0414: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0421: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0426: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0428: Unknown result type (might be due to invalid IL or missing references)
-		//IL_042a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_042c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0431: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0435: Unknown result type (might be due to invalid IL or missing references)
-		//IL_043a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_04f8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_04fd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_04ff: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0501: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0508: Unknown result type (might be due to invalid IL or missing references)
-		//IL_050a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_050f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_047b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0481: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0529: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0542: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0547: Unknown result type (might be due to invalid IL or missing references)
-		//IL_054c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0551: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0568: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0571: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0576: Unknown result type (might be due to invalid IL or missing references)
-		//IL_057b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0580: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0582: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0584: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0586: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0593: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0598: Unknown result type (might be due to invalid IL or missing references)
-		//IL_059a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_059f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_05b0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_05b2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_05b7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0602: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0607: Unknown result type (might be due to invalid IL or missing references)
-		//IL_060b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0610: Unknown result type (might be due to invalid IL or missing references)
 		if (World.Networked) {
 			TerrainMeta.Path.Rails.Clear ();
 			TerrainMeta.Path.Rails.AddRange (World.GetPaths ("Rail"));
@@ -151,7 +93,7 @@ public class GenerateRailLayout : ProceduralComponent
 			pathFinder.PushRadius = monument.GetPathFinderRadius (length);
 			pathFinder.PushDistance = 60;
 			pathFinder.PushMultiplier = 1;
-			TerrainPathConnect[] componentsInChildren = ((Component)monument).GetComponentsInChildren<TerrainPathConnect> (true);
+			TerrainPathConnect[] componentsInChildren = monument.GetComponentsInChildren<TerrainPathConnect> (includeInactive: true);
 			foreach (TerrainPathConnect terrainPathConnect in componentsInChildren) {
 				list6.Clear ();
 				list7.Clear ();
@@ -160,13 +102,13 @@ public class GenerateRailLayout : ProceduralComponent
 				if (terrainPathConnect.Type != InfrastructureType.Rail) {
 					continue;
 				}
-				Vector3 val = ((Component)terrainPathConnect).transform.position;
-				Vector3 val2 = ((Component)terrainPathConnect).transform.forward * 7.5f;
-				PathFinder.Point pathFinderPoint = terrainPathConnect.GetPathFinderPoint (length, val);
+				Vector3 position = terrainPathConnect.transform.position;
+				Vector3 vector = terrainPathConnect.transform.forward * 7.5f;
+				PathFinder.Point pathFinderPoint = terrainPathConnect.GetPathFinderPoint (length, position);
 				for (int k = 0; k < 8 || !pathFinder.IsWalkable (pathFinderPoint); k++) {
-					list6.Add (val);
-					val += val2;
-					pathFinderPoint = terrainPathConnect.GetPathFinderPoint (length, val);
+					list6.Add (position);
+					position += vector;
+					pathFinderPoint = terrainPathConnect.GetPathFinderPoint (length, position);
 				}
 				list4.Clear ();
 				list4.Add (pathFinderPoint);
@@ -200,47 +142,46 @@ public class GenerateRailLayout : ProceduralComponent
 				for (PathFinder.Node node6 = node3; node6 != null; node6 = node6.next) {
 					float normX = ((float)node6.point.x + 0.5f) / (float)length;
 					float normZ = ((float)node6.point.y + 0.5f) / (float)length;
-					float num = TerrainMeta.DenormalizeX (normX);
-					float num2 = TerrainMeta.DenormalizeZ (normZ);
-					float num3 = Mathf.Max (TerrainMeta.HeightMap.GetHeight (normX, normZ), 1f);
-					list7.Add (new Vector3 (num, num3, num2));
+					float x = TerrainMeta.DenormalizeX (normX);
+					float z = TerrainMeta.DenormalizeZ (normZ);
+					float y = Mathf.Max (TerrainMeta.HeightMap.GetHeight (normX, normZ), 1f);
+					list7.Add (new Vector3 (x, y, z));
 				}
 				if (list7.Count == 0) {
 					continue;
 				}
-				Vector3 val3 = list6 [0];
-				Vector3 val4 = list7 [list7.Count - 1];
-				Vector3 val5 = val4 - val3;
-				Vector3 normalized = ((Vector3)(ref val5)).normalized;
+				Vector3 vector2 = list6 [0];
+				Vector3 vector3 = list7 [list7.Count - 1];
+				Vector3 normalized = (vector3 - vector2).normalized;
 				PathList pathList = null;
-				float num4 = float.MaxValue;
-				int num5 = -1;
+				float num = float.MaxValue;
+				int num2 = -1;
 				foreach (PathList rail3 in TerrainMeta.Path.Rails) {
 					Vector3[] points = rail3.Path.Points;
 					for (int l = 0; l < points.Length; l++) {
-						float num6 = Vector3.Distance (val4, points [l]);
-						if (num6 < num4) {
-							num4 = num6;
+						float num3 = Vector3.Distance (vector3, points [l]);
+						if (num3 < num) {
+							num = num3;
 							pathList = rail3;
-							num5 = l;
+							num2 = l;
 						}
 					}
 				}
 				Vector3[] points2 = pathList.Path.Points;
 				Vector3[] tangents = pathList.Path.Tangents;
-				Vector3 val6 = tangents [num5];
-				int num7 = ((Vector3.Angle (val6, normalized) < Vector3.Angle (-val6, normalized)) ? 1 : (-1));
-				Vector3 val7 = Vector3.Normalize (list7 [list7.Count - 1] - list7 [Mathf.Max (0, list7.Count - 1 - 16)]);
-				Vector3 val8 = Vector3.Normalize (points2 [(num5 + num7 * 8 * 2 + points2.Length) % points2.Length] - points2 [num5]);
-				float num8 = 0f - Vector3.SignedAngle (val8, val7, Vector3.up);
-				Vector3 val9 = rot90 * val8;
-				if (num8 < 0f) {
-					val9 = -val9;
+				Vector3 vector4 = tangents [num2];
+				int num4 = ((Vector3.Angle (vector4, normalized) < Vector3.Angle (-vector4, normalized)) ? 1 : (-1));
+				Vector3 to = Vector3.Normalize (list7 [list7.Count - 1] - list7 [Mathf.Max (0, list7.Count - 1 - 16)]);
+				Vector3 vector5 = Vector3.Normalize (points2 [(num2 + num4 * 8 * 2 + points2.Length) % points2.Length] - points2 [num2]);
+				float num5 = 0f - Vector3.SignedAngle (vector5, to, Vector3.up);
+				Vector3 vector6 = rot90 * vector5;
+				if (num5 < 0f) {
+					vector6 = -vector6;
 				}
 				for (int m = 0; m < 8; m++) {
-					float num9 = Mathf.InverseLerp (7f, 0f, (float)m);
-					float num10 = Mathf.SmoothStep (0f, 2f, num9) * 4f;
-					list8.Add (points2 [(num5 + num7 * m + points2.Length) % points2.Length] + val9 * num10);
+					float t = Mathf.InverseLerp (7f, 0f, m);
+					float num6 = Mathf.SmoothStep (0f, 2f, t) * 4f;
+					list8.Add (points2 [(num2 + num4 * m + points2.Length) % points2.Length] + vector6 * num6);
 				}
 				list9.AddRange (list6);
 				list9.AddRange (list7);
@@ -258,9 +199,9 @@ public class GenerateRailLayout : ProceduralComponent
 		}
 		foreach (PathList rail in list) {
 			Func<int, float> filter = delegate(int i) {
-				float num11 = Mathf.InverseLerp (0f, 8f, (float)i);
-				float num12 = Mathf.InverseLerp ((float)rail.Path.DefaultMaxIndex, (float)(rail.Path.DefaultMaxIndex - 8), (float)i);
-				return Mathf.SmoothStep (0f, 1f, Mathf.Min (num11, num12));
+				float a = Mathf.InverseLerp (0f, 8f, i);
+				float b = Mathf.InverseLerp (rail.Path.DefaultMaxIndex, rail.Path.DefaultMaxIndex - 8, i);
+				return Mathf.SmoothStep (0f, 1f, Mathf.Min (a, b));
 			};
 			rail.Path.Smoothen (32, new Vector3 (1f, 0f, 1f), filter);
 			rail.Path.Smoothen (64, new Vector3 (0f, 1f, 0f), filter);

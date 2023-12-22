@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class DestroyArcadeEntity : BaseMonoBehaviour
@@ -11,13 +10,13 @@ public class DestroyArcadeEntity : BaseMonoBehaviour
 
 	private void Start ()
 	{
-		((FacepunchBehaviour)this).Invoke ((Action)DestroyAction, TimeToDie + Random.Range (TimeToDieVariance * -0.5f, TimeToDieVariance * 0.5f));
+		Invoke (DestroyAction, TimeToDie + Random.Range (TimeToDieVariance * -0.5f, TimeToDieVariance * 0.5f));
 	}
 
 	private void DestroyAction ()
 	{
-		if (((Object)(object)ent != (Object)null) & ent.host) {
-			Object.Destroy ((Object)(object)((Component)ent).gameObject);
+		if ((ent != null) & ent.host) {
+			Object.Destroy (ent.gameObject);
 		}
 	}
 }

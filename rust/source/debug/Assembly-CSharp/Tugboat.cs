@@ -1,4 +1,3 @@
-using System;
 using Facepunch;
 using Network;
 using ProtoBuf;
@@ -71,10 +70,7 @@ public class Tugboat : MotorRowboat
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("Tugboat.OnRpcMessage", 0);
-		try {
-		} finally {
-			((IDisposable)val)?.Dispose ();
+		using (TimeWarning.New ("Tugboat.OnRpcMessage")) {
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -111,9 +107,8 @@ public class Tugboat : MotorRowboat
 
 	public override void BoatDecay ()
 	{
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
 		if (!base.IsDying) {
-			BaseBoat.WaterVehicleDecay (this, 60f, TimeSince.op_Implicit (timeSinceLastUsedFuel), tugdecayminutes, tugdecayminutes, tugdecaystartdelayminutes, preventDecayIndoors);
+			BaseBoat.WaterVehicleDecay (this, 60f, timeSinceLastUsedFuel, tugdecayminutes, tugdecayminutes, tugdecaystartdelayminutes, preventDecayIndoors);
 		}
 	}
 
@@ -135,7 +130,7 @@ public class Tugboat : MotorRowboat
 
 	protected override void EnterCorpseState ()
 	{
-		((FacepunchBehaviour)this).Invoke ((Action)base.ActualDeath, tugcorpseseconds);
+		Invoke (base.ActualDeath, tugcorpseseconds);
 	}
 
 	public override bool SupportsChildDeployables ()
@@ -150,12 +145,6 @@ public class Tugboat : MotorRowboat
 
 	protected override bool CanPushNow (BasePlayer pusher)
 	{
-		//IL_0081: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0086: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0090: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0091: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009c: Unknown result type (might be due to invalid IL or missing references)
 		if (IsOn ()) {
 			return false;
 		}
@@ -168,9 +157,9 @@ public class Tugboat : MotorRowboat
 		if (pusher.IsBuildingBlockedByVehicle ()) {
 			return false;
 		}
-		Vector3 val = ((Component)this).transform.TransformPoint (-Vector3.up);
-		WaterLevel.WaterInfo waterInfo = WaterLevel.GetWaterInfo (val, waves: true, volumes: false, this, noEarlyExit: true);
-		float num = val.y - waterInfo.surfaceLevel;
+		Vector3 pos = base.transform.TransformPoint (-Vector3.up);
+		WaterLevel.WaterInfo waterInfo = WaterLevel.GetWaterInfo (pos, waves: true, volumes: false, this, noEarlyExit: true);
+		float num = pos.y - waterInfo.surfaceLevel;
 		if (num > 2f) {
 			return false;
 		}

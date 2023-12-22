@@ -28,10 +28,10 @@ public struct ViewModelDrawEvent : IEquatable<ViewModelDrawEvent>
 
 	public override int GetHashCode ()
 	{
-		int num = (((Object)(object)viewModelRenderer != (Object)null) ? ((object)viewModelRenderer).GetHashCode () : 0);
-		num = (num * 397) ^ (((Object)(object)renderer != (Object)null) ? ((object)renderer).GetHashCode () : 0);
+		int num = ((viewModelRenderer != null) ? viewModelRenderer.GetHashCode () : 0);
+		num = (num * 397) ^ ((renderer != null) ? renderer.GetHashCode () : 0);
 		num = (num * 397) ^ skipDepthPrePass.GetHashCode ();
-		num = (num * 397) ^ (((Object)(object)material != (Object)null) ? ((object)material).GetHashCode () : 0);
+		num = (num * 397) ^ ((material != null) ? material.GetHashCode () : 0);
 		num = (num * 397) ^ subMesh;
 		return (num * 397) ^ pass;
 	}

@@ -31,19 +31,18 @@ public class TrainCoupling
 
 	public TrainCoupling (TrainCar owner, bool isFrontCoupling, TrainCouplingController controller, Transform couplingPoint, Transform couplingPivot, BaseEntity.Flags flag)
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
 		this.owner = owner;
 		this.isFrontCoupling = isFrontCoupling;
 		this.controller = controller;
 		this.couplingPoint = couplingPoint;
 		this.couplingPivot = couplingPivot;
 		this.flag = flag;
-		isValid = (Object)(object)couplingPoint != (Object)null;
+		isValid = couplingPoint != null;
 	}
 
 	public bool IsCoupledTo (TrainCar them)
 	{
-		return CoupledTo != null && (Object)(object)CoupledTo.owner == (Object)(object)them;
+		return CoupledTo != null && CoupledTo.owner == them;
 	}
 
 	public bool IsCoupledTo (TrainCoupling them)
@@ -74,8 +73,6 @@ public class TrainCoupling
 
 	public void Uncouple (bool reflect)
 	{
-		//IL_006b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0070: Unknown result type (might be due to invalid IL or missing references)
 		if (!IsUncoupled) {
 			if (reflect && CoupledTo != null) {
 				CoupledTo.Uncouple (reflect: false);
@@ -84,7 +81,7 @@ public class TrainCoupling
 			CoupledTo = null;
 			owner.SetFlag (flag, b: false, recursive: false, networkupdate: false);
 			owner.SendNetworkUpdate ();
-			timeSinceCouplingBlock = TimeSince.op_Implicit (0f);
+			timeSinceCouplingBlock = 0f;
 		}
 	}
 
@@ -95,10 +92,7 @@ public class TrainCoupling
 
 	public bool TryGetCoupledToID (out NetworkableId id)
 	{
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
-		if (CoupledTo != null && (Object)(object)CoupledTo.owner != (Object)null && CoupledTo.owner.IsValid ()) {
+		if (CoupledTo != null && CoupledTo.owner != null && CoupledTo.owner.IsValid ()) {
 			id = CoupledTo.owner.net.ID;
 			return true;
 		}

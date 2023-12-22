@@ -19,9 +19,9 @@ public class CoverageQueries : MonoBehaviour
 
 		public RenderTexture resultTexture = null;
 
-		public Color[] inputData = (Color[])(object)new Color[0];
+		public Color[] inputData = new Color[0];
 
-		public Color32[] resultData = (Color32[])(object)new Color32[0];
+		public Color32[] resultData = new Color32[0];
 
 		private Material coverageMat = null;
 
@@ -36,52 +36,45 @@ public class CoverageQueries : MonoBehaviour
 
 		public void Dispose (bool data = true)
 		{
-			if ((Object)(object)inputTexture != (Object)null) {
-				Object.DestroyImmediate ((Object)(object)inputTexture);
+			if (inputTexture != null) {
+				UnityEngine.Object.DestroyImmediate (inputTexture);
 				inputTexture = null;
 			}
-			if ((Object)(object)resultTexture != (Object)null) {
+			if (resultTexture != null) {
 				RenderTexture.active = null;
 				resultTexture.Release ();
-				Object.DestroyImmediate ((Object)(object)resultTexture);
+				UnityEngine.Object.DestroyImmediate (resultTexture);
 				resultTexture = null;
 			}
 			if (data) {
-				inputData = (Color[])(object)new Color[0];
-				resultData = (Color32[])(object)new Color32[0];
+				inputData = new Color[0];
+				resultData = new Color32[0];
 			}
 		}
 
 		public bool CheckResize (int count)
 		{
-			//IL_0076: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0080: Expected O, but got Unknown
-			//IL_00bb: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00c5: Expected O, but got Unknown
-			//IL_0157: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0158: Unknown result type (might be due to invalid IL or missing references)
-			if (count > inputData.Length || ((Object)(object)resultTexture != (Object)null && !resultTexture.IsCreated ())) {
+			if (count > inputData.Length || (resultTexture != null && !resultTexture.IsCreated ())) {
 				Dispose (data: false);
-				width = Mathf.CeilToInt (Mathf.Sqrt ((float)count));
+				width = Mathf.CeilToInt (Mathf.Sqrt (count));
 				height = Mathf.CeilToInt ((float)count / (float)width);
-				inputTexture = new Texture2D (width, height, (TextureFormat)20, false, true);
-				((Object)inputTexture).name = "_Input";
-				((Texture)inputTexture).filterMode = (FilterMode)0;
-				((Texture)inputTexture).wrapMode = (TextureWrapMode)1;
-				resultTexture = new RenderTexture (width, height, 0, (RenderTextureFormat)0, (RenderTextureReadWrite)1);
-				((Object)resultTexture).name = "_Result";
-				((Texture)resultTexture).filterMode = (FilterMode)0;
-				((Texture)resultTexture).wrapMode = (TextureWrapMode)1;
+				inputTexture = new Texture2D (width, height, TextureFormat.RGBAFloat, mipChain: false, linear: true);
+				inputTexture.name = "_Input";
+				inputTexture.filterMode = FilterMode.Point;
+				inputTexture.wrapMode = TextureWrapMode.Clamp;
+				resultTexture = new RenderTexture (width, height, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Linear);
+				resultTexture.name = "_Result";
+				resultTexture.filterMode = FilterMode.Point;
+				resultTexture.wrapMode = TextureWrapMode.Clamp;
 				resultTexture.useMipMap = false;
 				resultTexture.Create ();
 				int num = resultData.Length;
 				int num2 = width * height;
 				Array.Resize (ref inputData, num2);
 				Array.Resize (ref resultData, num2);
-				Color32 val = default(Color32);
-				((Color32)(ref val))..ctor (byte.MaxValue, (byte)0, (byte)0, (byte)0);
+				Color32 color = new Color32 (byte.MaxValue, 0, 0, 0);
 				for (int i = num; i < num2; i++) {
-					resultData [i] = val;
+					resultData [i] = color;
 				}
 				return true;
 			}
@@ -98,50 +91,35 @@ public class CoverageQueries : MonoBehaviour
 
 		public void Dispatch (int count)
 		{
-			//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-			//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-			//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-			//IL_004d: Unknown result type (might be due to invalid IL or missing references)
 			if (inputData.Length != 0) {
 				RenderBuffer activeColorBuffer = Graphics.activeColorBuffer;
 				RenderBuffer activeDepthBuffer = Graphics.activeDepthBuffer;
-				coverageMat.SetTexture ("_Input", (Texture)(object)inputTexture);
-				Graphics.Blit ((Texture)(object)inputTexture, resultTexture, coverageMat, 0);
+				coverageMat.SetTexture ("_Input", inputTexture);
+				Graphics.Blit (inputTexture, resultTexture, coverageMat, 0);
 				Graphics.SetRenderTarget (activeColorBuffer, activeDepthBuffer);
 			}
 		}
 
 		public void IssueRead ()
 		{
-			//IL_0023: Unknown result type (might be due to invalid IL or missing references)
 			if (asyncRequests.Count < 10) {
-				asyncRequests.Enqueue (AsyncGPUReadback.Request ((Texture)(object)resultTexture, 0, (Action<AsyncGPUReadbackRequest>)null));
+				asyncRequests.Enqueue (AsyncGPUReadback.Request (resultTexture));
 			}
 		}
 
 		public void GetResults ()
 		{
-			//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0037: Unknown result type (might be due to invalid IL or missing references)
-			//IL_004f: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0068: Unknown result type (might be due to invalid IL or missing references)
-			//IL_006d: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0090: Unknown result type (might be due to invalid IL or missing references)
 			if (resultData.Length == 0) {
 				return;
 			}
 			while (asyncRequests.Count > 0) {
-				AsyncGPUReadbackRequest val = asyncRequests.Peek ();
-				if (((AsyncGPUReadbackRequest)(ref val)).hasError) {
+				AsyncGPUReadbackRequest asyncGPUReadbackRequest = asyncRequests.Peek ();
+				if (asyncGPUReadbackRequest.hasError) {
 					asyncRequests.Dequeue ();
 					continue;
 				}
-				if (((AsyncGPUReadbackRequest)(ref val)).done) {
-					NativeArray<Color32> data = ((AsyncGPUReadbackRequest)(ref val)).GetData<Color32> (0);
+				if (asyncGPUReadbackRequest.done) {
+					NativeArray<Color32> data = asyncGPUReadbackRequest.GetData<Color32> ();
 					for (int i = 0; i < data.Length; i++) {
 						resultData [i] = data [i];
 					}

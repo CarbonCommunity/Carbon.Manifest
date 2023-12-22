@@ -26,34 +26,19 @@ public class BaseMagnet : MonoBehaviour
 
 	public bool HasConnectedObject ()
 	{
-		return (Object)(object)((Joint)fixedJoint).connectedBody != (Object)null && isMagnetOn;
+		return fixedJoint.connectedBody != null && isMagnetOn;
 	}
 
 	public OBB GetConnectedOBB (float scale = 1f)
 	{
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0060: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0071: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0081: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0082: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0087: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0031: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008a: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)((Joint)fixedJoint).connectedBody == (Object)null) {
-			Debug.LogError ((object)"BaseMagnet returning fake OBB because no connected body!");
+		if (fixedJoint.connectedBody == null) {
+			Debug.LogError ("BaseMagnet returning fake OBB because no connected body!");
 			return new OBB (Vector3.zero, Vector3.one, Quaternion.identity);
 		}
-		BaseEntity component = ((Component)((Joint)fixedJoint).connectedBody).gameObject.GetComponent<BaseEntity> ();
+		BaseEntity component = fixedJoint.connectedBody.gameObject.GetComponent<BaseEntity> ();
 		Bounds bounds = component.bounds;
-		((Bounds)(ref bounds)).extents = ((Bounds)(ref bounds)).extents * scale;
-		return new OBB (((Component)component).transform.position, ((Component)component).transform.rotation, bounds);
+		bounds.extents *= scale;
+		return new OBB (component.transform.position, component.transform.rotation, bounds);
 	}
 
 	public void SetCollisionsEnabled (GameObject other, bool wants)
@@ -61,10 +46,10 @@ public class BaseMagnet : MonoBehaviour
 		Collider[] componentsInChildren = other.GetComponentsInChildren<Collider> ();
 		Collider[] componentsInChildren2 = colliderSource.GetComponentsInChildren<Collider> ();
 		Collider[] array = componentsInChildren;
-		foreach (Collider val in array) {
+		foreach (Collider collider in array) {
 			Collider[] array2 = componentsInChildren2;
-			foreach (Collider val2 in array2) {
-				Physics.IgnoreCollision (val, val2, !wants);
+			foreach (Collider collider2 in array2) {
+				Physics.IgnoreCollision (collider, collider2, !wants);
 			}
 		}
 	}
@@ -79,7 +64,7 @@ public class BaseMagnet : MonoBehaviour
 			} else {
 				OnMagnetDisabled ();
 			}
-			if ((Object)(object)entityOwner != (Object)null) {
+			if (entityOwner != null) {
 				entityOwner.SetFlag (magnetFlag, isMagnetOn);
 			}
 		}
@@ -91,10 +76,10 @@ public class BaseMagnet : MonoBehaviour
 
 	public virtual void OnMagnetDisabled ()
 	{
-		if (Object.op_Implicit ((Object)(object)((Joint)fixedJoint).connectedBody)) {
-			SetCollisionsEnabled (((Component)((Joint)fixedJoint).connectedBody).gameObject, wants: true);
-			Rigidbody connectedBody = ((Joint)fixedJoint).connectedBody;
-			((Joint)fixedJoint).connectedBody = null;
+		if ((bool)fixedJoint.connectedBody) {
+			SetCollisionsEnabled (fixedJoint.connectedBody.gameObject, wants: true);
+			Rigidbody connectedBody = fixedJoint.connectedBody;
+			fixedJoint.connectedBody = null;
 			connectedBody.WakeUp ();
 		}
 	}
@@ -106,59 +91,37 @@ public class BaseMagnet : MonoBehaviour
 
 	public void MagnetThink (float delta)
 	{
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00de: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0190: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0195: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0197: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0199: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01c1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01c9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0134: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0144: Unknown result type (might be due to invalid IL or missing references)
 		if (!isMagnetOn) {
 			return;
 		}
-		Vector3 position = ((Component)magnetTrigger).transform.position;
+		Vector3 position = magnetTrigger.transform.position;
 		if (magnetTrigger.entityContents == null) {
 			return;
 		}
-		OBB val = default(OBB);
 		foreach (BaseEntity entityContent in magnetTrigger.entityContents) {
 			if (!entityContent.syncPosition) {
 				continue;
 			}
-			Rigidbody component = ((Component)entityContent).GetComponent<Rigidbody> ();
-			if ((Object)(object)component == (Object)null || component.isKinematic || entityContent.isClient) {
+			Rigidbody component = entityContent.GetComponent<Rigidbody> ();
+			if (component == null || component.isKinematic || entityContent.isClient) {
 				continue;
 			}
-			((OBB)(ref val))..ctor (((Component)entityContent).transform.position, ((Component)entityContent).transform.rotation, entityContent.bounds);
-			if (((OBB)(ref val)).Contains (attachDepthPoint.position)) {
-				MagnetLiftable component2 = ((Component)entityContent).GetComponent<MagnetLiftable> ();
+			if (new OBB (entityContent.transform.position, entityContent.transform.rotation, entityContent.bounds).Contains (attachDepthPoint.position)) {
+				MagnetLiftable component2 = entityContent.GetComponent<MagnetLiftable> ();
 				component2.SetMagnetized (wantsOn: true, this, associatedPlayer);
-				if ((Object)(object)((Joint)fixedJoint).connectedBody == (Object)null) {
+				if (fixedJoint.connectedBody == null) {
 					Effect.server.Run (attachEffect.resourcePath, attachDepthPoint.position, -attachDepthPoint.up);
-					((Joint)fixedJoint).connectedBody = component;
-					SetCollisionsEnabled (((Component)component).gameObject, wants: false);
+					fixedJoint.connectedBody = component;
+					SetCollisionsEnabled (component.gameObject, wants: false);
 					continue;
 				}
 			}
-			if ((Object)(object)((Joint)fixedJoint).connectedBody == (Object)null) {
-				Vector3 position2 = ((Component)entityContent).transform.position;
-				float num = Vector3.Distance (position2, position);
-				Vector3 val2 = Vector3Ex.Direction (position, position2);
-				float num2 = 1f / Mathf.Max (1f, num);
-				component.AddForce (val2 * magnetForce * num2, (ForceMode)5);
+			if (fixedJoint.connectedBody == null) {
+				Vector3 position2 = entityContent.transform.position;
+				float b = Vector3.Distance (position2, position);
+				Vector3 vector = Vector3Ex.Direction (position, position2);
+				float num = 1f / Mathf.Max (1f, b);
+				component.AddForce (vector * magnetForce * num, ForceMode.Acceleration);
 			}
 		}
 	}

@@ -16,15 +16,15 @@ public class Bradley : ConsoleSystem
 	public static void quickrespawn (Arg arg)
 	{
 		BasePlayer basePlayer = arg.Player ();
-		if (!Object.op_Implicit ((Object)(object)basePlayer)) {
+		if (!basePlayer) {
 			return;
 		}
 		BradleySpawner singleton = BradleySpawner.singleton;
-		if ((Object)(object)singleton == (Object)null) {
-			Debug.LogWarning ((object)"No Spawner");
+		if (singleton == null) {
+			Debug.LogWarning ("No Spawner");
 			return;
 		}
-		if (Object.op_Implicit ((Object)(object)singleton.spawned)) {
+		if ((bool)singleton.spawned) {
 			singleton.spawned.Kill ();
 		}
 		singleton.spawned = null;

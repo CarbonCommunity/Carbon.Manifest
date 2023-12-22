@@ -11,5 +11,5 @@ public class MissionUIPanel : MonoBehaviour
 
 	public VirtualItemIcon[] rewardIcons;
 
-	public Phrase noMissionText;
+	public Translate.Phrase noMissionText;
 }

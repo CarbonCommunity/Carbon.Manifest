@@ -19,26 +19,23 @@ public class GenerateRailMeshes : ProceduralComponent
 
 	public override void Process (uint seed)
 	{
-		//IL_00b0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b7: Expected O, but got Unknown
-		//IL_00c0: Unknown result type (might be due to invalid IL or missing references)
 		if (RailMeshes == null || RailMeshes.Length == 0) {
-			RailMeshes = (Mesh[])(object)new Mesh[1] { RailMesh };
+			RailMeshes = new Mesh[1] { RailMesh };
 		}
 		List<PathList> rails = TerrainMeta.Path.Rails;
 		foreach (PathList item in rails) {
 			foreach (PathList.MeshObject item2 in item.CreateMesh (RailMeshes, 0f, snapToTerrain: false, !item.Path.Circular && !item.Start, !item.Path.Circular && !item.End)) {
-				GameObject val = new GameObject ("Rail Mesh");
-				val.transform.position = item2.Position;
-				val.tag = "Railway";
-				val.layer = 16;
-				val.SetHierarchyGroup (item.Name);
-				val.SetActive (false);
-				MeshCollider val2 = val.AddComponent<MeshCollider> ();
-				((Collider)val2).sharedMaterial = RailPhysicMaterial;
-				val2.sharedMesh = item2.Meshes [0];
-				val.AddComponent<AddToHeightMap> ();
-				val.SetActive (true);
+				GameObject gameObject = new GameObject ("Rail Mesh");
+				gameObject.transform.position = item2.Position;
+				gameObject.tag = "Railway";
+				gameObject.layer = 16;
+				gameObject.SetHierarchyGroup (item.Name);
+				gameObject.SetActive (value: false);
+				MeshCollider meshCollider = gameObject.AddComponent<MeshCollider> ();
+				meshCollider.sharedMaterial = RailPhysicMaterial;
+				meshCollider.sharedMesh = item2.Meshes [0];
+				gameObject.AddComponent<AddToHeightMap> ();
+				gameObject.SetActive (value: true);
 			}
 			AddTrackSpline (item);
 		}
@@ -46,10 +43,6 @@ public class GenerateRailMeshes : ProceduralComponent
 
 	private void AddTrackSpline (PathList rail)
 	{
-		//IL_0074: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0079: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d6: Unknown result type (might be due to invalid IL or missing references)
 		GameObject root = HierarchyUtil.GetRoot (rail.Name);
 		TrainTrackSpline trainTrackSpline = root.AddComponent<TrainTrackSpline> ();
 		trainTrackSpline.aboveGroundSpawn = rail.Hierarchy == 2;
@@ -57,12 +50,12 @@ public class GenerateRailMeshes : ProceduralComponent
 		if (trainTrackSpline.aboveGroundSpawn) {
 			TrainTrackSpline.SidingSplines.Add (trainTrackSpline);
 		}
-		Vector3[] array = (Vector3[])(object)new Vector3[rail.Path.Points.Length];
+		Vector3[] array = new Vector3[rail.Path.Points.Length];
 		for (int i = 0; i < array.Length; i++) {
 			array [i] = rail.Path.Points [i];
 			array [i].y += 0.41f;
 		}
-		Vector3[] array2 = (Vector3[])(object)new Vector3[rail.Path.Tangents.Length];
+		Vector3[] array2 = new Vector3[rail.Path.Tangents.Length];
 		for (int j = 0; j < array.Length; j++) {
 			array2 [j] = rail.Path.Tangents [j];
 		}

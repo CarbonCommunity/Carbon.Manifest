@@ -24,12 +24,12 @@ public class ConstructionSkin : BasePrefab
 			if (!parent.GetConditionalModel (i)) {
 				continue;
 			}
-			GameObject val = array [i].InstantiateSkin (parent);
-			if (!((Object)(object)val == (Object)null)) {
+			GameObject gameObject = array [i].InstantiateSkin (parent);
+			if (!(gameObject == null)) {
 				if (conditionals == null) {
 					conditionals = new List<GameObject> ();
 				}
-				conditionals.Add (val);
+				conditionals.Add (gameObject);
 			}
 		}
 	}
@@ -53,7 +53,7 @@ public class ConstructionSkin : BasePrefab
 	public void Destroy (BuildingBlock parent)
 	{
 		DestroyConditionalModels (parent);
-		parent.gameManager.Retire (((Component)this).gameObject);
+		parent.gameManager.Retire (base.gameObject);
 	}
 
 	public virtual uint GetStartingDetailColour (uint playerColourIndex)

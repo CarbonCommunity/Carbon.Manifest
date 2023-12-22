@@ -8,13 +8,13 @@ public class ConvarToggleChildren : MonoBehaviour
 
 	private bool state = false;
 
-	private Command Command;
+	private ConsoleSystem.Command Command;
 
 	protected void Awake ()
 	{
-		Command = Client.Find (ConvarName);
+		Command = ConsoleSystem.Index.Client.Find (ConvarName);
 		if (Command == null) {
-			Command = Server.Find (ConvarName);
+			Command = ConsoleSystem.Index.Server.Find (ConvarName);
 		}
 		if (Command != null) {
 			SetState (Command.String == ConvarEnabled);
@@ -33,11 +33,8 @@ public class ConvarToggleChildren : MonoBehaviour
 
 	private void SetState (bool newState)
 	{
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Expected O, but got Unknown
-		foreach (Transform item in ((Component)this).transform) {
-			Transform val = item;
-			((Component)val).gameObject.SetActive (newState);
+		foreach (Transform item in base.transform) {
+			item.gameObject.SetActive (newState);
 		}
 		state = newState;
 	}

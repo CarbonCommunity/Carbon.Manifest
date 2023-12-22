@@ -31,21 +31,17 @@ public class ReflectionProbeEx : MonoBehaviour
 
 		public CubemapFaceMatrices (Vector3 x, Vector3 y, Vector3 z)
 		{
-			//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00d9: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00de: Unknown result type (might be due to invalid IL or missing references)
 			worldToView = Matrix4x4.identity;
-			((Matrix4x4)(ref worldToView)) [0, 0] = ((Vector3)(ref x)) [0];
-			((Matrix4x4)(ref worldToView)) [0, 1] = ((Vector3)(ref x)) [1];
-			((Matrix4x4)(ref worldToView)) [0, 2] = ((Vector3)(ref x)) [2];
-			((Matrix4x4)(ref worldToView)) [1, 0] = ((Vector3)(ref y)) [0];
-			((Matrix4x4)(ref worldToView)) [1, 1] = ((Vector3)(ref y)) [1];
-			((Matrix4x4)(ref worldToView)) [1, 2] = ((Vector3)(ref y)) [2];
-			((Matrix4x4)(ref worldToView)) [2, 0] = ((Vector3)(ref z)) [0];
-			((Matrix4x4)(ref worldToView)) [2, 1] = ((Vector3)(ref z)) [1];
-			((Matrix4x4)(ref worldToView)) [2, 2] = ((Vector3)(ref z)) [2];
-			viewToWorld = ((Matrix4x4)(ref worldToView)).inverse;
+			worldToView [0, 0] = x [0];
+			worldToView [0, 1] = x [1];
+			worldToView [0, 2] = x [2];
+			worldToView [1, 0] = y [0];
+			worldToView [1, 1] = y [1];
+			worldToView [1, 2] = y [2];
+			worldToView [2, 0] = z [0];
+			worldToView [2, 1] = z [1];
+			worldToView [2, 2] = z [2];
+			viewToWorld = worldToView.inverse;
 		}
 	}
 
@@ -124,7 +120,7 @@ public class ReflectionProbeEx : MonoBehaviour
 		4, 31
 	};
 
-	public ReflectionProbeRefreshMode refreshMode = (ReflectionProbeRefreshMode)1;
+	public ReflectionProbeRefreshMode refreshMode = ReflectionProbeRefreshMode.EveryFrame;
 
 	public bool timeSlicing = false;
 
@@ -135,7 +131,7 @@ public class ReflectionProbeEx : MonoBehaviour
 
 	public float shadowDistance = 0f;
 
-	public ReflectionProbeClearFlags clearFlags = (ReflectionProbeClearFlags)1;
+	public ReflectionProbeClearFlags clearFlags = ReflectionProbeClearFlags.Skybox;
 
 	public Color background = new Color (0.192f, 0.301f, 0.474f);
 
@@ -163,84 +159,54 @@ public class ReflectionProbeEx : MonoBehaviour
 
 	private void CreateMeshes ()
 	{
-		if ((Object)(object)blitMesh == (Object)null) {
+		if (blitMesh == null) {
 			blitMesh = CreateBlitMesh ();
 		}
-		if ((Object)(object)skyboxMesh == (Object)null) {
+		if (skyboxMesh == null) {
 			skyboxMesh = CreateSkyboxMesh ();
 		}
 	}
 
 	private void DestroyMeshes ()
 	{
-		if ((Object)(object)blitMesh != (Object)null) {
-			Object.DestroyImmediate ((Object)(object)blitMesh);
+		if (blitMesh != null) {
+			UnityEngine.Object.DestroyImmediate (blitMesh);
 			blitMesh = null;
 		}
-		if ((Object)(object)skyboxMesh != (Object)null) {
-			Object.DestroyImmediate ((Object)(object)skyboxMesh);
+		if (skyboxMesh != null) {
+			UnityEngine.Object.DestroyImmediate (skyboxMesh);
 			skyboxMesh = null;
 		}
 	}
 
 	private static Mesh CreateBlitMesh ()
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Expected O, but got Unknown
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0070: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0075: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0093: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0098: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ae: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00da: Unknown result type (might be due to invalid IL or missing references)
-		Mesh val = new Mesh ();
-		val.vertices = (Vector3[])(object)new Vector3[4] {
+		Mesh mesh = new Mesh ();
+		mesh.vertices = new Vector3[4] {
 			new Vector3 (-1f, -1f, 0f),
 			new Vector3 (-1f, 1f, 0f),
 			new Vector3 (1f, 1f, 0f),
 			new Vector3 (1f, -1f, 0f)
 		};
-		val.uv = (Vector2[])(object)new Vector2[4] {
+		mesh.uv = new Vector2[4] {
 			new Vector2 (0f, 0f),
 			new Vector2 (0f, 1f),
 			new Vector2 (1f, 1f),
 			new Vector2 (1f, 0f)
 		};
-		val.triangles = new int[6] { 0, 1, 2, 0, 2, 3 };
-		return val;
+		mesh.triangles = new int[6] { 0, 1, 2, 0, 2, 3 };
+		return mesh;
 	}
 
 	private static CubemapSkyboxVertex SubDivVert (CubemapSkyboxVertex v1, CubemapSkyboxVertex v2)
 	{
-		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0062: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0092: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0097: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 val = default(Vector3);
-		((Vector3)(ref val))..ctor (v1.x, v1.y, v1.z);
-		Vector3 val2 = default(Vector3);
-		((Vector3)(ref val2))..ctor (v2.x, v2.y, v2.z);
-		Vector3 val3 = Vector3.Normalize (Vector3.Lerp (val, val2, 0.5f));
+		Vector3 a = new Vector3 (v1.x, v1.y, v1.z);
+		Vector3 b = new Vector3 (v2.x, v2.y, v2.z);
+		Vector3 vector = Vector3.Normalize (Vector3.Lerp (a, b, 0.5f));
 		CubemapSkyboxVertex result = default(CubemapSkyboxVertex);
-		result.x = (result.tu = val3.x);
-		result.y = (result.tv = val3.y);
-		result.z = (result.tw = val3.z);
+		result.x = (result.tu = vector.x);
+		result.y = (result.tv = vector.y);
+		result.z = (result.tw = vector.z);
 		result.color = Color.white;
 		return result;
 	}
@@ -266,18 +232,6 @@ public class ReflectionProbeEx : MonoBehaviour
 
 	private static void SubdivideYOnly (List<CubemapSkyboxVertex> destArray, CubemapSkyboxVertex v1, CubemapSkyboxVertex v2, CubemapSkyboxVertex v3)
 	{
-		//IL_0114: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0123: Unknown result type (might be due to invalid IL or missing references)
-		//IL_012a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0133: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0143: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0152: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0159: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0162: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0169: Unknown result type (might be due to invalid IL or missing references)
 		float num = Mathf.Abs (v2.y - v1.y);
 		float num2 = Mathf.Abs (v2.y - v3.y);
 		float num3 = Mathf.Abs (v3.y - v1.y);
@@ -302,11 +256,9 @@ public class ReflectionProbeEx : MonoBehaviour
 		destArray.Add (cubemapSkyboxVertex);
 		destArray.Add (item);
 		destArray.Add (item2);
-		Vector3 val = default(Vector3);
-		((Vector3)(ref val))..ctor (item2.x - cubemapSkyboxVertex2.x, item2.y - cubemapSkyboxVertex2.y, item2.z - cubemapSkyboxVertex2.z);
-		Vector3 val2 = default(Vector3);
-		((Vector3)(ref val2))..ctor (item.x - cubemapSkyboxVertex3.x, item.y - cubemapSkyboxVertex3.y, item.z - cubemapSkyboxVertex3.z);
-		if (val.x * val.x + val.y * val.y + val.z * val.z > val2.x * val2.x + val2.y * val2.y + val2.z * val2.z) {
+		Vector3 vector = new Vector3 (item2.x - cubemapSkyboxVertex2.x, item2.y - cubemapSkyboxVertex2.y, item2.z - cubemapSkyboxVertex2.z);
+		Vector3 vector2 = new Vector3 (item.x - cubemapSkyboxVertex3.x, item.y - cubemapSkyboxVertex3.y, item.z - cubemapSkyboxVertex3.z);
+		if (vector.x * vector.x + vector.y * vector.y + vector.z * vector.z > vector2.x * vector2.x + vector2.y * vector2.y + vector2.z * vector2.z) {
 			destArray.Add (item);
 			destArray.Add (cubemapSkyboxVertex2);
 			destArray.Add (cubemapSkyboxVertex3);
@@ -325,28 +277,13 @@ public class ReflectionProbeEx : MonoBehaviour
 
 	private static Mesh CreateSkyboxMesh ()
 	{
-		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0064: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0096: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0282: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0288: Expected O, but got Unknown
-		//IL_02dd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02e2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0304: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0309: Unknown result type (might be due to invalid IL or missing references)
-		//IL_030e: Unknown result type (might be due to invalid IL or missing references)
 		List<CubemapSkyboxVertex> list = new List<CubemapSkyboxVertex> ();
 		for (int i = 0; i < 24; i++) {
 			CubemapSkyboxVertex item = default(CubemapSkyboxVertex);
-			Vector3 val = Vector3.Normalize (new Vector3 (octaVerts [i * 3], octaVerts [i * 3 + 1], octaVerts [i * 3 + 2]));
-			item.x = (item.tu = val.x);
-			item.y = (item.tv = val.y);
-			item.z = (item.tw = val.z);
+			Vector3 vector = Vector3.Normalize (new Vector3 (octaVerts [i * 3], octaVerts [i * 3 + 1], octaVerts [i * 3 + 2]));
+			item.x = (item.tu = vector.x);
+			item.y = (item.tv = vector.y);
+			item.z = (item.tw = vector.z);
 			item.color = Color.white;
 			list.Add (item);
 		}
@@ -378,55 +315,45 @@ public class ReflectionProbeEx : MonoBehaviour
 				}
 			}
 		}
-		Mesh val2 = new Mesh ();
-		Vector3[] array = (Vector3[])(object)new Vector3[list.Count];
-		Vector2[] array2 = (Vector2[])(object)new Vector2[list.Count];
+		Mesh mesh = new Mesh ();
+		Vector3[] array = new Vector3[list.Count];
+		Vector2[] array2 = new Vector2[list.Count];
 		int[] array3 = new int[list.Count];
 		for (int n = 0; n < list.Count; n++) {
 			array [n] = new Vector3 (list [n].x, list [n].y, list [n].z);
-			array2 [n] = Vector2.op_Implicit (new Vector3 (list [n].tu, list [n].tv));
+			array2 [n] = new Vector3 (list [n].tu, list [n].tv);
 			array3 [n] = n;
 		}
-		val2.vertices = array;
-		val2.uv = array2;
-		val2.triangles = array3;
-		return val2;
+		mesh.vertices = array;
+		mesh.uv = array2;
+		mesh.triangles = array3;
+		return mesh;
 	}
 
 	private bool InitializeCubemapFaceMatrices ()
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0009: Invalid comparison between Unknown and I4
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Expected I4, but got Unknown
-		//IL_008d: Unknown result type (might be due to invalid IL or missing references)
-		GraphicsDeviceType graphicsDeviceType = SystemInfo.graphicsDeviceType;
-		if ((int)graphicsDeviceType != 2) {
-			switch (graphicsDeviceType - 16) {
-			case 1:
-				platformCubemapFaceMatrices = cubemapFaceMatrices;
-				break;
-			case 2:
-				platformCubemapFaceMatrices = cubemapFaceMatricesD3D11;
-				break;
-			case 5:
-				platformCubemapFaceMatrices = cubemapFaceMatricesD3D11;
-				break;
-			case 0:
-				platformCubemapFaceMatrices = cubemapFaceMatricesD3D11;
-				break;
-			default:
-				platformCubemapFaceMatrices = null;
-				break;
-			}
-		} else {
+		switch (SystemInfo.graphicsDeviceType) {
+		case GraphicsDeviceType.OpenGLCore:
+			platformCubemapFaceMatrices = cubemapFaceMatrices;
+			break;
+		case GraphicsDeviceType.Direct3D11:
 			platformCubemapFaceMatrices = cubemapFaceMatricesD3D11;
+			break;
+		case GraphicsDeviceType.Direct3D12:
+			platformCubemapFaceMatrices = cubemapFaceMatricesD3D11;
+			break;
+		case GraphicsDeviceType.Vulkan:
+			platformCubemapFaceMatrices = cubemapFaceMatricesD3D11;
+			break;
+		case GraphicsDeviceType.Metal:
+			platformCubemapFaceMatrices = cubemapFaceMatricesD3D11;
+			break;
+		default:
+			platformCubemapFaceMatrices = null;
+			break;
 		}
 		if (platformCubemapFaceMatrices == null) {
-			Debug.LogError ((object)("[ReflectionProbeEx] Initialization failed. No cubemap ortho basis defined for " + SystemInfo.graphicsDeviceType));
+			Debug.LogError ("[ReflectionProbeEx] Initialization failed. No cubemap ortho basis defined for " + SystemInfo.graphicsDeviceType);
 			return false;
 		}
 		return true;
@@ -454,64 +381,51 @@ public class ReflectionProbeEx : MonoBehaviour
 
 	private void SafeCreateMaterial (ref Material mat, Shader shader)
 	{
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Expected O, but got Unknown
-		if ((Object)(object)mat == (Object)null) {
+		if (mat == null) {
 			mat = new Material (shader);
 		}
 	}
 
 	private void SafeCreateMaterial (ref Material mat, string shaderName)
 	{
-		if ((Object)(object)mat == (Object)null) {
+		if (mat == null) {
 			SafeCreateMaterial (ref mat, Shader.Find (shaderName));
 		}
 	}
 
-	private void SafeCreateCubeRT (ref RenderTexture rt, string name, int size, int depth, bool mips, TextureDimension dim, FilterMode filter, RenderTextureFormat format, RenderTextureReadWrite readWrite = 1)
+	private void SafeCreateCubeRT (ref RenderTexture rt, string name, int size, int depth, bool mips, TextureDimension dim, FilterMode filter, RenderTextureFormat format, RenderTextureReadWrite readWrite = RenderTextureReadWrite.Linear)
 	{
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003d: Expected O, but got Unknown
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Invalid comparison between Unknown and I4
-		//IL_0079: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)rt == (Object)null || !rt.IsCreated ()) {
-			SafeDestroy<RenderTexture> (ref rt);
+		if (rt == null || !rt.IsCreated ()) {
+			SafeDestroy (ref rt);
 			rt = new RenderTexture (size, size, depth, format, readWrite) {
-				hideFlags = (HideFlags)52
+				hideFlags = HideFlags.DontSave
 			};
-			((Object)rt).name = name;
-			((Texture)rt).dimension = dim;
-			if ((int)dim == 5) {
+			rt.name = name;
+			rt.dimension = dim;
+			if (dim == TextureDimension.Tex2DArray) {
 				rt.volumeDepth = 6;
 			}
 			rt.useMipMap = mips;
 			rt.autoGenerateMips = false;
-			((Texture)rt).filterMode = filter;
-			((Texture)rt).anisoLevel = 0;
+			rt.filterMode = filter;
+			rt.anisoLevel = 0;
 			rt.Create ();
 		}
 	}
 
 	private void SafeCreateCB (ref CommandBuffer cb, string name)
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Expected O, but got Unknown
 		if (cb == null) {
 			cb = new CommandBuffer ();
 			cb.name = name;
 		}
 	}
 
-	private void SafeDestroy<T> (ref T obj) where T : Object
+	private void SafeDestroy<T> (ref T obj) where T : UnityEngine.Object
 	{
-		if ((Object)(object)obj != (Object)null) {
-			Object.DestroyImmediate ((Object)(object)obj);
-			obj = default(T);
+		if (obj != null) {
+			UnityEngine.Object.DestroyImmediate (obj);
+			obj = null;
 		}
 	}
 

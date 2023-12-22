@@ -9,7 +9,7 @@ public class PlayerModelHairCap : MonoBehaviour
 	{
 		int index = skin.GetIndex (meshNum);
 		SkinSet skinSet = skin.Skins [index];
-		if ((Object)(object)skinSet == (Object)null) {
+		if (skinSet == null) {
 			return;
 		}
 		for (int i = 0; i < 5; i++) {
@@ -19,9 +19,9 @@ public class PlayerModelHairCap : MonoBehaviour
 			PlayerModelHair.GetRandomVariation (hairNum, i, index, out var typeNum, out var dyeNum);
 			HairType hairType = (HairType)i;
 			HairSetCollection.HairSetEntry hairSetEntry = skinSet.HairCollection.Get (hairType, typeNum);
-			if (!((Object)(object)hairSetEntry.HairSet == (Object)null)) {
+			if (!(hairSetEntry.HairSet == null)) {
 				HairDyeCollection hairDyeCollection = hairSetEntry.HairDyeCollection;
-				if (!((Object)(object)hairDyeCollection == (Object)null)) {
+				if (!(hairDyeCollection == null)) {
 					hairDyeCollection.Get (dyeNum)?.ApplyCap (hairDyeCollection, hairType, block);
 				}
 			}

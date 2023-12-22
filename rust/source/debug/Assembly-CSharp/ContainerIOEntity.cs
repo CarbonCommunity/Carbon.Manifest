@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -18,7 +19,7 @@ public class ContainerIOEntity : IOEntity, IItemContainerEntity, IIdealSlotEntit
 
 	public string lootPanelName = "generic";
 
-	public Phrase panelTitle = new Phrase ("loot", "Loot");
+	public Translate.Phrase panelTitle = new Translate.Phrase ("loot", "Loot");
 
 	public bool needsBuildingPrivilegeToUse = false;
 
@@ -34,11 +35,11 @@ public class ContainerIOEntity : IOEntity, IItemContainerEntity, IIdealSlotEntit
 
 	public SoundDefinition closeSound;
 
-	public Phrase LootPanelTitle => panelTitle;
+	public Translate.Phrase LootPanelTitle => panelTitle;
 
 	public ItemContainer inventory { get; private set; }
 
-	public Transform Transform => ((Component)this).transform;
+	public Transform Transform => base.transform;
 
 	public bool DropsLoot => dropsLoot;
 
@@ -50,46 +51,34 @@ public class ContainerIOEntity : IOEntity, IItemContainerEntity, IIdealSlotEntit
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("ContainerIOEntity.OnRpcMessage", 0);
-		try {
-			if (rpc == 331989034 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("ContainerIOEntity.OnRpcMessage")) {
+			if (rpc == 331989034 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_OpenLoot "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_OpenLoot "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_OpenLoot", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_OpenLoot")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (331989034u, "RPC_OpenLoot", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage rpc2 = rPCMessage;
 							RPC_OpenLoot (rpc2);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_OpenLoot");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -117,7 +106,7 @@ public class ContainerIOEntity : IOEntity, IItemContainerEntity, IIdealSlotEntit
 	public override void PostServerLoad ()
 	{
 		base.PostServerLoad ();
-		if (inventory != null && !((ItemContainerId)(ref inventory.uid)).IsValid) {
+		if (inventory != null && !inventory.uid.IsValid) {
 			inventory.GiveUID ();
 		}
 		SetFlag (Flags.Open, b: false);
@@ -143,10 +132,10 @@ public class ContainerIOEntity : IOEntity, IItemContainerEntity, IIdealSlotEntit
 		base.Save (info);
 		if (info.forDisk) {
 			if (inventory != null) {
-				info.msg.storageBox = Pool.Get<StorageBox> ();
+				info.msg.storageBox = Facepunch.Pool.Get<StorageBox> ();
 				info.msg.storageBox.contents = inventory.Save ();
 			} else {
-				Debug.LogWarning ((object)("Storage container without inventory: " + ((object)this).ToString ()));
+				Debug.LogWarning ("Storage container without inventory: " + ToString ());
 			}
 		}
 	}
@@ -180,7 +169,7 @@ public class ContainerIOEntity : IOEntity, IItemContainerEntity, IIdealSlotEntit
 	{
 		if (inventory != null) {
 			BasePlayer player = rpc.player;
-			if (Object.op_Implicit ((Object)(object)player) && player.CanInteract ()) {
+			if ((bool)player && player.CanInteract ()) {
 				PlayerOpenLoot (player, lootPanelName);
 			}
 		}
@@ -227,10 +216,6 @@ public class ContainerIOEntity : IOEntity, IItemContainerEntity, IIdealSlotEntit
 
 	public virtual ItemContainerId GetIdealContainer (BasePlayer player, Item item, bool altMove)
 	{
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
 		return default(ItemContainerId);
 	}
 
@@ -240,7 +225,7 @@ public class ContainerIOEntity : IOEntity, IItemContainerEntity, IIdealSlotEntit
 
 	public bool OccupiedCheck (BasePlayer player = null)
 	{
-		if ((Object)(object)player != (Object)null && (Object)(object)player.inventory.loot.entitySource == (Object)(object)this) {
+		if (player != null && player.inventory.loot.entitySource == this) {
 			return true;
 		}
 		return !onlyOneUser || !IsOpen ();
@@ -254,7 +239,7 @@ public class ContainerIOEntity : IOEntity, IItemContainerEntity, IIdealSlotEntit
 				inventory.Load (info.msg.storageBox.contents);
 				inventory.capacity = numSlots;
 			} else {
-				Debug.LogWarning ((object)("Storage container without inventory: " + ((object)this).ToString ()));
+				Debug.LogWarning ("Storage container without inventory: " + ToString ());
 			}
 		}
 	}

@@ -12,9 +12,9 @@ public class AnimalSkin : MonoBehaviour, IClientComponent
 
 	private void Start ()
 	{
-		model = ((Component)this).gameObject.GetComponent<Model> ();
+		model = base.gameObject.GetComponent<Model> ();
 		if (!dontRandomizeOnStart) {
-			int iSkin = Mathf.FloorToInt ((float)Random.Range (0, animalSkins.Length));
+			int iSkin = Mathf.FloorToInt (Random.Range (0, animalSkins.Length));
 			ChangeSkin (iSkin);
 		}
 	}
@@ -26,16 +26,16 @@ public class AnimalSkin : MonoBehaviour, IClientComponent
 		}
 		iSkin = Mathf.Clamp (iSkin, 0, animalSkins.Length - 1);
 		SkinnedMeshRenderer[] array = animalMesh;
-		foreach (SkinnedMeshRenderer val in array) {
-			Material[] sharedMaterials = ((Renderer)val).sharedMaterials;
+		foreach (SkinnedMeshRenderer skinnedMeshRenderer in array) {
+			Material[] sharedMaterials = skinnedMeshRenderer.sharedMaterials;
 			if (sharedMaterials != null) {
 				for (int j = 0; j < sharedMaterials.Length; j++) {
 					sharedMaterials [j] = animalSkins [iSkin].multiSkin [j];
 				}
-				((Renderer)val).sharedMaterials = sharedMaterials;
+				skinnedMeshRenderer.sharedMaterials = sharedMaterials;
 			}
 		}
-		if ((Object)(object)model != (Object)null) {
+		if (model != null) {
 			model.skin = iSkin;
 		}
 	}

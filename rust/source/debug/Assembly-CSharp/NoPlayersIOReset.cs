@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class NoPlayersIOReset : FacepunchBehaviour
@@ -14,17 +13,17 @@ public class NoPlayersIOReset : FacepunchBehaviour
 
 	protected void OnEnable ()
 	{
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)Check, timeBetweenChecks, timeBetweenChecks, timeBetweenChecks * 0.1f);
+		InvokeRandomized (Check, timeBetweenChecks, timeBetweenChecks, timeBetweenChecks * 0.1f);
 	}
 
 	protected void OnDisable ()
 	{
-		((FacepunchBehaviour)this).CancelInvoke ((Action)Check);
+		CancelInvoke (Check);
 	}
 
 	private void Check ()
 	{
-		if (!PuzzleReset.AnyPlayersWithinDistance (((Component)this).transform, radius)) {
+		if (!PuzzleReset.AnyPlayersWithinDistance (base.transform, radius)) {
 			Reset ();
 		}
 	}

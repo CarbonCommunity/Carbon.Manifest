@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public class AmbientLightLOD : FacepunchBehaviour, ILOD, IClientComponent
 {
 	public bool isDynamic = false;
@@ -12,6 +10,6 @@ public class AmbientLightLOD : FacepunchBehaviour, ILOD, IClientComponent
 
 	protected void OnValidate ()
 	{
-		LightEx.CheckConflict (((Component)this).gameObject);
+		LightEx.CheckConflict (base.gameObject);
 	}
 }

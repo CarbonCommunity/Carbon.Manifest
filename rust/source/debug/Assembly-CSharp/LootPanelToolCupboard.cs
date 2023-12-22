@@ -14,9 +14,9 @@ public class LootPanelToolCupboard : LootPanel
 
 	public GameObject baseProtectedObj;
 
-	public Phrase protectedPrefix;
+	public Translate.Phrase protectedPrefix;
 
 	public Tooltip costToolTip;
 
-	public Phrase blocksPhrase;
+	public Translate.Phrase blocksPhrase;
 }

@@ -5,7 +5,7 @@ public class SteamDLCItem : ScriptableObject
 {
 	public int id;
 
-	public Phrase dlcName;
+	public Translate.Phrase dlcName;
 
 	public int dlcAppID;
 

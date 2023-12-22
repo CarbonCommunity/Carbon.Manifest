@@ -63,20 +63,20 @@ public class SubscriberList<TKey, TTarget, TMessage> where TKey : IEquatable<TKe
 	public void Send (TKey key, TMessage message)
 	{
 		double realtimeSinceStartup = TimeEx.realtimeSinceStartup;
-		List<TTarget> list;
+		List<TTarget> obj;
 		lock (_syncRoot) {
 			if (!_subscriptions.TryGetValue (key, out var value)) {
 				return;
 			}
-			list = Pool.GetList<TTarget> ();
+			obj = Pool.GetList<TTarget> ();
 			foreach (KeyValuePair<TTarget, double> item in value) {
 				if (!_timeoutSeconds.HasValue || realtimeSinceStartup - item.Value < _timeoutSeconds.Value) {
-					list.Add (item.Key);
+					obj.Add (item.Key);
 				}
 			}
 		}
-		_sender.BroadcastTo (list, message);
-		Pool.FreeList<TTarget> (ref list);
+		_sender.BroadcastTo (obj, message);
+		Pool.FreeList (ref obj);
 	}
 
 	public bool HasAnySubscribers (TKey key)
@@ -116,19 +116,19 @@ public class SubscriberList<TKey, TTarget, TMessage> where TKey : IEquatable<TKe
 		}
 		_lastCleanup.Restart ();
 		double realtimeSinceStartup = TimeEx.realtimeSinceStartup;
-		List<(TKey, TTarget)> list = Pool.GetList<(TKey, TTarget)> ();
+		List<(TKey, TTarget)> obj = Pool.GetList<(TKey, TTarget)> ();
 		lock (_syncRoot) {
 			foreach (KeyValuePair<TKey, Dictionary<TTarget, double>> subscription in _subscriptions) {
 				foreach (KeyValuePair<TTarget, double> item in subscription.Value) {
 					if (realtimeSinceStartup - item.Value >= _timeoutSeconds.Value) {
-						list.Add ((subscription.Key, item.Key));
+						obj.Add ((subscription.Key, item.Key));
 					}
 				}
 			}
-			foreach (var (key, value) in list) {
+			foreach (var (key, value) in obj) {
 				Remove (key, value);
 			}
 		}
-		Pool.FreeList<(TKey, TTarget)> (ref list);
+		Pool.FreeList (ref obj);
 	}
 }

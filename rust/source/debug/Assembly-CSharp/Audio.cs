@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 [Factory ("audio")]
@@ -49,24 +48,15 @@ public class Audio : ConsoleSystem
 	[ClientVar (Help = "Volume", Saved = true)]
 	public static int speakers {
 		get {
-			//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0007: Expected I4, but got Unknown
-			return (int)AudioSettings.speakerMode;
+			return (int)UnityEngine.AudioSettings.speakerMode;
 		}
 		set {
-			//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-			//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0037: Unknown result type (might be due to invalid IL or missing references)
 			value = Mathf.Clamp (value, 2, 7);
 			if (!Application.isEditor) {
-				AudioConfiguration configuration = AudioSettings.GetConfiguration ();
+				AudioConfiguration configuration = UnityEngine.AudioSettings.GetConfiguration ();
 				configuration.speakerMode = (AudioSpeakerMode)value;
-				TimeWarning val = TimeWarning.New ("Audio Settings Reset", 250);
-				try {
-					AudioSettings.Reset (configuration);
-				} finally {
-					((IDisposable)val)?.Dispose ();
+				using (TimeWarning.New ("Audio Settings Reset", 250)) {
+					UnityEngine.AudioSettings.Reset (configuration);
 				}
 			}
 		}

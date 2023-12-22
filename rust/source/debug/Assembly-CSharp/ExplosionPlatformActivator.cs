@@ -19,23 +19,23 @@ public class ExplosionPlatformActivator : MonoBehaviour
 	private void Start ()
 	{
 		currentRepeatTime = DefaultRepeatTime;
-		((MonoBehaviour)this).Invoke ("Init", TimeDelay);
+		Invoke ("Init", TimeDelay);
 	}
 
 	private void Init ()
 	{
 		canUpdate = true;
-		Effect.SetActive (true);
+		Effect.SetActive (value: true);
 	}
 
 	private void Update ()
 	{
-		if (canUpdate && !((Object)(object)Effect == (Object)null)) {
+		if (canUpdate && !(Effect == null)) {
 			currentTime += Time.deltaTime;
 			if (currentTime > currentRepeatTime) {
 				currentTime = 0f;
-				Effect.SetActive (false);
-				Effect.SetActive (true);
+				Effect.SetActive (value: false);
+				Effect.SetActive (value: true);
 			}
 		}
 	}

@@ -12,8 +12,7 @@ public class BiomeVisuals : MonoBehaviour
 
 	protected void Start ()
 	{
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		switch (((Object)(object)TerrainMeta.BiomeMap != (Object)null) ? TerrainMeta.BiomeMap.GetBiomeMaxType (((Component)this).transform.position) : 2) {
+		switch ((TerrainMeta.BiomeMap != null) ? TerrainMeta.BiomeMap.GetBiomeMaxType (base.transform.position) : 2) {
 		case 1:
 			SetChoice (Arid);
 			break;
@@ -31,24 +30,24 @@ public class BiomeVisuals : MonoBehaviour
 
 	private void SetChoice (GameObject selection)
 	{
-		bool shouldDestroy = !((Component)this).gameObject.SupportsPoolingInParent ();
+		bool shouldDestroy = !base.gameObject.SupportsPoolingInParent ();
 		ApplyChoice (selection, Arid, shouldDestroy);
 		ApplyChoice (selection, Temperate, shouldDestroy);
 		ApplyChoice (selection, Tundra, shouldDestroy);
 		ApplyChoice (selection, Arctic, shouldDestroy);
-		if ((Object)(object)selection != (Object)null) {
-			selection.SetActive (true);
+		if (selection != null) {
+			selection.SetActive (value: true);
 		}
-		GameManager.Destroy ((Component)(object)this);
+		GameManager.Destroy (this);
 	}
 
 	private void ApplyChoice (GameObject selection, GameObject target, bool shouldDestroy)
 	{
-		if ((Object)(object)target != (Object)null && (Object)(object)target != (Object)(object)selection) {
+		if (target != null && target != selection) {
 			if (shouldDestroy) {
 				GameManager.Destroy (target);
 			} else {
-				target.SetActive (false);
+				target.SetActive (value: false);
 			}
 		}
 	}

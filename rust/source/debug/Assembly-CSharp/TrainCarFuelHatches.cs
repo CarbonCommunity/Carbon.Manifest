@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class TrainCarFuelHatches : MonoBehaviour
@@ -55,7 +54,7 @@ public class TrainCarFuelHatches : MonoBehaviour
 			if (opening) {
 			}
 			isMoving = true;
-			InvokeHandler.InvokeRepeating ((Behaviour)(object)this, (Action)MoveTick, 0f, 0f);
+			InvokeHandler.InvokeRepeating (this, MoveTick, 0f, 0f);
 		}
 	}
 
@@ -82,7 +81,7 @@ public class TrainCarFuelHatches : MonoBehaviour
 	{
 		_hatchLerp = 0f;
 		if (openingQueued == opening) {
-			InvokeHandler.CancelInvoke ((Behaviour)(object)this, (Action)MoveTick);
+			InvokeHandler.CancelInvoke (this, MoveTick);
 			isMoving = false;
 		} else {
 			opening = openingQueued;
@@ -110,7 +109,6 @@ public class TrainCarFuelHatches : MonoBehaviour
 
 	private void SetAngle (Transform transform, float angle)
 	{
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
 		_angles.x = angle;
 		transform.localEulerAngles = _angles;
 	}

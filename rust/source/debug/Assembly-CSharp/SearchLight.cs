@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -29,54 +30,40 @@ public class SearchLight : IOEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("SearchLight.OnRpcMessage", 0);
-		try {
-			if (rpc == 3611615802u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("SearchLight.OnRpcMessage")) {
+			if (rpc == 3611615802u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_UseLight "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_UseLight "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_UseLight", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_UseLight")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (3611615802u, "RPC_UseLight", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							RPC_UseLight (msg2);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_UseLight");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
 
 	public override void ResetState ()
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
 		aimDir = Vector3.zero;
 	}
 
@@ -87,22 +74,18 @@ public class SearchLight : IOEntity
 
 	public bool IsMounted ()
 	{
-		return (Object)(object)mountedPlayer != (Object)null;
+		return mountedPlayer != null;
 	}
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
-		info.msg.autoturret = Pool.Get<AutoTurret> ();
+		info.msg.autoturret = Facepunch.Pool.Get<ProtoBuf.AutoTurret> ();
 		info.msg.autoturret.aimDir = aimDir;
 	}
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (info.msg.autoturret != null) {
 			aimDir = info.msg.autoturret.aimDir;
@@ -111,9 +94,9 @@ public class SearchLight : IOEntity
 
 	public void PlayerEnter (BasePlayer player)
 	{
-		if (!IsMounted () || !((Object)(object)player != (Object)(object)mountedPlayer)) {
+		if (!IsMounted () || !(player != mountedPlayer)) {
 			PlayerExit ();
-			if ((Object)(object)player != (Object)null) {
+			if (player != null) {
 				mountedPlayer = player;
 				SetFlag (Flags.Reserved5, b: true);
 			}
@@ -122,7 +105,7 @@ public class SearchLight : IOEntity
 
 	public void PlayerExit ()
 	{
-		if (Object.op_Implicit ((Object)(object)mountedPlayer)) {
+		if ((bool)mountedPlayer) {
 			mountedPlayer = null;
 		}
 		SetFlag (Flags.Reserved5, b: false);
@@ -130,15 +113,7 @@ public class SearchLight : IOEntity
 
 	public void MountedUpdate ()
 	{
-		//IL_0079: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0089: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0093: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0098: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)mountedPlayer == (Object)null || mountedPlayer.IsSleeping () || !mountedPlayer.IsAlive () || mountedPlayer.IsWounded () || Vector3.Distance (((Component)mountedPlayer).transform.position, ((Component)this).transform.position) > 2f) {
+		if (mountedPlayer == null || mountedPlayer.IsSleeping () || !mountedPlayer.IsAlive () || mountedPlayer.IsWounded () || Vector3.Distance (mountedPlayer.transform.position, base.transform.position) > 2f) {
 			PlayerExit ();
 			return;
 		}
@@ -149,14 +124,7 @@ public class SearchLight : IOEntity
 
 	public void SetTargetAimpoint (Vector3 worldPos)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 val = worldPos - eyePoint.transform.position;
-		aimDir = ((Vector3)(ref val)).normalized;
+		aimDir = (worldPos - eyePoint.transform.position).normalized;
 	}
 
 	public override int GetCurrentEnergy ()

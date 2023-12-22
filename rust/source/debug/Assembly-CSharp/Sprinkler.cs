@@ -1,4 +1,4 @@
-using System;
+#define ENABLE_PROFILER
 using System.Collections.Generic;
 using ConVar;
 using Facepunch;
@@ -25,7 +25,7 @@ public class Sprinkler : IOEntity
 
 	private bool forceUpdateSplashables = false;
 
-	public override bool BlockFluidDraining => (Object)(object)currentFuelSource != (Object)null;
+	public override bool BlockFluidDraining => currentFuelSource != null;
 
 	public override int ConsumptionAmount ()
 	{
@@ -45,54 +45,31 @@ public class Sprinkler : IOEntity
 
 	private void DoSplash ()
 	{
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0063: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0073: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0078: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0084: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ce: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00da: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00df: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ed: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ef: Unknown result type (might be due to invalid IL or missing references)
-		//IL_016d: Unknown result type (might be due to invalid IL or missing references)
-		TimeWarning val = TimeWarning.New ("SprinklerSplash", 0);
-		try {
+		using (TimeWarning.New ("SprinklerSplash")) {
 			int num = WaterPerSplash;
-			if (TimeSince.op_Implicit (updateSplashableCache) > SplashFrequency * 4f || forceUpdateSplashables) {
+			if ((float)updateSplashableCache > SplashFrequency * 4f || forceUpdateSplashables) {
 				Profiler.BeginSample ("UpdateCachedSplashables");
 				cachedSplashables.Clear ();
 				forceUpdateSplashables = false;
-				updateSplashableCache = TimeSince.op_Implicit (0f);
+				updateSplashableCache = 0f;
 				Vector3 position = Eyes.position;
-				Vector3 up = ((Component)this).transform.up;
+				Vector3 up = base.transform.up;
 				float sprinklerEyeHeightOffset = Server.sprinklerEyeHeightOffset;
-				float num2 = Vector3.Angle (up, Vector3.up) / 180f;
-				num2 = Mathf.Clamp (num2, 0.2f, 1f);
-				sprinklerEyeHeightOffset *= num2;
+				float value = Vector3.Angle (up, Vector3.up) / 180f;
+				value = Mathf.Clamp (value, 0.2f, 1f);
+				sprinklerEyeHeightOffset *= value;
 				Vector3 startPosition = position + up * (Server.sprinklerRadius * 0.5f);
 				Vector3 endPosition = position + up * sprinklerEyeHeightOffset;
-				List<BaseEntity> list = Pool.GetList<BaseEntity> ();
-				Vis.Entities (startPosition, endPosition, Server.sprinklerRadius, list, 1237003025, (QueryTriggerInteraction)2);
-				if (list.Count > 0) {
-					foreach (BaseEntity item in list) {
+				List<BaseEntity> obj = Facepunch.Pool.GetList<BaseEntity> ();
+				Vis.Entities (startPosition, endPosition, Server.sprinklerRadius, obj, 1237003025);
+				if (obj.Count > 0) {
+					foreach (BaseEntity item in obj) {
 						if (!item.isClient && item is ISplashable splashable && !cachedSplashables.Contains (splashable) && splashable.WantsSplash (currentFuelType, num) && item.IsVisible (position) && (!(item is IOEntity entity) || !IsConnectedTo (entity, IOEntity.backtracking))) {
 							cachedSplashables.Add (splashable);
 						}
 					}
 				}
-				Pool.FreeList<BaseEntity> (ref list);
+				Facepunch.Pool.FreeList (ref obj);
 				Profiler.EndSample ();
 			} else {
 				Profiler.BeginSample ("UseCachedSplashables");
@@ -108,9 +85,9 @@ public class Sprinkler : IOEntity
 					}
 					Profiler.EndSample ();
 					Profiler.BeginSample ("ApplySplash");
-					int num3 = cachedSplashable.DoSplash (currentFuelType, amount);
+					int num2 = cachedSplashable.DoSplash (currentFuelType, amount);
 					Profiler.EndSample ();
-					num -= num3;
+					num -= num2;
 					if (num > 0) {
 						continue;
 					}
@@ -120,8 +97,6 @@ public class Sprinkler : IOEntity
 			if (DecayPerSplash > 0f) {
 				Hurt (DecayPerSplash);
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 	}
 
@@ -139,8 +114,8 @@ public class Sprinkler : IOEntity
 		if (!IsOn ()) {
 			SetFlag (Flags.On, b: true);
 			forceUpdateSplashables = true;
-			if (!((FacepunchBehaviour)this).IsInvoking ((Action)DoSplash)) {
-				((FacepunchBehaviour)this).InvokeRandomized ((Action)DoSplash, SplashFrequency * 0.5f, SplashFrequency, SplashFrequency * 0.2f);
+			if (!IsInvoking (DoSplash)) {
+				InvokeRandomized (DoSplash, SplashFrequency * 0.5f, SplashFrequency, SplashFrequency * 0.2f);
 			}
 		}
 	}
@@ -149,8 +124,8 @@ public class Sprinkler : IOEntity
 	{
 		if (IsOn ()) {
 			SetFlag (Flags.On, b: false);
-			if (((FacepunchBehaviour)this).IsInvoking ((Action)DoSplash)) {
-				((FacepunchBehaviour)this).CancelInvoke ((Action)DoSplash);
+			if (IsInvoking (DoSplash)) {
+				CancelInvoke (DoSplash);
 			}
 			currentFuelSource = null;
 			currentFuelType = null;

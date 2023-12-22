@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -26,46 +27,34 @@ public class Landmine : BaseTrap
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("Landmine.OnRpcMessage", 0);
-		try {
-			if (rpc == 1552281787 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("Landmine.OnRpcMessage")) {
+			if (rpc == 1552281787 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_Disarm "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_Disarm "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_Disarm", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_Disarm")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (1552281787u, "RPC_Disarm", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage rpc2 = rPCMessage;
 							RPC_Disarm (rpc2);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_Disarm");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -84,7 +73,7 @@ public class Landmine : BaseTrap
 	{
 		base.Save (info);
 		if (!info.forDisk) {
-			info.msg.landmine = Pool.Get<Landmine> ();
+			info.msg.landmine = Facepunch.Pool.Get<ProtoBuf.Landmine> ();
 			info.msg.landmine.triggeredID = triggerPlayerID;
 		}
 	}
@@ -100,7 +89,7 @@ public class Landmine : BaseTrap
 	public override void ServerInit ()
 	{
 		SetFlag (Flags.On, b: false);
-		((FacepunchBehaviour)this).Invoke ((Action)Arm, 1.5f);
+		Invoke (Arm, 1.5f);
 		base.ServerInit ();
 	}
 
@@ -108,7 +97,7 @@ public class Landmine : BaseTrap
 	{
 		if (!base.isClient) {
 			if (!Armed ()) {
-				((FacepunchBehaviour)this).CancelInvoke ((Action)Arm);
+				CancelInvoke (Arm);
 				blocked = true;
 			} else {
 				BasePlayer ply = obj.ToBaseEntity () as BasePlayer;
@@ -119,7 +108,7 @@ public class Landmine : BaseTrap
 
 	public void Trigger (BasePlayer ply = null)
 	{
-		if (Object.op_Implicit ((Object)(object)ply)) {
+		if ((bool)ply) {
 			triggerPlayerID = ply.userID;
 		}
 		SetFlag (Flags.Open, b: true);
@@ -132,17 +121,14 @@ public class Landmine : BaseTrap
 			Arm ();
 			blocked = false;
 		} else if (Triggered ()) {
-			((FacepunchBehaviour)this).Invoke ((Action)TryExplode, 0.05f);
+			Invoke (TryExplode, 0.05f);
 		}
 	}
 
 	public virtual void Explode ()
 	{
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
 		base.health = float.PositiveInfinity;
-		Effect.server.Run (explosionEffect.resourcePath, PivotPoint (), ((Component)this).transform.up, null, broadcast: true);
+		Effect.server.Run (explosionEffect.resourcePath, PivotPoint (), base.transform.up, null, broadcast: true);
 		DamageUtil.RadiusDamage (this, LookupPrefab (), CenterPoint (), minExplosionRadius, explosionRadius, damageTypes, 2263296, useLineOfSight: true);
 		if (!base.IsDestroyed) {
 			Kill ();
@@ -151,7 +137,7 @@ public class Landmine : BaseTrap
 
 	public override void OnKilled (HitInfo info)
 	{
-		((FacepunchBehaviour)this).Invoke ((Action)Explode, Random.Range (0.1f, 0.3f));
+		Invoke (Explode, UnityEngine.Random.Range (0.1f, 0.3f));
 	}
 
 	private void OnGroundMissing ()
@@ -178,9 +164,9 @@ public class Landmine : BaseTrap
 	{
 		if (rpc.player.userID != triggerPlayerID && Armed ()) {
 			SetFlag (Flags.On, b: false);
-			int num = Random.Range (0, 100);
+			int num = UnityEngine.Random.Range (0, 100);
 			if (num < 15) {
-				((FacepunchBehaviour)this).Invoke ((Action)TryExplode, 0.05f);
+				Invoke (TryExplode, 0.05f);
 				return;
 			}
 			rpc.player.GiveItem (ItemManager.CreateByName ("trap.landmine", 1, 0uL), GiveItemReason.PickedUp);

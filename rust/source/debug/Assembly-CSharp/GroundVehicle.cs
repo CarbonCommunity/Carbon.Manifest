@@ -66,12 +66,10 @@ public abstract class GroundVehicle : BaseVehicle, IEngineControllerUser, IEntit
 
 	public float GetSpeed ()
 	{
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
 		if (IsStationary ()) {
 			return 0f;
 		}
-		return Vector3.Dot (Velocity, ((Component)this).transform.forward);
+		return Vector3.Dot (Velocity, base.transform.forward);
 	}
 
 	public abstract float GetMaxForwardSpeed ();
@@ -93,12 +91,9 @@ public abstract class GroundVehicle : BaseVehicle, IEngineControllerUser, IEntit
 
 	public override void ServerInit ()
 	{
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
 		base.ServerInit ();
 		timeSinceDragModSet = default(TimeSince);
-		timeSinceDragModSet = TimeSince.op_Implicit (float.MaxValue);
+		timeSinceDragModSet = float.MaxValue;
 	}
 
 	public abstract void OnEngineStartFailed ();
@@ -118,8 +113,6 @@ public abstract class GroundVehicle : BaseVehicle, IEngineControllerUser, IEntit
 
 	public override void VehicleFixedUpdate ()
 	{
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
 		base.VehicleFixedUpdate ();
 		if (base.IsMovingOrOn) {
 			Velocity = GetLocalVelocity ();
@@ -153,25 +146,12 @@ public abstract class GroundVehicle : BaseVehicle, IEngineControllerUser, IEntit
 
 	public void OnHurtTriggerOccupant (BaseEntity hurtEntity, DamageType damageType, float damageTotal)
 	{
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0037: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0060: Unknown result type (might be due to invalid IL or missing references)
 		if (!base.isClient && !hurtEntity.IsDestroyed) {
-			Vector3 val = hurtEntity.GetLocalVelocity () - Velocity;
-			Vector3 val2 = ClosestPoint (((Component)hurtEntity).transform.position);
-			Vector3 val3 = hurtEntity.RealisticMass * val;
-			rigidBody.AddForceAtPosition (val3 * 1.25f, val2, (ForceMode)1);
-			QueueCollisionDamage (this, ((Vector3)(ref val3)).magnitude * 0.75f / Time.deltaTime);
+			Vector3 vector = hurtEntity.GetLocalVelocity () - Velocity;
+			Vector3 position = ClosestPoint (hurtEntity.transform.position);
+			Vector3 vector2 = hurtEntity.RealisticMass * vector;
+			rigidBody.AddForceAtPosition (vector2 * 1.25f, position, ForceMode.Impulse);
+			QueueCollisionDamage (this, vector2.magnitude * 0.75f / Time.deltaTime);
 			SetTempDrag (2.25f, 1f);
 		}
 	}
@@ -199,23 +179,18 @@ public abstract class GroundVehicle : BaseVehicle, IEngineControllerUser, IEntit
 
 	private void ProcessCollision (Collision collision)
 	{
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a8: Unknown result type (might be due to invalid IL or missing references)
-		if (base.isClient || collision == null || (Object)(object)collision.gameObject == (Object)null || (Object)(object)collision.gameObject == (Object)null) {
+		if (base.isClient || collision == null || collision.gameObject == null || collision.gameObject == null) {
 			return;
 		}
 		ContactPoint contact = collision.GetContact (0);
 		BaseEntity baseEntity = null;
-		if ((Object)(object)((ContactPoint)(ref contact)).otherCollider.attachedRigidbody == (Object)(object)rigidBody) {
-			baseEntity = ((ContactPoint)(ref contact)).otherCollider.ToBaseEntity ();
-		} else if ((Object)(object)((ContactPoint)(ref contact)).thisCollider.attachedRigidbody == (Object)(object)rigidBody) {
-			baseEntity = ((ContactPoint)(ref contact)).thisCollider.ToBaseEntity ();
+		if (contact.otherCollider.attachedRigidbody == rigidBody) {
+			baseEntity = contact.otherCollider.ToBaseEntity ();
+		} else if (contact.thisCollider.attachedRigidbody == rigidBody) {
+			baseEntity = contact.thisCollider.ToBaseEntity ();
 		}
-		if ((Object)(object)baseEntity != (Object)null) {
-			Vector3 impulse = collision.impulse;
-			float forceMagnitude = ((Vector3)(ref impulse)).magnitude / Time.fixedDeltaTime;
+		if (baseEntity != null) {
+			float forceMagnitude = collision.impulse.magnitude / Time.fixedDeltaTime;
 			float num = QueueCollisionDamage (baseEntity, forceMagnitude);
 			if (num > 0f) {
 				TryShowCollisionFX (collision, collisionEffect);
@@ -225,8 +200,7 @@ public abstract class GroundVehicle : BaseVehicle, IEngineControllerUser, IEntit
 
 	public virtual float GetModifiedDrag ()
 	{
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		float num = 1f - Mathf.InverseLerp (0f, dragModDuration, TimeSince.op_Implicit (timeSinceDragModSet));
+		float num = 1f - Mathf.InverseLerp (0f, dragModDuration, timeSinceDragModSet);
 		return num * dragMod;
 	}
 
@@ -245,20 +219,18 @@ public abstract class GroundVehicle : BaseVehicle, IEngineControllerUser, IEntit
 
 	private void SetTempDrag (float drag, float duration)
 	{
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
 		dragMod = Mathf.Clamp (drag, 0f, 1000f);
-		timeSinceDragModSet = TimeSince.op_Implicit (0f);
+		timeSinceDragModSet = 0f;
 		dragModDuration = duration;
 	}
 
 	void IEngineControllerUser.Invoke (Action action, float time)
 	{
-		((FacepunchBehaviour)this).Invoke (action, time);
+		Invoke (action, time);
 	}
 
 	void IEngineControllerUser.CancelInvoke (Action action)
 	{
-		((FacepunchBehaviour)this).CancelInvoke (action);
+		CancelInvoke (action);
 	}
 }

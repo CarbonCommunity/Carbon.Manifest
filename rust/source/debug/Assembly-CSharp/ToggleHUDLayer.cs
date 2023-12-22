@@ -14,25 +14,24 @@ public class ToggleHUDLayer : MonoBehaviour, IClientComponent
 	protected void OnEnable ()
 	{
 		UIHUD instance = SingletonComponent<UIHUD>.Instance;
-		if (!((Object)(object)instance != (Object)null)) {
+		if (!(instance != null)) {
 			return;
 		}
-		Transform val = TransformEx.FindChildRecursive (((Component)instance).transform, hudComponentName);
-		if ((Object)(object)val != (Object)null) {
-			Canvas component = ((Component)val).GetComponent<Canvas> ();
-			if ((Object)(object)component != (Object)null) {
-				toggleControl.isOn = ((Behaviour)component).enabled;
+		Transform transform = instance.transform.FindChildRecursive (hudComponentName);
+		if (transform != null) {
+			Canvas component = transform.GetComponent<Canvas> ();
+			if (component != null) {
+				toggleControl.isOn = component.enabled;
 			} else {
-				toggleControl.isOn = ((Component)val).gameObject.activeSelf;
+				toggleControl.isOn = transform.gameObject.activeSelf;
 			}
 		} else {
-			Debug.LogWarning ((object)(((object)this).GetType ().Name + ": Couldn't find child: " + hudComponentName));
+			Debug.LogWarning (GetType ().Name + ": Couldn't find child: " + hudComponentName);
 		}
 	}
 
 	public void OnToggleChanged ()
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		ConsoleSystem.Run (Option.Client, "global.hudcomponent", new object[2] { hudComponentName, toggleControl.isOn });
+		ConsoleSystem.Run (ConsoleSystem.Option.Client, "global.hudcomponent", hudComponentName, toggleControl.isOn);
 	}
 }

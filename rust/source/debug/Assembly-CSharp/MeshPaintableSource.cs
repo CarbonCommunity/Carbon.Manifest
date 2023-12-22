@@ -48,17 +48,11 @@ public class MeshPaintableSource : MonoBehaviour, IClientComponent
 
 	public void Init ()
 	{
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Expected O, but got Unknown
-		//IL_005f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0064: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0087: Expected O, but got Unknown
-		if ((Object)(object)texture == (Object)null) {
-			texture = new Texture2D (texWidth, texHeight, (TextureFormat)5, false);
-			((Object)texture).name = "MeshPaintableSource_" + ((Object)((Component)this).gameObject).name;
-			((Texture)texture).wrapMode = (TextureWrapMode)1;
-			TextureEx.Clear (texture, Color32.op_Implicit (Color.clear));
+		if (texture == null) {
+			texture = new Texture2D (texWidth, texHeight, TextureFormat.ARGB32, mipChain: false);
+			texture.name = "MeshPaintableSource_" + base.gameObject.name;
+			texture.wrapMode = TextureWrapMode.Clamp;
+			texture.Clear (Color.clear);
 		}
 		if (block == null) {
 			block = new MaterialPropertyBlock ();
@@ -66,39 +60,38 @@ public class MeshPaintableSource : MonoBehaviour, IClientComponent
 			block.Clear ();
 		}
 		UpdateMaterials (block, null, forEditing: false, isSelected);
-		List<Renderer> list = Pool.GetList<Renderer> ();
-		Transform val = (applyToAllRenderers ? ((Component)this).transform.root : ((Component)this).transform);
+		List<Renderer> obj = Pool.GetList<Renderer> ();
+		Transform transform = (applyToAllRenderers ? base.transform.root : base.transform);
 		if (applyToSkinRenderers) {
-			BaseEntity componentInParent = ((Component)this).GetComponentInParent<BaseEntity> ();
-			if ((Object)(object)componentInParent != (Object)null) {
-				val = ((Component)componentInParent).transform;
+			BaseEntity componentInParent = GetComponentInParent<BaseEntity> ();
+			if (componentInParent != null) {
+				transform = componentInParent.transform;
 			}
 		}
-		((Component)val).GetComponentsInChildren<Renderer> (true, list);
-		PlayerModelSkin playerModelSkin = default(PlayerModelSkin);
-		foreach (Renderer item in list) {
-			if (applyToSkinRenderers || !((Component)item).TryGetComponent<PlayerModelSkin> (ref playerModelSkin)) {
+		transform.GetComponentsInChildren (includeInactive: true, obj);
+		foreach (Renderer item in obj) {
+			if (applyToSkinRenderers || !item.TryGetComponent<PlayerModelSkin> (out var _)) {
 				item.SetPropertyBlock (block);
 			}
 		}
 		if (extraRenderers != null) {
 			Renderer[] array = extraRenderers;
-			foreach (Renderer val2 in array) {
-				if ((Object)(object)val2 != (Object)null) {
-					val2.SetPropertyBlock (block);
+			foreach (Renderer renderer in array) {
+				if (renderer != null) {
+					renderer.SetPropertyBlock (block);
 				}
 			}
 		}
-		if (applyToFirstPersonLegs && (Object)(object)legRenderer != (Object)null) {
+		if (applyToFirstPersonLegs && legRenderer != null) {
 			legRenderer.SetPropertyBlock (block);
 		}
-		Pool.FreeList<Renderer> (ref list);
+		Pool.FreeList (ref obj);
 	}
 
 	public void Free ()
 	{
-		if (Object.op_Implicit ((Object)(object)texture)) {
-			Object.Destroy ((Object)(object)texture);
+		if ((bool)texture) {
+			UnityEngine.Object.Destroy (texture);
 			texture = null;
 		}
 	}
@@ -110,7 +103,7 @@ public class MeshPaintableSource : MonoBehaviour, IClientComponent
 
 	public virtual void UpdateMaterials (MaterialPropertyBlock block, Texture2D textureOverride = null, bool forEditing = false, bool isSelected = false)
 	{
-		block.SetTexture (replacementTextureName, (Texture)(object)(textureOverride ?? texture));
+		block.SetTexture (replacementTextureName, textureOverride ?? texture);
 	}
 
 	public virtual Color32[] UpdateFrom (Texture2D input)
@@ -118,7 +111,7 @@ public class MeshPaintableSource : MonoBehaviour, IClientComponent
 		Init ();
 		Color32[] pixels = input.GetPixels32 ();
 		texture.SetPixels32 (pixels);
-		texture.Apply (true, false);
+		texture.Apply (updateMipmaps: true, makeNoLongerReadable: false);
 		return pixels;
 	}
 
@@ -126,18 +119,16 @@ public class MeshPaintableSource : MonoBehaviour, IClientComponent
 	{
 		Init ();
 		if (data != null) {
-			ImageConversion.LoadImage (texture, data);
-			texture.Apply (true, false);
+			texture.LoadImage (data);
+			texture.Apply (updateMipmaps: true, makeNoLongerReadable: false);
 		}
 	}
 
 	public void Clear ()
 	{
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		if (!((Object)(object)texture == (Object)null)) {
-			TextureEx.Clear (texture, Color32.op_Implicit (new Color (0f, 0f, 0f, 0f)));
-			texture.Apply (true, false);
+		if (!(texture == null)) {
+			texture.Clear (new Color (0f, 0f, 0f, 0f));
+			texture.Apply (updateMipmaps: true, makeNoLongerReadable: false);
 		}
 	}
 }

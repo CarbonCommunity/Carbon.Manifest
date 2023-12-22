@@ -1,3 +1,4 @@
+#define ENABLE_PROFILER
 using System.Collections.Generic;
 using ConVar;
 using Rust;
@@ -149,7 +150,7 @@ public abstract class BaseModifiers<T> : EntityComponent<T> where T : BaseCombat
 
 	protected virtual void OnDisable ()
 	{
-		if (!Application.isQuitting) {
+		if (!Rust.Application.isQuitting) {
 			owner = null;
 		}
 	}
@@ -168,17 +169,17 @@ public abstract class BaseModifiers<T> : EntityComponent<T> where T : BaseCombat
 
 	public void ResetTicking ()
 	{
-		lastTickTime = Time.realtimeSinceStartup;
+		lastTickTime = UnityEngine.Time.realtimeSinceStartup;
 		timeSinceLastTick = 0f;
 	}
 
 	public virtual void ServerUpdate (BaseCombatEntity ownerEntity)
 	{
-		float num = Time.realtimeSinceStartup - lastTickTime;
-		lastTickTime = Time.realtimeSinceStartup;
+		float num = UnityEngine.Time.realtimeSinceStartup - lastTickTime;
+		lastTickTime = UnityEngine.Time.realtimeSinceStartup;
 		timeSinceLastTick += num;
 		if (!(timeSinceLastTick <= ConVar.Server.modifierTickRate)) {
-			if ((Object)(object)owner != (Object)null && !owner.IsDead ()) {
+			if (owner != null && !owner.IsDead ()) {
 				Profiler.BeginSample ("TickModifiers");
 				TickModifiers (ownerEntity, timeSinceLastTick);
 				Profiler.EndSample ();

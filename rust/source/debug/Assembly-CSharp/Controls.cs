@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public static class Controls
@@ -7,50 +6,50 @@ public static class Controls
 
 	public static float FloatSlider (string strLabel, float value, float low, float high, string format = "0.00")
 	{
-		GUILayout.BeginHorizontal (Array.Empty<GUILayoutOption> ());
-		GUILayout.Label (strLabel, (GUILayoutOption[])(object)new GUILayoutOption[1] { GUILayout.Width (labelWidth) });
-		float num = float.Parse (GUILayout.TextField (value.ToString (format), (GUILayoutOption[])(object)new GUILayoutOption[1] { GUILayout.ExpandWidth (true) }));
+		GUILayout.BeginHorizontal ();
+		GUILayout.Label (strLabel, GUILayout.Width (labelWidth));
+		float value2 = float.Parse (GUILayout.TextField (value.ToString (format), GUILayout.ExpandWidth (expand: true)));
 		GUILayout.EndHorizontal ();
-		GUILayout.BeginHorizontal (Array.Empty<GUILayoutOption> ());
-		num = GUILayout.HorizontalSlider (num, low, high, Array.Empty<GUILayoutOption> ());
+		GUILayout.BeginHorizontal ();
+		value2 = GUILayout.HorizontalSlider (value2, low, high);
 		GUILayout.EndHorizontal ();
-		return num;
+		return value2;
 	}
 
 	public static int IntSlider (string strLabel, int value, int low, int high, string format = "0")
 	{
-		GUILayout.BeginHorizontal (Array.Empty<GUILayoutOption> ());
-		GUILayout.Label (strLabel, (GUILayoutOption[])(object)new GUILayoutOption[1] { GUILayout.Width (labelWidth) });
-		int num = int.Parse (GUILayout.TextField (value.ToString (format), (GUILayoutOption[])(object)new GUILayoutOption[1] { GUILayout.ExpandWidth (true) }));
+		GUILayout.BeginHorizontal ();
+		GUILayout.Label (strLabel, GUILayout.Width (labelWidth));
+		int num = int.Parse (GUILayout.TextField (value.ToString (format), GUILayout.ExpandWidth (expand: true)));
 		GUILayout.EndHorizontal ();
-		GUILayout.BeginHorizontal (Array.Empty<GUILayoutOption> ());
-		num = (int)GUILayout.HorizontalSlider ((float)num, (float)low, (float)high, Array.Empty<GUILayoutOption> ());
+		GUILayout.BeginHorizontal ();
+		num = (int)GUILayout.HorizontalSlider (num, low, high);
 		GUILayout.EndHorizontal ();
 		return num;
 	}
 
 	public static string TextArea (string strName, string value)
 	{
-		GUILayout.BeginHorizontal (Array.Empty<GUILayoutOption> ());
-		GUILayout.Label (strName, (GUILayoutOption[])(object)new GUILayoutOption[1] { GUILayout.Width (labelWidth) });
-		string result = GUILayout.TextArea (value, Array.Empty<GUILayoutOption> ());
+		GUILayout.BeginHorizontal ();
+		GUILayout.Label (strName, GUILayout.Width (labelWidth));
+		string result = GUILayout.TextArea (value);
 		GUILayout.EndHorizontal ();
 		return result;
 	}
 
 	public static bool Checkbox (string strName, bool value)
 	{
-		GUILayout.BeginHorizontal (Array.Empty<GUILayoutOption> ());
-		GUILayout.Label (strName, (GUILayoutOption[])(object)new GUILayoutOption[1] { GUILayout.Width (labelWidth) });
-		bool result = GUILayout.Toggle (value, "", Array.Empty<GUILayoutOption> ());
+		GUILayout.BeginHorizontal ();
+		GUILayout.Label (strName, GUILayout.Width (labelWidth));
+		bool result = GUILayout.Toggle (value, "");
 		GUILayout.EndHorizontal ();
 		return result;
 	}
 
 	public static bool Button (string strName)
 	{
-		GUILayout.BeginHorizontal (Array.Empty<GUILayoutOption> ());
-		bool result = GUILayout.Button (strName, Array.Empty<GUILayoutOption> ());
+		GUILayout.BeginHorizontal ();
+		bool result = GUILayout.Button (strName);
 		GUILayout.EndHorizontal ();
 		return result;
 	}

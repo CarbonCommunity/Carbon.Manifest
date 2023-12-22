@@ -1,3 +1,5 @@
+#define ENABLE_PROFILER
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -50,64 +52,51 @@ public class AudioVisualisationEntity : IOEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("AudioVisualisationEntity.OnRpcMessage", 0);
-		try {
-			if (rpc == 4002266471u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("AudioVisualisationEntity.OnRpcMessage")) {
+			if (rpc == 4002266471u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - ServerUpdateSettings "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - ServerUpdateSettings "));
 				}
-				TimeWarning val2 = TimeWarning.New ("ServerUpdateSettings", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("ServerUpdateSettings")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (4002266471u, "ServerUpdateSettings", this, player, 5uL)) {
 							return true;
 						}
 						if (!RPC_Server.IsVisible.Test (4002266471u, "ServerUpdateSettings", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							ServerUpdateSettings (msg2);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in ServerUpdateSettings");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
 
 	public override void OnFlagsChanged (Flags old, Flags next)
 	{
-		//IL_00a1: Unknown result type (might be due to invalid IL or missing references)
 		base.OnFlagsChanged (old, next);
 		if (base.isServer && old.HasFlag (Flags.Reserved8) != next.HasFlag (Flags.Reserved8) && next.HasFlag (Flags.Reserved8)) {
 			Profiler.BeginSample ("GetBoombox");
 			int depth = BoomBox.BacktrackLength * 4;
 			IOEntity audioSource = GetAudioSource (this, ref depth);
 			Profiler.EndSample ();
-			if ((Object)(object)audioSource != (Object)null) {
-				ClientRPC<NetworkableId> (null, "Client_PlayAudioFrom", audioSource.net.ID);
+			if (audioSource != null) {
+				ClientRPC (null, "Client_PlayAudioFrom", audioSource.net.ID);
 			}
 			connectedTo.Set (audioSource);
 		}
@@ -119,24 +108,21 @@ public class AudioVisualisationEntity : IOEntity
 			return null;
 		}
 		IOSlot[] array = entity.inputs;
-		IAudioConnectionSource audioConnectionSource = default(IAudioConnectionSource);
-		AudioVisualisationEntity audioVisualisationEntity = default(AudioVisualisationEntity);
-		IAudioConnectionSource audioConnectionSource2 = default(IAudioConnectionSource);
 		foreach (IOSlot iOSlot in array) {
 			IOEntity iOEntity = iOSlot.connectedTo.Get (base.isServer);
-			if ((Object)(object)iOEntity == (Object)(object)this) {
+			if (iOEntity == this) {
 				return null;
 			}
-			if ((Object)(object)iOEntity != (Object)null && ((Component)iOEntity).TryGetComponent<IAudioConnectionSource> (ref audioConnectionSource)) {
+			if (iOEntity != null && iOEntity.TryGetComponent<IAudioConnectionSource> (out var _)) {
 				return iOEntity;
 			}
-			if ((Object)(object)iOEntity != (Object)null && ((Component)iOEntity).TryGetComponent<AudioVisualisationEntity> (ref audioVisualisationEntity) && audioVisualisationEntity.connectedTo.IsSet) {
-				return audioVisualisationEntity.connectedTo.Get (base.isServer) as IOEntity;
+			if (iOEntity != null && iOEntity.TryGetComponent<AudioVisualisationEntity> (out var component2) && component2.connectedTo.IsSet) {
+				return component2.connectedTo.Get (base.isServer) as IOEntity;
 			}
-			if ((Object)(object)iOEntity != (Object)null) {
+			if (iOEntity != null) {
 				depth--;
 				iOEntity = GetAudioSource (iOEntity, ref depth);
-				if ((Object)(object)iOEntity != (Object)null && ((Component)iOEntity).TryGetComponent<IAudioConnectionSource> (ref audioConnectionSource2)) {
+				if (iOEntity != null && iOEntity.TryGetComponent<IAudioConnectionSource> (out var _)) {
 					return iOEntity;
 				}
 			}
@@ -146,15 +132,13 @@ public class AudioVisualisationEntity : IOEntity
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
 		if (info.msg.connectedSpeaker == null) {
-			info.msg.connectedSpeaker = Pool.Get<ConnectedSpeaker> ();
+			info.msg.connectedSpeaker = Facepunch.Pool.Get<ProtoBuf.ConnectedSpeaker> ();
 		}
 		info.msg.connectedSpeaker.connectedTo = connectedTo.uid;
 		if (info.msg.audioEntity == null) {
-			info.msg.audioEntity = Pool.Get<AudioEntity> ();
+			info.msg.audioEntity = Facepunch.Pool.Get<AudioEntity> ();
 		}
 		info.msg.audioEntity.colourMode = (int)currentColour;
 		info.msg.audioEntity.volumeRange = (int)currentVolumeSensitivity;
@@ -183,7 +167,6 @@ public class AudioVisualisationEntity : IOEntity
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_009d: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (info.msg.audioEntity != null) {
 			currentColour = (LightColour)info.msg.audioEntity.colourMode;

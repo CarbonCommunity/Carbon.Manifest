@@ -3,9 +3,9 @@ using UnityEngine;
 [CreateAssetMenu (menuName = "Scriptable Object/Horse Breed", fileName = "newbreed.asset")]
 public class HorseBreed : ScriptableObject
 {
-	public Phrase breedName;
+	public Translate.Phrase breedName;
 
-	public Phrase breedDesc;
+	public Translate.Phrase breedDesc;
 
 	public Material[] materialOverrides;
 

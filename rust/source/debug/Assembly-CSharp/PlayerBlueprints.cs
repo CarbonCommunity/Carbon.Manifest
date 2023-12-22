@@ -1,6 +1,5 @@
 using Facepunch;
 using ProtoBuf;
-using UnityEngine;
 
 public class PlayerBlueprints : EntityComponent<BasePlayer>
 {
@@ -51,15 +50,15 @@ public class PlayerBlueprints : EntityComponent<BasePlayer>
 
 	public bool HasUnlocked (ItemDefinition targetItem)
 	{
-		if (Object.op_Implicit ((Object)(object)targetItem.Blueprint)) {
+		if ((bool)targetItem.Blueprint) {
 			if (targetItem.Blueprint.NeedsSteamItem) {
-				if ((Object)(object)targetItem.steamItem != (Object)null && !steamInventory.HasItem (targetItem.steamItem.id)) {
+				if (targetItem.steamItem != null && !steamInventory.HasItem (targetItem.steamItem.id)) {
 					return false;
 				}
 				if (base.baseEntity.UnlockAllSkins) {
 					return true;
 				}
-				if ((Object)(object)targetItem.steamItem == (Object)null) {
+				if (targetItem.steamItem == null) {
 					bool flag = false;
 					ItemSkinDirectory.Skin[] skins = targetItem.skins;
 					for (int i = 0; i < skins.Length; i++) {
@@ -71,8 +70,8 @@ public class PlayerBlueprints : EntityComponent<BasePlayer>
 					}
 					if (!flag && targetItem.skins2 != null) {
 						IPlayerItemDefinition[] skins2 = targetItem.skins2;
-						foreach (IPlayerItemDefinition val in skins2) {
-							if (steamInventory.HasItem (val.DefinitionId)) {
+						foreach (IPlayerItemDefinition playerItemDefinition in skins2) {
+							if (steamInventory.HasItem (playerItemDefinition.DefinitionId)) {
 								flag = true;
 								break;
 							}
@@ -88,7 +87,7 @@ public class PlayerBlueprints : EntityComponent<BasePlayer>
 				if (base.baseEntity.UnlockAllSkins) {
 					return true;
 				}
-				if ((Object)(object)targetItem.steamDlc != (Object)null && targetItem.steamDlc.HasLicense (base.baseEntity.userID)) {
+				if (targetItem.steamDlc != null && targetItem.steamDlc.HasLicense (base.baseEntity.userID)) {
 					return true;
 				}
 			}
@@ -108,7 +107,7 @@ public class PlayerBlueprints : EntityComponent<BasePlayer>
 	public bool CanCraft (int itemid, int skinItemId, ulong playerId)
 	{
 		ItemDefinition itemDefinition = ItemManager.FindItemDefinition (itemid);
-		if ((Object)(object)itemDefinition == (Object)null) {
+		if (itemDefinition == null) {
 			return false;
 		}
 		if (skinItemId != 0 && !base.baseEntity.UnlockAllSkins && !CheckSkinOwnership (skinItemId, playerId)) {
@@ -126,7 +125,7 @@ public class PlayerBlueprints : EntityComponent<BasePlayer>
 	public bool CheckSkinOwnership (int skinItemId, ulong playerId)
 	{
 		ItemSkinDirectory.Skin skin = ItemSkinDirectory.FindByInventoryDefinitionId (skinItemId);
-		if ((Object)(object)skin.invItem != (Object)null && skin.invItem.HasUnlocked (playerId)) {
+		if (skin.invItem != null && skin.invItem.HasUnlocked (playerId)) {
 			return true;
 		}
 		return steamInventory.HasItem (skinItemId);

@@ -36,21 +36,21 @@ public class PreloadedCassetteContent : ScriptableObject
 		uint num = 0u;
 		SoundDefinition[] shortTapeContent = ShortTapeContent;
 		foreach (SoundDefinition soundDefinition in shortTapeContent) {
-			if ((Object)(object)soundDefinition == (Object)(object)def) {
+			if (soundDefinition == def) {
 				return num;
 			}
 			num++;
 		}
 		SoundDefinition[] mediumTapeContent = MediumTapeContent;
 		foreach (SoundDefinition soundDefinition2 in mediumTapeContent) {
-			if ((Object)(object)soundDefinition2 == (Object)(object)def) {
+			if (soundDefinition2 == def) {
 				return num;
 			}
 			num++;
 		}
 		SoundDefinition[] longTapeContent = LongTapeContent;
 		foreach (SoundDefinition soundDefinition3 in longTapeContent) {
-			if ((Object)(object)soundDefinition3 == (Object)(object)def) {
+			if (soundDefinition3 == def) {
 				return num;
 			}
 			num++;

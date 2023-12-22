@@ -51,18 +51,18 @@ public class ScientistJunkpileSpawner : MonoBehaviour, IServerComponent, ISpawnG
 
 	private void Awake ()
 	{
-		SpawnPoints = ((Component)this).GetComponentsInChildren<BaseSpawnPoint> ();
-		if (Object.op_Implicit ((Object)(object)SingletonComponent<SpawnHandler>.Instance)) {
-			SingletonComponent<SpawnHandler>.Instance.SpawnGroups.Add ((ISpawnGroup)this);
+		SpawnPoints = GetComponentsInChildren<BaseSpawnPoint> ();
+		if ((bool)SingletonComponent<SpawnHandler>.Instance) {
+			SingletonComponent<SpawnHandler>.Instance.SpawnGroups.Add (this);
 		}
 	}
 
 	protected void OnDestroy ()
 	{
-		if (Object.op_Implicit ((Object)(object)SingletonComponent<SpawnHandler>.Instance)) {
-			SingletonComponent<SpawnHandler>.Instance.SpawnGroups.Remove ((ISpawnGroup)this);
+		if ((bool)SingletonComponent<SpawnHandler>.Instance) {
+			SingletonComponent<SpawnHandler>.Instance.SpawnGroups.Remove (this);
 		} else {
-			Debug.LogWarning ((object)(((object)this).GetType ().Name + ": SpawnHandler instance not found."));
+			Debug.LogWarning (GetType ().Name + ": SpawnHandler instance not found.");
 		}
 	}
 
@@ -77,9 +77,9 @@ public class ScientistJunkpileSpawner : MonoBehaviour, IServerComponent, ISpawnG
 			return;
 		}
 		foreach (BaseCombatEntity item in Spawned) {
-			if (!((Object)(object)item == (Object)null) && !((Object)(object)((Component)item).gameObject == (Object)null) && !((Object)(object)((Component)item).transform == (Object)null)) {
-				BaseEntity baseEntity = ((Component)item).gameObject.ToBaseEntity ();
-				if (Object.op_Implicit ((Object)(object)baseEntity)) {
+			if (!(item == null) && !(item.gameObject == null) && !(item.transform == null)) {
+				BaseEntity baseEntity = item.gameObject.ToBaseEntity ();
+				if ((bool)baseEntity) {
 					baseEntity.Kill ();
 				}
 			}
@@ -89,7 +89,7 @@ public class ScientistJunkpileSpawner : MonoBehaviour, IServerComponent, ISpawnG
 
 	public void SpawnInitial ()
 	{
-		nextRespawnTime = Time.time + Random.Range (3f, 4f);
+		nextRespawnTime = UnityEngine.Time.time + UnityEngine.Random.Range (3f, 4f);
 		pendingRespawn = true;
 	}
 
@@ -104,7 +104,7 @@ public class ScientistJunkpileSpawner : MonoBehaviour, IServerComponent, ISpawnG
 			if (Spawned == null || Spawned.Count == 0 || IsAllSpawnedDead ()) {
 				ScheduleRespawn ();
 			}
-		} else if ((Spawned == null || Spawned.Count == 0 || IsAllSpawnedDead ()) && Time.time >= nextRespawnTime) {
+		} else if ((Spawned == null || Spawned.Count == 0 || IsAllSpawnedDead ()) && UnityEngine.Time.time >= nextRespawnTime) {
 			DoRespawn ();
 		}
 	}
@@ -114,7 +114,7 @@ public class ScientistJunkpileSpawner : MonoBehaviour, IServerComponent, ISpawnG
 		int num = 0;
 		while (num < Spawned.Count) {
 			BaseCombatEntity baseCombatEntity = Spawned [num];
-			if ((Object)(object)baseCombatEntity == (Object)null || (Object)(object)((Component)baseCombatEntity).transform == (Object)null || baseCombatEntity.IsDestroyed || baseCombatEntity.IsDead ()) {
+			if (baseCombatEntity == null || baseCombatEntity.transform == null || baseCombatEntity.IsDestroyed || baseCombatEntity.IsDead ()) {
 				Spawned.RemoveAt (num);
 				num--;
 				num++;
@@ -127,13 +127,13 @@ public class ScientistJunkpileSpawner : MonoBehaviour, IServerComponent, ISpawnG
 
 	public void ScheduleRespawn ()
 	{
-		nextRespawnTime = Time.time + Random.Range (MinRespawnTimeMinutes, MaxRespawnTimeMinutes) * 60f;
+		nextRespawnTime = UnityEngine.Time.time + UnityEngine.Random.Range (MinRespawnTimeMinutes, MaxRespawnTimeMinutes) * 60f;
 		pendingRespawn = true;
 	}
 
 	public void DoRespawn ()
 	{
-		if (!Application.isLoading && !Application.isLoadingSave) {
+		if (!Rust.Application.isLoading && !Rust.Application.isLoadingSave) {
 			SpawnScientist ();
 		}
 		pendingRespawn = false;
@@ -141,8 +141,6 @@ public class ScientistJunkpileSpawner : MonoBehaviour, IServerComponent, ISpawnG
 
 	public void SpawnScientist ()
 	{
-		//IL_00c5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c7: Unknown result type (might be due to invalid IL or missing references)
 		if (!AI.npc_enable || Spawned == null || Spawned.Count >= MaxPopulation) {
 			return;
 		}
@@ -155,7 +153,7 @@ public class ScientistJunkpileSpawner : MonoBehaviour, IServerComponent, ISpawnG
 			num = AI.npc_junkpile_g_spawn_chance;
 			break;
 		}
-		if (Random.value > num) {
+		if (UnityEngine.Random.value > num) {
 			return;
 		}
 		int num2 = MaxPopulation - Spawned.Count;
@@ -163,13 +161,13 @@ public class ScientistJunkpileSpawner : MonoBehaviour, IServerComponent, ISpawnG
 			Vector3 pos;
 			Quaternion rot;
 			BaseSpawnPoint spawnPoint = GetSpawnPoint (out pos, out rot);
-			if (!((Object)(object)spawnPoint == (Object)null)) {
+			if (!(spawnPoint == null)) {
 				BaseEntity baseEntity = GameManager.server.CreateEntity (ScientistPrefab.resourcePath, pos, rot, startActive: false);
-				if (!((Object)(object)baseEntity != (Object)null)) {
+				if (!(baseEntity != null)) {
 					break;
 				}
 				baseEntity.enableSaving = false;
-				((Component)baseEntity).gameObject.AwakeFromInstantiate ();
+				baseEntity.gameObject.AwakeFromInstantiate ();
 				baseEntity.Spawn ();
 				Spawned.Add ((BaseCombatEntity)baseEntity);
 			}
@@ -178,21 +176,17 @@ public class ScientistJunkpileSpawner : MonoBehaviour, IServerComponent, ISpawnG
 
 	private BaseSpawnPoint GetSpawnPoint (out Vector3 pos, out Quaternion rot)
 	{
-		//IL_0004: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
 		BaseSpawnPoint baseSpawnPoint = null;
 		pos = Vector3.zero;
 		rot = Quaternion.identity;
-		int num = Random.Range (0, SpawnPoints.Length);
+		int num = UnityEngine.Random.Range (0, SpawnPoints.Length);
 		for (int i = 0; i < SpawnPoints.Length; i++) {
 			baseSpawnPoint = SpawnPoints [(num + i) % SpawnPoints.Length];
-			if (Object.op_Implicit ((Object)(object)baseSpawnPoint) && ((Component)baseSpawnPoint).gameObject.activeSelf) {
+			if ((bool)baseSpawnPoint && baseSpawnPoint.gameObject.activeSelf) {
 				break;
 			}
 		}
-		if (Object.op_Implicit ((Object)(object)baseSpawnPoint)) {
+		if ((bool)baseSpawnPoint) {
 			baseSpawnPoint.GetLocation (out pos, out rot);
 		}
 		return baseSpawnPoint;

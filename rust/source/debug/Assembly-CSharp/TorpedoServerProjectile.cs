@@ -21,16 +21,10 @@ public class TorpedoServerProjectile : ServerProjectile
 
 	public override bool DoMovement ()
 	{
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0076: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00dc: Unknown result type (might be due to invalid IL or missing references)
 		if (!base.DoMovement ()) {
 			return false;
 		}
-		float num = WaterLevel.GetWaterInfo (((Component)this).transform.position, waves: true, volumes: false).surfaceLevel - ((Component)this).transform.position.y;
+		float num = WaterLevel.GetWaterInfo (base.transform.position, waves: true, volumes: false).surfaceLevel - base.transform.position.y;
 		if (num < -1f) {
 			gravityModifier = 1f;
 		} else if (num <= minWaterDepth) {
@@ -48,18 +42,11 @@ public class TorpedoServerProjectile : ServerProjectile
 
 	public override void InitializeVelocity (Vector3 overrideVel)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0064: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0076: Unknown result type (might be due to invalid IL or missing references)
 		base.InitializeVelocity (overrideVel);
-		float num = WaterLevel.GetWaterInfo (((Component)this).transform.position, waves: true, volumes: false).surfaceLevel - ((Component)this).transform.position.y;
-		float num2 = Mathf.InverseLerp (shallowWaterCutoff, shallowWaterCutoff + 2f, num);
-		float num3 = Mathf.Lerp (shallowWaterInaccuracy, deepWaterInaccuracy, num2);
-		initialVelocity = Vector3Ex.GetWithInaccuracy (initialVelocity, num3);
+		float value = WaterLevel.GetWaterInfo (base.transform.position, waves: true, volumes: false).surfaceLevel - base.transform.position.y;
+		float t = Mathf.InverseLerp (shallowWaterCutoff, shallowWaterCutoff + 2f, value);
+		float maxAngle = Mathf.Lerp (shallowWaterInaccuracy, deepWaterInaccuracy, t);
+		initialVelocity = initialVelocity.GetWithInaccuracy (maxAngle);
 		base.CurrentVelocity = initialVelocity;
 	}
 }

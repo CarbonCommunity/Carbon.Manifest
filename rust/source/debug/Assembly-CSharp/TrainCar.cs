@@ -1,3 +1,5 @@
+#define ENABLE_PROFILER
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -167,7 +169,7 @@ public class TrainCar : BaseVehicle, TriggerHurtNotChild.IHurtTriggerUser, Train
 
 	public const Flags Flag_LinedUpToUnload = Flags.Reserved4;
 
-	public Vector3 Position => ((Component)this).transform.position;
+	public Vector3 Position => base.transform.position;
 
 	public float FrontWheelSplineDist { get; private set; }
 
@@ -182,12 +184,12 @@ public class TrainCar : BaseVehicle, TriggerHurtNotChild.IHurtTriggerUser, Train
 			return _frontTrackSection;
 		}
 		private set {
-			if ((Object)(object)_frontTrackSection != (Object)(object)value) {
-				if ((Object)(object)_frontTrackSection != (Object)null) {
+			if (_frontTrackSection != value) {
+				if (_frontTrackSection != null) {
 					_frontTrackSection.DeregisterTrackUser (this);
 				}
 				_frontTrackSection = value;
-				if ((Object)(object)_frontTrackSection != (Object)null) {
+				if (_frontTrackSection != null) {
 					_frontTrackSection.RegisterTrackUser (this);
 				}
 			}
@@ -198,7 +200,7 @@ public class TrainCar : BaseVehicle, TriggerHurtNotChild.IHurtTriggerUser, Train
 
 	protected bool IsAtAStation {
 		get {
-			if ((Object)(object)FrontTrackSection != (Object)null) {
+			if (FrontTrackSection != null) {
 				return FrontTrackSection.isStation;
 			}
 			return false;
@@ -207,14 +209,14 @@ public class TrainCar : BaseVehicle, TriggerHurtNotChild.IHurtTriggerUser, Train
 
 	protected bool IsOnAboveGroundSpawnRail {
 		get {
-			if ((Object)(object)FrontTrackSection != (Object)null) {
+			if (FrontTrackSection != null) {
 				return FrontTrackSection.aboveGroundSpawn;
 			}
 			return false;
 		}
 	}
 
-	private bool RecentlySpawned => Time.time < initialSpawnTime + 2f;
+	private bool RecentlySpawned => UnityEngine.Time.time < initialSpawnTime + 2f;
 
 	public TriggerTrainCollisions FrontCollisionTrigger => frontCollisionTrigger;
 
@@ -226,55 +228,43 @@ public class TrainCar : BaseVehicle, TriggerHurtNotChild.IHurtTriggerUser, Train
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("TrainCar.OnRpcMessage", 0);
-		try {
-			if (rpc == 3930273067u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("TrainCar.OnRpcMessage")) {
+			if (rpc == 3930273067u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_WantsUncouple "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_WantsUncouple "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_WantsUncouple", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Call", 0);
+				using (TimeWarning.New ("RPC_WantsUncouple")) {
 					try {
-						RPCMessage rPCMessage = default(RPCMessage);
-						rPCMessage.connection = msg.connection;
-						rPCMessage.player = player;
-						rPCMessage.read = msg.read;
-						RPCMessage msg2 = rPCMessage;
-						RPC_WantsUncouple (msg2);
-					} finally {
-						((IDisposable)val3)?.Dispose ();
+						using (TimeWarning.New ("Call")) {
+							RPCMessage rPCMessage = default(RPCMessage);
+							rPCMessage.connection = msg.connection;
+							rPCMessage.player = player;
+							rPCMessage.read = msg.read;
+							RPCMessage msg2 = rPCMessage;
+							RPC_WantsUncouple (msg2);
+						}
+					} catch (Exception exception) {
+						Debug.LogException (exception);
+						player.Kick ("RPC Error in RPC_WantsUncouple");
 					}
-				} catch (Exception ex) {
-					Debug.LogException (ex);
-					player.Kick ("RPC Error in RPC_WantsUncouple");
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
 
 	public override void ServerInit ()
 	{
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
 		base.ServerInit ();
-		spawnOrigin = ((Component)this).transform.position;
+		spawnOrigin = base.transform.position;
 		distFrontToBackWheel = Vector3.Distance (GetFrontWheelPos (), GetRearWheelPos ());
 		rigidBody.centerOfMass = centreOfMassTransform.localPosition;
 		UpdateCompleteTrain ();
-		lastDecayTick = Time.time;
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)UpdateClients, 0f, 0.15f, 0.02f);
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)DecayTick, Random.Range (20f, 40f), decayTickSpacing, decayTickSpacing * 0.1f);
+		lastDecayTick = UnityEngine.Time.time;
+		InvokeRandomized (UpdateClients, 0f, 0.15f, 0.02f);
+		InvokeRandomized (DecayTick, UnityEngine.Random.Range (20f, 40f), decayTickSpacing, decayTickSpacing * 0.1f);
 	}
 
 	public override void PostServerLoad ()
@@ -290,36 +280,26 @@ public class TrainCar : BaseVehicle, TriggerHurtNotChild.IHurtTriggerUser, Train
 
 	public override void Spawn ()
 	{
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
 		base.Spawn ();
-		initialSpawnTime = Time.time;
+		initialSpawnTime = UnityEngine.Time.time;
 		if (TrainTrackSpline.TryFindTrackNear (GetFrontWheelPos (), 15f, out var splineResult, out var distResult)) {
 			FrontWheelSplineDist = distResult;
 			Vector3 tangent;
-			Vector3 positionAndTangent = splineResult.GetPositionAndTangent (FrontWheelSplineDist, ((Component)this).transform.forward, out tangent);
+			Vector3 positionAndTangent = splineResult.GetPositionAndTangent (FrontWheelSplineDist, base.transform.forward, out tangent);
 			SetTheRestFromFrontWheelData (ref splineResult, positionAndTangent, tangent, localTrackSelection, null, instantMove: true);
 			FrontTrackSection = splineResult;
-			if (!Application.isLoadingSave && !SpaceIsClear ()) {
-				((FacepunchBehaviour)this).Invoke ((Action)base.KillMessage, 0f);
+			if (!Rust.Application.isLoadingSave && !SpaceIsClear ()) {
+				Invoke (base.KillMessage, 0f);
 			}
 		} else {
-			((FacepunchBehaviour)this).Invoke ((Action)base.KillMessage, 0f);
+			Invoke (base.KillMessage, 0f);
 		}
 	}
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_007d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cc: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
-		info.msg.baseTrain = Pool.Get<BaseTrain> ();
+		info.msg.baseTrain = Facepunch.Pool.Get<BaseTrain> ();
 		info.msg.baseTrain.time = GetNetworkTime ();
 		info.msg.baseTrain.frontBogieYRot = frontBogieYRot;
 		info.msg.baseTrain.rearBogieYRot = rearBogieYRot;
@@ -342,12 +322,12 @@ public class TrainCar : BaseVehicle, TriggerHurtNotChild.IHurtTriggerUser, Train
 
 	private void UpdateCompleteTrain ()
 	{
-		List<TrainCar> result = Pool.GetList<TrainCar> ();
+		List<TrainCar> result = Facepunch.Pool.GetList<TrainCar> ();
 		coupling.GetAll (ref result);
 		if (completeTrain == null || !completeTrain.Matches (result)) {
 			SetNewCompleteTrain (new CompleteTrain (result));
 		} else {
-			Pool.FreeList<TrainCar> (ref result);
+			Facepunch.Pool.FreeList (ref result);
 		}
 	}
 
@@ -371,8 +351,6 @@ public class TrainCar : BaseVehicle, TriggerHurtNotChild.IHurtTriggerUser, Train
 
 	public override void OnKilled (HitInfo info)
 	{
-		//IL_00e1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e6: Unknown result type (might be due to invalid IL or missing references)
 		float num = info?.damageTypes.Get (DamageType.AntiVehicle) ?? 0f;
 		float num2 = info?.damageTypes.Get (DamageType.Explosion) ?? 0f;
 		float num3 = info?.damageTypes.Total () ?? 0f;
@@ -383,7 +361,7 @@ public class TrainCar : BaseVehicle, TriggerHurtNotChild.IHurtTriggerUser, Train
 			}
 			base.OnKilled (info);
 		} else {
-			((FacepunchBehaviour)this).Invoke ((Action)ActualDeath, corpseSeconds);
+			Invoke (ActualDeath, corpseSeconds);
 		}
 		if (base.IsDestroyed && fxDestroyed.isValid) {
 			Effect.server.Run (fxDestroyed.resourcePath, GetExplosionPos (), Vector3.up, null, broadcast: true);
@@ -392,9 +370,6 @@ public class TrainCar : BaseVehicle, TriggerHurtNotChild.IHurtTriggerUser, Train
 
 	protected virtual Vector3 GetExplosionPos ()
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000a: Unknown result type (might be due to invalid IL or missing references)
 		return GetCentreOfTrainPos ();
 	}
 
@@ -407,7 +382,7 @@ public class TrainCar : BaseVehicle, TriggerHurtNotChild.IHurtTriggerUser, Train
 	{
 		base.DoRepair (player);
 		if (IsDead () && Health () > 0f) {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)ActualDeath);
+			CancelInvoke (ActualDeath);
 			lifestate = LifeState.Alive;
 		}
 	}
@@ -423,7 +398,7 @@ public class TrainCar : BaseVehicle, TriggerHurtNotChild.IHurtTriggerUser, Train
 
 	internal override void DoServerDestroy ()
 	{
-		if ((Object)(object)FrontTrackSection != (Object)null) {
+		if (FrontTrackSection != null) {
 			FrontTrackSection.DeregisterTrackUser (this);
 		}
 		coupling.Uncouple (front: true);
@@ -483,11 +458,7 @@ public class TrainCar : BaseVehicle, TriggerHurtNotChild.IHurtTriggerUser, Train
 
 	public override Vector3 GetLocalVelocityServer ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		return ((Component)this).transform.forward * GetTrackSpeed ();
+		return base.transform.forward * GetTrackSpeed ();
 	}
 
 	public bool AnyPlayersOnTrainCar ()
@@ -495,9 +466,9 @@ public class TrainCar : BaseVehicle, TriggerHurtNotChild.IHurtTriggerUser, Train
 		if (AnyMounted ()) {
 			return true;
 		}
-		if ((Object)(object)platformParentTrigger != (Object)null && platformParentTrigger.HasAnyEntityContents) {
+		if (platformParentTrigger != null && platformParentTrigger.HasAnyEntityContents) {
 			foreach (BaseEntity entityContent in platformParentTrigger.entityContents) {
-				if ((Object)(object)entityContent.ToPlayer () != (Object)null) {
+				if (entityContent.ToPlayer () != null) {
 					return true;
 				}
 			}
@@ -510,13 +481,13 @@ public class TrainCar : BaseVehicle, TriggerHurtNotChild.IHurtTriggerUser, Train
 		base.VehicleFixedUpdate ();
 		if (completeTrain != null) {
 			Profiler.BeginSample ("TrainCar.VehicleFixedUpdate");
-			completeTrain.UpdateTick (Time.fixedDeltaTime);
+			completeTrain.UpdateTick (UnityEngine.Time.fixedDeltaTime);
 			float trackSpeed = GetTrackSpeed ();
-			((Component)hurtTriggerFront).gameObject.SetActive (!coupling.IsFrontCoupled && trackSpeed > hurtTriggerMinSpeed);
-			((Component)hurtTriggerRear).gameObject.SetActive (!coupling.IsRearCoupled && trackSpeed < 0f - hurtTriggerMinSpeed);
+			hurtTriggerFront.gameObject.SetActive (!coupling.IsFrontCoupled && trackSpeed > hurtTriggerMinSpeed);
+			hurtTriggerRear.gameObject.SetActive (!coupling.IsRearCoupled && trackSpeed < 0f - hurtTriggerMinSpeed);
 			GameObject[] array = hurtOrRepelTriggersInternal;
-			foreach (GameObject val in array) {
-				val.SetActive (Mathf.Abs (trackSpeed) > hurtTriggerMinSpeed);
+			foreach (GameObject gameObject in array) {
+				gameObject.SetActive (Mathf.Abs (trackSpeed) > hurtTriggerMinSpeed);
 			}
 			Profiler.EndSample ();
 		}
@@ -532,52 +503,23 @@ public class TrainCar : BaseVehicle, TriggerHurtNotChild.IHurtTriggerUser, Train
 
 	public Vector3 GetCentreOfTrainPos ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		return ((Component)this).transform.position + ((Component)this).transform.rotation * ((Bounds)(ref bounds)).center;
+		return base.transform.position + base.transform.rotation * bounds.center;
 	}
 
 	public Vector3 GetFrontOfTrainPos ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0037: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		return ((Component)this).transform.position + ((Component)this).transform.rotation * (((Bounds)(ref bounds)).center + Vector3.forward * ((Bounds)(ref bounds)).extents.z);
+		return base.transform.position + base.transform.rotation * (bounds.center + Vector3.forward * bounds.extents.z);
 	}
 
 	public Vector3 GetRearOfTrainPos ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0037: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		return ((Component)this).transform.position + ((Component)this).transform.rotation * (((Bounds)(ref bounds)).center - Vector3.forward * ((Bounds)(ref bounds)).extents.z);
+		return base.transform.position + base.transform.rotation * (bounds.center - Vector3.forward * bounds.extents.z);
 	}
 
 	public void FrontTrainCarTick (TrainTrackSpline.TrackSelection trackSelection, float dt)
 	{
 		float distToMove = GetTrackSpeed () * dt;
-		TrainTrackSpline preferredAltTrack = (((Object)(object)RearTrackSection != (Object)(object)FrontTrackSection) ? RearTrackSection : null);
+		TrainTrackSpline preferredAltTrack = ((RearTrackSection != FrontTrackSection) ? RearTrackSection : null);
 		MoveFrontWheelsAlongTrackSpline (FrontTrackSection, FrontWheelSplineDist, distToMove, preferredAltTrack, trackSelection);
 	}
 
@@ -588,19 +530,16 @@ public class TrainCar : BaseVehicle, TriggerHurtNotChild.IHurtTriggerUser, Train
 
 	public bool TryGetNextTrainCar (Vector3 forwardDir, out TrainCar result)
 	{
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
 		return TryGetTrainCar (next: true, forwardDir, out result);
 	}
 
 	public bool TryGetPrevTrainCar (Vector3 forwardDir, out TrainCar result)
 	{
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
 		return TryGetTrainCar (next: false, forwardDir, out result);
 	}
 
 	public bool TryGetTrainCar (bool next, Vector3 forwardDir, out TrainCar result)
 	{
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
 		result = null;
 		if (completeTrain == null) {
 			return false;
@@ -610,135 +549,68 @@ public class TrainCar : BaseVehicle, TriggerHurtNotChild.IHurtTriggerUser, Train
 
 	private void MoveFrontWheelsAlongTrackSpline (TrainTrackSpline trackSpline, float prevSplineDist, float distToMove, TrainTrackSpline preferredAltTrack, TrainTrackSpline.TrackSelection trackSelection)
 	{
-		//IL_000a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		FrontWheelSplineDist = trackSpline.GetSplineDistAfterMove (prevSplineDist, ((Component)this).transform.forward, distToMove, trackSelection, out var onSpline, out frontAtEndOfLine, preferredAltTrack, null);
+		FrontWheelSplineDist = trackSpline.GetSplineDistAfterMove (prevSplineDist, base.transform.forward, distToMove, trackSelection, out var onSpline, out frontAtEndOfLine, preferredAltTrack, null);
 		Vector3 tangent;
-		Vector3 positionAndTangent = onSpline.GetPositionAndTangent (FrontWheelSplineDist, ((Component)this).transform.forward, out tangent);
+		Vector3 positionAndTangent = onSpline.GetPositionAndTangent (FrontWheelSplineDist, base.transform.forward, out tangent);
 		SetTheRestFromFrontWheelData (ref onSpline, positionAndTangent, tangent, trackSelection, trackSpline, instantMove: false);
 		FrontTrackSection = onSpline;
 	}
 
 	private Vector3 GetFrontWheelPos ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		return ((Component)this).transform.position + ((Component)this).transform.rotation * frontBogieLocalOffset;
+		return base.transform.position + base.transform.rotation * frontBogieLocalOffset;
 	}
 
 	private Vector3 GetRearWheelPos ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		return ((Component)this).transform.position + ((Component)this).transform.rotation * rearBogieLocalOffset;
+		return base.transform.position + base.transform.rotation * rearBogieLocalOffset;
 	}
 
 	private void SetTheRestFromFrontWheelData (ref TrainTrackSpline frontTS, Vector3 targetFrontWheelPos, Vector3 targetFrontWheelTangent, TrainTrackSpline.TrackSelection trackSelection, TrainTrackSpline additionalAlt, bool instantMove)
 	{
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ac: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ba: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ca: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0095: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0130: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0168: Unknown result type (might be due to invalid IL or missing references)
-		//IL_016a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0153: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0118: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0103: Unknown result type (might be due to invalid IL or missing references)
-		//IL_017e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0183: Unknown result type (might be due to invalid IL or missing references)
-		//IL_018a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ac: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01c7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01c8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01c9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01df: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01fd: Unknown result type (might be due to invalid IL or missing references)
 		TrainTrackSpline onSpline;
-		float splineDistAfterMove = frontTS.GetSplineDistAfterMove (FrontWheelSplineDist, ((Component)this).transform.forward, 0f - distFrontToBackWheel, trackSelection, out onSpline, out rearAtEndOfLine, RearTrackSection, additionalAlt);
+		float splineDistAfterMove = frontTS.GetSplineDistAfterMove (FrontWheelSplineDist, base.transform.forward, 0f - distFrontToBackWheel, trackSelection, out onSpline, out rearAtEndOfLine, RearTrackSection, additionalAlt);
 		Vector3 tangent;
-		Vector3 positionAndTangent = onSpline.GetPositionAndTangent (splineDistAfterMove, ((Component)this).transform.forward, out tangent);
+		Vector3 positionAndTangent = onSpline.GetPositionAndTangent (splineDistAfterMove, base.transform.forward, out tangent);
 		if (rearAtEndOfLine) {
-			FrontWheelSplineDist = onSpline.GetSplineDistAfterMove (splineDistAfterMove, ((Component)this).transform.forward, distFrontToBackWheel, trackSelection, out frontTS, out frontAtEndOfLine, onSpline, additionalAlt);
-			targetFrontWheelPos = frontTS.GetPositionAndTangent (FrontWheelSplineDist, ((Component)this).transform.forward, out targetFrontWheelTangent);
+			FrontWheelSplineDist = onSpline.GetSplineDistAfterMove (splineDistAfterMove, base.transform.forward, distFrontToBackWheel, trackSelection, out frontTS, out frontAtEndOfLine, onSpline, additionalAlt);
+			targetFrontWheelPos = frontTS.GetPositionAndTangent (FrontWheelSplineDist, base.transform.forward, out targetFrontWheelTangent);
 		}
 		RearTrackSection = onSpline;
-		Vector3 val = targetFrontWheelPos - positionAndTangent;
-		Vector3 normalized = ((Vector3)(ref val)).normalized;
-		Vector3 val2 = targetFrontWheelPos - Quaternion.LookRotation (normalized) * frontBogieLocalOffset;
+		Vector3 normalized = (targetFrontWheelPos - positionAndTangent).normalized;
+		Vector3 vector = targetFrontWheelPos - Quaternion.LookRotation (normalized) * frontBogieLocalOffset;
 		if (instantMove) {
-			((Component)this).transform.position = val2;
-			if (((Vector3)(ref normalized)).magnitude == 0f) {
-				((Component)this).transform.rotation = Quaternion.identity;
+			base.transform.position = vector;
+			if (normalized.magnitude == 0f) {
+				base.transform.rotation = Quaternion.identity;
 			} else {
-				((Component)this).transform.rotation = Quaternion.LookRotation (normalized);
+				base.transform.rotation = Quaternion.LookRotation (normalized);
 			}
 		} else {
-			((Component)this).transform.position = val2;
-			if (((Vector3)(ref normalized)).magnitude == 0f) {
-				((Component)this).transform.rotation = Quaternion.identity;
+			base.transform.position = vector;
+			if (normalized.magnitude == 0f) {
+				base.transform.rotation = Quaternion.identity;
 			} else {
-				((Component)this).transform.rotation = Quaternion.LookRotation (normalized);
+				base.transform.rotation = Quaternion.LookRotation (normalized);
 			}
 		}
-		frontBogieYRot = Vector3.SignedAngle (((Component)this).transform.forward, targetFrontWheelTangent, ((Component)this).transform.up);
-		rearBogieYRot = Vector3.SignedAngle (((Component)this).transform.forward, tangent, ((Component)this).transform.up);
-		if (Application.isEditor) {
+		frontBogieYRot = Vector3.SignedAngle (base.transform.forward, targetFrontWheelTangent, base.transform.up);
+		rearBogieYRot = Vector3.SignedAngle (base.transform.forward, tangent, base.transform.up);
+		if (UnityEngine.Application.isEditor) {
 			Debug.DrawLine (targetFrontWheelPos, positionAndTangent, Color.magenta, 0.2f);
-			Debug.DrawLine (rigidBody.position, val2, Color.yellow, 0.2f);
-			Debug.DrawRay (val2, Vector3.up, Color.yellow, 0.2f);
+			Debug.DrawLine (rigidBody.position, vector, Color.yellow, 0.2f);
+			Debug.DrawRay (vector, Vector3.up, Color.yellow, 0.2f);
 		}
 	}
 
 	public float GetForces ()
 	{
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
 		float num = 0f;
-		float num2 = ((Component)this).transform.localEulerAngles.x;
+		float num2 = base.transform.localEulerAngles.x;
 		if (num2 > 180f) {
 			num2 -= 360f;
 		}
-		num += num2 / 90f * (0f - Physics.gravity.y) * RealisticMass;
+		num += num2 / 90f * (0f - UnityEngine.Physics.gravity.y) * RealisticMass;
 		return num + GetThrottleForce ();
 	}
 
@@ -761,29 +633,28 @@ public class TrainCar : BaseVehicle, TriggerHurtNotChild.IHurtTriggerUser, Train
 
 	public bool SpaceIsClear ()
 	{
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		List<Collider> list = Pool.GetList<Collider> ();
-		GamePhysics.OverlapOBB (WorldSpaceBounds (), list, 32768, (QueryTriggerInteraction)1);
-		foreach (Collider item in list) {
+		List<Collider> obj = Facepunch.Pool.GetList<Collider> ();
+		GamePhysics.OverlapOBB (WorldSpaceBounds (), obj, 32768);
+		foreach (Collider item in obj) {
 			if (!ColliderIsPartOfTrain (item)) {
 				return false;
 			}
 		}
-		Pool.FreeList<Collider> (ref list);
+		Facepunch.Pool.FreeList (ref obj);
 		return true;
 	}
 
 	public bool ColliderIsPartOfTrain (Collider collider)
 	{
 		BaseEntity baseEntity = collider.ToBaseEntity ();
-		if ((Object)(object)baseEntity == (Object)null) {
+		if (baseEntity == null) {
 			return false;
 		}
-		if ((Object)(object)baseEntity == (Object)(object)this) {
+		if (baseEntity == this) {
 			return true;
 		}
 		BaseEntity baseEntity2 = baseEntity.parentEntity.Get (base.isServer);
-		return baseEntity2.IsValid () && (Object)(object)baseEntity2 == (Object)(object)this;
+		return baseEntity2.IsValid () && baseEntity2 == this;
 	}
 
 	private void UpdateClients ()
@@ -803,7 +674,7 @@ public class TrainCar : BaseVehicle, TriggerHurtNotChild.IHurtTriggerUser, Train
 			decayingFor = 0f;
 		}
 		float num = GetDecayMinutes (flag) * 60f;
-		float time = Time.time;
+		float time = UnityEngine.Time.time;
 		float num2 = time - lastDecayTick;
 		lastDecayTick = time;
 		if (num != float.PositiveInfinity) {
@@ -816,9 +687,7 @@ public class TrainCar : BaseVehicle, TriggerHurtNotChild.IHurtTriggerUser, Train
 
 	protected virtual float GetDecayMinutes (bool hasPassengers)
 	{
-		//IL_000a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		bool flag = IsAtAStation && Vector3.Distance (spawnOrigin, ((Component)this).transform.position) < 50f;
+		bool flag = IsAtAStation && Vector3.Distance (spawnOrigin, base.transform.position) < 50f;
 		if (hasPassengers || AnyPlayersNearby (30f) || flag || IsOnAboveGroundSpawnRail) {
 			return float.PositiveInfinity;
 		}
@@ -832,29 +701,25 @@ public class TrainCar : BaseVehicle, TriggerHurtNotChild.IHurtTriggerUser, Train
 
 	private bool AnyPlayersNearby (float maxDist)
 	{
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		List<BasePlayer> list = Pool.GetList<BasePlayer> ();
-		Vis.Entities (((Component)this).transform.position, maxDist, list, 131072, (QueryTriggerInteraction)2);
+		List<BasePlayer> obj = Facepunch.Pool.GetList<BasePlayer> ();
+		Vis.Entities (base.transform.position, maxDist, obj, 131072);
 		bool result = false;
-		foreach (BasePlayer item in list) {
+		foreach (BasePlayer item in obj) {
 			if (!item.IsSleeping () && item.IsAlive ()) {
 				result = true;
 				break;
 			}
 		}
-		Pool.FreeList<BasePlayer> (ref list);
+		Facepunch.Pool.FreeList (ref obj);
 		return result;
 	}
 
 	[RPC_Server]
 	public void RPC_WantsUncouple (RPCMessage msg)
 	{
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer player = msg.player;
-		if (!((Object)(object)player == (Object)null)) {
-			float num = Vector3.SqrMagnitude (((Component)this).transform.position - ((Component)player).transform.position);
+		if (!(player == null)) {
+			float num = Vector3.SqrMagnitude (base.transform.position - player.transform.position);
 			if (!(num > 200f)) {
 				bool front = msg.read.Bit ();
 				coupling.Uncouple (front);
@@ -864,27 +729,13 @@ public class TrainCar : BaseVehicle, TriggerHurtNotChild.IHurtTriggerUser, Train
 
 	public override void PreProcess (IPrefabProcessor process, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
 	{
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0064: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0074: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0114: Unknown result type (might be due to invalid IL or missing references)
 		base.PreProcess (process, rootObj, name, serverside, clientside, bundling);
-		frontBogieLocalOffset = ((Component)this).transform.InverseTransformPoint (frontBogiePivot.position);
-		float num = ((!((Object)(object)frontCoupling != (Object)null)) ? (((Bounds)(ref bounds)).extents.z + ((Bounds)(ref bounds)).center.z) : ((Component)this).transform.InverseTransformPoint (frontCoupling.position).z);
-		float num2 = ((!((Object)(object)rearCoupling != (Object)null)) ? (0f - ((Bounds)(ref bounds)).extents.z + ((Bounds)(ref bounds)).center.z) : ((Component)this).transform.InverseTransformPoint (rearCoupling.position).z);
+		frontBogieLocalOffset = base.transform.InverseTransformPoint (frontBogiePivot.position);
+		float num = ((!(frontCoupling != null)) ? (bounds.extents.z + bounds.center.z) : base.transform.InverseTransformPoint (frontCoupling.position).z);
+		float num2 = ((!(rearCoupling != null)) ? (0f - bounds.extents.z + bounds.center.z) : base.transform.InverseTransformPoint (rearCoupling.position).z);
 		DistFrontWheelToFrontCoupling = num - frontBogieLocalOffset.z;
 		DistFrontWheelToBackCoupling = 0f - num2 + frontBogieLocalOffset.z;
-		rearBogieLocalOffset = ((Component)this).transform.InverseTransformPoint (rearBogiePivot.position);
+		rearBogieLocalOffset = base.transform.InverseTransformPoint (rearBogiePivot.position);
 	}
 
 	public override void InitShared ()
@@ -932,6 +783,6 @@ public class TrainCar : BaseVehicle, TriggerHurtNotChild.IHurtTriggerUser, Train
 
 	protected bool PlayerIsOnPlatform (BasePlayer player)
 	{
-		return (Object)(object)player.GetParentEntity () == (Object)(object)this;
+		return player.GetParentEntity () == this;
 	}
 }

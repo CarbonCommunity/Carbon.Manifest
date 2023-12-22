@@ -1,4 +1,4 @@
-using System;
+#define ENABLE_PROFILER
 using System.Collections.Generic;
 using Facepunch;
 using Network;
@@ -53,7 +53,7 @@ public class ElectricBattery : IOEntity, IInstanceDataReceiver
 		return IsOn () ? activeDrain : 0;
 	}
 
-	public void ReceiveInstanceData (InstanceData data)
+	public void ReceiveInstanceData (ProtoBuf.Item.InstanceData data)
 	{
 		rustWattSeconds = data.dataInt;
 	}
@@ -66,11 +66,9 @@ public class ElectricBattery : IOEntity, IInstanceDataReceiver
 
 	public override void OnPickedUp (Item createdItem, BasePlayer player)
 	{
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Expected O, but got Unknown
 		base.OnPickedUp (createdItem, player);
 		if (createdItem.instanceData == null) {
-			createdItem.instanceData = new InstanceData ();
+			createdItem.instanceData = new ProtoBuf.Item.InstanceData ();
 		}
 		createdItem.instanceData.ShouldPool = false;
 		createdItem.instanceData.dataInt = Mathf.FloorToInt (rustWattSeconds);
@@ -98,7 +96,7 @@ public class ElectricBattery : IOEntity, IInstanceDataReceiver
 	public override void ServerInit ()
 	{
 		base.ServerInit ();
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)CheckDischarge, Random.Range (0f, 1f), 1f, 0.1f);
+		InvokeRandomized (CheckDischarge, Random.Range (0f, 1f), 1f, 0.1f);
 	}
 
 	public int GetDrainFor (IOEntity ent)
@@ -120,7 +118,7 @@ public class ElectricBattery : IOEntity, IInstanceDataReceiver
 					continue;
 				}
 				IOEntity iOEntity = iOSlot.connectedTo.Get ();
-				if (!((Object)(object)iOEntity != (Object)null)) {
+				if (!(iOEntity != null)) {
 					continue;
 				}
 				bool flag = iOEntity.WantsPower ();
@@ -141,7 +139,7 @@ public class ElectricBattery : IOEntity, IInstanceDataReceiver
 		Profiler.BeginSample ("GetDrain");
 		connectedList.Clear ();
 		IOEntity iOEntity = outputs [0].connectedTo.Get ();
-		if (Object.op_Implicit ((Object)(object)iOEntity)) {
+		if ((bool)iOEntity) {
 			AddConnectedRecursive (iOEntity, ref connectedList);
 		}
 		int num = 0;
@@ -175,7 +173,7 @@ public class ElectricBattery : IOEntity, IInstanceDataReceiver
 		IOEntity iOEntity = outputs [0].connectedTo.Get ();
 		int drain = GetDrain ();
 		activeDrain = drain;
-		if (Object.op_Implicit ((Object)(object)iOEntity)) {
+		if ((bool)iOEntity) {
 			SetDischarging (iOEntity.WantsPower ());
 		} else {
 			SetDischarging (wantsOn: false);
@@ -209,10 +207,10 @@ public class ElectricBattery : IOEntity, IInstanceDataReceiver
 		}
 		if (!IsPowered ()) {
 			if (rechargable) {
-				((FacepunchBehaviour)this).CancelInvoke ((Action)AddCharge);
+				CancelInvoke (AddCharge);
 			}
-		} else if (rechargable && !((FacepunchBehaviour)this).IsInvoking ((Action)AddCharge)) {
-			((FacepunchBehaviour)this).InvokeRandomized ((Action)AddCharge, 1f, 1f, 0.1f);
+		} else if (rechargable && !IsInvoking (AddCharge)) {
+			InvokeRandomized (AddCharge, 1f, 1f, 0.1f);
 		}
 	}
 
@@ -270,11 +268,11 @@ public class ElectricBattery : IOEntity, IInstanceDataReceiver
 		Profiler.BeginSample ("ElectricBattery.SetPassthroughOn");
 		SetFlag (Flags.On, wantsOn);
 		if (IsOn ()) {
-			if (!((FacepunchBehaviour)this).IsInvoking ((Action)TickUsage)) {
-				((FacepunchBehaviour)this).InvokeRandomized ((Action)TickUsage, 1f, 1f, 0.1f);
+			if (!IsInvoking (TickUsage)) {
+				InvokeRandomized (TickUsage, 1f, 1f, 0.1f);
 			}
 		} else {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)TickUsage);
+			CancelInvoke (TickUsage);
 		}
 		MarkDirty ();
 		Profiler.EndSample ();
@@ -289,7 +287,7 @@ public class ElectricBattery : IOEntity, IInstanceDataReceiver
 	{
 		base.Save (info);
 		if (info.msg.ioEntity == null) {
-			info.msg.ioEntity = Pool.Get<IOEntity> ();
+			info.msg.ioEntity = Pool.Get<ProtoBuf.IOEntity> ();
 		}
 		info.msg.ioEntity.genericFloat1 = rustWattSeconds;
 	}

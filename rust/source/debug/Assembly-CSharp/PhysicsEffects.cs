@@ -35,43 +35,29 @@ public class PhysicsEffects : MonoBehaviour
 
 	public void OnEnable ()
 	{
-		enabledAt = Time.time;
+		enabledAt = UnityEngine.Time.time;
 	}
 
 	public void OnCollisionEnter (Collision collision)
 	{
-		//IL_005f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0079: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00da: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01bd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01c2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01aa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01af: Unknown result type (might be due to invalid IL or missing references)
-		if (!Physics.sendeffects || Time.time < enabledAt + enableDelay || Time.time < lastEffectPlayed + minTimeBetweenEffects || ((1 << collision.gameObject.layer) & LayerMask.op_Implicit (ignoreLayers)) != 0) {
+		if (!ConVar.Physics.sendeffects || UnityEngine.Time.time < enabledAt + enableDelay || UnityEngine.Time.time < lastEffectPlayed + minTimeBetweenEffects || ((1 << collision.gameObject.layer) & (int)ignoreLayers) != 0) {
 			return;
 		}
-		Vector3 relativeVelocity = collision.relativeVelocity;
-		float magnitude = ((Vector3)(ref relativeVelocity)).magnitude;
+		float magnitude = collision.relativeVelocity.magnitude;
 		magnitude = magnitude * 0.055f * hardnessScale;
 		if (magnitude <= ignoreImpactThreshold) {
 			return;
 		}
-		float num = (useCollisionPositionInsteadOfTransform ? Vector3.Distance (((ContactPoint)(ref collision.contacts [0])).point, lastCollisionPos) : Vector3.Distance (((Component)this).transform.position, lastCollisionPos));
-		Rigidbody val = default(Rigidbody);
-		if ((!(num < minDistBetweenEffects) || lastEffectPlayed == 0f) && (!(minimumRigidbodyImpactWeight > 0f) || !collision.gameObject.TryGetComponent<Rigidbody> (ref val) || !(val.mass < minimumRigidbodyImpactWeight))) {
-			if ((Object)(object)entity != (Object)null) {
+		float num = (useCollisionPositionInsteadOfTransform ? Vector3.Distance (collision.contacts [0].point, lastCollisionPos) : Vector3.Distance (base.transform.position, lastCollisionPos));
+		if ((!(num < minDistBetweenEffects) || lastEffectPlayed == 0f) && (!(minimumRigidbodyImpactWeight > 0f) || !collision.gameObject.TryGetComponent<Rigidbody> (out var component) || !(component.mass < minimumRigidbodyImpactWeight))) {
+			if (entity != null) {
 				entity.SignalBroadcast (BaseEntity.Signal.PhysImpact, magnitude.ToString ());
 			}
-			lastEffectPlayed = Time.time;
+			lastEffectPlayed = UnityEngine.Time.time;
 			if (useCollisionPositionInsteadOfTransform) {
-				lastCollisionPos = ((Component)this).transform.InverseTransformPoint (((ContactPoint)(ref collision.contacts [0])).point);
+				lastCollisionPos = base.transform.InverseTransformPoint (collision.contacts [0].point);
 			} else {
-				lastCollisionPos = ((Component)this).transform.position;
+				lastCollisionPos = base.transform.position;
 			}
 		}
 	}

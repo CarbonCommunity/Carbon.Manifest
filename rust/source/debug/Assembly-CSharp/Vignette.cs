@@ -57,6 +57,6 @@ public sealed class Vignette : PostProcessEffectSettings
 
 	public override bool IsEnabledAndSupported (PostProcessRenderContext context)
 	{
-		return enabled.value && ((mode.value == VignetteMode.Classic && intensity.value > 0f) || (mode.value == VignetteMode.Masked && opacity.value > 0f && (Object)(object)mask.value != (Object)null));
+		return enabled.value && ((mode.value == VignetteMode.Classic && intensity.value > 0f) || (mode.value == VignetteMode.Masked && opacity.value > 0f && mask.value != null));
 	}
 }

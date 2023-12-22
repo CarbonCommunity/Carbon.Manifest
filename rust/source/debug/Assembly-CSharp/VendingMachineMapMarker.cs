@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Facepunch;
 using ProtoBuf;
-using UnityEngine;
 
 public class VendingMachineMapMarker : MapMarker
 {
@@ -10,7 +9,7 @@ public class VendingMachineMapMarker : MapMarker
 
 	public VendingMachine server_vendingMachine;
 
-	public VendingMachine client_vendingMachine;
+	public ProtoBuf.VendingMachine client_vendingMachine;
 
 	[NonSerialized]
 	public NetworkableId client_vendingMachineNetworkID;
@@ -21,16 +20,15 @@ public class VendingMachineMapMarker : MapMarker
 	{
 		server_vendingMachine = vm;
 		markerShopName = shopName;
-		if (!((FacepunchBehaviour)this).IsInvoking ((Action)TryUpdatePosition)) {
-			((FacepunchBehaviour)this).InvokeRandomized ((Action)TryUpdatePosition, 30f, 30f, 10f);
+		if (!IsInvoking (TryUpdatePosition)) {
+			InvokeRandomized (TryUpdatePosition, 30f, 30f, 10f);
 		}
 	}
 
 	private void TryUpdatePosition ()
 	{
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)server_vendingMachine != (Object)null && (Object)(object)server_vendingMachine.GetParentEntity () != (Object)null) {
-			((Component)this).transform.position = ((Component)server_vendingMachine).transform.position;
+		if (server_vendingMachine != null && server_vendingMachine.GetParentEntity () != null) {
+			base.transform.position = server_vendingMachine.transform.position;
 			try {
 				syncPosition = true;
 				NetworkPositionTick ();
@@ -42,29 +40,21 @@ public class VendingMachineMapMarker : MapMarker
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Expected O, but got Unknown
-		//IL_0059: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0078: Expected O, but got Unknown
-		//IL_00ca: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d0: Expected O, but got Unknown
 		base.Save (info);
-		info.msg.vendingMachine = new VendingMachine ();
+		info.msg.vendingMachine = new ProtoBuf.VendingMachine ();
 		info.msg.vendingMachine.shopName = markerShopName;
-		if (!((Object)(object)server_vendingMachine != (Object)null)) {
+		if (!(server_vendingMachine != null)) {
 			return;
 		}
 		info.msg.vendingMachine.networkID = server_vendingMachine.net.ID;
-		info.msg.vendingMachine.sellOrderContainer = new SellOrderContainer ();
+		info.msg.vendingMachine.sellOrderContainer = new ProtoBuf.VendingMachine.SellOrderContainer ();
 		info.msg.vendingMachine.sellOrderContainer.ShouldPool = false;
-		info.msg.vendingMachine.sellOrderContainer.sellOrders = new List<SellOrder> ();
-		foreach (SellOrder sellOrder in server_vendingMachine.sellOrders.sellOrders) {
-			SellOrder val = new SellOrder ();
-			val.ShouldPool = false;
-			sellOrder.CopyTo (val);
-			info.msg.vendingMachine.sellOrderContainer.sellOrders.Add (val);
+		info.msg.vendingMachine.sellOrderContainer.sellOrders = new List<ProtoBuf.VendingMachine.SellOrder> ();
+		foreach (ProtoBuf.VendingMachine.SellOrder sellOrder2 in server_vendingMachine.sellOrders.sellOrders) {
+			ProtoBuf.VendingMachine.SellOrder sellOrder = new ProtoBuf.VendingMachine.SellOrder ();
+			sellOrder.ShouldPool = false;
+			sellOrder2.CopyTo (sellOrder);
+			info.msg.vendingMachine.sellOrderContainer.sellOrders.Add (sellOrder);
 		}
 	}
 
@@ -73,20 +63,20 @@ public class VendingMachineMapMarker : MapMarker
 		AppMarker appMarkerData = base.GetAppMarkerData ();
 		appMarkerData.name = markerShopName ?? "";
 		appMarkerData.outOfStock = !HasFlag (Flags.Busy);
-		if ((Object)(object)server_vendingMachine != (Object)null) {
-			appMarkerData.sellOrders = Pool.GetList<SellOrder> ();
-			foreach (SellOrder sellOrder in server_vendingMachine.sellOrders.sellOrders) {
-				SellOrder val = Pool.Get<SellOrder> ();
-				val.itemId = sellOrder.itemToSellID;
-				val.quantity = sellOrder.itemToSellAmount;
-				val.currencyId = sellOrder.currencyID;
-				val.costPerItem = sellOrder.currencyAmountPerItem;
-				val.amountInStock = sellOrder.inStock;
-				val.itemIsBlueprint = sellOrder.itemToSellIsBP;
-				val.currencyIsBlueprint = sellOrder.currencyIsBP;
-				val.itemCondition = sellOrder.itemCondition;
-				val.itemConditionMax = sellOrder.itemConditionMax;
-				appMarkerData.sellOrders.Add (val);
+		if (server_vendingMachine != null) {
+			appMarkerData.sellOrders = Pool.GetList<AppMarker.SellOrder> ();
+			foreach (ProtoBuf.VendingMachine.SellOrder sellOrder2 in server_vendingMachine.sellOrders.sellOrders) {
+				AppMarker.SellOrder sellOrder = Pool.Get<AppMarker.SellOrder> ();
+				sellOrder.itemId = sellOrder2.itemToSellID;
+				sellOrder.quantity = sellOrder2.itemToSellAmount;
+				sellOrder.currencyId = sellOrder2.currencyID;
+				sellOrder.costPerItem = sellOrder2.currencyAmountPerItem;
+				sellOrder.amountInStock = sellOrder2.inStock;
+				sellOrder.itemIsBlueprint = sellOrder2.itemToSellIsBP;
+				sellOrder.currencyIsBlueprint = sellOrder2.currencyIsBP;
+				sellOrder.itemCondition = sellOrder2.itemCondition;
+				sellOrder.itemConditionMax = sellOrder2.itemConditionMax;
+				appMarkerData.sellOrders.Add (sellOrder);
 			}
 		}
 		return appMarkerData;

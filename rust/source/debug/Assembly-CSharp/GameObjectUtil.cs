@@ -6,8 +6,8 @@ public static class GameObjectUtil
 	{
 		Transform[] rootObjects = TransformUtil.GetRootObjects ();
 		Transform[] array = rootObjects;
-		foreach (Transform val in array) {
-			((Component)val).BroadcastMessage (messageName, param, (SendMessageOptions)1);
+		foreach (Transform transform in array) {
+			transform.BroadcastMessage (messageName, param, SendMessageOptions.DontRequireReceiver);
 		}
 	}
 }

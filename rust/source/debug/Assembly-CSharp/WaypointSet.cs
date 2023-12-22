@@ -43,23 +43,9 @@ public class WaypointSet : MonoBehaviour, IServerComponent
 
 	private void OnDrawGizmos ()
 	{
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0102: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0130: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0141: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0148: Unknown result type (might be due to invalid IL or missing references)
 		for (int i = 0; i < Points.Count; i++) {
 			Transform transform = Points [i].Transform;
-			if ((Object)(object)transform != (Object)null) {
+			if (transform != null) {
 				if (Points [i].IsOccupied) {
 					Gizmos.color = Color.red;
 				} else {
@@ -74,9 +60,9 @@ public class WaypointSet : MonoBehaviour, IServerComponent
 				}
 				Gizmos.color = Color.magenta - new Color (0f, 0f, 0f, 0.5f);
 				Transform[] lookatPoints = Points [i].LookatPoints;
-				foreach (Transform val in lookatPoints) {
-					Gizmos.DrawSphere (val.position, 0.1f);
-					Gizmos.DrawLine (transform.position, val.position);
+				foreach (Transform transform2 in lookatPoints) {
+					Gizmos.DrawSphere (transform2.position, 0.1f);
+					Gizmos.DrawLine (transform.position, transform2.position);
 				}
 			}
 		}

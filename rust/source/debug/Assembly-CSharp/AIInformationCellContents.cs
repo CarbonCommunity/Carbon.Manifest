@@ -11,11 +11,10 @@ public class AIInformationCellContents<T> where T : AIPoint
 
 	public void Init (Bounds cellBounds, GameObject root)
 	{
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
 		Clear ();
-		T[] componentsInChildren = root.GetComponentsInChildren<T> (true);
+		T[] componentsInChildren = root.GetComponentsInChildren<T> (includeInactive: true);
 		foreach (T val in componentsInChildren) {
-			if (((Bounds)(ref cellBounds)).Contains (((Component)val).gameObject.transform.position)) {
+			if (cellBounds.Contains (val.gameObject.transform.position)) {
 				Add (val);
 			}
 		}

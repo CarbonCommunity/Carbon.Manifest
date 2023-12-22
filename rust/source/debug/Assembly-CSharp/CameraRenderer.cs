@@ -1,3 +1,4 @@
+#define ENABLE_PROFILER
 using System;
 using System.Buffers;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using ProtoBuf;
 using UnityEngine;
 using UnityEngine.Profiling;
 
-public class CameraRenderer : IPooled
+public class CameraRenderer : Pool.IPooled
 {
 	[ServerVar]
 	public static bool enabled = true;
@@ -113,7 +114,7 @@ public class CameraRenderer : IPooled
 		_sampleCount = 0;
 		if (_task != null) {
 			CameraRendererManager instance = SingletonComponent<CameraRendererManager>.Instance;
-			if ((Object)(object)instance != (Object)null) {
+			if (instance != null) {
 				instance.ReturnTask (ref _task);
 			}
 		}
@@ -131,7 +132,7 @@ public class CameraRenderer : IPooled
 		}
 		rc = remoteControllable;
 		entity = remoteControllable.GetEnt ();
-		if ((Object)(object)entity == (Object)null || !entity.IsValid ()) {
+		if (entity == null || !entity.IsValid ()) {
 			throw new ArgumentException ("RemoteControllable's entity is null or invalid", "rc");
 		}
 		state = CameraRendererState.WaitingToRender;
@@ -152,7 +153,7 @@ public class CameraRenderer : IPooled
 	{
 		Profiler.BeginSample ("CameraRenderer.Render");
 		CameraRendererManager instance = SingletonComponent<CameraRendererManager>.Instance;
-		if ((Object)(object)instance == (Object)null) {
+		if (instance == null) {
 			state = CameraRendererState.Invalid;
 			Profiler.EndSample ();
 			return;
@@ -166,13 +167,13 @@ public class CameraRenderer : IPooled
 			return;
 		}
 		Transform eyes = rc.GetEyes ();
-		if ((Object)(object)eyes == (Object)null) {
+		if (eyes == null) {
 			state = CameraRendererState.Invalid;
 			Profiler.EndSample ();
 			return;
 		}
 		if (_task != null) {
-			Debug.LogError ((object)"CameraRenderer: Trying to render but a task is already allocated?", (Object)(object)entity);
+			Debug.LogError ("CameraRenderer: Trying to render but a task is already allocated?", entity);
 			instance.ReturnTask (ref _task);
 		}
 		_fieldOfView = verticalFov / Mathf.Clamp (rc.GetFovScale (), 1f, 8f);
@@ -185,44 +186,9 @@ public class CameraRenderer : IPooled
 
 	public void CompleteRender ()
 	{
-		//IL_023d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_024d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_026b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0270: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0273: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0278: Unknown result type (might be due to invalid IL or missing references)
-		//IL_027b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0280: Unknown result type (might be due to invalid IL or missing references)
-		//IL_028d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0292: Unknown result type (might be due to invalid IL or missing references)
-		//IL_037e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0383: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0385: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0387: Unknown result type (might be due to invalid IL or missing references)
-		//IL_04f7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0518: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0402: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0407: Unknown result type (might be due to invalid IL or missing references)
-		//IL_040c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0420: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0429: Unknown result type (might be due to invalid IL or missing references)
-		//IL_042b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0430: Unknown result type (might be due to invalid IL or missing references)
-		//IL_043e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0443: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0448: Unknown result type (might be due to invalid IL or missing references)
-		//IL_044a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_044f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0453: Unknown result type (might be due to invalid IL or missing references)
-		//IL_045d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0462: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0470: Unknown result type (might be due to invalid IL or missing references)
-		//IL_047c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0481: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0486: Unknown result type (might be due to invalid IL or missing references)
 		Profiler.BeginSample ("CameraRenderer.CompleteRender");
 		CameraRendererManager instance = SingletonComponent<CameraRendererManager>.Instance;
-		if ((Object)(object)instance == (Object)null) {
+		if (instance == null) {
 			state = CameraRendererState.Invalid;
 			Profiler.EndSample ();
 			return;
@@ -231,93 +197,92 @@ public class CameraRenderer : IPooled
 			throw new InvalidOperationException ($"CameraRenderer cannot complete render in state {state}");
 		}
 		if (_task == null) {
-			Debug.LogError ((object)"CameraRenderer: Trying to complete render but no task is allocated?", (Object)(object)entity);
+			Debug.LogError ("CameraRenderer: Trying to complete render but no task is allocated?", this.entity);
 			state = CameraRendererState.Invalid;
 			Profiler.EndSample ();
 			return;
 		}
-		if (((CustomYieldInstruction)_task).keepWaiting) {
+		if (_task.keepWaiting) {
 			Profiler.EndSample ();
 			return;
 		}
-		if (rc.IsUnityNull () || !entity.IsValid ()) {
+		if (rc.IsUnityNull () || !this.entity.IsValid ()) {
 			instance.ReturnTask (ref _task);
 			state = CameraRendererState.Invalid;
 			Profiler.EndSample ();
 			return;
 		}
 		Transform eyes = rc.GetEyes ();
-		if ((Object)(object)eyes == (Object)null) {
+		if (eyes == null) {
 			instance.ReturnTask (ref _task);
 			state = CameraRendererState.Invalid;
 			Profiler.EndSample ();
 			return;
 		}
-		int num = _sampleCount * 4;
-		byte[] array = ArrayPool<byte>.Shared.Rent (num);
-		List<int> list = Pool.GetList<int> ();
-		List<int> list2 = Pool.GetList<int> ();
-		int count = _task.ExtractRayData (array, list, list2);
+		int minimumLength = _sampleCount * 4;
+		byte[] array = System.Buffers.ArrayPool<byte>.Shared.Rent (minimumLength);
+		List<int> obj = Pool.GetList<int> ();
+		List<int> obj2 = Pool.GetList<int> ();
+		int count = _task.ExtractRayData (array, obj, obj2);
 		instance.ReturnTask (ref _task);
-		UpdateCollidersMap (list2);
-		Pool.FreeList<int> (ref list);
-		Pool.FreeList<int> (ref list2);
-		ulong num2 = rc.ControllingViewerId?.SteamId ?? 0;
-		if (num2 == 0) {
+		UpdateCollidersMap (obj2);
+		Pool.FreeList (ref obj);
+		Pool.FreeList (ref obj2);
+		ulong num = rc.ControllingViewerId?.SteamId ?? 0;
+		if (num == 0) {
 			_cachedViewerSteamId = null;
 			_cachedViewer = null;
-		} else if (num2 != _cachedViewerSteamId) {
-			_cachedViewerSteamId = num2;
-			_cachedViewer = BasePlayer.FindByID (num2) ?? BasePlayer.FindSleeping (num2);
+		} else if (num != _cachedViewerSteamId) {
+			_cachedViewerSteamId = num;
+			_cachedViewer = BasePlayer.FindByID (num) ?? BasePlayer.FindSleeping (num);
 		}
-		float distance = (_cachedViewer.IsValid () ? Mathf.Clamp01 (Vector3.Distance (((Component)_cachedViewer).transform.position, ((Component)entity).transform.position) / rc.MaxRange) : 0f);
+		float distance = (_cachedViewer.IsValid () ? Mathf.Clamp01 (Vector3.Distance (_cachedViewer.transform.position, this.entity.transform.position) / rc.MaxRange) : 0f);
 		Vector3 position = eyes.position;
 		Quaternion rotation = eyes.rotation;
 		Matrix4x4 worldToLocalMatrix = eyes.worldToLocalMatrix;
-		NetworkableId iD = entity.net.ID;
+		NetworkableId iD = this.entity.net.ID;
 		Profiler.BeginSample ("CameraRenderer.BroadcastRays");
 		_entityIdMap.Clear ();
-		AppBroadcast val = Pool.Get<AppBroadcast> ();
-		val.cameraRays = Pool.Get<AppCameraRays> ();
-		val.cameraRays.verticalFov = _fieldOfView;
-		val.cameraRays.sampleOffset = _sampleOffset;
-		val.cameraRays.rayData = new ArraySegment<byte> (array, 0, count);
-		val.cameraRays.distance = distance;
-		val.cameraRays.entities = Pool.GetList<Entity> ();
-		val.cameraRays.timeOfDay = (((Object)(object)TOD_Sky.Instance != (Object)null) ? TOD_Sky.Instance.LerpValue : 1f);
+		AppBroadcast appBroadcast = Pool.Get<AppBroadcast> ();
+		appBroadcast.cameraRays = Pool.Get<AppCameraRays> ();
+		appBroadcast.cameraRays.verticalFov = _fieldOfView;
+		appBroadcast.cameraRays.sampleOffset = _sampleOffset;
+		appBroadcast.cameraRays.rayData = new ArraySegment<byte> (array, 0, count);
+		appBroadcast.cameraRays.distance = distance;
+		appBroadcast.cameraRays.entities = Pool.GetList<AppCameraRays.Entity> ();
+		appBroadcast.cameraRays.timeOfDay = ((TOD_Sky.Instance != null) ? TOD_Sky.Instance.LerpValue : 1f);
 		foreach (BaseEntity value in _colliderToEntity.Values) {
 			if (!value.IsValid ()) {
 				continue;
 			}
-			Vector3 position2 = ((Component)value).transform.position;
-			float num3 = Vector3.Distance (position2, position);
-			if (num3 > (float)entityMaxDistance) {
+			Vector3 position2 = value.transform.position;
+			float num2 = Vector3.Distance (position2, position);
+			if (num2 > (float)entityMaxDistance) {
 				continue;
 			}
 			string name = null;
 			if (value is BasePlayer basePlayer) {
-				if (num3 > (float)playerMaxDistance) {
+				if (num2 > (float)playerMaxDistance) {
 					continue;
 				}
-				if (num3 <= (float)playerNameMaxDistance) {
+				if (num2 <= (float)playerNameMaxDistance) {
 					name = basePlayer.displayName;
 				}
 			}
-			Entity val2 = Pool.Get<Entity> ();
-			val2.entityId = RandomizeEntityId (value.net.ID);
-			val2.type = (EntityType)((value is TreeEntity) ? 1 : 2);
-			val2.position = ((Matrix4x4)(ref worldToLocalMatrix)).MultiplyPoint3x4 (position2);
-			Quaternion val3 = Quaternion.Inverse (((Component)value).transform.rotation) * rotation;
-			val2.rotation = ((Quaternion)(ref val3)).eulerAngles * ((float)Math.PI / 180f);
-			val2.size = Vector3.Scale (((Bounds)(ref value.bounds)).size, ((Component)value).transform.localScale);
-			val2.name = name;
-			val.cameraRays.entities.Add (val2);
+			AppCameraRays.Entity entity = Pool.Get<AppCameraRays.Entity> ();
+			entity.entityId = RandomizeEntityId (value.net.ID);
+			entity.type = ((value is TreeEntity) ? AppCameraRays.EntityType.Tree : AppCameraRays.EntityType.Player);
+			entity.position = worldToLocalMatrix.MultiplyPoint3x4 (position2);
+			entity.rotation = (Quaternion.Inverse (value.transform.rotation) * rotation).eulerAngles * ((float)Math.PI / 180f);
+			entity.size = Vector3.Scale (value.bounds.size, value.transform.localScale);
+			entity.name = name;
+			appBroadcast.cameraRays.entities.Add (entity);
 		}
-		val.cameraRays.entities.Sort ((Entity x, Entity y) => x.entityId.Value.CompareTo (y.entityId.Value));
-		Server.Broadcast (new CameraTarget (iD), val);
+		appBroadcast.cameraRays.entities.Sort ((AppCameraRays.Entity x, AppCameraRays.Entity y) => x.entityId.Value.CompareTo (y.entityId.Value));
+		CompanionServer.Server.Broadcast (new CameraTarget (iD), appBroadcast);
 		Profiler.EndSample ();
 		_sampleOffset = _nextSampleOffset;
-		if (!Server.HasAnySubscribers (new CameraTarget (iD))) {
+		if (!CompanionServer.Server.HasAnySubscribers (new CameraTarget (iD))) {
 			state = CameraRendererState.Invalid;
 		} else {
 			_lastRenderTimestamp = TimeEx.realtimeSinceStartup;
@@ -330,26 +295,26 @@ public class CameraRenderer : IPooled
 	{
 		Profiler.BeginSample ("CameraRenderer.UpdateCollidersMap");
 		Profiler.BeginSample ("IncrementAge");
-		List<int> list = Pool.GetList<int> ();
+		List<int> obj = Pool.GetList<int> ();
 		foreach (int key in _knownColliders.Keys) {
-			list.Add (key);
+			obj.Add (key);
 		}
-		List<int> list2 = Pool.GetList<int> ();
-		foreach (int item2 in list) {
+		List<int> obj2 = Pool.GetList<int> ();
+		foreach (int item2 in obj) {
 			if (_knownColliders.TryGetValue (item2, out (byte, int) value)) {
 				if (value.Item2 > entityMaxAge) {
-					list2.Add (item2);
+					obj2.Add (item2);
 				} else {
 					_knownColliders [item2] = (value.Item1, value.Item2 + 1);
 				}
 			}
 		}
-		Pool.FreeList<int> (ref list);
-		foreach (int item3 in list2) {
+		Pool.FreeList (ref obj);
+		foreach (int item3 in obj2) {
 			_knownColliders.Remove (item3);
 			_colliderToEntity.Remove (item3);
 		}
-		Pool.FreeList<int> (ref list2);
+		Pool.FreeList (ref obj2);
 		Profiler.EndSample ();
 		Profiler.BeginSample ("RegisterNew");
 		foreach (int foundColliderId in foundColliderIds) {
@@ -357,7 +322,7 @@ public class CameraRenderer : IPooled
 				break;
 			}
 			Collider collider = BurstUtil.GetCollider (foundColliderId);
-			if ((Object)(object)collider == (Object)null) {
+			if (collider == null) {
 				continue;
 			}
 			byte item;
@@ -379,24 +344,15 @@ public class CameraRenderer : IPooled
 
 	private static NetworkableId RandomizeEntityId (NetworkableId realId)
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0031: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
 		if (_entityIdMap.TryGetValue (realId, out var value)) {
 			return value;
 		}
-		NetworkableId val = default(NetworkableId);
+		NetworkableId networkableId;
 		do {
-			((NetworkableId)(ref val))..ctor ((ulong)Random.Range (0, 2500));
-		} while (_entityIdMap.ContainsKey (val));
-		_entityIdMap.Add (realId, val);
-		return val;
+			networkableId = new NetworkableId ((ulong)UnityEngine.Random.Range (0, 2500));
+		} while (_entityIdMap.ContainsKey (networkableId));
+		_entityIdMap.Add (realId, networkableId);
+		return networkableId;
 	}
 
 	[MethodImpl (MethodImplOptions.AggressiveInlining)]
@@ -414,7 +370,7 @@ public class CameraRenderer : IPooled
 		case "Metal":
 			return 6;
 		default:
-			if ((Object)(object)entity != (Object)null && entity is BasePlayer) {
+			if (entity != null && entity is BasePlayer) {
 				return 7;
 			}
 			return 0;

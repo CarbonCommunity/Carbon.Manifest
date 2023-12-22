@@ -29,18 +29,18 @@ public class HelicopterDebris : ServerGib
 		if (!base.isServer) {
 			return;
 		}
-		resourceDispenser = ((Component)this).GetComponent<ResourceDispenser> ();
-		Rigidbody component = ((Component)this).GetComponent<Rigidbody> ();
+		resourceDispenser = GetComponent<ResourceDispenser> ();
+		Rigidbody component = GetComponent<Rigidbody> ();
 		float num = Mathf.Clamp01 (component.mass / massReductionScalar);
 		resourceDispenser.containedItems = new List<ItemAmount> ();
-		if (num > 0.75f && (Object)(object)hqMetal != (Object)null) {
+		if (num > 0.75f && hqMetal != null) {
 			resourceDispenser.containedItems.Add (new ItemAmount (hqMetal, Mathf.CeilToInt (7f * num)));
 		}
 		if (num > 0f) {
-			if ((Object)(object)metalFragments != (Object)null) {
+			if (metalFragments != null) {
 				resourceDispenser.containedItems.Add (new ItemAmount (metalFragments, Mathf.CeilToInt (150f * num)));
 			}
-			if ((Object)(object)charcoal != (Object)null) {
+			if (charcoal != null) {
 				resourceDispenser.containedItems.Add (new ItemAmount (charcoal, Mathf.CeilToInt (80f * num)));
 			}
 		}
@@ -54,10 +54,6 @@ public class HelicopterDebris : ServerGib
 
 	public override void OnAttacked (HitInfo info)
 	{
-		//IL_0070: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0075: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0095: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009a: Unknown result type (might be due to invalid IL or missing references)
 		if (IsTooHot () && info.WeaponPrefab is BaseMelee) {
 			if (info.Initiator is BasePlayer) {
 				HitInfo hitInfo = new HitInfo ();
@@ -66,11 +62,11 @@ public class HelicopterDebris : ServerGib
 				hitInfo.DidHit = true;
 				hitInfo.HitBone = 0u;
 				hitInfo.Initiator = this;
-				hitInfo.PointStart = ((Component)this).transform.position;
+				hitInfo.PointStart = base.transform.position;
 				Effect.server.Run ("assets/bundled/prefabs/fx/impacts/additive/fire.prefab", info.Initiator, 0u, new Vector3 (0f, 1f, 0f), Vector3.up);
 			}
 		} else {
-			if (Object.op_Implicit ((Object)(object)resourceDispenser)) {
+			if ((bool)resourceDispenser) {
 				resourceDispenser.OnAttacked (info);
 			}
 			base.OnAttacked (info);

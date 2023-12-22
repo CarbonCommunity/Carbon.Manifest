@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class ScientistNPC : HumanNPC, IAIMounted
@@ -28,7 +27,7 @@ public class ScientistNPC : HumanNPC, IAIMounted
 			if (newType == RadioChatterType.Idle) {
 				QueueRadioChatter ();
 			} else {
-				((FacepunchBehaviour)this).CancelInvoke ((Action)PlayRadioChatter);
+				CancelInvoke (PlayRadioChatter);
 			}
 		}
 	}
@@ -37,7 +36,7 @@ public class ScientistNPC : HumanNPC, IAIMounted
 	{
 		base.ServerInit ();
 		SetChatterType (RadioChatterType.Idle);
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)IdleCheck, 0f, 20f, 1f);
+		InvokeRandomized (IdleCheck, 0f, 20f, 1f);
 	}
 
 	public void IdleCheck ()
@@ -50,7 +49,7 @@ public class ScientistNPC : HumanNPC, IAIMounted
 	public void QueueRadioChatter ()
 	{
 		if (IsAlive () && !base.IsDestroyed) {
-			((FacepunchBehaviour)this).Invoke ((Action)PlayRadioChatter, Random.Range (IdleChatterRepeatRange.x, IdleChatterRepeatRange.y));
+			Invoke (PlayRadioChatter, Random.Range (IdleChatterRepeatRange.x, IdleChatterRepeatRange.y));
 		}
 	}
 
@@ -77,25 +76,21 @@ public class ScientistNPC : HumanNPC, IAIMounted
 
 	public override void OnKilled (HitInfo info)
 	{
-		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
 		base.OnKilled (info);
 		SetChatterType (RadioChatterType.NONE);
 		if (DeathEffects.Length != 0) {
 			Effect.server.Run (DeathEffects [Random.Range (0, DeathEffects.Length)].resourcePath, ServerPosition, Vector3.up);
 		}
-		if (info != null && (Object)(object)info.InitiatorPlayer != (Object)null && !info.InitiatorPlayer.IsNpc) {
+		if (info != null && info.InitiatorPlayer != null && !info.InitiatorPlayer.IsNpc) {
 			info.InitiatorPlayer.stats.Add (deathStatName, 1, (Stats)5);
 		}
 	}
 
 	public void PlayRadioChatter ()
 	{
-		//IL_0067: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006c: Unknown result type (might be due to invalid IL or missing references)
 		if (RadioChatterEffects.Length != 0) {
-			if (base.IsDestroyed || (Object)(object)((Component)this).transform == (Object)null) {
-				((FacepunchBehaviour)this).CancelInvoke ((Action)PlayRadioChatter);
+			if (base.IsDestroyed || base.transform == null) {
+				CancelInvoke (PlayRadioChatter);
 				return;
 			}
 			Effect.server.Run (RadioChatterEffects [Random.Range (0, RadioChatterEffects.Length)].resourcePath, this, StringPool.Get ("head"), Vector3.zero, Vector3.zero);
@@ -107,7 +102,7 @@ public class ScientistNPC : HumanNPC, IAIMounted
 	{
 		base.EquipWeapon (skipDeployDelay);
 		HeldEntity heldEntity = GetHeldEntity ();
-		if (!((Object)(object)heldEntity != (Object)null)) {
+		if (!(heldEntity != null)) {
 			return;
 		}
 		Item item = heldEntity.GetItem ();
@@ -121,7 +116,7 @@ public class ScientistNPC : HumanNPC, IAIMounted
 				return;
 			}
 			lightsOn = false;
-			((FacepunchBehaviour)this).InvokeRandomized ((Action)base.LightCheck, 0f, 30f, 5f);
+			InvokeRandomized (base.LightCheck, 0f, 30f, 5f);
 			LightCheck ();
 		} else {
 			Item item3 = ItemManager.CreateByName ("weapon.mod.lasersight", 1, 0uL);

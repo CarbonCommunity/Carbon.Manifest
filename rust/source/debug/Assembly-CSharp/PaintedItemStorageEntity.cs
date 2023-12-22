@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -25,46 +26,34 @@ public class PaintedItemStorageEntity : BaseEntity, IServerFileReceiver, IUGCBro
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("PaintedItemStorageEntity.OnRpcMessage", 0);
-		try {
-			if (rpc == 2439017595u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("PaintedItemStorageEntity.OnRpcMessage")) {
+			if (rpc == 2439017595u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_UpdateImage "));
+				if (ConVar.Global.developer > 2) {
+					UnityEngine.Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_UpdateImage "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_UpdateImage", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_UpdateImage")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (2439017595u, "Server_UpdateImage", this, player, 3uL)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							Server_UpdateImage (msg2);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						UnityEngine.Debug.LogException (exception);
 						player.Kick ("RPC Error in Server_UpdateImage");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -83,7 +72,7 @@ public class PaintedItemStorageEntity : BaseEntity, IServerFileReceiver, IUGCBro
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.paintedItem = Pool.Get<PaintedItem> ();
+		info.msg.paintedItem = Facepunch.Pool.Get<PaintedItem> ();
 		info.msg.paintedItem.imageCrc = _currentImageCrc;
 		info.msg.paintedItem.editedBy = lastEditedBy;
 	}
@@ -92,13 +81,7 @@ public class PaintedItemStorageEntity : BaseEntity, IServerFileReceiver, IUGCBro
 	[RPC_Server.CallsPerSecond (3uL)]
 	private void Server_UpdateImage (RPCMessage msg)
 	{
-		//IL_006a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0075: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ba: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_019a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_017f: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)msg.player == (Object)null || msg.player.userID != base.OwnerID) {
+		if (msg.player == null || msg.player.userID != base.OwnerID) {
 			return;
 		}
 		foreach (Item item2 in msg.player.inventory.containerWear.itemList) {
@@ -110,7 +93,7 @@ public class PaintedItemStorageEntity : BaseEntity, IServerFileReceiver, IUGCBro
 		if (item == null || item.isBroken) {
 			return;
 		}
-		byte[] array = msg.read.BytesWithSize (10485760u);
+		byte[] array = msg.read.BytesWithSize ();
 		if (array == null) {
 			if (_currentImageCrc != 0) {
 				FileStorage.server.RemoveExact (_currentImageCrc, FileStorage.Type.png, net.ID, 0u);
@@ -135,9 +118,8 @@ public class PaintedItemStorageEntity : BaseEntity, IServerFileReceiver, IUGCBro
 
 	internal override void DoServerDestroy ()
 	{
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
 		base.DoServerDestroy ();
-		if (!Application.isQuitting && net != null) {
+		if (!Rust.Application.isQuitting && net != null) {
 			FileStorage.server.RemoveAllByEntity (net.ID);
 		}
 	}
@@ -151,6 +133,6 @@ public class PaintedItemStorageEntity : BaseEntity, IServerFileReceiver, IUGCBro
 	[Conditional ("PAINTED_ITEM_DEBUG")]
 	private void DebugOnlyLog (string str)
 	{
-		Debug.Log ((object)str, (Object)(object)this);
+		UnityEngine.Debug.Log (str, this);
 	}
 }

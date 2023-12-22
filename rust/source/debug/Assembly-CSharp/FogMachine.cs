@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch.Rust;
@@ -41,7 +42,7 @@ public class FogMachine : ContainerIOEntity
 			BasePlayer player = msg.player;
 			if (player.CanBuild ()) {
 				SetFlag (Flags.On, b: true);
-				((FacepunchBehaviour)this).InvokeRepeating ((Action)StartFogging, 0f, fogLength - 1f);
+				InvokeRepeating (StartFogging, 0f, fogLength - 1f);
 			}
 		}
 	}
@@ -53,7 +54,7 @@ public class FogMachine : ContainerIOEntity
 		if (IsOn ()) {
 			BasePlayer player = msg.player;
 			if (player.CanBuild ()) {
-				((FacepunchBehaviour)this).CancelInvoke ((Action)StartFogging);
+				CancelInvoke (StartFogging);
 				SetFlag (Flags.On, b: false);
 			}
 		}
@@ -77,27 +78,17 @@ public class FogMachine : ContainerIOEntity
 	public void UpdateMotionMode ()
 	{
 		if (HasFlag (Flags.Reserved9)) {
-			((FacepunchBehaviour)this).InvokeRandomized ((Action)CheckTrigger, Random.Range (0f, 0.5f), 0.5f, 0.1f);
+			InvokeRandomized (CheckTrigger, UnityEngine.Random.Range (0f, 0.5f), 0.5f, 0.1f);
 		} else {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)CheckTrigger);
+			CancelInvoke (CheckTrigger);
 		}
 	}
 
 	public void CheckTrigger ()
 	{
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
 		if (!IsEmitting ()) {
-			Vector3 pos = ((Component)this).transform.position + ((Component)this).transform.forward * 3f;
-			if (BasePlayer.AnyPlayersVisibleToEntity (pos, 3f, this, ((Component)this).transform.position + Vector3.up * 0.1f, ignorePlayersWithPriv: true)) {
+			Vector3 pos = base.transform.position + base.transform.forward * 3f;
+			if (BasePlayer.AnyPlayersVisibleToEntity (pos, 3f, this, base.transform.position + Vector3.up * 0.1f, ignorePlayersWithPriv: true)) {
 				StartFogging ();
 			}
 		}
@@ -106,14 +97,14 @@ public class FogMachine : ContainerIOEntity
 	public void StartFogging ()
 	{
 		if (!UseFuel (1f)) {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)StartFogging);
+			CancelInvoke (StartFogging);
 			SetFlag (Flags.On, b: false);
 			return;
 		}
 		SetFlag (Flags.Reserved6, b: true);
-		((FacepunchBehaviour)this).Invoke ((Action)EnableFogField, 1f);
-		((FacepunchBehaviour)this).Invoke ((Action)DisableNozzle, nozzleBlastDuration);
-		((FacepunchBehaviour)this).Invoke ((Action)FinishFogging, fogLength);
+		Invoke (EnableFogField, 1f);
+		Invoke (DisableNozzle, nozzleBlastDuration);
+		Invoke (FinishFogging, fogLength);
 	}
 
 	public virtual void EnableFogField ()
@@ -138,7 +129,7 @@ public class FogMachine : ContainerIOEntity
 		SetFlag (Flags.Reserved6, b: false);
 		SetFlag (Flags.Reserved5, HasFuel ());
 		if (IsOn ()) {
-			((FacepunchBehaviour)this).InvokeRepeating ((Action)StartFogging, 0f, fogLength - 1f);
+			InvokeRepeating (StartFogging, 0f, fogLength - 1f);
 		}
 		UpdateMotionMode ();
 	}
@@ -203,10 +194,10 @@ public class FogMachine : ContainerIOEntity
 		if (flag) {
 			if (!IsEmitting () && !IsOn () && HasFuel ()) {
 				SetFlag (Flags.On, b: true);
-				((FacepunchBehaviour)this).InvokeRepeating ((Action)StartFogging, 0f, fogLength - 1f);
+				InvokeRepeating (StartFogging, 0f, fogLength - 1f);
 			}
 		} else if (IsOn ()) {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)StartFogging);
+			CancelInvoke (StartFogging);
 			SetFlag (Flags.On, b: false);
 		}
 	}
@@ -218,118 +209,88 @@ public class FogMachine : ContainerIOEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("FogMachine.OnRpcMessage", 0);
-		try {
-			if (rpc == 2788115565u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("FogMachine.OnRpcMessage")) {
+			if (rpc == 2788115565u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - SetFogOff "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - SetFogOff "));
 				}
-				TimeWarning val2 = TimeWarning.New ("SetFogOff", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("SetFogOff")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (2788115565u, "SetFogOff", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage fogOff = rPCMessage;
 							SetFogOff (fogOff);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in SetFogOff");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 3905831928u && (Object)(object)player != (Object)null) {
+			if (rpc == 3905831928u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - SetFogOn "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - SetFogOn "));
 				}
-				TimeWarning val5 = TimeWarning.New ("SetFogOn", 0);
-				try {
-					TimeWarning val6 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("SetFogOn")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (3905831928u, "SetFogOn", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val6)?.Dispose ();
 					}
 					try {
-						TimeWarning val7 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage fogOn = rPCMessage;
 							SetFogOn (fogOn);
-						} finally {
-							((IDisposable)val7)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in SetFogOn");
 					}
-				} finally {
-					((IDisposable)val5)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 1773639087 && (Object)(object)player != (Object)null) {
+			if (rpc == 1773639087 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - SetMotionDetection "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - SetMotionDetection "));
 				}
-				TimeWarning val8 = TimeWarning.New ("SetMotionDetection", 0);
-				try {
-					TimeWarning val9 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("SetMotionDetection")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (1773639087u, "SetMotionDetection", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val9)?.Dispose ();
 					}
 					try {
-						TimeWarning val10 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage motionDetection = rPCMessage;
 							SetMotionDetection (motionDetection);
-						} finally {
-							((IDisposable)val10)?.Dispose ();
 						}
-					} catch (Exception ex3) {
-						Debug.LogException (ex3);
+					} catch (Exception exception3) {
+						Debug.LogException (exception3);
 						player.Kick ("RPC Error in SetMotionDetection");
 					}
-				} finally {
-					((IDisposable)val8)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}

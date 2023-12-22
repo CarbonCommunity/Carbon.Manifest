@@ -53,14 +53,6 @@ public class HitTest
 
 	public void CopyFrom (HitTest other, bool copyHitInfo = false)
 	{
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0075: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0081: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0086: Unknown result type (might be due to invalid IL or missing references)
 		type = other.type;
 		AttackRay = other.AttackRay;
 		Radius = other.Radius;
@@ -85,46 +77,30 @@ public class HitTest
 
 	public Vector3 HitPointWorld ()
 	{
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)HitEntity != (Object)null) {
-			Transform val = HitTransform;
-			if (!Object.op_Implicit ((Object)(object)val)) {
-				val = ((Component)HitEntity).transform;
+		if (HitEntity != null) {
+			Transform transform = HitTransform;
+			if (!transform) {
+				transform = HitEntity.transform;
 			}
-			return val.TransformPoint (HitPoint);
+			return transform.TransformPoint (HitPoint);
 		}
 		return HitPoint;
 	}
 
 	public Vector3 HitNormalWorld ()
 	{
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)HitEntity != (Object)null) {
-			Transform val = HitTransform;
-			if (!Object.op_Implicit ((Object)(object)val)) {
-				val = ((Component)HitEntity).transform;
+		if (HitEntity != null) {
+			Transform transform = HitTransform;
+			if (!transform) {
+				transform = HitEntity.transform;
 			}
-			return val.TransformDirection (HitNormal);
+			return transform.TransformDirection (HitNormal);
 		}
 		return HitNormal;
 	}
 
 	public void Clear ()
 	{
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008b: Unknown result type (might be due to invalid IL or missing references)
 		type = Type.Generic;
 		AttackRay = default(Ray);
 		Radius = 0f;

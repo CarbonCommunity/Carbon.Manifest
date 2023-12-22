@@ -29,11 +29,11 @@ public class TriggerAchievement : TriggerBase
 	internal override GameObject InterestedInObject (GameObject obj)
 	{
 		obj = base.InterestedInObject (obj);
-		if ((Object)(object)obj == (Object)null) {
+		if (obj == null) {
 			return null;
 		}
 		BaseEntity baseEntity = obj.ToBaseEntity ();
-		if ((Object)(object)baseEntity == (Object)null) {
+		if (baseEntity == null) {
 			return null;
 		}
 		if (baseEntity.isClient && serverSide) {
@@ -42,22 +42,22 @@ public class TriggerAchievement : TriggerBase
 		if (baseEntity.isServer && !serverSide) {
 			return null;
 		}
-		return ((Component)baseEntity).gameObject;
+		return baseEntity.gameObject;
 	}
 
 	internal override void OnEntityEnter (BaseEntity ent)
 	{
 		base.OnEntityEnter (ent);
-		if ((Object)(object)ent == (Object)null) {
+		if (ent == null) {
 			return;
 		}
-		BasePlayer component = ((Component)ent).GetComponent<BasePlayer> ();
-		if ((Object)(object)component == (Object)null || !component.IsAlive () || component.IsSleeping () || component.IsNpc || triggeredPlayers.Contains (component.userID)) {
+		BasePlayer component = ent.GetComponent<BasePlayer> ();
+		if (component == null || !component.IsAlive () || component.IsSleeping () || component.IsNpc || triggeredPlayers.Contains (component.userID)) {
 			return;
 		}
 		if (!string.IsNullOrEmpty (requiredVehicleName)) {
 			BaseVehicle mountedVehicle = component.GetMountedVehicle ();
-			if ((Object)(object)mountedVehicle == (Object)null) {
+			if (mountedVehicle == null) {
 				return;
 			}
 			string shortPrefabName = mountedVehicle.ShortPrefabName;

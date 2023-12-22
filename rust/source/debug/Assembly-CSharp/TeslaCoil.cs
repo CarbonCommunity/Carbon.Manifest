@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using Rust;
 using UnityEngine;
@@ -45,13 +44,13 @@ public class TeslaCoil : IOEntity
 			if (num < 0f) {
 				num = 0f;
 			}
-			float num2 = Mathf.Min (dischargeTickRate - num, dischargeTickRate);
-			((FacepunchBehaviour)this).InvokeRepeating ((Action)Discharge, num2, dischargeTickRate);
+			float time = Mathf.Min (dischargeTickRate - num, dischargeTickRate);
+			InvokeRepeating (Discharge, time, dischargeTickRate);
 			SetFlag (Flags.Reserved1, inputAmount < powerForHeavyShorting, recursive: false, networkupdate: false);
 			SetFlag (Flags.Reserved2, inputAmount >= powerForHeavyShorting, recursive: false, networkupdate: false);
 			SetFlag (Flags.On, b: true);
 		} else {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)Discharge);
+			CancelInvoke (Discharge);
 			SetFlag (Flags.Reserved1, b: false, recursive: false, networkupdate: false);
 			SetFlag (Flags.Reserved2, b: false, recursive: false, networkupdate: false);
 			SetFlag (Flags.On, b: false);
@@ -60,19 +59,17 @@ public class TeslaCoil : IOEntity
 
 	public void Discharge ()
 	{
-		//IL_00a0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a7: Unknown result type (might be due to invalid IL or missing references)
-		float num = (float)currentEnergy * powerToDamageRatio;
-		num = Mathf.Clamp (num, 0f, maxDamageOutput);
-		float damageAmount = num * dischargeTickRate;
+		float value = (float)currentEnergy * powerToDamageRatio;
+		value = Mathf.Clamp (value, 0f, maxDamageOutput);
+		float damageAmount = value * dischargeTickRate;
 		lastDischargeTime = Time.time;
 		if (targetTrigger.entityContents != null) {
 			BaseEntity[] array = targetTrigger.entityContents.ToArray ();
 			if (array != null) {
 				BaseEntity[] array2 = array;
 				foreach (BaseEntity baseEntity in array2) {
-					BaseCombatEntity component = ((Component)baseEntity).GetComponent<BaseCombatEntity> ();
-					if (Object.op_Implicit ((Object)(object)component) && component.IsVisible (((Component)damageEyes).transform.position, component.CenterPoint ())) {
+					BaseCombatEntity component = baseEntity.GetComponent<BaseCombatEntity> ();
+					if ((bool)component && component.IsVisible (damageEyes.transform.position, component.CenterPoint ())) {
 						component.OnAttacked (new HitInfo (this, component, DamageType.ElectricShock, damageAmount));
 					}
 				}

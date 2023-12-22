@@ -40,51 +40,32 @@ public class TriggerTrainCollisions : TriggerBase
 
 	internal override void OnObjectAdded (GameObject obj, Collider col)
 	{
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0062: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0072: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0077: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0081: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0089: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0092: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0097: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0099: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00af: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b4: Unknown result type (might be due to invalid IL or missing references)
 		if (!owner.isServer) {
 			return;
 		}
 		base.OnObjectAdded (obj, col);
-		if ((Object)(object)obj != (Object)null) {
+		if (obj != null) {
 			BaseEntity baseEntity = obj.ToBaseEntity ();
-			if ((Object)(object)baseEntity != (Object)null) {
-				Vector3 val = ((Component)baseEntity).transform.position + ((Component)baseEntity).transform.rotation * Vector3.Scale (obj.transform.lossyScale, ((Bounds)(ref baseEntity.bounds)).center);
-				Bounds bounds = triggerCollider.bounds;
-				Vector3 center = ((Bounds)(ref bounds)).center;
-				Vector3 val2 = val - center;
-				bool flag = Vector3.Dot (((Component)owner).transform.forward, val2) > 0f;
+			if (baseEntity != null) {
+				Vector3 vector = baseEntity.transform.position + baseEntity.transform.rotation * Vector3.Scale (obj.transform.lossyScale, baseEntity.bounds.center);
+				Vector3 center = triggerCollider.bounds.center;
+				Vector3 rhs = vector - center;
+				bool flag = Vector3.Dot (owner.transform.forward, rhs) > 0f;
 				if ((location == Location.Front && !flag) || (location == Location.Rear && flag)) {
 					return;
 				}
 			}
 		}
-		if ((Object)(object)obj != (Object)null) {
+		if (obj != null) {
 			Rigidbody componentInParent = obj.GetComponentInParent<Rigidbody> ();
-			if ((Object)(object)componentInParent != (Object)null) {
+			if (componentInParent != null) {
 				TrainCar componentInParent2 = obj.GetComponentInParent<TrainCar> ();
-				if ((Object)(object)componentInParent2 != (Object)null) {
+				if (componentInParent2 != null) {
 					trainContents.Add (componentInParent2);
 					if (owner.coupling != null) {
 						owner.coupling.TryCouple (componentInParent2, location);
 					}
-					((FacepunchBehaviour)this).InvokeRepeating ((Action)TrainContentsTick, 0.2f, 0.2f);
+					InvokeRepeating (TrainContentsTick, 0.2f, 0.2f);
 				} else {
 					otherRigidbodyContents.Add (componentInParent);
 				}
@@ -99,14 +80,14 @@ public class TriggerTrainCollisions : TriggerBase
 				}
 			}
 		}
-		if ((Object)(object)col != (Object)null) {
+		if (col != null) {
 			colliderContents.Add (col);
 		}
 	}
 
 	internal override void OnObjectRemoved (GameObject obj)
 	{
-		if (!owner.isServer || (Object)(object)obj == (Object)null) {
+		if (!owner.isServer || obj == null) {
 			return;
 		}
 		Collider[] components = obj.GetComponents<Collider> ();
@@ -116,11 +97,11 @@ public class TriggerTrainCollisions : TriggerBase
 		}
 		if (!staticContents.Remove (obj)) {
 			TrainCar componentInParent = obj.GetComponentInParent<TrainCar> ();
-			if ((Object)(object)componentInParent != (Object)null) {
+			if (componentInParent != null) {
 				if (!HasAnotherColliderFor<TrainCar> (componentInParent)) {
 					trainContents.Remove (componentInParent);
 					if (trainContents == null || trainContents.Count == 0) {
-						((FacepunchBehaviour)this).CancelInvoke ((Action)TrainContentsTick);
+						CancelInvoke (TrainContentsTick);
 					}
 				}
 			} else {
@@ -134,7 +115,7 @@ public class TriggerTrainCollisions : TriggerBase
 		bool HasAnotherColliderFor<T> (T component) where T : Component
 		{
 			foreach (Collider colliderContent in colliderContents) {
-				if ((Object)(object)colliderContent != (Object)null && (Object)(object)((Component)colliderContent).GetComponentInParent<T> () == (Object)(object)component) {
+				if (colliderContent != null && colliderContent.GetComponentInParent<T> () == component) {
 					return true;
 				}
 			}

@@ -1,3 +1,5 @@
+#define ENABLE_PROFILER
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -193,111 +195,90 @@ public class ModularCar : BaseModularVehicle, TakeCollisionDamage.ICanRestoreVel
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("ModularCar.OnRpcMessage", 0);
-		try {
-			if (rpc == 1851540757 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("ModularCar.OnRpcMessage")) {
+			if (rpc == 1851540757 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_OpenFuel "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_OpenFuel "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_OpenFuel", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Call", 0);
+				using (TimeWarning.New ("RPC_OpenFuel")) {
 					try {
-						RPCMessage rPCMessage = default(RPCMessage);
-						rPCMessage.connection = msg.connection;
-						rPCMessage.player = player;
-						rPCMessage.read = msg.read;
-						RPCMessage msg2 = rPCMessage;
-						RPC_OpenFuel (msg2);
-					} finally {
-						((IDisposable)val3)?.Dispose ();
+						using (TimeWarning.New ("Call")) {
+							RPCMessage rPCMessage = default(RPCMessage);
+							rPCMessage.connection = msg.connection;
+							rPCMessage.player = player;
+							rPCMessage.read = msg.read;
+							RPCMessage msg2 = rPCMessage;
+							RPC_OpenFuel (msg2);
+						}
+					} catch (Exception exception) {
+						Debug.LogException (exception);
+						player.Kick ("RPC Error in RPC_OpenFuel");
 					}
-				} catch (Exception ex) {
-					Debug.LogException (ex);
-					player.Kick ("RPC Error in RPC_OpenFuel");
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 1382140449 && (Object)(object)player != (Object)null) {
+			if (rpc == 1382140449 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_OpenFuelWithKeycode "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_OpenFuelWithKeycode "));
 				}
-				TimeWarning val4 = TimeWarning.New ("RPC_OpenFuelWithKeycode", 0);
-				try {
-					TimeWarning val5 = TimeWarning.New ("Call", 0);
+				using (TimeWarning.New ("RPC_OpenFuelWithKeycode")) {
 					try {
-						RPCMessage rPCMessage = default(RPCMessage);
-						rPCMessage.connection = msg.connection;
-						rPCMessage.player = player;
-						rPCMessage.read = msg.read;
-						RPCMessage msg3 = rPCMessage;
-						RPC_OpenFuelWithKeycode (msg3);
-					} finally {
-						((IDisposable)val5)?.Dispose ();
+						using (TimeWarning.New ("Call")) {
+							RPCMessage rPCMessage = default(RPCMessage);
+							rPCMessage.connection = msg.connection;
+							rPCMessage.player = player;
+							rPCMessage.read = msg.read;
+							RPCMessage msg3 = rPCMessage;
+							RPC_OpenFuelWithKeycode (msg3);
+						}
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
+						player.Kick ("RPC Error in RPC_OpenFuelWithKeycode");
 					}
-				} catch (Exception ex2) {
-					Debug.LogException (ex2);
-					player.Kick ("RPC Error in RPC_OpenFuelWithKeycode");
-				} finally {
-					((IDisposable)val4)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 2818660542u && (Object)(object)player != (Object)null) {
+			if (rpc == 2818660542u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_TryMountWithKeycode "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_TryMountWithKeycode "));
 				}
-				TimeWarning val6 = TimeWarning.New ("RPC_TryMountWithKeycode", 0);
-				try {
-					TimeWarning val7 = TimeWarning.New ("Call", 0);
+				using (TimeWarning.New ("RPC_TryMountWithKeycode")) {
 					try {
-						RPCMessage rPCMessage = default(RPCMessage);
-						rPCMessage.connection = msg.connection;
-						rPCMessage.player = player;
-						rPCMessage.read = msg.read;
-						RPCMessage msg4 = rPCMessage;
-						RPC_TryMountWithKeycode (msg4);
-					} finally {
-						((IDisposable)val7)?.Dispose ();
+						using (TimeWarning.New ("Call")) {
+							RPCMessage rPCMessage = default(RPCMessage);
+							rPCMessage.connection = msg.connection;
+							rPCMessage.player = player;
+							rPCMessage.read = msg.read;
+							RPCMessage msg4 = rPCMessage;
+							RPC_TryMountWithKeycode (msg4);
+						}
+					} catch (Exception exception3) {
+						Debug.LogException (exception3);
+						player.Kick ("RPC Error in RPC_TryMountWithKeycode");
 					}
-				} catch (Exception ex3) {
-					Debug.LogException (ex3);
-					player.Kick ("RPC Error in RPC_TryMountWithKeycode");
-				} finally {
-					((IDisposable)val6)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
 
 	public override void ServerInit ()
 	{
-		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0070: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a5: Unknown result type (might be due to invalid IL or missing references)
 		base.ServerInit ();
-		carPhysics = new CarPhysics<ModularCar> (this, ((Component)this).transform, rigidBody, carSettings);
+		carPhysics = new CarPhysics<ModularCar> (this, base.transform, rigidBody, carSettings);
 		serverTerrainHandler = new VehicleTerrainHandler (this);
-		if (!Application.isLoadingSave) {
+		if (!Rust.Application.isLoadingSave) {
 			SpawnPreassignedModules ();
 		}
-		lastEngineOnTime = Time.realtimeSinceStartup;
+		lastEngineOnTime = UnityEngine.Time.realtimeSinceStartup;
 		allCarsList.Add (this);
 		collisionCheckBounds = new Bounds (mainChassisCollider.center, new Vector3 (mainChassisCollider.size.x - 0.5f, 0.05f, mainChassisCollider.size.z - 0.5f));
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)UpdateClients, 0f, 0.15f, 0.02f);
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)DecayTick, Random.Range (30f, 60f), 60f, 6f);
+		InvokeRandomized (UpdateClients, 0f, 0.15f, 0.02f);
+		InvokeRandomized (DecayTick, UnityEngine.Random.Range (30f, 60f), 60f, 6f);
 	}
 
 	internal override void DoServerDestroy ()
@@ -338,48 +319,22 @@ public class ModularCar : BaseModularVehicle, TakeCollisionDamage.ICanRestoreVel
 
 	public override void VehicleFixedUpdate ()
 	{
-		//IL_0170: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0175: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0181: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0186: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0142: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0147: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0153: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0158: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00df: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0103: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0114: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0125: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ab: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01c3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01c8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ca: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d8: Unknown result type (might be due to invalid IL or missing references)
 		Profiler.BeginSample ("ModularCar.VehicleFixedUpdate");
 		base.VehicleFixedUpdate ();
 		float speed = GetSpeed ();
-		carPhysics.FixedUpdate (Time.fixedDeltaTime, speed);
+		carPhysics.FixedUpdate (UnityEngine.Time.fixedDeltaTime, speed);
 		engineController.CheckEngineState ();
-		((Component)hurtTriggerFront).gameObject.SetActive (speed > hurtTriggerMinSpeed);
-		((Component)hurtTriggerRear).gameObject.SetActive (speed < 0f - hurtTriggerMinSpeed);
+		hurtTriggerFront.gameObject.SetActive (speed > hurtTriggerMinSpeed);
+		hurtTriggerRear.gameObject.SetActive (speed < 0f - hurtTriggerMinSpeed);
 		serverTerrainHandler.FixedUpdate ();
 		float num = Mathf.Abs (speed);
 		if (lastPosWasBad || num > 15f) {
-			OBB obb = default(OBB);
-			((OBB)(ref obb))..ctor (((Component)mainChassisCollider).transform, collisionCheckBounds);
-			if (GamePhysics.CheckOBB (obb, 1218511105, (QueryTriggerInteraction)1)) {
+			OBB obb = new OBB (mainChassisCollider.transform, collisionCheckBounds);
+			if (GamePhysics.CheckOBB (obb, 1218511105, QueryTriggerInteraction.Ignore)) {
 				rigidBody.position = lastGoodPos;
 				rigidBody.rotation = lastGoodRot;
-				((Component)this).transform.position = lastGoodPos;
-				((Component)this).transform.rotation = lastGoodRot;
+				base.transform.position = lastGoodPos;
+				base.transform.rotation = lastGoodRot;
 				rigidBody.velocity = Vector3.zero;
 				rigidBody.angularVelocity = Vector3.zero;
 				lastPosWasBad = true;
@@ -405,14 +360,6 @@ public class ModularCar : BaseModularVehicle, TakeCollisionDamage.ICanRestoreVel
 
 	protected override bool DetermineIfStationary ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
 		bool result = rigidBody.position == prevPosition && rigidBody.rotation == prevRotation;
 		prevPosition = rigidBody.position;
 		prevRotation = rigidBody.rotation;
@@ -421,7 +368,6 @@ public class ModularCar : BaseModularVehicle, TakeCollisionDamage.ICanRestoreVel
 
 	public override void PlayerServerInput (InputState inputState, BasePlayer player)
 	{
-		//IL_007f: Unknown result type (might be due to invalid IL or missing references)
 		MountPointInfo playerSeatInfo = GetPlayerSeatInfo (player);
 		if (playerSeatInfo == null || !playerSeatInfo.isDriver) {
 			return;
@@ -468,12 +414,11 @@ public class ModularCar : BaseModularVehicle, TakeCollisionDamage.ICanRestoreVel
 	public override void PlayerDismounted (BasePlayer player, BaseMountable seat)
 	{
 		base.PlayerDismounted (player, seat);
-		DriverSeatInputs driverSeatInputs = default(DriverSeatInputs);
-		if (this.driverSeatInputs.TryGetValue (seat, ref driverSeatInputs)) {
-			this.driverSeatInputs.Remove (seat);
+		if (driverSeatInputs.TryGetValue (seat, out var _)) {
+			driverSeatInputs.Remove (seat);
 		}
 		foreach (BaseVehicleModule attachedModuleEntity in base.AttachedModuleEntities) {
-			if ((Object)(object)attachedModuleEntity != (Object)null) {
+			if (attachedModuleEntity != null) {
 				attachedModuleEntity.OnPlayerDismountedVehicle (player);
 			}
 		}
@@ -482,10 +427,8 @@ public class ModularCar : BaseModularVehicle, TakeCollisionDamage.ICanRestoreVel
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_0087: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008c: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
-		info.msg.modularCar = Pool.Get<ModularCar> ();
+		info.msg.modularCar = Facepunch.Pool.Get<ProtoBuf.ModularCar> ();
 		info.msg.modularCar.steerAngle = SteerAngle;
 		info.msg.modularCar.driveWheelVel = DriveWheelVelocity;
 		info.msg.modularCar.throttleInput = GetThrottleInput ();
@@ -514,7 +457,7 @@ public class ModularCar : BaseModularVehicle, TakeCollisionDamage.ICanRestoreVel
 			return false;
 		}
 		ModularCarSeat modularCarSeat = GetIdealMountPointFor (player) as ModularCarSeat;
-		if ((Object)(object)modularCarSeat != (Object)null && !modularCarSeat.associatedSeatingModule.DoorsAreLockable) {
+		if (modularCarSeat != null && !modularCarSeat.associatedSeatingModule.DoorsAreLockable) {
 			return true;
 		}
 		return PlayerCanUseThis (player, ModularCarCodeLock.LockType.Door);
@@ -582,9 +525,7 @@ public class ModularCar : BaseModularVehicle, TakeCollisionDamage.ICanRestoreVel
 
 	public float GetWheelsMidPos ()
 	{
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		return (((Component)wheels [0].wheelCollider).transform.localPosition.z - ((Component)wheels [2].wheelCollider).transform.localPosition.z) * 0.5f;
+		return (wheels [0].wheelCollider.transform.localPosition.z - wheels [2].wheelCollider.transform.localPosition.z) * 0.5f;
 	}
 
 	public override bool AdminFixUp (int tier)
@@ -601,9 +542,8 @@ public class ModularCar : BaseModularVehicle, TakeCollisionDamage.ICanRestoreVel
 
 	public override void ModuleHurt (BaseVehicleModule hurtModule, HitInfo info)
 	{
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
 		if (IsDead ()) {
-			if (TimeSince.op_Implicit (timeSinceDeath) > 1f) {
+			if ((float)timeSinceDeath > 1f) {
 				for (int i = 0; i < info.damageTypes.types.Length; i++) {
 					deathDamageCounter += info.damageTypes.types [i];
 				}
@@ -619,13 +559,13 @@ public class ModularCar : BaseModularVehicle, TakeCollisionDamage.ICanRestoreVel
 	private void PropagateDamageToModules (HitInfo info, float minPropagationPercent, float maxPropagationPercent, BaseVehicleModule ignoreModule)
 	{
 		foreach (BaseVehicleModule attachedModuleEntity in base.AttachedModuleEntities) {
-			if ((Object)(object)attachedModuleEntity == (Object)(object)ignoreModule || attachedModuleEntity.Health () <= 0f) {
+			if (attachedModuleEntity == ignoreModule || attachedModuleEntity.Health () <= 0f) {
 				continue;
 			}
 			if (IsDead ()) {
 				break;
 			}
-			float num = Random.Range (minPropagationPercent, maxPropagationPercent);
+			float num = UnityEngine.Random.Range (minPropagationPercent, maxPropagationPercent);
 			for (int i = 0; i < info.damageTypes.types.Length; i++) {
 				float num2 = info.damageTypes.types [i];
 				if (num2 > 0f) {
@@ -657,8 +597,6 @@ public class ModularCar : BaseModularVehicle, TakeCollisionDamage.ICanRestoreVel
 
 	public override void OnKilled (HitInfo info)
 	{
-		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006d: Unknown result type (might be due to invalid IL or missing references)
 		DismountAllPlayers ();
 		foreach (BaseVehicleModule attachedModuleEntity in base.AttachedModuleEntities) {
 			attachedModuleEntity.repair.enabled = false;
@@ -666,7 +604,7 @@ public class ModularCar : BaseModularVehicle, TakeCollisionDamage.ICanRestoreVel
 		if (CarLock != null) {
 			CarLock.RemoveLock ();
 		}
-		timeSinceDeath = TimeSince.op_Implicit (0f);
+		timeSinceDeath = 0f;
 		if (vehicle.carwrecks) {
 			if (!base.HasAnyModules) {
 				Kill (DestroyMode.Gib);
@@ -685,12 +623,7 @@ public class ModularCar : BaseModularVehicle, TakeCollisionDamage.ICanRestoreVel
 
 	public void RestoreVelocity (Vector3 vel)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 velocity = rigidBody.velocity;
-		if (((Vector3)(ref velocity)).sqrMagnitude < ((Vector3)(ref vel)).sqrMagnitude) {
+		if (rigidBody.velocity.sqrMagnitude < vel.sqrMagnitude) {
 			vel.y = rigidBody.velocity.y;
 			rigidBody.velocity = vel;
 		}
@@ -698,10 +631,6 @@ public class ModularCar : BaseModularVehicle, TakeCollisionDamage.ICanRestoreVel
 
 	protected override Vector3 GetCOMMultiplier ()
 	{
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0031: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
 		return (carPhysics != null && carPhysics.IsGrounded () && IsOn ()) ? groundedCOMMultiplier : airbourneCOMMultiplier;
 	}
 
@@ -718,7 +647,7 @@ public class ModularCar : BaseModularVehicle, TakeCollisionDamage.ICanRestoreVel
 
 	private void DecayTick ()
 	{
-		if (base.IsDestroyed || IsOn () || immuneToDecay || Time.time < lastEngineOnTime + 600f) {
+		if (base.IsDestroyed || IsOn () || immuneToDecay || UnityEngine.Time.time < lastEngineOnTime + 600f) {
 			return;
 		}
 		float num = 1f;
@@ -738,13 +667,13 @@ public class ModularCar : BaseModularVehicle, TakeCollisionDamage.ICanRestoreVel
 
 	protected override void DoCollisionDamage (BaseEntity hitEntity, float damage)
 	{
-		if ((Object)(object)hitEntity == (Object)null) {
+		if (hitEntity == null) {
 			return;
 		}
 		if (hitEntity is BaseVehicleModule baseVehicleModule) {
 			baseVehicleModule.Hurt (damage, DamageType.Collision, this, useProtection: false);
 		} else {
-			if (!((Object)(object)hitEntity == (Object)(object)this)) {
+			if (!(hitEntity == this)) {
 				return;
 			}
 			if (base.HasAnyModules) {
@@ -765,21 +694,21 @@ public class ModularCar : BaseModularVehicle, TakeCollisionDamage.ICanRestoreVel
 		if (!spawnSettings.useSpawnSettings || spawnSettings.configurationOptions.IsNullOrEmpty ()) {
 			return;
 		}
-		ModularCarPresetConfig modularCarPresetConfig = spawnSettings.configurationOptions [Random.Range (0, spawnSettings.configurationOptions.Length)];
+		ModularCarPresetConfig modularCarPresetConfig = spawnSettings.configurationOptions [UnityEngine.Random.Range (0, spawnSettings.configurationOptions.Length)];
 		for (int i = 0; i < modularCarPresetConfig.socketItemDefs.Length; i++) {
 			ItemModVehicleModule itemModVehicleModule = modularCarPresetConfig.socketItemDefs [i];
-			if ((Object)(object)itemModVehicleModule != (Object)null && base.Inventory.SocketsAreFree (i, itemModVehicleModule.socketsTaken)) {
+			if (itemModVehicleModule != null && base.Inventory.SocketsAreFree (i, itemModVehicleModule.socketsTaken)) {
 				itemModVehicleModule.doNonUserSpawn = true;
-				ItemDefinition component = ((Component)itemModVehicleModule).GetComponent<ItemDefinition> ();
+				ItemDefinition component = itemModVehicleModule.GetComponent<ItemDefinition> ();
 				Item item = ItemManager.Create (component, 1, 0uL);
-				float num = Random.Range (spawnSettings.minStartHealthPercent, spawnSettings.maxStartHealthPercent);
+				float num = UnityEngine.Random.Range (spawnSettings.minStartHealthPercent, spawnSettings.maxStartHealthPercent);
 				item.condition = item.maxCondition * num;
 				if (!TryAddModule (item)) {
 					item.Remove ();
 				}
 			}
 		}
-		((FacepunchBehaviour)this).Invoke ((Action)HandleAdminBonus, 0f);
+		Invoke (HandleAdminBonus, 0f);
 	}
 
 	private void HandleAdminBonus ()
@@ -801,7 +730,7 @@ public class ModularCar : BaseModularVehicle, TakeCollisionDamage.ICanRestoreVel
 	public void RPC_OpenFuel (RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
-		if (!((Object)(object)player == (Object)null) && CanBeLooted (player)) {
+		if (!(player == null) && CanBeLooted (player)) {
 			GetFuelSystem ().LootFuel (player);
 		}
 	}
@@ -810,10 +739,10 @@ public class ModularCar : BaseModularVehicle, TakeCollisionDamage.ICanRestoreVel
 	public void RPC_OpenFuelWithKeycode (RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
-		if ((Object)(object)player == (Object)null) {
+		if (player == null) {
 			return;
 		}
-		string codeEntered = msg.read.String (256);
+		string codeEntered = msg.read.String ();
 		if (CarLock.TryOpenWithCode (player, codeEntered)) {
 			if (CanBeLooted (player)) {
 				GetFuelSystem ().LootFuel (player);
@@ -827,8 +756,8 @@ public class ModularCar : BaseModularVehicle, TakeCollisionDamage.ICanRestoreVel
 	public void RPC_TryMountWithKeycode (RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
-		if (!((Object)(object)player == (Object)null)) {
-			string codeEntered = msg.read.String (256);
+		if (!(player == null)) {
+			string codeEntered = msg.read.String ();
 			if (CarLock.TryOpenWithCode (player, codeEntered)) {
 				WantsMount (player);
 			} else {
@@ -850,7 +779,7 @@ public class ModularCar : BaseModularVehicle, TakeCollisionDamage.ICanRestoreVel
 	public override void PreProcess (IPrefabProcessor process, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
 	{
 		base.PreProcess (process, rootObj, name, serverside, clientside, bundling);
-		damageShowingRenderers = ((Component)this).GetComponentsInChildren<MeshRenderer> ();
+		damageShowingRenderers = GetComponentsInChildren<MeshRenderer> ();
 	}
 
 	public override void InitShared ()
@@ -898,7 +827,6 @@ public class ModularCar : BaseModularVehicle, TakeCollisionDamage.ICanRestoreVel
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (info.msg.modularCar == null) {
 			return;
@@ -987,7 +915,7 @@ public class ModularCar : BaseModularVehicle, TakeCollisionDamage.ICanRestoreVel
 
 	public override bool CanBeLooted (BasePlayer player)
 	{
-		if ((Object)(object)player == (Object)null) {
+		if (player == null) {
 			return false;
 		}
 		if (PlayerIsMounted (player)) {
@@ -1016,14 +944,14 @@ public class ModularCar : BaseModularVehicle, TakeCollisionDamage.ICanRestoreVel
 			return false;
 		}
 		if (base.isServer && base.CurEngineState == VehicleEngineController<GroundVehicle>.EngineState.Off) {
-			lastEngineOnTime = Time.time;
+			lastEngineOnTime = UnityEngine.Time.time;
 		}
 		foreach (BaseVehicleModule attachedModuleEntity in base.AttachedModuleEntities) {
 			attachedModuleEntity.OnEngineStateChanged (lastSetEngineState, base.CurEngineState);
 		}
 		if (base.isServer && GameInfo.HasAchievements && NumMounted () >= 5) {
 			foreach (MountPointInfo allMountPoint in base.allMountPoints) {
-				if ((Object)(object)allMountPoint.mountable != (Object)null && (Object)(object)allMountPoint.mountable.GetMounted () != (Object)null) {
+				if (allMountPoint.mountable != null && allMountPoint.mountable.GetMounted () != null) {
 					allMountPoint.mountable.GetMounted ().GiveAchievement ("BATTLE_BUS");
 				}
 			}

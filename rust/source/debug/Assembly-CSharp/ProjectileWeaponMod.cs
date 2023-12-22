@@ -142,7 +142,7 @@ public class ProjectileWeaponMod : BaseEntity
 	public static IEnumerable<float> GetMods (BaseEntity parentEnt, Func<ProjectileWeaponMod, Modifier> selector_modifier, Func<Modifier, float> selector_value)
 	{
 		return (from x in (from ProjectileWeaponMod x in parentEnt.children
-				where (Object)(object)x != (Object)null && (!x.needsOnForEffects || x.HasFlag (Flags.On))
+				where x != null && (!x.needsOnForEffects || x.HasFlag (Flags.On))
 				select x).Select (selector_modifier)
 			where x.enabled
 			select x).Select (selector_value);
@@ -153,7 +153,7 @@ public class ProjectileWeaponMod : BaseEntity
 		if (parentEnt.children == null) {
 			return false;
 		}
-		if (parentEnt.children.Cast<ProjectileWeaponMod> ().Any ((ProjectileWeaponMod x) => (Object)(object)x != (Object)null && x.IsBroken ())) {
+		if (parentEnt.children.Cast<ProjectileWeaponMod> ().Any ((ProjectileWeaponMod x) => x != null && x.IsBroken ())) {
 			return true;
 		}
 		return false;

@@ -33,120 +33,94 @@ public class Pool : ConsoleSystem
 	[ClientVar]
 	public static void print_memory (Arg arg)
 	{
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Expected O, but got Unknown
 		if (Pool.Directory.Count == 0) {
 			arg.ReplyWith ("Memory pool is empty.");
 			return;
 		}
-		TextTable val = new TextTable ();
-		val.AddColumn ("type");
-		val.AddColumn ("capacity");
-		val.AddColumn ("pooled");
-		val.AddColumn ("active");
-		val.AddColumn ("hits");
-		val.AddColumn ("misses");
-		val.AddColumn ("spills");
-		foreach (KeyValuePair<Type, IPoolCollection> item in Pool.Directory.OrderByDescending ((KeyValuePair<Type, IPoolCollection> x) => x.Value.ItemsCreated)) {
+		TextTable textTable = new TextTable ();
+		textTable.AddColumn ("type");
+		textTable.AddColumn ("capacity");
+		textTable.AddColumn ("pooled");
+		textTable.AddColumn ("active");
+		textTable.AddColumn ("hits");
+		textTable.AddColumn ("misses");
+		textTable.AddColumn ("spills");
+		foreach (KeyValuePair<Type, Pool.IPoolCollection> item in Pool.Directory.OrderByDescending ((KeyValuePair<Type, Pool.IPoolCollection> x) => x.Value.ItemsCreated)) {
 			Type key = item.Key;
-			IPoolCollection value = item.Value;
-			val.AddRow (new string[7] {
-				key.ToString ().Replace ("System.Collections.Generic.", ""),
-				NumberExtensions.FormatNumberShort (value.ItemsCapacity),
-				NumberExtensions.FormatNumberShort (value.ItemsInStack),
-				NumberExtensions.FormatNumberShort (value.ItemsInUse),
-				NumberExtensions.FormatNumberShort (value.ItemsTaken),
-				NumberExtensions.FormatNumberShort (value.ItemsCreated),
-				NumberExtensions.FormatNumberShort (value.ItemsSpilled)
-			});
+			Pool.IPoolCollection value = item.Value;
+			textTable.AddRow (key.ToString ().Replace ("System.Collections.Generic.", ""), value.ItemsCapacity.FormatNumberShort (), value.ItemsInStack.FormatNumberShort (), value.ItemsInUse.FormatNumberShort (), value.ItemsTaken.FormatNumberShort (), value.ItemsCreated.FormatNumberShort (), value.ItemsSpilled.FormatNumberShort ());
 		}
-		arg.ReplyWith (arg.HasArg ("--json") ? val.ToJson () : ((object)val).ToString ());
+		arg.ReplyWith (arg.HasArg ("--json") ? textTable.ToJson () : textTable.ToString ());
 	}
 
 	[ServerVar]
 	[ClientVar]
 	public static void print_arraypool (Arg arg)
 	{
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Expected O, but got Unknown
 		ArrayPool<byte> arrayPool = BaseNetwork.ArrayPool;
 		ConcurrentQueue<byte[]>[] buffer = arrayPool.GetBuffer ();
-		TextTable val = new TextTable ();
-		val.AddColumn ("index");
-		val.AddColumn ("size");
-		val.AddColumn ("bytes");
-		val.AddColumn ("count");
-		val.AddColumn ("memory");
+		TextTable textTable = new TextTable ();
+		textTable.AddColumn ("index");
+		textTable.AddColumn ("size");
+		textTable.AddColumn ("bytes");
+		textTable.AddColumn ("count");
+		textTable.AddColumn ("memory");
 		for (int i = 0; i < buffer.Length; i++) {
 			int num = arrayPool.IndexToSize (i);
 			int count = buffer [i].Count;
-			int num2 = num * count;
-			val.AddRow (new string[5] {
-				i.ToString (),
-				num.ToString (),
-				NumberExtensions.FormatBytes<int> (num, false),
-				count.ToString (),
-				NumberExtensions.FormatBytes<int> (num2, false)
-			});
+			int input = num * count;
+			textTable.AddRow (i.ToString (), num.ToString (), num.FormatBytes (), count.ToString (), input.FormatBytes ());
 		}
-		arg.ReplyWith (arg.HasArg ("--json") ? val.ToJson () : ((object)val).ToString ());
+		arg.ReplyWith (arg.HasArg ("--json") ? textTable.ToJson () : textTable.ToString ());
 	}
 
 	[ServerVar]
 	[ClientVar]
 	public static void print_prefabs (Arg arg)
 	{
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Expected O, but got Unknown
 		PrefabPoolCollection pool = GameManager.server.pool;
 		if (pool.storage.Count == 0) {
 			arg.ReplyWith ("Prefab pool is empty.");
 			return;
 		}
 		string @string = arg.GetString (0, string.Empty);
-		TextTable val = new TextTable ();
-		val.AddColumn ("id");
-		val.AddColumn ("name");
-		val.AddColumn ("count");
+		TextTable textTable = new TextTable ();
+		textTable.AddColumn ("id");
+		textTable.AddColumn ("name");
+		textTable.AddColumn ("count");
 		foreach (KeyValuePair<uint, PrefabPool> item in pool.storage) {
 			string text = item.Key.ToString ();
 			string text2 = StringPool.Get (item.Key);
 			string text3 = item.Value.Count.ToString ();
-			if (string.IsNullOrEmpty (@string) || StringEx.Contains (text2, @string, CompareOptions.IgnoreCase)) {
-				val.AddRow (new string[3] {
-					text,
-					Path.GetFileNameWithoutExtension (text2),
-					text3
-				});
+			if (string.IsNullOrEmpty (@string) || text2.Contains (@string, CompareOptions.IgnoreCase)) {
+				textTable.AddRow (text, Path.GetFileNameWithoutExtension (text2), text3);
 			}
 		}
-		arg.ReplyWith (arg.HasArg ("--json") ? val.ToJson () : ((object)val).ToString ());
+		arg.ReplyWith (arg.HasArg ("--json") ? textTable.ToJson () : textTable.ToString ());
 	}
 
 	[ServerVar]
 	[ClientVar]
 	public static void print_assets (Arg arg)
 	{
-		//IL_0031: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0037: Expected O, but got Unknown
 		if (AssetPool.storage.Count == 0) {
 			arg.ReplyWith ("Asset pool is empty.");
 			return;
 		}
 		string @string = arg.GetString (0, string.Empty);
-		TextTable val = new TextTable ();
-		val.AddColumn ("type");
-		val.AddColumn ("allocated");
-		val.AddColumn ("available");
-		foreach (KeyValuePair<Type, Pool> item in AssetPool.storage) {
+		TextTable textTable = new TextTable ();
+		textTable.AddColumn ("type");
+		textTable.AddColumn ("allocated");
+		textTable.AddColumn ("available");
+		foreach (KeyValuePair<Type, AssetPool.Pool> item in AssetPool.storage) {
 			string text = item.Key.ToString ();
 			string text2 = item.Value.allocated.ToString ();
 			string text3 = item.Value.available.ToString ();
-			if (string.IsNullOrEmpty (@string) || StringEx.Contains (text, @string, CompareOptions.IgnoreCase)) {
-				val.AddRow (new string[3] { text, text2, text3 });
+			if (string.IsNullOrEmpty (@string) || text.Contains (@string, CompareOptions.IgnoreCase)) {
+				textTable.AddRow (text, text2, text3);
 			}
 		}
-		arg.ReplyWith (arg.HasArg ("--json") ? val.ToJson () : ((object)val).ToString ());
+		arg.ReplyWith (arg.HasArg ("--json") ? textTable.ToJson () : textTable.ToString ());
 	}
 
 	[ServerVar]
@@ -188,7 +162,7 @@ public class Pool : ConsoleSystem
 			string arg2 = item.Key.ToString ();
 			string text = StringPool.Get (item.Key);
 			string arg3 = item.Value.Count.ToString ();
-			if (string.IsNullOrEmpty (@string) || StringEx.Contains (text, @string, CompareOptions.IgnoreCase)) {
+			if (string.IsNullOrEmpty (@string) || text.Contains (@string, CompareOptions.IgnoreCase)) {
 				stringBuilder.AppendLine ($"{arg2},{Path.GetFileNameWithoutExtension (text)},{arg3}");
 			}
 		}
@@ -200,7 +174,7 @@ public class Pool : ConsoleSystem
 	public static void fill_prefabs (Arg arg)
 	{
 		string @string = arg.GetString (0, string.Empty);
-		int @int = arg.GetInt (1, 0);
+		int @int = arg.GetInt (1);
 		PrefabPoolWarmup.Run (@string, @int);
 	}
 }

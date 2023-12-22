@@ -1,3 +1,5 @@
+#define ENABLE_PROFILER
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using CompanionServer;
@@ -20,7 +22,7 @@ public class RelationshipManager : BaseEntity
 		Enemy
 	}
 
-	public class PlayerRelationshipInfo : IPooled, IServerFileReceiver
+	public class PlayerRelationshipInfo : Facepunch.Pool.IPooled, IServerFileReceiver
 	{
 		public string displayName;
 
@@ -60,7 +62,7 @@ public class RelationshipManager : BaseEntity
 		}
 	}
 
-	public class PlayerRelationships : IPooled
+	public class PlayerRelationships : Facepunch.Pool.IPooled
 	{
 		public bool dirty;
 
@@ -84,13 +86,13 @@ public class RelationshipManager : BaseEntity
 		{
 			BasePlayer basePlayer = FindByID (player);
 			if (relations.TryGetValue (player, out var value)) {
-				if ((Object)(object)basePlayer != (Object)null) {
+				if (basePlayer != null) {
 					value.displayName = basePlayer.displayName;
 				}
 				return value;
 			}
-			PlayerRelationshipInfo playerRelationshipInfo = Pool.Get<PlayerRelationshipInfo> ();
-			if ((Object)(object)basePlayer != (Object)null) {
+			PlayerRelationshipInfo playerRelationshipInfo = Facepunch.Pool.Get<PlayerRelationshipInfo> ();
+			if (basePlayer != null) {
 				playerRelationshipInfo.displayName = basePlayer.displayName;
 			}
 			playerRelationshipInfo.player = player;
@@ -108,14 +110,14 @@ public class RelationshipManager : BaseEntity
 			ownerPlayer = 0uL;
 			if (relations != null) {
 				relations.Clear ();
-				Pool.Free<Dictionary<ulong, PlayerRelationshipInfo>> (ref relations);
+				Facepunch.Pool.Free (ref relations);
 			}
 		}
 
 		public void LeavePool ()
 		{
 			ownerPlayer = 0uL;
-			relations = Pool.Get<Dictionary<ulong, PlayerRelationshipInfo>> ();
+			relations = Facepunch.Pool.Get<Dictionary<ulong, PlayerRelationshipInfo>> ();
 			relations.Clear ();
 		}
 	}
@@ -134,9 +136,9 @@ public class RelationshipManager : BaseEntity
 
 		public float teamStartTime;
 
-		private List<Connection> onlineMemberConnections = new List<Connection> ();
+		private List<Network.Connection> onlineMemberConnections = new List<Network.Connection> ();
 
-		public float teamLifetime => Time.realtimeSinceStartup - teamStartTime;
+		public float teamLifetime => UnityEngine.Time.realtimeSinceStartup - teamStartTime;
 
 		public BasePlayer GetLeader ()
 		{
@@ -149,7 +151,7 @@ public class RelationshipManager : BaseEntity
 				invites.RemoveRange (0, 1);
 			}
 			BasePlayer basePlayer = FindByID (teamLeader);
-			if (!((Object)(object)basePlayer == (Object)null)) {
+			if (!(basePlayer == null)) {
 				invites.Add (player.userID);
 				player.ClientRPCPlayer (null, player, "CLIENT_PendingInvite", basePlayer.displayName, teamLeader, teamID);
 			}
@@ -200,7 +202,7 @@ public class RelationshipManager : BaseEntity
 				members.Remove (playerID);
 				ServerInstance.playerToTeam.Remove (playerID);
 				BasePlayer basePlayer = FindByID (playerID);
-				if ((Object)(object)basePlayer != (Object)null) {
+				if (basePlayer != null) {
 					basePlayer.ClearTeam ();
 					basePlayer.BroadcastAppTeamRemoval ();
 				}
@@ -236,14 +238,14 @@ public class RelationshipManager : BaseEntity
 		{
 			foreach (ulong member in members) {
 				BasePlayer basePlayer = FindByID (member);
-				if ((Object)(object)basePlayer != (Object)null) {
+				if (basePlayer != null) {
 					basePlayer.UpdateTeam (teamID);
 				}
 			}
 			this.BroadcastAppTeamUpdate ();
 		}
 
-		public List<Connection> GetOnlineMemberConnections ()
+		public List<Network.Connection> GetOnlineMemberConnections ()
 		{
 			if (members.Count == 0) {
 				return null;
@@ -251,7 +253,7 @@ public class RelationshipManager : BaseEntity
 			onlineMemberConnections.Clear ();
 			foreach (ulong member in members) {
 				BasePlayer basePlayer = FindByID (member);
-				if (!((Object)(object)basePlayer == (Object)null) && basePlayer.Connection != null) {
+				if (!(basePlayer == null) && basePlayer.Connection != null) {
 					onlineMemberConnections.Add (basePlayer.Connection);
 				}
 			}
@@ -307,7 +309,7 @@ public class RelationshipManager : BaseEntity
 		}
 		set {
 			maxTeamSize_Internal = value;
-			if (Object.op_Implicit ((Object)(object)ServerInstance)) {
+			if ((bool)ServerInstance) {
 				ServerInstance.SendNetworkUpdate ();
 			}
 		}
@@ -317,185 +319,137 @@ public class RelationshipManager : BaseEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("RelationshipManager.OnRpcMessage", 0);
-		try {
-			if (rpc == 532372582 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("RelationshipManager.OnRpcMessage")) {
+			if (rpc == 532372582 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - BagQuotaRequest_SERVER "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - BagQuotaRequest_SERVER "));
 				}
-				TimeWarning val2 = TimeWarning.New ("BagQuotaRequest_SERVER", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("BagQuotaRequest_SERVER")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (532372582u, "BagQuotaRequest_SERVER", this, player, 2uL)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							BagQuotaRequest_SERVER ();
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in BagQuotaRequest_SERVER");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 1684577101 && (Object)(object)player != (Object)null) {
+			if (rpc == 1684577101 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - SERVER_ChangeRelationship "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - SERVER_ChangeRelationship "));
 				}
-				TimeWarning val5 = TimeWarning.New ("SERVER_ChangeRelationship", 0);
-				try {
-					TimeWarning val6 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("SERVER_ChangeRelationship")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (1684577101u, "SERVER_ChangeRelationship", this, player, 2uL)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val6)?.Dispose ();
 					}
 					try {
-						TimeWarning val7 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							SERVER_ChangeRelationship (msg2);
-						} finally {
-							((IDisposable)val7)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in SERVER_ChangeRelationship");
 					}
-				} finally {
-					((IDisposable)val5)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 1239936737 && (Object)(object)player != (Object)null) {
+			if (rpc == 1239936737 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - SERVER_ReceiveMugshot "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - SERVER_ReceiveMugshot "));
 				}
-				TimeWarning val8 = TimeWarning.New ("SERVER_ReceiveMugshot", 0);
-				try {
-					TimeWarning val9 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("SERVER_ReceiveMugshot")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (1239936737u, "SERVER_ReceiveMugshot", this, player, 10uL)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val9)?.Dispose ();
 					}
 					try {
-						TimeWarning val10 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg3 = rPCMessage;
 							SERVER_ReceiveMugshot (msg3);
-						} finally {
-							((IDisposable)val10)?.Dispose ();
 						}
-					} catch (Exception ex3) {
-						Debug.LogException (ex3);
+					} catch (Exception exception3) {
+						Debug.LogException (exception3);
 						player.Kick ("RPC Error in SERVER_ReceiveMugshot");
 					}
-				} finally {
-					((IDisposable)val8)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 2178173141u && (Object)(object)player != (Object)null) {
+			if (rpc == 2178173141u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - SERVER_SendFreshContacts "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - SERVER_SendFreshContacts "));
 				}
-				TimeWarning val11 = TimeWarning.New ("SERVER_SendFreshContacts", 0);
-				try {
-					TimeWarning val12 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("SERVER_SendFreshContacts")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (2178173141u, "SERVER_SendFreshContacts", this, player, 1uL)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val12)?.Dispose ();
 					}
 					try {
-						TimeWarning val13 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg4 = rPCMessage;
 							SERVER_SendFreshContacts (msg4);
-						} finally {
-							((IDisposable)val13)?.Dispose ();
 						}
-					} catch (Exception ex4) {
-						Debug.LogException (ex4);
+					} catch (Exception exception4) {
+						Debug.LogException (exception4);
 						player.Kick ("RPC Error in SERVER_SendFreshContacts");
 					}
-				} finally {
-					((IDisposable)val11)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 290196604 && (Object)(object)player != (Object)null) {
+			if (rpc == 290196604 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - SERVER_UpdatePlayerNote "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - SERVER_UpdatePlayerNote "));
 				}
-				TimeWarning val14 = TimeWarning.New ("SERVER_UpdatePlayerNote", 0);
-				try {
-					TimeWarning val15 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("SERVER_UpdatePlayerNote")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (290196604u, "SERVER_UpdatePlayerNote", this, player, 10uL)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val15)?.Dispose ();
 					}
 					try {
-						TimeWarning val16 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg5 = rPCMessage;
 							SERVER_UpdatePlayerNote (msg5);
-						} finally {
-							((IDisposable)val16)?.Dispose ();
 						}
-					} catch (Exception ex5) {
-						Debug.LogException (ex5);
+					} catch (Exception exception5) {
+						Debug.LogException (exception5);
 						player.Kick ("RPC Error in SERVER_UpdatePlayerNote");
 					}
-				} finally {
-					((IDisposable)val14)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -510,9 +464,9 @@ public class RelationshipManager : BaseEntity
 	{
 		base.ServerInit ();
 		if (contacts) {
-			((FacepunchBehaviour)this).InvokeRepeating ((Action)UpdateContactsTick, 0f, 1f);
-			((FacepunchBehaviour)this).InvokeRepeating ((Action)UpdateReputations, 0f, 0.05f);
-			((FacepunchBehaviour)this).InvokeRepeating ((Action)SendRelationships, 0f, 5f);
+			InvokeRepeating (UpdateContactsTick, 0f, 1f);
+			InvokeRepeating (UpdateReputations, 0f, 0.05f);
+			InvokeRepeating (SendRelationships, 0f, 5f);
 		}
 	}
 
@@ -538,20 +492,12 @@ public class RelationshipManager : BaseEntity
 
 	public void UpdateContactsTick ()
 	{
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
 		Profiler.BeginSample ("RelationshipManager.UpdateContactsTick");
 		if (!contacts) {
 			return;
 		}
-		Enumerator<BasePlayer> enumerator = BasePlayer.activePlayerList.GetEnumerator ();
-		try {
-			while (enumerator.MoveNext ()) {
-				BasePlayer current = enumerator.Current;
-				UpdateAcquaintancesFor (current, 1f);
-			}
-		} finally {
-			((IDisposable)enumerator).Dispose ();
+		foreach (BasePlayer activePlayer in BasePlayer.activePlayerList) {
+			UpdateAcquaintancesFor (activePlayer, 1f);
 		}
 		Profiler.EndSample ();
 	}
@@ -579,46 +525,38 @@ public class RelationshipManager : BaseEntity
 	}
 
 	[ServerVar]
-	public static void wipecontacts (Arg arg)
+	public static void wipecontacts (ConsoleSystem.Arg arg)
 	{
 		BasePlayer basePlayer = arg.Player ();
-		if (!((Object)(object)basePlayer == (Object)null) && !((Object)(object)ServerInstance == (Object)null)) {
+		if (!(basePlayer == null) && !(ServerInstance == null)) {
 			ulong userID = basePlayer.userID;
 			if (ServerInstance.relationships.ContainsKey (userID)) {
-				Debug.Log ((object)("Wiped contacts for :" + userID));
+				Debug.Log ("Wiped contacts for :" + userID);
 				ServerInstance.relationships.Remove (userID);
 				ServerInstance.MarkRelationshipsDirtyFor (userID);
 			} else {
-				Debug.Log ((object)("No contacts for :" + userID));
+				Debug.Log ("No contacts for :" + userID);
 			}
 		}
 	}
 
 	[ServerVar]
-	public static void wipe_all_contacts (Arg arg)
+	public static void wipe_all_contacts (ConsoleSystem.Arg arg)
 	{
-		//IL_007b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0080: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer basePlayer = arg.Player ();
-		if ((Object)(object)basePlayer == (Object)null || (Object)(object)ServerInstance == (Object)null) {
+		if (basePlayer == null || ServerInstance == null) {
 			return;
 		}
-		if (!arg.HasArgs (1) || arg.Args [0] != "confirm") {
-			Debug.Log ((object)"Please append the word 'confirm' at the end of the console command to execute");
+		if (!arg.HasArgs () || arg.Args [0] != "confirm") {
+			Debug.Log ("Please append the word 'confirm' at the end of the console command to execute");
 			return;
 		}
 		ulong userID = basePlayer.userID;
 		ServerInstance.relationships.Clear ();
-		Enumerator<BasePlayer> enumerator = BasePlayer.activePlayerList.GetEnumerator ();
-		try {
-			while (enumerator.MoveNext ()) {
-				BasePlayer current = enumerator.Current;
-				ServerInstance.MarkRelationshipsDirtyFor (current);
-			}
-		} finally {
-			((IDisposable)enumerator).Dispose ();
+		foreach (BasePlayer activePlayer in BasePlayer.activePlayerList) {
+			ServerInstance.MarkRelationshipsDirtyFor (activePlayer);
 		}
-		Debug.Log ((object)"Wiped all contacts.");
+		Debug.Log ("Wiped all contacts.");
 	}
 
 	public float GetAcquaintanceMaxDist ()
@@ -628,23 +566,20 @@ public class RelationshipManager : BaseEntity
 
 	public void UpdateAcquaintancesFor (BasePlayer player, float deltaSeconds)
 	{
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ab: Unknown result type (might be due to invalid IL or missing references)
 		Profiler.BeginSample ("UpdateAcquaintancesFor");
 		PlayerRelationships playerRelationships = GetRelationships (player.userID);
-		List<BasePlayer> list = Pool.GetList<BasePlayer> ();
-		BaseNetworkable.GetCloseConnections (((Component)player).transform.position, GetAcquaintanceMaxDist (), list);
-		foreach (BasePlayer item in list) {
-			if ((Object)(object)item == (Object)(object)player || item.isClient || !item.IsAlive () || item.IsSleeping ()) {
+		List<BasePlayer> obj = Facepunch.Pool.GetList<BasePlayer> ();
+		BaseNetworkable.GetCloseConnections (player.transform.position, GetAcquaintanceMaxDist (), obj);
+		foreach (BasePlayer item in obj) {
+			if (item == player || item.isClient || !item.IsAlive () || item.IsSleeping ()) {
 				continue;
 			}
 			PlayerRelationshipInfo relations = playerRelationships.GetRelations (item.userID);
-			float num = Vector3.Distance (((Component)player).transform.position, ((Component)item).transform.position);
+			float num = Vector3.Distance (player.transform.position, item.transform.position);
 			if (!(num <= GetAcquaintanceMaxDist ())) {
 				continue;
 			}
-			relations.lastSeenTime = Time.realtimeSinceStartup;
+			relations.lastSeenTime = UnityEngine.Time.realtimeSinceStartup;
 			if ((relations.type == RelationshipType.NONE || relations.type == RelationshipType.Acquaintance) && player.IsPlayerVisibleToUs (item, 1218519041)) {
 				int num2 = Mathf.CeilToInt (deltaSeconds);
 				if (player.InSafeZone () || item.InSafeZone ()) {
@@ -655,7 +590,7 @@ public class RelationshipManager : BaseEntity
 				}
 			}
 		}
-		Pool.FreeList<BasePlayer> (ref list);
+		Facepunch.Pool.FreeList (ref obj);
 		Profiler.EndSample ();
 	}
 
@@ -666,7 +601,7 @@ public class RelationshipManager : BaseEntity
 		PlayerRelationships playerRelationships = GetRelationships (userID);
 		PlayerRelationshipInfo relations = playerRelationships.GetRelations (userID2);
 		if (relations.type != 0) {
-			relations.lastSeenTime = Time.realtimeSinceStartup;
+			relations.lastSeenTime = UnityEngine.Time.realtimeSinceStartup;
 		}
 	}
 
@@ -676,26 +611,26 @@ public class RelationshipManager : BaseEntity
 		if (numberRelationships < maxplayerrelationships) {
 			return true;
 		}
-		List<ulong> list = Pool.GetList<ulong> ();
+		List<ulong> obj = Facepunch.Pool.GetList<ulong> ();
 		foreach (KeyValuePair<ulong, PlayerRelationshipInfo> relation in ownerRelationships.relations) {
 			if (relation.Value.type == relationshipType) {
-				float num = Time.realtimeSinceStartup - relation.Value.lastSeenTime;
+				float num = UnityEngine.Time.realtimeSinceStartup - relation.Value.lastSeenTime;
 				if (num > (float)forgetafterminutes * 60f) {
-					list.Add (relation.Key);
+					obj.Add (relation.Key);
 				}
 			}
 		}
-		int count = list.Count;
-		foreach (ulong item in list) {
+		int count = obj.Count;
+		foreach (ulong item in obj) {
 			ownerRelationships.Forget (item);
 		}
-		Pool.FreeList<ulong> (ref list);
+		Facepunch.Pool.FreeList (ref obj);
 		return numberRelationships - count < maxplayerrelationships;
 	}
 
 	public void ForceRelationshipByID (BasePlayer player, ulong otherPlayerID, RelationshipType newType, int weight, bool sendImmediate = false)
 	{
-		if (!contacts || (Object)(object)player == (Object)null || player.userID == otherPlayerID || player.IsNpc) {
+		if (!contacts || player == null || player.userID == otherPlayerID || player.IsNpc) {
 			return;
 		}
 		ulong userID = player.userID;
@@ -717,22 +652,12 @@ public class RelationshipManager : BaseEntity
 
 	public void SetRelationship (BasePlayer player, BasePlayer otherPlayer, RelationshipType type, int weight = 1, bool sendImmediate = false)
 	{
-		//IL_014b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0156: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0160: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0164: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0169: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0171: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0176: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0193: Unknown result type (might be due to invalid IL or missing references)
-		//IL_019e: Unknown result type (might be due to invalid IL or missing references)
 		if (!contacts) {
 			return;
 		}
 		ulong userID = player.userID;
 		ulong userID2 = otherPlayer.userID;
-		if ((Object)(object)player == (Object)null || (Object)(object)player == (Object)(object)otherPlayer || player.IsNpc || ((Object)(object)otherPlayer != (Object)null && otherPlayer.IsNpc)) {
+		if (player == null || player == otherPlayer || player.IsNpc || (otherPlayer != null && otherPlayer.IsNpc)) {
 			return;
 		}
 		PlayerRelationships playerRelationships = GetRelationships (userID);
@@ -747,20 +672,19 @@ public class RelationshipManager : BaseEntity
 		}
 		relations.type = type;
 		relations.weight += weight;
-		float num = Time.realtimeSinceStartup - relations.lastMugshotTime;
+		float num = UnityEngine.Time.realtimeSinceStartup - relations.lastMugshotTime;
 		if (flag || relations.mugshotCrc == 0 || num >= mugshotUpdateInterval) {
 			bool flag2 = otherPlayer.IsAlive ();
 			bool flag3 = player.SecondsSinceAttacked > 10f && !player.IsAiming;
 			float num2 = 100f;
 			if (flag3) {
-				Vector3 val = otherPlayer.eyes.position - player.eyes.position;
-				Vector3 normalized = ((Vector3)(ref val)).normalized;
+				Vector3 normalized = (otherPlayer.eyes.position - player.eyes.position).normalized;
 				float num3 = Vector3.Dot (player.eyes.HeadForward (), normalized);
 				bool flag4 = num3 >= 0.6f;
-				float num4 = Vector3Ex.Distance2D (((Component)player).transform.position, ((Component)otherPlayer).transform.position);
+				float num4 = Vector3Ex.Distance2D (player.transform.position, otherPlayer.transform.position);
 				if (flag2 && num4 < num2 && flag4) {
 					ClientRPCPlayer (null, player, "CLIENT_DoMugshot", userID2);
-					relations.lastMugshotTime = Time.realtimeSinceStartup;
+					relations.lastMugshotTime = UnityEngine.Time.realtimeSinceStartup;
 				}
 			}
 		}
@@ -771,27 +695,27 @@ public class RelationshipManager : BaseEntity
 		}
 	}
 
-	public PlayerRelationships GetRelationshipSaveByID (ulong playerID)
+	public ProtoBuf.RelationshipManager.PlayerRelationships GetRelationshipSaveByID (ulong playerID)
 	{
-		PlayerRelationships val = Pool.Get<PlayerRelationships> ();
-		PlayerRelationships playerRelationships = GetRelationships (playerID);
-		if (playerRelationships != null) {
+		ProtoBuf.RelationshipManager.PlayerRelationships playerRelationships = Facepunch.Pool.Get<ProtoBuf.RelationshipManager.PlayerRelationships> ();
+		PlayerRelationships playerRelationships2 = GetRelationships (playerID);
+		if (playerRelationships2 != null) {
 			Profiler.BeginSample ("RelationshipManager.GetRelationshipSaveByID");
-			val.playerID = playerID;
-			val.relations = Pool.GetList<PlayerRelationshipInfo> ();
-			foreach (KeyValuePair<ulong, PlayerRelationshipInfo> relation in playerRelationships.relations) {
-				PlayerRelationshipInfo val2 = Pool.Get<PlayerRelationshipInfo> ();
-				val2.playerID = relation.Value.player;
-				val2.type = (int)relation.Value.type;
-				val2.weight = relation.Value.weight;
-				val2.mugshotCrc = relation.Value.mugshotCrc;
-				val2.displayName = relation.Value.displayName;
-				val2.notes = relation.Value.notes;
-				val2.timeSinceSeen = Time.realtimeSinceStartup - relation.Value.lastSeenTime;
-				val.relations.Add (val2);
+			playerRelationships.playerID = playerID;
+			playerRelationships.relations = Facepunch.Pool.GetList<ProtoBuf.RelationshipManager.PlayerRelationshipInfo> ();
+			foreach (KeyValuePair<ulong, PlayerRelationshipInfo> relation in playerRelationships2.relations) {
+				ProtoBuf.RelationshipManager.PlayerRelationshipInfo playerRelationshipInfo = Facepunch.Pool.Get<ProtoBuf.RelationshipManager.PlayerRelationshipInfo> ();
+				playerRelationshipInfo.playerID = relation.Value.player;
+				playerRelationshipInfo.type = (int)relation.Value.type;
+				playerRelationshipInfo.weight = relation.Value.weight;
+				playerRelationshipInfo.mugshotCrc = relation.Value.mugshotCrc;
+				playerRelationshipInfo.displayName = relation.Value.displayName;
+				playerRelationshipInfo.notes = relation.Value.notes;
+				playerRelationshipInfo.timeSinceSeen = UnityEngine.Time.realtimeSinceStartup - relation.Value.lastSeenTime;
+				playerRelationships.relations.Add (playerRelationshipInfo);
 			}
 			Profiler.EndSample ();
-			return val;
+			return playerRelationships;
 		}
 		return null;
 	}
@@ -799,21 +723,21 @@ public class RelationshipManager : BaseEntity
 	public void MarkRelationshipsDirtyFor (ulong playerID)
 	{
 		BasePlayer basePlayer = FindByID (playerID);
-		if (Object.op_Implicit ((Object)(object)basePlayer)) {
+		if ((bool)basePlayer) {
 			MarkRelationshipsDirtyFor (basePlayer);
 		}
 	}
 
 	public static void ForceSendRelationships (BasePlayer player)
 	{
-		if (Object.op_Implicit ((Object)(object)ServerInstance)) {
+		if ((bool)ServerInstance) {
 			ServerInstance.MarkRelationshipsDirtyFor (player);
 		}
 	}
 
 	public void MarkRelationshipsDirtyFor (BasePlayer player)
 	{
-		if (!((Object)(object)player == (Object)null)) {
+		if (!(player == null)) {
 			if (!_dirtyRelationshipPlayers.Contains (player)) {
 				_dirtyRelationshipPlayers.Add (player);
 			}
@@ -825,8 +749,8 @@ public class RelationshipManager : BaseEntity
 	{
 		if (contacts) {
 			ulong userID = player.userID;
-			PlayerRelationships relationshipSaveByID = GetRelationshipSaveByID (userID);
-			ClientRPCPlayer<PlayerRelationships> (null, player, "CLIENT_RecieveLocalRelationships", relationshipSaveByID);
+			ProtoBuf.RelationshipManager.PlayerRelationships relationshipSaveByID = GetRelationshipSaveByID (userID);
+			ClientRPCPlayer (null, player, "CLIENT_RecieveLocalRelationships", relationshipSaveByID);
 		}
 	}
 
@@ -836,7 +760,7 @@ public class RelationshipManager : BaseEntity
 			return;
 		}
 		foreach (BasePlayer dirtyRelationshipPlayer in _dirtyRelationshipPlayers) {
-			if (!((Object)(object)dirtyRelationshipPlayer == (Object)null) && dirtyRelationshipPlayer.IsConnected && !dirtyRelationshipPlayer.IsSleeping ()) {
+			if (!(dirtyRelationshipPlayer == null) && dirtyRelationshipPlayer.IsConnected && !dirtyRelationshipPlayer.IsSleeping ()) {
 				SendRelationshipsFor (dirtyRelationshipPlayer);
 			}
 		}
@@ -865,7 +789,7 @@ public class RelationshipManager : BaseEntity
 		if (relationships.TryGetValue (player, out var value)) {
 			return value;
 		}
-		PlayerRelationships playerRelationships = Pool.Get<PlayerRelationships> ();
+		PlayerRelationships playerRelationships = Facepunch.Pool.Get<PlayerRelationships> ();
 		playerRelationships.ownerPlayer = player;
 		relationships.Add (player, playerRelationships);
 		Profiler.EndSample ();
@@ -877,7 +801,7 @@ public class RelationshipManager : BaseEntity
 	public void SERVER_SendFreshContacts (RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
-		if (Object.op_Implicit ((Object)(object)player)) {
+		if ((bool)player) {
 			SendRelationshipsFor (player);
 		}
 	}
@@ -888,20 +812,20 @@ public class RelationshipManager : BaseEntity
 	{
 		ulong userID = msg.player.userID;
 		ulong num = msg.read.UInt64 ();
-		int num2 = msg.read.Int32 ();
-		num2 = Mathf.Clamp (num2, 0, 3);
+		int value = msg.read.Int32 ();
+		value = Mathf.Clamp (value, 0, 3);
 		PlayerRelationships playerRelationships = GetRelationships (userID);
 		PlayerRelationshipInfo relations = playerRelationships.GetRelations (num);
 		BasePlayer player = msg.player;
-		RelationshipType relationshipType = (RelationshipType)num2;
-		if (num2 == 0) {
+		RelationshipType relationshipType = (RelationshipType)value;
+		if (value == 0) {
 			if (playerRelationships.Forget (num)) {
 				SendRelationshipsFor (player);
 			}
 			return;
 		}
 		BasePlayer basePlayer = FindByID (num);
-		if ((Object)(object)basePlayer == (Object)null) {
+		if (basePlayer == null) {
 			ForceRelationshipByID (player, num, relationshipType, 0, sendImmediate: true);
 		} else {
 			SetRelationship (player, basePlayer, relationshipType, 1, sendImmediate: true);
@@ -914,7 +838,7 @@ public class RelationshipManager : BaseEntity
 	{
 		ulong userID = msg.player.userID;
 		ulong player = msg.read.UInt64 ();
-		string notes = msg.read.String (256);
+		string notes = msg.read.String ();
 		PlayerRelationships playerRelationships = GetRelationships (userID);
 		PlayerRelationshipInfo relations = playerRelationships.GetRelations (player);
 		relations.notes = notes;
@@ -925,8 +849,6 @@ public class RelationshipManager : BaseEntity
 	[RPC_Server.CallsPerSecond (10uL)]
 	public void SERVER_ReceiveMugshot (RPCMessage msg)
 	{
-		//IL_00a2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f3: Unknown result type (might be due to invalid IL or missing references)
 		ulong userID = msg.player.userID;
 		ulong num = msg.read.UInt64 ();
 		uint num2 = msg.read.UInt32 ();
@@ -935,7 +857,7 @@ public class RelationshipManager : BaseEntity
 			uint steamIdHash = GetSteamIdHash (userID, num);
 			uint num3 = FileStorage.server.Store (array, FileStorage.Type.jpg, net.ID, steamIdHash);
 			if (num3 != num2) {
-				Debug.LogWarning ((object)"Client/Server FileStorage CRC differs");
+				Debug.LogWarning ("Client/Server FileStorage CRC differs");
 			}
 			if (num3 != value2.mugshotCrc) {
 				FileStorage.server.RemoveExact (value2.mugshotCrc, FileStorage.Type.jpg, net.ID, steamIdHash);
@@ -947,7 +869,6 @@ public class RelationshipManager : BaseEntity
 
 	private void DeleteMugshot (ulong steamId, ulong targetSteamId, uint crc)
 	{
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
 		if (crc != 0) {
 			uint steamIdHash = GetSteamIdHash (steamId, targetSteamId);
 			FileStorage.server.RemoveExact (crc, FileStorage.Type.jpg, net.ID, steamIdHash);
@@ -962,7 +883,7 @@ public class RelationshipManager : BaseEntity
 	public int GetMaxTeamSize ()
 	{
 		BaseGameMode activeGameMode = BaseGameMode.GetActiveGameMode (serverside: true);
-		if (Object.op_Implicit ((Object)(object)activeGameMode)) {
+		if ((bool)activeGameMode) {
 			return activeGameMode.GetMaxRelationshipTeamSize ();
 		}
 		return maxTeamSize;
@@ -971,9 +892,9 @@ public class RelationshipManager : BaseEntity
 	public void OnEnable ()
 	{
 		if (base.isServer) {
-			if ((Object)(object)ServerInstance != (Object)null) {
-				Debug.LogError ((object)"Major fuckup! RelationshipManager spawned twice, Contact Developers!");
-				Object.Destroy ((Object)(object)((Component)this).gameObject);
+			if (ServerInstance != null) {
+				Debug.LogError ("Major fuckup! RelationshipManager spawned twice, Contact Developers!");
+				UnityEngine.Object.Destroy (base.gameObject);
 			} else {
 				ServerInstance = this;
 			}
@@ -990,36 +911,36 @@ public class RelationshipManager : BaseEntity
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.relationshipManager = Pool.Get<RelationshipManager> ();
+		info.msg.relationshipManager = Facepunch.Pool.Get<ProtoBuf.RelationshipManager> ();
 		info.msg.relationshipManager.maxTeamSize = maxTeamSize;
 		if (!info.forDisk) {
 			return;
 		}
 		info.msg.relationshipManager.lastTeamIndex = lastTeamIndex;
-		info.msg.relationshipManager.teamList = Pool.GetList<PlayerTeam> ();
+		info.msg.relationshipManager.teamList = Facepunch.Pool.GetList<ProtoBuf.PlayerTeam> ();
 		foreach (KeyValuePair<ulong, PlayerTeam> team in teams) {
 			PlayerTeam value = team.Value;
 			if (value == null) {
 				continue;
 			}
-			PlayerTeam val = Pool.Get<PlayerTeam> ();
-			val.teamLeader = value.teamLeader;
-			val.teamID = value.teamID;
-			val.teamName = value.teamName;
-			val.members = Pool.GetList<TeamMember> ();
+			ProtoBuf.PlayerTeam playerTeam = Facepunch.Pool.Get<ProtoBuf.PlayerTeam> ();
+			playerTeam.teamLeader = value.teamLeader;
+			playerTeam.teamID = value.teamID;
+			playerTeam.teamName = value.teamName;
+			playerTeam.members = Facepunch.Pool.GetList<ProtoBuf.PlayerTeam.TeamMember> ();
 			foreach (ulong member in value.members) {
-				TeamMember val2 = Pool.Get<TeamMember> ();
+				ProtoBuf.PlayerTeam.TeamMember teamMember = Facepunch.Pool.Get<ProtoBuf.PlayerTeam.TeamMember> ();
 				BasePlayer basePlayer = FindByID (member);
-				val2.displayName = (((Object)(object)basePlayer != (Object)null) ? basePlayer.displayName : (SingletonComponent<ServerMgr>.Instance.persistance.GetPlayerName (member) ?? "DEAD"));
-				val2.userID = member;
-				val.members.Add (val2);
+				teamMember.displayName = ((basePlayer != null) ? basePlayer.displayName : (SingletonComponent<ServerMgr>.Instance.persistance.GetPlayerName (member) ?? "DEAD"));
+				teamMember.userID = member;
+				playerTeam.members.Add (teamMember);
 			}
-			info.msg.relationshipManager.teamList.Add (val);
+			info.msg.relationshipManager.teamList.Add (playerTeam);
 		}
-		info.msg.relationshipManager.relationships = Pool.GetList<PlayerRelationships> ();
+		info.msg.relationshipManager.relationships = Facepunch.Pool.GetList<ProtoBuf.RelationshipManager.PlayerRelationships> ();
 		foreach (ulong key in relationships.Keys) {
 			PlayerRelationships playerRelationships = relationships [key];
-			PlayerRelationships relationshipSaveByID = GetRelationshipSaveByID (key);
+			ProtoBuf.RelationshipManager.PlayerRelationships relationshipSaveByID = GetRelationshipSaveByID (key);
 			info.msg.relationshipManager.relationships.Add (relationshipSaveByID);
 		}
 	}
@@ -1027,7 +948,7 @@ public class RelationshipManager : BaseEntity
 	public void DisbandTeam (PlayerTeam teamToDisband)
 	{
 		teams.Remove (teamToDisband.teamID);
-		Pool.Free<PlayerTeam> (ref teamToDisband);
+		Facepunch.Pool.Free (ref teamToDisband);
 	}
 
 	public static BasePlayer FindByID (ulong userID)
@@ -1035,17 +956,17 @@ public class RelationshipManager : BaseEntity
 		Profiler.BeginSample ("RelationshipManager.FindByID");
 		BasePlayer value = null;
 		if (ServerInstance.cachedPlayers.TryGetValue (userID, out value)) {
-			if ((Object)(object)value != (Object)null) {
+			if (value != null) {
 				Profiler.EndSample ();
 				return value;
 			}
 			ServerInstance.cachedPlayers.Remove (userID);
 		}
 		BasePlayer basePlayer = BasePlayer.FindByID (userID);
-		if (!Object.op_Implicit ((Object)(object)basePlayer)) {
+		if (!basePlayer) {
 			basePlayer = BasePlayer.FindSleeping (userID);
 		}
-		if ((Object)(object)basePlayer != (Object)null) {
+		if (basePlayer != null) {
 			ServerInstance.cachedPlayers.Add (userID, basePlayer);
 		}
 		Profiler.EndSample ();
@@ -1070,16 +991,16 @@ public class RelationshipManager : BaseEntity
 
 	public PlayerTeam CreateTeam ()
 	{
-		PlayerTeam playerTeam = Pool.Get<PlayerTeam> ();
+		PlayerTeam playerTeam = Facepunch.Pool.Get<PlayerTeam> ();
 		playerTeam.teamID = lastTeamIndex;
-		playerTeam.teamStartTime = Time.realtimeSinceStartup;
+		playerTeam.teamStartTime = UnityEngine.Time.realtimeSinceStartup;
 		teams.Add (lastTeamIndex, playerTeam);
 		lastTeamIndex++;
 		return playerTeam;
 	}
 
 	[ServerUserVar]
-	public static void trycreateteam (Arg arg)
+	public static void trycreateteam (ConsoleSystem.Arg arg)
 	{
 		if (maxTeamSize == 0) {
 			arg.ReplyWith ("Teams are disabled on this server");
@@ -1095,14 +1016,14 @@ public class RelationshipManager : BaseEntity
 	}
 
 	[ServerUserVar]
-	public static void promote (Arg arg)
+	public static void promote (ConsoleSystem.Arg arg)
 	{
 		BasePlayer basePlayer = arg.Player ();
 		if (basePlayer.currentTeam == 0) {
 			return;
 		}
 		BasePlayer lookingAtPlayer = GetLookingAtPlayer (basePlayer);
-		if (!((Object)(object)lookingAtPlayer == (Object)null) && !lookingAtPlayer.IsDead () && !((Object)(object)lookingAtPlayer == (Object)(object)basePlayer) && lookingAtPlayer.currentTeam == basePlayer.currentTeam) {
+		if (!(lookingAtPlayer == null) && !lookingAtPlayer.IsDead () && !(lookingAtPlayer == basePlayer) && lookingAtPlayer.currentTeam == basePlayer.currentTeam) {
 			PlayerTeam playerTeam = ServerInstance.teams [basePlayer.currentTeam];
 			if (playerTeam != null && playerTeam.teamLeader == basePlayer.userID) {
 				playerTeam.SetTeamLeader (lookingAtPlayer.userID);
@@ -1111,10 +1032,10 @@ public class RelationshipManager : BaseEntity
 	}
 
 	[ServerUserVar]
-	public static void leaveteam (Arg arg)
+	public static void leaveteam (ConsoleSystem.Arg arg)
 	{
 		BasePlayer basePlayer = arg.Player ();
-		if (!((Object)(object)basePlayer == (Object)null) && basePlayer.currentTeam != 0) {
+		if (!(basePlayer == null) && basePlayer.currentTeam != 0) {
 			PlayerTeam playerTeam = ServerInstance.FindTeam (basePlayer.currentTeam);
 			if (playerTeam != null) {
 				playerTeam.RemovePlayer (basePlayer.userID);
@@ -1124,10 +1045,10 @@ public class RelationshipManager : BaseEntity
 	}
 
 	[ServerUserVar]
-	public static void acceptinvite (Arg arg)
+	public static void acceptinvite (ConsoleSystem.Arg arg)
 	{
 		BasePlayer basePlayer = arg.Player ();
-		if (!((Object)(object)basePlayer == (Object)null) && basePlayer.currentTeam == 0) {
+		if (!(basePlayer == null) && basePlayer.currentTeam == 0) {
 			ulong uLong = arg.GetULong (0, 0uL);
 			PlayerTeam playerTeam = ServerInstance.FindTeam (uLong);
 			if (playerTeam == null) {
@@ -1139,10 +1060,10 @@ public class RelationshipManager : BaseEntity
 	}
 
 	[ServerUserVar]
-	public static void rejectinvite (Arg arg)
+	public static void rejectinvite (ConsoleSystem.Arg arg)
 	{
 		BasePlayer basePlayer = arg.Player ();
-		if (!((Object)(object)basePlayer == (Object)null) && basePlayer.currentTeam == 0) {
+		if (!(basePlayer == null) && basePlayer.currentTeam == 0) {
 			ulong uLong = arg.GetULong (0, 0uL);
 			PlayerTeam playerTeam = ServerInstance.FindTeam (uLong);
 			if (playerTeam == null) {
@@ -1155,36 +1076,28 @@ public class RelationshipManager : BaseEntity
 
 	public static BasePlayer GetLookingAtPlayer (BasePlayer source)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
-		RaycastHit hit = default(RaycastHit);
-		if (Physics.Raycast (source.eyes.position, source.eyes.HeadForward (), ref hit, 5f, 1218652417, (QueryTriggerInteraction)1)) {
-			BaseEntity entity = hit.GetEntity ();
-			if (Object.op_Implicit ((Object)(object)entity)) {
-				return ((Component)entity).GetComponent<BasePlayer> ();
+		if (UnityEngine.Physics.Raycast (source.eyes.position, source.eyes.HeadForward (), out var hitInfo, 5f, 1218652417, QueryTriggerInteraction.Ignore)) {
+			BaseEntity entity = hitInfo.GetEntity ();
+			if ((bool)entity) {
+				return entity.GetComponent<BasePlayer> ();
 			}
 		}
 		return null;
 	}
 
 	[ServerVar]
-	public static void sleeptoggle (Arg arg)
+	public static void sleeptoggle (ConsoleSystem.Arg arg)
 	{
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer basePlayer = arg.Player ();
-		RaycastHit hit = default(RaycastHit);
-		if ((Object)(object)basePlayer == (Object)null || !Physics.Raycast (basePlayer.eyes.position, basePlayer.eyes.HeadForward (), ref hit, 5f, 1218652417, (QueryTriggerInteraction)1)) {
+		if (basePlayer == null || !UnityEngine.Physics.Raycast (basePlayer.eyes.position, basePlayer.eyes.HeadForward (), out var hitInfo, 5f, 1218652417, QueryTriggerInteraction.Ignore)) {
 			return;
 		}
-		BaseEntity entity = hit.GetEntity ();
-		if (!Object.op_Implicit ((Object)(object)entity)) {
+		BaseEntity entity = hitInfo.GetEntity ();
+		if (!entity) {
 			return;
 		}
-		BasePlayer component = ((Component)entity).GetComponent<BasePlayer> ();
-		if (Object.op_Implicit ((Object)(object)component) && (Object)(object)component != (Object)(object)basePlayer && !component.IsNpc) {
+		BasePlayer component = entity.GetComponent<BasePlayer> ();
+		if ((bool)component && component != basePlayer && !component.IsNpc) {
 			if (component.IsSleeping ()) {
 				component.EndSleeping ();
 			} else {
@@ -1194,14 +1107,14 @@ public class RelationshipManager : BaseEntity
 	}
 
 	[ServerUserVar]
-	public static void kickmember (Arg arg)
+	public static void kickmember (ConsoleSystem.Arg arg)
 	{
 		BasePlayer basePlayer = arg.Player ();
-		if ((Object)(object)basePlayer == (Object)null) {
+		if (basePlayer == null) {
 			return;
 		}
 		PlayerTeam playerTeam = ServerInstance.FindTeam (basePlayer.currentTeam);
-		if (playerTeam != null && !((Object)(object)playerTeam.GetLeader () != (Object)(object)basePlayer)) {
+		if (playerTeam != null && !(playerTeam.GetLeader () != basePlayer)) {
 			ulong uLong = arg.GetULong (0, 0uL);
 			if (basePlayer.userID != uLong) {
 				playerTeam.RemovePlayer (uLong);
@@ -1210,65 +1123,57 @@ public class RelationshipManager : BaseEntity
 	}
 
 	[ServerUserVar]
-	public static void sendinvite (Arg arg)
+	public static void sendinvite (ConsoleSystem.Arg arg)
 	{
-		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0069: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008b: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer basePlayer = arg.Player ();
 		PlayerTeam playerTeam = ServerInstance.FindTeam (basePlayer.currentTeam);
 		if (playerTeam == null) {
 			return;
 		}
 		BasePlayer leader = playerTeam.GetLeader ();
-		RaycastHit hit = default(RaycastHit);
-		if ((Object)(object)leader == (Object)null || (Object)(object)playerTeam.GetLeader () != (Object)(object)basePlayer || !Physics.Raycast (basePlayer.eyes.position, basePlayer.eyes.HeadForward (), ref hit, 5f, 1218652417, (QueryTriggerInteraction)1)) {
+		if (leader == null || playerTeam.GetLeader () != basePlayer || !UnityEngine.Physics.Raycast (basePlayer.eyes.position, basePlayer.eyes.HeadForward (), out var hitInfo, 5f, 1218652417, QueryTriggerInteraction.Ignore)) {
 			return;
 		}
-		BaseEntity entity = hit.GetEntity ();
-		if (Object.op_Implicit ((Object)(object)entity)) {
-			BasePlayer component = ((Component)entity).GetComponent<BasePlayer> ();
-			if (Object.op_Implicit ((Object)(object)component) && (Object)(object)component != (Object)(object)basePlayer && !component.IsNpc && component.currentTeam == 0) {
+		BaseEntity entity = hitInfo.GetEntity ();
+		if ((bool)entity) {
+			BasePlayer component = entity.GetComponent<BasePlayer> ();
+			if ((bool)component && component != basePlayer && !component.IsNpc && component.currentTeam == 0) {
 				playerTeam.SendInvite (component);
 			}
 		}
 	}
 
 	[ServerVar]
-	public static void fakeinvite (Arg arg)
+	public static void fakeinvite (ConsoleSystem.Arg arg)
 	{
 		BasePlayer basePlayer = arg.Player ();
 		ulong uLong = arg.GetULong (0, 0uL);
 		PlayerTeam playerTeam = ServerInstance.FindTeam (uLong);
 		if (playerTeam != null) {
 			if (basePlayer.currentTeam != 0) {
-				Debug.Log ((object)"already in team");
+				Debug.Log ("already in team");
 			}
 			playerTeam.SendInvite (basePlayer);
-			Debug.Log ((object)"sent bot invite");
+			Debug.Log ("sent bot invite");
 		}
 	}
 
 	[ServerVar]
-	public static void addtoteam (Arg arg)
+	public static void addtoteam (ConsoleSystem.Arg arg)
 	{
-		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0069: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008b: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer basePlayer = arg.Player ();
 		PlayerTeam playerTeam = ServerInstance.FindTeam (basePlayer.currentTeam);
 		if (playerTeam == null) {
 			return;
 		}
 		BasePlayer leader = playerTeam.GetLeader ();
-		RaycastHit hit = default(RaycastHit);
-		if ((Object)(object)leader == (Object)null || (Object)(object)playerTeam.GetLeader () != (Object)(object)basePlayer || !Physics.Raycast (basePlayer.eyes.position, basePlayer.eyes.HeadForward (), ref hit, 5f, 1218652417, (QueryTriggerInteraction)1)) {
+		if (leader == null || playerTeam.GetLeader () != basePlayer || !UnityEngine.Physics.Raycast (basePlayer.eyes.position, basePlayer.eyes.HeadForward (), out var hitInfo, 5f, 1218652417, QueryTriggerInteraction.Ignore)) {
 			return;
 		}
-		BaseEntity entity = hit.GetEntity ();
-		if (Object.op_Implicit ((Object)(object)entity)) {
-			BasePlayer component = ((Component)entity).GetComponent<BasePlayer> ();
-			if (Object.op_Implicit ((Object)(object)component) && (Object)(object)component != (Object)(object)basePlayer && !component.IsNpc) {
+		BaseEntity entity = hitInfo.GetEntity ();
+		if ((bool)entity) {
+			BasePlayer component = entity.GetComponent<BasePlayer> ();
+			if ((bool)component && component != basePlayer && !component.IsNpc) {
 				playerTeam.AddPlayer (component);
 			}
 		}
@@ -1286,13 +1191,13 @@ public class RelationshipManager : BaseEntity
 			return;
 		}
 		lastTeamIndex = info.msg.relationshipManager.lastTeamIndex;
-		foreach (PlayerTeam team in info.msg.relationshipManager.teamList) {
-			PlayerTeam playerTeam = Pool.Get<PlayerTeam> ();
+		foreach (ProtoBuf.PlayerTeam team in info.msg.relationshipManager.teamList) {
+			PlayerTeam playerTeam = Facepunch.Pool.Get<PlayerTeam> ();
 			playerTeam.teamLeader = team.teamLeader;
 			playerTeam.teamID = team.teamID;
 			playerTeam.teamName = team.teamName;
 			playerTeam.members = new List<ulong> ();
-			foreach (TeamMember member in team.members) {
+			foreach (ProtoBuf.PlayerTeam.TeamMember member in team.members) {
 				playerTeam.members.Add (member.userID);
 			}
 			teams [playerTeam.teamID] = playerTeam;
@@ -1301,17 +1206,17 @@ public class RelationshipManager : BaseEntity
 			foreach (ulong member2 in value.members) {
 				playerToTeam [member2] = value;
 				BasePlayer basePlayer = FindByID (member2);
-				if ((Object)(object)basePlayer != (Object)null && basePlayer.currentTeam != value.teamID) {
-					Debug.LogWarning ((object)$"Player {member2} has the wrong teamID: got {basePlayer.currentTeam}, expected {value.teamID}. Fixing automatically.");
+				if (basePlayer != null && basePlayer.currentTeam != value.teamID) {
+					Debug.LogWarning ($"Player {member2} has the wrong teamID: got {basePlayer.currentTeam}, expected {value.teamID}. Fixing automatically.");
 					basePlayer.currentTeam = value.teamID;
 				}
 			}
 		}
-		foreach (PlayerRelationships relationship in info.msg.relationshipManager.relationships) {
+		foreach (ProtoBuf.RelationshipManager.PlayerRelationships relationship in info.msg.relationshipManager.relationships) {
 			ulong playerID = relationship.playerID;
 			PlayerRelationships playerRelationships = GetRelationships (playerID);
 			playerRelationships.relations.Clear ();
-			foreach (PlayerRelationshipInfo relation in relationship.relations) {
+			foreach (ProtoBuf.RelationshipManager.PlayerRelationshipInfo relation in relationship.relations) {
 				PlayerRelationshipInfo playerRelationshipInfo = new PlayerRelationshipInfo ();
 				playerRelationshipInfo.type = (RelationshipType)relation.type;
 				playerRelationshipInfo.weight = relation.weight;
@@ -1319,7 +1224,7 @@ public class RelationshipManager : BaseEntity
 				playerRelationshipInfo.mugshotCrc = relation.mugshotCrc;
 				playerRelationshipInfo.notes = relation.notes;
 				playerRelationshipInfo.player = relation.playerID;
-				playerRelationshipInfo.lastSeenTime = Time.realtimeSinceStartup - relation.timeSinceSeen;
+				playerRelationshipInfo.lastSeenTime = UnityEngine.Time.realtimeSinceStartup - relation.timeSinceSeen;
 				playerRelationships.relations.Add (relation.playerID, playerRelationshipInfo);
 			}
 		}

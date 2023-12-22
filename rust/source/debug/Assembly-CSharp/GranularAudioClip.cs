@@ -103,20 +103,18 @@ public class GranularAudioClip : MonoBehaviour
 
 	public List<Grain> grains = new List<Grain> ();
 
-	private Random random = new Random ();
+	private System.Random random = new System.Random ();
 
 	private bool inited = false;
 
 	private void Update ()
 	{
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0015: Invalid comparison between Unknown and I4
-		if (!inited && (int)sourceClip.loadState == 2) {
+		if (!inited && sourceClip.loadState == AudioDataLoadState.Loaded) {
 			sampleRate = sourceClip.frequency;
 			sourceAudioData = new float[sourceClip.samples * sourceClip.channels];
 			sourceClip.GetData (sourceAudioData, 0);
 			InitAudioClip ();
-			AudioSource component = ((Component)this).GetComponent<AudioSource> ();
+			AudioSource component = GetComponent<AudioSource> ();
 			component.clip = granularClip;
 			component.loop = true;
 			component.Play ();
@@ -135,12 +133,10 @@ public class GranularAudioClip : MonoBehaviour
 
 	private void InitAudioClip ()
 	{
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0049: Expected O, but got Unknown
-		int num = 1;
-		int num2 = 1;
-		AudioSettings.GetDSPBufferSize (ref num, ref num2);
-		granularClip = AudioClip.Create (((Object)sourceClip).name + " (granular)", num, sourceClip.channels, sampleRate, true, new PCMReaderCallback (OnAudioRead));
+		int bufferLength = 1;
+		int numBuffers = 1;
+		UnityEngine.AudioSettings.GetDSPBufferSize (out bufferLength, out numBuffers);
+		granularClip = AudioClip.Create (sourceClip.name + " (granular)", bufferLength, sourceClip.channels, sampleRate, stream: true, OnAudioRead);
 		sourceChannels = sourceClip.channels;
 	}
 
@@ -176,9 +172,9 @@ public class GranularAudioClip : MonoBehaviour
 	private void CleanupFinishedGrains ()
 	{
 		for (int num = grains.Count - 1; num >= 0; num--) {
-			Grain grain = grains [num];
-			if (grain.finished) {
-				Pool.Free<Grain> (ref grain);
+			Grain obj = grains [num];
+			if (obj.finished) {
+				Pool.Free (ref obj);
 				grains.RemoveAt (num);
 			}
 		}

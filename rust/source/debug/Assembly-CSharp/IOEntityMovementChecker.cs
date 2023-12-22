@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 [RequireComponent (typeof(IOEntity))]
@@ -14,28 +13,23 @@ public class IOEntityMovementChecker : FacepunchBehaviour
 
 	protected void Awake ()
 	{
-		ioEntity = ((Component)this).GetComponent<IOEntity> ();
+		ioEntity = GetComponent<IOEntity> ();
 	}
 
 	protected void OnEnable ()
 	{
-		((FacepunchBehaviour)this).InvokeRepeating ((Action)CheckPosition, Random.Range (0f, 0.25f), 0.25f);
+		InvokeRepeating (CheckPosition, Random.Range (0f, 0.25f), 0.25f);
 	}
 
 	protected void OnDisable ()
 	{
-		((FacepunchBehaviour)this).CancelInvoke ((Action)CheckPosition);
+		CancelInvoke (CheckPosition);
 	}
 
 	private void CheckPosition ()
 	{
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-		if (!ioEntity.isClient && Vector3.SqrMagnitude (((Component)this).transform.position - prevPos) > 0.00250000018f) {
-			prevPos = ((Component)this).transform.position;
+		if (!ioEntity.isClient && Vector3.SqrMagnitude (base.transform.position - prevPos) > 0.00250000018f) {
+			prevPos = base.transform.position;
 			if (ioEntity.HasConnections ()) {
 				ioEntity.SendChangedToRoot (forceUpdate: true);
 				ioEntity.ClearConnections ();

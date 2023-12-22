@@ -19,8 +19,8 @@ public class WorldSplineSharedData : ScriptableObject
 
 	public static bool TryGetDataFor (WorldSpline worldSpline, out WorldSplineData data)
 	{
-		if ((Object)(object)instance == (Object)null) {
-			Debug.LogError ((object)"No instance of WorldSplineSharedData found.");
+		if (instance == null) {
+			Debug.LogError ("No instance of WorldSplineSharedData found.");
 			data = null;
 			return false;
 		}

@@ -8,14 +8,6 @@ public class BaseCommandBuffer : MonoBehaviour
 
 	protected CommandBuffer GetCommandBuffer (string name, Camera camera, CameraEvent cameraEvent)
 	{
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0035: Expected I4, but got Unknown
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Expected O, but got Unknown
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005b: Expected I4, but got Unknown
-		//IL_005f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0067: Unknown result type (might be due to invalid IL or missing references)
 		if (!cameras.TryGetValue (camera, out var value)) {
 			value = new Dictionary<int, CommandBuffer> ();
 			cameras.Add (camera, value);
@@ -34,22 +26,17 @@ public class BaseCommandBuffer : MonoBehaviour
 
 	protected void CleanupCamera (string name, Camera camera, CameraEvent cameraEvent)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
 		CommandBuffer[] commandBuffers = camera.GetCommandBuffers (cameraEvent);
 		CommandBuffer[] array = commandBuffers;
-		foreach (CommandBuffer val in array) {
-			if (val.name == name) {
-				camera.RemoveCommandBuffer (cameraEvent, val);
+		foreach (CommandBuffer commandBuffer in array) {
+			if (commandBuffer.name == name) {
+				camera.RemoveCommandBuffer (cameraEvent, commandBuffer);
 			}
 		}
 	}
 
 	protected void CleanupCommandBuffer (Camera camera, CameraEvent cameraEvent)
 	{
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Expected I4, but got Unknown
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
 		if (cameras.TryGetValue (camera, out var value) && value.TryGetValue ((int)cameraEvent, out var value2)) {
 			camera.RemoveCommandBuffer (cameraEvent, value2);
 		}
@@ -60,7 +47,7 @@ public class BaseCommandBuffer : MonoBehaviour
 		foreach (KeyValuePair<Camera, Dictionary<int, CommandBuffer>> camera in cameras) {
 			Camera key = camera.Key;
 			Dictionary<int, CommandBuffer> value = camera.Value;
-			if (!Object.op_Implicit ((Object)(object)key)) {
+			if (!key) {
 				continue;
 			}
 			foreach (KeyValuePair<int, CommandBuffer> item in value) {

@@ -21,8 +21,8 @@ public class ItemModCookable : ItemMod
 		if (amountOfBecome < 1) {
 			amountOfBecome = 1;
 		}
-		if ((Object)(object)becomeOnCooked == (Object)null) {
-			Debug.LogWarning ((object)("[ItemModCookable] becomeOnCooked is unset! [" + ((Object)this).name + "]"), (Object)(object)((Component)this).gameObject);
+		if (becomeOnCooked == null) {
+			Debug.LogWarning ("[ItemModCookable] becomeOnCooked is unset! [" + base.name + "]", base.gameObject);
 		}
 	}
 
@@ -33,10 +33,6 @@ public class ItemModCookable : ItemMod
 
 	private void CycleCooking (Item item, float delta)
 	{
-		//IL_01e2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ed: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01fa: Unknown result type (might be due to invalid IL or missing references)
 		if (!CanBeCookedByAtTemperature (item.temperature) || item.cookTimeLeft < 0f) {
 			if (setCookingFlag && item.HasFlag (Item.Flag.Cooking)) {
 				item.SetFlag (Item.Flag.Cooking, b: false);
@@ -54,25 +50,25 @@ public class ItemModCookable : ItemMod
 			return;
 		}
 		float num = item.cookTimeLeft * -1f;
-		int num2 = 1 + Mathf.FloorToInt (num / cookTime);
+		int a = 1 + Mathf.FloorToInt (num / cookTime);
 		item.cookTimeLeft = cookTime - num % cookTime;
 		BaseOven baseOven = item.GetEntityOwner () as BaseOven;
-		num2 = Mathf.Min (num2, item.amount);
-		if (item.amount > num2) {
-			item.amount -= num2;
+		a = Mathf.Min (a, item.amount);
+		if (item.amount > a) {
+			item.amount -= a;
 			item.MarkDirty ();
 		} else {
 			item.Remove ();
 		}
-		Analytics.Azure.AddPendingItems (baseOven, item.info.shortname, num2, "smelt");
-		if (!((Object)(object)becomeOnCooked != (Object)null)) {
+		Analytics.Azure.AddPendingItems (baseOven, item.info.shortname, a, "smelt");
+		if (!(becomeOnCooked != null)) {
 			return;
 		}
-		Item item2 = ItemManager.Create (becomeOnCooked, amountOfBecome * num2, 0uL);
+		Item item2 = ItemManager.Create (becomeOnCooked, amountOfBecome * a, 0uL);
 		Analytics.Azure.AddPendingItems (baseOven, item2.info.shortname, item2.amount, "smelt", consumed: false);
 		if (item2 != null && !item2.MoveToContainer (item.parent) && !item2.MoveToContainer (item.parent)) {
 			item2.Drop (item.parent.dropPosition, item.parent.dropVelocity);
-			if (Object.op_Implicit ((Object)(object)item.parent.entityOwner) && (Object)(object)baseOven != (Object)null) {
+			if ((bool)item.parent.entityOwner && baseOven != null) {
 				baseOven.OvenFull ();
 			}
 		}

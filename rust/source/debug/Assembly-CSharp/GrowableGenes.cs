@@ -1,3 +1,4 @@
+#define ENABLE_PROFILER
 using System.Linq;
 using System.Text;
 using UnityEngine;
@@ -26,7 +27,7 @@ public class GrowableGenes
 
 	public void GenerateRandom (GrowableEntity growable)
 	{
-		if (!((Object)(object)growable == (Object)null) && !((Object)(object)growable.Properties.Genes == (Object)null)) {
+		if (!(growable == null) && !(growable.Properties.Genes == null)) {
 			CalculateBaseWeights (growable.Properties.Genes);
 			for (int i = 0; i < 6; i++) {
 				CalculateSlotWeights (growable.Properties.Genes, i);
@@ -132,7 +133,7 @@ public class GrowableGenes
 
 	public void DebugPrint ()
 	{
-		Debug.Log ((object)GetDisplayString (previousGenes: false));
+		Debug.Log (GetDisplayString (previousGenes: false));
 	}
 
 	private string GetDisplayString (bool previousGenes)

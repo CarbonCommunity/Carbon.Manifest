@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Network;
@@ -21,82 +22,61 @@ public class TorchWeapon : BaseMelee
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("TorchWeapon.OnRpcMessage", 0);
-		try {
-			if (rpc == 2235491565u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("TorchWeapon.OnRpcMessage")) {
+			if (rpc == 2235491565u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Extinguish "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Extinguish "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Extinguish", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Extinguish")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsActiveItem.Test (2235491565u, "Extinguish", this, player)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							Extinguish (msg2);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in Extinguish");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 3010584743u && (Object)(object)player != (Object)null) {
+			if (rpc == 3010584743u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Ignite "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Ignite "));
 				}
-				TimeWarning val5 = TimeWarning.New ("Ignite", 0);
-				try {
-					TimeWarning val6 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Ignite")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsActiveItem.Test (3010584743u, "Ignite", this, player)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val6)?.Dispose ();
 					}
 					try {
-						TimeWarning val7 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg3 = rPCMessage;
 							Ignite (msg3);
-						} finally {
-							((IDisposable)val7)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in Ignite");
 					}
-				} finally {
-					((IDisposable)val5)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -118,10 +98,10 @@ public class TorchWeapon : BaseMelee
 	{
 		if (isOn) {
 			SetFlag (Flags.On, b: true);
-			((FacepunchBehaviour)this).InvokeRepeating ((Action)UseFuel, 1f, 1f);
+			InvokeRepeating (UseFuel, 1f, 1f);
 		} else {
 			SetFlag (Flags.On, b: false);
-			((FacepunchBehaviour)this).CancelInvoke ((Action)UseFuel);
+			CancelInvoke (UseFuel);
 		}
 	}
 
@@ -152,7 +132,7 @@ public class TorchWeapon : BaseMelee
 	{
 		if (IsDisabled ()) {
 			SetFlag (Flags.On, b: false);
-			((FacepunchBehaviour)this).CancelInvoke ((Action)UseFuel);
+			CancelInvoke (UseFuel);
 		}
 	}
 

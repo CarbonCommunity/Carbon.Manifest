@@ -27,13 +27,11 @@ public class TimerAIEvent : BaseAIEvent
 
 	public override AIEventData ToProto ()
 	{
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Expected O, but got Unknown
-		AIEventData val = base.ToProto ();
-		val.timerData = new TimerAIEventData ();
-		val.timerData.duration = DurationMin;
-		val.timerData.durationMax = DurationMax;
-		return val;
+		AIEventData aIEventData = base.ToProto ();
+		aIEventData.timerData = new TimerAIEventData ();
+		aIEventData.timerData.duration = DurationMin;
+		aIEventData.timerData.durationMax = DurationMax;
+		return aIEventData;
 	}
 
 	public override void Reset ()

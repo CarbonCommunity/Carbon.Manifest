@@ -39,16 +39,14 @@ public class PhotoEntity : ImageStorageEntity, IUGCBrowserEntity
 
 	public void SetImageData (ulong steamId, byte[] data)
 	{
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
 		ImageCrc = FileStorage.server.Store (data, FileStorage.Type.jpg, net.ID);
 		PhotographerSteamId = steamId;
 	}
 
 	internal override void DoServerDestroy ()
 	{
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
 		base.DoServerDestroy ();
-		if (!Application.isQuitting && net != null) {
+		if (!Rust.Application.isQuitting && net != null) {
 			FileStorage.server.RemoveAllByEntity (net.ID);
 		}
 	}

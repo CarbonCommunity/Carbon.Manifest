@@ -19,10 +19,10 @@ public class SwapRPG : MonoBehaviour
 	public void SelectRPGType (int iType)
 	{
 		GameObject[] array = rpgModels;
-		foreach (GameObject val in array) {
-			val.SetActive (false);
+		foreach (GameObject gameObject in array) {
+			gameObject.SetActive (value: false);
 		}
-		rpgModels [iType].SetActive (true);
+		rpgModels [iType].SetActive (value: true);
 	}
 
 	public void UpdateAmmoType (ItemDefinition ammoType)

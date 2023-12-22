@@ -1,5 +1,3 @@
-using System;
-
 public class TimedUnlootableCrate : LootContainer
 {
 	public bool unlootableOnSpawn = true;
@@ -19,7 +17,7 @@ public class TimedUnlootableCrate : LootContainer
 		SetFlag (Flags.OnFire, b: true);
 		SetFlag (Flags.Locked, b: true);
 		unlootableDuration = duration;
-		((FacepunchBehaviour)this).Invoke ((Action)MakeLootable, duration);
+		Invoke (MakeLootable, duration);
 	}
 
 	public void MakeLootable ()

@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 using Facepunch;
 using Network;
 using ProtoBuf;
@@ -13,40 +11,27 @@ public class WorldNetworking
 
 	public static void OnMessageReceived (Message message)
 	{
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Expected I4, but got Unknown
 		WorldSerialization serialization = World.Serialization;
-		WorldMessage val = WorldMessage.Deserialize ((Stream)(object)message.read);
-		try {
-			MessageType status = val.status;
-			switch (status - 1) {
-			case 0:
-				SendWorldData (message.connection);
-				return;
-			}
-			if (val.prefabs != null) {
-				serialization.world.prefabs.AddRange (val.prefabs);
-				val.prefabs.Clear ();
-			}
-			if (val.paths != null) {
-				serialization.world.paths.AddRange (val.paths);
-				val.paths.Clear ();
-			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
+		using WorldMessage worldMessage = WorldMessage.Deserialize (message.read);
+		switch (worldMessage.status) {
+		case WorldMessage.MessageType.Request:
+			SendWorldData (message.connection);
+			return;
+		}
+		if (worldMessage.prefabs != null) {
+			serialization.world.prefabs.AddRange (worldMessage.prefabs);
+			worldMessage.prefabs.Clear ();
+		}
+		if (worldMessage.paths != null) {
+			serialization.world.paths.AddRange (worldMessage.paths);
+			worldMessage.paths.Clear ();
 		}
 	}
 
 	private static void SendWorldData (Connection connection)
 	{
-		//IL_0061: Unknown result type (might be due to invalid IL or missing references)
-		//IL_017c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fc: Unknown result type (might be due to invalid IL or missing references)
 		if (connection.hasRequestedWorld) {
-			DebugEx.LogWarning ((object)$"{connection} requested world data more than once", (StackTraceLogType)0);
+			DebugEx.LogWarning ($"{connection} requested world data more than once");
 			return;
 		}
 		connection.hasRequestedWorld = true;
@@ -54,7 +39,7 @@ public class WorldNetworking
 		WorldMessage data = Pool.Get<WorldMessage> ();
 		for (int i = 0; i < serialization.world.prefabs.Count; i++) {
 			if (data.prefabs != null && data.prefabs.Count >= 100) {
-				data.status = (MessageType)2;
+				data.status = WorldMessage.MessageType.Receive;
 				SendWorldData (connection, ref data);
 				data = Pool.Get<WorldMessage> ();
 			}
@@ -65,7 +50,7 @@ public class WorldNetworking
 		}
 		for (int j = 0; j < serialization.world.paths.Count; j++) {
 			if (data.paths != null && data.paths.Count >= 10) {
-				data.status = (MessageType)2;
+				data.status = WorldMessage.MessageType.Receive;
 				SendWorldData (connection, ref data);
 				data = Pool.Get<WorldMessage> ();
 			}
@@ -75,18 +60,17 @@ public class WorldNetworking
 			data.paths.Add (serialization.world.paths [j]);
 		}
 		if (data != null) {
-			data.status = (MessageType)3;
+			data.status = WorldMessage.MessageType.Done;
 			SendWorldData (connection, ref data);
 		}
 	}
 
 	private static void SendWorldData (Connection connection, ref WorldMessage data)
 	{
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		NetWrite val = ((BaseNetwork)Net.sv).StartWrite ();
-		val.PacketID ((Type)24);
-		data.ToProto ((Stream)(object)val);
-		val.Send (new SendInfo (connection));
+		NetWrite netWrite = Net.sv.StartWrite ();
+		netWrite.PacketID (Message.Type.World);
+		data.ToProto (netWrite);
+		netWrite.Send (new SendInfo (connection));
 		if (data.prefabs != null) {
 			data.prefabs.Clear ();
 		}

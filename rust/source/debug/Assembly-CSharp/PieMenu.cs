@@ -141,31 +141,21 @@ public class PieMenu : UIBehaviour
 
 	private static Color middleImageColor = new Color (0.804f, 0.255f, 0.169f, 0.784f);
 
-	private static AnimationCurve easePunch = new AnimationCurve ((Keyframe[])(object)new Keyframe[9] {
-		new Keyframe (0f, 0f),
-		new Keyframe (0.112586f, 0.9976035f),
-		new Keyframe (0.3120486f, 0.01720615f),
-		new Keyframe (0.4316337f, 0.170306817f),
-		new Keyframe (0.5524869f, 0.03141804f),
-		new Keyframe (0.6549395f, 0.002909959f),
-		new Keyframe (0.770987f, 0.009817753f),
-		new Keyframe (0.8838775f, 0.001939224f),
-		new Keyframe (1f, 0f)
-	});
+	private static AnimationCurve easePunch = new AnimationCurve (new Keyframe (0f, 0f), new Keyframe (0.112586f, 0.9976035f), new Keyframe (0.3120486f, 0.01720615f), new Keyframe (0.4316337f, 0.170306817f), new Keyframe (0.5524869f, 0.03141804f), new Keyframe (0.6549395f, 0.002909959f), new Keyframe (0.770987f, 0.009817753f), new Keyframe (0.8838775f, 0.001939224f), new Keyframe (1f, 0f));
 
 	public bool IsOpen { get; private set; }
 
 	protected override void Start ()
 	{
-		((UIBehaviour)this).Start ();
+		base.Start ();
 		Instance = this;
-		canvasGroup = ((Component)this).GetComponentInChildren<CanvasGroup> ();
+		canvasGroup = GetComponentInChildren<CanvasGroup> ();
 		canvasGroup.alpha = 0f;
 		canvasGroup.interactable = false;
 		canvasGroup.blocksRaycasts = false;
 		IsOpen = false;
 		isClosing = true;
-		((Component)this).gameObject.SetChildComponentsEnabled<TMP_Text> (enabled: false);
+		base.gameObject.SetChildComponentsEnabled<TMP_Text> (enabled: false);
 	}
 
 	public void Clear ()
@@ -182,27 +172,24 @@ public class PieMenu : UIBehaviour
 
 	public void FinishAndOpen ()
 	{
-		//IL_007e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0088: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0099: Unknown result type (might be due to invalid IL or missing references)
 		IsOpen = true;
 		isClosing = false;
 		SetDefaultOption ();
 		Rebuild ();
 		UpdateInteraction (allowLerp: false);
 		PlayOpenSound ();
-		LeanTween.cancel (((Component)this).gameObject);
+		LeanTween.cancel (base.gameObject);
 		LeanTween.cancel (scaleTarget);
-		((Component)this).GetComponent<CanvasGroup> ().alpha = 0f;
-		LeanTween.alphaCanvas (((Component)this).GetComponent<CanvasGroup> (), 1f, 0.1f).setEase ((LeanTweenType)21);
+		GetComponent<CanvasGroup> ().alpha = 0f;
+		LeanTween.alphaCanvas (GetComponent<CanvasGroup> (), 1f, 0.1f).setEase (LeanTweenType.easeOutCirc);
 		scaleTarget.transform.localScale = Vector3.one * 1.5f;
-		LeanTween.scale (scaleTarget, Vector3.one, 0.1f).setEase ((LeanTweenType)24);
-		((Component)Instance).gameObject.SetChildComponentsEnabled<TMP_Text> (enabled: true);
+		LeanTween.scale (scaleTarget, Vector3.one, 0.1f).setEase (LeanTweenType.easeOutBounce);
+		Instance.gameObject.SetChildComponentsEnabled<TMP_Text> (enabled: true);
 	}
 
 	protected override void OnEnable ()
 	{
-		((UIBehaviour)this).OnEnable ();
+		base.OnEnable ();
 		Rebuild ();
 	}
 
@@ -232,19 +219,17 @@ public class PieMenu : UIBehaviour
 
 	public void Close (bool success = false)
 	{
-		//IL_006e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0082: Unknown result type (might be due to invalid IL or missing references)
 		if (!isClosing) {
 			isClosing = true;
-			NeedsCursor component = ((Component)this).GetComponent<NeedsCursor> ();
-			if ((Object)(object)component != (Object)null) {
-				((Behaviour)component).enabled = false;
+			NeedsCursor component = GetComponent<NeedsCursor> ();
+			if (component != null) {
+				component.enabled = false;
 			}
-			LeanTween.cancel (((Component)this).gameObject);
+			LeanTween.cancel (base.gameObject);
 			LeanTween.cancel (scaleTarget);
-			LeanTween.alphaCanvas (((Component)this).GetComponent<CanvasGroup> (), 0f, 0.2f).setEase ((LeanTweenType)21);
-			LeanTween.scale (scaleTarget, Vector3.one * (success ? 1.5f : 0.5f), 0.2f).setEase ((LeanTweenType)21);
-			((Component)Instance).gameObject.SetChildComponentsEnabled<TMP_Text> (enabled: false);
+			LeanTween.alphaCanvas (GetComponent<CanvasGroup> (), 0f, 0.2f).setEase (LeanTweenType.easeOutCirc);
+			LeanTween.scale (scaleTarget, Vector3.one * (success ? 1.5f : 0.5f), 0.2f).setEase (LeanTweenType.easeOutCirc);
+			Instance.gameObject.SetChildComponentsEnabled<TMP_Text> (enabled: false);
 			IsOpen = false;
 			selectedOption = null;
 		}
@@ -257,7 +242,7 @@ public class PieMenu : UIBehaviour
 			pieBackground.endRadius = startRadius + radiusSize;
 			pieBackground.innerSize = innerSize;
 			pieBackground.outerSize = outerSize;
-			((Graphic)pieBackground).SetVerticesDirty ();
+			pieBackground.SetVerticesDirty ();
 		}
 		UpdateInteraction ();
 		if (IsOpen) {
@@ -270,10 +255,10 @@ public class PieMenu : UIBehaviour
 	{
 		options = options.OrderBy ((MenuOption x) => x.order).ToArray ();
 		while (optionsCanvas.transform.childCount > 0) {
-			if (Application.isPlaying) {
-				GameManager.DestroyImmediate (((Component)optionsCanvas.transform.GetChild (0)).gameObject, allowDestroyingAssets: true);
+			if (UnityEngine.Application.isPlaying) {
+				GameManager.DestroyImmediate (optionsCanvas.transform.GetChild (0).gameObject, allowDestroyingAssets: true);
 			} else {
-				Object.DestroyImmediate ((Object)(object)((Component)optionsCanvas.transform.GetChild (0)).gameObject);
+				UnityEngine.Object.DestroyImmediate (optionsCanvas.transform.GetChild (0).gameObject);
 			}
 		}
 		if (options.Length != 0) {
@@ -299,11 +284,11 @@ public class PieMenu : UIBehaviour
 			for (int j = 0; j < options.Length; j++) {
 				float num8 = (options [j].wantsMerge ? 0.8f : 1f);
 				float num9 = (options [j].wantsMerge ? num5 : num6);
-				GameObject val = Instantiate.GameObject (pieOptionPrefab, (Transform)null);
-				val.transform.SetParent (optionsCanvas.transform, false);
-				options [j].option = val.GetComponent<PieOption> ();
+				GameObject gameObject = Facepunch.Instantiate.GameObject (pieOptionPrefab);
+				gameObject.transform.SetParent (optionsCanvas.transform, worldPositionStays: false);
+				options [j].option = gameObject.GetComponent<PieOption> ();
 				options [j].option.UpdateOption (num7, num9, sliceGaps, options [j].name, outerSize, innerSize, num8 * iconSize, options [j].sprite, options [j].showOverlay);
-				((Graphic)options [j].option.imageIcon).material = ((options [j].overrideColorMode.HasValue && options [j].overrideColorMode.Value.Mode == MenuOption.ColorMode.PieMenuSpriteColorOption.SpriteColor) ? null : IconMaterial);
+				options [j].option.imageIcon.material = ((options [j].overrideColorMode.HasValue && options [j].overrideColorMode.Value.Mode == MenuOption.ColorMode.PieMenuSpriteColorOption.SpriteColor) ? null : IconMaterial);
 				num7 += num9;
 			}
 		}
@@ -312,47 +297,18 @@ public class PieMenu : UIBehaviour
 
 	public void UpdateInteraction (bool allowLerp = true)
 	{
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0037: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_06fd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_067d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_06c0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0321: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0332: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0732: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0751: Unknown result type (might be due to invalid IL or missing references)
-		//IL_028e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0293: Unknown result type (might be due to invalid IL or missing references)
-		//IL_029b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02ba: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02ed: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02fe: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03cb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03d1: Invalid comparison between Unknown and I4
-		//IL_03f7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_043c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0442: Invalid comparison between Unknown and I4
-		//IL_0468: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0507: Unknown result type (might be due to invalid IL or missing references)
-		//IL_055e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_056f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0579: Unknown result type (might be due to invalid IL or missing references)
 		if (isClosing) {
 			return;
 		}
-		Vector3 val = Input.mousePosition - new Vector3 ((float)Screen.width / 2f, (float)Screen.height / 2f, 0f);
-		float num = Mathf.Atan2 (val.x, val.y) * 57.29578f;
+		Vector3 vector = UnityEngine.Input.mousePosition - new Vector3 ((float)Screen.width / 2f, (float)Screen.height / 2f, 0f);
+		float num = Mathf.Atan2 (vector.x, vector.y) * 57.29578f;
 		if (num < 0f) {
 			num += 360f;
 		}
 		for (int i = 0; i < options.Length; i++) {
 			float midRadius = options [i].option.midRadius;
 			float sliceSize = options [i].option.sliceSize;
-			if ((((Vector3)(ref val)).magnitude < 32f && options [i] == defaultOption) || (((Vector3)(ref val)).magnitude >= 32f && Mathf.Abs (Mathf.DeltaAngle (num, midRadius)) < sliceSize * 0.5f)) {
+			if ((vector.magnitude < 32f && options [i] == defaultOption) || (vector.magnitude >= 32f && Mathf.Abs (Mathf.DeltaAngle (num, midRadius)) < sliceSize * 0.5f)) {
 				if (allowLerp) {
 					pieSelection.startRadius = Mathf.MoveTowardsAngle (pieSelection.startRadius, options [i].option.background.startRadius, Time.deltaTime * Mathf.Abs (Mathf.DeltaAngle (pieSelection.startRadius, options [i].option.background.startRadius) * 30f + 10f));
 					pieSelection.endRadius = Mathf.MoveTowardsAngle (pieSelection.endRadius, options [i].option.background.endRadius, Time.deltaTime * Mathf.Abs (Mathf.DeltaAngle (pieSelection.endRadius, options [i].option.background.endRadius) * 30f + 10f));
@@ -360,49 +316,49 @@ public class PieMenu : UIBehaviour
 					pieSelection.startRadius = options [i].option.background.startRadius;
 					pieSelection.endRadius = options [i].option.background.endRadius;
 				}
-				((Graphic)middleImage).material = IconMaterial;
+				middleImage.material = IconMaterial;
 				if (options [i].overrideColorMode.HasValue) {
 					if (options [i].overrideColorMode.Value.Mode == MenuOption.ColorMode.PieMenuSpriteColorOption.CustomColor) {
 						Color customColor = options [i].overrideColorMode.Value.CustomColor;
-						((Graphic)pieSelection).color = customColor;
+						pieSelection.color = customColor;
 						customColor.a = middleImageColor.a;
-						((Graphic)middleImage).color = customColor;
+						middleImage.color = customColor;
 					} else if (options [i].overrideColorMode.Value.Mode == MenuOption.ColorMode.PieMenuSpriteColorOption.SpriteColor) {
-						((Graphic)pieSelection).color = pieSelectionColor;
-						((Graphic)middleImage).color = Color.white;
-						((Graphic)middleImage).material = null;
+						pieSelection.color = pieSelectionColor;
+						middleImage.color = Color.white;
+						middleImage.material = null;
 					}
 				} else {
-					((Graphic)pieSelection).color = pieSelectionColor;
-					((Graphic)middleImage).color = middleImageColor;
+					pieSelection.color = pieSelectionColor;
+					middleImage.color = middleImageColor;
 				}
-				((Graphic)pieSelection).SetVerticesDirty ();
+				pieSelection.SetVerticesDirty ();
 				middleImage.sprite = options [i].sprite;
-				((TMP_Text)middleTitle).text = options [i].name;
-				((TMP_Text)middleDesc).text = options [i].desc;
-				((TMP_Text)middleRequired).text = "";
-				Button buttonObjectWithBind = Input.GetButtonObjectWithBind ("+prevskin");
-				if (options [i].actionPrev != null && buttonObjectWithBind != null && (int)buttonObjectWithBind.Code > 0) {
-					arrowLeft.SetActive (true);
-					((TMP_Text)arrowLeft.GetComponentInChildren<TextMeshProUGUI> ()).text = KeyCodeEx.ToShortname (buttonObjectWithBind.Code, true);
+				middleTitle.text = options [i].name;
+				middleDesc.text = options [i].desc;
+				middleRequired.text = "";
+				Facepunch.Input.Button buttonObjectWithBind = Facepunch.Input.GetButtonObjectWithBind ("+prevskin");
+				if (options [i].actionPrev != null && buttonObjectWithBind != null && buttonObjectWithBind.Code != 0) {
+					arrowLeft.SetActive (value: true);
+					arrowLeft.GetComponentInChildren<TextMeshProUGUI> ().text = buttonObjectWithBind.Code.ToShortname ();
 				} else {
-					arrowLeft.SetActive (false);
+					arrowLeft.SetActive (value: false);
 				}
-				Button buttonObjectWithBind2 = Input.GetButtonObjectWithBind ("+nextskin");
-				if (options [i].actionNext != null && buttonObjectWithBind2 != null && (int)buttonObjectWithBind2.Code > 0) {
-					arrowRight.SetActive (true);
-					((TMP_Text)arrowRight.GetComponentInChildren<TextMeshProUGUI> ()).text = KeyCodeEx.ToShortname (buttonObjectWithBind2.Code, true);
+				Facepunch.Input.Button buttonObjectWithBind2 = Facepunch.Input.GetButtonObjectWithBind ("+nextskin");
+				if (options [i].actionNext != null && buttonObjectWithBind2 != null && buttonObjectWithBind2.Code != 0) {
+					arrowRight.SetActive (value: true);
+					arrowRight.GetComponentInChildren<TextMeshProUGUI> ().text = buttonObjectWithBind2.Code.ToShortname ();
 				} else {
-					arrowRight.SetActive (false);
+					arrowRight.SetActive (value: false);
 				}
 				string requirements = options [i].requirements;
 				if (requirements != null) {
 					requirements = requirements.Replace ("[e]", "<color=#CD412B>");
 					requirements = requirements.Replace ("[/e]", "</color>");
-					((TMP_Text)middleRequired).text = requirements;
+					middleRequired.text = requirements;
 				}
 				if (!options [i].showOverlay) {
-					((Graphic)options [i].option.imageIcon).color = colorIconHovered;
+					options [i].option.imageIcon.color = colorIconHovered;
 				}
 				if (selectedOption != options [i]) {
 					if (selectedOption != null && !options [i].disabled) {
@@ -418,21 +374,21 @@ public class PieMenu : UIBehaviour
 					}
 				}
 			} else {
-				((Graphic)options [i].option.imageIcon).material = IconMaterial;
+				options [i].option.imageIcon.material = IconMaterial;
 				if (options [i].overrideColorMode.HasValue) {
 					if (options [i].overrideColorMode.Value.Mode == MenuOption.ColorMode.PieMenuSpriteColorOption.CustomColor) {
-						((Graphic)options [i].option.imageIcon).color = options [i].overrideColorMode.Value.CustomColor;
+						options [i].option.imageIcon.color = options [i].overrideColorMode.Value.CustomColor;
 					} else if (options [i].overrideColorMode.Value.Mode == MenuOption.ColorMode.PieMenuSpriteColorOption.SpriteColor) {
-						((Graphic)options [i].option.imageIcon).color = Color.white;
-						((Graphic)options [i].option.imageIcon).material = null;
+						options [i].option.imageIcon.color = Color.white;
+						options [i].option.imageIcon.material = null;
 					}
 				} else {
-					((Graphic)options [i].option.imageIcon).color = colorIconActive;
+					options [i].option.imageIcon.color = colorIconActive;
 				}
 			}
 			if (options [i].disabled) {
-				((Graphic)options [i].option.imageIcon).color = colorIconDisabled;
-				((Graphic)options [i].option.background).color = colorBackgroundDisabled;
+				options [i].option.imageIcon.color = colorIconDisabled;
+				options [i].option.background.color = colorBackgroundDisabled;
 			}
 		}
 	}

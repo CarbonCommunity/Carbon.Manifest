@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -29,82 +30,61 @@ public class PowerCounter : IOEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("PowerCounter.OnRpcMessage", 0);
-		try {
-			if (rpc == 3554226761u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("PowerCounter.OnRpcMessage")) {
+			if (rpc == 3554226761u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - SERVER_SetTarget "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - SERVER_SetTarget "));
 				}
-				TimeWarning val2 = TimeWarning.New ("SERVER_SetTarget", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("SERVER_SetTarget")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (3554226761u, "SERVER_SetTarget", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							SERVER_SetTarget (msg2);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in SERVER_SetTarget");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 3222475159u && (Object)(object)player != (Object)null) {
+			if (rpc == 3222475159u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - ToggleDisplayMode "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - ToggleDisplayMode "));
 				}
-				TimeWarning val5 = TimeWarning.New ("ToggleDisplayMode", 0);
-				try {
-					TimeWarning val6 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("ToggleDisplayMode")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (3222475159u, "ToggleDisplayMode", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val6)?.Dispose ();
 					}
 					try {
-						TimeWarning val7 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg3 = rPCMessage;
 							ToggleDisplayMode (msg3);
-						} finally {
-							((IDisposable)val7)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in ToggleDisplayMode");
 					}
-				} finally {
-					((IDisposable)val5)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -121,7 +101,7 @@ public class PowerCounter : IOEntity
 
 	public bool CanPlayerAdmin (BasePlayer player)
 	{
-		return (Object)(object)player != (Object)null && player.CanBuild ();
+		return player != null && player.CanBuild ();
 	}
 
 	public int GetTarget ()
@@ -168,7 +148,7 @@ public class PowerCounter : IOEntity
 	{
 		base.Save (info);
 		if (info.msg.ioEntity == null) {
-			info.msg.ioEntity = Pool.Get<IOEntity> ();
+			info.msg.ioEntity = Facepunch.Pool.Get<ProtoBuf.IOEntity> ();
 		}
 		info.msg.ioEntity.genericInt1 = counterNumber;
 		info.msg.ioEntity.genericInt2 = GetPassthroughAmount ();

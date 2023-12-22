@@ -1,4 +1,3 @@
-using System;
 using Facepunch;
 using ProtoBuf;
 using UnityEngine;
@@ -20,9 +19,9 @@ public class SlidingProgressDoor : ProgressDoor
 	public override void Spawn ()
 	{
 		base.Spawn ();
-		((FacepunchBehaviour)this).InvokeRepeating ((Action)ServerUpdate, 0f, 0.1f);
-		if ((Object)(object)vehiclePhysBox != (Object)null) {
-			((Component)vehiclePhysBox).gameObject.SetActive (false);
+		InvokeRepeating (ServerUpdate, 0f, 0.1f);
+		if (vehiclePhysBox != null) {
+			vehiclePhysBox.gameObject.SetActive (value: false);
 		}
 	}
 
@@ -48,21 +47,21 @@ public class SlidingProgressDoor : ProgressDoor
 		float num = Time.realtimeSinceStartup - lastServerUpdateTime;
 		lastServerUpdateTime = Time.realtimeSinceStartup;
 		if (Time.time > lastEnergyTime + 0.333f) {
-			float num2 = energyForOpen * num / secondsToClose;
-			float num3 = Mathf.Min (storedEnergy, num2);
-			if ((Object)(object)vehiclePhysBox != (Object)null) {
-				((Component)vehiclePhysBox).gameObject.SetActive (num3 > 0f && storedEnergy > 0f);
-				if (((Component)vehiclePhysBox).gameObject.activeSelf && vehiclePhysBox.ContentsCount > 0) {
-					num3 = 0f;
+			float b = energyForOpen * num / secondsToClose;
+			float num2 = Mathf.Min (storedEnergy, b);
+			if (vehiclePhysBox != null) {
+				vehiclePhysBox.gameObject.SetActive (num2 > 0f && storedEnergy > 0f);
+				if (vehiclePhysBox.gameObject.activeSelf && vehiclePhysBox.ContentsCount > 0) {
+					num2 = 0f;
 				}
 			}
-			storedEnergy -= num3;
+			storedEnergy -= num2;
 			storedEnergy = Mathf.Clamp (storedEnergy, 0f, energyForOpen);
-			if (num3 > 0f) {
+			if (num2 > 0f) {
 				IOSlot[] array = outputs;
 				foreach (IOSlot iOSlot in array) {
-					if ((Object)(object)iOSlot.connectedTo.Get () != (Object)null) {
-						iOSlot.connectedTo.Get ().IOInput (this, ioType, 0f - num3, iOSlot.connectedToSlot);
+					if (iOSlot.connectedTo.Get () != null) {
+						iOSlot.connectedTo.Get ().IOInput (this, ioType, 0f - num2, iOSlot.connectedToSlot);
 					}
 				}
 			}
@@ -72,21 +71,12 @@ public class SlidingProgressDoor : ProgressDoor
 
 	public override void UpdateProgress ()
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
 		Vector3 localPosition = doorObject.transform.localPosition;
-		float num = storedEnergy / energyForOpen;
-		Vector3 val = Vector3.Lerp (closedPosition, openPosition, num);
-		doorObject.transform.localPosition = val;
+		float t = storedEnergy / energyForOpen;
+		Vector3 vector = Vector3.Lerp (closedPosition, openPosition, t);
+		doorObject.transform.localPosition = vector;
 		if (base.isServer) {
-			bool flag = Vector3.Distance (localPosition, val) > 0.01f;
+			bool flag = Vector3.Distance (localPosition, vector) > 0.01f;
 			SetFlag (Flags.Reserved1, flag);
 			if (flag) {
 				SendNetworkUpdate ();
@@ -104,7 +94,7 @@ public class SlidingProgressDoor : ProgressDoor
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.sphereEntity = Pool.Get<SphereEntity> ();
+		info.msg.sphereEntity = Pool.Get<ProtoBuf.SphereEntity> ();
 		info.msg.sphereEntity.radius = storedEnergy;
 	}
 }

@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -83,7 +84,7 @@ public class BaseVehicleModule : BaseVehicle, IPrefabPreProcess
 
 	public NetworkableId ID => net.ID;
 
-	public bool IsOnAVehicle => (Object)(object)Vehicle != (Object)null;
+	public bool IsOnAVehicle => Vehicle != null;
 
 	public ItemDefinition AssociatedItemDef => repair.itemTarget;
 
@@ -93,46 +94,34 @@ public class BaseVehicleModule : BaseVehicle, IPrefabPreProcess
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("BaseVehicleModule.OnRpcMessage", 0);
-		try {
-			if (rpc == 2683376664u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("BaseVehicleModule.OnRpcMessage")) {
+			if (rpc == 2683376664u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_Use "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_Use "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_Use", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_Use")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (2683376664u, "RPC_Use", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							RPC_Use (msg2);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_Use");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -143,14 +132,11 @@ public class BaseVehicleModule : BaseVehicle, IPrefabPreProcess
 
 	public override void VehicleFixedUpdate ()
 	{
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0074: Unknown result type (might be due to invalid IL or missing references)
 		if (isSpawned && IsOnAVehicle) {
 			base.VehicleFixedUpdate ();
-			if (Vehicle.IsEditableNow && AssociatedItemInstance != null && TimeSince.op_Implicit (timeSinceItemLockRefresh) > 1f) {
+			if (Vehicle.IsEditableNow && AssociatedItemInstance != null && (float)timeSinceItemLockRefresh > 1f) {
 				AssociatedItemInstance.LockUnlock (!CanBeMovedNow ());
-				timeSinceItemLockRefresh = TimeSince.op_Implicit (0f);
+				timeSinceItemLockRefresh = 0f;
 			}
 			for (int i = 0; i < slidingComponents.Length; i++) {
 				slidingComponents [i].ServerUpdateTick (this);
@@ -220,7 +206,7 @@ public class BaseVehicleModule : BaseVehicle, IPrefabPreProcess
 		if (!CanBeUsedNowBy (player)) {
 			return;
 		}
-		string lookingAtColldierName = msg.read.String (256);
+		string lookingAtColldierName = msg.read.String ();
 		VehicleModuleSlidingComponent[] array = slidingComponents;
 		foreach (VehicleModuleSlidingComponent vehicleModuleSlidingComponent in array) {
 			if (PlayerIsLookingAtUsable (lookingAtColldierName, vehicleModuleSlidingComponent.interactionColliderName)) {
@@ -230,7 +216,7 @@ public class BaseVehicleModule : BaseVehicle, IPrefabPreProcess
 		}
 		VehicleModuleButtonComponent[] array2 = buttonComponents;
 		foreach (VehicleModuleButtonComponent vehicleModuleButtonComponent in array2) {
-			if ((Object)(object)vehicleModuleButtonComponent == (Object)null) {
+			if (vehicleModuleButtonComponent == null) {
 				break;
 			}
 			if (PlayerIsLookingAtUsable (lookingAtColldierName, vehicleModuleButtonComponent.interactionColliderName)) {
@@ -262,29 +248,29 @@ public class BaseVehicleModule : BaseVehicle, IPrefabPreProcess
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.vehicleModule = Pool.Get<VehicleModule> ();
+		info.msg.vehicleModule = Facepunch.Pool.Get<VehicleModule> ();
 		info.msg.vehicleModule.socketIndex = FirstSocketIndex;
 	}
 
 	public override void PreProcess (IPrefabProcessor process, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
 	{
 		base.PreProcess (process, rootObj, name, serverside, clientside, bundling);
-		damageRenderer = ((Component)this).GetComponent<DamageRenderer> ();
+		damageRenderer = GetComponent<DamageRenderer> ();
 		RefreshParameters ();
-		lights = ((Component)this).GetComponentsInChildren<VehicleLight> ();
+		lights = GetComponentsInChildren<VehicleLight> ();
 	}
 
 	public void RefreshParameters ()
 	{
 		for (int num = conditionals.Count - 1; num >= 0; num--) {
 			ConditionalObject conditionalObject = conditionals [num];
-			if ((Object)(object)conditionalObject.gameObject == (Object)null) {
+			if (conditionalObject.gameObject == null) {
 				conditionals.RemoveAt (num);
 			} else if (conditionalObject.restrictOnHealth) {
 				conditionalObject.healthRestrictionMin = Mathf.Clamp01 (conditionalObject.healthRestrictionMin);
 				conditionalObject.healthRestrictionMax = Mathf.Clamp01 (conditionalObject.healthRestrictionMax);
 			}
-			if ((Object)(object)conditionalObject.gameObject != (Object)null) {
+			if (conditionalObject.gameObject != null) {
 				Gibbable component = conditionalObject.gameObject.GetComponent<Gibbable> ();
 				if (component != null) {
 					component.isConditional = true;
@@ -300,11 +286,9 @@ public class BaseVehicleModule : BaseVehicle, IPrefabPreProcess
 
 	public virtual void ModuleAdded (BaseModularVehicle vehicle, int firstSocketIndex)
 	{
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
 		Vehicle = vehicle;
 		FirstSocketIndex = firstSocketIndex;
-		TimeSinceAddedToVehicle = TimeSince.op_Implicit (0f);
+		TimeSinceAddedToVehicle = 0f;
 		if (base.isServer) {
 			TriggerParent[] array = triggerParents;
 			foreach (TriggerParent triggerParent in array) {
@@ -355,7 +339,7 @@ public class BaseVehicleModule : BaseVehicle, IPrefabPreProcess
 
 	public override float MaxHealth ()
 	{
-		if ((Object)(object)AssociatedItemDef != (Object)null) {
+		if (AssociatedItemDef != null) {
 			return AssociatedItemDef.condition.max;
 		}
 		return base.MaxHealth ();
@@ -368,10 +352,10 @@ public class BaseVehicleModule : BaseVehicle, IPrefabPreProcess
 
 	public int GetNumSocketsTaken ()
 	{
-		if ((Object)(object)AssociatedItemDef == (Object)null) {
+		if (AssociatedItemDef == null) {
 			return 1;
 		}
-		ItemModVehicleModule component = ((Component)AssociatedItemDef).GetComponent<ItemModVehicleModule> ();
+		ItemModVehicleModule component = AssociatedItemDef.GetComponent<ItemModVehicleModule> ();
 		return component.socketsTaken;
 	}
 
@@ -379,7 +363,7 @@ public class BaseVehicleModule : BaseVehicle, IPrefabPreProcess
 	{
 		List<ConditionalObject> list = new List<ConditionalObject> ();
 		foreach (ConditionalObject conditional in conditionals) {
-			if ((Object)(object)conditional.gameObject != (Object)null) {
+			if (conditional.gameObject != null) {
 				list.Add (conditional);
 			}
 		}
@@ -411,7 +395,7 @@ public class BaseVehicleModule : BaseVehicle, IPrefabPreProcess
 
 	private void RefreshConditional (ConditionalObject conditional, bool canGib)
 	{
-		if (conditional == null || (Object)(object)conditional.gameObject == (Object)null) {
+		if (conditional == null || conditional.gameObject == null) {
 			return;
 		}
 		bool flag = true;
@@ -467,7 +451,7 @@ public class BaseVehicleModule : BaseVehicle, IPrefabPreProcess
 				for (int j = 0; j < conditional.socketSettings.Length; j++) {
 					ModularVehicleSocket socket = Vehicle.GetSocket (FirstSocketIndex + j);
 					if (socket == null) {
-						Debug.LogWarning ((object)$"{AssociatedItemDef.displayName.translated} module got NULL socket at index {FirstSocketIndex + j}. Total vehicle sockets: {Vehicle.TotalSockets} FirstSocketIndex: {FirstSocketIndex} Sockets taken: {conditional.socketSettings.Length}");
+						Debug.LogWarning ($"{AssociatedItemDef.displayName.translated} module got NULL socket at index {FirstSocketIndex + j}. Total vehicle sockets: {Vehicle.TotalSockets} FirstSocketIndex: {FirstSocketIndex} Sockets taken: {conditional.socketSettings.Length}");
 					}
 					flag = socket?.ShouldBeActive (conditional.socketSettings [j]) ?? false;
 					if (!flag) {
@@ -502,7 +486,7 @@ public class BaseVehicleModule : BaseVehicle, IPrefabPreProcess
 
 	private bool InSameVisualGroupAs (BaseVehicleModule moduleEntity, ConditionalObject.AdjacentMatchType matchType)
 	{
-		if ((Object)(object)moduleEntity == (Object)null) {
+		if (moduleEntity == null) {
 			return false;
 		}
 		if (visualGroup == VisualGroup.None) {
@@ -521,7 +505,7 @@ public class BaseVehicleModule : BaseVehicle, IPrefabPreProcess
 
 	private bool CanBeUsedNowBy (BasePlayer player)
 	{
-		if (!IsOnAVehicle || (Object)(object)player == (Object)null) {
+		if (!IsOnAVehicle || player == null) {
 			return false;
 		}
 		if (Vehicle.IsEditableNow || Vehicle.IsDead () || !Vehicle.PlayerIsMounted (player)) {

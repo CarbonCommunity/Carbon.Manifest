@@ -14,22 +14,10 @@ public class PowerLineWireConnectionDef
 
 	public PowerLineWireConnectionDef ()
 	{
-	}//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-	//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-	//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-	//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-
+	}
 
 	public PowerLineWireConnectionDef (PowerLineWireConnectionDef src)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0037: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
 		inOffset = src.inOffset;
 		outOffset = src.outOffset;
 		radius = src.radius;

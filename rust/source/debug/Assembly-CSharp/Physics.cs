@@ -54,11 +54,9 @@ public class Physics : ConsoleSystem
 	[ServerVar (Help = "Gravity multiplier")]
 	public static float gravity {
 		get {
-			//IL_0001: Unknown result type (might be due to invalid IL or missing references)
 			return Physics.gravity.y / -9.81f;
 		}
 		set {
-			//IL_0012: Unknown result type (might be due to invalid IL or missing references)
 			Physics.gravity = new Vector3 (0f, value * -9.81f, 0f);
 		}
 	}

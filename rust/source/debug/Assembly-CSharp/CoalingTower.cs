@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -205,14 +206,8 @@ public class CoalingTower : IOEntity, INotifyEntityTrigger
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0060: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0080: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
-		info.msg.coalingTower = Pool.Get<CoalingTower> ();
+		info.msg.coalingTower = Facepunch.Pool.Get<ProtoBuf.CoalingTower> ();
 		info.msg.coalingTower.lootTypeIndex = LootTypeIndex;
 		info.msg.coalingTower.oreStorageID = oreStorageInstance.uid;
 		info.msg.coalingTower.fuelStorageID = fuelStorageInstance.uid;
@@ -251,7 +246,7 @@ public class CoalingTower : IOEntity, INotifyEntityTrigger
 	{
 		if (ent.IsValid () && !ent.isClient) {
 			TrainCar trainCar = ent as TrainCar;
-			if ((Object)(object)trainCar != (Object)null) {
+			if (trainCar != null) {
 				SetActiveTrainCar (trainCar);
 			}
 		}
@@ -262,7 +257,7 @@ public class CoalingTower : IOEntity, INotifyEntityTrigger
 		if (ent.IsValid () && !ent.isClient) {
 			BaseEntity baseEntity = ent.parentEntity.Get (base.isServer);
 			TrainCar trainCar = activeTrainCarRef.Get (serverside: true);
-			if ((Object)(object)trainCar == (Object)(object)ent && (Object)(object)trainCar != (Object)(object)baseEntity) {
+			if (trainCar == ent && trainCar != baseEntity) {
 				ClearActiveTrainCar ();
 			}
 		}
@@ -271,7 +266,7 @@ public class CoalingTower : IOEntity, INotifyEntityTrigger
 	private void SetActiveTrainCar (TrainCar trainCar)
 	{
 		TrainCar activeTrainCar = GetActiveTrainCar ();
-		if (!((Object)(object)activeTrainCar == (Object)(object)trainCar)) {
+		if (!(activeTrainCar == trainCar)) {
 			activeTrainCarRef.Set (trainCar);
 			if (trainCar is TrainCarUnloadable entity) {
 				activeUnloadableRef.Set (entity);
@@ -281,9 +276,9 @@ public class CoalingTower : IOEntity, INotifyEntityTrigger
 			bool flag = activeUnloadableRef.IsValid (serverside: true);
 			CheckWagonLinedUp (networkUpdate: false);
 			if (flag) {
-				((FacepunchBehaviour)this).InvokeRandomized ((Action)CheckWagonLinedUp, 0.15f, 0.15f, 0.015f);
+				InvokeRandomized (CheckWagonLinedUp, 0.15f, 0.15f, 0.015f);
 			} else {
-				((FacepunchBehaviour)this).CancelInvoke ((Action)CheckWagonLinedUp);
+				CancelInvoke (CheckWagonLinedUp);
 			}
 			SendNetworkUpdate ();
 		}
@@ -303,7 +298,7 @@ public class CoalingTower : IOEntity, INotifyEntityTrigger
 	{
 		bool b = false;
 		TrainCarUnloadable activeUnloadable = GetActiveUnloadable ();
-		if ((Object)(object)activeUnloadable != (Object)null) {
+		if (activeUnloadable != null) {
 			b = activeUnloadable.IsLinedUpToUnload (unloadingBounds);
 		}
 		SetFlag (Flags.Reserved2, b, recursive: false, networkUpdate);
@@ -312,7 +307,7 @@ public class CoalingTower : IOEntity, INotifyEntityTrigger
 	private bool TryUnloadActiveWagon (out ActionAttemptStatus attemptStatus)
 	{
 		TrainCarUnloadable activeUnloadable = GetActiveUnloadable ();
-		if ((Object)(object)activeUnloadable == (Object)null) {
+		if (activeUnloadable == null) {
 			attemptStatus = ActionAttemptStatus.NoTrainCar;
 			return false;
 		}
@@ -321,14 +316,14 @@ public class CoalingTower : IOEntity, INotifyEntityTrigger
 			return false;
 		}
 		SetFlag (Flags.Busy, b: true);
-		((FacepunchBehaviour)this).Invoke ((Action)WagonBeginUnloadAnim, vacuumStartDelay);
+		Invoke (WagonBeginUnloadAnim, vacuumStartDelay);
 		return true;
 	}
 
 	private void WagonBeginUnloadAnim ()
 	{
 		TrainCarUnloadable activeUnloadable = GetActiveUnloadable ();
-		if ((Object)(object)activeUnloadable == (Object)null) {
+		if (activeUnloadable == null) {
 			SetFlag (Flags.Busy, b: false);
 			return;
 		}
@@ -340,8 +335,8 @@ public class CoalingTower : IOEntity, INotifyEntityTrigger
 		LootTypeIndex.Value = index;
 		tcUnloadingNow = activeUnloadable;
 		tcUnloadingNow.BeginUnloadAnimation ();
-		float num = 4f;
-		((FacepunchBehaviour)this).InvokeRepeating ((Action)EmptyTenPercent, 0f, num);
+		float repeat = 4f;
+		InvokeRepeating (EmptyTenPercent, 0f, repeat);
 	}
 
 	private void EmptyTenPercent ()
@@ -355,7 +350,7 @@ public class CoalingTower : IOEntity, INotifyEntityTrigger
 			return;
 		}
 		TrainCarUnloadable activeUnloadable = GetActiveUnloadable ();
-		if ((Object)(object)tcUnloadingNow == (Object)null || (Object)(object)activeUnloadable != (Object)(object)tcUnloadingNow) {
+		if (tcUnloadingNow == null || activeUnloadable != tcUnloadingNow) {
 			EndEmptyProcess (ActionAttemptStatus.NoTrainCar);
 			return;
 		}
@@ -367,7 +362,7 @@ public class CoalingTower : IOEntity, INotifyEntityTrigger
 		bool flag = tcUnloadingNow.wagonType != TrainCarUnloadable.WagonType.Fuel;
 		ItemContainer itemContainer = null;
 		PercentFullStorageContainer percentFullStorageContainer = (flag ? GetOreStorage () : GetFuelStorage ());
-		if ((Object)(object)percentFullStorageContainer != (Object)null) {
+		if (percentFullStorageContainer != null) {
 			itemContainer = percentFullStorageContainer.inventory;
 		}
 		if (itemContainer == null) {
@@ -377,11 +372,11 @@ public class CoalingTower : IOEntity, INotifyEntityTrigger
 		ItemContainer inventory = storageContainer.inventory;
 		ItemContainer newcontainer = itemContainer;
 		int iAmount = Mathf.RoundToInt ((float)lootOption.maxLootAmount / 10f);
-		List<Item> list = Pool.GetList<Item> ();
-		int num = inventory.Take (list, lootOption.lootItem.itemid, iAmount);
+		List<Item> obj = Facepunch.Pool.GetList<Item> ();
+		int num = inventory.Take (obj, lootOption.lootItem.itemid, iAmount);
 		bool flag2 = true;
 		if (num > 0) {
-			foreach (Item item in list) {
+			foreach (Item item in obj) {
 				if (tcUnloadingNow.wagonType == TrainCarUnloadable.WagonType.Lootboxes) {
 					item.Remove ();
 					continue;
@@ -395,7 +390,7 @@ public class CoalingTower : IOEntity, INotifyEntityTrigger
 				break;
 			}
 		}
-		Pool.FreeList<Item> (ref list);
+		Facepunch.Pool.FreeList (ref obj);
 		float orePercent = tcUnloadingNow.GetOrePercent ();
 		if (orePercent == 0f) {
 			EndEmptyProcess (ActionAttemptStatus.NoError);
@@ -408,9 +403,9 @@ public class CoalingTower : IOEntity, INotifyEntityTrigger
 
 	private void EndEmptyProcess (ActionAttemptStatus status)
 	{
-		((FacepunchBehaviour)this).CancelInvoke ((Action)EmptyTenPercent);
-		((FacepunchBehaviour)this).CancelInvoke ((Action)WagonBeginUnloadAnim);
-		if ((Object)(object)tcUnloadingNow != (Object)null) {
+		CancelInvoke (EmptyTenPercent);
+		CancelInvoke (WagonBeginUnloadAnim);
+		if (tcUnloadingNow != null) {
 			tcUnloadingNow.EndEmptyProcess ();
 			tcUnloadingNow = null;
 		}
@@ -423,30 +418,12 @@ public class CoalingTower : IOEntity, INotifyEntityTrigger
 
 	private bool TryShuntTrain (bool next, out ActionAttemptStatus attemptStatus)
 	{
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0091: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0092: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0094: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0099: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0102: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0110: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0111: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0116: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0127: Unknown result type (might be due to invalid IL or missing references)
 		if (!IsPowered () || HasFlag (Flags.Reserved3) || HasFlag (Flags.Reserved4)) {
 			attemptStatus = ActionAttemptStatus.GenericError;
 			return false;
 		}
 		TrainCar activeTrainCar = GetActiveTrainCar ();
-		if ((Object)(object)activeTrainCar == (Object)null) {
+		if (activeTrainCar == null) {
 			attemptStatus = ActionAttemptStatus.NoTrainCar;
 			return false;
 		}
@@ -454,24 +431,24 @@ public class CoalingTower : IOEntity, INotifyEntityTrigger
 		unloadingPos.y = 0f;
 		TrainCar result;
 		if (activeTrainCar is TrainCarUnloadable && !HasUnloadableLinedUp) {
-			Vector3 position = ((Component)activeTrainCar).transform.position;
-			Vector3 val = unloadingPos - position;
-			bool flag = Vector3.Dot (((Component)this).transform.forward, val) >= 0f;
+			Vector3 position = activeTrainCar.transform.position;
+			Vector3 rhs = unloadingPos - position;
+			bool flag = Vector3.Dot (base.transform.forward, rhs) >= 0f;
 			if (flag == next) {
 				result = activeTrainCar;
 				goto IL_00f6;
 			}
 		}
-		if (!activeTrainCar.TryGetTrainCar (next, ((Component)this).transform.forward, out result)) {
+		if (!activeTrainCar.TryGetTrainCar (next, base.transform.forward, out result)) {
 			attemptStatus = (next ? ActionAttemptStatus.NoNextTrainCar : ActionAttemptStatus.NoPrevTrainCar);
 			return false;
 		}
 		goto IL_00f6;
 		IL_00f6:
-		Vector3 position2 = ((Component)result).transform.position;
+		Vector3 position2 = result.transform.position;
 		position2.y = 0f;
 		Vector3 shuntDirection = unloadingPos - position2;
-		float magnitude = ((Vector3)(ref shuntDirection)).magnitude;
+		float magnitude = shuntDirection.magnitude;
 		return activeTrainCar.completeTrain.TryShuntCarTo (shuntDirection, magnitude, result, ShuntEnded, out attemptStatus);
 	}
 
@@ -488,7 +465,7 @@ public class CoalingTower : IOEntity, INotifyEntityTrigger
 	[RPC_Server.MaxDistance (3f)]
 	private void RPC_Unload (RPCMessage msg)
 	{
-		if (!TryUnloadActiveWagon (out var attemptStatus) && (Object)(object)msg.player != (Object)null) {
+		if (!TryUnloadActiveWagon (out var attemptStatus) && msg.player != null) {
 			ClientRPCPlayer (null, msg.player, "ActionFailed", (byte)attemptStatus, arg2: true);
 		}
 	}
@@ -499,7 +476,7 @@ public class CoalingTower : IOEntity, INotifyEntityTrigger
 	{
 		if (TryShuntTrain (next: true, out var attemptStatus)) {
 			SetFlag (Flags.Reserved3, b: true);
-		} else if ((Object)(object)msg.player != (Object)null) {
+		} else if (msg.player != null) {
 			ClientRPCPlayer (null, msg.player, "ActionFailed", (byte)attemptStatus, arg2: true);
 		}
 	}
@@ -510,21 +487,16 @@ public class CoalingTower : IOEntity, INotifyEntityTrigger
 	{
 		if (TryShuntTrain (next: false, out var attemptStatus)) {
 			SetFlag (Flags.Reserved4, b: true);
-		} else if ((Object)(object)msg.player != (Object)null) {
+		} else if (msg.player != null) {
 			ClientRPCPlayer (null, msg.player, "ActionFailed", (byte)attemptStatus, arg2: true);
 		}
 	}
 
 	public override void InitShared ()
 	{
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
 		base.InitShared ();
 		LootTypeIndex = new NetworkedProperty<int> (this);
-		UnloadingPos = ((Component)unloadingBounds).transform.position + ((Component)unloadingBounds).transform.rotation * unloadingBounds.center;
+		UnloadingPos = unloadingBounds.transform.position + unloadingBounds.transform.rotation * unloadingBounds.center;
 		unloadersInWorld.Add (this);
 	}
 
@@ -536,8 +508,6 @@ public class CoalingTower : IOEntity, INotifyEntityTrigger
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (info.msg.coalingTower != null) {
 			LootTypeIndex.Value = info.msg.coalingTower.lootTypeIndex;
@@ -548,10 +518,6 @@ public class CoalingTower : IOEntity, INotifyEntityTrigger
 
 	public static bool IsUnderAnUnloader (TrainCar trainCar, out bool isLinedUp, out Vector3 unloaderPos)
 	{
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0059: Unknown result type (might be due to invalid IL or missing references)
 		foreach (CoalingTower item in unloadersInWorld) {
 			if (item.TrainCarIsUnder (trainCar, out isLinedUp)) {
 				unloaderPos = item.UnloadingPos;
@@ -570,7 +536,7 @@ public class CoalingTower : IOEntity, INotifyEntityTrigger
 			return false;
 		}
 		TrainCarUnloadable activeUnloadable = GetActiveUnloadable ();
-		if ((Object)(object)activeUnloadable != (Object)null && activeUnloadable.EqualNetID ((BaseNetworkable)trainCar)) {
+		if (activeUnloadable != null && activeUnloadable.EqualNetID (trainCar)) {
 			isLinedUp = HasUnloadableLinedUp;
 			return true;
 		}
@@ -616,7 +582,7 @@ public class CoalingTower : IOEntity, INotifyEntityTrigger
 	private bool OutputBinIsFull ()
 	{
 		TrainCarUnloadable activeUnloadable = GetActiveUnloadable ();
-		if ((Object)(object)activeUnloadable == (Object)null) {
+		if (activeUnloadable == null) {
 			return false;
 		}
 		switch (activeUnloadable.wagonType) {
@@ -624,11 +590,11 @@ public class CoalingTower : IOEntity, INotifyEntityTrigger
 			return false;
 		case TrainCarUnloadable.WagonType.Fuel: {
 			PercentFullStorageContainer fuelStorage = GetFuelStorage ();
-			return (Object)(object)fuelStorage != (Object)null && fuelStorage.IsFull ();
+			return fuelStorage != null && fuelStorage.IsFull ();
 		}
 		default: {
 			OreHopper oreStorage = GetOreStorage ();
-			return (Object)(object)oreStorage != (Object)null && oreStorage.IsFull ();
+			return oreStorage != null && oreStorage.IsFull ();
 		}
 		}
 	}
@@ -636,7 +602,7 @@ public class CoalingTower : IOEntity, INotifyEntityTrigger
 	private bool WagonIsEmpty ()
 	{
 		TrainCarUnloadable activeUnloadable = GetActiveUnloadable ();
-		if ((Object)(object)activeUnloadable != (Object)null) {
+		if (activeUnloadable != null) {
 			return activeUnloadable.GetOrePercent () == 0f;
 		}
 		return true;
@@ -658,118 +624,88 @@ public class CoalingTower : IOEntity, INotifyEntityTrigger
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("CoalingTower.OnRpcMessage", 0);
-		try {
-			if (rpc == 3071873383u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("CoalingTower.OnRpcMessage")) {
+			if (rpc == 3071873383u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_Next "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_Next "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_Next", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_Next")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (3071873383u, "RPC_Next", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							RPC_Next (msg2);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_Next");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 3656312045u && (Object)(object)player != (Object)null) {
+			if (rpc == 3656312045u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_Prev "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_Prev "));
 				}
-				TimeWarning val5 = TimeWarning.New ("RPC_Prev", 0);
-				try {
-					TimeWarning val6 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_Prev")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (3656312045u, "RPC_Prev", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val6)?.Dispose ();
 					}
 					try {
-						TimeWarning val7 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg3 = rPCMessage;
 							RPC_Prev (msg3);
-						} finally {
-							((IDisposable)val7)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in RPC_Prev");
 					}
-				} finally {
-					((IDisposable)val5)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 998476828 && (Object)(object)player != (Object)null) {
+			if (rpc == 998476828 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_Unload "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_Unload "));
 				}
-				TimeWarning val8 = TimeWarning.New ("RPC_Unload", 0);
-				try {
-					TimeWarning val9 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_Unload")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (998476828u, "RPC_Unload", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val9)?.Dispose ();
 					}
 					try {
-						TimeWarning val10 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg4 = rPCMessage;
 							RPC_Unload (msg4);
-						} finally {
-							((IDisposable)val10)?.Dispose ();
 						}
-					} catch (Exception ex3) {
-						Debug.LogException (ex3);
+					} catch (Exception exception3) {
+						Debug.LogException (exception3);
 						player.Kick ("RPC Error in RPC_Unload");
 					}
-				} finally {
-					((IDisposable)val8)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}

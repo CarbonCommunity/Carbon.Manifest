@@ -20,18 +20,7 @@ public class Marketplace : BaseEntity
 
 	public NetworkableId SendDrone (BasePlayer player, MarketTerminal sourceTerminal, VendingMachine vendingMachine)
 	{
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ad: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0079: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0080: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)sourceTerminal == (Object)null || (Object)(object)vendingMachine == (Object)null) {
+		if (sourceTerminal == null || vendingMachine == null) {
 			return default(NetworkableId);
 		}
 		BaseEntity baseEntity = GameManager.server.CreateEntity (deliveryDronePrefab?.resourcePath, droneLaunchPoint.position, droneLaunchPoint.rotation);
@@ -47,7 +36,6 @@ public class Marketplace : BaseEntity
 
 	public void ReturnDrone (DeliveryDrone deliveryDrone)
 	{
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
 		if (deliveryDrone.sourceTerminal.TryGet (serverside: true, out var entity)) {
 			entity.CompleteOrder (deliveryDrone.targetVendingMachine.uid);
 		}
@@ -57,15 +45,13 @@ public class Marketplace : BaseEntity
 	public override void Spawn ()
 	{
 		base.Spawn ();
-		if (!Application.isLoadingSave) {
+		if (!Rust.Application.isLoadingSave) {
 			SpawnSubEntities ();
 		}
 	}
 
 	private void SpawnSubEntities ()
 	{
-		//IL_00e1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e8: Unknown result type (might be due to invalid IL or missing references)
 		if (!base.isServer) {
 			return;
 		}
@@ -78,13 +64,13 @@ public class Marketplace : BaseEntity
 		}
 		Array.Resize (ref terminalEntities, terminalPoints.Length);
 		for (int j = 0; j < terminalPoints.Length; j++) {
-			Transform val = terminalPoints [j];
+			Transform transform = terminalPoints [j];
 			if (!terminalEntities [j].TryGet (serverside: true, out var _)) {
-				BaseEntity baseEntity = GameManager.server.CreateEntity (terminalPrefab?.resourcePath, val.position, val.rotation);
+				BaseEntity baseEntity = GameManager.server.CreateEntity (terminalPrefab?.resourcePath, transform.position, transform.rotation);
 				baseEntity.SetParent (this, worldPositionStays: true);
 				baseEntity.Spawn ();
 				if (!(baseEntity is MarketTerminal marketTerminal)) {
-					Debug.LogError ((object)("Marketplace.terminalPrefab did not spawn a MarketTerminal (it spawned " + ((object)baseEntity).GetType ().FullName + ")"));
+					Debug.LogError ("Marketplace.terminalPrefab did not spawn a MarketTerminal (it spawned " + baseEntity.GetType ().FullName + ")");
 					baseEntity.Kill ();
 				} else {
 					marketTerminal.Setup (this);
@@ -96,7 +82,6 @@ public class Marketplace : BaseEntity
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (info.msg.subEntityList != null) {
 			List<NetworkableId> subEntityIds = info.msg.subEntityList.subEntityIds;
@@ -110,7 +95,6 @@ public class Marketplace : BaseEntity
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_005d: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
 		info.msg.subEntityList = Pool.Get<SubEntityList> ();
 		info.msg.subEntityList.subEntityIds = Pool.GetList<NetworkableId> ();

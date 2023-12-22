@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -43,13 +42,13 @@ public class FileSystem_Warmup : MonoBehaviour
 		}
 		Stopwatch statusSw = Stopwatch.StartNew ();
 		Stopwatch sw = Stopwatch.StartNew ();
-		AssetPreloadResult preload = FileSystem.PreloadAssets ((IEnumerable<string>)assetList, Global.warmupConcurrency, priority);
+		AssetPreloadResult preload = FileSystem.PreloadAssets (assetList, Global.warmupConcurrency, priority);
 		int warmupIndex = 0;
-		while (((CustomYieldInstruction)preload).MoveNext () || warmupIndex < preload.TotalCount) {
+		while (preload.MoveNext () || warmupIndex < preload.TotalCount) {
 			float frameBudget = CalculateFrameBudget ();
 			if (frameBudget > 0f) {
 				while (warmupIndex < preload.Results.Count && sw.Elapsed.TotalSeconds < (double)frameBudget) {
-					PrefabWarmup (preload.Results [warmupIndex++].Item1);
+					PrefabWarmup (preload.Results [warmupIndex++].AssetPath);
 				}
 			}
 			if (warmupIndex == 0 || warmupIndex == preload.TotalCount || statusSw.Elapsed.TotalSeconds > 1.0) {
@@ -88,7 +87,7 @@ public class FileSystem_Warmup : MonoBehaviour
 	private static bool ShouldIgnore (string path)
 	{
 		for (int i = 0; i < ExcludeFilter.Length; i++) {
-			if (StringEx.Contains (path, ExcludeFilter [i], CompareOptions.IgnoreCase)) {
+			if (path.Contains (ExcludeFilter [i], CompareOptions.IgnoreCase)) {
 				return true;
 			}
 		}

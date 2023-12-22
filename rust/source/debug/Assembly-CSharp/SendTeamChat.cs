@@ -14,7 +14,7 @@ public class SendTeamChat : BaseHandler<AppSendMessage>
 			SendSuccess ();
 			return;
 		}
-		text = StringExtensions.Truncate (text, 256, "…");
+		text = text.Truncate (256, "…");
 		string username = base.Player?.displayName ?? SingletonComponent<ServerMgr>.Instance.persistance.GetPlayerName (base.UserId) ?? "[unknown]";
 		if (Chat.sayAs (Chat.ChatChannel.Team, base.UserId, username, text, base.Player)) {
 			SendSuccess ();

@@ -43,16 +43,16 @@ public class GenerateDungeonBase : ProceduralComponent
 
 	private List<DungeonSegment> segmentsTotal = new List<DungeonSegment> ();
 
-	private Quaternion[] horizontalRotations = (Quaternion[])(object)new Quaternion[1] { Quaternion.Euler (0f, 0f, 0f) };
+	private Quaternion[] horizontalRotations = new Quaternion[1] { Quaternion.Euler (0f, 0f, 0f) };
 
-	private Quaternion[] pillarRotations = (Quaternion[])(object)new Quaternion[4] {
+	private Quaternion[] pillarRotations = new Quaternion[4] {
 		Quaternion.Euler (0f, 0f, 0f),
 		Quaternion.Euler (0f, 90f, 0f),
 		Quaternion.Euler (0f, 180f, 0f),
 		Quaternion.Euler (0f, 270f, 0f)
 	};
 
-	private Quaternion[] verticalRotations = (Quaternion[])(object)new Quaternion[8] {
+	private Quaternion[] verticalRotations = new Quaternion[8] {
 		Quaternion.Euler (0f, 0f, 0f),
 		Quaternion.Euler (0f, 45f, 0f),
 		Quaternion.Euler (0f, 90f, 0f),
@@ -67,13 +67,6 @@ public class GenerateDungeonBase : ProceduralComponent
 
 	public override void Process (uint seed)
 	{
-		//IL_019a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_019f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0444: Unknown result type (might be due to invalid IL or missing references)
-		//IL_044b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0450: Unknown result type (might be due to invalid IL or missing references)
 		if (World.Cached) {
 			TerrainMeta.Path.DungeonBaseRoot = HierarchyUtil.GetRoot ("DungeonBase");
 			return;
@@ -83,25 +76,25 @@ public class GenerateDungeonBase : ProceduralComponent
 			TerrainMeta.Path.DungeonBaseRoot = HierarchyUtil.GetRoot ("DungeonBase");
 			return;
 		}
-		Prefab<DungeonBaseLink>[] array = Prefab.Load<DungeonBaseLink> ("assets/bundled/prefabs/autospawn/" + EntranceFolder, (GameManager)null, (PrefabAttribute.Library)null, useProbabilities: true);
+		Prefab<DungeonBaseLink>[] array = Prefab.Load<DungeonBaseLink> ("assets/bundled/prefabs/autospawn/" + EntranceFolder);
 		if (array == null) {
 			return;
 		}
-		Prefab<DungeonBaseLink>[] array2 = Prefab.Load<DungeonBaseLink> ("assets/bundled/prefabs/autospawn/" + LinkFolder, (GameManager)null, (PrefabAttribute.Library)null, useProbabilities: true);
+		Prefab<DungeonBaseLink>[] array2 = Prefab.Load<DungeonBaseLink> ("assets/bundled/prefabs/autospawn/" + LinkFolder);
 		if (array2 == null) {
 			return;
 		}
-		Prefab<DungeonBaseLink>[] array3 = Prefab.Load<DungeonBaseLink> ("assets/bundled/prefabs/autospawn/" + EndFolder, (GameManager)null, (PrefabAttribute.Library)null, useProbabilities: true);
+		Prefab<DungeonBaseLink>[] array3 = Prefab.Load<DungeonBaseLink> ("assets/bundled/prefabs/autospawn/" + EndFolder);
 		if (array3 == null) {
 			return;
 		}
-		Prefab<DungeonBaseTransition>[] array4 = Prefab.Load<DungeonBaseTransition> ("assets/bundled/prefabs/autospawn/" + TransitionFolder, (GameManager)null, (PrefabAttribute.Library)null, useProbabilities: true);
+		Prefab<DungeonBaseTransition>[] array4 = Prefab.Load<DungeonBaseTransition> ("assets/bundled/prefabs/autospawn/" + TransitionFolder);
 		if (array4 == null) {
 			return;
 		}
-		List<DungeonBaseInfo> list = (Object.op_Implicit ((Object)(object)TerrainMeta.Path) ? TerrainMeta.Path.DungeonBaseEntrances : null);
+		List<DungeonBaseInfo> list = (TerrainMeta.Path ? TerrainMeta.Path.DungeonBaseEntrances : null);
 		foreach (DungeonBaseInfo item in list) {
-			TerrainPathConnect[] componentsInChildren = ((Component)item).GetComponentsInChildren<TerrainPathConnect> (true);
+			TerrainPathConnect[] componentsInChildren = item.GetComponentsInChildren<TerrainPathConnect> (includeInactive: true);
 			foreach (TerrainPathConnect terrainPathConnect in componentsInChildren) {
 				if (terrainPathConnect.Type != ConnectionType) {
 					continue;
@@ -110,9 +103,9 @@ public class GenerateDungeonBase : ProceduralComponent
 				List<DungeonSegment> list2 = new List<DungeonSegment> ();
 				DungeonSegment segmentStart = new DungeonSegment ();
 				int num = 0;
-				segmentStart.position = ((Component)item).transform.position;
-				segmentStart.rotation = ((Component)item).transform.rotation;
-				segmentStart.link = ((Component)item).GetComponentInChildren<DungeonBaseLink> ();
+				segmentStart.position = item.transform.position;
+				segmentStart.rotation = item.transform.rotation;
+				segmentStart.link = item.GetComponentInChildren<DungeonBaseLink> ();
 				segmentStart.cost = 0;
 				segmentStart.floor = 0;
 				for (int j = 0; j < 25; j++) {
@@ -126,12 +119,12 @@ public class GenerateDungeonBase : ProceduralComponent
 					}
 				}
 				if (list2.Count > 5) {
-					list2 = list2.OrderByDescending ((DungeonSegment x) => Vector3Ex.SqrMagnitude2D (x.position - segmentStart.position)).ToList ();
+					list2 = list2.OrderByDescending ((DungeonSegment x) => (x.position - segmentStart.position).SqrMagnitude2D ()).ToList ();
 					PlaceSegments (ref seed2, 1, 4, 2, attachToFemale: true, attachToMale: false, list2, array);
 				}
 				if (list2.Count > 25) {
 					DungeonSegment segmentEnd = list2 [list2.Count - 1];
-					list2 = list2.OrderByDescending ((DungeonSegment x) => Mathf.Min (Vector3Ex.SqrMagnitude2D (x.position - segmentStart.position), Vector3Ex.SqrMagnitude2D (x.position - segmentEnd.position))).ToList ();
+					list2 = list2.OrderByDescending ((DungeonSegment x) => Mathf.Min ((x.position - segmentStart.position).SqrMagnitude2D (), (x.position - segmentEnd.position).SqrMagnitude2D ())).ToList ();
 					PlaceSegments (ref seed2, 1, 5, 2, attachToFemale: true, attachToMale: false, list2, array);
 				}
 				bool flag = true;
@@ -155,7 +148,7 @@ public class GenerateDungeonBase : ProceduralComponent
 				World.AddPrefab ("DungeonBase", item2.prefab, item2.position, item2.rotation, Vector3.one);
 			}
 		}
-		if (Object.op_Implicit ((Object)(object)TerrainMeta.Path)) {
+		if ((bool)TerrainMeta.Path) {
 			TerrainMeta.Path.DungeonBaseRoot = HierarchyUtil.GetRoot ("DungeonBase");
 		}
 	}
@@ -177,43 +170,24 @@ public class GenerateDungeonBase : ProceduralComponent
 
 	private bool IsFullyOccupied (List<DungeonSegment> segments, DungeonSegment segment)
 	{
-		//IL_000a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
 		return SocketMatches (segments, segment.link, segment.position, segment.rotation) == segment.link.Sockets.Count;
 	}
 
 	private bool NeighbourMatches (List<DungeonSegment> segments, DungeonBaseTransition transition, Vector3 transitionPos, Quaternion transitionRot)
 	{
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0080: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0086: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0092: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0097: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ab: Unknown result type (might be due to invalid IL or missing references)
 		bool flag = false;
 		bool flag2 = false;
 		foreach (DungeonSegment segment in segments) {
-			Vector3 val;
-			if ((Object)(object)segment.link == (Object)null) {
-				val = segment.position - transitionPos;
-				if (((Vector3)(ref val)).sqrMagnitude < 0.01f) {
+			if (segment.link == null) {
+				if ((segment.position - transitionPos).sqrMagnitude < 0.01f) {
 					flag = false;
 					flag2 = false;
 				}
 				continue;
 			}
 			foreach (DungeonBaseSocket socket in segment.link.Sockets) {
-				Vector3 val2 = segment.position + segment.rotation * ((Component)socket).transform.localPosition;
-				val = val2 - transitionPos;
-				if (((Vector3)(ref val)).sqrMagnitude < 0.01f) {
+				Vector3 vector = segment.position + segment.rotation * socket.transform.localPosition;
+				if ((vector - transitionPos).sqrMagnitude < 0.01f) {
 					if (!flag && segment.link.Type == transition.Neighbour1) {
 						flag = true;
 					} else if (!flag2 && segment.link.Type == transition.Neighbour2) {
@@ -227,31 +201,14 @@ public class GenerateDungeonBase : ProceduralComponent
 
 	private int SocketMatches (List<DungeonSegment> segments, DungeonBaseLink link, Vector3 linkPos, Quaternion linkRot)
 	{
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0089: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0093: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0098: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ad: Unknown result type (might be due to invalid IL or missing references)
 		int num = 0;
 		foreach (DungeonSegment segment in segments) {
 			foreach (DungeonBaseSocket socket in segment.link.Sockets) {
-				Vector3 val = segment.position + segment.rotation * ((Component)socket).transform.localPosition;
+				Vector3 vector = segment.position + segment.rotation * socket.transform.localPosition;
 				foreach (DungeonBaseSocket socket2 in link.Sockets) {
-					if (!((Object)(object)socket == (Object)(object)socket2)) {
-						Vector3 val2 = linkPos + linkRot * ((Component)socket2).transform.localPosition;
-						Vector3 val3 = val - val2;
-						if (((Vector3)(ref val3)).sqrMagnitude < 0.01f) {
+					if (!(socket == socket2)) {
+						Vector3 vector2 = linkPos + linkRot * socket2.transform.localPosition;
+						if ((vector - vector2).sqrMagnitude < 0.01f) {
 							num++;
 						}
 					}
@@ -263,22 +220,11 @@ public class GenerateDungeonBase : ProceduralComponent
 
 	private bool IsOccupied (List<DungeonSegment> segments, DungeonBaseSocket socket, Vector3 socketPos, Quaternion socketRot)
 	{
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0064: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0066: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0069: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006e: Unknown result type (might be due to invalid IL or missing references)
 		foreach (DungeonSegment segment in segments) {
 			foreach (DungeonBaseSocket socket2 in segment.link.Sockets) {
-				if (!((Object)(object)socket2 == (Object)(object)socket)) {
-					Vector3 val = segment.position + segment.rotation * ((Component)socket2).transform.localPosition;
-					Vector3 val2 = val - socketPos;
-					if (((Vector3)(ref val2)).sqrMagnitude < 0.01f) {
+				if (!(socket2 == socket)) {
+					Vector3 vector = segment.position + segment.rotation * socket2.transform.localPosition;
+					if ((vector - socketPos).sqrMagnitude < 0.01f) {
 						return true;
 					}
 				}
@@ -290,12 +236,12 @@ public class GenerateDungeonBase : ProceduralComponent
 	private int CountLocal (List<DungeonSegment> segments, DungeonBaseLink link)
 	{
 		int num = 0;
-		if ((Object)(object)link == (Object)null) {
+		if (link == null) {
 			return num;
 		}
 		foreach (DungeonSegment segment in segments) {
-			if (!((Object)(object)segment.link == (Object)null)) {
-				if ((Object)(object)segment.link == (Object)(object)link) {
+			if (!(segment.link == null)) {
+				if (segment.link == link) {
 					num++;
 				} else if (segment.link.MaxCountIdentifier >= 0 && segment.link.MaxCountIdentifier == link.MaxCountIdentifier) {
 					num++;
@@ -308,12 +254,12 @@ public class GenerateDungeonBase : ProceduralComponent
 	private int CountGlobal (List<DungeonSegment> segments, DungeonBaseLink link)
 	{
 		int num = 0;
-		if ((Object)(object)link == (Object)null) {
+		if (link == null) {
 			return num;
 		}
 		foreach (DungeonSegment segment in segments) {
-			if (!((Object)(object)segment.link == (Object)null)) {
-				if ((Object)(object)segment.link == (Object)(object)link) {
+			if (!(segment.link == null)) {
+				if (segment.link == link) {
 					num++;
 				} else if (segment.link.MaxCountIdentifier >= 0 && segment.link.MaxCountIdentifier == link.MaxCountIdentifier) {
 					num++;
@@ -321,8 +267,8 @@ public class GenerateDungeonBase : ProceduralComponent
 			}
 		}
 		foreach (DungeonSegment item in segmentsTotal) {
-			if (!((Object)(object)item.link == (Object)null)) {
-				if ((Object)(object)item.link == (Object)(object)link) {
+			if (!(item.link == null)) {
+				if (item.link == link) {
 					num++;
 				} else if (item.link.MaxCountIdentifier >= 0 && item.link.MaxCountIdentifier == link.MaxCountIdentifier) {
 					num++;
@@ -334,82 +280,25 @@ public class GenerateDungeonBase : ProceduralComponent
 
 	private bool IsBlocked (List<DungeonSegment> segments, DungeonBaseLink link, Vector3 linkPos, Quaternion linkRot)
 	{
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0076: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0082: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0087: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0090: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0244: Unknown result type (might be due to invalid IL or missing references)
-		//IL_024b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0250: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0255: Unknown result type (might be due to invalid IL or missing references)
-		//IL_025a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ec: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0102: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0107: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0279: Unknown result type (might be due to invalid IL or missing references)
-		//IL_027a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0283: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0288: Unknown result type (might be due to invalid IL or missing references)
-		//IL_028d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0292: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0296: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0147: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0151: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0156: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0158: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0161: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02d0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02d7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02e3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02e8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02ed: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02f2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02f4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02f6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02f8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02fd: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 val3;
 		foreach (DungeonVolume volume in link.Volumes) {
 			OBB bounds = volume.GetBounds (linkPos, linkRot, VolumeExtrudeNegative);
 			OBB bounds2 = volume.GetBounds (linkPos, linkRot, VolumeExtrudePositive);
 			foreach (DungeonSegment segment in segments) {
 				foreach (DungeonVolume volume2 in segment.link.Volumes) {
 					OBB bounds3 = volume2.GetBounds (segment.position, segment.rotation, VolumeExtrudeNegative);
-					if (((OBB)(ref bounds)).Intersects (bounds3)) {
+					if (bounds.Intersects (bounds3)) {
 						return true;
 					}
 				}
 				foreach (DungeonBaseSocket socket in segment.link.Sockets) {
-					Vector3 val = segment.position + segment.rotation * ((Component)socket).transform.localPosition;
-					if (!((OBB)(ref bounds2)).Contains (val)) {
+					Vector3 vector = segment.position + segment.rotation * socket.transform.localPosition;
+					if (!bounds2.Contains (vector)) {
 						continue;
 					}
 					bool flag = false;
 					foreach (DungeonBaseSocket socket2 in link.Sockets) {
-						Vector3 val2 = linkPos + linkRot * ((Component)socket2).transform.localPosition;
-						val3 = val - val2;
-						if (((Vector3)(ref val3)).sqrMagnitude < 0.01f) {
+						Vector3 vector2 = linkPos + linkRot * socket2.transform.localPosition;
+						if ((vector - vector2).sqrMagnitude < 0.01f) {
 							flag = true;
 							break;
 						}
@@ -425,15 +314,14 @@ public class GenerateDungeonBase : ProceduralComponent
 			foreach (DungeonVolume volume3 in segment2.link.Volumes) {
 				OBB bounds4 = volume3.GetBounds (segment2.position, segment2.rotation, VolumeExtrudePositive);
 				foreach (DungeonBaseSocket socket3 in link.Sockets) {
-					Vector3 val4 = linkPos + linkRot * ((Component)socket3).transform.localPosition;
-					if (!((OBB)(ref bounds4)).Contains (val4)) {
+					Vector3 vector3 = linkPos + linkRot * socket3.transform.localPosition;
+					if (!bounds4.Contains (vector3)) {
 						continue;
 					}
 					bool flag2 = false;
 					foreach (DungeonBaseSocket socket4 in segment2.link.Sockets) {
-						Vector3 val5 = segment2.position + segment2.rotation * ((Component)socket4).transform.localPosition;
-						val3 = val5 - val4;
-						if (((Vector3)(ref val3)).sqrMagnitude < 0.01f) {
+						Vector3 vector4 = segment2.position + segment2.rotation * socket4.transform.localPosition;
+						if ((vector4 - vector3).sqrMagnitude < 0.01f) {
 							flag2 = true;
 							break;
 						}
@@ -450,28 +338,6 @@ public class GenerateDungeonBase : ProceduralComponent
 
 	private void PlaceSegments (ref uint seed, int count, int budget, int floors, bool attachToFemale, bool attachToMale, List<DungeonSegment> segments, Prefab<DungeonBaseLink>[] prefabs)
 	{
-		//IL_009f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01c8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01cd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01cf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01df: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0264: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0266: Unknown result type (might be due to invalid IL or missing references)
-		//IL_026d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_026f: Unknown result type (might be due to invalid IL or missing references)
 		int num = 0;
 		for (int i = 0; i < segments.Count; i++) {
 			DungeonSegment dungeonSegment = segments [i];
@@ -484,9 +350,9 @@ public class GenerateDungeonBase : ProceduralComponent
 				if (!(dungeonBaseSocket.Female && attachToFemale) && !(dungeonBaseSocket.Male && attachToMale)) {
 					continue;
 				}
-				Vector3 val = dungeonSegment.position + dungeonSegment.rotation * ((Component)dungeonBaseSocket).transform.localPosition;
-				Quaternion val2 = dungeonSegment.rotation * ((Component)dungeonBaseSocket).transform.localRotation;
-				if (IsOccupied (segments, dungeonBaseSocket, val, val2)) {
+				Vector3 vector = dungeonSegment.position + dungeonSegment.rotation * dungeonBaseSocket.transform.localPosition;
+				Quaternion quaternion = dungeonSegment.rotation * dungeonBaseSocket.transform.localRotation;
+				if (IsOccupied (segments, dungeonBaseSocket, vector, quaternion)) {
 					continue;
 				}
 				prefabs.Shuffle (ref seed);
@@ -509,7 +375,7 @@ public class GenerateDungeonBase : ProceduralComponent
 					Vector3 linkPos = Vector3.zero;
 					Quaternion linkRot = Quaternion.identity;
 					int linkScore = 0;
-					if (Place (ref seed, segments, dungeonBaseSocket, val, val2, prefab, rotationList, out linkSocket, out linkPos, out linkRot, out linkScore) && (component.MaxCountLocal <= 0 || CountLocal (segments, component) < component.MaxCountLocal) && (component.MaxCountGlobal <= 0 || CountGlobal (segments, component) < component.MaxCountGlobal)) {
+					if (Place (ref seed, segments, dungeonBaseSocket, vector, quaternion, prefab, rotationList, out linkSocket, out linkPos, out linkRot, out linkScore) && (component.MaxCountLocal <= 0 || CountLocal (segments, component) < component.MaxCountLocal) && (component.MaxCountGlobal <= 0 || CountGlobal (segments, component) < component.MaxCountGlobal)) {
 						DungeonSegment dungeonSegment3 = new DungeonSegment ();
 						dungeonSegment3.position = linkPos;
 						dungeonSegment3.rotation = linkRot;
@@ -536,36 +402,20 @@ public class GenerateDungeonBase : ProceduralComponent
 
 	private void PlaceTransitions (ref uint seed, List<DungeonSegment> segments, Prefab<DungeonBaseTransition>[] prefabs)
 	{
-		//IL_0061: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0067: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0073: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0078: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0082: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0085: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0091: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0096: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ff: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0101: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0108: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010a: Unknown result type (might be due to invalid IL or missing references)
 		int count = segments.Count;
 		for (int i = 0; i < count; i++) {
 			DungeonSegment dungeonSegment = segments [i];
 			int num = SeedRandom.Range (ref seed, 0, dungeonSegment.link.Sockets.Count);
 			for (int j = 0; j < dungeonSegment.link.Sockets.Count; j++) {
 				DungeonBaseSocket dungeonBaseSocket = dungeonSegment.link.Sockets [(j + num) % dungeonSegment.link.Sockets.Count];
-				Vector3 val = dungeonSegment.position + dungeonSegment.rotation * ((Component)dungeonBaseSocket).transform.localPosition;
-				Quaternion val2 = dungeonSegment.rotation * ((Component)dungeonBaseSocket).transform.localRotation;
+				Vector3 vector = dungeonSegment.position + dungeonSegment.rotation * dungeonBaseSocket.transform.localPosition;
+				Quaternion quaternion = dungeonSegment.rotation * dungeonBaseSocket.transform.localRotation;
 				prefabs.Shuffle (ref seed);
 				foreach (Prefab<DungeonBaseTransition> prefab in prefabs) {
-					if (dungeonBaseSocket.Type == prefab.Component.Type && NeighbourMatches (segments, prefab.Component, val, val2)) {
+					if (dungeonBaseSocket.Type == prefab.Component.Type && NeighbourMatches (segments, prefab.Component, vector, quaternion)) {
 						DungeonSegment dungeonSegment2 = new DungeonSegment ();
-						dungeonSegment2.position = val;
-						dungeonSegment2.rotation = val2;
+						dungeonSegment2.position = vector;
+						dungeonSegment2.rotation = quaternion;
 						dungeonSegment2.prefab = prefab;
 						dungeonSegment2.link = null;
 						dungeonSegment2.score = 0;
@@ -581,46 +431,6 @@ public class GenerateDungeonBase : ProceduralComponent
 
 	private bool Place (ref uint seed, List<DungeonSegment> segments, DungeonBaseSocket targetSocket, Vector3 targetPos, Quaternion targetRot, Prefab<DungeonBaseLink> prefab, Quaternion[] rotations, out DungeonBaseSocket linkSocket, out Vector3 linkPos, out Quaternion linkRot, out int linkScore)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00de: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ea: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ef: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0122: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0124: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0126: Unknown result type (might be due to invalid IL or missing references)
-		//IL_012b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_012d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_012f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0137: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0141: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0146: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0109: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0110: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0115: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0161: Unknown result type (might be due to invalid IL or missing references)
-		//IL_017e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0180: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0182: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ad: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01af: Unknown result type (might be due to invalid IL or missing references)
 		linkSocket = null;
 		linkPos = Vector3.one;
 		linkRot = Quaternion.identity;
@@ -633,19 +443,19 @@ public class GenerateDungeonBase : ProceduralComponent
 				continue;
 			}
 			rotations.Shuffle (ref seed);
-			foreach (Quaternion val in rotations) {
-				Quaternion val2 = Quaternion.FromToRotation (-((Component)dungeonBaseSocket).transform.forward, targetRot * Vector3.forward);
+			foreach (Quaternion quaternion in rotations) {
+				Quaternion quaternion2 = Quaternion.FromToRotation (-dungeonBaseSocket.transform.forward, targetRot * Vector3.forward);
 				if (dungeonBaseSocket.Type != DungeonBaseSocketType.Vertical) {
-					val2 = QuaternionEx.LookRotationForcedUp (val2 * Vector3.forward, Vector3.up);
+					quaternion2 = QuaternionEx.LookRotationForcedUp (quaternion2 * Vector3.forward, Vector3.up);
 				}
-				Quaternion val3 = val * val2;
-				Vector3 val4 = targetPos - val3 * ((Component)dungeonBaseSocket).transform.localPosition;
-				if (!IsBlocked (segments, component, val4, val3)) {
-					int num2 = SocketMatches (segments, component, val4, val3);
-					if (num2 > linkScore && prefab.CheckEnvironmentVolumesOutsideTerrain (val4, val3, Vector3.one, EnvironmentType.UnderwaterLab, 1f)) {
+				Quaternion quaternion3 = quaternion * quaternion2;
+				Vector3 vector = targetPos - quaternion3 * dungeonBaseSocket.transform.localPosition;
+				if (!IsBlocked (segments, component, vector, quaternion3)) {
+					int num2 = SocketMatches (segments, component, vector, quaternion3);
+					if (num2 > linkScore && prefab.CheckEnvironmentVolumesOutsideTerrain (vector, quaternion3, Vector3.one, EnvironmentType.UnderwaterLab, 1f)) {
 						linkSocket = dungeonBaseSocket;
-						linkPos = val4;
-						linkRot = val3;
+						linkPos = vector;
+						linkRot = quaternion3;
 						linkScore = num2;
 					}
 				}
@@ -656,54 +466,41 @@ public class GenerateDungeonBase : ProceduralComponent
 
 	public static void SetupAI ()
 	{
-		//IL_00f0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f7: Expected O, but got Unknown
-		//IL_0109: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0143: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014a: Expected O, but got Unknown
-		//IL_0158: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0164: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0169: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0182: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0196: Unknown result type (might be due to invalid IL or missing references)
-		//IL_019b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0200: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0205: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)TerrainMeta.Path == (Object)null || TerrainMeta.Path.DungeonBaseEntrances == null) {
+		if (TerrainMeta.Path == null || TerrainMeta.Path.DungeonBaseEntrances == null) {
 			return;
 		}
 		foreach (DungeonBaseInfo dungeonBaseEntrance in TerrainMeta.Path.DungeonBaseEntrances) {
-			if ((Object)(object)dungeonBaseEntrance == (Object)null) {
+			if (dungeonBaseEntrance == null) {
 				continue;
 			}
 			List<AIInformationZone> list = new List<AIInformationZone> ();
 			int num = 0;
-			AIInformationZone componentInChildren = ((Component)dungeonBaseEntrance).GetComponentInChildren<AIInformationZone> ();
-			if ((Object)(object)componentInChildren != (Object)null) {
+			AIInformationZone componentInChildren = dungeonBaseEntrance.GetComponentInChildren<AIInformationZone> ();
+			if (componentInChildren != null) {
 				list.Add (componentInChildren);
 				num++;
 			}
-			foreach (GameObject link in ((Component)dungeonBaseEntrance).GetComponent<DungeonBaseInfo> ().Links) {
+			foreach (GameObject link in dungeonBaseEntrance.GetComponent<DungeonBaseInfo> ().Links) {
 				AIInformationZone componentInChildren2 = link.GetComponentInChildren<AIInformationZone> ();
-				if (!((Object)(object)componentInChildren2 == (Object)null)) {
+				if (!(componentInChildren2 == null)) {
 					list.Add (componentInChildren2);
 					num++;
 				}
 			}
-			GameObject val = new GameObject ("AIZ");
-			val.transform.position = ((Component)dungeonBaseEntrance).gameObject.transform.position;
-			AIInformationZone aIInformationZone = AIInformationZone.Merge (list, val);
+			GameObject gameObject = new GameObject ("AIZ");
+			gameObject.transform.position = dungeonBaseEntrance.gameObject.transform.position;
+			AIInformationZone aIInformationZone = AIInformationZone.Merge (list, gameObject);
 			aIInformationZone.ShouldSleepAI = true;
-			val.transform.SetParent (((Component)dungeonBaseEntrance).gameObject.transform);
-			GameObject val2 = new GameObject ("WakeTrigger");
-			val2.transform.position = val.transform.position + ((Bounds)(ref aIInformationZone.bounds)).center;
-			val2.transform.localScale = ((Bounds)(ref aIInformationZone.bounds)).extents + new Vector3 (100f, 100f, 100f);
-			BoxCollider val3 = val2.AddComponent<BoxCollider> ();
-			((Collider)val3).isTrigger = true;
-			val2.layer = LayerMask.NameToLayer ("Trigger");
-			val2.transform.SetParent (((Component)dungeonBaseEntrance).gameObject.transform);
-			TriggerWakeAIZ triggerWakeAIZ = val2.AddComponent<TriggerWakeAIZ> ();
-			triggerWakeAIZ.interestLayers = LayerMask.op_Implicit (LayerMask.GetMask (new string[1] { "Player (Server)" }));
+			gameObject.transform.SetParent (dungeonBaseEntrance.gameObject.transform);
+			GameObject gameObject2 = new GameObject ("WakeTrigger");
+			gameObject2.transform.position = gameObject.transform.position + aIInformationZone.bounds.center;
+			gameObject2.transform.localScale = aIInformationZone.bounds.extents + new Vector3 (100f, 100f, 100f);
+			BoxCollider boxCollider = gameObject2.AddComponent<BoxCollider> ();
+			boxCollider.isTrigger = true;
+			gameObject2.layer = LayerMask.NameToLayer ("Trigger");
+			gameObject2.transform.SetParent (dungeonBaseEntrance.gameObject.transform);
+			TriggerWakeAIZ triggerWakeAIZ = gameObject2.AddComponent<TriggerWakeAIZ> ();
+			triggerWakeAIZ.interestLayers = LayerMask.GetMask ("Player (Server)");
 			triggerWakeAIZ.Init (aIInformationZone);
 		}
 	}

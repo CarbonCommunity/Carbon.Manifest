@@ -8,7 +8,7 @@ public class ExplosionsDeactivateRendererByTime : MonoBehaviour
 
 	private void Awake ()
 	{
-		rend = ((Component)this).GetComponent<Renderer> ();
+		rend = GetComponent<Renderer> ();
 	}
 
 	private void DeactivateRenderer ()
@@ -19,6 +19,6 @@ public class ExplosionsDeactivateRendererByTime : MonoBehaviour
 	private void OnEnable ()
 	{
 		rend.enabled = true;
-		((MonoBehaviour)this).Invoke ("DeactivateRenderer", TimeDelay);
+		Invoke ("DeactivateRenderer", TimeDelay);
 	}
 }

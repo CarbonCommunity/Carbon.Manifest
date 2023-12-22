@@ -21,30 +21,6 @@ public class UIRing : UIPrimitiveBase
 
 	protected override void OnPopulateMesh (VertexHelper vh)
 	{
-		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0074: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0079: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0088: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0092: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0101: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0106: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0115: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_012a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0141: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0146: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0151: Unknown result type (might be due to invalid IL or missing references)
 		float num = innerRadius * 2f;
 		float num2 = outerRadius * 2f;
 		vh.Clear ();
@@ -56,21 +32,20 @@ public class UIRing : UIPrimitiveBase
 		float num5 = Mathf.Cos (0f);
 		float num6 = Mathf.Sin (0f);
 		UIVertex simpleVert = UIVertex.simpleVert;
-		simpleVert.color = Color32.op_Implicit (((Graphic)this).color);
-		simpleVert.position = Vector2.op_Implicit (new Vector2 (num2 * num5, num2 * num6));
+		simpleVert.color = color;
+		simpleVert.position = new Vector2 (num2 * num5, num2 * num6);
 		vertices.Add (simpleVert);
-		Vector2 val = default(Vector2);
-		((Vector2)(ref val))..ctor (num * num5, num * num6);
-		simpleVert.position = Vector2.op_Implicit (val);
+		Vector2 vector = new Vector2 (num * num5, num * num6);
+		simpleVert.position = vector;
 		vertices.Add (simpleVert);
 		for (int i = 1; i <= ArcSteps; i++) {
-			float num7 = (float)Math.PI / 180f * ((float)i * num4);
-			num5 = Mathf.Cos (num7);
-			num6 = Mathf.Sin (num7);
-			simpleVert.color = Color32.op_Implicit (((Graphic)this).color);
-			simpleVert.position = Vector2.op_Implicit (new Vector2 (num2 * num5, num2 * num6));
+			float f = (float)Math.PI / 180f * ((float)i * num4);
+			num5 = Mathf.Cos (f);
+			num6 = Mathf.Sin (f);
+			simpleVert.color = color;
+			simpleVert.position = new Vector2 (num2 * num5, num2 * num6);
 			vertices.Add (simpleVert);
-			simpleVert.position = Vector2.op_Implicit (new Vector2 (num * num5, num * num6));
+			simpleVert.position = new Vector2 (num * num5, num * num6);
 			vertices.Add (simpleVert);
 			int item2 = num3;
 			indices.Add (item);
@@ -89,24 +64,20 @@ public class UIRing : UIPrimitiveBase
 	public void SetArcSteps (int steps)
 	{
 		ArcSteps = steps;
-		((Graphic)this).SetVerticesDirty ();
+		SetVerticesDirty ();
 	}
 
 	public void SetBaseColor (Color color)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		((Graphic)this).color = color;
-		((Graphic)this).SetVerticesDirty ();
+		this.color = color;
+		SetVerticesDirty ();
 	}
 
 	public void UpdateBaseAlpha (float value)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		Color color = ((Graphic)this).color;
+		Color color = this.color;
 		color.a = value;
-		((Graphic)this).color = color;
-		((Graphic)this).SetVerticesDirty ();
+		this.color = color;
+		SetVerticesDirty ();
 	}
 }

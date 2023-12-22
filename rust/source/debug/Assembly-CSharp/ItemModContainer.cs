@@ -75,10 +75,6 @@ public class ItemModContainer : ItemMod
 
 	public override void CollectedForCrafting (Item item, BasePlayer crafter)
 	{
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006b: Unknown result type (might be due to invalid IL or missing references)
 		if (item.contents == null) {
 			return;
 		}

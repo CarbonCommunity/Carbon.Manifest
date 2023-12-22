@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -21,7 +22,7 @@ public abstract class BaseCardGameEntity : BaseVehicle
 		public CardGamePlayerStorage GetStorage ()
 		{
 			BaseEntity baseEntity = storageInstance.Get (serverside: true);
-			if ((Object)(object)baseEntity != (Object)null && baseEntity.IsValid ()) {
+			if (baseEntity != null && baseEntity.IsValid ()) {
 				return baseEntity as CardGamePlayerStorage;
 			}
 			return null;
@@ -73,233 +74,175 @@ public abstract class BaseCardGameEntity : BaseVehicle
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("BaseCardGameEntity.OnRpcMessage", 0);
-		try {
-			if (rpc == 2395020190u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("BaseCardGameEntity.OnRpcMessage")) {
+			if (rpc == 2395020190u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_Editor_MakeRandomMove "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_Editor_MakeRandomMove "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_Editor_MakeRandomMove", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_Editor_MakeRandomMove")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (2395020190u, "RPC_Editor_MakeRandomMove", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							RPC_Editor_MakeRandomMove (msg2);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_Editor_MakeRandomMove");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 1608700874 && (Object)(object)player != (Object)null) {
+			if (rpc == 1608700874 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_Editor_SpawnTestPlayer "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_Editor_SpawnTestPlayer "));
 				}
-				TimeWarning val5 = TimeWarning.New ("RPC_Editor_SpawnTestPlayer", 0);
-				try {
-					TimeWarning val6 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_Editor_SpawnTestPlayer")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (1608700874u, "RPC_Editor_SpawnTestPlayer", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val6)?.Dispose ();
 					}
 					try {
-						TimeWarning val7 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg3 = rPCMessage;
 							RPC_Editor_SpawnTestPlayer (msg3);
-						} finally {
-							((IDisposable)val7)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in RPC_Editor_SpawnTestPlayer");
 					}
-				} finally {
-					((IDisposable)val5)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 1499640189 && (Object)(object)player != (Object)null) {
+			if (rpc == 1499640189 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_LeaveTable "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_LeaveTable "));
 				}
-				TimeWarning val8 = TimeWarning.New ("RPC_LeaveTable", 0);
-				try {
-					TimeWarning val9 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_LeaveTable")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (1499640189u, "RPC_LeaveTable", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val9)?.Dispose ();
 					}
 					try {
-						TimeWarning val10 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg4 = rPCMessage;
 							RPC_LeaveTable (msg4);
-						} finally {
-							((IDisposable)val10)?.Dispose ();
 						}
-					} catch (Exception ex3) {
-						Debug.LogException (ex3);
+					} catch (Exception exception3) {
+						Debug.LogException (exception3);
 						player.Kick ("RPC Error in RPC_LeaveTable");
 					}
-				} finally {
-					((IDisposable)val8)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 331989034 && (Object)(object)player != (Object)null) {
+			if (rpc == 331989034 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_OpenLoot "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_OpenLoot "));
 				}
-				TimeWarning val11 = TimeWarning.New ("RPC_OpenLoot", 0);
-				try {
-					TimeWarning val12 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_OpenLoot")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (331989034u, "RPC_OpenLoot", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val12)?.Dispose ();
 					}
 					try {
-						TimeWarning val13 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg5 = rPCMessage;
 							RPC_OpenLoot (msg5);
-						} finally {
-							((IDisposable)val13)?.Dispose ();
 						}
-					} catch (Exception ex4) {
-						Debug.LogException (ex4);
+					} catch (Exception exception4) {
+						Debug.LogException (exception4);
 						player.Kick ("RPC Error in RPC_OpenLoot");
 					}
-				} finally {
-					((IDisposable)val11)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 2847205856u && (Object)(object)player != (Object)null) {
+			if (rpc == 2847205856u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_Play "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_Play "));
 				}
-				TimeWarning val14 = TimeWarning.New ("RPC_Play", 0);
-				try {
-					TimeWarning val15 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_Play")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (2847205856u, "RPC_Play", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val15)?.Dispose ();
 					}
 					try {
-						TimeWarning val16 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg6 = rPCMessage;
 							RPC_Play (msg6);
-						} finally {
-							((IDisposable)val16)?.Dispose ();
 						}
-					} catch (Exception ex5) {
-						Debug.LogException (ex5);
+					} catch (Exception exception5) {
+						Debug.LogException (exception5);
 						player.Kick ("RPC Error in RPC_Play");
 					}
-				} finally {
-					((IDisposable)val14)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 2495306863u && (Object)(object)player != (Object)null) {
+			if (rpc == 2495306863u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_PlayerInput "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_PlayerInput "));
 				}
-				TimeWarning val17 = TimeWarning.New ("RPC_PlayerInput", 0);
-				try {
-					TimeWarning val18 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_PlayerInput")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (2495306863u, "RPC_PlayerInput", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val18)?.Dispose ();
 					}
 					try {
-						TimeWarning val19 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg7 = rPCMessage;
 							RPC_PlayerInput (msg7);
-						} finally {
-							((IDisposable)val19)?.Dispose ();
 						}
-					} catch (Exception ex6) {
-						Debug.LogException (ex6);
+					} catch (Exception exception6) {
+						Debug.LogException (exception6);
 						player.Kick ("RPC Error in RPC_PlayerInput");
 					}
-				} finally {
-					((IDisposable)val17)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (base.isServer) {
 			PotInstance.uid = info.msg.cardGame.potRef;
@@ -323,10 +266,8 @@ public abstract class BaseCardGameEntity : BaseVehicle
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
-		info.msg.cardGame = Pool.Get<CardGame> ();
+		info.msg.cardGame = Facepunch.Pool.Get<CardGame> ();
 		info.msg.cardGame.potRef = PotInstance.uid;
 		if (!info.forDisk && storageLinked) {
 			GameController.Save (info.msg.cardGame);
@@ -350,27 +291,27 @@ public abstract class BaseCardGameEntity : BaseVehicle
 		storageLinked = true;
 		bool flag = true;
 		StorageContainer pot = GetPot ();
-		if ((Object)(object)pot == (Object)null) {
+		if (pot == null) {
 			flag = false;
 		} else {
 			int num3 = ((num2 > 0) ? num2 : playerStoragePoints.Length);
-			int iAmount = Mathf.CeilToInt ((float)(pot.inventory.GetAmount (ScrapItemID, onlyUsableAmounts: true) / num3));
+			int iAmount = Mathf.CeilToInt (pot.inventory.GetAmount (ScrapItemID, onlyUsableAmounts: true) / num3);
 			PlayerStorageInfo[] array = playerStoragePoints;
 			foreach (PlayerStorageInfo playerStorageInfo in array) {
 				CardGamePlayerStorage cardGamePlayerStorage2 = playerStorageInfo.storageInstance.Get (base.isServer) as CardGamePlayerStorage;
 				if (!cardGamePlayerStorage2.IsValid () || (cardGamePlayerStorage2.inventory.IsEmpty () && num2 != 0)) {
 					continue;
 				}
-				List<Item> list = Pool.GetList<Item> ();
-				int num4 = pot.inventory.Take (list, ScrapItemID, iAmount);
+				List<Item> obj = Facepunch.Pool.GetList<Item> ();
+				int num4 = pot.inventory.Take (obj, ScrapItemID, iAmount);
 				if (num4 > 0) {
-					foreach (Item item in list) {
+					foreach (Item item in obj) {
 						if (!item.MoveToContainer (cardGamePlayerStorage2.inventory, -1, allowStack: true, ignoreStackLimit: true)) {
 							item.Remove ();
 						}
 					}
 				}
-				Pool.FreeList<Item> (ref list);
+				Facepunch.Pool.FreeList (ref obj);
 			}
 		}
 		if (flag) {
@@ -383,12 +324,12 @@ public abstract class BaseCardGameEntity : BaseVehicle
 			}
 		}
 		if (!flag) {
-			Debug.LogWarning ((object)(((object)this).GetType ().Name + ": Card game storage didn't load in. Destroying the card game (and parent entity if there is one)."));
+			Debug.LogWarning (GetType ().Name + ": Card game storage didn't load in. Destroying the card game (and parent entity if there is one).");
 			BaseEntity baseEntity = GetParentEntity ();
-			if ((Object)(object)baseEntity != (Object)null) {
-				((FacepunchBehaviour)baseEntity).Invoke ((Action)baseEntity.KillMessage, 0f);
+			if (baseEntity != null) {
+				baseEntity.Invoke (baseEntity.KillMessage, 0f);
 			} else {
-				((FacepunchBehaviour)this).Invoke ((Action)base.KillMessage, 0f);
+				Invoke (base.KillMessage, 0f);
 			}
 		}
 	}
@@ -399,12 +340,12 @@ public abstract class BaseCardGameEntity : BaseVehicle
 		PlayerStorageInfo[] array = playerStoragePoints;
 		foreach (PlayerStorageInfo playerStorageInfo in array) {
 			CardGamePlayerStorage storage = playerStorageInfo.GetStorage ();
-			if ((Object)(object)storage != (Object)null) {
+			if (storage != null) {
 				storage.DropItems ();
 			}
 		}
 		StorageContainer pot = GetPot ();
-		if ((Object)(object)pot != (Object)null) {
+		if (pot != null) {
 			pot.DropItems ();
 		}
 		base.DoServerDestroy ();
@@ -413,9 +354,9 @@ public abstract class BaseCardGameEntity : BaseVehicle
 	public override void PrePlayerDismount (BasePlayer player, BaseMountable seat)
 	{
 		base.PrePlayerDismount (player, seat);
-		if (!Application.isLoadingSave) {
+		if (!Rust.Application.isLoadingSave) {
 			CardGamePlayerStorage playerStorage = GetPlayerStorage (player.userID);
-			if ((Object)(object)playerStorage != (Object)null) {
+			if (playerStorage != null) {
 				playerStorage.inventory.GetSlot (0)?.MoveToContainer (player.inventory.containerMain);
 			}
 		}
@@ -430,7 +371,7 @@ public abstract class BaseCardGameEntity : BaseVehicle
 	public StorageContainer GetPot ()
 	{
 		BaseEntity baseEntity = PotInstance.Get (serverside: true);
-		if ((Object)(object)baseEntity != (Object)null && baseEntity.IsValid ()) {
+		if (baseEntity != null && baseEntity.IsValid ()) {
 			return baseEntity as StorageContainer;
 		}
 		return null;
@@ -439,7 +380,7 @@ public abstract class BaseCardGameEntity : BaseVehicle
 	public BasePlayer IDToPlayer (ulong id)
 	{
 		foreach (MountPointInfo mountPoint in mountPoints) {
-			if ((Object)(object)mountPoint.mountable != (Object)null && (Object)(object)mountPoint.mountable.GetMounted () != (Object)null && mountPoint.mountable.GetMounted ().userID == id) {
+			if (mountPoint.mountable != null && mountPoint.mountable.GetMounted () != null && mountPoint.mountable.GetMounted ().userID == id) {
 				return mountPoint.mountable.GetMounted ();
 			}
 		}
@@ -470,46 +411,42 @@ public abstract class BaseCardGameEntity : BaseVehicle
 		int num = -1;
 		for (int i = 0; i < mountPoints.Count; i++) {
 			BaseMountable mountable = mountPoints [i].mountable;
-			if ((Object)(object)mountable != (Object)null) {
+			if (mountable != null) {
 				BasePlayer mounted = mountable.GetMounted ();
-				if ((Object)(object)mounted != (Object)null && mounted.userID == playerID) {
+				if (mounted != null && mounted.userID == playerID) {
 					num = i;
 				}
 			}
 		}
 		if (num < 0) {
-			Debug.LogError ((object)(((object)this).GetType ().Name + ": Couldn't find mount point for this player."));
+			Debug.LogError (GetType ().Name + ": Couldn't find mount point for this player.");
 		}
 		return num;
 	}
 
 	public override void SpawnSubEntities ()
 	{
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ad: Unknown result type (might be due to invalid IL or missing references)
 		BaseEntity baseEntity = GameManager.server.CreateEntity (potPrefab.resourcePath, Vector3.zero, Quaternion.identity);
 		StorageContainer storageContainer = baseEntity as StorageContainer;
-		if ((Object)(object)storageContainer != (Object)null) {
+		if (storageContainer != null) {
 			storageContainer.SetParent (this);
 			storageContainer.Spawn ();
 			PotInstance.Set (baseEntity);
 		} else {
-			Debug.LogError ((object)(((object)this).GetType ().Name + ": Spawned prefab is not a StorageContainer as expected."));
+			Debug.LogError (GetType ().Name + ": Spawned prefab is not a StorageContainer as expected.");
 		}
 		PlayerStorageInfo[] array = playerStoragePoints;
 		foreach (PlayerStorageInfo playerStorageInfo in array) {
 			baseEntity = GameManager.server.CreateEntity (playerStoragePrefab.resourcePath, playerStorageInfo.storagePos.localPosition, playerStorageInfo.storagePos.localRotation);
 			CardGamePlayerStorage cardGamePlayerStorage = baseEntity as CardGamePlayerStorage;
-			if ((Object)(object)cardGamePlayerStorage != (Object)null) {
+			if (cardGamePlayerStorage != null) {
 				cardGamePlayerStorage.SetCardTable (this);
 				cardGamePlayerStorage.SetParent (this);
 				cardGamePlayerStorage.Spawn ();
 				playerStorageInfo.storageInstance.Set (baseEntity);
 				storageLinked = true;
 			} else {
-				Debug.LogError ((object)(((object)this).GetType ().Name + ": Spawned prefab is not a CardTablePlayerStorage as expected."));
+				Debug.LogError (GetType ().Name + ": Spawned prefab is not a CardTablePlayerStorage as expected.");
 			}
 		}
 		base.SpawnSubEntities ();
@@ -534,7 +471,7 @@ public abstract class BaseCardGameEntity : BaseVehicle
 	private void RPC_OpenLoot (RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
-		if ((Object)(object)player != (Object)null && PlayerIsMounted (player)) {
+		if (player != null && PlayerIsMounted (player)) {
 			CardGamePlayerStorage playerStorage = GetPlayerStorage (player.userID);
 			playerStorage.PlayerOpenLoot (player);
 		}
@@ -544,17 +481,15 @@ public abstract class BaseCardGameEntity : BaseVehicle
 	[RPC_Server.IsVisible (3f)]
 	public void RPC_Editor_SpawnTestPlayer (RPCMessage msg)
 	{
-		//IL_0064: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0069: Unknown result type (might be due to invalid IL or missing references)
-		if (!Application.isEditor) {
+		if (!UnityEngine.Application.isEditor) {
 			return;
 		}
 		int num = GameController.MaxPlayersAtTable ();
 		if (GameController.NumPlayersAllowedToPlay () >= num || NumMounted () >= num) {
 			return;
 		}
-		Debug.Log ((object)"Adding test NPC for card game");
-		BaseEntity baseEntity = GameManager.server.CreateEntity ("assets/prefabs/player/player.prefab", ((Component)this).transform.position, Quaternion.identity);
+		Debug.Log ("Adding test NPC for card game");
+		BaseEntity baseEntity = GameManager.server.CreateEntity ("assets/prefabs/player/player.prefab", base.transform.position, Quaternion.identity);
 		baseEntity.Spawn ();
 		BasePlayer basePlayer = (BasePlayer)baseEntity;
 		AttemptMount (basePlayer, doMountChecks: false);
@@ -563,14 +498,14 @@ public abstract class BaseCardGameEntity : BaseVehicle
 			int scrapAmount = cardPlayer.GetScrapAmount ();
 			if (scrapAmount < 400) {
 				StorageContainer storage = cardPlayer.GetStorage ();
-				if ((Object)(object)storage != (Object)null) {
+				if (storage != null) {
 					storage.inventory.AddItem (scrapItemDef, 400 - scrapAmount, 0uL);
 				} else {
-					Debug.LogError ((object)"Couldn't get storage for NPC.");
+					Debug.LogError ("Couldn't get storage for NPC.");
 				}
 			}
 		} else {
-			Debug.Log ((object)"Couldn't find player data for NPC. No scrap given.");
+			Debug.Log ("Couldn't find player data for NPC. No scrap given.");
 		}
 	}
 
@@ -578,7 +513,7 @@ public abstract class BaseCardGameEntity : BaseVehicle
 	[RPC_Server.IsVisible (3f)]
 	public void RPC_Editor_MakeRandomMove (RPCMessage msg)
 	{
-		if (Application.isEditor) {
+		if (UnityEngine.Application.isEditor) {
 			GameController.EditorMakeRandomMove ();
 		}
 	}
@@ -588,7 +523,7 @@ public abstract class BaseCardGameEntity : BaseVehicle
 	private void RPC_Play (RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
-		if ((Object)(object)player != (Object)null && PlayerIsMounted (player)) {
+		if (player != null && PlayerIsMounted (player)) {
 			GameController.JoinTable (player);
 		}
 	}

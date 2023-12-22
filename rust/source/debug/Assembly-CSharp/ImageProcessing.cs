@@ -10,8 +10,8 @@ public static class ImageProcessing
 
 	public static void GaussianBlur2D (float[] data, int len1, int len2, int iterations = 1)
 	{
-		float[] array = data;
-		float[] array2 = new float[len1 * len2];
+		float[] a = data;
+		float[] b = new float[len1 * len2];
 		for (int i = 0; i < iterations; i++) {
 			for (int j = 0; j < len1; j++) {
 				int num = Mathf.Max (0, j - 1);
@@ -19,14 +19,14 @@ public static class ImageProcessing
 				for (int k = 0; k < len2; k++) {
 					int num3 = Mathf.Max (0, k - 1);
 					int num4 = Mathf.Min (len2 - 1, k + 1);
-					float num5 = array [j * len2 + k] * 4f + array [j * len2 + num3] + array [j * len2 + num4] + array [num * len2 + k] + array [num2 * len2 + k];
-					array2 [j * len2 + k] = num5 * 0.125f;
+					float num5 = a [j * len2 + k] * 4f + a [j * len2 + num3] + a [j * len2 + num4] + a [num * len2 + k] + a [num2 * len2 + k];
+					b [j * len2 + k] = num5 * 0.125f;
 				}
 			}
-			GenericsUtil.Swap<float[]> (ref array, ref array2);
+			GenericsUtil.Swap (ref a, ref b);
 		}
-		if (array != data) {
-			Buffer.BlockCopy (array, 0, data, 0, data.Length * 4);
+		if (a != data) {
+			Buffer.BlockCopy (a, 0, data, 0, data.Length * 4);
 		}
 	}
 
@@ -35,7 +35,7 @@ public static class ImageProcessing
 		float[] src = data;
 		float[] dst = new float[len1 * len2 * len3];
 		for (int i = 0; i < iterations; i++) {
-			Parallel.For (0, len1, (Action<int>)delegate(int x) {
+			Parallel.For (0, len1, delegate(int x) {
 				int num = Mathf.Max (0, x - 1);
 				int num2 = Mathf.Min (len1 - 1, x + 1);
 				for (int j = 0; j < len2; j++) {
@@ -47,7 +47,7 @@ public static class ImageProcessing
 					}
 				}
 			});
-			GenericsUtil.Swap<float[]> (ref src, ref dst);
+			GenericsUtil.Swap (ref src, ref dst);
 		}
 		if (src != data) {
 			Buffer.BlockCopy (src, 0, data, 0, data.Length * 4);
@@ -59,7 +59,7 @@ public static class ImageProcessing
 		float[] src = data;
 		float[] dst = new float[len1 * len2];
 		for (int i = 0; i < iterations; i++) {
-			Parallel.For (0, len1, (Action<int>)delegate(int x) {
+			Parallel.For (0, len1, delegate(int x) {
 				int num = Mathf.Max (0, x - 1);
 				int num2 = Mathf.Min (len1 - 1, x + 1);
 				for (int j = 0; j < len2; j++) {
@@ -69,7 +69,7 @@ public static class ImageProcessing
 					dst [x * len2 + j] = num5 * 0.2f;
 				}
 			});
-			GenericsUtil.Swap<float[]> (ref src, ref dst);
+			GenericsUtil.Swap (ref src, ref dst);
 		}
 		if (src != data) {
 			Buffer.BlockCopy (src, 0, data, 0, data.Length * 4);
@@ -81,7 +81,7 @@ public static class ImageProcessing
 		float[] src = data;
 		float[] dst = new float[len1 * len2 * len3];
 		for (int i = 0; i < iterations; i++) {
-			Parallel.For (0, len1, (Action<int>)delegate(int x) {
+			Parallel.For (0, len1, delegate(int x) {
 				int num = Mathf.Max (0, x - 1);
 				int num2 = Mathf.Min (len1 - 1, x + 1);
 				for (int j = 0; j < len2; j++) {
@@ -93,7 +93,7 @@ public static class ImageProcessing
 					}
 				}
 			});
-			GenericsUtil.Swap<float[]> (ref src, ref dst);
+			GenericsUtil.Swap (ref src, ref dst);
 		}
 		if (src != data) {
 			Buffer.BlockCopy (src, 0, data, 0, data.Length * 4);
@@ -105,7 +105,7 @@ public static class ImageProcessing
 		if (2 * srclen1 != dstlen1 || 2 * srclen2 != dstlen2) {
 			return;
 		}
-		Parallel.For (0, srclen1, (Action<int>)delegate(int x) {
+		Parallel.For (0, srclen1, delegate(int x) {
 			int num = Mathf.Max (0, x - 1);
 			int num2 = Mathf.Min (srclen1 - 1, x + 1);
 			for (int i = 0; i < srclen2; i++) {
@@ -129,7 +129,7 @@ public static class ImageProcessing
 		if (2 * srclen1 != dstlen1 || 2 * srclen2 != dstlen2 || srclen3 != dstlen3) {
 			return;
 		}
-		Parallel.For (0, srclen1, (Action<int>)delegate(int x) {
+		Parallel.For (0, srclen1, delegate(int x) {
 			int num = Mathf.Max (0, x - 1);
 			int num2 = Mathf.Min (srclen1 - 1, x + 1);
 			for (int i = 0; i < srclen2; i++) {
@@ -152,40 +152,36 @@ public static class ImageProcessing
 
 	public static void Dilate2D (int[] src, int len1, int len2, int srcmask, int radius, Action<int, int> action)
 	{
-		Parallel.For (0, len1, (Action<int>)delegate(int x) {
-			//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0011: Expected O, but got Unknown
-			MaxQueue val2 = new MaxQueue (radius * 2 + 1);
+		Parallel.For (0, len1, delegate(int x) {
+			MaxQueue maxQueue2 = new MaxQueue (radius * 2 + 1);
 			for (int k = 0; k < radius; k++) {
-				val2.Push (src [x * len2 + k] & srcmask);
+				maxQueue2.Push (src [x * len2 + k] & srcmask);
 			}
 			for (int l = 0; l < len2; l++) {
 				if (l > radius) {
-					val2.Pop ();
+					maxQueue2.Pop ();
 				}
 				if (l < len2 - radius) {
-					val2.Push (src [x * len2 + l + radius] & srcmask);
+					maxQueue2.Push (src [x * len2 + l + radius] & srcmask);
 				}
-				if (val2.Max != 0) {
+				if (maxQueue2.Max != 0) {
 					action (x, l);
 				}
 			}
 		});
-		Parallel.For (0, len2, (Action<int>)delegate(int y) {
-			//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0011: Expected O, but got Unknown
-			MaxQueue val = new MaxQueue (radius * 2 + 1);
+		Parallel.For (0, len2, delegate(int y) {
+			MaxQueue maxQueue = new MaxQueue (radius * 2 + 1);
 			for (int i = 0; i < radius; i++) {
-				val.Push (src [i * len2 + y] & srcmask);
+				maxQueue.Push (src [i * len2 + y] & srcmask);
 			}
 			for (int j = 0; j < len1; j++) {
 				if (j > radius) {
-					val.Pop ();
+					maxQueue.Pop ();
 				}
 				if (j < len1 - radius) {
-					val.Push (src [(j + radius) * len2 + y] & srcmask);
+					maxQueue.Push (src [(j + radius) * len2 + y] & srcmask);
 				}
-				if (val.Max != 0) {
+				if (maxQueue.Max != 0) {
 					action (j, y);
 				}
 			}
@@ -242,12 +238,6 @@ public static class ImageProcessing
 
 	public static bool IsValidPNG (byte[] data, int maxWidth, int maxHeight)
 	{
-		//IL_00b5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0147: Unknown result type (might be due to invalid IL or missing references)
 		if (data == null || data.Length < 29) {
 			return false;
 		}
@@ -264,20 +254,20 @@ public static class ImageProcessing
 				return false;
 			}
 		}
-		Union32 val = default(Union32);
-		val.b4 = data [16];
-		val.b3 = data [17];
-		val.b2 = data [18];
-		val.b1 = data [19];
-		if (val.i < 1 || val.i > maxWidth) {
+		Union32 union = default(Union32);
+		union.b4 = data [16];
+		union.b3 = data [17];
+		union.b2 = data [18];
+		union.b1 = data [19];
+		if (union.i < 1 || union.i > maxWidth) {
 			return false;
 		}
-		Union32 val2 = default(Union32);
-		val2.b4 = data [20];
-		val2.b3 = data [21];
-		val2.b2 = data [22];
-		val2.b1 = data [23];
-		if (val2.i < 1 || val2.i > maxHeight) {
+		Union32 union2 = default(Union32);
+		union2.b4 = data [20];
+		union2.b3 = data [21];
+		union2.b2 = data [22];
+		union2.b1 = data [23];
+		if (union2.i < 1 || union2.i > maxHeight) {
 			return false;
 		}
 		byte b = data [24];

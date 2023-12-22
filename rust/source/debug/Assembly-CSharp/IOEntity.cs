@@ -1,3 +1,5 @@
+#define ENABLE_PROFILER
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -29,24 +31,24 @@ public class IOEntity : DecayEntity
 
 		public void Init ()
 		{
-			if ((Object)(object)ioEnt != (Object)null && !entityRef.IsValid (serverside: true)) {
+			if (ioEnt != null && !entityRef.IsValid (serverside: true)) {
 				entityRef.Set (ioEnt);
 			}
 			if (entityRef.IsValid (serverside: true)) {
-				ioEnt = ((Component)entityRef.Get (serverside: true)).GetComponent<IOEntity> ();
+				ioEnt = entityRef.Get (serverside: true).GetComponent<IOEntity> ();
 			}
 		}
 
 		public void InitClient ()
 		{
-			if (entityRef.IsValid (serverside: false) && (Object)(object)ioEnt == (Object)null) {
-				ioEnt = ((Component)entityRef.Get (serverside: false)).GetComponent<IOEntity> ();
+			if (entityRef.IsValid (serverside: false) && ioEnt == null) {
+				ioEnt = entityRef.Get (serverside: false).GetComponent<IOEntity> ();
 			}
 		}
 
 		public IOEntity Get (bool isServer = true)
 		{
-			if ((Object)(object)ioEnt == (Object)null && entityRef.IsValid (isServer)) {
+			if (ioEnt == null && entityRef.IsValid (isServer)) {
 				ioEnt = entityRef.Get (isServer) as IOEntity;
 			}
 			return ioEnt;
@@ -185,7 +187,7 @@ public class IOEntity : DecayEntity
 
 	public virtual bool IsGravitySource => false;
 
-	private bool HasBlockedUpdatedOutputsThisFrame => Time.frameCount == lastUpdateBlockedFrame;
+	private bool HasBlockedUpdatedOutputsThisFrame => UnityEngine.Time.frameCount == lastUpdateBlockedFrame;
 
 	public virtual bool BlockFluidDraining => false;
 
@@ -195,49 +197,37 @@ public class IOEntity : DecayEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("IOEntity.OnRpcMessage", 0);
-		try {
-			if (rpc == 4161541566u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("IOEntity.OnRpcMessage")) {
+			if (rpc == 4161541566u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_RequestData "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_RequestData "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_RequestData", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_RequestData")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (4161541566u, "Server_RequestData", this, player, 10uL)) {
 							return true;
 						}
 						if (!RPC_Server.IsVisible.Test (4161541566u, "Server_RequestData", this, player, 6f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							Server_RequestData (msg2);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in Server_RequestData");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -259,7 +249,7 @@ public class IOEntity : DecayEntity
 
 	public string GetDisplayName ()
 	{
-		if ((Object)(object)sourceItem != (Object)null) {
+		if (sourceItem != null) {
 			return sourceItem.displayName.translated;
 		}
 		return base.ShortPrefabName;
@@ -272,35 +262,26 @@ public class IOEntity : DecayEntity
 
 	public IOEntity FindGravitySource (ref Vector3 worldHandlePosition, int depth, bool ignoreSelf)
 	{
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ff: Unknown result type (might be due to invalid IL or missing references)
 		if (depth <= 0) {
 			return null;
 		}
 		if (!ignoreSelf && IsGravitySource) {
 			Profiler.BeginSample ("Transform Point");
-			worldHandlePosition = ((Component)this).transform.TransformPoint (outputs [0].handlePosition);
+			worldHandlePosition = base.transform.TransformPoint (outputs [0].handlePosition);
 			Profiler.EndSample ();
 			return this;
 		}
 		IOSlot[] array = inputs;
 		foreach (IOSlot iOSlot in array) {
 			IOEntity iOEntity = iOSlot.connectedTo.Get (base.isServer);
-			if ((Object)(object)iOEntity != (Object)null) {
+			if (iOEntity != null) {
 				if (iOEntity.IsGravitySource) {
-					worldHandlePosition = ((Component)iOEntity).transform.TransformPoint (iOEntity.outputs [0].handlePosition);
+					worldHandlePosition = iOEntity.transform.TransformPoint (iOEntity.outputs [0].handlePosition);
 					return iOEntity;
 				}
 				iOEntity = iOEntity.FindGravitySource (ref worldHandlePosition, depth - 1, ignoreSelf: false);
-				if ((Object)(object)iOEntity != (Object)null) {
-					worldHandlePosition = ((Component)iOEntity).transform.TransformPoint (iOEntity.outputs [0].handlePosition);
+				if (iOEntity != null) {
+					worldHandlePosition = iOEntity.transform.TransformPoint (iOEntity.outputs [0].handlePosition);
 					return iOEntity;
 				}
 			}
@@ -319,7 +300,7 @@ public class IOEntity : DecayEntity
 
 	public virtual bool AllowWireConnections ()
 	{
-		if ((Object)(object)((Component)this).GetComponentInParent<BaseVehicle> () != (Object)null) {
+		if (GetComponentInParent<BaseVehicle> () != null) {
 			return false;
 		}
 		return true;
@@ -360,8 +341,8 @@ public class IOEntity : DecayEntity
 		if (depth > 0 && slot < inputs.Length) {
 			IOSlot iOSlot = inputs [slot];
 			IOEntity iOEntity = iOSlot.connectedTo.Get ();
-			if ((Object)(object)iOEntity != (Object)null) {
-				if ((Object)(object)iOEntity == (Object)(object)entity) {
+			if (iOEntity != null) {
+				if (iOEntity == entity) {
 					return true;
 				}
 				if (ConsiderConnectedTo (entity)) {
@@ -381,8 +362,8 @@ public class IOEntity : DecayEntity
 			IOSlot iOSlot = inputs [slot];
 			if (iOSlot.mainPowerSlot) {
 				IOEntity iOEntity = iOSlot.connectedTo.Get ();
-				if ((Object)(object)iOEntity != (Object)null) {
-					if ((Object)(object)iOEntity == (Object)(object)entity) {
+				if (iOEntity != null) {
+					if (iOEntity == entity) {
 						return true;
 					}
 					if (ConsiderConnectedTo (entity)) {
@@ -406,8 +387,8 @@ public class IOEntity : DecayEntity
 					continue;
 				}
 				IOEntity iOEntity = iOSlot.connectedTo.Get ();
-				if ((Object)(object)iOEntity != (Object)null) {
-					if ((Object)(object)iOEntity == (Object)(object)entity) {
+				if (iOEntity != null) {
+					if (iOEntity == entity) {
 						return true;
 					}
 					if (ConsiderConnectedTo (entity)) {
@@ -452,7 +433,7 @@ public class IOEntity : DecayEntity
 			if (slot >= 0 && slot < inputs.Length) {
 				IOSlot iOSlot = inputs [slot];
 				IOEntity iOEntity = iOSlot.connectedTo.Get ();
-				if ((Object)(object)iOEntity != (Object)null && iOSlot.connectedToSlot >= 0 && iOSlot.connectedToSlot < iOEntity.outputs.Length) {
+				if (iOEntity != null && iOSlot.connectedToSlot >= 0 && iOSlot.connectedToSlot < iOEntity.outputs.Length) {
 					result = iOEntity.GetPassthroughAmount (inputs [slot].connectedToSlot);
 				}
 			}
@@ -464,16 +445,14 @@ public class IOEntity : DecayEntity
 
 	public static void ProcessQueue ()
 	{
-		//IL_0133: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013a: Expected O, but got Unknown
 		Profiler.BeginSample ("IOEntity.ProcessQueue");
-		float realtimeSinceStartup = Time.realtimeSinceStartup;
+		float realtimeSinceStartup = UnityEngine.Time.realtimeSinceStartup;
 		float num = framebudgetms / 1000f;
 		if (debugBudget) {
 			timings.Clear ();
 		}
-		while (_processQueue.Count > 0 && Time.realtimeSinceStartup < realtimeSinceStartup + num && !_processQueue.Peek ().HasBlockedUpdatedOutputsThisFrame) {
-			float realtimeSinceStartup2 = Time.realtimeSinceStartup;
+		while (_processQueue.Count > 0 && UnityEngine.Time.realtimeSinceStartup < realtimeSinceStartup + num && !_processQueue.Peek ().HasBlockedUpdatedOutputsThisFrame) {
+			float realtimeSinceStartup2 = UnityEngine.Time.realtimeSinceStartup;
 			IOEntity iOEntity = _processQueue.Dequeue ();
 			if (iOEntity.IsValid ()) {
 				Profiler.BeginSample (iOEntity.ShortPrefabName);
@@ -483,7 +462,7 @@ public class IOEntity : DecayEntity
 			if (debugBudget) {
 				timings.Add (new FrameTiming {
 					PrefabName = iOEntity.ShortPrefabName,
-					Time = (Time.realtimeSinceStartup - realtimeSinceStartup2) * 1000f
+					Time = (UnityEngine.Time.realtimeSinceStartup - realtimeSinceStartup2) * 1000f
 				});
 			}
 		}
@@ -491,24 +470,21 @@ public class IOEntity : DecayEntity
 		if (!debugBudget) {
 			return;
 		}
-		float num2 = Time.realtimeSinceStartup - realtimeSinceStartup;
+		float num2 = UnityEngine.Time.realtimeSinceStartup - realtimeSinceStartup;
 		float num3 = debugBudgetThreshold / 1000f;
 		if (!(num2 > num3)) {
 			return;
 		}
-		TextTable val = new TextTable ();
-		val.AddColumns (new string[2] { "Prefab Name", "Time (in ms)" });
+		TextTable textTable = new TextTable ();
+		textTable.AddColumns ("Prefab Name", "Time (in ms)");
 		foreach (FrameTiming timing in timings) {
 			string[] obj = new string[2] { timing.PrefabName, null };
 			float time = timing.Time;
 			obj [1] = time.ToString ();
-			val.AddRow (obj);
+			textTable.AddRow (obj);
 		}
-		val.AddRow (new string[2] {
-			"Total time",
-			(num2 * 1000f).ToString ()
-		});
-		Debug.Log ((object)((object)val).ToString ());
+		textTable.AddRow ("Total time", (num2 * 1000f).ToString ());
+		Debug.Log (textTable.ToString ());
 	}
 
 	public virtual void ResetIOState ()
@@ -520,10 +496,10 @@ public class IOEntity : DecayEntity
 		for (int i = 0; i < outputs.Length; i++) {
 			IOSlot iOSlot = outputs [i];
 			iOSlot.connectedTo.Init ();
-			if ((Object)(object)iOSlot.connectedTo.Get () != (Object)null) {
+			if (iOSlot.connectedTo.Get () != null) {
 				int connectedToSlot = iOSlot.connectedToSlot;
 				if (connectedToSlot < 0 || connectedToSlot >= iOSlot.connectedTo.Get ().inputs.Length) {
-					Debug.LogError ((object)("Slot IOR Error: " + ((Object)this).name + " setting up inputs for " + ((Object)iOSlot.connectedTo.Get ()).name + " slot : " + iOSlot.connectedToSlot));
+					Debug.LogError ("Slot IOR Error: " + base.name + " setting up inputs for " + iOSlot.connectedTo.Get ().name + " slot : " + iOSlot.connectedToSlot);
 				} else {
 					iOSlot.connectedTo.Get ().inputs [iOSlot.connectedToSlot].connectedTo.Set (this);
 					iOSlot.connectedTo.Get ().inputs [iOSlot.connectedToSlot].connectedToSlot = i;
@@ -533,7 +509,7 @@ public class IOEntity : DecayEntity
 		}
 		UpdateUsedOutputs ();
 		if (IsRootEntity ()) {
-			((FacepunchBehaviour)this).Invoke ((Action)MarkDirtyForceUpdateOutputs, Random.Range (1f, 1f));
+			Invoke (MarkDirtyForceUpdateOutputs, UnityEngine.Random.Range (1f, 1f));
 		}
 	}
 
@@ -547,50 +523,50 @@ public class IOEntity : DecayEntity
 
 	public void ClearConnections ()
 	{
-		List<IOEntity> list = Pool.GetList<IOEntity> ();
-		List<IOEntity> list2 = Pool.GetList<IOEntity> ();
+		List<IOEntity> obj = Facepunch.Pool.GetList<IOEntity> ();
+		List<IOEntity> obj2 = Facepunch.Pool.GetList<IOEntity> ();
 		IOSlot[] array = inputs;
 		foreach (IOSlot iOSlot in array) {
 			IOEntity iOEntity = null;
-			if ((Object)(object)iOSlot.connectedTo.Get () != (Object)null) {
+			if (iOSlot.connectedTo.Get () != null) {
 				iOEntity = iOSlot.connectedTo.Get ();
 				if (iOSlot.type == IOType.Industrial) {
-					list2.Add (iOEntity);
+					obj2.Add (iOEntity);
 				}
 				IOSlot[] array2 = iOSlot.connectedTo.Get ().outputs;
 				foreach (IOSlot iOSlot2 in array2) {
-					if ((Object)(object)iOSlot2.connectedTo.Get () != (Object)null && iOSlot2.connectedTo.Get ().EqualNetID ((BaseNetworkable)this)) {
+					if (iOSlot2.connectedTo.Get () != null && iOSlot2.connectedTo.Get ().EqualNetID (this)) {
 						iOSlot2.Clear ();
 					}
 				}
 			}
 			iOSlot.Clear ();
-			if (Object.op_Implicit ((Object)(object)iOEntity)) {
+			if ((bool)iOEntity) {
 				iOEntity.SendNetworkUpdate ();
 			}
 		}
 		IOSlot[] array3 = outputs;
 		foreach (IOSlot iOSlot3 in array3) {
-			if ((Object)(object)iOSlot3.connectedTo.Get () != (Object)null) {
-				list.Add (iOSlot3.connectedTo.Get ());
+			if (iOSlot3.connectedTo.Get () != null) {
+				obj.Add (iOSlot3.connectedTo.Get ());
 				if (iOSlot3.type == IOType.Industrial) {
-					list2.Add (list [list.Count - 1]);
+					obj2.Add (obj [obj.Count - 1]);
 				}
 				IOSlot[] array4 = iOSlot3.connectedTo.Get ().inputs;
 				foreach (IOSlot iOSlot4 in array4) {
-					if ((Object)(object)iOSlot4.connectedTo.Get () != (Object)null && iOSlot4.connectedTo.Get ().EqualNetID ((BaseNetworkable)this)) {
+					if (iOSlot4.connectedTo.Get () != null && iOSlot4.connectedTo.Get ().EqualNetID (this)) {
 						iOSlot4.Clear ();
 					}
 				}
 			}
-			if (Object.op_Implicit ((Object)(object)iOSlot3.connectedTo.Get ())) {
+			if ((bool)iOSlot3.connectedTo.Get ()) {
 				iOSlot3.connectedTo.Get ().UpdateFromInput (0, iOSlot3.connectedToSlot);
 			}
 			iOSlot3.Clear ();
 		}
 		SendNetworkUpdate ();
-		foreach (IOEntity item in list) {
-			if ((Object)(object)item != (Object)null) {
+		foreach (IOEntity item in obj) {
+			if (item != null) {
 				item.MarkDirty ();
 				item.SendNetworkUpdate ();
 			}
@@ -598,14 +574,14 @@ public class IOEntity : DecayEntity
 		for (int m = 0; m < inputs.Length; m++) {
 			UpdateFromInput (0, m);
 		}
-		foreach (IOEntity item2 in list2) {
-			if ((Object)(object)item2 != (Object)null) {
+		foreach (IOEntity item2 in obj2) {
+			if (item2 != null) {
 				item2.NotifyIndustrialNetworkChanged ();
 			}
 			item2.RefreshIndustrialPreventBuilding ();
 		}
-		Pool.FreeList<IOEntity> (ref list);
-		Pool.FreeList<IOEntity> (ref list2);
+		Facepunch.Pool.FreeList (ref obj);
+		Facepunch.Pool.FreeList (ref obj2);
 		RefreshIndustrialPreventBuilding ();
 	}
 
@@ -628,7 +604,7 @@ public class IOEntity : DecayEntity
 		IOSlot[] array = outputs;
 		foreach (IOSlot iOSlot in array) {
 			IOEntity iOEntity = iOSlot.connectedTo.Get ();
-			if ((Object)(object)iOEntity != (Object)null && !iOEntity.IsDestroyed) {
+			if (iOEntity != null && !iOEntity.IsDestroyed) {
 				cachedOutputsUsed++;
 			}
 		}
@@ -666,7 +642,7 @@ public class IOEntity : DecayEntity
 			return 0;
 		}
 		IOEntity iOEntity = outputs [outputSlot].connectedTo.Get ();
-		if ((Object)(object)iOEntity == (Object)null || iOEntity.IsDestroyed) {
+		if (iOEntity == null || iOEntity.IsDestroyed) {
 			return 0;
 		}
 		int num = ((cachedOutputsUsed == 0) ? 1 : cachedOutputsUsed);
@@ -737,9 +713,9 @@ public class IOEntity : DecayEntity
 	public virtual void SendChangedToRoot (bool forceUpdate)
 	{
 		Profiler.BeginSample ("IOEntity.SendChangedToRoot");
-		List<IOEntity> existing = Pool.GetList<IOEntity> ();
+		List<IOEntity> existing = Facepunch.Pool.GetList<IOEntity> ();
 		SendChangedToRootRecursive (forceUpdate, ref existing);
-		Pool.FreeList<IOEntity> (ref existing);
+		Facepunch.Pool.FreeList (ref existing);
 		Profiler.EndSample ();
 	}
 
@@ -757,7 +733,7 @@ public class IOEntity : DecayEntity
 				continue;
 			}
 			IOEntity iOEntity = iOSlot.connectedTo.Get ();
-			if (!((Object)(object)iOEntity == (Object)null) && !existing.Contains (iOEntity)) {
+			if (!(iOEntity == null) && !existing.Contains (iOEntity)) {
 				flag2 = true;
 				if (forceUpdate) {
 					iOEntity.ensureOutputsUpdated = true;
@@ -773,12 +749,12 @@ public class IOEntity : DecayEntity
 
 	public void NotifyIndustrialNetworkChanged ()
 	{
-		List<IOEntity> list = Pool.GetList<IOEntity> ();
+		List<IOEntity> obj = Facepunch.Pool.GetList<IOEntity> ();
 		OnIndustrialNetworkChanged ();
-		NotifyIndustrialNetworkChanged (list, input: true, 128);
-		list.Clear ();
-		NotifyIndustrialNetworkChanged (list, input: false, 128);
-		Pool.FreeList<IOEntity> (ref list);
+		NotifyIndustrialNetworkChanged (obj, input: true, 128);
+		obj.Clear ();
+		NotifyIndustrialNetworkChanged (obj, input: false, 128);
+		Facepunch.Pool.FreeList (ref obj);
 	}
 
 	private void NotifyIndustrialNetworkChanged (List<IOEntity> existing, bool input, int maxDepth)
@@ -792,7 +768,7 @@ public class IOEntity : DecayEntity
 		existing.Add (this);
 		IOSlot[] array = (input ? inputs : outputs);
 		foreach (IOSlot iOSlot in array) {
-			if (iOSlot.type == IOType.Industrial && (Object)(object)iOSlot.connectedTo.Get () != (Object)null) {
+			if (iOSlot.type == IOType.Industrial && iOSlot.connectedTo.Get () != null) {
 				iOSlot.connectedTo.Get ().NotifyIndustrialNetworkChanged (existing, input, maxDepth - 1);
 			}
 		}
@@ -804,12 +780,12 @@ public class IOEntity : DecayEntity
 
 	protected bool ShouldUpdateOutputs ()
 	{
-		if (Time.realtimeSinceStartup - lastUpdateTime < responsetime) {
-			lastUpdateBlockedFrame = Time.frameCount;
+		if (UnityEngine.Time.realtimeSinceStartup - lastUpdateTime < responsetime) {
+			lastUpdateBlockedFrame = UnityEngine.Time.frameCount;
 			_processQueue.Enqueue (this);
 			return false;
 		}
-		lastUpdateTime = Time.realtimeSinceStartup;
+		lastUpdateTime = UnityEngine.Time.realtimeSinceStartup;
 		SendIONetworkUpdate ();
 		if (outputs.Length == 0) {
 			ensureOutputsUpdated = false;
@@ -820,43 +796,35 @@ public class IOEntity : DecayEntity
 
 	public virtual void UpdateOutputs ()
 	{
-		//IL_00a9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ae: Unknown result type (might be due to invalid IL or missing references)
 		if (!ShouldUpdateOutputs () || !ensureOutputsUpdated) {
 			return;
 		}
 		ensureOutputsUpdated = false;
-		TimeWarning val = TimeWarning.New ("ProcessIOOutputs", 0);
-		try {
+		using (TimeWarning.New ("ProcessIOOutputs")) {
 			for (int i = 0; i < outputs.Length; i++) {
 				IOSlot iOSlot = outputs [i];
 				bool flag = true;
 				IOEntity iOEntity = iOSlot.connectedTo.Get ();
-				if (!((Object)(object)iOEntity != (Object)null)) {
+				if (!(iOEntity != null)) {
 					continue;
 				}
 				if (ioType == IOType.Fluidic && !DisregardGravityRestrictionsOnLiquid && !iOEntity.DisregardGravityRestrictionsOnLiquid) {
-					TimeWarning val2 = TimeWarning.New ("FluidOutputProcessing", 0);
-					try {
-						if (!iOEntity.AllowLiquidPassthrough (this, ((Component)this).transform.TransformPoint (iOSlot.handlePosition))) {
+					using (TimeWarning.New ("FluidOutputProcessing")) {
+						if (!iOEntity.AllowLiquidPassthrough (this, base.transform.TransformPoint (iOSlot.handlePosition))) {
 							flag = false;
 						}
-					} finally {
-						((IDisposable)val2)?.Dispose ();
 					}
 				}
 				int passthroughAmount = GetPassthroughAmount (i);
 				iOEntity.UpdateFromInput (flag ? passthroughAmount : 0, iOSlot.connectedToSlot);
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 	}
 
 	public override void Spawn ()
 	{
 		base.Spawn ();
-		if (!Application.isLoadingSave) {
+		if (!Rust.Application.isLoadingSave) {
 			Init ();
 		}
 	}
@@ -875,59 +843,48 @@ public class IOEntity : DecayEntity
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_0074: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0079: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0123: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0177: Unknown result type (might be due to invalid IL or missing references)
-		//IL_017c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01cb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01db: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01dd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e2: Unknown result type (might be due to invalid IL or missing references)
 		Profiler.BeginSample ("IOEntity.Save");
 		base.Save (info);
-		info.msg.ioEntity = Pool.Get<IOEntity> ();
-		info.msg.ioEntity.inputs = Pool.GetList<IOConnection> ();
-		info.msg.ioEntity.outputs = Pool.GetList<IOConnection> ();
+		info.msg.ioEntity = Facepunch.Pool.Get<ProtoBuf.IOEntity> ();
+		info.msg.ioEntity.inputs = Facepunch.Pool.GetList<ProtoBuf.IOEntity.IOConnection> ();
+		info.msg.ioEntity.outputs = Facepunch.Pool.GetList<ProtoBuf.IOEntity.IOConnection> ();
 		IOSlot[] array = inputs;
 		foreach (IOSlot iOSlot in array) {
-			IOConnection val = Pool.Get<IOConnection> ();
-			val.connectedID = iOSlot.connectedTo.entityRef.uid;
-			val.connectedToSlot = iOSlot.connectedToSlot;
-			val.niceName = iOSlot.niceName;
-			val.type = (int)iOSlot.type;
-			val.inUse = ((NetworkableId)(ref val.connectedID)).IsValid;
-			val.colour = (int)iOSlot.wireColour;
-			val.lineThickness = iOSlot.lineThickness;
-			info.msg.ioEntity.inputs.Add (val);
+			ProtoBuf.IOEntity.IOConnection iOConnection = Facepunch.Pool.Get<ProtoBuf.IOEntity.IOConnection> ();
+			iOConnection.connectedID = iOSlot.connectedTo.entityRef.uid;
+			iOConnection.connectedToSlot = iOSlot.connectedToSlot;
+			iOConnection.niceName = iOSlot.niceName;
+			iOConnection.type = (int)iOSlot.type;
+			iOConnection.inUse = iOConnection.connectedID.IsValid;
+			iOConnection.colour = (int)iOSlot.wireColour;
+			iOConnection.lineThickness = iOSlot.lineThickness;
+			info.msg.ioEntity.inputs.Add (iOConnection);
 		}
 		IOSlot[] array2 = outputs;
 		foreach (IOSlot iOSlot2 in array2) {
-			IOConnection val2 = Pool.Get<IOConnection> ();
-			val2.connectedID = iOSlot2.connectedTo.entityRef.uid;
-			val2.connectedToSlot = iOSlot2.connectedToSlot;
-			val2.niceName = iOSlot2.niceName;
-			val2.type = (int)iOSlot2.type;
-			val2.inUse = ((NetworkableId)(ref val2.connectedID)).IsValid;
-			val2.colour = (int)iOSlot2.wireColour;
-			val2.worldSpaceRotation = iOSlot2.worldSpaceLineEndRotation;
-			val2.lineThickness = iOSlot2.lineThickness;
+			ProtoBuf.IOEntity.IOConnection iOConnection2 = Facepunch.Pool.Get<ProtoBuf.IOEntity.IOConnection> ();
+			iOConnection2.connectedID = iOSlot2.connectedTo.entityRef.uid;
+			iOConnection2.connectedToSlot = iOSlot2.connectedToSlot;
+			iOConnection2.niceName = iOSlot2.niceName;
+			iOConnection2.type = (int)iOSlot2.type;
+			iOConnection2.inUse = iOConnection2.connectedID.IsValid;
+			iOConnection2.colour = (int)iOSlot2.wireColour;
+			iOConnection2.worldSpaceRotation = iOSlot2.worldSpaceLineEndRotation;
+			iOConnection2.lineThickness = iOSlot2.lineThickness;
 			if (iOSlot2.linePoints != null) {
-				val2.linePointList = Pool.GetList<LineVec> ();
-				val2.linePointList.Clear ();
+				iOConnection2.linePointList = Facepunch.Pool.GetList<ProtoBuf.IOEntity.IOConnection.LineVec> ();
+				iOConnection2.linePointList.Clear ();
 				for (int k = 0; k < iOSlot2.linePoints.Length; k++) {
-					Vector3 val3 = iOSlot2.linePoints [k];
-					LineVec val4 = Pool.Get<LineVec> ();
-					val4.vec = Vector4.op_Implicit (val3);
+					Vector3 vector = iOSlot2.linePoints [k];
+					ProtoBuf.IOEntity.IOConnection.LineVec lineVec = Facepunch.Pool.Get<ProtoBuf.IOEntity.IOConnection.LineVec> ();
+					lineVec.vec = vector;
 					if (iOSlot2.slackLevels.Length > k) {
-						val4.vec.w = iOSlot2.slackLevels [k];
+						lineVec.vec.w = iOSlot2.slackLevels [k];
 					}
-					val2.linePointList.Add (val4);
+					iOConnection2.linePointList.Add (lineVec);
 				}
 			}
-			info.msg.ioEntity.outputs.Add (val2);
+			info.msg.ioEntity.outputs.Add (iOConnection2);
 		}
 		Profiler.EndSample ();
 	}
@@ -936,7 +893,7 @@ public class IOEntity : DecayEntity
 	{
 		IOSlot[] array = outputs;
 		foreach (IOSlot iOSlot in array) {
-			if ((Object)(object)iOSlot.connectedTo.Get () != (Object)null) {
+			if (iOSlot.connectedTo.Get () != null) {
 				inputAmount = iOSlot.connectedTo.Get ().IOInput (this, iOSlot.type, inputAmount, iOSlot.connectedToSlot);
 			}
 		}
@@ -959,7 +916,7 @@ public class IOEntity : DecayEntity
 				}
 			}
 		}
-		List<int> list = Pool.GetList<int> ();
+		List<int> obj = Facepunch.Pool.GetList<int> ();
 		IOSlot[] array2 = (input ? inputs : outputs);
 		foreach (IOSlot iOSlot2 in array2) {
 			num++;
@@ -967,7 +924,7 @@ public class IOEntity : DecayEntity
 				continue;
 			}
 			IOEntity iOEntity = iOSlot2.connectedTo.Get (base.isServer);
-			if (!((Object)(object)iOEntity != (Object)null) || ignoreList.Contains (iOEntity)) {
+			if (!(iOEntity != null) || ignoreList.Contains (iOEntity)) {
 				continue;
 			}
 			int num3 = -1;
@@ -982,22 +939,22 @@ public class IOEntity : DecayEntity
 						MaxStackSize = stackSize / num2
 					});
 					num3 = found.Count - 1;
-					list.Add (num3);
+					obj.Add (num3);
 				}
 			} else {
 				ignoreList.Add (iOEntity);
 			}
-			if ((!(iOEntity is IIndustrialStorage) || iOEntity is IndustrialStorageAdaptor) && !(iOEntity is IndustrialConveyor) && (Object)(object)iOEntity != (Object)null) {
+			if ((!(iOEntity is IIndustrialStorage) || iOEntity is IndustrialStorageAdaptor) && !(iOEntity is IndustrialConveyor) && iOEntity != null) {
 				iOEntity.FindContainerSource (found, depth - 1, input, ignoreList, (num3 == -1) ? parentId : num3, stackSize / num2);
 			}
 		}
-		int count = list.Count;
-		foreach (int item in list) {
+		int count = obj.Count;
+		foreach (int item in obj) {
 			ContainerInputOutput value = found [item];
 			value.IndustrialSiblingCount = count;
 			found [item] = value;
 		}
-		Pool.FreeList<int> (ref list);
+		Facepunch.Pool.FreeList (ref obj);
 		int GetExistingCount (IIndustrialStorage storage)
 		{
 			int num5 = 0;
@@ -1012,19 +969,14 @@ public class IOEntity : DecayEntity
 
 	public virtual bool AllowLiquidPassthrough (IOEntity fromSource, Vector3 sourceWorldPosition, bool forPlacement = false)
 	{
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
 		if (fromSource.DisregardGravityRestrictionsOnLiquid || DisregardGravityRestrictionsOnLiquid) {
 			return true;
 		}
 		if (inputs.Length == 0) {
 			return false;
 		}
-		Vector3 val = ((Component)this).transform.TransformPoint (inputs [0].handlePosition);
-		float num = sourceWorldPosition.y - val.y;
+		Vector3 vector = base.transform.TransformPoint (inputs [0].handlePosition);
+		float num = sourceWorldPosition.y - vector.y;
 		if (num > 0f) {
 			return true;
 		}
@@ -1036,13 +988,6 @@ public class IOEntity : DecayEntity
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_00f7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02ef: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0379: Unknown result type (might be due to invalid IL or missing references)
-		//IL_037e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_047b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0480: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0485: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (info.msg.ioEntity == null) {
 			return;
@@ -1057,17 +1002,17 @@ public class IOEntity : DecayEntity
 				if (inputs [i] == null) {
 					inputs [i] = new IOSlot ();
 				}
-				IOConnection val = info.msg.ioEntity.inputs [i];
+				ProtoBuf.IOEntity.IOConnection iOConnection = info.msg.ioEntity.inputs [i];
 				inputs [i].connectedTo = new IORef ();
-				inputs [i].connectedTo.entityRef.uid = val.connectedID;
+				inputs [i].connectedTo.entityRef.uid = iOConnection.connectedID;
 				if (base.isClient) {
 					inputs [i].connectedTo.InitClient ();
 				}
-				inputs [i].connectedToSlot = val.connectedToSlot;
-				inputs [i].niceName = val.niceName;
-				inputs [i].type = (IOType)val.type;
-				inputs [i].wireColour = (WireTool.WireColour)val.colour;
-				inputs [i].lineThickness = val.lineThickness;
+				inputs [i].connectedToSlot = iOConnection.connectedToSlot;
+				inputs [i].niceName = iOConnection.niceName;
+				inputs [i].type = (IOType)iOConnection.type;
+				inputs [i].wireColour = (WireTool.WireColour)iOConnection.colour;
+				inputs [i].lineThickness = iOConnection.lineThickness;
 			}
 		}
 		if (info.msg.ioEntity.outputs != null) {
@@ -1086,31 +1031,31 @@ public class IOEntity : DecayEntity
 				if (outputs [k] == null) {
 					outputs [k] = new IOSlot ();
 				}
-				IOConnection val2 = info.msg.ioEntity.outputs [k];
-				if (val2.linePointList == null || val2.linePointList.Count == 0 || !((NetworkableId)(ref val2.connectedID)).IsValid) {
+				ProtoBuf.IOEntity.IOConnection iOConnection2 = info.msg.ioEntity.outputs [k];
+				if (iOConnection2.linePointList == null || iOConnection2.linePointList.Count == 0 || !iOConnection2.connectedID.IsValid) {
 					outputs [k].Clear ();
 				}
 				outputs [k].connectedTo = new IORef ();
-				outputs [k].connectedTo.entityRef.uid = val2.connectedID;
+				outputs [k].connectedTo.entityRef.uid = iOConnection2.connectedID;
 				if (base.isClient) {
 					outputs [k].connectedTo.InitClient ();
 				}
-				outputs [k].connectedToSlot = val2.connectedToSlot;
-				outputs [k].niceName = val2.niceName;
-				outputs [k].type = (IOType)val2.type;
-				outputs [k].wireColour = (WireTool.WireColour)val2.colour;
-				outputs [k].worldSpaceLineEndRotation = val2.worldSpaceRotation;
-				outputs [k].lineThickness = val2.lineThickness;
+				outputs [k].connectedToSlot = iOConnection2.connectedToSlot;
+				outputs [k].niceName = iOConnection2.niceName;
+				outputs [k].type = (IOType)iOConnection2.type;
+				outputs [k].wireColour = (WireTool.WireColour)iOConnection2.colour;
+				outputs [k].worldSpaceLineEndRotation = iOConnection2.worldSpaceRotation;
+				outputs [k].lineThickness = iOConnection2.lineThickness;
 				if (info.fromDisk || base.isClient) {
-					List<LineVec> linePointList = val2.linePointList;
+					List<ProtoBuf.IOEntity.IOConnection.LineVec> linePointList = iOConnection2.linePointList;
 					if (outputs [k].linePoints == null || outputs [k].linePoints.Length != linePointList.Count) {
-						outputs [k].linePoints = (Vector3[])(object)new Vector3[linePointList.Count];
+						outputs [k].linePoints = new Vector3[linePointList.Count];
 					}
 					if (outputs [k].slackLevels == null || outputs [k].slackLevels.Length != linePointList.Count) {
 						outputs [k].slackLevels = new float[linePointList.Count];
 					}
 					for (int l = 0; l < linePointList.Count; l++) {
-						outputs [k].linePoints [l] = Vector4.op_Implicit (linePointList [l].vec);
+						outputs [k].linePoints [l] = linePointList [l].vec;
 						outputs [k].slackLevels [l] = linePointList [l].vec.w;
 					}
 				}
@@ -1125,7 +1070,7 @@ public class IOEntity : DecayEntity
 		int num = 0;
 		IOSlot[] array = inputs;
 		foreach (IOSlot iOSlot in array) {
-			if ((Object)(object)iOSlot.connectedTo.Get (base.isServer) != (Object)null) {
+			if (iOSlot.connectedTo.Get (base.isServer) != null) {
 				num++;
 			}
 		}
@@ -1137,7 +1082,7 @@ public class IOEntity : DecayEntity
 		int num = 0;
 		IOSlot[] array = outputs;
 		foreach (IOSlot iOSlot in array) {
-			if ((Object)(object)iOSlot.connectedTo.Get (base.isServer) != (Object)null) {
+			if (iOSlot.connectedTo.Get (base.isServer) != null) {
 				num++;
 			}
 		}
@@ -1157,59 +1102,30 @@ public class IOEntity : DecayEntity
 
 	public void RefreshIndustrialPreventBuilding ()
 	{
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0070: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0075: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0094: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0096: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0098: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ba: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00be: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0112: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014f: Unknown result type (might be due to invalid IL or missing references)
 		Profiler.BeginSample ("RefreshIndustrialPreventBuilding");
 		ClearIndustrialPreventBuilding ();
-		Matrix4x4 localToWorldMatrix = ((Component)this).transform.localToWorldMatrix;
-		BoxCollider val5 = default(BoxCollider);
-		ColliderInfo_Pipe colliderInfo_Pipe = default(ColliderInfo_Pipe);
+		Matrix4x4 localToWorldMatrix = base.transform.localToWorldMatrix;
 		for (int i = 0; i < outputs.Length; i++) {
 			IOSlot iOSlot = outputs [i];
 			Profiler.BeginSample ("CreateOutput");
 			if (iOSlot.type == IOType.Industrial && iOSlot.linePoints != null && iOSlot.linePoints.Length > 1) {
-				Vector3 val = ((Matrix4x4)(ref localToWorldMatrix)).MultiplyPoint3x4 (iOSlot.linePoints [0]);
+				Vector3 vector = localToWorldMatrix.MultiplyPoint3x4 (iOSlot.linePoints [0]);
 				for (int j = 1; j < iOSlot.linePoints.Length; j++) {
-					Vector3 val2 = ((Matrix4x4)(ref localToWorldMatrix)).MultiplyPoint3x4 (iOSlot.linePoints [j]);
-					Vector3 pos = Vector3.Lerp (val2, val, 0.5f);
-					float num = Vector3.Distance (val2, val);
-					Vector3 val3 = val2 - val;
-					Quaternion rot = Quaternion.LookRotation (((Vector3)(ref val3)).normalized);
-					GameObject val4 = base.gameManager.CreatePrefab ("assets/prefabs/misc/ioentitypreventbuilding.prefab", pos, rot);
-					val4.transform.SetParent (((Component)this).transform);
-					if (val4.TryGetComponent<BoxCollider> (ref val5)) {
-						val5.size = new Vector3 (0.1f, 0.1f, num);
-						spawnedColliders.Add (val5);
+					Vector3 vector2 = localToWorldMatrix.MultiplyPoint3x4 (iOSlot.linePoints [j]);
+					Vector3 pos = Vector3.Lerp (vector2, vector, 0.5f);
+					float z = Vector3.Distance (vector2, vector);
+					Quaternion rot = Quaternion.LookRotation ((vector2 - vector).normalized);
+					GameObject gameObject = base.gameManager.CreatePrefab ("assets/prefabs/misc/ioentitypreventbuilding.prefab", pos, rot);
+					gameObject.transform.SetParent (base.transform);
+					if (gameObject.TryGetComponent<BoxCollider> (out var component)) {
+						component.size = new Vector3 (0.1f, 0.1f, z);
+						spawnedColliders.Add (component);
 					}
-					if (val4.TryGetComponent<ColliderInfo_Pipe> (ref colliderInfo_Pipe)) {
-						colliderInfo_Pipe.OutputSlotIndex = i;
-						colliderInfo_Pipe.ParentEntity = this;
+					if (gameObject.TryGetComponent<ColliderInfo_Pipe> (out var component2)) {
+						component2.OutputSlotIndex = i;
+						component2.ParentEntity = this;
 					}
-					val = val2;
+					vector = vector2;
 				}
 			}
 			Profiler.EndSample ();
@@ -1220,7 +1136,7 @@ public class IOEntity : DecayEntity
 	private void ClearIndustrialPreventBuilding ()
 	{
 		foreach (BoxCollider spawnedCollider in spawnedColliders) {
-			base.gameManager.Retire (((Component)spawnedCollider).gameObject);
+			base.gameManager.Retire (spawnedCollider.gameObject);
 		}
 		spawnedColliders.Clear ();
 	}

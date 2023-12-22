@@ -23,37 +23,27 @@ public class NeonMeshPaintableSource : MeshPaintableSource
 
 	public override void UpdateMaterials (MaterialPropertyBlock block, Texture2D textureOverride = null, bool forEditing = false, bool isSelected = false)
 	{
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005a: Unknown result type (might be due to invalid IL or missing references)
 		base.UpdateMaterials (block, textureOverride, forEditing);
 		if (forEditing) {
 			block.SetFloat ("_EmissionScale", editorEmissionScale);
-			block.SetFloat ("_Power", (float)(isSelected ? 1 : 0));
+			block.SetFloat ("_Power", isSelected ? 1 : 0);
 			if (!isSelected) {
 				block.SetColor ("_TubeInner", Color.clear);
 				block.SetColor ("_TubeOuter", Color.clear);
 			}
-		} else if ((Object)(object)neonSign != (Object)null) {
-			block.SetFloat ("_Power", (float)((isSelected && neonSign.HasFlag (BaseEntity.Flags.Reserved8)) ? 1 : 0));
+		} else if (neonSign != null) {
+			block.SetFloat ("_Power", (isSelected && neonSign.HasFlag (BaseEntity.Flags.Reserved8)) ? 1 : 0);
 		}
 	}
 
 	public override Color32[] UpdateFrom (Texture2D input)
 	{
-		//IL_0066: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0078: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a1: Unknown result type (might be due to invalid IL or missing references)
 		Init ();
 		Color32[] pixels = input.GetPixels32 ();
 		texture.SetPixels32 (pixels);
-		texture.Apply (true, false);
-		int width = ((Texture)input).width;
-		int height = ((Texture)input).height;
+		texture.Apply (updateMipmaps: true, makeNoLongerReadable: false);
+		int width = input.width;
+		int height = input.height;
 		int num = width / 2;
 		int num2 = height / 2;
 		topLeft = GetColorForRegion (0, num2, num, num2);
@@ -63,15 +53,6 @@ public class NeonMeshPaintableSource : MeshPaintableSource
 		return pixels;
 		Color GetColorForRegion (int x, int y, int regionWidth, int regionHeight)
 		{
-			//IL_00ef: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00f4: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00f8: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-			//IL_004a: Unknown result type (might be due to invalid IL or missing references)
-			//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-			//IL_005d: Unknown result type (might be due to invalid IL or missing references)
-			//IL_006b: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0079: Unknown result type (might be due to invalid IL or missing references)
 			float num3 = 0f;
 			float num4 = 0f;
 			float num5 = 0f;
@@ -80,11 +61,11 @@ public class NeonMeshPaintableSource : MeshPaintableSource
 				int num7 = i * width + x;
 				int num8 = num7 + regionWidth;
 				for (int j = num7; j < num8; j++) {
-					Color32 val = pixels [j];
-					float num9 = (float)(int)val.a / 255f;
-					num3 += (float)(int)val.r * num9;
-					num4 += (float)(int)val.g * num9;
-					num5 += (float)(int)val.b * num9;
+					Color32 color = pixels [j];
+					float num9 = (float)(int)color.a / 255f;
+					num3 += (float)(int)color.r * num9;
+					num4 += (float)(int)color.g * num9;
+					num5 += (float)(int)color.b * num9;
 				}
 			}
 			int num10 = regionWidth * regionHeight * 255;

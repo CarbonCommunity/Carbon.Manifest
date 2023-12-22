@@ -24,16 +24,16 @@ public class vehicle : ConsoleSystem
 	{
 		int targetSeat = 0;
 		BasePlayer basePlayer = arg.Player ();
-		if ((Object)(object)basePlayer == (Object)null || basePlayer.SwapSeatCooldown ()) {
+		if (basePlayer == null || basePlayer.SwapSeatCooldown ()) {
 			return;
 		}
 		BaseMountable mounted = basePlayer.GetMounted ();
-		if (!((Object)(object)mounted == (Object)null)) {
-			BaseVehicle baseVehicle = ((Component)mounted).GetComponent<BaseVehicle> ();
-			if ((Object)(object)baseVehicle == (Object)null) {
+		if (!(mounted == null)) {
+			BaseVehicle baseVehicle = mounted.GetComponent<BaseVehicle> ();
+			if (baseVehicle == null) {
 				baseVehicle = mounted.VehicleParent ();
 			}
-			if (!((Object)(object)baseVehicle == (Object)null)) {
+			if (!(baseVehicle == null)) {
 				baseVehicle.SwapSeats (basePlayer, targetSeat);
 			}
 		}
@@ -42,12 +42,8 @@ public class vehicle : ConsoleSystem
 	[ServerVar]
 	public static void fixcars (Arg arg)
 	{
-		//IL_0083: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0102: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer basePlayer = arg.Player ();
-		if ((Object)(object)basePlayer == (Object)null) {
+		if (basePlayer == null) {
 			arg.ReplyWith ("Null player.");
 			return;
 		}
@@ -61,14 +57,14 @@ public class vehicle : ConsoleSystem
 		int num = 0;
 		BaseVehicle[] array2 = array;
 		foreach (BaseVehicle baseVehicle in array2) {
-			if (baseVehicle.isServer && Vector3.Distance (((Component)baseVehicle).transform.position, ((Component)basePlayer).transform.position) <= 10f && baseVehicle.AdminFixUp (@int)) {
+			if (baseVehicle.isServer && Vector3.Distance (baseVehicle.transform.position, basePlayer.transform.position) <= 10f && baseVehicle.AdminFixUp (@int)) {
 				num++;
 			}
 		}
 		MLRS[] array3 = Object.FindObjectsOfType<MLRS> ();
 		MLRS[] array4 = array3;
 		foreach (MLRS mLRS in array4) {
-			if (mLRS.isServer && Vector3.Distance (((Component)mLRS).transform.position, ((Component)basePlayer).transform.position) <= 10f && mLRS.AdminFixUp ()) {
+			if (mLRS.isServer && Vector3.Distance (mLRS.transform.position, basePlayer.transform.position) <= 10f && mLRS.AdminFixUp ()) {
 				num++;
 			}
 		}
@@ -100,7 +96,7 @@ public class vehicle : ConsoleSystem
 	{
 		MiniCopter[] array = BaseEntity.Util.FindAll<MiniCopter> ();
 		foreach (MiniCopter miniCopter in array) {
-			if (((Object)miniCopter).name.ToLower ().Contains ("minicopter")) {
+			if (miniCopter.name.ToLower ().Contains ("minicopter")) {
 				miniCopter.Kill ();
 			}
 		}

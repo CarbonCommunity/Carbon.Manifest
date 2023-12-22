@@ -19,23 +19,18 @@ public class ErrorText : MonoBehaviour
 
 	public void OnDisable ()
 	{
-		if (!Application.isQuitting) {
+		if (!Rust.Application.isQuitting) {
 			Output.OnMessage -= CaptureLog;
 		}
 	}
 
 	internal void CaptureLog (string error, string stacktrace, LogType type)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0004: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Invalid comparison between Unknown and I4
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000a: Invalid comparison between Unknown and I4
-		if (((int)type == 0 || (int)type == 4 || (int)type == 1) && !((Object)(object)text == (Object)null)) {
-			TextMeshProUGUI val = text;
-			((TMP_Text)val).text = ((TMP_Text)val).text + error + "\n" + stacktrace + "\n\n";
-			if (((TMP_Text)text).text.Length > maxLength) {
-				((TMP_Text)text).text = ((TMP_Text)text).text.Substring (((TMP_Text)text).text.Length - maxLength, maxLength);
+		if ((type == LogType.Error || type == LogType.Exception || type == LogType.Assert) && !(text == null)) {
+			TextMeshProUGUI textMeshProUGUI = text;
+			textMeshProUGUI.text = textMeshProUGUI.text + error + "\n" + stacktrace + "\n\n";
+			if (text.text.Length > maxLength) {
+				text.text = text.text.Substring (text.text.Length - maxLength, maxLength);
 			}
 			stopwatch = Stopwatch.StartNew ();
 		}
@@ -44,7 +39,7 @@ public class ErrorText : MonoBehaviour
 	protected void Update ()
 	{
 		if (stopwatch != null && stopwatch.Elapsed.TotalSeconds > 30.0) {
-			((TMP_Text)text).text = string.Empty;
+			text.text = string.Empty;
 			stopwatch = null;
 		}
 	}

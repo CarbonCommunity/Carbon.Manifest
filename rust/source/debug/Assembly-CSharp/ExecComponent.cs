@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class ExecComponent : MonoBehaviour
@@ -7,7 +6,6 @@ public class ExecComponent : MonoBehaviour
 
 	public void Run ()
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		ConsoleSystem.Run (Option.Client, ExecToRun, Array.Empty<object> ());
+		ConsoleSystem.Run (ConsoleSystem.Option.Client, ExecToRun);
 	}
 }

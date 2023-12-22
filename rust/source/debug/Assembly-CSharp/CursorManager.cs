@@ -12,7 +12,7 @@ public class CursorManager : SingletonComponent<CursorManager>
 
 	private void Update ()
 	{
-		if (!((Object)(object)SingletonComponent<CursorManager>.Instance != (Object)(object)this)) {
+		if (!(SingletonComponent<CursorManager>.Instance != this)) {
 			if (iHoldOpen == 0 && iPreviousOpen == 0) {
 				SwitchToGame ();
 			} else {
@@ -25,10 +25,8 @@ public class CursorManager : SingletonComponent<CursorManager>
 
 	public void SwitchToGame ()
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Invalid comparison between Unknown and I4
-		if ((int)Cursor.lockState != 1) {
-			Cursor.lockState = (CursorLockMode)1;
+		if (Cursor.lockState != CursorLockMode.Locked) {
+			Cursor.lockState = CursorLockMode.Locked;
 		}
 		if (Cursor.visible) {
 			Cursor.visible = false;
@@ -38,10 +36,8 @@ public class CursorManager : SingletonComponent<CursorManager>
 
 	private void SwitchToUI ()
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Invalid comparison between Unknown and I4
-		if ((int)Cursor.lockState > 0) {
-			Cursor.lockState = (CursorLockMode)0;
+		if (Cursor.lockState != 0) {
+			Cursor.lockState = CursorLockMode.None;
 		}
 		if (!Cursor.visible) {
 			Cursor.visible = true;

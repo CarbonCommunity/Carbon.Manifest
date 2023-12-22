@@ -8,12 +8,6 @@ public class GenerateTopology : ProceduralComponent
 
 	public override void Process (uint seed)
 	{
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0063: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0064: Unknown result type (might be due to invalid IL or missing references)
 		int[] dst = TerrainMeta.TopologyMap.dst;
 		int res = TerrainMeta.TopologyMap.res;
 		Vector3 position = TerrainMeta.Position;

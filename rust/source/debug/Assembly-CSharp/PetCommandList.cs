@@ -9,9 +9,9 @@ public class PetCommandList : PrefabAttribute
 	{
 		public PetCommandType CommandType;
 
-		public Phrase Title;
+		public Translate.Phrase Title;
 
-		public Phrase Description;
+		public Translate.Phrase Description;
 
 		public Sprite Icon;
 

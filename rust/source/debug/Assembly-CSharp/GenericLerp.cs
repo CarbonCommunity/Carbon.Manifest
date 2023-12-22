@@ -1,3 +1,4 @@
+#define ENABLE_PROFILER
 using System;
 using Rust.Interpolation;
 using UnityEngine;

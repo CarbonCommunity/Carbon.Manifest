@@ -24,11 +24,11 @@ public class TriggerDanceAchievement : TriggerBase
 	internal override GameObject InterestedInObject (GameObject obj)
 	{
 		obj = base.InterestedInObject (obj);
-		if ((Object)(object)obj == (Object)null) {
+		if (obj == null) {
 			return null;
 		}
 		BaseEntity baseEntity = obj.ToBaseEntity ();
-		if ((Object)(object)baseEntity == (Object)null) {
+		if (baseEntity == null) {
 			return null;
 		}
 		if (!(baseEntity is BasePlayer)) {
@@ -37,19 +37,17 @@ public class TriggerDanceAchievement : TriggerBase
 		if (baseEntity.isClient) {
 			return null;
 		}
-		return ((Component)baseEntity).gameObject;
+		return baseEntity.gameObject;
 	}
 
 	public void NotifyDanceStarted ()
 	{
-		//IL_00c1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0104: Unknown result type (might be due to invalid IL or missing references)
 		if (entityContents == null) {
 			return;
 		}
 		int num = 0;
 		foreach (BaseEntity entityContent in entityContents) {
-			if ((Object)(object)entityContent.ToPlayer () != (Object)null && entityContent.ToPlayer ().CurrentGestureIsDance) {
+			if (entityContent.ToPlayer () != null && entityContent.ToPlayer ().CurrentGestureIsDance) {
 				num++;
 				if (num >= RequiredPlayerCount) {
 					break;
@@ -60,7 +58,7 @@ public class TriggerDanceAchievement : TriggerBase
 			return;
 		}
 		foreach (BaseEntity entityContent2 in entityContents) {
-			if (!triggeredPlayers.Contains (entityContent2.net.ID) && (Object)(object)entityContent2.ToPlayer () != (Object)null) {
+			if (!triggeredPlayers.Contains (entityContent2.net.ID) && entityContent2.ToPlayer () != null) {
 				entityContent2.ToPlayer ().GiveAchievement (AchievementName);
 				triggeredPlayers.Add (entityContent2.net.ID);
 			}

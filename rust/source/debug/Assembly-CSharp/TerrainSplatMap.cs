@@ -11,97 +11,79 @@ public class TerrainSplatMap : TerrainMap<byte>
 
 	public override void Setup ()
 	{
-		//IL_00c0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_026b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0270: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_029c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0121: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02ce: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0153: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0300: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0185: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0332: Unknown result type (might be due to invalid IL or missing references)
 		res = terrain.terrainData.alphamapResolution;
 		this.num = config.Splats.Length;
 		src = (dst = new byte[this.num * res * res]);
-		if ((Object)(object)SplatTexture0 != (Object)null) {
-			if (((Texture)SplatTexture0).width == ((Texture)SplatTexture0).height && ((Texture)SplatTexture0).width == res) {
+		if (SplatTexture0 != null) {
+			if (SplatTexture0.width == SplatTexture0.height && SplatTexture0.width == res) {
 				Color32[] pixels = SplatTexture0.GetPixels32 ();
 				int i = 0;
 				int num = 0;
 				for (; i < res; i++) {
 					int num2 = 0;
 					while (num2 < res) {
-						Color32 val = pixels [num];
+						Color32 color = pixels [num];
 						if (this.num > 0) {
 							byte[] array = dst;
 							_ = res;
-							array [(0 + i) * res + num2] = val.r;
+							array [(0 + i) * res + num2] = color.r;
 						}
 						if (this.num > 1) {
-							dst [(res + i) * res + num2] = val.g;
+							dst [(res + i) * res + num2] = color.g;
 						}
 						if (this.num > 2) {
-							dst [(2 * res + i) * res + num2] = val.b;
+							dst [(2 * res + i) * res + num2] = color.b;
 						}
 						if (this.num > 3) {
-							dst [(3 * res + i) * res + num2] = val.a;
+							dst [(3 * res + i) * res + num2] = color.a;
 						}
 						num2++;
 						num++;
 					}
 				}
 			} else {
-				Debug.LogError ((object)("Invalid splat texture: " + ((Object)SplatTexture0).name), (Object)(object)SplatTexture0);
+				Debug.LogError ("Invalid splat texture: " + SplatTexture0.name, SplatTexture0);
 			}
 		}
-		if (!((Object)(object)SplatTexture1 != (Object)null)) {
+		if (!(SplatTexture1 != null)) {
 			return;
 		}
-		if (((Texture)SplatTexture1).width == ((Texture)SplatTexture1).height && ((Texture)SplatTexture1).width == res && this.num > 5) {
+		if (SplatTexture1.width == SplatTexture1.height && SplatTexture1.width == res && this.num > 5) {
 			Color32[] pixels2 = SplatTexture1.GetPixels32 ();
 			int j = 0;
 			int num3 = 0;
 			for (; j < res; j++) {
 				int num4 = 0;
 				while (num4 < res) {
-					Color32 val2 = pixels2 [num3];
+					Color32 color2 = pixels2 [num3];
 					if (this.num > 4) {
-						dst [(4 * res + j) * res + num4] = val2.r;
+						dst [(4 * res + j) * res + num4] = color2.r;
 					}
 					if (this.num > 5) {
-						dst [(5 * res + j) * res + num4] = val2.g;
+						dst [(5 * res + j) * res + num4] = color2.g;
 					}
 					if (this.num > 6) {
-						dst [(6 * res + j) * res + num4] = val2.b;
+						dst [(6 * res + j) * res + num4] = color2.b;
 					}
 					if (this.num > 7) {
-						dst [(7 * res + j) * res + num4] = val2.a;
+						dst [(7 * res + j) * res + num4] = color2.a;
 					}
 					num4++;
 					num3++;
 				}
 			}
 		} else {
-			Debug.LogError ((object)("Invalid splat texture: " + ((Object)SplatTexture1).name), (Object)(object)SplatTexture1);
+			Debug.LogError ("Invalid splat texture: " + SplatTexture1.name, SplatTexture1);
 		}
 	}
 
 	public void GenerateTextures ()
 	{
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0029: Expected O, but got Unknown
-		//IL_00a9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b3: Expected O, but got Unknown
-		SplatTexture0 = new Texture2D (res, res, (TextureFormat)4, false, true);
-		((Object)SplatTexture0).name = "SplatTexture0";
-		((Texture)SplatTexture0).wrapMode = (TextureWrapMode)1;
-		Color32[] cols = (Color32[])(object)new Color32[res * res];
-		Parallel.For (0, res, (Action<int>)delegate(int z) {
-			//IL_010e: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0113: Unknown result type (might be due to invalid IL or missing references)
+		SplatTexture0 = new Texture2D (res, res, TextureFormat.RGBA32, mipChain: false, linear: true);
+		SplatTexture0.name = "SplatTexture0";
+		SplatTexture0.wrapMode = TextureWrapMode.Clamp;
+		Color32[] cols = new Color32[res * res];
+		Parallel.For (0, res, delegate(int z) {
 			for (int j = 0; j < res; j++) {
 				int num;
 				if (this.num <= 0) {
@@ -111,27 +93,25 @@ public class TerrainSplatMap : TerrainMap<byte>
 					_ = res;
 					num = array [(0 + z) * res + j];
 				}
-				byte b5 = (byte)num;
-				byte b6 = (byte)((this.num > 1) ? src [(res + z) * res + j] : 0);
-				byte b7 = (byte)((this.num > 2) ? src [(2 * res + z) * res + j] : 0);
-				byte b8 = (byte)((this.num > 3) ? src [(3 * res + z) * res + j] : 0);
-				cols [z * res + j] = new Color32 (b5, b6, b7, b8);
+				byte r2 = (byte)num;
+				byte g2 = (byte)((this.num > 1) ? src [(res + z) * res + j] : 0);
+				byte b2 = (byte)((this.num > 2) ? src [(2 * res + z) * res + j] : 0);
+				byte a2 = (byte)((this.num > 3) ? src [(3 * res + z) * res + j] : 0);
+				cols [z * res + j] = new Color32 (r2, g2, b2, a2);
 			}
 		});
 		SplatTexture0.SetPixels32 (cols);
-		SplatTexture1 = new Texture2D (res, res, (TextureFormat)4, false, true);
-		((Object)SplatTexture1).name = "SplatTexture1";
-		((Texture)SplatTexture1).wrapMode = (TextureWrapMode)1;
-		Color32[] cols2 = (Color32[])(object)new Color32[res * res];
-		Parallel.For (0, res, (Action<int>)delegate(int z) {
-			//IL_0110: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0115: Unknown result type (might be due to invalid IL or missing references)
+		SplatTexture1 = new Texture2D (res, res, TextureFormat.RGBA32, mipChain: false, linear: true);
+		SplatTexture1.name = "SplatTexture1";
+		SplatTexture1.wrapMode = TextureWrapMode.Clamp;
+		Color32[] cols2 = new Color32[res * res];
+		Parallel.For (0, res, delegate(int z) {
 			for (int i = 0; i < res; i++) {
-				byte b = (byte)((num > 4) ? src [(4 * res + z) * res + i] : 0);
-				byte b2 = (byte)((num > 5) ? src [(5 * res + z) * res + i] : 0);
-				byte b3 = (byte)((num > 6) ? src [(6 * res + z) * res + i] : 0);
-				byte b4 = (byte)((num > 7) ? src [(7 * res + z) * res + i] : 0);
-				cols2 [z * res + i] = new Color32 (b, b2, b3, b4);
+				byte r = (byte)((num > 4) ? src [(4 * res + z) * res + i] : 0);
+				byte g = (byte)((num > 5) ? src [(5 * res + z) * res + i] : 0);
+				byte b = (byte)((num > 6) ? src [(6 * res + z) * res + i] : 0);
+				byte a = (byte)((num > 7) ? src [(7 * res + z) * res + i] : 0);
+				cols2 [z * res + i] = new Color32 (r, g, b, a);
 			}
 		});
 		SplatTexture1.SetPixels32 (cols2);
@@ -139,14 +119,12 @@ public class TerrainSplatMap : TerrainMap<byte>
 
 	public void ApplyTextures ()
 	{
-		SplatTexture0.Apply (true, true);
-		SplatTexture1.Apply (true, true);
+		SplatTexture0.Apply (updateMipmaps: true, makeNoLongerReadable: true);
+		SplatTexture1.Apply (updateMipmaps: true, makeNoLongerReadable: true);
 	}
 
 	public float GetSplatMax (Vector3 worldPos, int mask = -1)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
 		float normX = TerrainMeta.NormalizeX (worldPos.x);
 		float normZ = TerrainMeta.NormalizeZ (worldPos.z);
 		return GetSplatMax (normX, normZ, mask);
@@ -170,13 +148,11 @@ public class TerrainSplatMap : TerrainMap<byte>
 				}
 			}
 		}
-		return BitUtility.Byte2Float ((int)b);
+		return BitUtility.Byte2Float (b);
 	}
 
 	public int GetSplatMaxIndex (Vector3 worldPos, int mask = -1)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
 		float normX = TerrainMeta.NormalizeX (worldPos.x);
 		float normZ = TerrainMeta.NormalizeZ (worldPos.z);
 		return GetSplatMaxIndex (normX, normZ, mask);
@@ -208,7 +184,6 @@ public class TerrainSplatMap : TerrainMap<byte>
 
 	public int GetSplatMaxType (Vector3 worldPos, int mask = -1)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
 		return TerrainSplat.IndexToType (GetSplatMaxIndex (worldPos, mask));
 	}
 
@@ -224,8 +199,6 @@ public class TerrainSplatMap : TerrainMap<byte>
 
 	public float GetSplat (Vector3 worldPos, int mask)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
 		float normX = TerrainMeta.NormalizeX (worldPos.x);
 		float normZ = TerrainMeta.NormalizeZ (worldPos.z);
 		return GetSplat (normX, normZ, mask);
@@ -240,15 +213,15 @@ public class TerrainSplatMap : TerrainMap<byte>
 		int num5 = Mathf.Clamp ((int)num3, 0, num);
 		int x = Mathf.Min (num4 + 1, num);
 		int z = Mathf.Min (num5 + 1, num);
-		float num6 = Mathf.Lerp (GetSplat (num4, num5, mask), GetSplat (x, num5, mask), num2 - (float)num4);
-		float num7 = Mathf.Lerp (GetSplat (num4, z, mask), GetSplat (x, z, mask), num2 - (float)num4);
-		return Mathf.Lerp (num6, num7, num3 - (float)num5);
+		float a = Mathf.Lerp (GetSplat (num4, num5, mask), GetSplat (x, num5, mask), num2 - (float)num4);
+		float b = Mathf.Lerp (GetSplat (num4, z, mask), GetSplat (x, z, mask), num2 - (float)num4);
+		return Mathf.Lerp (a, b, num3 - (float)num5);
 	}
 
 	public float GetSplat (int x, int z, int mask)
 	{
 		if (Mathf.IsPowerOfTwo (mask)) {
-			return BitUtility.Byte2Float ((int)src [(TerrainSplat.TypeToIndex (mask) * res + z) * res + x]);
+			return BitUtility.Byte2Float (src [(TerrainSplat.TypeToIndex (mask) * res + z) * res + x]);
 		}
 		int num = 0;
 		for (int i = 0; i < this.num; i++) {
@@ -261,8 +234,6 @@ public class TerrainSplatMap : TerrainMap<byte>
 
 	public void SetSplat (Vector3 worldPos, int id)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
 		float normX = TerrainMeta.NormalizeX (worldPos.x);
 		float normZ = TerrainMeta.NormalizeZ (worldPos.z);
 		SetSplat (normX, normZ, id);
@@ -289,8 +260,6 @@ public class TerrainSplatMap : TerrainMap<byte>
 
 	public void SetSplat (Vector3 worldPos, int id, float v)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
 		float normX = TerrainMeta.NormalizeX (worldPos.x);
 		float normZ = TerrainMeta.NormalizeZ (worldPos.z);
 		SetSplat (normX, normZ, id, v);
@@ -310,30 +279,6 @@ public class TerrainSplatMap : TerrainMap<byte>
 
 	public void SetSplatRaw (int x, int z, Vector4 v1, Vector4 v2, float opacity)
 	{
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01fd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0242: Unknown result type (might be due to invalid IL or missing references)
-		//IL_028b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02d4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_031d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0367: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03b1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03fb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ab: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ce: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0118: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0163: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0189: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01af: Unknown result type (might be due to invalid IL or missing references)
 		if (opacity == 0f) {
 			return;
 		}
@@ -357,22 +302,20 @@ public class TerrainSplatMap : TerrainMap<byte>
 				int num3 = (0 + z) * res + x;
 				byte[] array3 = src;
 				_ = res;
-				array2 [num3] = BitUtility.Float2Byte (BitUtility.Byte2Float ((int)array3 [(0 + z) * res + x]) * num2 + v1.x * opacity);
-				dst [(res + z) * res + x] = BitUtility.Float2Byte (BitUtility.Byte2Float ((int)src [(res + z) * res + x]) * num2 + v1.y * opacity);
-				dst [(2 * res + z) * res + x] = BitUtility.Float2Byte (BitUtility.Byte2Float ((int)src [(2 * res + z) * res + x]) * num2 + v1.z * opacity);
-				dst [(3 * res + z) * res + x] = BitUtility.Float2Byte (BitUtility.Byte2Float ((int)src [(3 * res + z) * res + x]) * num2 + v1.w * opacity);
-				dst [(4 * res + z) * res + x] = BitUtility.Float2Byte (BitUtility.Byte2Float ((int)src [(4 * res + z) * res + x]) * num2 + v2.x * opacity);
-				dst [(5 * res + z) * res + x] = BitUtility.Float2Byte (BitUtility.Byte2Float ((int)src [(5 * res + z) * res + x]) * num2 + v2.y * opacity);
-				dst [(6 * res + z) * res + x] = BitUtility.Float2Byte (BitUtility.Byte2Float ((int)src [(6 * res + z) * res + x]) * num2 + v2.z * opacity);
-				dst [(7 * res + z) * res + x] = BitUtility.Float2Byte (BitUtility.Byte2Float ((int)src [(7 * res + z) * res + x]) * num2 + v2.w * opacity);
+				array2 [num3] = BitUtility.Float2Byte (BitUtility.Byte2Float (array3 [(0 + z) * res + x]) * num2 + v1.x * opacity);
+				dst [(res + z) * res + x] = BitUtility.Float2Byte (BitUtility.Byte2Float (src [(res + z) * res + x]) * num2 + v1.y * opacity);
+				dst [(2 * res + z) * res + x] = BitUtility.Float2Byte (BitUtility.Byte2Float (src [(2 * res + z) * res + x]) * num2 + v1.z * opacity);
+				dst [(3 * res + z) * res + x] = BitUtility.Float2Byte (BitUtility.Byte2Float (src [(3 * res + z) * res + x]) * num2 + v1.w * opacity);
+				dst [(4 * res + z) * res + x] = BitUtility.Float2Byte (BitUtility.Byte2Float (src [(4 * res + z) * res + x]) * num2 + v2.x * opacity);
+				dst [(5 * res + z) * res + x] = BitUtility.Float2Byte (BitUtility.Byte2Float (src [(5 * res + z) * res + x]) * num2 + v2.y * opacity);
+				dst [(6 * res + z) * res + x] = BitUtility.Float2Byte (BitUtility.Byte2Float (src [(6 * res + z) * res + x]) * num2 + v2.z * opacity);
+				dst [(7 * res + z) * res + x] = BitUtility.Float2Byte (BitUtility.Byte2Float (src [(7 * res + z) * res + x]) * num2 + v2.w * opacity);
 			}
 		}
 	}
 
 	public void SetSplat (Vector3 worldPos, int id, float opacity, float radius, float fade = 0f)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
 		float normX = TerrainMeta.NormalizeX (worldPos.x);
 		float normZ = TerrainMeta.NormalizeZ (worldPos.z);
 		SetSplat (normX, normZ, id, opacity, radius, fade);
@@ -383,7 +326,7 @@ public class TerrainSplatMap : TerrainMap<byte>
 		int idx = TerrainSplat.TypeToIndex (id);
 		Action<int, int, float> action = delegate(int x, int z, float lerp) {
 			if (lerp > 0f) {
-				float num = BitUtility.Byte2Float ((int)dst [(idx * res + z) * res + x]);
+				float num = BitUtility.Byte2Float (dst [(idx * res + z) * res + x]);
 				float new_val = Mathf.Lerp (num, 1f, lerp * opacity);
 				SetSplat (x, z, id, num, new_val);
 			}
@@ -393,8 +336,6 @@ public class TerrainSplatMap : TerrainMap<byte>
 
 	public void AddSplat (Vector3 worldPos, int id, float delta, float radius, float fade = 0f)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
 		float normX = TerrainMeta.NormalizeX (worldPos.x);
 		float normZ = TerrainMeta.NormalizeZ (worldPos.z);
 		AddSplat (normX, normZ, id, delta, radius, fade);
@@ -405,7 +346,7 @@ public class TerrainSplatMap : TerrainMap<byte>
 		int idx = TerrainSplat.TypeToIndex (id);
 		Action<int, int, float> action = delegate(int x, int z, float lerp) {
 			if (lerp > 0f) {
-				float num = BitUtility.Byte2Float ((int)dst [(idx * res + z) * res + x]);
+				float num = BitUtility.Byte2Float (dst [(idx * res + z) * res + x]);
 				float new_val = Mathf.Clamp01 (num + lerp * delta);
 				SetSplat (x, z, id, num, new_val);
 			}
@@ -424,7 +365,7 @@ public class TerrainSplatMap : TerrainMap<byte>
 			if (i == num) {
 				dst [(i * res + z) * res + x] = BitUtility.Float2Byte (new_val);
 			} else {
-				dst [(i * res + z) * res + x] = BitUtility.Float2Byte (num2 * BitUtility.Byte2Float ((int)dst [(i * res + z) * res + x]));
+				dst [(i * res + z) * res + x] = BitUtility.Float2Byte (num2 * BitUtility.Byte2Float (dst [(i * res + z) * res + x]));
 			}
 		}
 	}

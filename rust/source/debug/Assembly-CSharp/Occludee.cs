@@ -24,13 +24,13 @@ public class Occludee : MonoBehaviour
 
 	protected virtual void Awake ()
 	{
-		renderer = ((Component)this).GetComponent<Renderer> ();
-		collider = ((Component)this).GetComponent<Collider> ();
+		renderer = GetComponent<Renderer> ();
+		collider = GetComponent<Collider> ();
 	}
 
 	public void OnEnable ()
 	{
-		if (autoRegister && (Object)(object)collider != (Object)null) {
+		if (autoRegister && collider != null) {
 			Register ();
 		}
 	}
@@ -44,31 +44,11 @@ public class Occludee : MonoBehaviour
 
 	public void Register ()
 	{
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0056: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0074: Unknown result type (might be due to invalid IL or missing references)
-		Bounds bounds = collider.bounds;
-		center = ((Bounds)(ref bounds)).center;
-		bounds = collider.bounds;
-		float x = ((Bounds)(ref bounds)).extents.x;
-		bounds = collider.bounds;
-		float num = Mathf.Max (x, ((Bounds)(ref bounds)).extents.y);
-		bounds = collider.bounds;
-		radius = Mathf.Max (num, ((Bounds)(ref bounds)).extents.z);
-		occludeeId = OcclusionCulling.RegisterOccludee (center, radius, renderer.enabled, minTimeVisible, isStatic, ((Component)this).gameObject.layer, OnVisibilityChanged);
+		center = collider.bounds.center;
+		radius = Mathf.Max (Mathf.Max (collider.bounds.extents.x, collider.bounds.extents.y), collider.bounds.extents.z);
+		occludeeId = OcclusionCulling.RegisterOccludee (center, radius, renderer.enabled, minTimeVisible, isStatic, base.gameObject.layer, OnVisibilityChanged);
 		if (occludeeId < 0) {
-			Debug.LogWarning ((object)("[OcclusionCulling] Occludee registration failed for " + ((Object)this).name + ". Too many registered."));
+			Debug.LogWarning ("[OcclusionCulling] Occludee registration failed for " + base.name + ". Too many registered.");
 		}
 		state = OcclusionCulling.GetStateById (occludeeId);
 	}
@@ -80,7 +60,7 @@ public class Occludee : MonoBehaviour
 
 	protected virtual void OnVisibilityChanged (bool visible)
 	{
-		if ((Object)(object)renderer != (Object)null) {
+		if (renderer != null) {
 			renderer.enabled = visible;
 		}
 	}

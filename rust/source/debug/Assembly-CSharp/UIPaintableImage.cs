@@ -17,14 +17,9 @@ public class UIPaintableImage : MonoBehaviour
 
 	public Color clearColor = Color.clear;
 
-	public FilterMode filterMode = (FilterMode)1;
+	public FilterMode filterMode = FilterMode.Bilinear;
 
 	public bool mipmaps = false;
 
-	public RectTransform rectTransform {
-		get {
-			Transform transform = ((Component)this).transform;
-			return (RectTransform)(object)((transform is RectTransform) ? transform : null);
-		}
-	}
+	public RectTransform rectTransform => base.transform as RectTransform;
 }

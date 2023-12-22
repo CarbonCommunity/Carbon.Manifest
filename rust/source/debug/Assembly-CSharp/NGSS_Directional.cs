@@ -34,7 +34,7 @@ public class NGSS_Directional : MonoBehaviour
 
 	private void Update ()
 	{
-		bool globalSettings = Graphics.shadowquality >= 2;
+		bool globalSettings = ConVar.Graphics.shadowquality >= 2;
 		SetGlobalSettings (globalSettings);
 	}
 

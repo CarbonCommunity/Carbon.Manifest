@@ -39,25 +39,20 @@ public class MissionObjective_KillEntity : MissionObjective
 
 	public override void Think (int index, BaseMission.MissionInstance instance, BasePlayer assignee, float delta)
 	{
-		//IL_0071: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0133: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0138: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00da: Unknown result type (might be due to invalid IL or missing references)
 		if (shouldUpdateMissionLocation && IsStarted (index, instance) && Time.realtimeSinceStartup > nextLocationUpdateTime) {
 			nextLocationUpdateTime = Time.realtimeSinceStartup + 1f;
 			string[] array = targetPrefabIDs;
 			foreach (string s in array) {
 				uint result = 0u;
 				uint.TryParse (s, out result);
-				List<BaseCombatEntity> list = Pool.GetList<BaseCombatEntity> ();
-				Vis.Entities (((Component)assignee).transform.position, 20f, list, 133120, (QueryTriggerInteraction)2);
+				List<BaseCombatEntity> obj = Pool.GetList<BaseCombatEntity> ();
+				Vis.Entities (assignee.transform.position, 20f, obj, 133120);
 				int num = -1;
 				float num2 = float.PositiveInfinity;
-				for (int j = 0; j < list.Count; j++) {
-					BaseCombatEntity baseCombatEntity = list [j];
+				for (int j = 0; j < obj.Count; j++) {
+					BaseCombatEntity baseCombatEntity = obj [j];
 					if (baseCombatEntity.IsAlive () && baseCombatEntity.prefabID == result) {
-						float num3 = Vector3.Distance (((Component)baseCombatEntity).transform.position, ((Component)assignee).transform.position);
+						float num3 = Vector3.Distance (baseCombatEntity.transform.position, assignee.transform.position);
 						if (num3 < num2) {
 							num = j;
 							num2 = num3;
@@ -65,12 +60,12 @@ public class MissionObjective_KillEntity : MissionObjective
 					}
 				}
 				if (num != -1) {
-					instance.missionLocation = ((Component)list [num]).transform.position;
+					instance.missionLocation = obj [num].transform.position;
 					assignee.MissionDirty ();
-					Pool.FreeList<BaseCombatEntity> (ref list);
+					Pool.FreeList (ref obj);
 					break;
 				}
-				Pool.FreeList<BaseCombatEntity> (ref list);
+				Pool.FreeList (ref obj);
 			}
 		}
 		base.Think (index, instance, assignee, delta);

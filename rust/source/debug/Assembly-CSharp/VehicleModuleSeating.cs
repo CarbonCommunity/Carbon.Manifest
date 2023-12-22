@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Network;
@@ -121,7 +122,7 @@ public class VehicleModuleSeating : BaseVehicleModule, IPrefabPreProcess
 
 	public ModularCar Car { get; private set; }
 
-	protected bool IsOnACar => (Object)(object)Car != (Object)null;
+	protected bool IsOnACar => Car != null;
 
 	protected bool IsOnAVehicleLockUser => VehicleLockUser != null;
 
@@ -129,76 +130,54 @@ public class VehicleModuleSeating : BaseVehicleModule, IPrefabPreProcess
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("VehicleModuleSeating.OnRpcMessage", 0);
-		try {
-			if (rpc == 2791546333u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("VehicleModuleSeating.OnRpcMessage")) {
+			if (rpc == 2791546333u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_DestroyLock "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_DestroyLock "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_DestroyLock", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_DestroyLock")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (2791546333u, "RPC_DestroyLock", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							RPC_DestroyLock (msg2);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_DestroyLock");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
 
 	public override void PreProcess (IPrefabProcessor preProcess, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
 	{
-		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0060: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0092: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00be: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ed: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f2: Unknown result type (might be due to invalid IL or missing references)
 		base.PreProcess (preProcess, rootObj, name, serverside, clientside, bundling);
-		if ((Object)(object)seating.steeringWheel != (Object)null) {
+		if (seating.steeringWheel != null) {
 			steerAngle = seating.steeringWheel.localEulerAngles;
 		}
-		if ((Object)(object)seating.accelPedal != (Object)null) {
+		if (seating.accelPedal != null) {
 			accelAngle = seating.accelPedal.localEulerAngles;
 		}
-		if ((Object)(object)seating.brakePedal != (Object)null) {
+		if (seating.brakePedal != null) {
 			brakeAngle = seating.brakePedal.localEulerAngles;
 		}
-		if ((Object)(object)seating.speedometer != (Object)null) {
+		if (seating.speedometer != null) {
 			speedometerAngle = new Vector3 (-160f, 0f, -40f);
 		}
-		if ((Object)(object)seating.fuelGauge != (Object)null) {
+		if (seating.fuelGauge != null) {
 			fuelAngle = seating.fuelGauge.localEulerAngles;
 		}
 	}
@@ -206,9 +185,9 @@ public class VehicleModuleSeating : BaseVehicleModule, IPrefabPreProcess
 	public virtual bool IsOnThisModule (BasePlayer player)
 	{
 		BaseMountable mounted = player.GetMounted ();
-		if ((Object)(object)mounted != (Object)null) {
+		if (mounted != null) {
 			VehicleModuleSeating vehicleModuleSeating = mounted.GetParentEntity () as VehicleModuleSeating;
-			return (Object)(object)vehicleModuleSeating == (Object)(object)this;
+			return vehicleModuleSeating == this;
 		}
 		return false;
 	}
@@ -247,7 +226,7 @@ public class VehicleModuleSeating : BaseVehicleModule, IPrefabPreProcess
 
 	public bool PlayerCanDestroyLock (BasePlayer player)
 	{
-		if (!IsOnAVehicleLockUser || (Object)(object)player == (Object)null) {
+		if (!IsOnAVehicleLockUser || player == null) {
 			return false;
 		}
 		if (base.Vehicle.IsDead ()) {
@@ -273,7 +252,7 @@ public class VehicleModuleSeating : BaseVehicleModule, IPrefabPreProcess
 	public override void ScaleDamageForPlayer (BasePlayer player, HitInfo info)
 	{
 		base.ScaleDamageForPlayer (player, info);
-		if ((Object)(object)passengerProtection != (Object)null) {
+		if (passengerProtection != null) {
 			passengerProtection.Scale (info.damageTypes);
 		}
 	}
@@ -281,7 +260,7 @@ public class VehicleModuleSeating : BaseVehicleModule, IPrefabPreProcess
 	public override void PlayerServerInput (InputState inputState, BasePlayer player)
 	{
 		base.PlayerServerInput (inputState, player);
-		if ((Object)(object)hornLoop != (Object)null && IsOnThisModule (player)) {
+		if (hornLoop != null && IsOnThisModule (player)) {
 			bool flag = inputState.IsDown (BUTTON.FIRE_PRIMARY);
 			if (flag != HasFlag (Flags.Reserved8)) {
 				SetFlag (Flags.Reserved8, flag);
@@ -295,7 +274,7 @@ public class VehicleModuleSeating : BaseVehicleModule, IPrefabPreProcess
 	public override void OnPlayerDismountedVehicle (BasePlayer player)
 	{
 		base.OnPlayerDismountedVehicle (player);
-		if (HasFlag (Flags.Reserved8) && (Object)(object)player == (Object)(object)hornPlayer) {
+		if (HasFlag (Flags.Reserved8) && player == hornPlayer) {
 			SetFlag (Flags.Reserved8, b: false);
 		}
 	}
@@ -312,9 +291,6 @@ public class VehicleModuleSeating : BaseVehicleModule, IPrefabPreProcess
 
 	protected virtual Vector3 ModifySeatPositionLocalSpace (int index, Vector3 desiredPos)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0005: Unknown result type (might be due to invalid IL or missing references)
 		return desiredPos;
 	}
 
@@ -335,7 +311,7 @@ public class VehicleModuleSeating : BaseVehicleModule, IPrefabPreProcess
 			return;
 		}
 		foreach (MountPointInfo mountPoint in mountPoints) {
-			if ((Object)(object)mountPoint.mountable.GetMounted () != (Object)null) {
+			if (mountPoint.mountable.GetMounted () != null) {
 				mountPoint.mountable.GetMounted ().GiveAchievement ("BUCKLE_UP");
 			}
 		}

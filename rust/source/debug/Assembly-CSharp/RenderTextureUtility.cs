@@ -5,23 +5,21 @@ public class RenderTextureUtility
 {
 	private List<RenderTexture> m_TemporaryRTs = new List<RenderTexture> ();
 
-	public RenderTexture GetTemporaryRenderTexture (int width, int height, int depthBuffer = 0, RenderTextureFormat format = 2, FilterMode filterMode = 1)
+	public RenderTexture GetTemporaryRenderTexture (int width, int height, int depthBuffer = 0, RenderTextureFormat format = RenderTextureFormat.ARGBHalf, FilterMode filterMode = FilterMode.Bilinear)
 	{
-		//IL_0004: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
 		RenderTexture temporary = RenderTexture.GetTemporary (width, height, depthBuffer, format);
-		((Texture)temporary).filterMode = filterMode;
-		((Texture)temporary).wrapMode = (TextureWrapMode)1;
-		((Object)temporary).name = "RenderTextureUtilityTempTexture";
+		temporary.filterMode = filterMode;
+		temporary.wrapMode = TextureWrapMode.Clamp;
+		temporary.name = "RenderTextureUtilityTempTexture";
 		m_TemporaryRTs.Add (temporary);
 		return temporary;
 	}
 
 	public void ReleaseTemporaryRenderTexture (RenderTexture rt)
 	{
-		if (!((Object)(object)rt == (Object)null)) {
+		if (!(rt == null)) {
 			if (!m_TemporaryRTs.Contains (rt)) {
-				Debug.LogErrorFormat ("Attempting to remove texture that was not allocated: {0}", new object[1] { rt });
+				Debug.LogErrorFormat ("Attempting to remove texture that was not allocated: {0}", rt);
 			} else {
 				m_TemporaryRTs.Remove (rt);
 				RenderTexture.ReleaseTemporary (rt);

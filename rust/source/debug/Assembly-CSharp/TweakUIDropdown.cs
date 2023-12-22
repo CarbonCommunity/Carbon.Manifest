@@ -15,7 +15,7 @@ public class TweakUIDropdown : TweakUIBase
 
 		public Color imageColor;
 
-		public Phrase label;
+		public Translate.Phrase label;
 	}
 
 	public RustText Current;
@@ -41,7 +41,7 @@ public class TweakUIDropdown : TweakUIBase
 	protected override void Init ()
 	{
 		base.Init ();
-		DropdownItemPrefab.SetActive (false);
+		DropdownItemPrefab.SetActive (value: false);
 		UpdateDropdownOptions ();
 		Opener.SetToggleFalse ();
 		ResetToConvar ();
@@ -54,23 +54,21 @@ public class TweakUIDropdown : TweakUIBase
 
 	public void UpdateDropdownOptions ()
 	{
-		//IL_00b8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c2: Expected O, but got Unknown
-		List<RustButton> list = Pool.GetList<RustButton> ();
-		((Component)DropdownContainer).GetComponentsInChildren<RustButton> (false, list);
-		foreach (RustButton item in list) {
-			Object.Destroy ((Object)(object)((Component)item).gameObject);
+		List<RustButton> obj = Pool.GetList<RustButton> ();
+		DropdownContainer.GetComponentsInChildren (includeInactive: false, obj);
+		foreach (RustButton item in obj) {
+			UnityEngine.Object.Destroy (item.gameObject);
 		}
-		Pool.FreeList<RustButton> (ref list);
+		Pool.FreeList (ref obj);
 		for (int i = 0; i < nameValues.Length; i++) {
-			GameObject val = Object.Instantiate<GameObject> (DropdownItemPrefab, (Transform)(object)DropdownContainer);
+			GameObject gameObject = UnityEngine.Object.Instantiate (DropdownItemPrefab, DropdownContainer);
 			int itemIndex = i;
-			RustButton component = val.GetComponent<RustButton> ();
+			RustButton component = gameObject.GetComponent<RustButton> ();
 			component.Text.SetPhrase (nameValues [i].label);
-			component.OnPressed.AddListener ((UnityAction)delegate {
+			component.OnPressed.AddListener (delegate {
 				ChangeValue (itemIndex);
 			});
-			val.SetActive (true);
+			gameObject.SetActive (value: true);
 		}
 	}
 
@@ -83,28 +81,14 @@ public class TweakUIDropdown : TweakUIBase
 
 	public void OnDropdownOpen ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Expected O, but got Unknown
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0080: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0097: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ab: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0061: Unknown result type (might be due to invalid IL or missing references)
-		RectTransform val = (RectTransform)((Component)this).transform;
-		if (((Transform)val).position.y <= (float)Screen.height / 2f) {
+		RectTransform rectTransform = (RectTransform)base.transform;
+		if (rectTransform.position.y <= (float)Screen.height / 2f) {
 			Dropdown.pivot = new Vector2 (0.5f, 0f);
-			Dropdown.anchoredPosition = Vector2Ex.WithY (Dropdown.anchoredPosition, 0f);
-			return;
+			Dropdown.anchoredPosition = Dropdown.anchoredPosition.WithY (0f);
+		} else {
+			Dropdown.pivot = new Vector2 (0.5f, 1f);
+			Dropdown.anchoredPosition = Dropdown.anchoredPosition.WithY (0f - rectTransform.rect.height);
 		}
-		Dropdown.pivot = new Vector2 (0.5f, 1f);
-		RectTransform dropdown = Dropdown;
-		Vector2 anchoredPosition = Dropdown.anchoredPosition;
-		Rect rect = val.rect;
-		dropdown.anchoredPosition = Vector2Ex.WithY (anchoredPosition, 0f - ((Rect)(ref rect)).height);
 	}
 
 	public void ChangeValue (int index)
@@ -119,10 +103,7 @@ public class TweakUIDropdown : TweakUIBase
 			ShowValue (nameValues [currentValue].value);
 		}
 		if (flag) {
-			UnityEvent obj = onValueChanged;
-			if (obj != null) {
-				obj.Invoke ();
-			}
+			onValueChanged?.Invoke ();
 		}
 	}
 
@@ -146,13 +127,12 @@ public class TweakUIDropdown : TweakUIBase
 
 	private void ShowValue (string value)
 	{
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
 		for (int i = 0; i < nameValues.Length; i++) {
 			if (!(nameValues [i].value != value)) {
 				Current.SetPhrase (nameValues [i].label);
 				currentValue = i;
 				if (assignImageColor) {
-					((Graphic)BackgroundImage).color = nameValues [i].imageColor;
+					BackgroundImage.color = nameValues [i].imageColor;
 				}
 				break;
 			}

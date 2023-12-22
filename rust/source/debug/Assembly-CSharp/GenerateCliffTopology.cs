@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class GenerateCliffTopology : ProceduralComponent
@@ -45,7 +44,7 @@ public class GenerateCliffTopology : ProceduralComponent
 	{
 		int[] map = TerrainMeta.TopologyMap.dst;
 		int res = TerrainMeta.TopologyMap.res;
-		Parallel.For (0, res, (Action<int>)delegate(int z) {
+		Parallel.For (0, res, delegate(int z) {
 			for (int i = 0; i < res; i++) {
 				Process (i, z, KeepExisting);
 			}

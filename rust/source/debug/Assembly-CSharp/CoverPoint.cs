@@ -1,3 +1,4 @@
+#define ENABLE_PROFILER
 using System.Collections;
 using Rust.Ai;
 using UnityEngine;
@@ -26,45 +27,31 @@ public class CoverPoint
 
 	public Vector3 Position {
 		get {
-			//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0035: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-			if (IsDynamic && (Object)(object)SourceTransform != (Object)null) {
+			if (IsDynamic && SourceTransform != null) {
 				return SourceTransform.position;
 			}
 			return _staticPosition;
 		}
 		set {
-			//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0003: Unknown result type (might be due to invalid IL or missing references)
 			_staticPosition = value;
 		}
 	}
 
 	public Vector3 Normal {
 		get {
-			//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0035: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-			if (IsDynamic && (Object)(object)SourceTransform != (Object)null) {
+			if (IsDynamic && SourceTransform != null) {
 				return SourceTransform.forward;
 			}
 			return _staticNormal;
 		}
 		set {
-			//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0003: Unknown result type (might be due to invalid IL or missing references)
 			_staticNormal = value;
 		}
 	}
 
 	public BaseEntity ReservedFor { get; set; }
 
-	public bool IsReserved => (Object)(object)ReservedFor != (Object)null;
+	public bool IsReserved => ReservedFor != null;
 
 	public bool IsCompromised { get; set; }
 
@@ -72,7 +59,7 @@ public class CoverPoint
 
 	public bool IsValidFor (BaseEntity entity)
 	{
-		return !IsCompromised && ((Object)(object)ReservedFor == (Object)null || (Object)(object)ReservedFor == (Object)(object)entity);
+		return !IsCompromised && (ReservedFor == null || ReservedFor == entity);
 	}
 
 	public CoverPoint (CoverPointVolume volume, float score)
@@ -83,8 +70,8 @@ public class CoverPoint
 
 	public void CoverIsCompromised (float cooldown)
 	{
-		if (!IsCompromised && (Object)(object)Volume != (Object)null) {
-			((MonoBehaviour)Volume).StartCoroutine (StartCooldown (cooldown));
+		if (!IsCompromised && Volume != null) {
+			Volume.StartCoroutine (StartCooldown (cooldown));
 		}
 	}
 
@@ -97,17 +84,8 @@ public class CoverPoint
 
 	public bool ProvidesCoverFromPoint (Vector3 point, float arcThreshold)
 	{
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
 		Profiler.BeginSample ("ProvidesCoverFromPoint");
-		Vector3 val = Position - point;
-		Vector3 normalized = ((Vector3)(ref val)).normalized;
+		Vector3 normalized = (Position - point).normalized;
 		float num = Vector3.Dot (Normal, normalized);
 		Profiler.EndSample ();
 		return num < arcThreshold;

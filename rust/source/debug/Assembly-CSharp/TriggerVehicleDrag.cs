@@ -9,27 +9,25 @@ public class TriggerVehicleDrag : TriggerBase, IServerComponent
 
 	internal override GameObject InterestedInObject (GameObject obj)
 	{
-		//IL_008e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0094: Unknown result type (might be due to invalid IL or missing references)
 		obj = base.InterestedInObject (obj);
-		if ((Object)(object)obj == (Object)null) {
+		if (obj == null) {
 			return null;
 		}
 		BaseEntity baseEntity = obj.ToBaseEntity ();
-		if ((Object)(object)baseEntity == (Object)null) {
+		if (baseEntity == null) {
 			return null;
 		}
 		if (baseEntity.isClient) {
 			return null;
 		}
-		if ((Object)(object)losEyes != (Object)null) {
+		if (losEyes != null) {
 			if (entityContents != null && entityContents.Contains (baseEntity)) {
-				return ((Component)baseEntity).gameObject;
+				return baseEntity.gameObject;
 			}
-			if (!baseEntity.IsVisible (((Component)losEyes).transform.position, baseEntity.CenterPoint ())) {
+			if (!baseEntity.IsVisible (losEyes.transform.position, baseEntity.CenterPoint ())) {
 				return null;
 			}
 		}
-		return ((Component)baseEntity).gameObject;
+		return baseEntity.gameObject;
 	}
 }

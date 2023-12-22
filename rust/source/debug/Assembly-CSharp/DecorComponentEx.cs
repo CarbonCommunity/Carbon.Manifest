@@ -14,15 +14,6 @@ public static class DecorComponentEx
 
 	public static void ApplyDecorComponents (this Transform transform, DecorComponent[] components)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
 		Vector3 pos = transform.position;
 		Quaternion rot = transform.rotation;
 		Vector3 scale = transform.localScale;
@@ -34,13 +25,6 @@ public static class DecorComponentEx
 
 	public static void ApplyDecorComponentsScaleOnly (this Transform transform, DecorComponent[] components)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
 		Vector3 pos = transform.position;
 		Quaternion rot = transform.rotation;
 		Vector3 scale = transform.localScale;

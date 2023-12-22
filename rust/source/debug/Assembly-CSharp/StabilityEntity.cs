@@ -1,3 +1,4 @@
+#define ENABLE_PROFILER
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -13,7 +14,7 @@ public class StabilityEntity : DecayEntity
 	{
 		protected override void RunJob (StabilityEntity entity)
 		{
-			if (((ObjectWorkQueue<StabilityEntity>)this).ShouldAdd (entity)) {
+			if (ShouldAdd (entity)) {
 				Profiler.BeginSample ("StabilityCheck");
 				entity.StabilityCheck ();
 				Profiler.EndSample ();
@@ -39,17 +40,12 @@ public class StabilityEntity : DecayEntity
 	{
 		protected override void RunJob (Bounds bounds)
 		{
-			//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0026: Unknown result type (might be due to invalid IL or missing references)
 			if (!ConVar.Server.stability) {
 				return;
 			}
-			List<BaseEntity> list = Pool.GetList<BaseEntity> ();
-			Vector3 center = ((Bounds)(ref bounds)).center;
-			Vector3 extents = ((Bounds)(ref bounds)).extents;
-			Vis.Entities (center, ((Vector3)(ref extents)).magnitude + 1f, list, 69372162, (QueryTriggerInteraction)2);
-			foreach (BaseEntity item in list) {
+			List<BaseEntity> obj = Facepunch.Pool.GetList<BaseEntity> ();
+			Vis.Entities (bounds.center, bounds.extents.magnitude + 1f, obj, 69372162);
+			foreach (BaseEntity item in obj) {
 				if (!item.IsDestroyed && !item.isClient) {
 					if (item is StabilityEntity) {
 						Profiler.BeginSample ("StabilityEntity.OnPhysicsNeighbourChanged");
@@ -57,12 +53,12 @@ public class StabilityEntity : DecayEntity
 						Profiler.EndSample ();
 					} else {
 						Profiler.BeginSample ("BroadcastMessage OnPhysicsNeighbourChanged");
-						((Component)item).BroadcastMessage ("OnPhysicsNeighbourChanged", (SendMessageOptions)1);
+						item.BroadcastMessage ("OnPhysicsNeighbourChanged", SendMessageOptions.DontRequireReceiver);
 						Profiler.EndSample ();
 					}
 				}
 			}
-			Pool.FreeList<BaseEntity> (ref list);
+			Facepunch.Pool.FreeList (ref obj);
 		}
 	}
 
@@ -87,7 +83,7 @@ public class StabilityEntity : DecayEntity
 			for (int i = 0; i < link.connections.Count; i++) {
 				StabilityEntity stabilityEntity2 = link.connections [i].owner as StabilityEntity;
 				Socket_Base socket = link.connections [i].socket;
-				if (!((Object)(object)stabilityEntity2 == (Object)null) && !((Object)(object)stabilityEntity2 == (Object)(object)parent) && !((Object)(object)stabilityEntity2 == (Object)(object)ignoreEntity) && !stabilityEntity2.isClient && !stabilityEntity2.IsDestroyed && !(socket is ConstructionSocket { femaleNoStability: not false }) && ((Object)(object)stabilityEntity == (Object)null || stabilityEntity2.cachedDistanceFromGround < stabilityEntity.cachedDistanceFromGround)) {
+				if (!(stabilityEntity2 == null) && !(stabilityEntity2 == parent) && !(stabilityEntity2 == ignoreEntity) && !stabilityEntity2.isClient && !stabilityEntity2.IsDestroyed && !(socket is ConstructionSocket { femaleNoStability: not false }) && (stabilityEntity == null || stabilityEntity2.cachedDistanceFromGround < stabilityEntity.cachedDistanceFromGround)) {
 					stabilityEntity = stabilityEntity2;
 				}
 			}
@@ -117,7 +113,7 @@ public class StabilityEntity : DecayEntity
 	{
 		base.Save (info);
 		Profiler.BeginSample ("StabilityEntity.Save");
-		info.msg.stabilityEntity = Pool.Get<StabilityEntity> ();
+		info.msg.stabilityEntity = Facepunch.Pool.Get<ProtoBuf.StabilityEntity> ();
 		info.msg.stabilityEntity.stability = cachedStability;
 		info.msg.stabilityEntity.distanceFromGround = cachedDistanceFromGround;
 		Profiler.EndSample ();
@@ -180,14 +176,14 @@ public class StabilityEntity : DecayEntity
 		if (supports == null) {
 			return 1;
 		}
-		if ((Object)(object)ignoreEntity == (Object)null) {
+		if (ignoreEntity == null) {
 			ignoreEntity = this;
 		}
 		int num = int.MaxValue;
 		for (int i = 0; i < supports.Count; i++) {
 			Support support = supports [i];
 			StabilityEntity stabilityEntity = support.SupportEntity (ignoreEntity);
-			if (!((Object)(object)stabilityEntity == (Object)null)) {
+			if (!(stabilityEntity == null)) {
 				int num2 = stabilityEntity.CachedDistanceFromGround (ignoreEntity);
 				if (num2 != int.MaxValue) {
 					num = Mathf.Min (num, num2 + 1);
@@ -205,14 +201,14 @@ public class StabilityEntity : DecayEntity
 		if (supports == null) {
 			return 1f;
 		}
-		if ((Object)(object)ignoreEntity == (Object)null) {
+		if (ignoreEntity == null) {
 			ignoreEntity = this;
 		}
 		float num = 0f;
 		for (int i = 0; i < supports.Count; i++) {
 			Support support = supports [i];
 			StabilityEntity stabilityEntity = support.SupportEntity (ignoreEntity);
-			if (!((Object)(object)stabilityEntity == (Object)null)) {
+			if (!(stabilityEntity == null)) {
 				float num2 = stabilityEntity.CachedSupportValue (ignoreEntity);
 				if (num2 != 0f) {
 					num += num2 * support.factor;
@@ -230,14 +226,14 @@ public class StabilityEntity : DecayEntity
 		if (supports == null) {
 			return 1;
 		}
-		if ((Object)(object)ignoreEntity == (Object)null) {
+		if (ignoreEntity == null) {
 			ignoreEntity = this;
 		}
 		int num = int.MaxValue;
 		for (int i = 0; i < supports.Count; i++) {
 			Support support = supports [i];
 			StabilityEntity stabilityEntity = support.SupportEntity (ignoreEntity);
-			if (!((Object)(object)stabilityEntity == (Object)null)) {
+			if (!(stabilityEntity == null)) {
 				int num2 = stabilityEntity.cachedDistanceFromGround;
 				if (num2 != int.MaxValue) {
 					num = Mathf.Min (num, num2 + 1);
@@ -255,14 +251,14 @@ public class StabilityEntity : DecayEntity
 		if (supports == null) {
 			return 1f;
 		}
-		if ((Object)(object)ignoreEntity == (Object)null) {
+		if (ignoreEntity == null) {
 			ignoreEntity = this;
 		}
 		float num = 0f;
 		for (int i = 0; i < supports.Count; i++) {
 			Support support = supports [i];
 			StabilityEntity stabilityEntity = support.SupportEntity (ignoreEntity);
-			if (!((Object)(object)stabilityEntity == (Object)null)) {
+			if (!(stabilityEntity == null)) {
 				float num2 = stabilityEntity.cachedStability;
 				if (num2 != 0f) {
 					num += num2 * support.factor;
@@ -323,17 +319,12 @@ public class StabilityEntity : DecayEntity
 
 	public void UpdateStability ()
 	{
-		((ObjectWorkQueue<StabilityEntity>)stabilityCheckQueue).Add (this);
+		stabilityCheckQueue.Add (this);
 	}
 
 	public void UpdateSurroundingEntities ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		UpdateSurroundingsQueue obj = updateSurroundingsQueue;
-		OBB val = WorldSpaceBounds ();
-		((ObjectWorkQueue<Bounds>)obj).Add (((OBB)(ref val)).ToBounds ());
+		updateSurroundingsQueue.Add (WorldSpaceBounds ().ToBounds ());
 	}
 
 	public void UpdateConnectedEntities ()
@@ -346,7 +337,7 @@ public class StabilityEntity : DecayEntity
 			}
 			for (int j = 0; j < entityLink.connections.Count; j++) {
 				StabilityEntity stabilityEntity = entityLink.connections [j].owner as StabilityEntity;
-				if (!((Object)(object)stabilityEntity == (Object)null) && !stabilityEntity.isClient && !stabilityEntity.IsDestroyed) {
+				if (!(stabilityEntity == null) && !stabilityEntity.isClient && !stabilityEntity.IsDestroyed) {
 					stabilityEntity.UpdateStability ();
 				}
 			}
@@ -368,7 +359,7 @@ public class StabilityEntity : DecayEntity
 	public override void ServerInit ()
 	{
 		base.ServerInit ();
-		if (!Application.isLoadingSave) {
+		if (!Rust.Application.isLoadingSave) {
 			UpdateStability ();
 		}
 	}

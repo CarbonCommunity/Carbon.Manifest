@@ -13,7 +13,7 @@ public class PowerLineWire : MonoBehaviour
 	public void Copy (PowerLineWire from, PowerLineWireConnectionHelper helper)
 	{
 		connections.Clear ();
-		if (Object.op_Implicit ((Object)(object)helper)) {
+		if ((bool)helper) {
 			for (int i = 0; i < helper.connections.Count; i++) {
 				connections.Add (new PowerLineWireConnectionDef (helper.connections [i]));
 			}
@@ -26,28 +26,24 @@ public class PowerLineWire : MonoBehaviour
 
 	public static PowerLineWire Create (PowerLineWire wire, List<GameObject> objs, GameObjectRef wirePrefab, string name, PowerLineWire copyfrom, float wiresize, float str)
 	{
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Expected O, but got Unknown
-		//IL_008d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0094: Expected O, but got Unknown
 		if (objs != null && objs.Count > 1) {
-			GameObject val = null;
-			if ((Object)(object)wire == (Object)null) {
-				val = new GameObject ();
-				((Object)val).name = name;
-				wire = val.AddComponent<PowerLineWire> ();
+			GameObject gameObject = null;
+			if (wire == null) {
+				gameObject = new GameObject ();
+				gameObject.name = name;
+				wire = gameObject.AddComponent<PowerLineWire> ();
 			} else {
-				val = ((Component)wire).gameObject;
+				gameObject = wire.gameObject;
 			}
 			wire.poles.Clear ();
 			wire.spans.Clear ();
 			wire.connections.Clear ();
 			wire.poles.Add (objs [0].transform);
 			for (int i = 0; i < objs.Count - 1; i++) {
-				GameObject val2 = new GameObject ();
-				((Object)val2).name = name + " Span Mesh " + i;
-				val2.transform.parent = val.transform;
-				PowerLineWireSpan powerLineWireSpan = val2.AddComponent<PowerLineWireSpan> ();
+				GameObject gameObject2 = new GameObject ();
+				gameObject2.name = name + " Span Mesh " + i;
+				gameObject2.transform.parent = gameObject.transform;
+				PowerLineWireSpan powerLineWireSpan = gameObject2.AddComponent<PowerLineWireSpan> ();
 				powerLineWireSpan.wirePrefab = wirePrefab;
 				powerLineWireSpan.start = objs [i].transform;
 				powerLineWireSpan.end = objs [i + 1].transform;
@@ -55,9 +51,9 @@ public class PowerLineWire : MonoBehaviour
 				wire.poles.Add (objs [i + 1].transform);
 			}
 			PowerLineWireConnectionHelper component = objs [0].GetComponent<PowerLineWireConnectionHelper> ();
-			if (Object.op_Implicit ((Object)(object)copyfrom)) {
+			if ((bool)copyfrom) {
 				wire.Copy (copyfrom, component);
-			} else if (Object.op_Implicit ((Object)(object)component)) {
+			} else if ((bool)component) {
 				wire.Copy (wire, component);
 			} else {
 				PowerLineWireConnectionDef item = new PowerLineWireConnectionDef ();
@@ -75,14 +71,6 @@ public class PowerLineWire : MonoBehaviour
 
 	public void Init ()
 	{
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0059: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0070: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ba: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d2: Unknown result type (might be due to invalid IL or missing references)
 		for (int i = 0; i < spans.Count; i++) {
 			PowerLineWireSpan powerLineWireSpan = spans [i];
 			powerLineWireSpan.connections.Clear ();
@@ -94,8 +82,8 @@ public class PowerLineWire : MonoBehaviour
 					outOffset = connections [j].outOffset,
 					radius = connections [j].radius
 				};
-				PowerLineWireConnectionHelper component = ((Component)powerLineWireSpan.start).GetComponent<PowerLineWireConnectionHelper> ();
-				PowerLineWireConnectionHelper component2 = ((Component)powerLineWireSpan.end).GetComponent<PowerLineWireConnectionHelper> ();
+				PowerLineWireConnectionHelper component = powerLineWireSpan.start.GetComponent<PowerLineWireConnectionHelper> ();
+				PowerLineWireConnectionHelper component2 = powerLineWireSpan.end.GetComponent<PowerLineWireConnectionHelper> ();
 				powerLineWireConnection.inOffset = component2.connections [j].inOffset;
 				powerLineWireConnection.outOffset = component.connections [j].outOffset;
 				if (!component.connections [j].hidden && !component2.connections [j].hidden) {

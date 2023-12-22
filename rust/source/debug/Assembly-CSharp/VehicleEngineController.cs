@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class VehicleEngineController<TOwner> where TOwner : BaseVehicle, IEngineControllerUser
@@ -72,7 +71,7 @@ public class VehicleEngineController<TOwner> where TOwner : BaseVehicle, IEngine
 			}
 			owner.SetFlag (engineStartingFlag, b: true);
 			owner.SetFlag (BaseEntity.Flags.On, b: false);
-			((FacepunchBehaviour)owner).Invoke ((Action)FinishStartingEngine, engineStartupTime);
+			owner.Invoke (FinishStartingEngine, engineStartupTime);
 		}
 	}
 
@@ -107,8 +106,7 @@ public class VehicleEngineController<TOwner> where TOwner : BaseVehicle, IEngine
 
 	public bool IsWaterlogged ()
 	{
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		return (Object)(object)waterloggedPoint != (Object)null && WaterLevel.Test (waterloggedPoint.position, waves: true, volumes: true, owner);
+		return waterloggedPoint != null && WaterLevel.Test (waterloggedPoint.position, waves: true, volumes: true, owner);
 	}
 
 	public int TickFuel (float fuelPerSecond)
@@ -122,7 +120,7 @@ public class VehicleEngineController<TOwner> where TOwner : BaseVehicle, IEngine
 	private void CancelEngineStart ()
 	{
 		if (CurEngineState == EngineState.Starting) {
-			((FacepunchBehaviour)owner).CancelInvoke ((Action)FinishStartingEngine);
+			owner.CancelInvoke (FinishStartingEngine);
 		}
 	}
 }

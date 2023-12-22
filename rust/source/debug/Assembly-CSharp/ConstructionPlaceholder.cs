@@ -22,19 +22,19 @@ public class ConstructionPlaceholder : PrefabAttribute, IPrefabPreProcess
 		if (renderer) {
 			MeshFilter component = rootObj.GetComponent<MeshFilter> ();
 			MeshRenderer component2 = rootObj.GetComponent<MeshRenderer> ();
-			if (!Object.op_Implicit ((Object)(object)component)) {
+			if (!component) {
 				component = rootObj.AddComponent<MeshFilter> ();
 				component.sharedMesh = mesh;
 			}
-			if (!Object.op_Implicit ((Object)(object)component2)) {
+			if (!component2) {
 				component2 = rootObj.AddComponent<MeshRenderer> ();
-				((Renderer)component2).sharedMaterial = material;
-				((Renderer)component2).shadowCastingMode = (ShadowCastingMode)0;
+				component2.sharedMaterial = material;
+				component2.shadowCastingMode = ShadowCastingMode.Off;
 			}
 		}
 		if (collider) {
 			MeshCollider component3 = rootObj.GetComponent<MeshCollider> ();
-			if (!Object.op_Implicit ((Object)(object)component3)) {
+			if (!component3) {
 				component3 = rootObj.AddComponent<MeshCollider> ();
 				component3.sharedMesh = mesh;
 			}

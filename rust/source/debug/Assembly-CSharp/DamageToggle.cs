@@ -8,6 +8,6 @@ public class DamageToggle : MonoBehaviour
 
 	private void Reset ()
 	{
-		toggle = ((Component)this).GetComponent<Toggle> ();
+		toggle = GetComponent<Toggle> ();
 	}
 }

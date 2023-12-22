@@ -8,12 +8,6 @@ public class GenerateBiome : ProceduralComponent
 
 	public override void Process (uint seed)
 	{
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
 		byte[] dst = TerrainMeta.BiomeMap.dst;
 		int res = TerrainMeta.BiomeMap.res;
 		Vector3 position = TerrainMeta.Position;

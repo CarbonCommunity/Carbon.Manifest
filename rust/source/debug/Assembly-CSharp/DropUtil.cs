@@ -5,15 +5,6 @@ public class DropUtil
 {
 	public static void DropItems (ItemContainer container, Vector3 position)
 	{
-		//IL_0070: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0086: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0092: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0098: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0139: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0140: Unknown result type (might be due to invalid IL or missing references)
-		//IL_017a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0181: Unknown result type (might be due to invalid IL or missing references)
 		if (!Server.dropitems || container == null || container.itemList == null) {
 			return;
 		}
@@ -23,7 +14,7 @@ public class DropUtil
 			float num2 = Random.Range (0f, 2f);
 			item.RemoveFromContainer ();
 			BaseEntity baseEntity = item.CreateWorldObject (position + new Vector3 (Random.Range (0f - num, num), 1f, Random.Range (0f - num, num)));
-			if ((Object)(object)baseEntity == (Object)null) {
+			if (baseEntity == null) {
 				item.Remove ();
 				continue;
 			}

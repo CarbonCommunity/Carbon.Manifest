@@ -9,14 +9,12 @@ public class CameraSubscribe : BaseHandler<AppCameraSubscribe>
 {
 	public override void Execute ()
 	{
-		//IL_019b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a6: Unknown result type (might be due to invalid IL or missing references)
 		if (!CameraRenderer.enabled) {
 			SendError ("not_enabled");
 			return;
 		}
 		CameraRendererManager instance = SingletonComponent<CameraRendererManager>.Instance;
-		if ((Object)(object)instance == (Object)null) {
+		if (instance == null) {
 			SendError ("server_error");
 			return;
 		}
@@ -52,7 +50,7 @@ public class CameraSubscribe : BaseHandler<AppCameraSubscribe>
 			SendError ("not_found");
 			return;
 		}
-		float num = Vector3.Distance (((Component)base.Player).transform.position, ((Component)ent).transform.position);
+		float num = Vector3.Distance (base.Player.transform.position, ent.transform.position);
 		if (num >= remoteControllable.MaxRange) {
 			base.Client.EndViewing ();
 			SendError ("not_found");
@@ -64,14 +62,14 @@ public class CameraSubscribe : BaseHandler<AppCameraSubscribe>
 			return;
 		}
 		instance.StartRendering (remoteControllable);
-		AppResponse val = Pool.Get<AppResponse> ();
-		AppCameraInfo val2 = Pool.Get<AppCameraInfo> ();
-		val2.width = CameraRenderer.width;
-		val2.height = CameraRenderer.height;
-		val2.nearPlane = CameraRenderer.nearPlane;
-		val2.farPlane = CameraRenderer.farPlane;
-		val2.controlFlags = (int)(base.Client.IsControllingCamera ? remoteControllable.RequiredControls : RemoteControllableControls.None);
-		val.cameraSubscribeInfo = val2;
-		Send (val);
+		AppResponse appResponse = Pool.Get<AppResponse> ();
+		AppCameraInfo appCameraInfo = Pool.Get<AppCameraInfo> ();
+		appCameraInfo.width = CameraRenderer.width;
+		appCameraInfo.height = CameraRenderer.height;
+		appCameraInfo.nearPlane = CameraRenderer.nearPlane;
+		appCameraInfo.farPlane = CameraRenderer.farPlane;
+		appCameraInfo.controlFlags = (int)(base.Client.IsControllingCamera ? remoteControllable.RequiredControls : RemoteControllableControls.None);
+		appResponse.cameraSubscribeInfo = appCameraInfo;
+		Send (appResponse);
 	}
 }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Facepunch;
 using Rust;
@@ -35,7 +34,7 @@ public class ModularCarCodeLock
 		}
 	}
 
-	public bool CentralLockingIsOn => (Object)(object)owner != (Object)null && owner.HasFlag (BaseEntity.Flags.Reserved2);
+	public bool CentralLockingIsOn => owner != null && owner.HasFlag (BaseEntity.Flags.Reserved2);
 
 	public List<ulong> WhitelistPlayers { get; private set; } = new List<ulong> ();
 
@@ -65,7 +64,7 @@ public class ModularCarCodeLock
 		if (HasLockPermission (player)) {
 			return false;
 		}
-		return (Object)(object)owner != (Object)null && owner.HasFlag (BaseEntity.Flags.Reserved10);
+		return owner != null && owner.HasFlag (BaseEntity.Flags.Reserved10);
 	}
 
 	public void Load (BaseNetworkable.LoadInfo info)
@@ -122,7 +121,7 @@ public class ModularCarCodeLock
 
 	public bool IsValidLockCode (string code)
 	{
-		return code != null && code.Length == 4 && StringEx.IsNumeric (code);
+		return code != null && code.Length == 4 && code.IsNumeric ();
 	}
 
 	public bool TrySetNewCode (string newCode, ulong userID)
@@ -161,7 +160,7 @@ public class ModularCarCodeLock
 			}
 			if ((float)wrongCodes >= CodeLock.maxFailedAttempts) {
 				owner.SetFlag (BaseEntity.Flags.Reserved10, b: true);
-				((FacepunchBehaviour)owner).Invoke ((Action)ClearCodeEntryBlocked, CodeLock.lockoutCooldown);
+				owner.Invoke (ClearCodeEntryBlocked, CodeLock.lockoutCooldown);
 			}
 			lastWrongTime = Time.realtimeSinceStartup;
 			return false;

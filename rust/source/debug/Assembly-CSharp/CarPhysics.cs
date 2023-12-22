@@ -86,7 +86,9 @@ public class CarPhysics<TCar> where TCar : BaseVehicle, CarPhysics<TCar>.ICar
 
 	private float lastMovingTime = float.MinValue;
 
-	private WheelFrictionCurve zeroFriction;
+	private WheelFrictionCurve zeroFriction = new WheelFrictionCurve {
+		stiffness = 0f
+	};
 
 	private Vector3 prevLocalCOM;
 
@@ -126,17 +128,6 @@ public class CarPhysics<TCar> where TCar : BaseVehicle, CarPhysics<TCar>.ICar
 
 	public CarPhysics (TCar car, Transform transform, Rigidbody rBody, CarSettings vehicleSettings)
 	{
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0086: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008b: Unknown result type (might be due to invalid IL or missing references)
-		WheelFrictionCurve val = default(WheelFrictionCurve);
-		((WheelFrictionCurve)(ref val)).stiffness = 0f;
-		zeroFriction = val;
 		Transform transform2 = transform;
 		base..ctor ();
 		CarPhysics<TCar> carPhysics = this;
@@ -145,7 +136,7 @@ public class CarPhysics<TCar> where TCar : BaseVehicle, CarPhysics<TCar>.ICar
 		this.rBody = rBody;
 		this.vehicleSettings = vehicleSettings;
 		timeSinceWaterCheck = default(TimeSince);
-		timeSinceWaterCheck = TimeSince.op_Implicit (float.MaxValue);
+		timeSinceWaterCheck = float.MaxValue;
 		prevLocalCOM = rBody.centerOfMass;
 		CarWheel[] wheels = car.GetWheels ();
 		wheelData = new ServerWheelData[wheels.Length];
@@ -157,44 +148,23 @@ public class CarPhysics<TCar> where TCar : BaseVehicle, CarPhysics<TCar>.ICar
 		lastMovingTime = Time.realtimeSinceStartup;
 		ServerWheelData AddWheel (CarWheel wheel)
 		{
-			//IL_0044: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0056: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0072: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0077: Unknown result type (might be due to invalid IL or missing references)
-			//IL_007c: Unknown result type (might be due to invalid IL or missing references)
-			//IL_007e: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0091: Unknown result type (might be due to invalid IL or missing references)
 			ServerWheelData serverWheelData = new ServerWheelData {
 				wheelCollider = wheel.wheelCollider,
-				wheelColliderTransform = ((Component)wheel.wheelCollider).transform,
+				wheelColliderTransform = wheel.wheelCollider.transform,
 				forceDistance = GetWheelForceDistance (wheel.wheelCollider),
 				wheel = wheel
 			};
 			serverWheelData.wheelCollider.sidewaysFriction = zeroFriction;
 			serverWheelData.wheelCollider.forwardFriction = zeroFriction;
-			Vector3 val2 = transform2.InverseTransformPoint (((Component)wheel.wheelCollider).transform.position);
-			serverWheelData.isFrontWheel = val2.z > 0f;
-			serverWheelData.isLeftWheel = val2.x < 0f;
+			Vector3 vector = transform2.InverseTransformPoint (wheel.wheelCollider.transform.position);
+			serverWheelData.isFrontWheel = vector.z > 0f;
+			serverWheelData.isLeftWheel = vector.x < 0f;
 			return serverWheelData;
 		}
 	}
 
 	public void FixedUpdate (float dt, float speed)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0107: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0218: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0223: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0233: Unknown result type (might be due to invalid IL or missing references)
-		//IL_023e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_033f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0423: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0428: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0443: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0400: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0405: Unknown result type (might be due to invalid IL or missing references)
 		if (rBody.centerOfMass != prevLocalCOM) {
 			COMChanged ();
 		}
@@ -210,109 +180,87 @@ public class CarPhysics<TCar> where TCar : BaseVehicle, CarPhysics<TCar>.ICar
 		if ((hasDriver || !vehicleSettings.canSleep) && rBody.IsSleeping ()) {
 			rBody.WakeUp ();
 		}
-		Vector3 val;
 		if (!rBody.IsSleeping ()) {
-			if ((!wasSleeping || rBody.isKinematic) && !(num > 0.25f)) {
-				val = rBody.angularVelocity;
-				if (!(Mathf.Abs (((Vector3)(ref val)).magnitude) > 0.25f)) {
-					goto IL_0137;
+			if ((wasSleeping && !rBody.isKinematic) || num > 0.25f || Mathf.Abs (rBody.angularVelocity.magnitude) > 0.25f) {
+				lastMovingTime = Time.time;
+			}
+			bool flag = vehicleSettings.canSleep && !hasDriver && Time.time > lastMovingTime + 10f;
+			if (flag) {
+				BaseVehicle ent = car.GetParentEntity () as BaseVehicle;
+				if (ent.IsValid ()) {
+					flag = false;
 				}
 			}
-			lastMovingTime = Time.time;
-			goto IL_0137;
-		}
-		wasSleeping = true;
-		goto IL_05e5;
-		IL_0137:
-		bool flag = vehicleSettings.canSleep && !hasDriver && Time.time > lastMovingTime + 10f;
-		if (flag) {
-			BaseVehicle ent = car.GetParentEntity () as BaseVehicle;
-			if (ent.IsValid ()) {
-				flag = false;
-			}
-		}
-		if (flag) {
-			for (int i = 0; i < wheelData.Length; i++) {
-				ServerWheelData serverWheelData = wheelData [i];
-				serverWheelData.wheelCollider.motorTorque = 0f;
-				serverWheelData.wheelCollider.brakeTorque = 0f;
-				serverWheelData.wheelCollider.steerAngle = 0f;
-			}
-			rBody.Sleep ();
-			goto IL_05d2;
-		}
-		speedAngle = Vector3.Angle (rBody.velocity, transform.forward) * Mathf.Sign (Vector3.Dot (rBody.velocity, transform.right));
-		float maxDriveForce = car.GetMaxDriveForce ();
-		float maxForwardSpeed = car.GetMaxForwardSpeed ();
-		float num2 = (car.IsOn () ? car.GetThrottleInput () : 0f);
-		float steerInput = car.GetSteerInput ();
-		float brakeInput = (InSlowSpeedExitMode ? 1f : car.GetBrakeInput ());
-		float num3 = 1f;
-		if (num < 3f) {
-			num3 = 2.75f;
-		} else if (num < 9f) {
-			float num4 = Mathf.InverseLerp (9f, 3f, num);
-			num3 = Mathf.Lerp (1f, 2.75f, num4);
-		}
-		maxDriveForce *= num3;
-		ComputeSteerAngle (num2, steerInput, dt, speed);
-		if (TimeSince.op_Implicit (timeSinceWaterCheck) > 0.25f) {
-			float num5 = car.WaterFactor ();
-			float num6 = 0f;
-			if (car.FindTrigger<TriggerVehicleDrag> (out var result)) {
-				num6 = result.vehicleDrag;
-			}
-			float num7 = ((num2 != 0f) ? 0f : 0.25f);
-			float num8 = Mathf.Max (num5, num6);
-			num8 = Mathf.Max (num8, car.GetModifiedDrag ());
-			rBody.drag = Mathf.Max (num7, num8);
-			rBody.angularDrag = num8 * 0.5f;
-			timeSinceWaterCheck = TimeSince.op_Implicit (0f);
-		}
-		int num9 = 0;
-		float num10 = 0f;
-		int num11;
-		if (!hasDriver) {
-			val = rBody.velocity;
-			if (((Vector3)(ref val)).magnitude < 2.5f) {
-				num11 = ((TimeSince.op_Implicit (car.timeSinceLastPush) > 2f) ? 1 : 0);
-				goto IL_0457;
-			}
-		}
-		num11 = 0;
-		goto IL_0457;
-		IL_0457:
-		bool flag2 = (byte)num11 != 0;
-		for (int j = 0; j < wheelData.Length; j++) {
-			ServerWheelData serverWheelData2 = wheelData [j];
-			serverWheelData2.wheelCollider.motorTorque = 1E-05f;
-			if (flag2 && car.OnSurface != VehicleTerrainHandler.Surface.Frictionless) {
-				serverWheelData2.wheelCollider.brakeTorque = 10000f;
+			if (flag) {
+				for (int i = 0; i < wheelData.Length; i++) {
+					ServerWheelData serverWheelData = wheelData [i];
+					serverWheelData.wheelCollider.motorTorque = 0f;
+					serverWheelData.wheelCollider.brakeTorque = 0f;
+					serverWheelData.wheelCollider.steerAngle = 0f;
+				}
+				rBody.Sleep ();
 			} else {
-				serverWheelData2.wheelCollider.brakeTorque = 0f;
+				speedAngle = Vector3.Angle (rBody.velocity, transform.forward) * Mathf.Sign (Vector3.Dot (rBody.velocity, transform.right));
+				float maxDriveForce = car.GetMaxDriveForce ();
+				float maxForwardSpeed = car.GetMaxForwardSpeed ();
+				float num2 = (car.IsOn () ? car.GetThrottleInput () : 0f);
+				float steerInput = car.GetSteerInput ();
+				float brakeInput = (InSlowSpeedExitMode ? 1f : car.GetBrakeInput ());
+				float num3 = 1f;
+				if (num < 3f) {
+					num3 = 2.75f;
+				} else if (num < 9f) {
+					float t = Mathf.InverseLerp (9f, 3f, num);
+					num3 = Mathf.Lerp (1f, 2.75f, t);
+				}
+				maxDriveForce *= num3;
+				ComputeSteerAngle (num2, steerInput, dt, speed);
+				if ((float)timeSinceWaterCheck > 0.25f) {
+					float a = car.WaterFactor ();
+					float b = 0f;
+					if (car.FindTrigger<TriggerVehicleDrag> (out var result)) {
+						b = result.vehicleDrag;
+					}
+					float a2 = ((num2 != 0f) ? 0f : 0.25f);
+					float a3 = Mathf.Max (a, b);
+					a3 = Mathf.Max (a3, car.GetModifiedDrag ());
+					rBody.drag = Mathf.Max (a2, a3);
+					rBody.angularDrag = a3 * 0.5f;
+					timeSinceWaterCheck = 0f;
+				}
+				int num4 = 0;
+				float num5 = 0f;
+				bool flag2 = !hasDriver && rBody.velocity.magnitude < 2.5f && (float)car.timeSinceLastPush > 2f;
+				for (int j = 0; j < wheelData.Length; j++) {
+					ServerWheelData serverWheelData2 = wheelData [j];
+					serverWheelData2.wheelCollider.motorTorque = 1E-05f;
+					if (flag2 && car.OnSurface != VehicleTerrainHandler.Surface.Frictionless) {
+						serverWheelData2.wheelCollider.brakeTorque = 10000f;
+					} else {
+						serverWheelData2.wheelCollider.brakeTorque = 0f;
+					}
+					if (serverWheelData2.wheel.steerWheel) {
+						serverWheelData2.wheel.wheelCollider.steerAngle = (serverWheelData2.isFrontWheel ? SteerAngle : (vehicleSettings.rearWheelSteer * (0f - SteerAngle)));
+					}
+					UpdateSuspension (serverWheelData2);
+					if (serverWheelData2.isGrounded) {
+						num4++;
+						num5 += wheelData [j].downforce;
+					}
+				}
+				AdjustHitForces (num4, num5 / (float)num4);
+				for (int k = 0; k < wheelData.Length; k++) {
+					ServerWheelData wd = wheelData [k];
+					UpdateLocalFrame (wd, dt);
+					ComputeTyreForces (wd, speed, maxDriveForce, maxForwardSpeed, num2, steerInput, brakeInput, num3);
+					ApplyTyreForces (wd, num2, steerInput, speed);
+				}
+				ComputeOverallForces ();
 			}
-			if (serverWheelData2.wheel.steerWheel) {
-				serverWheelData2.wheel.wheelCollider.steerAngle = (serverWheelData2.isFrontWheel ? SteerAngle : (vehicleSettings.rearWheelSteer * (0f - SteerAngle)));
-			}
-			UpdateSuspension (serverWheelData2);
-			if (serverWheelData2.isGrounded) {
-				num9++;
-				num10 += wheelData [j].downforce;
-			}
+			wasSleeping = false;
+		} else {
+			wasSleeping = true;
 		}
-		AdjustHitForces (num9, num10 / (float)num9);
-		for (int k = 0; k < wheelData.Length; k++) {
-			ServerWheelData wd = wheelData [k];
-			UpdateLocalFrame (wd, dt);
-			ComputeTyreForces (wd, speed, maxDriveForce, maxForwardSpeed, num2, steerInput, brakeInput, num3);
-			ApplyTyreForces (wd, num2, steerInput, speed);
-		}
-		ComputeOverallForces ();
-		goto IL_05d2;
-		IL_05d2:
-		wasSleeping = false;
-		goto IL_05e5;
-		IL_05e5:
 		hadDriver = hasDriver;
 	}
 
@@ -332,8 +280,6 @@ public class CarPhysics<TCar> where TCar : BaseVehicle, CarPhysics<TCar>.ICar
 
 	private void COMChanged ()
 	{
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
 		for (int i = 0; i < wheelData.Length; i++) {
 			ServerWheelData serverWheelData = wheelData [i];
 			serverWheelData.forceDistance = GetWheelForceDistance (serverWheelData.wheel.wheelCollider);
@@ -378,35 +324,22 @@ public class CarPhysics<TCar> where TCar : BaseVehicle, CarPhysics<TCar>.ICar
 
 	private float GetWheelForceDistance (WheelCollider col)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
-		return rBody.centerOfMass.y - transform.InverseTransformPoint (((Component)col).transform.position).y + col.radius + (1f - col.suspensionSpring.targetPosition) * col.suspensionDistance;
+		return rBody.centerOfMass.y - transform.InverseTransformPoint (col.transform.position).y + col.radius + (1f - col.suspensionSpring.targetPosition) * col.suspensionDistance;
 	}
 
 	private void UpdateSuspension (ServerWheelData wd)
 	{
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0093: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a6: Unknown result type (might be due to invalid IL or missing references)
-		wd.isGrounded = wd.wheelCollider.GetGroundHit (ref wd.hit);
+		wd.isGrounded = wd.wheelCollider.GetGroundHit (out wd.hit);
 		wd.origin = wd.wheelColliderTransform.TransformPoint (wd.wheelCollider.center);
-		if (wd.isGrounded && GamePhysics.Trace (new Ray (wd.origin, -wd.wheelColliderTransform.up), 0f, out var hitInfo, wd.wheelCollider.suspensionDistance + wd.wheelCollider.radius, 1235321089, (QueryTriggerInteraction)1)) {
-			((WheelHit)(ref wd.hit)).point = ((RaycastHit)(ref hitInfo)).point;
-			((WheelHit)(ref wd.hit)).normal = ((RaycastHit)(ref hitInfo)).normal;
+		if (wd.isGrounded && GamePhysics.Trace (new Ray (wd.origin, -wd.wheelColliderTransform.up), 0f, out var hitInfo, wd.wheelCollider.suspensionDistance + wd.wheelCollider.radius, 1235321089, QueryTriggerInteraction.Ignore)) {
+			wd.hit.point = hitInfo.point;
+			wd.hit.normal = hitInfo.normal;
 		}
 		if (wd.isGrounded) {
-			if (((WheelHit)(ref wd.hit)).force < 0f) {
-				((WheelHit)(ref wd.hit)).force = 0f;
+			if (wd.hit.force < 0f) {
+				wd.hit.force = 0f;
 			}
-			wd.downforce = ((WheelHit)(ref wd.hit)).force;
+			wd.downforce = wd.hit.force;
 		} else {
 			wd.downforce = 0f;
 		}
@@ -424,13 +357,13 @@ public class CarPhysics<TCar> where TCar : BaseVehicle, CarPhysics<TCar>.ICar
 				serverWheelData.downforce = num;
 				continue;
 			}
-			float num2 = (num - serverWheelData.downforce) / (float)(groundedWheels - 1);
+			float a = (num - serverWheelData.downforce) / (float)(groundedWheels - 1);
 			serverWheelData.downforce = num;
 			for (int j = 0; j < wheelData.Length; j++) {
 				ServerWheelData serverWheelData2 = wheelData [j];
 				if (serverWheelData2.isGrounded && serverWheelData2.downforce > num) {
-					float num3 = Mathf.Min (num2, serverWheelData2.downforce - num);
-					serverWheelData2.downforce -= num3;
+					float num2 = Mathf.Min (a, serverWheelData2.downforce - num);
+					serverWheelData2.downforce -= num2;
 				}
 			}
 		}
@@ -438,110 +371,43 @@ public class CarPhysics<TCar> where TCar : BaseVehicle, CarPhysics<TCar>.ICar
 
 	private void UpdateLocalFrame (ServerWheelData wd, float dt)
 	{
-		//IL_0080: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0085: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0094: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0099: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ba: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00db: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0100: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01eb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0137: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0142: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_021e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0223: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0229: Unknown result type (might be due to invalid IL or missing references)
-		//IL_022e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0231: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0233: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0234: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0239: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0196: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0169: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0170: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0175: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0177: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0179: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0181: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0186: Unknown result type (might be due to invalid IL or missing references)
-		//IL_018b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0190: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01c9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ce: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01da: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01dc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e1: Unknown result type (might be due to invalid IL or missing references)
 		if (!wd.isGrounded) {
-			((WheelHit)(ref wd.hit)).point = wd.origin - wd.wheelColliderTransform.up * (wd.wheelCollider.suspensionDistance + wd.wheelCollider.radius);
-			((WheelHit)(ref wd.hit)).normal = wd.wheelColliderTransform.up;
-			((WheelHit)(ref wd.hit)).collider = null;
+			wd.hit.point = wd.origin - wd.wheelColliderTransform.up * (wd.wheelCollider.suspensionDistance + wd.wheelCollider.radius);
+			wd.hit.normal = wd.wheelColliderTransform.up;
+			wd.hit.collider = null;
 		}
-		Vector3 pointVelocity = rBody.GetPointVelocity (((WheelHit)(ref wd.hit)).point);
-		wd.velocity = pointVelocity - Vector3.Project (pointVelocity, ((WheelHit)(ref wd.hit)).normal);
-		wd.localVelocity.y = Vector3.Dot (((WheelHit)(ref wd.hit)).forwardDir, wd.velocity);
-		wd.localVelocity.x = Vector3.Dot (((WheelHit)(ref wd.hit)).sidewaysDir, wd.velocity);
+		Vector3 pointVelocity = rBody.GetPointVelocity (wd.hit.point);
+		wd.velocity = pointVelocity - Vector3.Project (pointVelocity, wd.hit.normal);
+		wd.localVelocity.y = Vector3.Dot (wd.hit.forwardDir, wd.velocity);
+		wd.localVelocity.x = Vector3.Dot (wd.hit.sidewaysDir, wd.velocity);
 		if (!wd.isGrounded) {
 			wd.localRigForce = Vector2.zero;
 			return;
 		}
-		float num = Mathf.InverseLerp (1f, 0.25f, ((Vector3)(ref wd.velocity)).sqrMagnitude);
-		Vector2 val3 = default(Vector2);
+		float num = Mathf.InverseLerp (1f, 0.25f, wd.velocity.sqrMagnitude);
+		Vector2 zero = default(Vector2);
 		if (num > 0f) {
-			float num2 = Vector3.Dot (Vector3.up, ((WheelHit)(ref wd.hit)).normal);
-			Vector3 val2;
+			float num2 = Vector3.Dot (Vector3.up, wd.hit.normal);
+			Vector3 rhs;
 			if (num2 > 1E-06f) {
-				Vector3 val = Vector3.up * wd.downforce / num2;
-				val2 = val - Vector3.Project (val, ((WheelHit)(ref wd.hit)).normal);
+				Vector3 vector = Vector3.up * wd.downforce / num2;
+				rhs = vector - Vector3.Project (vector, wd.hit.normal);
 			} else {
-				val2 = Vector3.up * 100000f;
+				rhs = Vector3.up * 100000f;
 			}
-			val3.y = Vector3.Dot (((WheelHit)(ref wd.hit)).forwardDir, val2);
-			val3.x = Vector3.Dot (((WheelHit)(ref wd.hit)).sidewaysDir, val2);
-			val3 *= num;
+			zero.y = Vector3.Dot (wd.hit.forwardDir, rhs);
+			zero.x = Vector3.Dot (wd.hit.sidewaysDir, rhs);
+			zero *= num;
 		} else {
-			val3 = Vector2.zero;
+			zero = Vector2.zero;
 		}
 		float num3 = Mathf.Clamp (wd.downforce / (0f - Physics.gravity.y), 0f, wd.wheelCollider.sprungMass) * 0.5f;
-		Vector2 val4 = (0f - num3) * wd.localVelocity / dt;
-		wd.localRigForce = val4 + val3;
+		Vector2 vector2 = (0f - num3) * wd.localVelocity / dt;
+		wd.localRigForce = vector2 + zero;
 	}
 
 	private void ComputeTyreForces (ServerWheelData wd, float speed, float maxDriveForce, float maxSpeed, float throttleInput, float steerInput, float brakeInput, float driveForceMultiplier)
 	{
-		//IL_03e3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03e8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03ee: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03f3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0319: Unknown result type (might be due to invalid IL or missing references)
-		//IL_031e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0323: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0327: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0340: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0362: Unknown result type (might be due to invalid IL or missing references)
-		//IL_036a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03c4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03cc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0388: Unknown result type (might be due to invalid IL or missing references)
 		float absSpeed = Mathf.Abs (speed);
 		if (vehicleSettings.tankSteering && brakeInput == 0f) {
 			throttleInput = ((!wd.isLeftWheel) ? TankThrottleRight : TankThrottleLeft);
@@ -589,15 +455,15 @@ public class CarPhysics<TCar> where TCar : BaseVehicle, CarPhysics<TCar>.ICar
 			if (Mathf.Abs (wd.tyreSlip.y) < num9) {
 				wd.tyreSlip.y = num9 * Mathf.Sign (wd.tyreSlip.y);
 			}
-			Vector2 val = (0f - num8) * ((Vector2)(ref wd.tyreSlip)).normalized;
-			val.x = Mathf.Abs (val.x) * 1.5f;
-			val.y = Mathf.Abs (val.y);
-			wd.tyreForce.x = Mathf.Clamp (wd.localRigForce.x, 0f - val.x, val.x);
+			Vector2 vector = (0f - num8) * wd.tyreSlip.normalized;
+			vector.x = Mathf.Abs (vector.x) * 1.5f;
+			vector.y = Mathf.Abs (vector.y);
+			wd.tyreForce.x = Mathf.Clamp (wd.localRigForce.x, 0f - vector.x, vector.x);
 			if (wd.isBraking) {
-				float num10 = Mathf.Min (val.y, num6);
+				float num10 = Mathf.Min (vector.y, num6);
 				wd.tyreForce.y = Mathf.Clamp (wd.localRigForce.y, 0f - num10, num10);
 			} else {
-				wd.tyreForce.y = Mathf.Clamp (num6, 0f - val.y, val.y);
+				wd.tyreForce.y = Mathf.Clamp (num6, 0f - vector.y, vector.y);
 			}
 		} else {
 			wd.tyreSlip = Vector2.zero;
@@ -661,8 +527,6 @@ public class CarPhysics<TCar> where TCar : BaseVehicle, CarPhysics<TCar>.ICar
 
 	private void ComputeOverallForces ()
 	{
-		//IL_005b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0061: Unknown result type (might be due to invalid IL or missing references)
 		DriveWheelVelocity = 0f;
 		DriveWheelSlip = 0f;
 		int num = 0;
@@ -685,65 +549,34 @@ public class CarPhysics<TCar> where TCar : BaseVehicle, CarPhysics<TCar>.ICar
 
 	private static float ComputeCombinedSlip (Vector2 localVelocity, Vector2 tyreSlip)
 	{
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		float magnitude = ((Vector2)(ref localVelocity)).magnitude;
+		float magnitude = localVelocity.magnitude;
 		if (magnitude > 0.01f) {
 			float num = tyreSlip.x * localVelocity.x / magnitude;
 			float y = tyreSlip.y;
 			return Mathf.Sqrt (num * num + y * y);
 		}
-		return ((Vector2)(ref tyreSlip)).magnitude;
+		return tyreSlip.magnitude;
 	}
 
 	private void ApplyTyreForces (ServerWheelData wd, float throttleInput, float steerInput, float speed)
 	{
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0056: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0064: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0076: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0077: Unknown result type (might be due to invalid IL or missing references)
 		if (wd.isGrounded) {
-			Vector3 val = ((WheelHit)(ref wd.hit)).forwardDir * wd.tyreForce.y;
-			Vector3 val2 = ((WheelHit)(ref wd.hit)).sidewaysDir * wd.tyreForce.x;
-			Vector3 sidewaysForceAppPoint = GetSidewaysForceAppPoint (wd, ((WheelHit)(ref wd.hit)).point);
-			rBody.AddForceAtPosition (val, ((WheelHit)(ref wd.hit)).point, (ForceMode)0);
-			rBody.AddForceAtPosition (val2, sidewaysForceAppPoint, (ForceMode)0);
+			Vector3 force = wd.hit.forwardDir * wd.tyreForce.y;
+			Vector3 force2 = wd.hit.sidewaysDir * wd.tyreForce.x;
+			Vector3 sidewaysForceAppPoint = GetSidewaysForceAppPoint (wd, wd.hit.point);
+			rBody.AddForceAtPosition (force, wd.hit.point, ForceMode.Force);
+			rBody.AddForceAtPosition (force2, sidewaysForceAppPoint, ForceMode.Force);
 		}
 	}
 
 	private Vector3 GetSidewaysForceAppPoint (ServerWheelData wd, Vector3 contactPoint)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0074: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0086: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ac: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 val = contactPoint + wd.wheelColliderTransform.up * vehicleSettings.antiRoll * wd.forceDistance;
+		Vector3 result = contactPoint + wd.wheelColliderTransform.up * vehicleSettings.antiRoll * wd.forceDistance;
 		float num = (wd.wheel.steerWheel ? SteerAngle : 0f);
 		if (num != 0f && Mathf.Sign (num) != Mathf.Sign (wd.tyreSlip.x)) {
-			val += wd.wheelColliderTransform.forward * midWheelPos * (vehicleSettings.handlingBias - 0.5f);
+			result += wd.wheelColliderTransform.forward * midWheelPos * (vehicleSettings.handlingBias - 0.5f);
 		}
-		return val;
+		return result;
 	}
 
 	private float GetTankSteerInvert (float throttleInput, float speed)

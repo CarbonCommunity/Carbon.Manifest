@@ -12,7 +12,7 @@ public sealed class PostProcessVolume : MonoBehaviour
 
 	public Bounds bounds;
 
-	[Min (0f)]
+	[UnityEngine.Rendering.PostProcessing.Min (0f)]
 	[Tooltip ("The distance (from the attached Collider) to start blending from. A value of 0 means there will be no blending and the Volume overrides will be applied immediatly upon entry to the attached Collider.")]
 	public float blendDistance = 0f;
 
@@ -31,11 +31,11 @@ public sealed class PostProcessVolume : MonoBehaviour
 
 	public PostProcessProfile profile {
 		get {
-			if ((Object)(object)m_InternalProfile == (Object)null) {
+			if (m_InternalProfile == null) {
 				m_InternalProfile = ScriptableObject.CreateInstance<PostProcessProfile> ();
-				if ((Object)(object)sharedProfile != (Object)null) {
+				if (sharedProfile != null) {
 					foreach (PostProcessEffectSettings setting in sharedProfile.settings) {
-						PostProcessEffectSettings item = Object.Instantiate<PostProcessEffectSettings> (setting);
+						PostProcessEffectSettings item = Object.Instantiate (setting);
 						m_InternalProfile.settings.Add (item);
 					}
 				}
@@ -47,17 +47,17 @@ public sealed class PostProcessVolume : MonoBehaviour
 		}
 	}
 
-	internal PostProcessProfile profileRef => ((Object)(object)m_InternalProfile == (Object)null) ? sharedProfile : m_InternalProfile;
+	internal PostProcessProfile profileRef => (m_InternalProfile == null) ? sharedProfile : m_InternalProfile;
 
 	public bool HasInstantiatedProfile ()
 	{
-		return (Object)(object)m_InternalProfile != (Object)null;
+		return m_InternalProfile != null;
 	}
 
 	private void OnEnable ()
 	{
 		PostProcessManager.instance.Register (this);
-		m_PreviousLayer = ((Component)this).gameObject.layer;
+		m_PreviousLayer = base.gameObject.layer;
 	}
 
 	private void OnDisable ()
@@ -67,7 +67,7 @@ public sealed class PostProcessVolume : MonoBehaviour
 
 	private void Update ()
 	{
-		int layer = ((Component)this).gameObject.layer;
+		int layer = base.gameObject.layer;
 		if (layer != m_PreviousLayer) {
 			PostProcessManager.instance.UpdateVolumeLayer (this, m_PreviousLayer, layer);
 			m_PreviousLayer = layer;
@@ -80,31 +80,12 @@ public sealed class PostProcessVolume : MonoBehaviour
 
 	private void OnDrawGizmos ()
 	{
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0096: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ac: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bc: Unknown result type (might be due to invalid IL or missing references)
 		if (!isGlobal) {
-			Vector3 lossyScale = ((Component)this).transform.lossyScale;
-			Vector3 val = default(Vector3);
-			((Vector3)(ref val))..ctor (1f / lossyScale.x, 1f / lossyScale.y, 1f / lossyScale.z);
-			Gizmos.matrix = Matrix4x4.TRS (((Component)this).transform.position, ((Component)this).transform.rotation, lossyScale);
-			Gizmos.DrawCube (((Bounds)(ref bounds)).center, ((Bounds)(ref bounds)).size);
-			Gizmos.DrawWireCube (((Bounds)(ref bounds)).center, ((Bounds)(ref bounds)).size + val * blendDistance * 4f);
+			Vector3 lossyScale = base.transform.lossyScale;
+			Vector3 vector = new Vector3 (1f / lossyScale.x, 1f / lossyScale.y, 1f / lossyScale.z);
+			Gizmos.matrix = Matrix4x4.TRS (base.transform.position, base.transform.rotation, lossyScale);
+			Gizmos.DrawCube (bounds.center, bounds.size);
+			Gizmos.DrawWireCube (bounds.center, bounds.size + vector * blendDistance * 4f);
 			Gizmos.matrix = Matrix4x4.identity;
 		}
 	}

@@ -21,30 +21,18 @@ public class TriggerTemperature : TriggerBase
 
 	private void OnValidate ()
 	{
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0059: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		SphereCollider component = ((Component)this).GetComponent<SphereCollider> ();
-		if ((Object)(object)component != (Object)null) {
-			triggerSize = ((Component)this).GetComponent<SphereCollider> ().radius * ((Component)this).transform.localScale.y;
+		SphereCollider component = GetComponent<SphereCollider> ();
+		if (component != null) {
+			triggerSize = GetComponent<SphereCollider> ().radius * base.transform.localScale.y;
 			return;
 		}
-		BoxCollider component2 = ((Component)this).GetComponent<BoxCollider> ();
-		Vector3 val = Vector3.Scale (component2.size, ((Component)this).transform.localScale);
-		triggerSize = Vector3Ex.Max (val) * 0.5f;
+		BoxCollider component2 = GetComponent<BoxCollider> ();
+		Vector3 v = Vector3.Scale (component2.size, base.transform.localScale);
+		triggerSize = v.Max () * 0.5f;
 	}
 
 	public float WorkoutTemperature (Vector3 position, float oldTemperature)
 	{
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0081: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
 		if (sunlightBlocker) {
 			float time = Env.time;
 			if (time >= blockMinHour && time <= blockMaxHour) {
@@ -55,24 +43,24 @@ public class TriggerTemperature : TriggerBase
 			}
 			return oldTemperature;
 		}
-		float num = Vector3.Distance (((Component)this).gameObject.transform.position, position);
-		float num2 = Mathf.InverseLerp (triggerSize, minSize, num);
-		return Mathf.Lerp (oldTemperature, Temperature, num2);
+		float value = Vector3.Distance (base.gameObject.transform.position, position);
+		float t = Mathf.InverseLerp (triggerSize, minSize, value);
+		return Mathf.Lerp (oldTemperature, Temperature, t);
 	}
 
 	internal override GameObject InterestedInObject (GameObject obj)
 	{
 		obj = base.InterestedInObject (obj);
-		if ((Object)(object)obj == (Object)null) {
+		if (obj == null) {
 			return null;
 		}
 		BaseEntity baseEntity = obj.ToBaseEntity ();
-		if ((Object)(object)baseEntity == (Object)null) {
+		if (baseEntity == null) {
 			return null;
 		}
 		if (baseEntity.isClient) {
 			return null;
 		}
-		return ((Component)baseEntity).gameObject;
+		return baseEntity.gameObject;
 	}
 }

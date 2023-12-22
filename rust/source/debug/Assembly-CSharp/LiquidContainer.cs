@@ -1,3 +1,5 @@
+#define ENABLE_PROFILER
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -53,53 +55,41 @@ public class LiquidContainer : ContainerIOEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("LiquidContainer.OnRpcMessage", 0);
-		try {
-			if (rpc == 2002733690 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("LiquidContainer.OnRpcMessage")) {
+			if (rpc == 2002733690 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - SVDrink "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - SVDrink "));
 				}
-				TimeWarning val2 = TimeWarning.New ("SVDrink", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("SVDrink")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (2002733690u, "SVDrink", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage rpc2 = rPCMessage;
 							SVDrink (rpc2);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in SVDrink");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
 
 	public override bool AllowWireConnections ()
 	{
-		if (HasParent () && (Object)(object)parentEntity.Get (base.isServer) != (Object)null && parentEntity.Get (base.isServer) is VehicleModuleStorage) {
+		if (HasParent () && parentEntity.Get (base.isServer) != null && parentEntity.Get (base.isServer) is VehicleModuleStorage) {
 			return true;
 		}
 		return base.AllowWireConnections ();
@@ -117,7 +107,7 @@ public class LiquidContainer : ContainerIOEntity
 		}
 		ItemDefinition[] validItems = ValidItems;
 		foreach (ItemDefinition itemDefinition in validItems) {
-			if ((Object)(object)itemDefinition == (Object)(object)item.info) {
+			if (itemDefinition == item.info) {
 				return true;
 			}
 		}
@@ -145,44 +135,42 @@ public class LiquidContainer : ContainerIOEntity
 	{
 		base.OnCircuitChanged (forceUpdate);
 		ClearDrains ();
-		((FacepunchBehaviour)this).Invoke (updateDrainAmountAction, 0.1f);
+		Invoke (updateDrainAmountAction, 0.1f);
 		if (autofillOutputs && HasLiquidItem ()) {
-			((FacepunchBehaviour)this).Invoke (updatePushLiquidTargetsAction, 0.1f);
+			Invoke (updatePushLiquidTargetsAction, 0.1f);
 		}
 	}
 
 	public override void OnItemAddedOrRemoved (Item item, bool added)
 	{
-		//IL_0108: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010d: Unknown result type (might be due to invalid IL or missing references)
 		base.OnItemAddedOrRemoved (item, added);
 		UpdateOnFlag ();
 		MarkDirtyForceUpdateOutputs ();
-		((FacepunchBehaviour)this).Invoke (updateDrainAmountAction, 0.1f);
+		Invoke (updateDrainAmountAction, 0.1f);
 		if (connectedList.Count > 0) {
-			List<IOEntity> list = Pool.GetList<IOEntity> ();
+			List<IOEntity> obj = Facepunch.Pool.GetList<IOEntity> ();
 			foreach (IOEntity connected in connectedList) {
-				if ((Object)(object)connected != (Object)null) {
-					list.Add (connected);
+				if (connected != null) {
+					obj.Add (connected);
 				}
 			}
-			foreach (IOEntity item2 in list) {
+			foreach (IOEntity item2 in obj) {
 				item2.SendChangedToRoot (forceUpdate: true);
 			}
-			Pool.FreeList<IOEntity> (ref list);
+			Facepunch.Pool.FreeList (ref obj);
 		}
 		if (HasLiquidItem () && autofillOutputs) {
-			((FacepunchBehaviour)this).Invoke (updatePushLiquidTargetsAction, 0.1f);
+			Invoke (updatePushLiquidTargetsAction, 0.1f);
 		}
 		if (added) {
-			waterTransferStartTime = TimeUntil.op_Implicit (10f);
+			waterTransferStartTime = 10f;
 		}
 	}
 
 	private void ClearDrains ()
 	{
 		foreach (IOEntity connected in connectedList) {
-			if ((Object)(object)connected != (Object)null) {
+			if (connected != null) {
 				connected.SetFuelType (null, null);
 			}
 		}
@@ -201,32 +189,27 @@ public class LiquidContainer : ContainerIOEntity
 
 	private void UpdateDrainAmount ()
 	{
-		//IL_0056: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005b: Unknown result type (might be due to invalid IL or missing references)
 		int amount = 0;
 		Item liquidItem = GetLiquidItem ();
 		if (liquidItem != null) {
 			IOSlot[] array = outputs;
 			foreach (IOSlot iOSlot in array) {
-				if ((Object)(object)iOSlot.connectedTo.Get () != (Object)null) {
-					CalculateDrain (iOSlot.connectedTo.Get (), ((Component)this).transform.TransformPoint (iOSlot.handlePosition), IOEntity.backtracking * 2, ref amount, this, liquidItem?.info);
+				if (iOSlot.connectedTo.Get () != null) {
+					CalculateDrain (iOSlot.connectedTo.Get (), base.transform.TransformPoint (iOSlot.handlePosition), IOEntity.backtracking * 2, ref amount, this, liquidItem?.info);
 				}
 			}
 		}
 		currentDrainAmount = Mathf.Clamp (amount, 0, maxOutputFlow);
-		if (currentDrainAmount <= 0 && ((FacepunchBehaviour)this).IsInvoking (deductFuelAction)) {
-			((FacepunchBehaviour)this).CancelInvoke (deductFuelAction);
-		} else if (currentDrainAmount > 0 && !((FacepunchBehaviour)this).IsInvoking (deductFuelAction)) {
-			((FacepunchBehaviour)this).InvokeRepeating (deductFuelAction, 0f, 1f);
+		if (currentDrainAmount <= 0 && IsInvoking (deductFuelAction)) {
+			CancelInvoke (deductFuelAction);
+		} else if (currentDrainAmount > 0 && !IsInvoking (deductFuelAction)) {
+			InvokeRepeating (deductFuelAction, 0f, 1f);
 		}
 	}
 
 	private void CalculateDrain (IOEntity ent, Vector3 fromSlotWorld, int depth, ref int amount, IOEntity lastEntity, ItemDefinition waterType)
 	{
-		//IL_007e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ec: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f1: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)ent == (Object)(object)this || depth <= 0 || (Object)(object)ent == (Object)null || (Object)(object)lastEntity == (Object)null || ent is LiquidContainer) {
+		if (ent == this || depth <= 0 || ent == null || lastEntity == null || ent is LiquidContainer) {
 			return;
 		}
 		if (!ent.BlockFluidDraining && ent.HasFlag (Flags.On)) {
@@ -240,8 +223,8 @@ public class LiquidContainer : ContainerIOEntity
 		}
 		IOSlot[] array = ent.outputs;
 		foreach (IOSlot iOSlot in array) {
-			if ((Object)(object)iOSlot.connectedTo.Get () != (Object)null && (Object)(object)iOSlot.connectedTo.Get () != (Object)(object)ent) {
-				CalculateDrain (iOSlot.connectedTo.Get (), ((Component)ent).transform.TransformPoint (iOSlot.handlePosition), depth - 1, ref amount, ent, waterType);
+			if (iOSlot.connectedTo.Get () != null && iOSlot.connectedTo.Get () != ent) {
+				CalculateDrain (iOSlot.connectedTo.Get (), ent.transform.TransformPoint (iOSlot.handlePosition), depth - 1, ref amount, ent, waterType);
 			}
 		}
 	}
@@ -249,10 +232,10 @@ public class LiquidContainer : ContainerIOEntity
 	public override void UpdateOutputs ()
 	{
 		base.UpdateOutputs ();
-		if (!(Time.realtimeSinceStartup - lastOutputDrainUpdate < 0.2f)) {
-			lastOutputDrainUpdate = Time.realtimeSinceStartup;
+		if (!(UnityEngine.Time.realtimeSinceStartup - lastOutputDrainUpdate < 0.2f)) {
+			lastOutputDrainUpdate = UnityEngine.Time.realtimeSinceStartup;
 			ClearDrains ();
-			((FacepunchBehaviour)this).Invoke (updateDrainAmountAction, 0.1f);
+			Invoke (updateDrainAmountAction, 0.1f);
 		}
 	}
 
@@ -277,7 +260,7 @@ public class LiquidContainer : ContainerIOEntity
 	{
 		if (!HasFlag (Flags.Reserved5)) {
 			SetFlag (Flags.Reserved5, b: true);
-			((FacepunchBehaviour)this).Invoke ((Action)ShutTap, duration);
+			Invoke (ShutTap, duration);
 			SendNetworkUpdateImmediate ();
 		}
 	}
@@ -314,8 +297,8 @@ public class LiquidContainer : ContainerIOEntity
 			return;
 		}
 		foreach (Item item in base.inventory.itemList) {
-			ItemModConsume component = ((Component)item.info).GetComponent<ItemModConsume> ();
-			if ((Object)(object)component == (Object)null || !component.CanDoAction (item, rpc.player)) {
+			ItemModConsume component = item.info.GetComponent<ItemModConsume> ();
+			if (component == null || !component.CanDoAction (item, rpc.player)) {
 				continue;
 			}
 			component.DoAction (item, rpc.player);
@@ -330,33 +313,29 @@ public class LiquidContainer : ContainerIOEntity
 			return;
 		}
 		Item liquidItem = GetLiquidItem ();
-		TimeWarning val = TimeWarning.New ("UpdatePushTargets", 0);
-		try {
+		using (TimeWarning.New ("UpdatePushTargets")) {
 			IOSlot[] array = outputs;
 			foreach (IOSlot iOSlot in array) {
 				if (iOSlot.type == IOType.Fluidic) {
 					IOEntity iOEntity = iOSlot.connectedTo.Get ();
-					if ((Object)(object)iOEntity != (Object)null) {
+					if (iOEntity != null) {
 						CheckPushLiquid (iOEntity, liquidItem, this, IOEntity.backtracking * 4);
 					}
 				}
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		if (pushTargets.Count > 0) {
-			((FacepunchBehaviour)this).InvokeRandomized (pushLiquidAction, 0f, autofillTickRate, autofillTickRate * 0.2f);
+			InvokeRandomized (pushLiquidAction, 0f, autofillTickRate, autofillTickRate * 0.2f);
 		}
 	}
 
 	private void PushLiquidThroughOutputs ()
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		if (TimeUntil.op_Implicit (waterTransferStartTime) > 0f) {
+		if ((float)waterTransferStartTime > 0f) {
 			return;
 		}
 		if (!HasLiquidItem ()) {
-			((FacepunchBehaviour)this).CancelInvoke (pushLiquidAction);
+			CancelInvoke (pushLiquidAction);
 			return;
 		}
 		Item liquidItem = GetLiquidItem ();
@@ -365,7 +344,7 @@ public class LiquidContainer : ContainerIOEntity
 			if (num == 0 && liquidItem.amount > 0) {
 				num = liquidItem.amount;
 			}
-			if (Server.waterContainersLeaveWaterBehind && num == liquidItem.amount) {
+			if (ConVar.Server.waterContainersLeaveWaterBehind && num == liquidItem.amount) {
 				num--;
 			}
 			if (num == 0) {
@@ -387,19 +366,12 @@ public class LiquidContainer : ContainerIOEntity
 			if (liquidItem.amount <= 0) {
 				liquidItem.Remove ();
 			}
-			((FacepunchBehaviour)this).CancelInvoke (pushLiquidAction);
+			CancelInvoke (pushLiquidAction);
 		}
 	}
 
 	private void CheckPushLiquid (IOEntity connected, Item ourFuel, IOEntity fromSource, int depth)
 	{
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0110: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0115: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0133: Unknown result type (might be due to invalid IL or missing references)
 		if (depth <= 0 || ourFuel.amount <= 0) {
 			return;
 		}
@@ -407,7 +379,7 @@ public class LiquidContainer : ContainerIOEntity
 		Vector3 worldHandlePosition = Vector3.zero;
 		IOEntity iOEntity = connected.FindGravitySource (ref worldHandlePosition, IOEntity.backtracking * 2, ignoreSelf: true);
 		Profiler.EndSample ();
-		if (((Object)(object)iOEntity != (Object)null && !connected.AllowLiquidPassthrough (iOEntity, worldHandlePosition)) || (Object)(object)connected == (Object)(object)this || ConsiderConnectedTo (connected)) {
+		if ((iOEntity != null && !connected.AllowLiquidPassthrough (iOEntity, worldHandlePosition)) || connected == this || ConsiderConnectedTo (connected)) {
 			return;
 		}
 		if (connected is ContainerIOEntity containerIOEntity && !pushTargets.Contains (containerIOEntity) && containerIOEntity.inventory.CanAcceptItem (ourFuel, 0) == ItemContainer.CanAcceptResult.CanAccept) {
@@ -418,8 +390,8 @@ public class LiquidContainer : ContainerIOEntity
 		foreach (IOSlot iOSlot in array) {
 			Profiler.BeginSample ("CheckPushLiquid.AllowPassthrough");
 			IOEntity iOEntity2 = iOSlot.connectedTo.Get ();
-			Vector3 sourceWorldPosition = ((Component)connected).transform.TransformPoint (iOSlot.handlePosition);
-			if ((Object)(object)iOEntity2 != (Object)null && (Object)(object)iOEntity2 != (Object)(object)fromSource && iOEntity2.AllowLiquidPassthrough (connected, sourceWorldPosition)) {
+			Vector3 sourceWorldPosition = connected.transform.TransformPoint (iOSlot.handlePosition);
+			if (iOEntity2 != null && iOEntity2 != fromSource && iOEntity2.AllowLiquidPassthrough (connected, sourceWorldPosition)) {
 				CheckPushLiquid (iOEntity2, ourFuel, fromSource, depth - 1);
 				if (pushTargets.Count >= 3) {
 					Profiler.EndSample ();
@@ -437,6 +409,6 @@ public class LiquidContainer : ContainerIOEntity
 
 	protected override bool ConsiderConnectedTo (IOEntity entity)
 	{
-		return (Object)(object)entity == (Object)(object)considerConnectedTo;
+		return entity == considerConnectedTo;
 	}
 }

@@ -64,7 +64,7 @@ public class LoadingScreen : SingletonComponent<LoadingScreen>
 
 	public GameObject blackout;
 
-	public static bool isOpen => Object.op_Implicit ((Object)(object)SingletonComponent<LoadingScreen>.Instance) && Object.op_Implicit ((Object)(object)SingletonComponent<LoadingScreen>.Instance.panel) && ((Component)SingletonComponent<LoadingScreen>.Instance.panel).gameObject.activeSelf;
+	public static bool isOpen => (bool)SingletonComponent<LoadingScreen>.Instance && (bool)SingletonComponent<LoadingScreen>.Instance.panel && SingletonComponent<LoadingScreen>.Instance.panel.gameObject.activeSelf;
 
 	public static bool WantsSkip { get; private set; }
 

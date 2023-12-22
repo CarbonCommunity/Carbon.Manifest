@@ -80,23 +80,22 @@ public class SpawnGroup : BaseMonoBehaviour, IServerComponent, ISpawnPointUser, 
 
 	protected void Awake ()
 	{
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)TerrainMeta.TopologyMap == (Object)null) {
+		if (TerrainMeta.TopologyMap == null) {
 			return;
 		}
-		int topology = TerrainMeta.TopologyMap.GetTopology (((Component)this).transform.position);
+		int topology = TerrainMeta.TopologyMap.GetTopology (base.transform.position);
 		int num = 469762048;
 		int num2 = MonumentInfo.TierToMask (Tier);
 		if (num2 == num || (num2 & topology) != 0) {
-			spawnPoints = ((Component)this).GetComponentsInChildren<BaseSpawnPoint> ();
+			spawnPoints = GetComponentsInChildren<BaseSpawnPoint> ();
 			if (WantsTimedSpawn ()) {
 				spawnClock.Add (GetSpawnDelta (), GetSpawnVariance (), Spawn);
 			}
-			if (!temporary && Object.op_Implicit ((Object)(object)SingletonComponent<SpawnHandler>.Instance)) {
-				SingletonComponent<SpawnHandler>.Instance.SpawnGroups.Add ((ISpawnGroup)this);
+			if (!temporary && (bool)SingletonComponent<SpawnHandler>.Instance) {
+				SingletonComponent<SpawnHandler>.Instance.SpawnGroups.Add (this);
 			}
 			if (forceInitialSpawn) {
-				((FacepunchBehaviour)this).Invoke ((Action)SpawnInitial, 1f);
+				Invoke (SpawnInitial, 1f);
 			}
 			Monument = FindMonument ();
 		}
@@ -104,10 +103,10 @@ public class SpawnGroup : BaseMonoBehaviour, IServerComponent, ISpawnPointUser, 
 
 	protected void OnDestroy ()
 	{
-		if (Object.op_Implicit ((Object)(object)SingletonComponent<SpawnHandler>.Instance)) {
-			SingletonComponent<SpawnHandler>.Instance.SpawnGroups.Remove ((ISpawnGroup)this);
+		if ((bool)SingletonComponent<SpawnHandler>.Instance) {
+			SingletonComponent<SpawnHandler>.Instance.SpawnGroups.Remove (this);
 		} else {
-			Debug.LogWarning ((object)(((object)this).GetType ().Name + ": SpawnHandler instance not found."));
+			Debug.LogWarning (GetType ().Name + ": SpawnHandler instance not found.");
 		}
 	}
 
@@ -120,20 +119,12 @@ public class SpawnGroup : BaseMonoBehaviour, IServerComponent, ISpawnPointUser, 
 
 	public void Clear ()
 	{
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
 		for (int num = spawnInstances.Count - 1; num >= 0; num--) {
 			SpawnPointInstance spawnPointInstance = spawnInstances [num];
-			BaseEntity baseEntity = ((Component)spawnPointInstance).gameObject.ToBaseEntity ();
-			if ((Object)(object)setFreeIfMovedBeyond != (Object)null) {
-				Bounds bounds = ((Collider)setFreeIfMovedBeyond).bounds;
-				if (!((Bounds)(ref bounds)).Contains (((Component)baseEntity).transform.position)) {
-					spawnPointInstance.Retire ();
-					continue;
-				}
-			}
-			if (Object.op_Implicit ((Object)(object)baseEntity)) {
+			BaseEntity baseEntity = spawnPointInstance.gameObject.ToBaseEntity ();
+			if (setFreeIfMovedBeyond != null && !setFreeIfMovedBeyond.bounds.Contains (baseEntity.transform.position)) {
+				spawnPointInstance.Retire ();
+			} else if ((bool)baseEntity) {
 				baseEntity.Kill ();
 			}
 		}
@@ -143,8 +134,8 @@ public class SpawnGroup : BaseMonoBehaviour, IServerComponent, ISpawnPointUser, 
 	public bool HasSpawned (uint prefabID)
 	{
 		foreach (SpawnPointInstance spawnInstance in spawnInstances) {
-			BaseEntity baseEntity = ((Component)spawnInstance).gameObject.ToBaseEntity ();
-			if (Object.op_Implicit ((Object)(object)baseEntity) && baseEntity.prefabID == prefabID) {
+			BaseEntity baseEntity = spawnInstance.gameObject.ToBaseEntity ();
+			if ((bool)baseEntity && baseEntity.prefabID == prefabID) {
 				return true;
 			}
 		}
@@ -166,7 +157,7 @@ public class SpawnGroup : BaseMonoBehaviour, IServerComponent, ISpawnPointUser, 
 	{
 		for (int i = 0; i < spawnClock.events.Count; i++) {
 			LocalClock.TimedEvent value = spawnClock.events [i];
-			if (Time.time > value.time) {
+			if (UnityEngine.Time.time > value.time) {
 				value.delta = GetSpawnDelta ();
 				value.variance = GetSpawnVariance ();
 				spawnClock.events [i] = value;
@@ -187,20 +178,18 @@ public class SpawnGroup : BaseMonoBehaviour, IServerComponent, ISpawnPointUser, 
 
 	public void DelayedSpawn ()
 	{
-		((FacepunchBehaviour)this).Invoke ((Action)Spawn, 1f);
+		Invoke (Spawn, 1f);
 	}
 
 	public void Spawn ()
 	{
 		if (isSpawnerActive) {
-			Spawn (Random.Range (numToSpawnPerTickMin, numToSpawnPerTickMax + 1));
+			Spawn (UnityEngine.Random.Range (numToSpawnPerTickMin, numToSpawnPerTickMax + 1));
 		}
 	}
 
 	protected virtual void Spawn (int numToSpawn)
 	{
-		//IL_006e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006f: Unknown result type (might be due to invalid IL or missing references)
 		numToSpawn = Mathf.Min (numToSpawn, maxPopulation - currentPopulation);
 		for (int i = 0; i < numToSpawn; i++) {
 			GameObjectRef prefab = GetPrefab ();
@@ -210,18 +199,18 @@ public class SpawnGroup : BaseMonoBehaviour, IServerComponent, ISpawnPointUser, 
 			Vector3 pos;
 			Quaternion rot;
 			BaseSpawnPoint spawnPoint = GetSpawnPoint (prefab, out pos, out rot);
-			if (!Object.op_Implicit ((Object)(object)spawnPoint)) {
+			if (!spawnPoint) {
 				continue;
 			}
 			BaseEntity baseEntity = GameManager.server.CreateEntity (prefab.resourcePath, pos, rot, startActive: false);
-			if (Object.op_Implicit ((Object)(object)baseEntity)) {
+			if ((bool)baseEntity) {
 				if (baseEntity.enableSaving && !(spawnPoint is SpaceCheckingSpawnPoint)) {
 					baseEntity.enableSaving = false;
 				}
-				((Component)baseEntity).gameObject.AwakeFromInstantiate ();
+				baseEntity.gameObject.AwakeFromInstantiate ();
 				baseEntity.Spawn ();
 				PostSpawnProcess (baseEntity, spawnPoint);
-				SpawnPointInstance spawnPointInstance = ((Component)baseEntity).gameObject.AddComponent<SpawnPointInstance> ();
+				SpawnPointInstance spawnPointInstance = baseEntity.gameObject.AddComponent<SpawnPointInstance> ();
 				spawnPointInstance.parentSpawnPointUser = this;
 				spawnPointInstance.parentSpawnPoint = spawnPoint;
 				spawnPointInstance.Notify ();
@@ -239,7 +228,7 @@ public class SpawnGroup : BaseMonoBehaviour, IServerComponent, ISpawnPointUser, 
 		if (num == 0f) {
 			return null;
 		}
-		float num2 = Random.Range (0f, num);
+		float num2 = UnityEngine.Random.Range (0f, num);
 		foreach (SpawnEntry prefab in prefabs) {
 			int num3 = ((!preventDuplicates || !HasSpawned (prefab.prefab.resourceID)) ? prefab.weight : 0);
 			if ((num2 -= (float)num3) <= 0f) {
@@ -251,22 +240,18 @@ public class SpawnGroup : BaseMonoBehaviour, IServerComponent, ISpawnPointUser, 
 
 	protected virtual BaseSpawnPoint GetSpawnPoint (GameObjectRef prefabRef, out Vector3 pos, out Quaternion rot)
 	{
-		//IL_0004: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
 		BaseSpawnPoint baseSpawnPoint = null;
 		pos = Vector3.zero;
 		rot = Quaternion.identity;
-		int num = Random.Range (0, spawnPoints.Length);
+		int num = UnityEngine.Random.Range (0, spawnPoints.Length);
 		for (int i = 0; i < spawnPoints.Length; i++) {
 			BaseSpawnPoint baseSpawnPoint2 = spawnPoints [(num + i) % spawnPoints.Length];
-			if (!((Object)(object)baseSpawnPoint2 == (Object)null) && baseSpawnPoint2.IsAvailableTo (prefabRef) && !baseSpawnPoint2.HasPlayersIntersecting ()) {
+			if (!(baseSpawnPoint2 == null) && baseSpawnPoint2.IsAvailableTo (prefabRef) && !baseSpawnPoint2.HasPlayersIntersecting ()) {
 				baseSpawnPoint = baseSpawnPoint2;
 				break;
 			}
 		}
-		if (Object.op_Implicit ((Object)(object)baseSpawnPoint)) {
+		if ((bool)baseSpawnPoint) {
 			baseSpawnPoint.GetLocation (out pos, out rot);
 		}
 		return baseSpawnPoint;
@@ -274,14 +259,12 @@ public class SpawnGroup : BaseMonoBehaviour, IServerComponent, ISpawnPointUser, 
 
 	private MonumentInfo FindMonument ()
 	{
-		return ((Component)this).GetComponentInParent<MonumentInfo> ();
+		return GetComponentInParent<MonumentInfo> ();
 	}
 
 	protected virtual void OnDrawGizmos ()
 	{
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
 		Gizmos.color = new Color (1f, 1f, 0f, 1f);
-		Gizmos.DrawSphere (((Component)this).transform.position, 0.25f);
+		Gizmos.DrawSphere (base.transform.position, 0.25f);
 	}
 }

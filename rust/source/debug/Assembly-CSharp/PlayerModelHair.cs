@@ -18,7 +18,7 @@ public class PlayerModelHair : MonoBehaviour
 			replacement = original.Clone () as Material[];
 			names = new string[original.Length];
 			for (int i = 0; i < original.Length; i++) {
-				names [i] = ((Object)original [i]).name;
+				names [i] = original [i].name;
 			}
 		}
 	}
@@ -34,22 +34,22 @@ public class PlayerModelHair : MonoBehaviour
 		if (materials != null) {
 			return;
 		}
-		List<SkinnedMeshRenderer> list = Pool.GetList<SkinnedMeshRenderer> ();
-		((Component)this).gameObject.GetComponentsInChildren<SkinnedMeshRenderer> (true, list);
+		List<SkinnedMeshRenderer> obj = Pool.GetList<SkinnedMeshRenderer> ();
+		base.gameObject.GetComponentsInChildren (includeInactive: true, obj);
 		materials = new Dictionary<Renderer, RendererMaterials> ();
 		materials.Clear ();
-		foreach (SkinnedMeshRenderer item in list) {
-			materials.Add ((Renderer)(object)item, new RendererMaterials ((Renderer)(object)item));
+		foreach (SkinnedMeshRenderer item in obj) {
+			materials.Add (item, new RendererMaterials (item));
 		}
-		Pool.FreeList<SkinnedMeshRenderer> (ref list);
+		Pool.FreeList (ref obj);
 	}
 
 	private void Setup (HairType type, HairSetCollection hair, int meshIndex, float typeNum, float dyeNum, MaterialPropertyBlock block)
 	{
 		CacheOriginalMaterials ();
 		HairSetCollection.HairSetEntry hairSetEntry = hair.Get (type, typeNum);
-		if ((Object)(object)hairSetEntry.HairSet == (Object)null) {
-			Debug.LogWarning ((object)"Hair.Get returned a NULL hair");
+		if (hairSetEntry.HairSet == null) {
+			Debug.LogWarning ("Hair.Get returned a NULL hair");
 			return;
 		}
 		int blendShapeIndex = -1;
@@ -58,19 +58,19 @@ public class PlayerModelHair : MonoBehaviour
 		}
 		HairDye dye = null;
 		HairDyeCollection hairDyeCollection = hairSetEntry.HairDyeCollection;
-		if ((Object)(object)hairDyeCollection != (Object)null) {
+		if (hairDyeCollection != null) {
 			dye = hairDyeCollection.Get (dyeNum);
 		}
 		hairSetEntry.HairSet.Process (this, hairDyeCollection, dye, block);
-		hairSetEntry.HairSet.ProcessMorphs (((Component)this).gameObject, blendShapeIndex);
+		hairSetEntry.HairSet.ProcessMorphs (base.gameObject, blendShapeIndex);
 	}
 
 	public void Setup (SkinSetCollection skin, float hairNum, float meshNum, MaterialPropertyBlock block)
 	{
 		int index = skin.GetIndex (meshNum);
 		SkinSet skinSet = skin.Skins [index];
-		if ((Object)(object)skinSet == (Object)null) {
-			Debug.LogError ((object)"Skin.Get returned a NULL skin");
+		if (skinSet == null) {
+			Debug.LogError ("Skin.Get returned a NULL skin");
 			return;
 		}
 		int typeIndex = (int)type;

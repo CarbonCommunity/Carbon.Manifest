@@ -8,12 +8,6 @@ public class GenerateHeight : ProceduralComponent
 
 	public override void Process (uint seed)
 	{
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
 		short[] dst = TerrainMeta.HeightMap.dst;
 		int res = TerrainMeta.HeightMap.res;
 		Vector3 position = TerrainMeta.Position;

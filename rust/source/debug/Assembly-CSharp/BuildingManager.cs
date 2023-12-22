@@ -1,5 +1,5 @@
+#define ENABLE_PROFILER
 using ConVar;
-using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Profiling;
 
@@ -9,11 +9,11 @@ public abstract class BuildingManager
 	{
 		public uint ID;
 
-		public ListHashSet<BuildingPrivlidge> buildingPrivileges = new ListHashSet<BuildingPrivlidge> (8);
+		public ListHashSet<BuildingPrivlidge> buildingPrivileges = new ListHashSet<BuildingPrivlidge> ();
 
-		public ListHashSet<BuildingBlock> buildingBlocks = new ListHashSet<BuildingBlock> (8);
+		public ListHashSet<BuildingBlock> buildingBlocks = new ListHashSet<BuildingBlock> ();
 
-		public ListHashSet<DecayEntity> decayEntities = new ListHashSet<DecayEntity> (8);
+		public ListHashSet<DecayEntity> decayEntities = new ListHashSet<DecayEntity> ();
 
 		public NavMeshObstacle buildingNavMeshObstacle;
 
@@ -43,7 +43,7 @@ public abstract class BuildingManager
 			if (HasBuildingPrivileges ()) {
 				for (int i = 0; i < buildingPrivileges.Count; i++) {
 					BuildingPrivlidge buildingPrivlidge2 = buildingPrivileges [i];
-					if (!((Object)(object)buildingPrivlidge2 == (Object)null) && buildingPrivlidge2.IsOlderThan (buildingPrivlidge)) {
+					if (!(buildingPrivlidge2 == null) && buildingPrivlidge2.IsOlderThan (buildingPrivlidge)) {
 						buildingPrivlidge = buildingPrivlidge2;
 					}
 				}
@@ -68,32 +68,32 @@ public abstract class BuildingManager
 
 		public void AddBuildingPrivilege (BuildingPrivlidge ent)
 		{
-			if (!((Object)(object)ent == (Object)null) && !buildingPrivileges.Contains (ent)) {
+			if (!(ent == null) && !buildingPrivileges.Contains (ent)) {
 				buildingPrivileges.Add (ent);
 			}
 		}
 
 		public void RemoveBuildingPrivilege (BuildingPrivlidge ent)
 		{
-			if (!((Object)(object)ent == (Object)null)) {
+			if (!(ent == null)) {
 				buildingPrivileges.Remove (ent);
 			}
 		}
 
 		public void AddBuildingBlock (BuildingBlock ent)
 		{
-			if ((Object)(object)ent == (Object)null || buildingBlocks.Contains (ent)) {
+			if (ent == null || buildingBlocks.Contains (ent)) {
 				return;
 			}
 			buildingBlocks.Add (ent);
 			if (!AI.nav_carve_use_building_optimization) {
 				return;
 			}
-			NavMeshObstacle component = ((Component)ent).GetComponent<NavMeshObstacle> ();
-			if ((Object)(object)component != (Object)null) {
+			NavMeshObstacle component = ent.GetComponent<NavMeshObstacle> ();
+			if (component != null) {
 				isNavMeshCarvingDirty = true;
 				if (navmeshCarvers == null) {
-					navmeshCarvers = new ListHashSet<NavMeshObstacle> (8);
+					navmeshCarvers = new ListHashSet<NavMeshObstacle> ();
 				}
 				navmeshCarvers.Add (component);
 			}
@@ -101,15 +101,15 @@ public abstract class BuildingManager
 
 		public void RemoveBuildingBlock (BuildingBlock ent)
 		{
-			if ((Object)(object)ent == (Object)null) {
+			if (ent == null) {
 				return;
 			}
 			buildingBlocks.Remove (ent);
 			if (!AI.nav_carve_use_building_optimization || navmeshCarvers == null) {
 				return;
 			}
-			NavMeshObstacle component = ((Component)ent).GetComponent<NavMeshObstacle> ();
-			if (!((Object)(object)component != (Object)null)) {
+			NavMeshObstacle component = ent.GetComponent<NavMeshObstacle> ();
+			if (!(component != null)) {
 				return;
 			}
 			navmeshCarvers.Remove (component);
@@ -128,14 +128,14 @@ public abstract class BuildingManager
 
 		public void AddDecayEntity (DecayEntity ent)
 		{
-			if (!((Object)(object)ent == (Object)null) && !decayEntities.Contains (ent)) {
+			if (!(ent == null) && !decayEntities.Contains (ent)) {
 				decayEntities.Add (ent);
 			}
 		}
 
 		public void RemoveDecayEntity (DecayEntity ent)
 		{
-			if (!((Object)(object)ent == (Object)null)) {
+			if (!(ent == null)) {
 				decayEntities.Remove (ent);
 			}
 		}
@@ -161,7 +161,7 @@ public abstract class BuildingManager
 		public void Dirty ()
 		{
 			BuildingPrivlidge dominatingBuildingPrivilege = GetDominatingBuildingPrivilege ();
-			if ((Object)(object)dominatingBuildingPrivilege != (Object)null) {
+			if (dominatingBuildingPrivilege != null) {
 				dominatingBuildingPrivilege.BuildingDirty ();
 			}
 		}
@@ -169,15 +169,15 @@ public abstract class BuildingManager
 
 	public static ServerBuildingManager server = new ServerBuildingManager ();
 
-	protected ListHashSet<DecayEntity> decayEntities = new ListHashSet<DecayEntity> (8);
+	protected ListHashSet<DecayEntity> decayEntities = new ListHashSet<DecayEntity> ();
 
 	protected ListDictionary<uint, Building> buildingDictionary = new ListDictionary<uint, Building> ();
 
 	public Building GetBuilding (uint buildingID)
 	{
-		Building result = null;
-		buildingDictionary.TryGetValue (buildingID, ref result);
-		return result;
+		Building val = null;
+		buildingDictionary.TryGetValue (buildingID, out val);
+		return val;
 	}
 
 	public void Add (DecayEntity ent)

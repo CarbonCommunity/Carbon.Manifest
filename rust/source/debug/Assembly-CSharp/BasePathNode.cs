@@ -12,7 +12,7 @@ public class BasePathNode : MonoBehaviour, IAIPathNode
 
 	public bool straightaway = false;
 
-	public Vector3 Position => ((Component)this).transform.position;
+	public Vector3 Position => base.transform.position;
 
 	public bool Straightaway => straightaway;
 
@@ -20,7 +20,7 @@ public class BasePathNode : MonoBehaviour, IAIPathNode
 
 	public bool IsValid ()
 	{
-		return (Object)(object)((Component)this).transform != (Object)null;
+		return base.transform != null;
 	}
 
 	public void AddLink (IAIPathNode link)

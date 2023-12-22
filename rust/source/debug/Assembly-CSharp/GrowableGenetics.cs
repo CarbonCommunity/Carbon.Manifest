@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Facepunch;
-using UnityEngine;
 
 public static class GrowableGenetics
 {
@@ -31,9 +30,8 @@ public static class GrowableGenetics
 
 	public static void CrossBreed (GrowableEntity growable)
 	{
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
 		List<GrowableEntity> list = Pool.GetList<GrowableEntity> ();
-		Vis.Entities (((Component)growable).transform.position, 1.5f, list, 524288, (QueryTriggerInteraction)2);
+		Vis.Entities (growable.transform.position, 1.5f, list, 524288);
 		bool flag = false;
 		for (int i = 0; i < 6; i++) {
 			GrowableGene growableGene = growable.Genes.Genes [i];
@@ -51,7 +49,7 @@ public static class GrowableGenetics
 	private static GeneWeighting GetDominantGeneWeighting (GrowableEntity crossBreedingGrowable, List<GrowableEntity> neighbours, int slot)
 	{
 		PlanterBox planter = crossBreedingGrowable.GetPlanter ();
-		if ((Object)(object)planter == (Object)null) {
+		if (planter == null) {
 			dominant.Weighting = -1f;
 			return dominant;
 		}
@@ -65,7 +63,7 @@ public static class GrowableGenetics
 				continue;
 			}
 			PlanterBox planter2 = neighbour.GetPlanter ();
-			if (!((Object)(object)planter2 == (Object)null) && !((Object)(object)planter2 != (Object)(object)planter) && !((Object)(object)neighbour == (Object)(object)crossBreedingGrowable) && neighbour.prefabID == crossBreedingGrowable.prefabID && !neighbour.IsDead ()) {
+			if (!(planter2 == null) && !(planter2 != planter) && !(neighbour == crossBreedingGrowable) && neighbour.prefabID == crossBreedingGrowable.prefabID && !neighbour.IsDead ()) {
 				GeneType type = neighbour.Genes.Genes [slot].Type;
 				float crossBreedingWeight = neighbour.Properties.Genes.Weights [(int)type].CrossBreedingWeight;
 				float num = (neighbourWeights [(int)type].Weighting += crossBreedingWeight);

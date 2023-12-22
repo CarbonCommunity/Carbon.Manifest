@@ -18,8 +18,8 @@ public class AiManagedAgent : FacepunchBehaviour, IServerComponent
 	private void OnEnable ()
 	{
 		isRegistered = false;
-		if ((Object)(object)SingletonComponent<AiManager>.Instance == (Object)null || !((Behaviour)SingletonComponent<AiManager>.Instance).enabled || AiManager.nav_disable) {
-			((Behaviour)this).enabled = false;
+		if (SingletonComponent<AiManager>.Instance == null || !SingletonComponent<AiManager>.Instance.enabled || AiManager.nav_disable) {
+			base.enabled = false;
 		}
 	}
 
@@ -32,7 +32,7 @@ public class AiManagedAgent : FacepunchBehaviour, IServerComponent
 
 	private void OnDisable ()
 	{
-		if (!Application.isQuitting && !((Object)(object)SingletonComponent<AiManager>.Instance == (Object)null) && ((Behaviour)SingletonComponent<AiManager>.Instance).enabled && isRegistered) {
+		if (!Rust.Application.isQuitting && !(SingletonComponent<AiManager>.Instance == null) && SingletonComponent<AiManager>.Instance.enabled && isRegistered) {
 		}
 	}
 }

@@ -15,22 +15,22 @@ public class ItemSkin : SteamInventoryItem
 
 	public void ApplySkin (GameObject obj)
 	{
-		if (!((Object)(object)Skinnable == (Object)null)) {
+		if (!(Skinnable == null)) {
 			Skin.Apply (obj, Skinnable, Materials);
 		}
 	}
 
 	public override bool HasUnlocked (ulong playerId)
 	{
-		if ((Object)(object)Redirect != (Object)null && (Object)(object)Redirect.isRedirectOf != (Object)null && (Object)(object)Redirect.isRedirectOf.steamItem != (Object)null) {
+		if (Redirect != null && Redirect.isRedirectOf != null && Redirect.isRedirectOf.steamItem != null) {
 			BasePlayer basePlayer = BasePlayer.FindByID (playerId);
-			if ((Object)(object)basePlayer != (Object)null && basePlayer.blueprints.CheckSkinOwnership (Redirect.isRedirectOf.steamItem.id, basePlayer.userID)) {
+			if (basePlayer != null && basePlayer.blueprints.CheckSkinOwnership (Redirect.isRedirectOf.steamItem.id, basePlayer.userID)) {
 				return true;
 			}
 		}
-		if ((Object)(object)UnlockedViaSteamItem != (Object)null) {
+		if (UnlockedViaSteamItem != null) {
 			BasePlayer basePlayer2 = BasePlayer.FindByID (playerId);
-			if ((Object)(object)basePlayer2 != (Object)null && basePlayer2.blueprints.CheckSkinOwnership (UnlockedViaSteamItem.id, basePlayer2.userID)) {
+			if (basePlayer2 != null && basePlayer2.blueprints.CheckSkinOwnership (UnlockedViaSteamItem.id, basePlayer2.userID)) {
 				return true;
 			}
 		}

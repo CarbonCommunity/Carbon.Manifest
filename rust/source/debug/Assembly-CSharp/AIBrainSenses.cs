@@ -1,3 +1,4 @@
+#define ENABLE_PROFILER
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -66,7 +67,7 @@ public class AIBrainSenses
 
 	private Func<BaseEntity, bool> aiCaresAbout;
 
-	public float TimeSinceThreat => Time.realtimeSinceStartup - LastThreatTimestamp;
+	public float TimeSinceThreat => UnityEngine.Time.realtimeSinceStartup - LastThreatTimestamp;
 
 	public SimpleAIMemory Memory { get; private set; } = new SimpleAIMemory ();
 
@@ -96,7 +97,7 @@ public class AIBrainSenses
 		this.senseFriendlies = senseFriendlies;
 		this.ignoreSafeZonePlayers = ignoreSafeZonePlayers;
 		this.senseTypes = senseTypes;
-		LastThreatTimestamp = Time.realtimeSinceStartup;
+		LastThreatTimestamp = UnityEngine.Time.realtimeSinceStartup;
 		this.refreshKnownLOS = refreshKnownLOS;
 		ownerSenses = owner as IAISenses;
 		knownPlayersLOSUpdateInterval = ((owner is HumanNPC) ? HumanKnownPlayersLOSUpdateInterval : KnownPlayersLOSUpdateInterval);
@@ -104,12 +105,12 @@ public class AIBrainSenses
 
 	public void DelaySenseUpdate (float delay)
 	{
-		nextUpdateTime = Time.time + delay;
+		nextUpdateTime = UnityEngine.Time.time + delay;
 	}
 
 	public void Update ()
 	{
-		if (!((Object)(object)owner == (Object)null)) {
+		if (!(owner == null)) {
 			UpdateSenses ();
 			UpdateKnownPlayersLOS ();
 		}
@@ -117,11 +118,11 @@ public class AIBrainSenses
 
 	private void UpdateSenses ()
 	{
-		if (Time.time < nextUpdateTime) {
+		if (UnityEngine.Time.time < nextUpdateTime) {
 			return;
 		}
 		Profiler.BeginSample ("AIBrainSenses.UpdateSenses");
-		nextUpdateTime = Time.time + UpdateInterval;
+		nextUpdateTime = UnityEngine.Time.time + UpdateInterval;
 		if (senseTypes != 0) {
 			if (senseTypes == EntityType.Player) {
 				SensePlayers ();
@@ -138,18 +139,16 @@ public class AIBrainSenses
 
 	public void UpdateKnownPlayersLOS ()
 	{
-		//IL_00b9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c9: Unknown result type (might be due to invalid IL or missing references)
-		if (Time.time < nextKnownPlayersLOSUpdateTime) {
+		if (UnityEngine.Time.time < nextKnownPlayersLOSUpdateTime) {
 			return;
 		}
 		Profiler.BeginSample ("AIBrainSenses.UpdateKnownPlayersLOS");
-		nextKnownPlayersLOSUpdateTime = Time.time + knownPlayersLOSUpdateInterval;
+		nextKnownPlayersLOSUpdateTime = UnityEngine.Time.time + knownPlayersLOSUpdateInterval;
 		foreach (BaseEntity player in Memory.Players) {
-			if (!((Object)(object)player == (Object)null) && !player.IsNpc) {
+			if (!(player == null) && !player.IsNpc) {
 				bool flag = ownerAttack.CanSeeTarget (player);
 				Memory.SetLOS (player, flag);
-				if (refreshKnownLOS && (Object)(object)owner != (Object)null && flag && Vector3.Distance (((Component)player).transform.position, ((Component)owner).transform.position) <= TargetLostRange) {
+				if (refreshKnownLOS && owner != null && flag && Vector3.Distance (player.transform.position, owner.transform.position) <= TargetLostRange) {
 					Memory.SetKnown (player, owner, this);
 				}
 			}
@@ -159,9 +158,8 @@ public class AIBrainSenses
 
 	private void SensePlayers ()
 	{
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
 		Profiler.BeginSample ("AIBrainSenses.SensePlayers.GetPlayersInSphereAndAiCaresAbout");
-		int playersInSphere = BaseEntity.Query.Server.GetPlayersInSphere (((Component)owner).transform.position, maxRange, playerQueryResults, aiCaresAbout);
+		int playersInSphere = BaseEntity.Query.Server.GetPlayersInSphere (owner.transform.position, maxRange, playerQueryResults, aiCaresAbout);
 		Profiler.EndSample ();
 		Profiler.BeginSample ("AIBrainSenses.SensePlayers.SetKnown");
 		for (int i = 0; i < playersInSphere; i++) {
@@ -173,9 +171,8 @@ public class AIBrainSenses
 
 	private void SenseBrains ()
 	{
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
 		Profiler.BeginSample ("AIBrainSenses.SenseBrains.GetBrainsInSphereAndAiCaresAbout");
-		int brainsInSphere = BaseEntity.Query.Server.GetBrainsInSphere (((Component)owner).transform.position, maxRange, queryResults, aiCaresAbout);
+		int brainsInSphere = BaseEntity.Query.Server.GetBrainsInSphere (owner.transform.position, maxRange, queryResults, aiCaresAbout);
 		Profiler.EndSample ();
 		Profiler.BeginSample ("AIBrainSenses.SenseBrains.SetKnown");
 		for (int i = 0; i < brainsInSphere; i++) {
@@ -187,18 +184,13 @@ public class AIBrainSenses
 
 	private bool AiCaresAbout (BaseEntity entity)
 	{
-		//IL_0134: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ed: Unknown result type (might be due to invalid IL or missing references)
-		//IL_028d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0298: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)entity == (Object)null) {
+		if (entity == null) {
 			return false;
 		}
 		if (!entity.isServer) {
 			return false;
 		}
-		if (entity.EqualNetID ((BaseNetworkable)owner)) {
+		if (entity.EqualNetID (owner)) {
 			return false;
 		}
 		if (entity.Health () <= 0f) {
@@ -212,14 +204,14 @@ public class AIBrainSenses
 		Profiler.EndSample ();
 		BaseCombatEntity baseCombatEntity = entity as BaseCombatEntity;
 		BasePlayer basePlayer = entity as BasePlayer;
-		if ((Object)(object)basePlayer != (Object)null && basePlayer.IsDead ()) {
+		if (basePlayer != null && basePlayer.IsDead ()) {
 			return false;
 		}
-		if (ignoreSafeZonePlayers && (Object)(object)basePlayer != (Object)null && basePlayer.InSafeZone ()) {
+		if (ignoreSafeZonePlayers && basePlayer != null && basePlayer.InSafeZone ()) {
 			return false;
 		}
 		Profiler.BeginSample ("AIBrainSenses.CanLastNoiseBeHeard");
-		if (listenRange > 0f && (Object)(object)baseCombatEntity != (Object)null && baseCombatEntity.TimeSinceLastNoise <= 1f && baseCombatEntity.CanLastNoiseBeHeard (((Component)owner).transform.position, listenRange)) {
+		if (listenRange > 0f && baseCombatEntity != null && baseCombatEntity.TimeSinceLastNoise <= 1f && baseCombatEntity.CanLastNoiseBeHeard (owner.transform.position, listenRange)) {
 			Profiler.EndSample ();
 			return true;
 		}
@@ -232,8 +224,8 @@ public class AIBrainSenses
 		Profiler.EndSample ();
 		float num = float.PositiveInfinity;
 		Profiler.BeginSample ("AIBrainSenses.DistanceCheck");
-		if ((Object)(object)baseCombatEntity != (Object)null && AI.accuratevisiondistance) {
-			num = Vector3.Distance (((Component)owner).transform.position, ((Component)baseCombatEntity).transform.position);
+		if (baseCombatEntity != null && AI.accuratevisiondistance) {
+			num = Vector3.Distance (owner.transform.position, baseCombatEntity.transform.position);
 			if (num > maxRange) {
 				Profiler.EndSample ();
 				return false;
@@ -246,9 +238,9 @@ public class AIBrainSenses
 				Profiler.EndSample ();
 				return false;
 			}
-			if ((Object)(object)basePlayer != (Object)null && !basePlayer.IsNpc) {
+			if (basePlayer != null && !basePlayer.IsNpc) {
 				if (!AI.accuratevisiondistance) {
-					num = Vector3.Distance (((Component)owner).transform.position, ((Component)basePlayer).transform.position);
+					num = Vector3.Distance (owner.transform.position, basePlayer.transform.position);
 				}
 				if ((basePlayer.IsDucked () && num >= brain.IgnoreSneakersMaxDistance) || num >= brain.IgnoreNonVisionMaxDistance) {
 					Profiler.EndSample ();
@@ -258,7 +250,7 @@ public class AIBrainSenses
 		}
 		Profiler.EndSample ();
 		Profiler.BeginSample ("AIBrainSenses.HostileTargetsOnly");
-		if (hostileTargetsOnly && (Object)(object)baseCombatEntity != (Object)null && !baseCombatEntity.IsHostile () && !(baseCombatEntity is ScarecrowNPC)) {
+		if (hostileTargetsOnly && baseCombatEntity != null && !baseCombatEntity.IsHostile () && !(baseCombatEntity is ScarecrowNPC)) {
 			Profiler.EndSample ();
 			return false;
 		}
@@ -278,7 +270,7 @@ public class AIBrainSenses
 	private bool IsValidSenseType (BaseEntity ent)
 	{
 		BasePlayer basePlayer = ent as BasePlayer;
-		if ((Object)(object)basePlayer != (Object)null) {
+		if (basePlayer != null) {
 			if (basePlayer.IsNpc) {
 				if (ent is BasePet) {
 					return true;
@@ -313,19 +305,10 @@ public class AIBrainSenses
 
 	private bool IsTargetInVision (BaseEntity target)
 	{
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005f: Unknown result type (might be due to invalid IL or missing references)
 		Profiler.BeginSample ("AIBrainSenses.IsTargetInVision");
-		Vector3 val = Vector3Ex.Direction (((Component)target).transform.position, ((Component)owner).transform.position);
-		Vector3 val2 = (((Object)(object)playerOwner != (Object)null) ? playerOwner.eyes.BodyForward () : ((Component)owner).transform.forward);
-		float num = Vector3.Dot (val2, val);
+		Vector3 rhs = Vector3Ex.Direction (target.transform.position, owner.transform.position);
+		Vector3 lhs = ((playerOwner != null) ? playerOwner.eyes.BodyForward () : owner.transform.forward);
+		float num = Vector3.Dot (lhs, rhs);
 		bool result = num >= visionCone;
 		Profiler.EndSample ();
 		return result;
@@ -348,8 +331,6 @@ public class AIBrainSenses
 
 	private BaseEntity GetNearest (List<BaseEntity> entities, float rangeFraction)
 	{
-		//IL_0073: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0083: Unknown result type (might be due to invalid IL or missing references)
 		if (entities == null || entities.Count == 0) {
 			return null;
 		}
@@ -357,8 +338,8 @@ public class AIBrainSenses
 		float num = float.PositiveInfinity;
 		BaseEntity result = null;
 		foreach (BaseEntity entity in entities) {
-			if (!((Object)(object)entity == (Object)null) && !(entity.Health () <= 0f)) {
-				float num2 = Vector3.Distance (((Component)entity).transform.position, ((Component)owner).transform.position);
+			if (!(entity == null) && !(entity.Health () <= 0f)) {
+				float num2 = Vector3.Distance (entity.transform.position, owner.transform.position);
 				if (num2 <= rangeFraction * maxRange && num2 < num) {
 					result = entity;
 				}

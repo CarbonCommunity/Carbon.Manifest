@@ -6,7 +6,7 @@ public class ClimateBlendTexture : ProcessedTexture
 	{
 		material = CreateMaterial ("Hidden/ClimateBlendLUTs");
 		result = CreateRenderTexture ("Climate Blend Texture", width, height, linear);
-		((Texture)result).wrapMode = (TextureWrapMode)1;
+		result.wrapMode = TextureWrapMode.Clamp;
 	}
 
 	public bool CheckLostData ()
@@ -24,12 +24,12 @@ public class ClimateBlendTexture : ProcessedTexture
 		material.SetTexture ("_dstLut1", dstLut1);
 		material.SetTexture ("_srcLut2", srcLut2);
 		material.SetTexture ("_dstLut2", dstLut2);
-		material.SetTexture ("_prevLut", (Texture)prevLut);
+		material.SetTexture ("_prevLut", prevLut);
 		material.SetFloat ("_lerpLut1", lerpLut1);
 		material.SetFloat ("_lerpLut2", lerpLut2);
 		material.SetFloat ("_lerp", lerp);
 		material.SetFloat ("_time", time);
-		Graphics.Blit ((Texture)null, result, material);
+		Graphics.Blit (null, result, material);
 	}
 
 	public static void Swap (ref ClimateBlendTexture a, ref ClimateBlendTexture b)

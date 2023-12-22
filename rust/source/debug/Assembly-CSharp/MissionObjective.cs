@@ -1,3 +1,4 @@
+#define ENABLE_PROFILER
 using UnityEngine;
 using UnityEngine.Profiling;
 

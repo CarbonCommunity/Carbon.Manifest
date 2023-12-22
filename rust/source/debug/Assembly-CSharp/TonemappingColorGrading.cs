@@ -43,16 +43,10 @@ public class TonemappingColorGrading : MonoBehaviour
 
 		public Curve ()
 		{
-		}//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-
+		}
 
 		public Curve (float r, float g, float b, float a)
 		{
-			//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-			//IL_001e: Unknown result type (might be due to invalid IL or missing references)
 			color = new Color (r, g, b, a);
 		}
 	}
@@ -62,7 +56,7 @@ public class TonemappingColorGrading : MonoBehaviour
 	{
 		public bool enabled;
 
-		[Min (0f)]
+		[UnityStandardAssets.CinematicEffects.Min (0f)]
 		[Tooltip ("Midpoint Adjustment.")]
 		public float middleGrey;
 
@@ -72,7 +66,7 @@ public class TonemappingColorGrading : MonoBehaviour
 		[Tooltip ("The highest possible exposure value; adjust this value to modify the darkest areas of your level.")]
 		public float max;
 
-		[Min (0f)]
+		[UnityStandardAssets.CinematicEffects.Min (0f)]
 		[Tooltip ("Speed of linear adaptation. Higher is faster.")]
 		public float speed;
 
@@ -112,7 +106,7 @@ public class TonemappingColorGrading : MonoBehaviour
 		[Tooltip ("Tonemapping technique to use. ACES is the recommended one.")]
 		public Tonemapper tonemapper;
 
-		[Min (0f)]
+		[UnityStandardAssets.CinematicEffects.Min (0f)]
 		[Tooltip ("Adjusts the overall exposure of the scene.")]
 		public float exposure;
 
@@ -192,12 +186,6 @@ public class TonemappingColorGrading : MonoBehaviour
 
 		public static ColorWheelsSettings defaultSettings {
 			get {
-				//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-				//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-				//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-				//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-				//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-				//IL_0028: Unknown result type (might be due to invalid IL or missing references)
 				ColorWheelsSettings result = default(ColorWheelsSettings);
 				result.shadows = Color.white;
 				result.midtones = Color.white;
@@ -274,15 +262,9 @@ public class TonemappingColorGrading : MonoBehaviour
 
 		public static ChannelMixerSettings defaultSettings {
 			get {
-				//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-				//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-				//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-				//IL_004a: Unknown result type (might be due to invalid IL or missing references)
-				//IL_0060: Unknown result type (might be due to invalid IL or missing references)
-				//IL_0065: Unknown result type (might be due to invalid IL or missing references)
 				ChannelMixerSettings result = default(ChannelMixerSettings);
 				result.currentChannel = 0;
-				result.channels = (Vector3[])(object)new Vector3[3] {
+				result.channels = new Vector3[3] {
 					new Vector3 (1f, 0f, 0f),
 					new Vector3 (0f, 1f, 0f),
 					new Vector3 (0f, 0f, 1f)
@@ -318,10 +300,7 @@ public class TonemappingColorGrading : MonoBehaviour
 			}
 		}
 
-		public static AnimationCurve defaultCurve => new AnimationCurve ((Keyframe[])(object)new Keyframe[2] {
-			new Keyframe (0f, 0f, 1f, 1f),
-			new Keyframe (1f, 1f, 1f, 1f)
-		});
+		public static AnimationCurve defaultCurve => new AnimationCurve (new Keyframe (0f, 0f, 1f, 1f), new Keyframe (1f, 1f, 1f, 1f));
 	}
 
 	public enum ColorGradingPrecision

@@ -16,8 +16,6 @@ public class ItemModSwap : ItemMod
 
 	public override void DoAction (Item item, BasePlayer player)
 	{
-		//IL_01e3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e8: Unknown result type (might be due to invalid IL or missing references)
 		if (item.amount < 1) {
 			return;
 		}
@@ -49,7 +47,7 @@ public class ItemModSwap : ItemMod
 			player.Command ("note.inv", item.info.itemid, -1);
 		}
 		if (actionEffect.isValid) {
-			Effect.server.Run (actionEffect.resourcePath, ((Component)player).transform.position, Vector3.up);
+			Effect.server.Run (actionEffect.resourcePath, player.transform.position, Vector3.up);
 		}
 		item.UseItem ();
 	}

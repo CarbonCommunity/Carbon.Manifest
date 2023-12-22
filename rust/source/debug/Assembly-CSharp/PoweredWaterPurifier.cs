@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class PoweredWaterPurifier : WaterPurifier
@@ -23,13 +22,11 @@ public class PoweredWaterPurifier : WaterPurifier
 		if (base.isClient) {
 			return base.CanPickup (player);
 		}
-		return base.CanPickup (player) && !HasDirtyWater () && (Object)(object)waterStorage != (Object)null && (waterStorage.inventory == null || waterStorage.inventory.itemList.Count == 0);
+		return base.CanPickup (player) && !HasDirtyWater () && waterStorage != null && (waterStorage.inventory == null || waterStorage.inventory.itemList.Count == 0);
 	}
 
 	protected override void SpawnStorageEnt (bool load)
 	{
-		//IL_008e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0099: Unknown result type (might be due to invalid IL or missing references)
 		if (load) {
 			foreach (BaseEntity child in children) {
 				if (child is LiquidContainer liquidContainer) {
@@ -37,7 +34,7 @@ public class PoweredWaterPurifier : WaterPurifier
 				}
 			}
 		}
-		if ((Object)(object)waterStorage != (Object)null) {
+		if (waterStorage != null) {
 			waterStorage.SetConnectedTo (this);
 			return;
 		}
@@ -51,11 +48,11 @@ public class PoweredWaterPurifier : WaterPurifier
 	{
 		base.OnItemAddedOrRemoved (item, added);
 		if (HasLiquidItem ()) {
-			if (HasFlag (Flags.Reserved8) && !((FacepunchBehaviour)this).IsInvoking ((Action)ConvertWater)) {
-				((FacepunchBehaviour)this).InvokeRandomized ((Action)ConvertWater, ConvertInterval, ConvertInterval, ConvertInterval * 0.1f);
+			if (HasFlag (Flags.Reserved8) && !IsInvoking (ConvertWater)) {
+				InvokeRandomized (ConvertWater, ConvertInterval, ConvertInterval, ConvertInterval * 0.1f);
 			}
-		} else if (((FacepunchBehaviour)this).IsInvoking ((Action)ConvertWater)) {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)ConvertWater);
+		} else if (IsInvoking (ConvertWater)) {
+			CancelInvoke (ConvertWater);
 		}
 	}
 
@@ -79,14 +76,14 @@ public class PoweredWaterPurifier : WaterPurifier
 		}
 		if (old.HasFlag (Flags.Reserved8) != next.HasFlag (Flags.Reserved8)) {
 			if (next.HasFlag (Flags.Reserved8)) {
-				if (!((FacepunchBehaviour)this).IsInvoking ((Action)ConvertWater)) {
-					((FacepunchBehaviour)this).InvokeRandomized ((Action)ConvertWater, ConvertInterval, ConvertInterval, ConvertInterval * 0.1f);
+				if (!IsInvoking (ConvertWater)) {
+					InvokeRandomized (ConvertWater, ConvertInterval, ConvertInterval, ConvertInterval * 0.1f);
 				}
-			} else if (((FacepunchBehaviour)this).IsInvoking ((Action)ConvertWater)) {
-				((FacepunchBehaviour)this).CancelInvoke ((Action)ConvertWater);
+			} else if (IsInvoking (ConvertWater)) {
+				CancelInvoke (ConvertWater);
 			}
 		}
-		if ((Object)(object)waterStorage != (Object)null) {
+		if (waterStorage != null) {
 			waterStorage.SetFlag (Flags.Reserved8, HasFlag (Flags.Reserved8));
 		}
 	}

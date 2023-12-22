@@ -9,21 +9,21 @@ public class Info : BaseHandler<AppEmpty>
 {
 	public override void Execute ()
 	{
-		AppInfo val = Pool.Get<AppInfo> ();
-		val.name = Server.hostname;
-		val.headerImage = Server.headerimage;
-		val.logoImage = Server.logoimage;
-		val.url = Server.url;
-		val.map = World.Name;
-		val.mapSize = World.Size;
-		val.wipeTime = (uint)Epoch.FromDateTime (SaveRestore.SaveCreatedTime.ToUniversalTime ());
-		val.players = (uint)BasePlayer.activePlayerList.Count;
-		val.maxPlayers = (uint)Server.maxplayers;
-		val.queuedPlayers = (uint)SingletonComponent<ServerMgr>.Instance.connectionQueue.Queued;
-		val.seed = World.Seed;
-		val.camerasEnabled = CameraRenderer.enabled;
-		AppResponse val2 = Pool.Get<AppResponse> ();
-		val2.info = val;
-		Send (val2);
+		AppInfo appInfo = Facepunch.Pool.Get<AppInfo> ();
+		appInfo.name = Server.hostname;
+		appInfo.headerImage = Server.headerimage;
+		appInfo.logoImage = Server.logoimage;
+		appInfo.url = Server.url;
+		appInfo.map = World.Name;
+		appInfo.mapSize = World.Size;
+		appInfo.wipeTime = (uint)Epoch.FromDateTime (SaveRestore.SaveCreatedTime.ToUniversalTime ());
+		appInfo.players = (uint)BasePlayer.activePlayerList.Count;
+		appInfo.maxPlayers = (uint)Server.maxplayers;
+		appInfo.queuedPlayers = (uint)SingletonComponent<ServerMgr>.Instance.connectionQueue.Queued;
+		appInfo.seed = World.Seed;
+		appInfo.camerasEnabled = CameraRenderer.enabled;
+		AppResponse appResponse = Facepunch.Pool.Get<AppResponse> ();
+		appResponse.info = appInfo;
+		Send (appResponse);
 	}
 }

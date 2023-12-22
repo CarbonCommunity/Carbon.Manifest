@@ -1,3 +1,4 @@
+#define ENABLE_PROFILER
 using UnityEngine;
 using UnityEngine.Profiling;
 using UnityStandardAssets.ImageEffects;
@@ -15,16 +16,14 @@ public class ScopeEffect : PostEffectsBase, IImageEffect
 
 	public bool IsActive ()
 	{
-		return ((Behaviour)this).enabled && ((PostEffectsBase)this).CheckResources ();
+		return base.enabled && CheckResources ();
 	}
 
 	public void OnRenderImage (RenderTexture source, RenderTexture destination)
 	{
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
 		Profiler.BeginSample ("ScopeEffect");
-		overlayMaterial.SetVector ("_Screen", Vector4.op_Implicit (new Vector2 ((float)Screen.width, (float)Screen.height)));
-		Graphics.Blit ((Texture)(object)source, destination, overlayMaterial);
+		overlayMaterial.SetVector ("_Screen", new Vector2 (Screen.width, Screen.height));
+		Graphics.Blit (source, destination, overlayMaterial);
 		Profiler.EndSample ();
 	}
 }

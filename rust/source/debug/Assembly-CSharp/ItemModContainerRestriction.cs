@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 
 public class ItemModContainerRestriction : ItemMod
 {
@@ -14,7 +13,7 @@ public class ItemModContainerRestriction : ItemMod
 
 	public bool CanExistWith (ItemModContainerRestriction other)
 	{
-		if ((Object)(object)other == (Object)null) {
+		if (other == null) {
 			return true;
 		}
 		if ((slotFlags & other.slotFlags) != 0) {

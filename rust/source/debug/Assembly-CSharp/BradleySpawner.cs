@@ -25,7 +25,7 @@ public class BradleySpawner : MonoBehaviour, IServerComponent
 	public void Start ()
 	{
 		singleton = this;
-		((MonoBehaviour)this).Invoke ("DelayedStart", 3f);
+		Invoke ("DelayedStart", 3f);
 	}
 
 	public void DelayedStart ()
@@ -33,26 +33,26 @@ public class BradleySpawner : MonoBehaviour, IServerComponent
 		if (initialSpawn) {
 			DoRespawn ();
 		}
-		((MonoBehaviour)this).InvokeRepeating ("CheckIfRespawnNeeded", 0f, 5f);
+		InvokeRepeating ("CheckIfRespawnNeeded", 0f, 5f);
 	}
 
 	public void CheckIfRespawnNeeded ()
 	{
-		if (!pendingRespawn && ((Object)(object)spawned == (Object)null || !spawned.IsAlive ())) {
+		if (!pendingRespawn && (spawned == null || !spawned.IsAlive ())) {
 			ScheduleRespawn ();
 		}
 	}
 
 	public void ScheduleRespawn ()
 	{
-		((MonoBehaviour)this).CancelInvoke ("DoRespawn");
-		((MonoBehaviour)this).Invoke ("DoRespawn", Random.Range (Bradley.respawnDelayMinutes - Bradley.respawnDelayVariance, Bradley.respawnDelayMinutes + Bradley.respawnDelayVariance) * 60f);
+		CancelInvoke ("DoRespawn");
+		Invoke ("DoRespawn", UnityEngine.Random.Range (Bradley.respawnDelayMinutes - Bradley.respawnDelayVariance, Bradley.respawnDelayMinutes + Bradley.respawnDelayVariance) * 60f);
 		pendingRespawn = true;
 	}
 
 	public void DoRespawn ()
 	{
-		if (!Application.isLoading && !Application.isLoadingSave) {
+		if (!Rust.Application.isLoading && !Rust.Application.isLoadingSave) {
 			SpawnBradley ();
 		}
 		pendingRespawn = false;
@@ -60,25 +60,19 @@ public class BradleySpawner : MonoBehaviour, IServerComponent
 
 	public void SpawnBradley ()
 	{
-		//IL_0060: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0076: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0079: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c0: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)spawned != (Object)null) {
-			Debug.LogWarning ((object)"Bradley attempting to spawn but one already exists!");
+		if (spawned != null) {
+			Debug.LogWarning ("Bradley attempting to spawn but one already exists!");
 		} else if (Bradley.enabled) {
-			Vector3 position = ((Component)path.interestZones [Random.Range (0, path.interestZones.Count)]).transform.position;
+			Vector3 position = path.interestZones [UnityEngine.Random.Range (0, path.interestZones.Count)].transform.position;
 			BaseEntity baseEntity = GameManager.server.CreateEntity (bradleyPrefab.resourcePath, position);
-			BradleyAPC component = ((Component)baseEntity).GetComponent<BradleyAPC> ();
-			if (Object.op_Implicit ((Object)(object)component)) {
+			BradleyAPC component = baseEntity.GetComponent<BradleyAPC> ();
+			if ((bool)component) {
 				baseEntity.Spawn ();
 				component.InstallPatrolPath (path);
 			} else {
 				baseEntity.Kill ();
 			}
-			Debug.Log ((object)("BradleyAPC Spawned at :" + position));
+			Debug.Log ("BradleyAPC Spawned at :" + position);
 			spawned = component;
 		}
 	}

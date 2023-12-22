@@ -45,7 +45,7 @@ public class NotificationList
 
 	public List<ulong> ToList ()
 	{
-		List<ulong> list = Pool.GetList<ulong> ();
+		List<ulong> list = Facepunch.Pool.GetList<ulong> ();
 		foreach (ulong subscription in _subscriptions) {
 			list.Add (subscription);
 		}
@@ -65,12 +65,12 @@ public class NotificationList
 
 	public void IntersectWith (List<PlayerNameID> players)
 	{
-		List<ulong> list = Pool.GetList<ulong> ();
+		List<ulong> obj = Facepunch.Pool.GetList<ulong> ();
 		foreach (PlayerNameID player in players) {
-			list.Add (player.userid);
+			obj.Add (player.userid);
 		}
-		_subscriptions.IntersectWith (list);
-		Pool.FreeList<ulong> (ref list);
+		_subscriptions.IntersectWith (obj);
+		Facepunch.Pool.FreeList (ref obj);
 	}
 
 	public Task<NotificationSendResult> SendNotification (NotificationChannel channel, string title, string body, string type)
@@ -98,12 +98,12 @@ public class NotificationList
 
 	public static async Task<NotificationSendResult> SendNotificationTo (ulong steamId, NotificationChannel channel, string title, string body, Dictionary<string, string> data)
 	{
-		HashSet<ulong> set = Pool.Get<HashSet<ulong>> ();
+		HashSet<ulong> set = Facepunch.Pool.Get<HashSet<ulong>> ();
 		set.Clear ();
 		set.Add (steamId);
 		NotificationSendResult result = await SendNotificationImpl (set, channel, title, body, data);
 		set.Clear ();
-		Pool.Free<HashSet<ulong>> (ref set);
+		Facepunch.Pool.Free (ref set);
 		return result;
 	}
 
@@ -118,23 +118,23 @@ public class NotificationList
 		if (steamIds.Count == 0) {
 			return NotificationSendResult.Sent;
 		}
-		PushRequest request = Pool.Get<PushRequest> ();
+		PushRequest request = Facepunch.Pool.Get<PushRequest> ();
 		request.ServerToken = CompanionServer.Server.Token;
 		request.Channel = channel;
 		request.Title = title;
 		request.Body = body;
 		request.Data = data;
-		request.SteamIds = Pool.GetList<ulong> ();
+		request.SteamIds = Facepunch.Pool.GetList<ulong> ();
 		foreach (ulong steamId in steamIds) {
 			request.SteamIds.Add (steamId);
 		}
-		string json = JsonConvert.SerializeObject ((object)request);
-		Pool.Free<PushRequest> (ref request);
+		string json = JsonConvert.SerializeObject (request);
+		Facepunch.Pool.Free (ref request);
 		try {
 			StringContent content = new StringContent (json, Encoding.UTF8, "application/json");
 			HttpResponseMessage response = await Http.PostAsync ("https://companion-rust.facepunch.com/api/push/send", content);
 			if (!response.IsSuccessStatusCode) {
-				DebugEx.LogWarning ((object)$"Failed to send notification: {response.StatusCode}", (StackTraceLogType)0);
+				DebugEx.LogWarning ($"Failed to send notification: {response.StatusCode}");
 				return NotificationSendResult.ServerError;
 			}
 			if (response.StatusCode == HttpStatusCode.Accepted) {
@@ -142,7 +142,7 @@ public class NotificationList
 			}
 			return NotificationSendResult.Sent;
 		} catch (Exception e) {
-			DebugEx.LogWarning ((object)$"Exception thrown when sending notification: {e}", (StackTraceLogType)0);
+			DebugEx.LogWarning ($"Exception thrown when sending notification: {e}");
 			return NotificationSendResult.Failed;
 		}
 	}

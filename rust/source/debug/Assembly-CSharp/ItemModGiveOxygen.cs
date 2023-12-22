@@ -46,12 +46,7 @@ public class ItemModGiveOxygen : ItemMod, IAirSupply
 
 	public override void DoAction (Item item, BasePlayer player)
 	{
-		//IL_00b9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00be: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0120: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0125: Unknown result type (might be due to invalid IL or missing references)
-		if (!item.hasCondition || item.conditionNormalized == 0f || (Object)(object)player == (Object)null) {
+		if (!item.hasCondition || item.conditionNormalized == 0f || player == null) {
 			return;
 		}
 		float num = Mathf.Clamp01 (0.525f);

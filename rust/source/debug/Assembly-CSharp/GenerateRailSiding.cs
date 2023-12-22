@@ -45,81 +45,17 @@ public class GenerateRailSiding : ProceduralComponent
 
 	public override void Process (uint seed)
 	{
-		//IL_011b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0120: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0271: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0276: Unknown result type (might be due to invalid IL or missing references)
-		//IL_027c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0281: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0283: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0285: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0140: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0143: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0145: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0147: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02a2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02a7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02ad: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02b2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02ba: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02c3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02c8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02cd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02d2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02d8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02e3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02e8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02ed: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02f2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02f4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02f6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02f8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0304: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0306: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0308: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0162: Unknown result type (might be due to invalid IL or missing references)
-		//IL_037c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0375: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0381: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0393: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0398: Unknown result type (might be due to invalid IL or missing references)
-		//IL_039c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03c3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03c8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03ca: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03cc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03ce: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03d3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_040c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_040e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0412: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0417: Unknown result type (might be due to invalid IL or missing references)
-		//IL_041c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_046e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0470: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0474: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0479: Unknown result type (might be due to invalid IL or missing references)
-		//IL_047e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0458: Unknown result type (might be due to invalid IL or missing references)
-		//IL_045a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_045e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0463: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0468: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0483: Unknown result type (might be due to invalid IL or missing references)
-		//IL_048d: Unknown result type (might be due to invalid IL or missing references)
 		if (World.Networked) {
 			TerrainMeta.Path.Rails.Clear ();
 			TerrainMeta.Path.Rails.AddRange (World.GetPaths ("Rail"));
 			return;
 		}
-		int num = Mathf.RoundToInt (40f);
-		int num2 = Mathf.RoundToInt (53.3333321f);
-		int num3 = Mathf.RoundToInt (13.333333f);
-		int num4 = Mathf.RoundToInt (20f);
-		float num5 = 16f;
-		float num6 = num5 * num5;
+		int min = Mathf.RoundToInt (40f);
+		int max = Mathf.RoundToInt (53.3333321f);
+		int min2 = Mathf.RoundToInt (13.333333f);
+		int max2 = Mathf.RoundToInt (20f);
+		float num = 16f;
+		float num2 = num * num;
 		List<PathList> list = new List<PathList> ();
 		int[,] array = TerrainPath.CreateRailCostmap (ref seed);
 		PathFinder pathFinder = new PathFinder (array);
@@ -133,12 +69,11 @@ public class GenerateRailSiding : ProceduralComponent
 					continue;
 				}
 				Vector3[] points = rail.Path.Points;
-				foreach (Vector3 val in points) {
+				foreach (Vector3 vector in points) {
 					Vector3[] points2 = rail2.Path.Points;
-					foreach (Vector3 val2 in points2) {
-						Vector3 val3 = val - val2;
-						if (((Vector3)(ref val3)).sqrMagnitude < num6) {
-							hashSet.Add (val);
+					foreach (Vector3 vector2 in points2) {
+						if ((vector - vector2).sqrMagnitude < num2) {
+							hashSet.Add (vector);
 							break;
 						}
 					}
@@ -149,56 +84,56 @@ public class GenerateRailSiding : ProceduralComponent
 			PathInterpolator path = rail3.Path;
 			Vector3[] points3 = path.Points;
 			Vector3[] tangents = path.Tangents;
-			int num7 = path.MinIndex + 1 + 16;
-			int num8 = path.MaxIndex - 1 - 16;
-			for (int k = num7; k <= num8; k++) {
+			int num3 = path.MinIndex + 1 + 16;
+			int num4 = path.MaxIndex - 1 - 16;
+			for (int k = num3; k <= num4; k++) {
 				list2.Clear ();
 				list3.Clear ();
-				int num9 = SeedRandom.Range (ref seed, num3, num4);
-				int num10 = SeedRandom.Range (ref seed, num, num2);
-				int num11 = k;
-				int num12 = k + num9;
-				if (num12 >= num8) {
+				int num5 = SeedRandom.Range (ref seed, min2, max2);
+				int num6 = SeedRandom.Range (ref seed, min, max);
+				int num7 = k;
+				int num8 = k + num5;
+				if (num8 >= num4) {
 					continue;
 				}
-				Vector3 val4 = tangents [num11];
-				Vector3 val5 = tangents [num12];
-				if (Vector3.Angle (val4, val5) > 30f) {
+				Vector3 from = tangents [num7];
+				Vector3 to = tangents [num8];
+				if (Vector3.Angle (from, to) > 30f) {
 					continue;
 				}
-				Vector3 val6 = tangents [num11];
-				Vector3 val7 = tangents [num12];
-				Vector3 val8 = Vector3.Normalize (points3 [num11 + 8] - points3 [num11]);
-				Vector3 val9 = Vector3.Normalize (points3 [num12] - points3 [num12 - 8]);
-				float num13 = Vector3.SignedAngle (val8, val6, Vector3.up);
-				float num14 = 0f - Vector3.SignedAngle (val9, val7, Vector3.up);
-				if (Mathf.Sign (num13) != Mathf.Sign (num14) || Mathf.Abs (num13) > 60f || Mathf.Abs (num14) > 60f) {
+				Vector3 to2 = tangents [num7];
+				Vector3 to3 = tangents [num8];
+				Vector3 from2 = Vector3.Normalize (points3 [num7 + 8] - points3 [num7]);
+				Vector3 from3 = Vector3.Normalize (points3 [num8] - points3 [num8 - 8]);
+				float num9 = Vector3.SignedAngle (from2, to2, Vector3.up);
+				float f = 0f - Vector3.SignedAngle (from3, to3, Vector3.up);
+				if (Mathf.Sign (num9) != Mathf.Sign (f) || Mathf.Abs (num9) > 60f || Mathf.Abs (f) > 60f) {
 					continue;
 				}
-				float num15 = 5f;
-				Quaternion val10 = ((num13 > 0f) ? rotRight : rotLeft);
-				for (int l = num11 - 8; l <= num12 + 8; l++) {
-					Vector3 val11 = points3 [l];
-					if (hashSet.Contains (val11)) {
+				float num10 = 5f;
+				Quaternion quaternion = ((num9 > 0f) ? rotRight : rotLeft);
+				for (int l = num7 - 8; l <= num8 + 8; l++) {
+					Vector3 item = points3 [l];
+					if (hashSet.Contains (item)) {
 						list2.Clear ();
 						list3.Clear ();
 						break;
 					}
-					Vector3 val12 = tangents [l];
-					Vector3 val13 = val10 * val12;
-					if (l < num11 + 8) {
-						float num16 = Mathf.InverseLerp ((float)(num11 - 8), (float)num11, (float)l);
-						float num17 = Mathf.SmoothStep (0f, 1f, num16) * num15;
-						val11 += val13 * num17;
-					} else if (l > num12 - 8) {
-						float num18 = Mathf.InverseLerp ((float)(num12 + 8), (float)num12, (float)l);
-						float num19 = Mathf.SmoothStep (0f, 1f, num18) * num15;
-						val11 += val13 * num19;
+					Vector3 vector3 = tangents [l];
+					Vector3 vector4 = quaternion * vector3;
+					if (l < num7 + 8) {
+						float t = Mathf.InverseLerp (num7 - 8, num7, l);
+						float num11 = Mathf.SmoothStep (0f, 1f, t) * num10;
+						item += vector4 * num11;
+					} else if (l > num8 - 8) {
+						float t2 = Mathf.InverseLerp (num8 + 8, num8, l);
+						float num12 = Mathf.SmoothStep (0f, 1f, t2) * num10;
+						item += vector4 * num12;
 					} else {
-						val11 += val13 * num15;
+						item += vector4 * num10;
 					}
-					list2.Add (val11);
-					list3.Add (val12);
+					list2.Add (item);
+					list3.Add (vector3);
 				}
 				if (list2.Count >= 2) {
 					int number = TerrainMeta.Path.Rails.Count + list.Count;
@@ -206,23 +141,21 @@ public class GenerateRailSiding : ProceduralComponent
 					pathList.Start = false;
 					pathList.End = false;
 					list.Add (pathList);
-					k += num9;
+					k += num5;
 				}
-				k += num10;
+				k += num6;
 			}
 		}
-		foreach (PathList item in list) {
-			item.Path.Resample (7.5f);
-			item.Path.RecalculateTangents ();
-			item.AdjustPlacementMap (20f);
+		foreach (PathList item2 in list) {
+			item2.Path.Resample (7.5f);
+			item2.Path.RecalculateTangents ();
+			item2.AdjustPlacementMap (20f);
 		}
 		TerrainMeta.Path.Rails.AddRange (list);
 	}
 
 	public PathFinder.Point GetPathFinderPoint (Vector3 worldPos, int res)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
 		float num = TerrainMeta.NormalizeX (worldPos.x);
 		float num2 = TerrainMeta.NormalizeZ (worldPos.z);
 		PathFinder.Point result = default(PathFinder.Point);

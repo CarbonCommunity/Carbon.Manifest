@@ -19,12 +19,10 @@ public class AggressionTimerAIEvent : BaseAIEvent
 
 	public override AIEventData ToProto ()
 	{
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Expected O, but got Unknown
-		AIEventData val = base.ToProto ();
-		val.aggressionTimerData = new AggressionTimerAIEventData ();
-		val.aggressionTimerData.value = Value;
-		return val;
+		AIEventData aIEventData = base.ToProto ();
+		aIEventData.aggressionTimerData = new AggressionTimerAIEventData ();
+		aIEventData.aggressionTimerData.value = Value;
+		return aIEventData;
 	}
 
 	public override void Execute (AIMemory memory, AIBrainSenses senses, StateStatus stateStatus)

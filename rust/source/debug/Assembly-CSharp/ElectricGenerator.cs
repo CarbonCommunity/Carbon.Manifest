@@ -1,4 +1,3 @@
-using System;
 using Facepunch;
 using ProtoBuf;
 using UnityEngine;
@@ -37,7 +36,7 @@ public class ElectricGenerator : IOEntity
 		currentEnergy = GetCurrentEnergy ();
 		IOSlot[] array = outputs;
 		foreach (IOSlot iOSlot in array) {
-			if ((Object)(object)iOSlot.connectedTo.Get () != (Object)null) {
+			if (iOSlot.connectedTo.Get () != null) {
 				iOSlot.connectedTo.Get ().UpdateFromInput (currentEnergy, iOSlot.connectedToSlot);
 			}
 		}
@@ -51,13 +50,13 @@ public class ElectricGenerator : IOEntity
 	public override void PostServerLoad ()
 	{
 		base.PostServerLoad ();
-		((FacepunchBehaviour)this).Invoke ((Action)ForcePuzzleReset, 1f);
+		Invoke (ForcePuzzleReset, 1f);
 	}
 
 	private void ForcePuzzleReset ()
 	{
-		PuzzleReset component = ((Component)this).GetComponent<PuzzleReset> ();
-		if ((Object)(object)component != (Object)null) {
+		PuzzleReset component = GetComponent<PuzzleReset> ();
+		if (component != null) {
 			component.DoReset ();
 			component.ResetTimer ();
 		}
@@ -65,17 +64,15 @@ public class ElectricGenerator : IOEntity
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_0073: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0078: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
 		if (!info.forDisk) {
 			return;
 		}
-		PuzzleReset component = ((Component)this).GetComponent<PuzzleReset> ();
-		if (Object.op_Implicit ((Object)(object)component)) {
-			info.msg.puzzleReset = Pool.Get<PuzzleReset> ();
+		PuzzleReset component = GetComponent<PuzzleReset> ();
+		if ((bool)component) {
+			info.msg.puzzleReset = Pool.Get<ProtoBuf.PuzzleReset> ();
 			info.msg.puzzleReset.playerBlocksReset = component.playersBlockReset;
-			if ((Object)(object)component.playerDetectionOrigin != (Object)null) {
+			if (component.playerDetectionOrigin != null) {
 				info.msg.puzzleReset.playerDetectionOrigin = component.playerDetectionOrigin.position;
 			}
 			info.msg.puzzleReset.playerDetectionRadius = component.playerDetectionRadius;
@@ -86,15 +83,14 @@ public class ElectricGenerator : IOEntity
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (!info.fromDisk || info.msg.puzzleReset == null) {
 			return;
 		}
-		PuzzleReset component = ((Component)this).GetComponent<PuzzleReset> ();
-		if ((Object)(object)component != (Object)null) {
+		PuzzleReset component = GetComponent<PuzzleReset> ();
+		if (component != null) {
 			component.playersBlockReset = info.msg.puzzleReset.playerBlocksReset;
-			if ((Object)(object)component.playerDetectionOrigin != (Object)null) {
+			if (component.playerDetectionOrigin != null) {
 				component.playerDetectionOrigin.position = info.msg.puzzleReset.playerDetectionOrigin;
 			}
 			component.playerDetectionRadius = info.msg.puzzleReset.playerDetectionRadius;

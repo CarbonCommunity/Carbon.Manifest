@@ -36,21 +36,12 @@ public class MapMarker : BaseEntity
 
 	public virtual AppMarker GetAppMarkerData ()
 	{
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-		AppMarker val = Pool.Get<AppMarker> ();
-		Vector2 val2 = CompanionServer.Util.WorldToMap (((Component)this).transform.position);
-		val.id = net.ID;
-		val.type = appType;
-		val.x = val2.x;
-		val.y = val2.y;
-		return val;
+		AppMarker appMarker = Pool.Get<AppMarker> ();
+		Vector2 vector = CompanionServer.Util.WorldToMap (base.transform.position);
+		appMarker.id = net.ID;
+		appMarker.type = appType;
+		appMarker.x = vector.x;
+		appMarker.y = vector.y;
+		return appMarker;
 	}
 }

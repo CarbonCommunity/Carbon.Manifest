@@ -8,14 +8,14 @@ public class BuildingBlockDecay : Decay
 	public override float GetDecayDelay (BaseEntity entity)
 	{
 		BuildingBlock buildingBlock = entity as BuildingBlock;
-		BuildingGrade.Enum grade = (Object.op_Implicit ((Object)(object)buildingBlock) ? buildingBlock.grade : BuildingGrade.Enum.Twigs);
+		BuildingGrade.Enum grade = (buildingBlock ? buildingBlock.grade : BuildingGrade.Enum.Twigs);
 		return GetDecayDelay (grade);
 	}
 
 	public override float GetDecayDuration (BaseEntity entity)
 	{
 		BuildingBlock buildingBlock = entity as BuildingBlock;
-		BuildingGrade.Enum grade = (Object.op_Implicit ((Object)(object)buildingBlock) ? buildingBlock.grade : BuildingGrade.Enum.Twigs);
+		BuildingGrade.Enum grade = (buildingBlock ? buildingBlock.grade : BuildingGrade.Enum.Twigs);
 		return GetDecayDuration (grade);
 	}
 
@@ -28,7 +28,7 @@ public class BuildingBlockDecay : Decay
 			return true;
 		}
 		BuildingBlock buildingBlock = entity as BuildingBlock;
-		BuildingGrade.Enum @enum = (Object.op_Implicit ((Object)(object)buildingBlock) ? buildingBlock.grade : BuildingGrade.Enum.Twigs);
+		BuildingGrade.Enum @enum = (buildingBlock ? buildingBlock.grade : BuildingGrade.Enum.Twigs);
 		return @enum == BuildingGrade.Enum.Twigs;
 	}
 

@@ -12,11 +12,7 @@ public class ModelConditionTest_SpiralStairs : ModelConditionTest
 
 	protected void OnDrawGizmosSelected ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		Gizmos.matrix = ((Component)this).transform.localToWorldMatrix;
+		Gizmos.matrix = base.transform.localToWorldMatrix;
 		Gizmos.color = Color.gray;
 		Gizmos.DrawWireCube (new Vector3 (0f, 2.35f, 0f), new Vector3 (3f, 1.5f, 3f));
 	}
@@ -24,7 +20,7 @@ public class ModelConditionTest_SpiralStairs : ModelConditionTest
 	public override bool DoTest (BaseEntity ent)
 	{
 		BuildingBlock buildingBlock = ent as BuildingBlock;
-		if ((Object)(object)buildingBlock == (Object)null) {
+		if (buildingBlock == null) {
 			return false;
 		}
 		EntityLink entityLink = ent.FindLink (stairs_sockets_female);
@@ -33,7 +29,7 @@ public class ModelConditionTest_SpiralStairs : ModelConditionTest
 		}
 		for (int i = 0; i < entityLink.connections.Count; i++) {
 			BuildingBlock buildingBlock2 = entityLink.connections [i].owner as BuildingBlock;
-			if (!((Object)(object)buildingBlock2 == (Object)null) && buildingBlock2.grade == buildingBlock.grade) {
+			if (!(buildingBlock2 == null) && buildingBlock2.grade == buildingBlock.grade) {
 				return false;
 			}
 		}

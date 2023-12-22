@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch.Rust;
@@ -7,7 +8,7 @@ using UnityEngine.Assertions;
 
 public class CollectibleEntity : BaseEntity, IPrefabPreProcess
 {
-	public Phrase itemName;
+	public Translate.Phrase itemName;
 
 	public ItemAmount[] itemList;
 
@@ -17,82 +18,61 @@ public class CollectibleEntity : BaseEntity, IPrefabPreProcess
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("CollectibleEntity.OnRpcMessage", 0);
-		try {
-			if (rpc == 2778075470u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("CollectibleEntity.OnRpcMessage")) {
+			if (rpc == 2778075470u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Pickup "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Pickup "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Pickup", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Pickup")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (2778075470u, "Pickup", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							Pickup (msg2);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in Pickup");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 3528769075u && (Object)(object)player != (Object)null) {
+			if (rpc == 3528769075u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - PickupEat "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - PickupEat "));
 				}
-				TimeWarning val5 = TimeWarning.New ("PickupEat", 0);
-				try {
-					TimeWarning val6 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("PickupEat")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (3528769075u, "PickupEat", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val6)?.Dispose ();
 					}
 					try {
-						TimeWarning val7 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg3 = rPCMessage;
 							PickupEat (msg3);
-						} finally {
-							((IDisposable)val7)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in PickupEat");
 					}
-				} finally {
-					((IDisposable)val5)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -100,7 +80,7 @@ public class CollectibleEntity : BaseEntity, IPrefabPreProcess
 	public bool IsFood (bool checkConsumeMod = false)
 	{
 		for (int i = 0; i < itemList.Length; i++) {
-			if (itemList [i].itemDef.category == ItemCategory.Food && (!checkConsumeMod || (Object)(object)((Component)itemList [i].itemDef).GetComponent<ItemModConsume> () != (Object)null)) {
+			if (itemList [i].itemDef.category == ItemCategory.Food && (!checkConsumeMod || itemList [i].itemDef.GetComponent<ItemModConsume> () != null)) {
 				return true;
 			}
 		}
@@ -109,16 +89,6 @@ public class CollectibleEntity : BaseEntity, IPrefabPreProcess
 
 	public void DoPickup (BasePlayer reciever, bool eat = false)
 	{
-		//IL_0142: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0181: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00db: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ea: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ef: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0101: Unknown result type (might be due to invalid IL or missing references)
 		if (itemList == null) {
 			return;
 		}
@@ -128,27 +98,27 @@ public class CollectibleEntity : BaseEntity, IPrefabPreProcess
 			if (item == null) {
 				continue;
 			}
-			if (eat && item.info.category == ItemCategory.Food && (Object)(object)reciever != (Object)null) {
-				ItemModConsume component = ((Component)item.info).GetComponent<ItemModConsume> ();
-				if ((Object)(object)component != (Object)null) {
+			if (eat && item.info.category == ItemCategory.Food && reciever != null) {
+				ItemModConsume component = item.info.GetComponent<ItemModConsume> ();
+				if (component != null) {
 					component.DoAction (item, reciever);
 					continue;
 				}
 			}
-			if (Object.op_Implicit ((Object)(object)reciever)) {
+			if ((bool)reciever) {
 				Analytics.Azure.OnGatherItem (item.info.shortname, item.amount, this, reciever);
 				reciever.GiveItem (item, GiveItemReason.ResourceHarvested);
 			} else {
-				item.Drop (((Component)this).transform.position + Vector3.up * 0.5f, Vector3.up);
+				item.Drop (base.transform.position + Vector3.up * 0.5f, Vector3.up);
 			}
 		}
 		itemList = null;
 		if (pickupEffect.isValid) {
-			Effect.server.Run (pickupEffect.resourcePath, ((Component)this).transform.position, ((Component)this).transform.up);
+			Effect.server.Run (pickupEffect.resourcePath, base.transform.position, base.transform.up);
 		}
 		RandomItemDispenser randomItemDispenser = PrefabAttribute.server.Find<RandomItemDispenser> (prefabID);
 		if (randomItemDispenser != null) {
-			randomItemDispenser.DistributeItems (reciever, ((Component)this).transform.position);
+			randomItemDispenser.DistributeItems (reciever, base.transform.position);
 		}
 		Kill ();
 	}
@@ -175,7 +145,7 @@ public class CollectibleEntity : BaseEntity, IPrefabPreProcess
 	{
 		base.PreProcess (preProcess, rootObj, name, serverside, clientside, bundling);
 		if (serverside) {
-			preProcess.RemoveComponent ((Component)(object)((Component)this).GetComponent<Collider> ());
+			preProcess.RemoveComponent (GetComponent<Collider> ());
 		}
 	}
 }

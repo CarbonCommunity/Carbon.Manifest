@@ -1,4 +1,3 @@
-using System;
 using Facepunch;
 using ProtoBuf;
 using UnityEngine;
@@ -27,8 +26,8 @@ public class ReclaimBackpack : StorageContainer
 	{
 		base.ServerInit ();
 		base.inventory.SetFlag (ItemContainer.Flag.NoItemInput, b: true);
-		((FacepunchBehaviour)this).Invoke ((Action)RemoveMe, ReclaimManager.reclaim_expire_minutes * 60f);
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)CheckEmpty, 1f, 30f, 3f);
+		Invoke (RemoveMe, ReclaimManager.reclaim_expire_minutes * 60f);
+		InvokeRandomized (CheckEmpty, 1f, 30f, 3f);
 	}
 
 	public void RemoveMe ()
@@ -76,7 +75,7 @@ public class ReclaimBackpack : StorageContainer
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.lootableCorpse = Pool.Get<LootableCorpse> ();
+		info.msg.lootableCorpse = Pool.Get<ProtoBuf.LootableCorpse> ();
 		info.msg.lootableCorpse.playerID = playerSteamID;
 		info.msg.lootableCorpse.underwearSkin = (uint)reclaimID;
 	}

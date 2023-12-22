@@ -39,50 +39,26 @@ public class BradleyMoveTest : MonoBehaviour
 
 	public void Initialize ()
 	{
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
 		myRigidBody.centerOfMass = centerOfMass.localPosition;
-		destination = ((Component)this).transform.position;
+		destination = base.transform.position;
 	}
 
 	public void SetDestination (Vector3 dest)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
 		destination = dest;
 	}
 
 	public void FixedUpdate ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0069: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0071: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0076: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0082: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0096: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ee: Unknown result type (might be due to invalid IL or missing references)
 		Vector3 velocity = myRigidBody.velocity;
 		SetDestination (followTest.transform.position);
-		float num = Vector3.Distance (((Component)this).transform.position, destination);
+		float num = Vector3.Distance (base.transform.position, destination);
 		if (num > stoppingDist) {
 			Vector3 zero = Vector3.zero;
-			float num2 = Vector3.Dot (zero, ((Component)this).transform.right);
-			float num3 = Vector3.Dot (zero, -((Component)this).transform.right);
-			float num4 = Vector3.Dot (zero, ((Component)this).transform.right);
-			float num5 = Vector3.Dot (zero, -((Component)this).transform.forward);
+			float num2 = Vector3.Dot (zero, base.transform.right);
+			float num3 = Vector3.Dot (zero, -base.transform.right);
+			float num4 = Vector3.Dot (zero, base.transform.right);
+			float num5 = Vector3.Dot (zero, -base.transform.forward);
 			if (num5 > num4) {
 				if (num2 >= num3) {
 					turning = 1f;
@@ -109,8 +85,8 @@ public class BradleyMoveTest : MonoBehaviour
 		num6 = Mathf.Clamp (num6 + num8, -1f, 1f);
 		num7 = Mathf.Clamp (num7 + num8, -1f, 1f);
 		AdjustFriction ();
-		float num9 = Mathf.InverseLerp (3f, 1f, ((Vector3)(ref velocity)).magnitude * Mathf.Abs (Vector3.Dot (((Vector3)(ref velocity)).normalized, ((Component)this).transform.forward)));
-		float torqueAmount = Mathf.Lerp (moveForceMax, turnForce, num9);
+		float t = Mathf.InverseLerp (3f, 1f, velocity.magnitude * Mathf.Abs (Vector3.Dot (velocity.normalized, base.transform.forward)));
+		float torqueAmount = Mathf.Lerp (moveForceMax, turnForce, t);
 		SetMotorTorque (num6, rightSide: false, torqueAmount);
 		SetMotorTorque (num7, rightSide: true, torqueAmount);
 	}
@@ -125,8 +101,8 @@ public class BradleyMoveTest : MonoBehaviour
 	{
 		float num = 0f;
 		WheelCollider[] array = (rightSide ? rightWheels : leftWheels);
-		foreach (WheelCollider val in array) {
-			num += val.motorTorque;
+		foreach (WheelCollider wheelCollider in array) {
+			num += wheelCollider.motorTorque;
 		}
 		return num / (float)rightWheels.Length;
 	}
@@ -136,16 +112,16 @@ public class BradleyMoveTest : MonoBehaviour
 		newThrottle = Mathf.Clamp (newThrottle, -1f, 1f);
 		float motorTorque = torqueAmount * newThrottle;
 		WheelCollider[] array = (rightSide ? rightWheels : leftWheels);
-		foreach (WheelCollider val in array) {
-			val.motorTorque = motorTorque;
+		foreach (WheelCollider wheelCollider in array) {
+			wheelCollider.motorTorque = motorTorque;
 		}
 	}
 
 	public void ApplyBrakeTorque (float amount, bool rightSide)
 	{
 		WheelCollider[] array = (rightSide ? rightWheels : leftWheels);
-		foreach (WheelCollider val in array) {
-			val.brakeTorque = brakeForce * amount;
+		foreach (WheelCollider wheelCollider in array) {
+			wheelCollider.brakeTorque = brakeForce * amount;
 		}
 	}
 

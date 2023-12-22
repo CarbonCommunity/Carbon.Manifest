@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Facepunch;
 using UnityEngine;
@@ -29,23 +28,23 @@ public class DoorManipulator : IOEntity
 	{
 		Door door = targetDoor;
 		targetDoor = newTargetDoor;
-		SetFlag (Flags.On, (Object)(object)targetDoor != (Object)null);
+		SetFlag (Flags.On, targetDoor != null);
 		entityRef.Set (newTargetDoor);
-		if ((Object)(object)door != (Object)(object)targetDoor && (Object)(object)targetDoor != (Object)null) {
+		if (door != targetDoor && targetDoor != null) {
 			DoAction ();
 		}
 	}
 
 	public virtual void SetupInitialDoorConnection ()
 	{
-		if ((Object)(object)targetDoor == (Object)null && !entityRef.IsValid (serverside: true)) {
+		if (targetDoor == null && !entityRef.IsValid (serverside: true)) {
 			SetTargetDoor (FindDoor (PairWithLockedDoors ()));
 		}
-		if ((Object)(object)targetDoor != (Object)null && !entityRef.IsValid (serverside: true)) {
+		if (targetDoor != null && !entityRef.IsValid (serverside: true)) {
 			entityRef.Set (targetDoor);
 		}
-		if (entityRef.IsValid (serverside: true) && (Object)(object)targetDoor == (Object)null) {
-			SetTargetDoor (((Component)entityRef.Get (serverside: true)).GetComponent<Door> ());
+		if (entityRef.IsValid (serverside: true) && targetDoor == null) {
+			SetTargetDoor (entityRef.Get (serverside: true).GetComponent<Door> ());
 		}
 	}
 
@@ -57,30 +56,27 @@ public class DoorManipulator : IOEntity
 
 	public Door FindDoor (bool allowLocked = true)
 	{
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0093: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009e: Unknown result type (might be due to invalid IL or missing references)
-		List<Door> list = Pool.GetList<Door> ();
-		Vis.Entities (((Component)this).transform.position, 1f, list, 2097152, (QueryTriggerInteraction)1);
+		List<Door> obj = Pool.GetList<Door> ();
+		Vis.Entities (base.transform.position, 1f, obj, 2097152, QueryTriggerInteraction.Ignore);
 		Door result = null;
 		float num = float.PositiveInfinity;
-		foreach (Door item in list) {
+		foreach (Door item in obj) {
 			if (!item.isServer) {
 				continue;
 			}
 			if (!allowLocked) {
 				BaseLock baseLock = item.GetSlot (Slot.Lock) as BaseLock;
-				if ((Object)(object)baseLock != (Object)null && baseLock.IsLocked ()) {
+				if (baseLock != null && baseLock.IsLocked ()) {
 					continue;
 				}
 			}
-			float num2 = Vector3.Distance (((Component)item).transform.position, ((Component)this).transform.position);
+			float num2 = Vector3.Distance (item.transform.position, base.transform.position);
 			if (num2 < num) {
 				result = item;
 				num = num2;
 			}
 		}
-		Pool.FreeList<Door> (ref list);
+		Pool.FreeList (ref obj);
 		return result;
 	}
 
@@ -92,14 +88,14 @@ public class DoorManipulator : IOEntity
 	public void DoAction ()
 	{
 		bool flag = IsPowered ();
-		if ((Object)(object)targetDoor == (Object)null) {
+		if (targetDoor == null) {
 			DoActionDoorMissing ();
 		}
-		if (!((Object)(object)targetDoor != (Object)null)) {
+		if (!(targetDoor != null)) {
 			return;
 		}
 		if (targetDoor.IsBusy ()) {
-			((FacepunchBehaviour)this).Invoke ((Action)DoAction, 1f);
+			Invoke (DoAction, 1f);
 		} else if (powerAction == DoorEffect.Open) {
 			if (flag) {
 				if (!targetDoor.IsOpen ()) {
@@ -134,8 +130,6 @@ public class DoorManipulator : IOEntity
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
 		info.msg.ioEntity.genericEntRef1 = entityRef.uid;
 		info.msg.ioEntity.genericInt1 = (int)powerAction;
@@ -143,7 +137,6 @@ public class DoorManipulator : IOEntity
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (info.msg.ioEntity != null) {
 			entityRef.uid = info.msg.ioEntity.genericEntRef1;

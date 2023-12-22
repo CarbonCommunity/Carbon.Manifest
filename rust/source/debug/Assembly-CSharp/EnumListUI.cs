@@ -20,18 +20,15 @@ public class EnumListUI : MonoBehaviour
 
 	public void Show (List<object> values, Action<object> clicked)
 	{
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0030: Expected O, but got Unknown
-		((Component)this).gameObject.SetActive (true);
+		base.gameObject.SetActive (value: true);
 		clickedAction = clicked;
 		foreach (Transform item in Container) {
-			Transform val = item;
-			Object.Destroy ((Object)(object)((Component)val).gameObject);
+			UnityEngine.Object.Destroy (item.gameObject);
 		}
 		foreach (object value in values) {
-			Transform val2 = Object.Instantiate<Transform> (PrefabItem);
-			val2.SetParent (Container, false);
-			((Component)val2).GetComponent<EnumListItemUI> ().Init (value, value.ToString (), this);
+			Transform transform2 = UnityEngine.Object.Instantiate (PrefabItem);
+			transform2.SetParent (Container, worldPositionStays: false);
+			transform2.GetComponent<EnumListItemUI> ().Init (value, value.ToString (), this);
 		}
 	}
 
@@ -43,6 +40,6 @@ public class EnumListUI : MonoBehaviour
 
 	public void Hide ()
 	{
-		((Component)this).gameObject.SetActive (false);
+		base.gameObject.SetActive (value: false);
 	}
 }

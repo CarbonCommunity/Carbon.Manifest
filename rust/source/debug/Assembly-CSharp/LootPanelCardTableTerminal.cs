@@ -7,8 +7,8 @@ public class LootPanelCardTableTerminal : LootPanel
 	private Text buyInInfoText;
 
 	[SerializeField]
-	private Phrase phraseMin;
+	private Translate.Phrase phraseMin;
 
 	[SerializeField]
-	private Phrase phraseMax;
+	private Translate.Phrase phraseMax;
 }

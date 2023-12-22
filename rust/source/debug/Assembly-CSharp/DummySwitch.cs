@@ -1,5 +1,3 @@
-using System;
-
 public class DummySwitch : IOEntity
 {
 	public string listenString = "";
@@ -28,7 +26,7 @@ public class DummySwitch : IOEntity
 		SetFlag (Flags.On, wantsOn);
 		MarkDirty ();
 		if (IsOn () && duration != -1f) {
-			((FacepunchBehaviour)this).Invoke ((Action)SetOff, duration);
+			Invoke (SetOff, duration);
 		}
 	}
 

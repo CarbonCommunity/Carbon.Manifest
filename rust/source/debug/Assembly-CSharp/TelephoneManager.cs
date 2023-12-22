@@ -37,7 +37,7 @@ public static class TelephoneManager
 
 	public static void RegisterTelephone (PhoneController t, bool checkPhoneNumber = false)
 	{
-		if (checkPhoneNumber && allTelephones.ContainsKey (t.PhoneNumber) && (Object)(object)allTelephones [t.PhoneNumber] != (Object)(object)t) {
+		if (checkPhoneNumber && allTelephones.ContainsKey (t.PhoneNumber) && allTelephones [t.PhoneNumber] != t) {
 			t.PhoneNumber = GetUnusedTelephoneNumber ();
 		}
 		if (!allTelephones.ContainsKey (t.PhoneNumber) && t.PhoneNumber != 0) {
@@ -88,7 +88,7 @@ public static class TelephoneManager
 
 	public static void GetPhoneDirectory (int ignoreNumber, int page, int perPage, PhoneDirectory directory)
 	{
-		directory.entries = Pool.GetList<DirectoryEntry> ();
+		directory.entries = Pool.GetList<PhoneDirectory.DirectoryEntry> ();
 		int num = page * perPage;
 		int num2 = 0;
 		foreach (KeyValuePair<int, PhoneController> allTelephone in allTelephones) {
@@ -97,10 +97,10 @@ public static class TelephoneManager
 			}
 			num2++;
 			if (num2 >= num) {
-				DirectoryEntry val = Pool.Get<DirectoryEntry> ();
-				val.phoneName = allTelephone.Value.GetDirectoryName ();
-				val.phoneNumber = allTelephone.Value.PhoneNumber;
-				directory.entries.Add (val);
+				PhoneDirectory.DirectoryEntry directoryEntry = Pool.Get<PhoneDirectory.DirectoryEntry> ();
+				directoryEntry.phoneName = allTelephone.Value.GetDirectoryName ();
+				directoryEntry.phoneNumber = allTelephone.Value.PhoneNumber;
+				directory.entries.Add (directoryEntry);
 				if (directory.entries.Count >= perPage) {
 					directory.atEnd = false;
 					return;
@@ -111,25 +111,14 @@ public static class TelephoneManager
 	}
 
 	[ServerVar]
-	public static void PrintAllPhones (Arg arg)
+	public static void PrintAllPhones (ConsoleSystem.Arg arg)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Expected O, but got Unknown
-		//IL_004f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0085: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0090: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009b: Unknown result type (might be due to invalid IL or missing references)
-		TextTable val = new TextTable ();
-		val.AddColumns (new string[3] { "Number", "Name", "Position" });
+		TextTable textTable = new TextTable ();
+		textTable.AddColumns ("Number", "Name", "Position");
 		foreach (KeyValuePair<int, PhoneController> allTelephone in allTelephones) {
-			Vector3 position = ((Component)allTelephone.Value).transform.position;
-			val.AddRow (new string[3] {
-				allTelephone.Key.ToString (),
-				allTelephone.Value.GetDirectoryName (),
-				$"{position.x} {position.y} {position.z}"
-			});
+			Vector3 position = allTelephone.Value.transform.position;
+			textTable.AddRow (allTelephone.Key.ToString (), allTelephone.Value.GetDirectoryName (), $"{position.x} {position.y} {position.z}");
 		}
-		arg.ReplyWith (((object)val).ToString ());
+		arg.ReplyWith (textTable.ToString ());
 	}
 }

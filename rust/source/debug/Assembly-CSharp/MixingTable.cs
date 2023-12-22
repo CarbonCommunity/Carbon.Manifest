@@ -1,3 +1,5 @@
+#define ENABLE_PROFILER
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -37,46 +39,34 @@ public class MixingTable : StorageContainer
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("MixingTable.OnRpcMessage", 0);
-		try {
-			if (rpc == 4167839872u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("MixingTable.OnRpcMessage")) {
+			if (rpc == 4167839872u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - SVSwitch "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - SVSwitch "));
 				}
-				TimeWarning val2 = TimeWarning.New ("SVSwitch", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("SVSwitch")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (4167839872u, "SVSwitch", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							SVSwitch (msg2);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in SVSwitch");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -101,7 +91,7 @@ public class MixingTable : StorageContainer
 		if (GetItemWaterAmount (item) > 0) {
 			item = item.contents.itemList [0];
 		}
-		return (Object)(object)item.info == (Object)(object)currentProductionItem || RecipeDictionary.ValidIngredientForARecipe (item, Recipes);
+		return item.info == currentProductionItem || RecipeDictionary.ValidIngredientForARecipe (item, Recipes);
 	}
 
 	protected override void OnInventoryDirty ()
@@ -117,7 +107,7 @@ public class MixingTable : StorageContainer
 	private void SVSwitch (RPCMessage msg)
 	{
 		bool flag = msg.read.Bit ();
-		if (flag != IsOn () && !((Object)(object)msg.player == (Object)null)) {
+		if (flag != IsOn () && !(msg.player == null)) {
 			if (flag) {
 				StartMixing (msg.player);
 			} else {
@@ -136,9 +126,9 @@ public class MixingTable : StorageContainer
 		List<Item> orderedContainerItems = GetOrderedContainerItems (base.inventory, out itemsAreContiguous);
 		currentRecipe = RecipeDictionary.GetMatchingRecipeAndQuantity (Recipes, orderedContainerItems, out var quantity);
 		currentQuantity = quantity;
-		if (!((Object)(object)currentRecipe == (Object)null) && itemsAreContiguous && (!currentRecipe.RequiresBlueprint || !((Object)(object)currentRecipe.ProducedItem != (Object)null) || player.blueprints.HasUnlocked (currentRecipe.ProducedItem))) {
+		if (!(currentRecipe == null) && itemsAreContiguous && (!currentRecipe.RequiresBlueprint || !(currentRecipe.ProducedItem != null) || player.blueprints.HasUnlocked (currentRecipe.ProducedItem))) {
 			if (base.isServer) {
-				lastTickTimestamp = Time.realtimeSinceStartup;
+				lastTickTimestamp = UnityEngine.Time.realtimeSinceStartup;
 			}
 			RemainingMixTime = currentRecipe.MixingDuration * (float)currentQuantity;
 			TotalMixTime = RemainingMixTime;
@@ -147,7 +137,7 @@ public class MixingTable : StorageContainer
 				ProduceItem (currentRecipe, currentQuantity);
 				return;
 			}
-			((FacepunchBehaviour)this).InvokeRepeating ((Action)TickMix, 1f, 1f);
+			InvokeRepeating (TickMix, 1f, 1f);
 			SetFlag (Flags.On, b: true);
 			SendNetworkUpdateImmediate ();
 		}
@@ -163,7 +153,7 @@ public class MixingTable : StorageContainer
 		currentRecipe = null;
 		currentQuantity = 0;
 		RemainingMixTime = 0f;
-		((FacepunchBehaviour)this).CancelInvoke ((Action)TickMix);
+		CancelInvoke (TickMix);
 		if (IsOn ()) {
 			SetFlag (Flags.On, b: false);
 			SendNetworkUpdateImmediate ();
@@ -172,12 +162,12 @@ public class MixingTable : StorageContainer
 
 	private void TickMix ()
 	{
-		if ((Object)(object)currentRecipe == (Object)null) {
+		if (currentRecipe == null) {
 			StopMixing ();
 			return;
 		}
 		if (base.isServer) {
-			lastTickTimestamp = Time.realtimeSinceStartup;
+			lastTickTimestamp = UnityEngine.Time.realtimeSinceStartup;
 			RemainingMixTime -= 1f;
 		}
 		SendNetworkUpdateImmediate ();
@@ -213,11 +203,7 @@ public class MixingTable : StorageContainer
 
 	private void ReturnExcessItems (List<Item> orderedContainerItems, BasePlayer player)
 	{
-		//IL_0104: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0116: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011c: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)player == (Object)null || (Object)(object)currentRecipe == (Object)null || orderedContainerItems == null || orderedContainerItems.Count != currentRecipe.Ingredients.Length) {
+		if (player == null || currentRecipe == null || orderedContainerItems == null || orderedContainerItems.Count != currentRecipe.Ingredients.Length) {
 			return;
 		}
 		for (int i = 0; i < base.inventory.capacity; i++) {
@@ -238,11 +224,7 @@ public class MixingTable : StorageContainer
 
 	protected virtual void CreateRecipeItems (Recipe recipe, int quantity)
 	{
-		//IL_00bd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d5: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)recipe == (Object)null || (Object)(object)recipe.ProducedItem == (Object)null) {
+		if (recipe == null || recipe.ProducedItem == null) {
 			return;
 		}
 		int num = quantity * recipe.ProducedItemCount;
@@ -267,11 +249,11 @@ public class MixingTable : StorageContainer
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.mixingTable = Pool.Get<MixingTable> ();
+		info.msg.mixingTable = Facepunch.Pool.Get<ProtoBuf.MixingTable> ();
 		if (info.forDisk) {
 			info.msg.mixingTable.remainingMixTime = RemainingMixTime;
 		} else {
-			info.msg.mixingTable.remainingMixTime = RemainingMixTime - Mathf.Max (Time.realtimeSinceStartup - lastTickTimestamp, 0f);
+			info.msg.mixingTable.remainingMixTime = RemainingMixTime - Mathf.Max (UnityEngine.Time.realtimeSinceStartup - lastTickTimestamp, 0f);
 		}
 		info.msg.mixingTable.totalMixTime = TotalMixTime;
 	}

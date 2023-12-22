@@ -7,13 +7,13 @@ public class EngineItemInformationPanel : ItemInformationPanel
 	private Text tier;
 
 	[SerializeField]
-	private Phrase low;
+	private Translate.Phrase low;
 
 	[SerializeField]
-	private Phrase medium;
+	private Translate.Phrase medium;
 
 	[SerializeField]
-	private Phrase high;
+	private Translate.Phrase high;
 
 	[SerializeField]
 	private GameObject accelerationRoot = null;

@@ -30,16 +30,13 @@ public class BenchmarkInfo : SingletonComponent<BenchmarkInfo>
 		text = text + BuildInfo.Current.Build.Node + " / " + BuildInfo.Current.Scm.Date + "\n";
 		text = text + BuildInfo.Current.Scm.Repo + "/" + BuildInfo.Current.Scm.Branch + "#" + BuildInfo.Current.Scm.ChangeId + "\n";
 		text = text + BuildInfo.Current.Scm.Author + " - " + BuildInfo.Current.Scm.Comment + "\n";
-		((TMP_Text)SystemInfoText).text = text;
+		SystemInfoText.text = text;
 	}
 
 	private void Update ()
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		if (!(RealTimeSince.op_Implicit (timeSinceUpdated) < 0.25f)) {
-			timeSinceUpdated = RealTimeSince.op_Implicit (0f);
+		if (!((float)timeSinceUpdated < 0.25f)) {
+			timeSinceUpdated = 0f;
 			sb.Clear ();
 			sb.AppendLine (BenchmarkTitle);
 			sb.AppendLine (BenchmarkSubtitle);
@@ -50,11 +47,11 @@ public class BenchmarkInfo : SingletonComponent<BenchmarkInfo>
 			sb.Append (" / ").Append (Performance.current.memoryCollections).Append (" GC");
 			sb.AppendLine ().Append (Performance.current.memoryUsageSystem).Append (" RAM");
 			sb.AppendLine ().Append (Performance.current.loadBalancerTasks).Append (" TASKS");
-			sb.Append (" / ").Append (WorkshopSkin.QueuedCount).Append (" SKINS");
+			sb.Append (" / ").Append (Rust.Workshop.WorkshopSkin.QueuedCount).Append (" SKINS");
 			sb.Append (" / ").Append (Performance.current.invokeHandlerTasks).Append (" INVOKES");
 			sb.AppendLine ();
 			sb.AppendLine (DateTime.Now.ToShortDateString () + " " + DateTime.Now.ToLongTimeString ());
-			((TMP_Text)PerformanceText).text = sb.ToString ();
+			PerformanceText.text = sb.ToString ();
 		}
 	}
 }

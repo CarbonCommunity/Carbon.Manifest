@@ -1,3 +1,4 @@
+#define ENABLE_PROFILER
 using System;
 using System.Collections;
 using ConVar;
@@ -19,7 +20,7 @@ public class NPCPlayer : BasePlayer
 
 	public PlayerInventoryProperties[] loadouts;
 
-	public LayerMask movementMask = LayerMask.op_Implicit (429990145);
+	public LayerMask movementMask = 429990145;
 
 	public bool LegacyNavigation = true;
 
@@ -89,70 +90,54 @@ public class NPCPlayer : BasePlayer
 
 	public override void ServerInit ()
 	{
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a7: Unknown result type (might be due to invalid IL or missing references)
 		if (base.isClient) {
 			return;
 		}
 		spawnPos = GetPosition ();
-		randomOffset = Random.Range (0f, 1f);
+		randomOffset = UnityEngine.Random.Range (0f, 1f);
 		base.ServerInit ();
 		UpdateNetworkGroup ();
 		EquipLoadout (loadouts);
 		if (!IsLoadBalanced ()) {
-			((FacepunchBehaviour)this).InvokeRepeating ((Action)ServerThink_Internal, 0f, 0.1f);
-			lastThinkTime = Time.time;
+			InvokeRepeating (ServerThink_Internal, 0f, 0.1f);
+			lastThinkTime = UnityEngine.Time.time;
 		}
-		((FacepunchBehaviour)this).Invoke ((Action)EquipTest, 0.25f);
-		finalDestination = ((Component)this).transform.position;
-		if ((Object)(object)NavAgent == (Object)null) {
-			NavAgent = ((Component)this).GetComponent<NavMeshAgent> ();
+		Invoke (EquipTest, 0.25f);
+		finalDestination = base.transform.position;
+		if (NavAgent == null) {
+			NavAgent = GetComponent<NavMeshAgent> ();
 		}
-		if (Object.op_Implicit ((Object)(object)NavAgent)) {
+		if ((bool)NavAgent) {
 			NavAgent.updateRotation = false;
 			NavAgent.updatePosition = false;
 			if (!LegacyNavigation) {
-				((Component)((Component)this).transform).gameObject.GetComponent<BaseNavigator> ().Init (this, NavAgent);
+				base.transform.gameObject.GetComponent<BaseNavigator> ().Init (this, NavAgent);
 			}
 		}
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)TickMovement, 1f, PositionTickRate, PositionTickRate * 0.1f);
+		InvokeRandomized (TickMovement, 1f, PositionTickRate, PositionTickRate * 0.1f);
 	}
 
 	public void EquipLoadout (PlayerInventoryProperties[] loads)
 	{
 		if (loads != null && loads.Length != 0) {
-			loads [Random.Range (0, loads.Length)].GiveToPlayer (this);
+			loads [UnityEngine.Random.Range (0, loads.Length)].GiveToPlayer (this);
 		}
 	}
 
 	public override void ApplyInheritedVelocity (Vector3 velocity)
 	{
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0004: Unknown result type (might be due to invalid IL or missing references)
 		ServerPosition = BaseNpc.GetNewNavPosWithVelocity (this, velocity);
 	}
 
 	public void RandomMove ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
 		float num = 8f;
-		Vector2 val = Random.insideUnitCircle * num;
-		SetDestination (spawnPos + new Vector3 (val.x, 0f, val.y));
+		Vector2 vector = UnityEngine.Random.insideUnitCircle * num;
+		SetDestination (spawnPos + new Vector3 (vector.x, 0f, vector.y));
 	}
 
 	public virtual void SetDestination (Vector3 newDestination)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
 		finalDestination = newDestination;
 	}
 
@@ -166,11 +151,11 @@ public class NPCPlayer : BasePlayer
 	{
 		HeldEntity heldEntity = GetHeldEntity ();
 		AttackEntity attackEntity = heldEntity as AttackEntity;
-		if ((Object)(object)attackEntity == (Object)null) {
+		if (attackEntity == null) {
 			return null;
 		}
 		BaseProjectile baseProjectile = attackEntity as BaseProjectile;
-		if (Object.op_Implicit ((Object)(object)baseProjectile)) {
+		if ((bool)baseProjectile) {
 			return baseProjectile;
 		}
 		return null;
@@ -179,7 +164,7 @@ public class NPCPlayer : BasePlayer
 	public virtual float AmmoFractionRemaining ()
 	{
 		AttackEntity attackEntity = GetAttackEntity ();
-		if (Object.op_Implicit ((Object)(object)attackEntity)) {
+		if ((bool)attackEntity) {
 			return attackEntity.AmmoFraction ();
 		}
 		return 0f;
@@ -188,7 +173,7 @@ public class NPCPlayer : BasePlayer
 	public virtual bool IsReloading ()
 	{
 		AttackEntity attackEntity = GetAttackEntity ();
-		if (!Object.op_Implicit ((Object)(object)attackEntity)) {
+		if (!attackEntity) {
 			return false;
 		}
 		return attackEntity.ServerIsReloading ();
@@ -197,7 +182,7 @@ public class NPCPlayer : BasePlayer
 	public virtual void AttemptReload ()
 	{
 		AttackEntity attackEntity = GetAttackEntity ();
-		if (!((Object)(object)attackEntity == (Object)null) && attackEntity.CanReload ()) {
+		if (!(attackEntity == null) && attackEntity.CanReload ()) {
 			attackEntity.ServerReload ();
 		}
 	}
@@ -206,37 +191,37 @@ public class NPCPlayer : BasePlayer
 	{
 		HeldEntity heldEntity = GetHeldEntity ();
 		AttackEntity attackEntity = heldEntity as AttackEntity;
-		if ((Object)(object)attackEntity == (Object)null) {
+		if (attackEntity == null) {
 			return false;
 		}
 		BaseProjectile baseProjectile = attackEntity as BaseProjectile;
-		if (Object.op_Implicit ((Object)(object)baseProjectile)) {
+		if ((bool)baseProjectile) {
 			if (baseProjectile.primaryMagazine.contents <= 0) {
 				baseProjectile.ServerReload ();
 				return false;
 			}
-			if (baseProjectile.NextAttackTime > Time.time) {
+			if (baseProjectile.NextAttackTime > UnityEngine.Time.time) {
 				return false;
 			}
 		}
 		if (!Mathf.Approximately (attackEntity.attackLengthMin, -1f)) {
-			if (((FacepunchBehaviour)this).IsInvoking ((Action)TriggerDown)) {
+			if (IsInvoking (TriggerDown)) {
 				return true;
 			}
-			if (Time.time < nextTriggerTime) {
+			if (UnityEngine.Time.time < nextTriggerTime) {
 				return true;
 			}
-			((FacepunchBehaviour)this).InvokeRepeating ((Action)TriggerDown, 0f, 0.01f);
+			InvokeRepeating (TriggerDown, 0f, 0.01f);
 			if (targetDist <= shortRange) {
-				triggerEndTime = Time.time + Random.Range (attackEntity.attackLengthMin, attackEntity.attackLengthMax * attackLengthMaxShortRangeScale);
+				triggerEndTime = UnityEngine.Time.time + UnityEngine.Random.Range (attackEntity.attackLengthMin, attackEntity.attackLengthMax * attackLengthMaxShortRangeScale);
 			} else {
-				triggerEndTime = Time.time + Random.Range (attackEntity.attackLengthMin, attackEntity.attackLengthMax);
+				triggerEndTime = UnityEngine.Time.time + UnityEngine.Random.Range (attackEntity.attackLengthMin, attackEntity.attackLengthMax);
 			}
 			TriggerDown ();
 			return true;
 		}
 		attackEntity.ServerUse (damageScale);
-		lastGunShotTime = Time.time;
+		lastGunShotTime = UnityEngine.Time.time;
 		return true;
 	}
 
@@ -247,8 +232,8 @@ public class NPCPlayer : BasePlayer
 
 	public void CancelBurst (float delay = 0.2f)
 	{
-		if (triggerEndTime > Time.time + delay) {
-			triggerEndTime = Time.time + delay;
+		if (triggerEndTime > UnityEngine.Time.time + delay) {
+			triggerEndTime = UnityEngine.Time.time + delay;
 		}
 	}
 
@@ -256,11 +241,11 @@ public class NPCPlayer : BasePlayer
 	{
 		HeldEntity heldEntity = GetHeldEntity ();
 		AttackEntity attackEntity = heldEntity as AttackEntity;
-		if ((Object)(object)attackEntity == (Object)null) {
+		if (attackEntity == null) {
 			return false;
 		}
 		BaseMelee baseMelee = attackEntity as BaseMelee;
-		if ((Object)(object)baseMelee == (Object)null) {
+		if (baseMelee == null) {
 			return false;
 		}
 		baseMelee.ServerUse (damageScale);
@@ -271,29 +256,28 @@ public class NPCPlayer : BasePlayer
 	{
 		HeldEntity heldEntity = GetHeldEntity ();
 		AttackEntity attackEntity = heldEntity as AttackEntity;
-		if ((Object)(object)attackEntity != (Object)null) {
+		if (attackEntity != null) {
 			attackEntity.ServerUse (damageScale);
 		}
-		lastGunShotTime = Time.time;
-		if (Time.time > triggerEndTime) {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)TriggerDown);
-			nextTriggerTime = Time.time + (((Object)(object)attackEntity != (Object)null) ? attackEntity.attackSpacing : 1f);
+		lastGunShotTime = UnityEngine.Time.time;
+		if (UnityEngine.Time.time > triggerEndTime) {
+			CancelInvoke (TriggerDown);
+			nextTriggerTime = UnityEngine.Time.time + ((attackEntity != null) ? attackEntity.attackSpacing : 1f);
 		}
 	}
 
 	public virtual void EquipWeapon (bool skipDeployDelay = false)
 	{
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)inventory == (Object)null || inventory.containerBelt == null) {
+		if (inventory == null || inventory.containerBelt == null) {
 			return;
 		}
 		Item slot = inventory.containerBelt.GetSlot (0);
 		if (slot != null) {
 			UpdateActiveItem (inventory.containerBelt.GetSlot (0).uid);
 			BaseEntity heldEntity = slot.GetHeldEntity ();
-			if ((Object)(object)heldEntity != (Object)null) {
-				AttackEntity component = ((Component)heldEntity).GetComponent<AttackEntity> ();
-				if ((Object)(object)component != (Object)null) {
+			if (heldEntity != null) {
+				AttackEntity component = heldEntity.GetComponent<AttackEntity> ();
+				if (component != null) {
 					if (skipDeployDelay) {
 						component.ResetAttackCooldown ();
 					}
@@ -312,9 +296,9 @@ public class NPCPlayer : BasePlayer
 
 	internal void ServerThink_Internal ()
 	{
-		float delta = Time.time - lastThinkTime;
+		float delta = UnityEngine.Time.time - lastThinkTime;
 		ServerThink (delta);
-		lastThinkTime = Time.time;
+		lastThinkTime = UnityEngine.Time.time;
 	}
 
 	public virtual void ServerThink (float delta)
@@ -337,28 +321,22 @@ public class NPCPlayer : BasePlayer
 
 	public void TickMovement ()
 	{
-		float delta = Time.realtimeSinceStartup - lastMovementTickTime;
-		lastMovementTickTime = Time.realtimeSinceStartup;
+		float delta = UnityEngine.Time.realtimeSinceStartup - lastMovementTickTime;
+		lastMovementTickTime = UnityEngine.Time.realtimeSinceStartup;
 		MovementUpdate (delta);
 	}
 
 	public override float GetNetworkTime ()
 	{
-		float num = Time.realtimeSinceStartup - lastPositionUpdateTime;
+		float num = UnityEngine.Time.realtimeSinceStartup - lastPositionUpdateTime;
 		if (num > PositionTickRate * 2f) {
-			return Time.time;
+			return UnityEngine.Time.time;
 		}
 		return lastPositionUpdateTime;
 	}
 
 	public virtual void MovementUpdate (float delta)
 	{
-		//IL_00a7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ac: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e1: Unknown result type (might be due to invalid IL or missing references)
 		if (!LegacyNavigation || base.isClient || !IsAlive () || IsWounded () || (!base.isMounted && !IsNavRunning ())) {
 			return;
 		}
@@ -370,7 +348,7 @@ public class NPCPlayer : BasePlayer
 			Profiler.EndSample ();
 			return;
 		}
-		Vector3 moveToPosition = ((Component)this).transform.position;
+		Vector3 moveToPosition = base.transform.position;
 		if (HasPath) {
 			moveToPosition = NavAgent.nextPosition;
 		}
@@ -382,12 +360,11 @@ public class NPCPlayer : BasePlayer
 
 	private bool ValidateNextPosition (ref Vector3 moveToPosition)
 	{
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
 		Profiler.BeginSample ("ValidBounds.Test");
 		bool flag = ValidBounds.Test (moveToPosition);
 		Profiler.EndSample ();
-		if (!flag && (Object)(object)((Component)this).transform != (Object)null && !base.IsDestroyed) {
-			Debug.Log ((object)string.Concat ("Invalid NavAgent Position: ", this, " ", ((object)(Vector3)(ref moveToPosition)).ToString (), " (destroying)"));
+		if (!flag && base.transform != null && !base.IsDestroyed) {
+			Debug.Log (string.Concat ("Invalid NavAgent Position: ", this, " ", moveToPosition.ToString (), " (destroying)"));
 			Kill ();
 			return false;
 		}
@@ -396,30 +373,25 @@ public class NPCPlayer : BasePlayer
 
 	private void UpdateSpeed (float delta)
 	{
-		float num = DesiredMoveSpeed ();
-		NavAgent.speed = Mathf.Lerp (NavAgent.speed, num, delta * 8f);
+		float b = DesiredMoveSpeed ();
+		NavAgent.speed = Mathf.Lerp (NavAgent.speed, b, delta * 8f);
 	}
 
 	protected virtual void UpdatePositionAndRotation (Vector3 moveToPosition)
 	{
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		lastPositionUpdateTime = Time.time;
+		lastPositionUpdateTime = UnityEngine.Time.time;
 		ServerPosition = moveToPosition;
 		SetAimDirection (GetAimDirection ());
 	}
 
 	public Vector3 GetPosition ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		return ((Component)this).transform.position;
+		return base.transform.position;
 	}
 
 	public virtual float DesiredMoveSpeed ()
 	{
-		float running = Mathf.Sin (Time.time + randomOffset);
+		float running = Mathf.Sin (UnityEngine.Time.time + randomOffset);
 		return GetSpeed (running, 0f, 0f);
 	}
 
@@ -430,25 +402,9 @@ public class NPCPlayer : BasePlayer
 
 	public virtual Vector3 GetAimDirection ()
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0062: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0037: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0066: Unknown result type (might be due to invalid IL or missing references)
 		float num = Vector3Ex.Distance2D (finalDestination, GetPosition ());
 		if (num >= 1f) {
-			Vector3 val = finalDestination - GetPosition ();
-			Vector3 normalized = ((Vector3)(ref val)).normalized;
+			Vector3 normalized = (finalDestination - GetPosition ()).normalized;
 			return new Vector3 (normalized.x, 0f, normalized.z);
 		}
 		return eyes.BodyForward ();
@@ -456,29 +412,15 @@ public class NPCPlayer : BasePlayer
 
 	public virtual void SetAimDirection (Vector3 newAim)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0069: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
 		if (!(newAim == Vector3.zero)) {
 			AttackEntity attackEntity = GetAttackEntity ();
-			if (Object.op_Implicit ((Object)(object)attackEntity)) {
+			if ((bool)attackEntity) {
 				newAim = attackEntity.ModifyAIAim (newAim);
 			}
 			eyes.rotation = Quaternion.LookRotation (newAim, Vector3.up);
-			Quaternion rotation = eyes.rotation;
-			viewAngles = ((Quaternion)(ref rotation)).eulerAngles;
+			viewAngles = eyes.rotation.eulerAngles;
 			ServerRotation = eyes.rotation;
-			lastPositionUpdateTime = Time.time;
+			lastPositionUpdateTime = UnityEngine.Time.time;
 		}
 	}
 
@@ -489,7 +431,7 @@ public class NPCPlayer : BasePlayer
 		}
 		Item item = FindThrownWeapon ();
 		if (item == null) {
-			lastThrowTime = Time.time;
+			lastThrowTime = UnityEngine.Time.time;
 			return false;
 		}
 		return TryUseThrownWeapon (item, target, attackRate);
@@ -497,28 +439,22 @@ public class NPCPlayer : BasePlayer
 
 	public bool TryUseThrownWeapon (Item item, BaseEntity target, float attackRate)
 	{
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0062: Unknown result type (might be due to invalid IL or missing references)
 		if (HasThrownItemCooldown ()) {
 			return false;
 		}
-		float num = Vector3.Distance (((Component)target).transform.position, ((Component)this).transform.position);
+		float num = Vector3.Distance (target.transform.position, base.transform.position);
 		if (num <= 2f || num >= 20f) {
 			return false;
 		}
-		Vector3 position = ((Component)target).transform.position;
+		Vector3 position = target.transform.position;
 		if (!IsVisible (CenterPoint (), position)) {
 			return false;
 		}
 		if (UseThrownWeapon (item, target)) {
 			if (this is ScarecrowNPC) {
-				ScarecrowNPC.NextBeanCanAllowedTime = Time.time + Halloween.scarecrow_throw_beancan_global_delay;
+				ScarecrowNPC.NextBeanCanAllowedTime = UnityEngine.Time.time + Halloween.scarecrow_throw_beancan_global_delay;
 			}
-			lastThrowTime = Time.time;
+			lastThrowTime = UnityEngine.Time.time;
 			return true;
 		}
 		return false;
@@ -526,42 +462,41 @@ public class NPCPlayer : BasePlayer
 
 	public bool HasThrownItemCooldown ()
 	{
-		return Time.time - lastThrowTime < 10f;
+		return UnityEngine.Time.time - lastThrowTime < 10f;
 	}
 
 	protected bool UseThrownWeapon (Item item, BaseEntity target)
 	{
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
 		UpdateActiveItem (item.uid);
 		ThrownWeapon thrownWeapon = GetActiveItem ().GetHeldEntity () as ThrownWeapon;
-		if ((Object)(object)thrownWeapon == (Object)null) {
+		if (thrownWeapon == null) {
 			return false;
 		}
-		((MonoBehaviour)this).StartCoroutine (DoThrow (thrownWeapon, target));
+		StartCoroutine (DoThrow (thrownWeapon, target));
 		return true;
 	}
 
 	private IEnumerator DoThrow (ThrownWeapon thrownWeapon, BaseEntity target)
 	{
 		modelState.aiming = true;
-		yield return (object)new WaitForSeconds (1.5f);
-		SetAimDirection (Vector3Ex.Direction (((Component)target).transform.position, ((Component)this).transform.position));
+		yield return new WaitForSeconds (1.5f);
+		SetAimDirection (Vector3Ex.Direction (target.transform.position, base.transform.position));
 		thrownWeapon.ResetAttackCooldown ();
-		thrownWeapon.ServerThrow (((Component)target).transform.position);
+		thrownWeapon.ServerThrow (target.transform.position);
 		modelState.aiming = false;
-		((FacepunchBehaviour)this).Invoke ((Action)EquipTest, 0.5f);
+		Invoke (EquipTest, 0.5f);
 	}
 
 	public Item FindThrownWeapon ()
 	{
-		if ((Object)(object)inventory == (Object)null || inventory.containerBelt == null) {
+		if (inventory == null || inventory.containerBelt == null) {
 			return null;
 		}
 		for (int i = 0; i < inventory.containerBelt.capacity; i++) {
 			Item slot = inventory.containerBelt.GetSlot (i);
 			if (slot != null) {
 				ThrownWeapon thrownWeapon = slot.GetHeldEntity () as ThrownWeapon;
-				if ((Object)(object)thrownWeapon != (Object)null) {
+				if (thrownWeapon != null) {
 					return slot;
 				}
 			}

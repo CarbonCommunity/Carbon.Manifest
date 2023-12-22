@@ -11,8 +11,8 @@ public class ItemModDeployable : MonoBehaviour
 
 	public Deployable GetDeployable (BaseEntity entity)
 	{
-		GameObject val = entity.gameManager.FindPrefab (entityPrefab.resourcePath);
-		if ((Object)(object)val == (Object)null) {
+		GameObject gameObject = entity.gameManager.FindPrefab (entityPrefab.resourcePath);
+		if (gameObject == null) {
 			return null;
 		}
 		return entity.prefabAttribute.Find<Deployable> (entityPrefab.resourceID);

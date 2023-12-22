@@ -1,3 +1,4 @@
+#define ENABLE_PROFILER
 using System;
 using Ionic.Zlib;
 using UnityEngine.Profiling;

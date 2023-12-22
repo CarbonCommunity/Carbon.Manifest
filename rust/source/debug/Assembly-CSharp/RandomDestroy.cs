@@ -8,12 +8,11 @@ public class RandomDestroy : MonoBehaviour
 
 	protected void Start ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		uint num = SeedEx.Seed (((Component)this).transform.position, World.Seed + Seed);
-		if (SeedRandom.Value (ref num) > Probability) {
-			GameManager.Destroy ((Component)(object)this);
+		uint seed = base.transform.position.Seed (World.Seed + Seed);
+		if (SeedRandom.Value (ref seed) > Probability) {
+			GameManager.Destroy (this);
 		} else {
-			GameManager.Destroy (((Component)this).gameObject);
+			GameManager.Destroy (base.gameObject);
 		}
 	}
 }

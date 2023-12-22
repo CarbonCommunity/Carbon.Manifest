@@ -55,9 +55,6 @@ public class HableCurve
 
 		public Vector4 toeSegmentA {
 			get {
-				//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-				//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-				//IL_002f: Unknown result type (might be due to invalid IL or missing references)
 				Segment segment = parent.m_Segments [0];
 				return new Vector4 (segment.offsetX, segment.offsetY, segment.scaleX, segment.scaleY);
 			}
@@ -65,9 +62,6 @@ public class HableCurve
 
 		public Vector4 toeSegmentB {
 			get {
-				//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-				//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-				//IL_002d: Unknown result type (might be due to invalid IL or missing references)
 				Segment segment = parent.m_Segments [0];
 				return new Vector4 (segment.lnA, segment.B, 0f, 0f);
 			}
@@ -75,9 +69,6 @@ public class HableCurve
 
 		public Vector4 midSegmentA {
 			get {
-				//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-				//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-				//IL_002f: Unknown result type (might be due to invalid IL or missing references)
 				Segment segment = parent.m_Segments [1];
 				return new Vector4 (segment.offsetX, segment.offsetY, segment.scaleX, segment.scaleY);
 			}
@@ -85,9 +76,6 @@ public class HableCurve
 
 		public Vector4 midSegmentB {
 			get {
-				//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-				//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-				//IL_002d: Unknown result type (might be due to invalid IL or missing references)
 				Segment segment = parent.m_Segments [1];
 				return new Vector4 (segment.lnA, segment.B, 0f, 0f);
 			}
@@ -95,9 +83,6 @@ public class HableCurve
 
 		public Vector4 shoSegmentA {
 			get {
-				//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-				//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-				//IL_002f: Unknown result type (might be due to invalid IL or missing references)
 				Segment segment = parent.m_Segments [2];
 				return new Vector4 (segment.offsetX, segment.offsetY, segment.scaleX, segment.scaleY);
 			}
@@ -105,9 +90,6 @@ public class HableCurve
 
 		public Vector4 shoSegmentB {
 			get {
-				//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-				//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-				//IL_002d: Unknown result type (might be due to invalid IL or missing references)
 				Segment segment = parent.m_Segments [2];
 				return new Vector4 (segment.lnA, segment.B, 0f, 0f);
 			}

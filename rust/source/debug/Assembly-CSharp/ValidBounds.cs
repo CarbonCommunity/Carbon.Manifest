@@ -6,8 +6,7 @@ public class ValidBounds : SingletonComponent<ValidBounds>
 
 	public static bool Test (Vector3 vPos)
 	{
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		if (!Object.op_Implicit ((Object)(object)SingletonComponent<ValidBounds>.Instance)) {
+		if (!SingletonComponent<ValidBounds>.Instance) {
 			return true;
 		}
 		return SingletonComponent<ValidBounds>.Instance.IsInside (vPos);
@@ -15,27 +14,19 @@ public class ValidBounds : SingletonComponent<ValidBounds>
 
 	private void OnDrawGizmosSelected ()
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
 		Gizmos.color = Color.blue;
-		Gizmos.DrawWireCube (((Bounds)(ref worldBounds)).center, ((Bounds)(ref worldBounds)).size);
+		Gizmos.DrawWireCube (worldBounds.center, worldBounds.size);
 	}
 
 	internal bool IsInside (Vector3 vPos)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005c: Unknown result type (might be due to invalid IL or missing references)
-		if (Vector3Ex.IsNaNOrInfinity (vPos)) {
+		if (vPos.IsNaNOrInfinity ()) {
 			return false;
 		}
-		if (!((Bounds)(ref worldBounds)).Contains (vPos)) {
+		if (!worldBounds.Contains (vPos)) {
 			return false;
 		}
-		if ((Object)(object)TerrainMeta.Terrain != (Object)null) {
+		if (TerrainMeta.Terrain != null) {
 			if (World.Procedural && vPos.y < TerrainMeta.Position.y) {
 				return false;
 			}

@@ -67,11 +67,11 @@ public class BaseGameMode : BaseEntity
 	public const Flags Flag_WaitingForPlayers = Flags.Reserved3;
 
 	[Header ("Changelog")]
-	public Phrase[] addedFeatures;
+	public Translate.Phrase[] addedFeatures;
 
-	public Phrase[] removedFeatures;
+	public Translate.Phrase[] removedFeatures;
 
-	public Phrase[] changedFeatures;
+	public Translate.Phrase[] changedFeatures;
 
 	public List<string> convars = new List<string> ();
 
@@ -171,10 +171,7 @@ public class BaseGameMode : BaseEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("BaseGameMode.OnRpcMessage", 0);
-		try {
-		} finally {
-			((IDisposable)val)?.Dispose ();
+		using (TimeWarning.New ("BaseGameMode.OnRpcMessage")) {
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -196,91 +193,77 @@ public class BaseGameMode : BaseEntity
 
 	public void InitScores ()
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Expected O, but got Unknown
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Expected O, but got Unknown
-		//IL_0094: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009b: Expected O, but got Unknown
 		gameModeScores = new GameMode ();
-		gameModeScores.scoreColumns = new List<ScoreColumn> ();
-		gameModeScores.playerScores = new List<PlayerScore> ();
-		gameModeScores.teams = new List<TeamInfo> ();
+		gameModeScores.scoreColumns = new List<GameMode.ScoreColumn> ();
+		gameModeScores.playerScores = new List<GameMode.PlayerScore> ();
+		gameModeScores.teams = new List<GameMode.TeamInfo> ();
 		GameModeTeam[] array = teams;
 		foreach (GameModeTeam gameModeTeam in array) {
-			TeamInfo val = new TeamInfo ();
-			val.score = 0;
-			val.ShouldPool = false;
-			gameModeScores.teams.Add (val);
+			GameMode.TeamInfo teamInfo = new GameMode.TeamInfo ();
+			teamInfo.score = 0;
+			teamInfo.ShouldPool = false;
+			gameModeScores.teams.Add (teamInfo);
 		}
 		string[] array2 = scoreColumns;
-		foreach (string name in array2) {
-			ScoreColumn val2 = new ScoreColumn ();
-			val2.name = name;
-			val2.ShouldPool = false;
-			gameModeScores.scoreColumns.Add (val2);
+		foreach (string text in array2) {
+			GameMode.ScoreColumn scoreColumn = new GameMode.ScoreColumn ();
+			scoreColumn.name = text;
+			scoreColumn.ShouldPool = false;
+			gameModeScores.scoreColumns.Add (scoreColumn);
 		}
 		gameModeScores.ShouldPool = false;
 	}
 
 	public void CopyGameModeScores (GameMode from, GameMode to)
 	{
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Expected O, but got Unknown
-		//IL_0090: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0097: Expected O, but got Unknown
-		//IL_00eb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f2: Expected O, but got Unknown
 		to.teams.Clear ();
 		to.scoreColumns.Clear ();
 		to.playerScores.Clear ();
-		foreach (TeamInfo team in from.teams) {
-			TeamInfo val = new TeamInfo ();
-			val.score = team.score;
-			to.teams.Add (val);
+		foreach (GameMode.TeamInfo team in from.teams) {
+			GameMode.TeamInfo teamInfo = new GameMode.TeamInfo ();
+			teamInfo.score = team.score;
+			to.teams.Add (teamInfo);
 		}
-		foreach (ScoreColumn scoreColumn in from.scoreColumns) {
-			ScoreColumn val2 = new ScoreColumn ();
-			val2.name = scoreColumn.name;
-			to.scoreColumns.Add (val2);
+		foreach (GameMode.ScoreColumn scoreColumn2 in from.scoreColumns) {
+			GameMode.ScoreColumn scoreColumn = new GameMode.ScoreColumn ();
+			scoreColumn.name = scoreColumn2.name;
+			to.scoreColumns.Add (scoreColumn);
 		}
-		foreach (PlayerScore playerScore in from.playerScores) {
-			PlayerScore val3 = new PlayerScore ();
-			val3.playerName = playerScore.playerName;
-			val3.userid = playerScore.userid;
-			val3.team = playerScore.team;
-			val3.scores = new List<int> ();
-			foreach (int score in playerScore.scores) {
-				val3.scores.Add (score);
+		foreach (GameMode.PlayerScore playerScore2 in from.playerScores) {
+			GameMode.PlayerScore playerScore = new GameMode.PlayerScore ();
+			playerScore.playerName = playerScore2.playerName;
+			playerScore.userid = playerScore2.userid;
+			playerScore.team = playerScore2.team;
+			playerScore.scores = new List<int> ();
+			foreach (int score in playerScore2.scores) {
+				playerScore.scores.Add (score);
 			}
-			to.playerScores.Add (val3);
+			to.playerScores.Add (playerScore);
 		}
 	}
 
-	public PlayerScore GetPlayerScoreForPlayer (BasePlayer player)
+	public GameMode.PlayerScore GetPlayerScoreForPlayer (BasePlayer player)
 	{
-		//IL_005d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0063: Expected O, but got Unknown
-		PlayerScore val = null;
-		foreach (PlayerScore playerScore in gameModeScores.playerScores) {
-			if (playerScore.userid == player.userID) {
-				val = playerScore;
+		GameMode.PlayerScore playerScore = null;
+		foreach (GameMode.PlayerScore playerScore2 in gameModeScores.playerScores) {
+			if (playerScore2.userid == player.userID) {
+				playerScore = playerScore2;
 				break;
 			}
 		}
-		if (val == null) {
-			val = new PlayerScore ();
-			val.ShouldPool = false;
-			val.playerName = player.displayName;
-			val.userid = player.userID;
-			val.scores = new List<int> ();
+		if (playerScore == null) {
+			playerScore = new GameMode.PlayerScore ();
+			playerScore.ShouldPool = false;
+			playerScore.playerName = player.displayName;
+			playerScore.userid = player.userID;
+			playerScore.scores = new List<int> ();
 			string[] array = scoreColumns;
 			foreach (string text in array) {
-				val.scores.Add (0);
+				playerScore.scores.Add (0);
 			}
-			gameModeScores.playerScores.Add (val);
+			gameModeScores.playerScores.Add (playerScore);
 		}
-		return val;
+		return playerScore;
 	}
 
 	public int GetScoreIndexByName (string name)
@@ -290,7 +273,7 @@ public class BaseGameMode : BaseEntity
 				return i;
 			}
 		}
-		Debug.LogWarning ((object)("No score colum named : " + name + "returning default"));
+		Debug.LogWarning ("No score colum named : " + name + "returning default");
 		return 0;
 	}
 
@@ -319,12 +302,12 @@ public class BaseGameMode : BaseEntity
 		int num6 = ScoreColumnIndex (victoryScoreName);
 		if (num6 != -1) {
 			for (int j = 0; j < gameModeScores.playerScores.Count; j++) {
-				PlayerScore val = gameModeScores.playerScores [j];
-				if (val.scores [num6] > num3) {
-					num3 = val.scores [num6];
+				GameMode.PlayerScore playerScore = gameModeScores.playerScores [j];
+				if (playerScore.scores [num6] > num3) {
+					num3 = playerScore.scores [num6];
 					num4 = j;
 					num5 = 1;
-				} else if (val.scores [num6] == num3) {
+				} else if (playerScore.scores [num6] == num3) {
 					num4 = j;
 					num5++;
 				}
@@ -353,9 +336,9 @@ public class BaseGameMode : BaseEntity
 		int num3 = ScoreColumnIndex (victoryScoreName);
 		if (num3 != -1) {
 			for (int j = 0; j < gameModeScores.playerScores.Count; j++) {
-				PlayerScore val = gameModeScores.playerScores [j];
-				if (val.scores [num3] > num) {
-					num = val.scores [num3];
+				GameMode.PlayerScore playerScore = gameModeScores.playerScores [j];
+				if (playerScore.scores [num3] > num) {
+					num = playerScore.scores [num3];
 					num2 = j;
 				}
 			}
@@ -379,7 +362,7 @@ public class BaseGameMode : BaseEntity
 		}
 		int num2 = GetPlayerScoreForPlayer (player).scores [num];
 		int num3 = 0;
-		foreach (PlayerScore playerScore in gameModeScores.playerScores) {
+		foreach (GameMode.PlayerScore playerScore in gameModeScores.playerScores) {
 			if (playerScore.scores [num] > num2 && playerScore.userid != player.userID) {
 				num3++;
 			}
@@ -409,14 +392,14 @@ public class BaseGameMode : BaseEntity
 
 	public virtual bool DidPlayerWin (BasePlayer player)
 	{
-		if ((Object)(object)player == (Object)null) {
+		if (player == null) {
 			return false;
 		}
 		if (IsDraw ()) {
 			return false;
 		}
 		if (IsTeamGame ()) {
-			PlayerScore playerScoreForPlayer = GetPlayerScoreForPlayer (player);
+			GameMode.PlayerScore playerScoreForPlayer = GetPlayerScoreForPlayer (player);
 			if (playerScoreForPlayer.team == -1) {
 				return false;
 			}
@@ -438,8 +421,7 @@ public class BaseGameMode : BaseEntity
 	public void ModifyTeamScore (int teamIndex, int modifyAmount)
 	{
 		if (KeepScores ()) {
-			TeamInfo obj = gameModeScores.teams [teamIndex];
-			obj.score += modifyAmount;
+			gameModeScores.teams [teamIndex].score += modifyAmount;
 			SendNetworkUpdate ();
 			CheckGameConditions ();
 		}
@@ -471,7 +453,7 @@ public class BaseGameMode : BaseEntity
 	public void ModifyPlayerGameScore (BasePlayer player, int scoreIndex, int modifyAmount)
 	{
 		if (KeepScores ()) {
-			PlayerScore playerScoreForPlayer = GetPlayerScoreForPlayer (player);
+			GameMode.PlayerScore playerScoreForPlayer = GetPlayerScoreForPlayer (player);
 			int playerGameScore = GetPlayerGameScore (player, scoreIndex);
 			if (IsTeamGame () && player.gamemodeteam >= 0 && scoreIndex == GetScoreIndexByName (teamScoreName)) {
 				gameModeScores.teams [player.gamemodeteam].score = gameModeScores.teams [player.gamemodeteam].score + modifyAmount;
@@ -482,14 +464,14 @@ public class BaseGameMode : BaseEntity
 
 	public int GetPlayerGameScore (BasePlayer player, int scoreIndex)
 	{
-		PlayerScore playerScoreForPlayer = GetPlayerScoreForPlayer (player);
+		GameMode.PlayerScore playerScoreForPlayer = GetPlayerScoreForPlayer (player);
 		return playerScoreForPlayer.scores [scoreIndex];
 	}
 
 	public void SetPlayerTeam (BasePlayer player, int newTeam)
 	{
 		player.gamemodeteam = newTeam;
-		PlayerScore playerScoreForPlayer = GetPlayerScoreForPlayer (player);
+		GameMode.PlayerScore playerScoreForPlayer = GetPlayerScoreForPlayer (player);
 		playerScoreForPlayer.team = newTeam;
 		SendNetworkUpdate ();
 	}
@@ -497,7 +479,7 @@ public class BaseGameMode : BaseEntity
 	public void SetPlayerGameScore (BasePlayer player, int scoreIndex, int scoreValue)
 	{
 		if (!base.isClient && KeepScores ()) {
-			PlayerScore playerScoreForPlayer = GetPlayerScoreForPlayer (player);
+			GameMode.PlayerScore playerScoreForPlayer = GetPlayerScoreForPlayer (player);
 			playerScoreForPlayer.scores [scoreIndex] = scoreValue;
 			SendNetworkUpdate ();
 			CheckGameConditions ();
@@ -528,23 +510,21 @@ public class BaseGameMode : BaseEntity
 
 	private void DeleteEntities ()
 	{
-		//IL_0080: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0085: Unknown result type (might be due to invalid IL or missing references)
 		if (!SingletonComponent<ServerMgr>.Instance.runFrameUpdate) {
-			((FacepunchBehaviour)this).Invoke ((Action)DeleteEntities, 5f);
+			Invoke (DeleteEntities, 5f);
 		}
 		MonumentInfo[] array = TerrainMeta.Path.Monuments.Where ((MonumentInfo x) => x.IsSafeZone).ToArray ();
 		MonumentInfo[] array2 = array;
 		foreach (MonumentInfo monumentInfo in array2) {
 			List<BaseEntity> list = new List<BaseEntity> ();
-			Vis.Entities (new OBB (((Component)monumentInfo).transform, monumentInfo.Bounds), list, -1, (QueryTriggerInteraction)2);
+			Vis.Entities (new OBB (monumentInfo.transform, monumentInfo.Bounds), list);
 			foreach (BaseEntity item in list) {
 				if (!safeZone && (item is HumanNPC || item is NPCAutoTurret || item is Marketplace)) {
 					item.Kill ();
 				}
 			}
 			if (!safeZone) {
-				NPCSpawner[] componentsInChildren = ((Component)monumentInfo).GetComponentsInChildren<NPCSpawner> ();
+				NPCSpawner[] componentsInChildren = monumentInfo.GetComponentsInChildren<NPCSpawner> ();
 				foreach (NPCSpawner nPCSpawner in componentsInChildren) {
 					nPCSpawner.isSpawnerActive = false;
 				}
@@ -552,7 +532,7 @@ public class BaseGameMode : BaseEntity
 			if (mlrs) {
 				continue;
 			}
-			IndividualSpawner[] componentsInChildren2 = ((Component)monumentInfo).GetComponentsInChildren<IndividualSpawner> ();
+			IndividualSpawner[] componentsInChildren2 = monumentInfo.GetComponentsInChildren<IndividualSpawner> ();
 			foreach (IndividualSpawner individualSpawner in componentsInChildren2) {
 				if (individualSpawner.entityPrefab.isValid && individualSpawner.entityPrefab.GetEntity () is MLRS) {
 					individualSpawner.isSpawnerActive = false;
@@ -587,7 +567,7 @@ public class BaseGameMode : BaseEntity
 		if (wipeBpsOnProtocol) {
 			SingletonComponent<ServerMgr>.Instance.persistance.Dispose ();
 			SingletonComponent<ServerMgr>.Instance.persistance = new UserPersistance (ConVar.Server.rootFolder);
-			BasePlayer[] array = Object.FindObjectsOfType<BasePlayer> ();
+			BasePlayer[] array = UnityEngine.Object.FindObjectsOfType<BasePlayer> ();
 			foreach (BasePlayer basePlayer in array) {
 				basePlayer.InvalidateCachedPeristantPlayer ();
 			}
@@ -641,37 +621,35 @@ public class BaseGameMode : BaseEntity
 
 	public static void CreateGameMode (string overrideMode = "")
 	{
-		//IL_009c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a1: Unknown result type (might be due to invalid IL or missing references)
 		BaseGameMode activeGameMode = GetActiveGameMode (serverside: true);
-		if (Object.op_Implicit ((Object)(object)activeGameMode)) {
+		if ((bool)activeGameMode) {
 			activeGameMode.ShutdownGame ();
 			activeGameMode.Kill ();
 			SetActiveGameMode (null, serverside: true);
 		}
 		string text = ConVar.Server.gamemode;
-		Debug.Log ((object)("Gamemode Convar :" + text));
+		Debug.Log ("Gamemode Convar :" + text);
 		if (!string.IsNullOrEmpty (overrideMode)) {
 			text = overrideMode;
 		}
 		if (string.IsNullOrEmpty (text)) {
-			Debug.Log ((object)"No Gamemode.");
+			Debug.Log ("No Gamemode.");
 			if (BaseGameMode.GameModeChanged != null) {
 				BaseGameMode.GameModeChanged (null);
 			}
 		} else {
 			BaseEntity baseEntity = GameManager.server.CreateEntity ("assets/prefabs/gamemodes/" + text + ".prefab", Vector3.zero, Quaternion.identity);
-			if (Object.op_Implicit ((Object)(object)baseEntity)) {
+			if ((bool)baseEntity) {
 				baseEntity.Spawn ();
 			} else {
-				Debug.Log ((object)("Failed to create gamemode : " + text));
+				Debug.Log ("Failed to create gamemode : " + text);
 			}
 		}
 	}
 
 	public static void SetActiveGameMode (BaseGameMode newActive, bool serverside)
 	{
-		if (Object.op_Implicit ((Object)(object)newActive)) {
+		if ((bool)newActive) {
 			newActive.InitScores ();
 		}
 		if (BaseGameMode.GameModeChanged != null) {
@@ -698,10 +676,10 @@ public class BaseGameMode : BaseEntity
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.gameMode = Pool.Get<GameMode> ();
-		info.msg.gameMode.scoreColumns = Pool.GetList<ScoreColumn> ();
-		info.msg.gameMode.playerScores = Pool.GetList<PlayerScore> ();
-		info.msg.gameMode.teams = Pool.GetList<TeamInfo> ();
+		info.msg.gameMode = Facepunch.Pool.Get<GameMode> ();
+		info.msg.gameMode.scoreColumns = Facepunch.Pool.GetList<GameMode.ScoreColumn> ();
+		info.msg.gameMode.playerScores = Facepunch.Pool.GetList<GameMode.PlayerScore> ();
+		info.msg.gameMode.teams = Facepunch.Pool.GetList<GameMode.TeamInfo> ();
 		CopyGameModeScores (gameModeScores, info.msg.gameMode);
 		info.msg.gameMode.ShouldPool = true;
 	}
@@ -734,9 +712,9 @@ public class BaseGameMode : BaseEntity
 	public override void InitShared ()
 	{
 		base.InitShared ();
-		if ((Object)(object)GetActiveGameMode (base.isServer) != (Object)null && (Object)(object)GetActiveGameMode (base.isServer) != (Object)(object)this) {
-			Debug.LogError ((object)("Already an active game mode! was : " + ((Object)GetActiveGameMode (base.isServer)).name));
-			Object.Destroy ((Object)(object)((Component)GetActiveGameMode (base.isServer)).gameObject);
+		if (GetActiveGameMode (base.isServer) != null && GetActiveGameMode (base.isServer) != this) {
+			Debug.LogError ("Already an active game mode! was : " + GetActiveGameMode (base.isServer).name);
+			UnityEngine.Object.Destroy (GetActiveGameMode (base.isServer).gameObject);
 		}
 		SetupTags ();
 		SetActiveGameMode (this, base.isServer);
@@ -745,7 +723,7 @@ public class BaseGameMode : BaseEntity
 
 	public override void DestroyShared ()
 	{
-		if ((Object)(object)GetActiveGameMode (base.isServer) == (Object)(object)this) {
+		if (GetActiveGameMode (base.isServer) == this) {
 			SetActiveGameMode (null, base.isServer);
 		}
 		base.DestroyShared ();
@@ -753,34 +731,25 @@ public class BaseGameMode : BaseEntity
 
 	protected virtual void OnCreated ()
 	{
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0072: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0077: Unknown result type (might be due to invalid IL or missing references)
 		OnCreated_Vanilla ();
 		if (base.isServer) {
 			foreach (string convar in convars) {
-				ConsoleSystem.Run (Option.Server, convar, Array.Empty<object> ());
+				ConsoleSystem.Run (ConsoleSystem.Option.Server, convar);
 			}
-			gameModeSpawnGroups = Object.FindObjectsOfType<GameModeSpawnGroup> ();
+			gameModeSpawnGroups = UnityEngine.Object.FindObjectsOfType<GameModeSpawnGroup> ();
 			UnassignAllPlayers ();
-			Enumerator<BasePlayer> enumerator2 = BasePlayer.activePlayerList.GetEnumerator ();
-			try {
-				while (enumerator2.MoveNext ()) {
-					BasePlayer current2 = enumerator2.Current;
-					AutoAssignTeam (current2);
-				}
-			} finally {
-				((IDisposable)enumerator2).Dispose ();
+			foreach (BasePlayer activePlayer in BasePlayer.activePlayerList) {
+				AutoAssignTeam (activePlayer);
 			}
 			InstallSpawnpoints ();
 			ResetMatch ();
 		}
-		Debug.Log ((object)("Game created! type was : " + ((Object)this).name));
+		Debug.Log ("Game created! type was : " + base.name);
 	}
 
 	protected virtual void OnMatchBegin ()
 	{
-		matchStartTime = Time.realtimeSinceStartup;
+		matchStartTime = UnityEngine.Time.realtimeSinceStartup;
 		SetFlag (Flags.Reserved3, b: false);
 		SetFlag (Flags.Reserved1, b: false);
 		SetFlag (Flags.Reserved2, b: false);
@@ -788,8 +757,6 @@ public class BaseGameMode : BaseEntity
 
 	public virtual void ResetMatch ()
 	{
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
 		if (IsWaitingForPlayers ()) {
 			return;
 		}
@@ -797,23 +764,17 @@ public class BaseGameMode : BaseEntity
 		SetFlag (Flags.Reserved1, b: true, recursive: false, networkupdate: false);
 		SetFlag (Flags.Reserved2, b: false);
 		ResetTeamScores ();
-		Enumerator<BasePlayer> enumerator = BasePlayer.activePlayerList.GetEnumerator ();
-		try {
-			while (enumerator.MoveNext ()) {
-				BasePlayer current = enumerator.Current;
-				ResetPlayerScores (current);
-				current.Hurt (100000f, DamageType.Suicide, null, useProtection: false);
-				current.Respawn ();
-			}
-		} finally {
-			((IDisposable)enumerator).Dispose ();
+		foreach (BasePlayer activePlayer in BasePlayer.activePlayerList) {
+			ResetPlayerScores (activePlayer);
+			activePlayer.Hurt (100000f, DamageType.Suicide, null, useProtection: false);
+			activePlayer.Respawn ();
 		}
 		GameModeSpawnGroup[] array = gameModeSpawnGroups;
 		foreach (GameModeSpawnGroup gameModeSpawnGroup in array) {
 			gameModeSpawnGroup.ResetSpawnGroup ();
 		}
 		matchStartTime = -1f;
-		((FacepunchBehaviour)this).Invoke ((Action)OnMatchBegin, warmupDuration);
+		Invoke (OnMatchBegin, warmupDuration);
 		isResetting = false;
 	}
 
@@ -826,51 +787,35 @@ public class BaseGameMode : BaseEntity
 
 	public virtual void ShutdownGame ()
 	{
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
 		ResetTeamScores ();
-		Enumerator<BasePlayer> enumerator = BasePlayer.activePlayerList.GetEnumerator ();
-		try {
-			while (enumerator.MoveNext ()) {
-				BasePlayer current = enumerator.Current;
-				SetPlayerTeam (current, -1);
-			}
-		} finally {
-			((IDisposable)enumerator).Dispose ();
+		foreach (BasePlayer activePlayer in BasePlayer.activePlayerList) {
+			SetPlayerTeam (activePlayer, -1);
 		}
 	}
 
 	private void Update ()
 	{
 		if (!base.isClient) {
-			OnThink (Time.deltaTime);
+			OnThink (UnityEngine.Time.deltaTime);
 		}
 	}
 
 	protected virtual void OnThink (float delta)
 	{
-		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006d: Unknown result type (might be due to invalid IL or missing references)
 		if (matchStartTime != -1f) {
-			float num = Time.realtimeSinceStartup - matchStartTime;
+			float num = UnityEngine.Time.realtimeSinceStartup - matchStartTime;
 			if (IsMatchActive () && matchDuration > 0f && num >= matchDuration) {
 				OnMatchEnd ();
 			}
 		}
 		int num2 = 0;
-		Enumerator<BasePlayer> enumerator = BasePlayer.activePlayerList.GetEnumerator ();
-		try {
-			while (enumerator.MoveNext ()) {
-				BasePlayer current = enumerator.Current;
-				if (autoHealDelay > 0f && current.healthFraction < 1f && current.IsAlive () && !current.IsWounded () && current.SecondsSinceAttacked >= autoHealDelay) {
-					current.Heal (current.MaxHealth () * delta / autoHealDuration);
-				}
-				if (current.IsConnected) {
-					num2++;
-				}
+		foreach (BasePlayer activePlayer in BasePlayer.activePlayerList) {
+			if (autoHealDelay > 0f && activePlayer.healthFraction < 1f && activePlayer.IsAlive () && !activePlayer.IsWounded () && activePlayer.SecondsSinceAttacked >= autoHealDelay) {
+				activePlayer.Heal (activePlayer.MaxHealth () * delta / autoHealDuration);
 			}
-		} finally {
-			((IDisposable)enumerator).Dispose ();
+			if (activePlayer.IsConnected) {
+				num2++;
+			}
 		}
 		if (num2 < minPlayersToStart && !IsWaitingForPlayers ()) {
 			if (IsMatchActive ()) {
@@ -882,17 +827,17 @@ public class BaseGameMode : BaseEntity
 			SetFlag (Flags.Reserved1, b: false);
 		} else if (IsWaitingForPlayers () && num2 >= minPlayersToStart) {
 			SetFlag (Flags.Reserved3, b: false);
-			((FacepunchBehaviour)this).CancelInvoke ((Action)ResetMatch);
+			CancelInvoke (ResetMatch);
 			ResetMatch ();
 		}
 	}
 
 	public virtual void OnMatchEnd ()
 	{
-		matchEndTime = Time.time;
-		Debug.Log ((object)"Match over!");
+		matchEndTime = UnityEngine.Time.time;
+		Debug.Log ("Match over!");
 		SetFlag (Flags.Reserved2, b: true);
-		((FacepunchBehaviour)this).Invoke ((Action)ResetMatch, timeBetweenMatches);
+		Invoke (ResetMatch, timeBetweenMatches);
 	}
 
 	public virtual void OnNewPlayer (BasePlayer player)
@@ -921,38 +866,22 @@ public class BaseGameMode : BaseEntity
 
 	public virtual void UnassignAllPlayers ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		Enumerator<BasePlayer> enumerator = BasePlayer.activePlayerList.GetEnumerator ();
-		try {
-			while (enumerator.MoveNext ()) {
-				BasePlayer current = enumerator.Current;
-				SetPlayerTeam (current, -1);
-			}
-		} finally {
-			((IDisposable)enumerator).Dispose ();
+		foreach (BasePlayer activePlayer in BasePlayer.activePlayerList) {
+			SetPlayerTeam (activePlayer, -1);
 		}
 	}
 
 	public void AutoAssignTeam (BasePlayer player)
 	{
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
 		int newTeam = 0;
 		int[] array = new int[teams.Length];
-		int num = Random.Range (0, teams.Length);
+		int num = UnityEngine.Random.Range (0, teams.Length);
 		int num2 = 0;
 		if (teams.Length > 1) {
-			Enumerator<BasePlayer> enumerator = BasePlayer.activePlayerList.GetEnumerator ();
-			try {
-				while (enumerator.MoveNext ()) {
-					BasePlayer current = enumerator.Current;
-					if (current.gamemodeteam >= 0 && current.gamemodeteam < teams.Length) {
-						array [current.gamemodeteam]++;
-					}
+			foreach (BasePlayer activePlayer in BasePlayer.activePlayerList) {
+				if (activePlayer.gamemodeteam >= 0 && activePlayer.gamemodeteam < teams.Length) {
+					array [activePlayer.gamemodeteam]++;
 				}
-			} finally {
-				((IDisposable)enumerator).Dispose ();
 			}
 			for (int i = 0; i < array.Length; i++) {
 				if (array [i] < num2) {
@@ -969,15 +898,15 @@ public class BaseGameMode : BaseEntity
 		if (gameModeScores == null || base.isClient) {
 			return;
 		}
-		PlayerScore val = null;
-		foreach (PlayerScore playerScore in gameModeScores.playerScores) {
-			if (playerScore.userid == player.userID) {
-				val = playerScore;
+		GameMode.PlayerScore playerScore = null;
+		foreach (GameMode.PlayerScore playerScore2 in gameModeScores.playerScores) {
+			if (playerScore2.userid == player.userID) {
+				playerScore = playerScore2;
 				break;
 			}
 		}
-		if (val != null) {
-			gameModeScores.playerScores.Remove (val);
+		if (playerScore != null) {
+			gameModeScores.playerScores.Remove (playerScore);
 		}
 	}
 
@@ -999,43 +928,33 @@ public class BaseGameMode : BaseEntity
 
 	public virtual void OnPlayerDeath (BasePlayer instigator, BasePlayer victim, HitInfo deathInfo = null)
 	{
-		//IL_0134: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01dd: Unknown result type (might be due to invalid IL or missing references)
 		if (!IsMatchActive ()) {
 			return;
 		}
-		if ((Object)(object)victim != (Object)null && victim.IsConnected && !victim.IsNpc) {
+		if (victim != null && victim.IsConnected && !victim.IsNpc) {
 			ModifyPlayerGameScore (victim, "deaths", 1);
 		}
-		bool flag = IsTeamGame () && (Object)(object)instigator != (Object)null && (Object)(object)victim != (Object)null && instigator.gamemodeteam == victim.gamemodeteam;
-		if ((Object)(object)instigator != (Object)null && (Object)(object)victim != (Object)(object)instigator && !flag && !instigator.IsNpc) {
+		bool flag = IsTeamGame () && instigator != null && victim != null && instigator.gamemodeteam == victim.gamemodeteam;
+		if (instigator != null && victim != instigator && !flag && !instigator.IsNpc) {
 			ModifyPlayerGameScore (instigator, "kills", 1);
 		}
-		if ((Object)(object)instigator != (Object)null && instigator.IsConnected && !instigator.IsNpc && (Object)(object)instigator != (Object)(object)victim) {
+		if (instigator != null && instigator.IsConnected && !instigator.IsNpc && instigator != victim) {
 			ClientRPCPlayer (null, instigator, "RPC_ScoreSplash", victim.displayName, 100, arg3: true);
 		}
-		if (hasKillFeed && (Object)(object)instigator != (Object)null && (Object)(object)victim != (Object)null && (Object)(object)deathInfo.Weapon != (Object)null && deathInfo.Weapon.GetItem () != null) {
-			string text = Vector3.Distance (((Component)instigator).transform.position, ((Component)victim).transform.position).ToString ("N0") + "m";
+		if (hasKillFeed && instigator != null && victim != null && deathInfo.Weapon != null && deathInfo.Weapon.GetItem () != null) {
+			string text = Vector3.Distance (instigator.transform.position, victim.transform.position).ToString ("N0") + "m";
 			string text2 = " with a " + deathInfo.Weapon.GetItem ().info.displayName.translated + " from " + text;
 			string msg = "You Killed " + victim.displayName + text2;
 			string msg2 = instigator.displayName + " Killed You" + text2;
 			string msg3 = instigator.displayName + " Killed" + victim.displayName + text2;
-			Enumerator<BasePlayer> enumerator = BasePlayer.activePlayerList.GetEnumerator ();
-			try {
-				while (enumerator.MoveNext ()) {
-					BasePlayer current = enumerator.Current;
-					if ((Object)(object)current == (Object)(object)instigator) {
-						current.ChatMessage (msg);
-					} else if ((Object)(object)current == (Object)(object)victim) {
-						current.ChatMessage (msg2);
-					} else if (BasePlayer.activePlayerList.Count <= 5) {
-						current.ChatMessage (msg3);
-					}
+			foreach (BasePlayer activePlayer in BasePlayer.activePlayerList) {
+				if (activePlayer == instigator) {
+					activePlayer.ChatMessage (msg);
+				} else if (activePlayer == victim) {
+					activePlayer.ChatMessage (msg2);
+				} else if (BasePlayer.activePlayerList.Count <= 5) {
+					activePlayer.ChatMessage (msg3);
 				}
-			} finally {
-				((IDisposable)enumerator).Dispose ();
 			}
 		}
 		CheckGameConditions (force: true);
@@ -1073,7 +992,7 @@ public class BaseGameMode : BaseEntity
 		if (num == -1) {
 			return;
 		}
-		foreach (PlayerScore playerScore in gameModeScores.playerScores) {
+		foreach (GameMode.PlayerScore playerScore in gameModeScores.playerScores) {
 			if (playerScore.scores [num] >= numScoreForVictory) {
 				OnMatchEnd ();
 			}
@@ -1084,15 +1003,15 @@ public class BaseGameMode : BaseEntity
 	{
 		PlayerInventoryProperties playerInventoryProperties;
 		if (!IsTeamGame ()) {
-			playerInventoryProperties = ((!useStaticLoadoutPerPlayer) ? loadouts [Random.Range (0, loadouts.Length)] : loadouts [SeedRandom.Range ((uint)player.userID, 0, loadouts.Length)]);
+			playerInventoryProperties = ((!useStaticLoadoutPerPlayer) ? loadouts [UnityEngine.Random.Range (0, loadouts.Length)] : loadouts [SeedRandom.Range ((uint)player.userID, 0, loadouts.Length)]);
 		} else {
 			if (player.gamemodeteam == -1) {
-				Debug.LogWarning ((object)"Player loading out without team assigned, auto assigning!");
+				Debug.LogWarning ("Player loading out without team assigned, auto assigning!");
 				AutoAssignTeam (player);
 			}
 			playerInventoryProperties = teams [player.gamemodeteam].teamloadouts [SeedRandom.Range ((uint)player.userID, 0, teams [player.gamemodeteam].teamloadouts.Length)];
 		}
-		if (Object.op_Implicit ((Object)(object)playerInventoryProperties)) {
+		if ((bool)playerInventoryProperties) {
 			playerInventoryProperties.GiveToPlayer (player);
 		} else {
 			player.inventory.GiveItem (ItemManager.CreateByName ("hazmatsuit", 1, 0uL), player.inventory.containerWear);
@@ -1102,9 +1021,9 @@ public class BaseGameMode : BaseEntity
 		}
 		foreach (Item item in player.inventory.containerBelt.itemList) {
 			BaseEntity heldEntity = item.GetHeldEntity ();
-			if ((Object)(object)heldEntity != (Object)null) {
-				BaseProjectile component = ((Component)heldEntity).GetComponent<BaseProjectile> ();
-				if ((Object)(object)component != (Object)null) {
+			if (heldEntity != null) {
+				BaseProjectile component = heldEntity.GetComponent<BaseProjectile> ();
+				if (component != null) {
 					component.TopUpAmmo ();
 				}
 			}
@@ -1115,56 +1034,45 @@ public class BaseGameMode : BaseEntity
 	{
 		allspawns = GameObject.FindGameObjectsWithTag ("spawnpoint");
 		if (allspawns != null) {
-			Debug.Log ((object)("Installed : " + allspawns.Length + "spawn points."));
+			Debug.Log ("Installed : " + allspawns.Length + "spawn points.");
 		}
 	}
 
 	public virtual BasePlayer.SpawnPoint GetPlayerSpawn (BasePlayer forPlayer)
 	{
-		//IL_01f8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01fd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0209: Unknown result type (might be due to invalid IL or missing references)
-		//IL_020e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_017c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0181: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0183: Unknown result type (might be due to invalid IL or missing references)
-		//IL_018c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c3: Unknown result type (might be due to invalid IL or missing references)
 		if (allspawns == null) {
 			InstallSpawnpoints ();
 		}
 		float num = 0f;
-		int num2 = Random.Range (0, allspawns.Length);
-		if (allspawns.Length != 0 && (Object)(object)forPlayer != (Object)null) {
+		int num2 = UnityEngine.Random.Range (0, allspawns.Length);
+		if (allspawns.Length != 0 && forPlayer != null) {
 			for (int i = 0; i < allspawns.Length; i++) {
-				GameObject val = allspawns [i];
+				GameObject gameObject = allspawns [i];
 				float num3 = 0f;
 				for (int j = 0; j < BasePlayer.activePlayerList.Count; j++) {
 					BasePlayer basePlayer = BasePlayer.activePlayerList [j];
-					if (!((Object)(object)basePlayer == (Object)null) && basePlayer.IsAlive () && !((Object)(object)basePlayer == (Object)(object)forPlayer)) {
-						float num4 = Vector3.Distance (((Component)basePlayer).transform.position, val.transform.position);
-						num3 -= 100f * (1f - Mathf.InverseLerp (8f, 16f, num4));
+					if (!(basePlayer == null) && basePlayer.IsAlive () && !(basePlayer == forPlayer)) {
+						float value = Vector3.Distance (basePlayer.transform.position, gameObject.transform.position);
+						num3 -= 100f * (1f - Mathf.InverseLerp (8f, 16f, value));
 						if (!IsTeamGame () || basePlayer.gamemodeteam != forPlayer.gamemodeteam) {
-							num3 += 100f * Mathf.InverseLerp (16f, 32f, num4);
+							num3 += 100f * Mathf.InverseLerp (16f, 32f, value);
 						}
 					}
 				}
-				Vector3 val2 = ((forPlayer.ServerCurrentDeathNote == null) ? allspawns [Random.Range (0, allspawns.Length)].transform.position : forPlayer.ServerCurrentDeathNote.worldPosition);
-				float num5 = Vector3.Distance (val2, val.transform.position);
-				float num6 = Mathf.InverseLerp (8f, 25f, num5);
-				num3 *= num6;
+				Vector3 a = ((forPlayer.ServerCurrentDeathNote == null) ? allspawns [UnityEngine.Random.Range (0, allspawns.Length)].transform.position : forPlayer.ServerCurrentDeathNote.worldPosition);
+				float value2 = Vector3.Distance (a, gameObject.transform.position);
+				float num4 = Mathf.InverseLerp (8f, 25f, value2);
+				num3 *= num4;
 				if (num3 > num) {
 					num2 = i;
 					num = num3;
 				}
 			}
 		}
-		GameObject val3 = allspawns [num2];
+		GameObject gameObject2 = allspawns [num2];
 		BasePlayer.SpawnPoint spawnPoint = new BasePlayer.SpawnPoint ();
-		spawnPoint.pos = val3.transform.position;
-		spawnPoint.rot = val3.transform.rotation;
+		spawnPoint.pos = gameObject2.transform.position;
+		spawnPoint.rot = gameObject2.transform.rotation;
 		return spawnPoint;
 	}
 

@@ -20,7 +20,7 @@ public class TerrainAtlasSet : ScriptableObject
 		internal void CheckReset ()
 		{
 			if (maps == null) {
-				maps = (Texture2D[])(object)new Texture2D[8];
+				maps = new Texture2D[8];
 			} else if (maps.Length != 8) {
 				Array.Resize (ref maps, 8);
 			}
@@ -81,12 +81,6 @@ public class TerrainAtlasSet : ScriptableObject
 
 	public void CheckReset ()
 	{
-		//IL_012c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0131: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0151: Unknown result type (might be due to invalid IL or missing references)
-		//IL_016c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0171: Unknown result type (might be due to invalid IL or missing references)
 		if (splatNames == null) {
 			splatNames = new string[8] { "Dirt", "Snow", "Sand", "Rock", "Grass", "Forest", "Stones", "Gravel" };
 		} else if (splatNames.Length != 8) {
@@ -103,7 +97,7 @@ public class TerrainAtlasSet : ScriptableObject
 			Array.Resize (ref albedoPaths, 8);
 		}
 		if (defaultValues == null) {
-			defaultValues = (Color[])(object)new Color[3] {
+			defaultValues = new Color[3] {
 				new Color (1f, 1f, 1f, 0.5f),
 				new Color (0.5f, 0.5f, 1f, 0f),
 				new Color (0f, 0f, 1f, 0.5f)

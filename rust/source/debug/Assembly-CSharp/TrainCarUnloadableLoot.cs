@@ -18,17 +18,15 @@ public class TrainCarUnloadableLoot : TrainCarUnloadable
 
 	public override void Spawn ()
 	{
-		//IL_004f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005c: Unknown result type (might be due to invalid IL or missing references)
 		base.Spawn ();
-		if (Application.isLoadingSave) {
+		if (Rust.Application.isLoadingSave) {
 			return;
 		}
-		int num = Random.Range (0, lootLayouts.Length);
+		int num = UnityEngine.Random.Range (0, lootLayouts.Length);
 		for (int i = 0; i < lootLayouts [num].crates.Length; i++) {
 			GameObjectRef gameObjectRef = lootLayouts [num].crates [i];
 			BaseEntity baseEntity = GameManager.server.CreateEntity (gameObjectRef.resourcePath, lootPositions [i].localPosition, lootPositions [i].localRotation);
-			if ((Object)(object)baseEntity != (Object)null) {
+			if (baseEntity != null) {
 				baseEntity.Spawn ();
 				baseEntity.SetParent (this);
 			}

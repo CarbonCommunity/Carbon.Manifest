@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -58,154 +59,115 @@ public class Chainsaw : BaseMelee
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("Chainsaw.OnRpcMessage", 0);
-		try {
-			if (rpc == 3381353917u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("Chainsaw.OnRpcMessage")) {
+			if (rpc == 3381353917u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - DoReload "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - DoReload "));
 				}
-				TimeWarning val2 = TimeWarning.New ("DoReload", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("DoReload")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsActiveItem.Test (3381353917u, "DoReload", this, player)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							DoReload (msg2);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in DoReload");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 706698034 && (Object)(object)player != (Object)null) {
+			if (rpc == 706698034 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_SetAttacking "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_SetAttacking "));
 				}
-				TimeWarning val5 = TimeWarning.New ("Server_SetAttacking", 0);
-				try {
-					TimeWarning val6 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_SetAttacking")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsActiveItem.Test (706698034u, "Server_SetAttacking", this, player)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val6)?.Dispose ();
 					}
 					try {
-						TimeWarning val7 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg3 = rPCMessage;
 							Server_SetAttacking (msg3);
-						} finally {
-							((IDisposable)val7)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in Server_SetAttacking");
 					}
-				} finally {
-					((IDisposable)val5)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 3881794867u && (Object)(object)player != (Object)null) {
+			if (rpc == 3881794867u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_StartEngine "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_StartEngine "));
 				}
-				TimeWarning val8 = TimeWarning.New ("Server_StartEngine", 0);
-				try {
-					TimeWarning val9 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_StartEngine")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsActiveItem.Test (3881794867u, "Server_StartEngine", this, player)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val9)?.Dispose ();
 					}
 					try {
-						TimeWarning val10 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg4 = rPCMessage;
 							Server_StartEngine (msg4);
-						} finally {
-							((IDisposable)val10)?.Dispose ();
 						}
-					} catch (Exception ex3) {
-						Debug.LogException (ex3);
+					} catch (Exception exception3) {
+						Debug.LogException (exception3);
 						player.Kick ("RPC Error in Server_StartEngine");
 					}
-				} finally {
-					((IDisposable)val8)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 841093980 && (Object)(object)player != (Object)null) {
+			if (rpc == 841093980 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_StopEngine "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_StopEngine "));
 				}
-				TimeWarning val11 = TimeWarning.New ("Server_StopEngine", 0);
-				try {
-					TimeWarning val12 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_StopEngine")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsActiveItem.Test (841093980u, "Server_StopEngine", this, player)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val12)?.Dispose ();
 					}
 					try {
-						TimeWarning val13 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg5 = rPCMessage;
 							Server_StopEngine (msg5);
-						} finally {
-							((IDisposable)val13)?.Dispose ();
 						}
-					} catch (Exception ex4) {
-						Debug.LogException (ex4);
+					} catch (Exception exception4) {
+						Debug.LogException (exception4);
 						player.Kick ("RPC Error in Server_StopEngine");
 					}
-				} finally {
-					((IDisposable)val11)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -224,7 +186,7 @@ public class Chainsaw : BaseMelee
 	{
 		if (!HasFlag (Flags.On)) {
 			BasePlayer ownerPlayer = GetOwnerPlayer ();
-			if ((Object)(object)ownerPlayer != (Object)null && ownerPlayer.IsNpc) {
+			if (ownerPlayer != null && ownerPlayer.IsNpc) {
 				DoReload (default(RPCMessage));
 				SetEngineStatus (status: true);
 				SendNetworkUpdateImmediate ();
@@ -236,7 +198,7 @@ public class Chainsaw : BaseMelee
 	{
 		base.ServerUse ();
 		SetAttackStatus (status: true);
-		((FacepunchBehaviour)this).Invoke ((Action)DelayedStopAttack, attackSpacing + 0.5f);
+		Invoke (DelayedStopAttack, attackSpacing + 0.5f);
 	}
 
 	public override void ServerUse_OnHit (HitInfo info)
@@ -273,7 +235,7 @@ public class Chainsaw : BaseMelee
 	public void ReduceAmmo (float firingTime)
 	{
 		BasePlayer ownerPlayer = GetOwnerPlayer ();
-		if ((Object)(object)ownerPlayer != (Object)null && ownerPlayer.IsNpc) {
+		if (ownerPlayer != null && ownerPlayer.IsNpc) {
 			return;
 		}
 		ammoRemainder += firingTime;
@@ -300,7 +262,7 @@ public class Chainsaw : BaseMelee
 	public void DoReload (RPCMessage msg)
 	{
 		BasePlayer ownerPlayer = GetOwnerPlayer ();
-		if (!((Object)(object)ownerPlayer == (Object)null) && !IsAttacking ()) {
+		if (!(ownerPlayer == null) && !IsAttacking ()) {
 			Item item;
 			while (ammo < maxAmmo && (item = GetAmmo ()) != null && item.amount > 0) {
 				int num = Mathf.Min (maxAmmo - ammo, item.amount);
@@ -316,8 +278,8 @@ public class Chainsaw : BaseMelee
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.baseProjectile = Pool.Get<BaseProjectile> ();
-		info.msg.baseProjectile.primaryMagazine = Pool.Get<Magazine> ();
+		info.msg.baseProjectile = Facepunch.Pool.Get<ProtoBuf.BaseProjectile> ();
+		info.msg.baseProjectile.primaryMagazine = Facepunch.Pool.Get<Magazine> ();
 		info.msg.baseProjectile.primaryMagazine.contents = ammo;
 	}
 
@@ -327,9 +289,9 @@ public class Chainsaw : BaseMelee
 		if (!status) {
 			SetAttackStatus (status: false);
 		}
-		((FacepunchBehaviour)this).CancelInvoke ((Action)EngineTick);
+		CancelInvoke (EngineTick);
 		if (status) {
-			((FacepunchBehaviour)this).InvokeRepeating ((Action)EngineTick, 0f, 1f);
+			InvokeRepeating (EngineTick, 0f, 1f);
 		}
 	}
 
@@ -339,9 +301,9 @@ public class Chainsaw : BaseMelee
 			status = false;
 		}
 		SetFlag (Flags.Busy, status);
-		((FacepunchBehaviour)this).CancelInvoke ((Action)AttackTick);
+		CancelInvoke (AttackTick);
 		if (status) {
-			((FacepunchBehaviour)this).InvokeRepeating ((Action)AttackTick, 0f, 1f);
+			InvokeRepeating (AttackTick, 0f, 1f);
 		}
 	}
 
@@ -361,7 +323,7 @@ public class Chainsaw : BaseMelee
 	{
 		if (ammo > 0 && !EngineOn ()) {
 			ReduceAmmo (0.25f);
-			bool flag = Random.Range (0f, 1f) <= engineStartChance;
+			bool flag = UnityEngine.Random.Range (0f, 1f) <= engineStartChance;
 			if (!flag) {
 				failedAttempts++;
 			}
@@ -394,10 +356,6 @@ public class Chainsaw : BaseMelee
 
 	public override void ServerCommand (Item item, string command, BasePlayer player)
 	{
-		//IL_0071: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0077: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0084: Unknown result type (might be due to invalid IL or missing references)
 		if (item == null || !(command == "unload_ammo")) {
 			return;
 		}
@@ -433,8 +391,8 @@ public class Chainsaw : BaseMelee
 			SetFlag (Flags.Reserved6, b: true);
 		}
 		SendNetworkUpdateImmediate ();
-		((FacepunchBehaviour)this).CancelInvoke ((Action)DisableHitEffects);
-		((FacepunchBehaviour)this).Invoke ((Action)DisableHitEffects, 0.5f);
+		CancelInvoke (DisableHitEffects);
+		Invoke (DisableHitEffects, 0.5f);
 	}
 
 	public override void DoAttackShared (HitInfo info)
@@ -461,7 +419,7 @@ public class Chainsaw : BaseMelee
 	public Item GetAmmo ()
 	{
 		BasePlayer ownerPlayer = GetOwnerPlayer ();
-		if (!Object.op_Implicit ((Object)(object)ownerPlayer)) {
+		if (!ownerPlayer) {
 			return null;
 		}
 		Item item = ownerPlayer.inventory.containerMain.FindItemsByItemName (fuelType.shortname);

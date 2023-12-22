@@ -1,4 +1,4 @@
-using UnityEngine;
+#define ENABLE_PROFILER
 using UnityEngine.Profiling;
 
 public class ItemModReveal : ItemMod
@@ -15,18 +15,11 @@ public class ItemModReveal : ItemMod
 
 	public override void ServerCommand (Item item, string command, BasePlayer player)
 	{
-		//IL_00b0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ee: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fb: Unknown result type (might be due to invalid IL or missing references)
 		if (command == "reveal" && item.amount >= numForReveal) {
 			int position = item.position;
 			item.UseItem (numForReveal);
 			Item item2 = null;
-			if (Object.op_Implicit ((Object)(object)revealedItemOverride)) {
+			if ((bool)revealedItemOverride) {
 				item2 = ItemManager.Create (revealedItemOverride, revealedItemAmount, 0uL);
 			} else {
 				Profiler.BeginSample ("BlueprintAttempts");

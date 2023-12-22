@@ -1,6 +1,4 @@
-using System;
 using Network;
-using UnityEngine;
 
 public class Flashbang : TimedExplosive
 {
@@ -16,18 +14,14 @@ public class Flashbang : TimedExplosive
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("Flashbang.OnRpcMessage", 0);
-		try {
-		} finally {
-			((IDisposable)val)?.Dispose ();
+		using (TimeWarning.New ("Flashbang.OnRpcMessage")) {
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
 
 	public override void Explode ()
 	{
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		ClientRPC<Vector3> (null, "Client_DoFlash", ((Component)this).transform.position);
+		ClientRPC (null, "Client_DoFlash", base.transform.position);
 		base.Explode ();
 	}
 

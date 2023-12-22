@@ -20,7 +20,7 @@ public class ItemAmountRanged : ItemAmount
 	public override float GetAmount ()
 	{
 		if (maxAmount > 0f && maxAmount > amount) {
-			return Random.Range (amount, maxAmount);
+			return UnityEngine.Random.Range (amount, maxAmount);
 		}
 		return amount;
 	}

@@ -1,3 +1,5 @@
+#define ENABLE_PROFILER
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -262,9 +264,8 @@ public class BaseSubmarine : BaseVehicle, IPoolVehicle, IEngineControllerUser, I
 
 	public float UpDownInput {
 		get {
-			//IL_000d: Unknown result type (might be due to invalid IL or missing references)
 			if (base.isServer) {
-				if (TimeSince.op_Implicit (timeSinceLastUsed) >= timeUntilAutoSurface) {
+				if ((float)timeSinceLastUsed >= timeUntilAutoSurface) {
 					return 0.15f;
 				}
 				return engineController.IsOn ? _upDown : Mathf.Max (0f, _upDown);
@@ -287,7 +288,6 @@ public class BaseSubmarine : BaseVehicle, IPoolVehicle, IEngineControllerUser, I
 
 	protected float PhysicalRudderAngle {
 		get {
-			//IL_0007: Unknown result type (might be due to invalid IL or missing references)
 			float num = rudderDetailedColliderTransform.localEulerAngles.y;
 			if (num > 180f) {
 				num -= 360f;
@@ -302,126 +302,98 @@ public class BaseSubmarine : BaseVehicle, IPoolVehicle, IEngineControllerUser, I
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("BaseSubmarine.OnRpcMessage", 0);
-		try {
-			if (rpc == 1851540757 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("BaseSubmarine.OnRpcMessage")) {
+			if (rpc == 1851540757 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_OpenFuel "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_OpenFuel "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_OpenFuel", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Call", 0);
+				using (TimeWarning.New ("RPC_OpenFuel")) {
 					try {
-						RPCMessage rPCMessage = default(RPCMessage);
-						rPCMessage.connection = msg.connection;
-						rPCMessage.player = player;
-						rPCMessage.read = msg.read;
-						RPCMessage msg2 = rPCMessage;
-						RPC_OpenFuel (msg2);
-					} finally {
-						((IDisposable)val3)?.Dispose ();
+						using (TimeWarning.New ("Call")) {
+							RPCMessage rPCMessage = default(RPCMessage);
+							rPCMessage.connection = msg.connection;
+							rPCMessage.player = player;
+							rPCMessage.read = msg.read;
+							RPCMessage msg2 = rPCMessage;
+							RPC_OpenFuel (msg2);
+						}
+					} catch (Exception exception) {
+						Debug.LogException (exception);
+						player.Kick ("RPC Error in RPC_OpenFuel");
 					}
-				} catch (Exception ex) {
-					Debug.LogException (ex);
-					player.Kick ("RPC Error in RPC_OpenFuel");
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 924237371 && (Object)(object)player != (Object)null) {
+			if (rpc == 924237371 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_OpenItemStorage "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_OpenItemStorage "));
 				}
-				TimeWarning val4 = TimeWarning.New ("RPC_OpenItemStorage", 0);
-				try {
-					TimeWarning val5 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_OpenItemStorage")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (924237371u, "RPC_OpenItemStorage", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val5)?.Dispose ();
 					}
 					try {
-						TimeWarning val6 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg3 = rPCMessage;
 							RPC_OpenItemStorage (msg3);
-						} finally {
-							((IDisposable)val6)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in RPC_OpenItemStorage");
 					}
-				} finally {
-					((IDisposable)val4)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 2181221870u && (Object)(object)player != (Object)null) {
+			if (rpc == 2181221870u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_OpenTorpedoStorage "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_OpenTorpedoStorage "));
 				}
-				TimeWarning val7 = TimeWarning.New ("RPC_OpenTorpedoStorage", 0);
-				try {
-					TimeWarning val8 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_OpenTorpedoStorage")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (2181221870u, "RPC_OpenTorpedoStorage", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val8)?.Dispose ();
 					}
 					try {
-						TimeWarning val9 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg4 = rPCMessage;
 							RPC_OpenTorpedoStorage (msg4);
-						} finally {
-							((IDisposable)val9)?.Dispose ();
 						}
-					} catch (Exception ex3) {
-						Debug.LogException (ex3);
+					} catch (Exception exception3) {
+						Debug.LogException (exception3);
 						player.Kick ("RPC Error in RPC_OpenTorpedoStorage");
 					}
-				} finally {
-					((IDisposable)val7)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
 
 	public override void ServerInit ()
 	{
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
 		base.ServerInit ();
 		rigidBody.centerOfMass = centreOfMassTransform.localPosition;
-		timeSinceLastUsed = TimeSince.op_Implicit (timeUntilAutoSurface);
+		timeSinceLastUsed = timeUntilAutoSurface;
 		buoyancy.buoyancyScale = 1f;
 		normalDrag = rigidBody.drag;
 		highDrag = normalDrag * 2.5f;
 		Oxygen = 1f;
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)UpdateClients, 0f, 0.15f, 0.02f);
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)SubmarineDecay, Random.Range (30f, 60f), 60f, 6f);
+		InvokeRandomized (UpdateClients, 0f, 0.15f, 0.02f);
+		InvokeRandomized (SubmarineDecay, UnityEngine.Random.Range (30f, 60f), 60f, 6f);
 	}
 
 	protected override void OnChildAdded (BaseEntity child)
@@ -451,7 +423,7 @@ public class BaseSubmarine : BaseVehicle, IPoolVehicle, IEngineControllerUser, I
 	{
 		if (vehicle.vehiclesdroploot) {
 			StorageContainer storageContainer = itemStorageInstance.Get (base.isServer);
-			if ((Object)(object)storageContainer != (Object)null && storageContainer.IsValid ()) {
+			if (storageContainer != null && storageContainer.IsValid ()) {
 				storageContainer.DropItems ();
 			}
 		}
@@ -484,7 +456,7 @@ public class BaseSubmarine : BaseVehicle, IPoolVehicle, IEngineControllerUser, I
 	{
 		if (CanMount (player) && MountEligable (player)) {
 			BaseMountable baseMountable = (HasDriver () ? GetIdealMountPointFor (player) : mountPoints [0].mountable);
-			if ((Object)(object)baseMountable != (Object)null) {
+			if (baseMountable != null) {
 				baseMountable.AttemptMount (player, doMountChecks);
 			}
 			if (PlayerIsMounted (player)) {
@@ -500,17 +472,15 @@ public class BaseSubmarine : BaseVehicle, IPoolVehicle, IEngineControllerUser, I
 
 	public void WakeUp ()
 	{
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)rigidBody != (Object)null) {
+		if (rigidBody != null) {
 			rigidBody.WakeUp ();
-			rigidBody.AddForce (Vector3.up * 0.1f, (ForceMode)1);
+			rigidBody.AddForce (Vector3.up * 0.1f, ForceMode.Impulse);
 		}
 	}
 
 	protected override void OnServerWake ()
 	{
-		if ((Object)(object)buoyancy != (Object)null) {
+		if (buoyancy != null) {
 			buoyancy.Wake ();
 		}
 	}
@@ -520,9 +490,9 @@ public class BaseSubmarine : BaseVehicle, IPoolVehicle, IEngineControllerUser, I
 		DamageType majorityDamageType = info.damageTypes.GetMajorityDamageType ();
 		if (majorityDamageType == DamageType.Explosion || majorityDamageType == DamageType.AntiVehicle) {
 			foreach (MountPointInfo mountPoint in mountPoints) {
-				if ((Object)(object)mountPoint.mountable != (Object)null) {
+				if (mountPoint.mountable != null) {
 					BasePlayer mounted = mountPoint.mountable.GetMounted ();
-					if ((Object)(object)mounted != (Object)null) {
+					if (mounted != null) {
 						mounted.Hurt (10000f, DamageType.Explosion, this, useProtection: false);
 					}
 				}
@@ -533,46 +503,6 @@ public class BaseSubmarine : BaseVehicle, IPoolVehicle, IEngineControllerUser, I
 
 	public override void VehicleFixedUpdate ()
 	{
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0078: Unknown result type (might be due to invalid IL or missing references)
-		//IL_039f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03aa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03b4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03bf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0445: Unknown result type (might be due to invalid IL or missing references)
-		//IL_044c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0257: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02a9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02ae: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02cf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02d4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02df: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02e4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02e9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02eb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02ed: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02f2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02f7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02f9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0300: Unknown result type (might be due to invalid IL or missing references)
-		//IL_030a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_030f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0317: Unknown result type (might be due to invalid IL or missing references)
-		//IL_032e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0336: Unknown result type (might be due to invalid IL or missing references)
-		//IL_033d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0621: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0524: Unknown result type (might be due to invalid IL or missing references)
-		//IL_055e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0569: Unknown result type (might be due to invalid IL or missing references)
-		//IL_05c1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_058a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_058f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0669: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0679: Unknown result type (might be due to invalid IL or missing references)
-		//IL_05e2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_05e7: Unknown result type (might be due to invalid IL or missing references)
 		base.VehicleFixedUpdate ();
 		if (!base.IsMovingOrOn) {
 			Velocity = Vector3.zero;
@@ -583,7 +513,7 @@ public class BaseSubmarine : BaseVehicle, IPoolVehicle, IEngineControllerUser, I
 		Profiler.BeginSample ("Submarine.VehicleFixedUpdate");
 		Velocity = GetLocalVelocity ();
 		UpdateWaterInfo ();
-		if (IsSurfaced && !wasOnSurface && ((Component)this).transform.position.y > Env.oceanlevel - 1f) {
+		if (IsSurfaced && !wasOnSurface && base.transform.position.y > Env.oceanlevel - 1f) {
 			wasOnSurface = true;
 		}
 		buoyancy.ArtificialHeight = waterSurfaceY;
@@ -594,11 +524,11 @@ public class BaseSubmarine : BaseVehicle, IPoolVehicle, IEngineControllerUser, I
 			if (Oxygen < 0.5f) {
 				Oxygen = 0.5f;
 			} else {
-				Oxygen += Time.deltaTime / num2;
+				Oxygen += UnityEngine.Time.deltaTime / num2;
 			}
 		} else if (AnyMounted ()) {
 			float num3 = oxygenminutes * 60f * num;
-			Oxygen -= Time.deltaTime / num3;
+			Oxygen -= UnityEngine.Time.deltaTime / num3;
 		}
 		engineController.CheckEngineState ();
 		if (engineController.IsOn) {
@@ -607,73 +537,71 @@ public class BaseSubmarine : BaseVehicle, IPoolVehicle, IEngineControllerUser, I
 		}
 		if (IsInWater) {
 			float num4 = depthChangeTargetSpeed * UpDownInput;
-			float num5 = (((!(UpDownInput > 0f) || !(num4 > targetClimbSpeed) || !(targetClimbSpeed > 0f)) && (!(UpDownInput < 0f) || !(num4 < targetClimbSpeed) || !(targetClimbSpeed < 0f))) ? 4f : 0.7f);
-			targetClimbSpeed = Mathf.MoveTowards (targetClimbSpeed, num4, num5 * Time.fixedDeltaTime);
-			float num6 = rigidBody.velocity.y - targetClimbSpeed;
-			float num7 = buoyancy.buoyancyScale - num6 * 50f * Time.fixedDeltaTime;
-			buoyancy.buoyancyScale = Mathf.Clamp (num7, 0.01f, 1f);
-			Vector3 angularVelocity = rigidBody.angularVelocity;
-			Vector3 val = Quaternion.AngleAxis (((Vector3)(ref angularVelocity)).magnitude * 57.29578f * 10f / 200f, rigidBody.angularVelocity) * ((Component)this).transform.up;
-			Vector3 val2 = Vector3.Cross (val, Vector3.up);
-			Vector3 val3 = val2 * 200f * 200f;
-			rigidBody.AddTorque (val3);
-			float num8 = 0.1f;
-			rigidBody.AddForce (Vector3.up * (0f - num6) * num8, (ForceMode)2);
+			targetClimbSpeed = Mathf.MoveTowards (maxDelta: (((!(UpDownInput > 0f) || !(num4 > targetClimbSpeed) || !(targetClimbSpeed > 0f)) && (!(UpDownInput < 0f) || !(num4 < targetClimbSpeed) || !(targetClimbSpeed < 0f))) ? 4f : 0.7f) * UnityEngine.Time.fixedDeltaTime, current: targetClimbSpeed, target: num4);
+			float num5 = rigidBody.velocity.y - targetClimbSpeed;
+			float value = buoyancy.buoyancyScale - num5 * 50f * UnityEngine.Time.fixedDeltaTime;
+			buoyancy.buoyancyScale = Mathf.Clamp (value, 0.01f, 1f);
+			Vector3 lhs = Quaternion.AngleAxis (rigidBody.angularVelocity.magnitude * 57.29578f * 10f / 200f, rigidBody.angularVelocity) * base.transform.up;
+			Vector3 vector = Vector3.Cross (lhs, Vector3.up);
+			Vector3 torque = vector * 200f * 200f;
+			rigidBody.AddTorque (torque);
+			float num6 = 0.1f;
+			rigidBody.AddForce (Vector3.up * (0f - num5) * num6, ForceMode.VelocityChange);
 		} else {
-			float num9 = 0f;
-			buoyancy.buoyancyScale = Mathf.Lerp (buoyancy.buoyancyScale, num9, Time.fixedDeltaTime);
+			float b = 0f;
+			buoyancy.buoyancyScale = Mathf.Lerp (buoyancy.buoyancyScale, b, UnityEngine.Time.fixedDeltaTime);
 		}
 		if (IsOn () && IsInWater) {
-			rigidBody.AddForce (((Component)this).transform.forward * engineKW * 40f * ThrottleInput, (ForceMode)0);
-			float num10 = turnPower * rigidBody.mass * rigidBody.angularDrag;
+			rigidBody.AddForce (base.transform.forward * engineKW * 40f * ThrottleInput, ForceMode.Force);
+			float num7 = turnPower * rigidBody.mass * rigidBody.angularDrag;
 			float speed = GetSpeed ();
-			float num11 = Mathf.Min (Mathf.Abs (speed) * 0.6f, 6f) + 4f;
-			float num12 = num10 * RudderInput * num11;
+			float num8 = Mathf.Min (Mathf.Abs (speed) * 0.6f, 6f) + 4f;
+			float num9 = num7 * RudderInput * num8;
 			if (speed < -1f) {
-				num12 *= -1f;
+				num9 *= -1f;
 			}
-			rigidBody.AddTorque (((Component)this).transform.up * num12, (ForceMode)0);
+			rigidBody.AddTorque (base.transform.up * num9, ForceMode.Force);
 		}
-		UpdatePhysicalRudder (RudderInput, Time.fixedDeltaTime);
-		if (Time.time >= nextCollisionDamageTime && maxDamageThisTick > 0f) {
-			nextCollisionDamageTime = Time.time + 0.33f;
+		UpdatePhysicalRudder (RudderInput, UnityEngine.Time.fixedDeltaTime);
+		if (UnityEngine.Time.time >= nextCollisionDamageTime && maxDamageThisTick > 0f) {
+			nextCollisionDamageTime = UnityEngine.Time.time + 0.33f;
 			Hurt (maxDamageThisTick, DamageType.Collision, this, useProtection: false);
 			maxDamageThisTick = 0f;
 		}
 		StorageContainer torpedoContainer = GetTorpedoContainer ();
-		if ((Object)(object)torpedoContainer != (Object)null) {
-			bool b = torpedoContainer.inventory.HasAmmo ((AmmoTypes)1024);
-			SetFlag (Flags.Reserved6, b);
+		if (torpedoContainer != null) {
+			bool b2 = torpedoContainer.inventory.HasAmmo (AmmoTypes.TORPEDO);
+			SetFlag (Flags.Reserved6, b2);
 		}
 		BasePlayer driver = GetDriver ();
-		if ((Object)(object)driver != (Object)null && primaryFireInput) {
+		if (driver != null && primaryFireInput) {
 			bool flag = true;
-			if (IsInWater && TimeSince.op_Implicit (timeSinceTorpedoFired) >= maxFireRate) {
+			if (IsInWater && (float)timeSinceTorpedoFired >= maxFireRate) {
 				float minSpeed = GetSpeed () + 2f;
-				if (TryFireProjectile (torpedoContainer, (AmmoTypes)1024, torpedoFiringPoint.position, torpedoFiringPoint.forward, driver, 1f, minSpeed, out var _)) {
-					timeSinceTorpedoFired = TimeSince.op_Implicit (0f);
+				if (TryFireProjectile (torpedoContainer, AmmoTypes.TORPEDO, torpedoFiringPoint.position, torpedoFiringPoint.forward, driver, 1f, minSpeed, out var _)) {
+					timeSinceTorpedoFired = 0f;
 					flag = false;
 					driver.MarkHostileFor ();
 					ClientRPC (null, "TorpedoFired");
 				}
 			}
-			if (!prevPrimaryFireInput && flag && TimeSince.op_Implicit (timeSinceFailRPCSent) > 0.5f) {
-				timeSinceFailRPCSent = TimeSince.op_Implicit (0f);
+			if (!prevPrimaryFireInput && flag && (float)timeSinceFailRPCSent > 0.5f) {
+				timeSinceFailRPCSent = 0f;
 				ClientRPCPlayer (null, driver, "TorpedoFireFailed");
 			}
-		} else if ((Object)(object)driver == (Object)null) {
+		} else if (driver == null) {
 			primaryFireInput = false;
 		}
 		prevPrimaryFireInput = primaryFireInput;
-		if (TimeSince.op_Implicit (timeSinceLastUsed) > 300f && LightsAreOn) {
+		if ((float)timeSinceLastUsed > 300f && LightsAreOn) {
 			SetFlag (Flags.Reserved5, b: false);
 		}
 		for (int i = 0; i < parentTriggers.Length; i++) {
-			float num13 = parentTriggers [i].triggerWaterLevel.position.y - ((Component)this).transform.position.y;
-			float num14 = curSubDepthY - num13;
-			bool flag2 = num14 <= 0f;
-			if (flag2 != ((Behaviour)parentTriggers [i].trigger).enabled) {
-				((Behaviour)parentTriggers [i].trigger).enabled = flag2;
+			float num10 = parentTriggers [i].triggerWaterLevel.position.y - base.transform.position.y;
+			float num11 = curSubDepthY - num10;
+			bool flag2 = num11 <= 0f;
+			if (flag2 != parentTriggers [i].trigger.enabled) {
+				parentTriggers [i].trigger.enabled = flag2;
 			}
 		}
 		Profiler.EndSample ();
@@ -688,9 +616,7 @@ public class BaseSubmarine : BaseVehicle, IPoolVehicle, IEngineControllerUser, I
 
 	public override void PlayerServerInput (InputState inputState, BasePlayer player)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		timeSinceLastUsed = TimeSince.op_Implicit (0f);
+		timeSinceLastUsed = 0f;
 		if (IsDriver (player)) {
 			if (inputState.IsDown (BUTTON.SPRINT)) {
 				UpDownInput = 1f;
@@ -722,14 +648,8 @@ public class BaseSubmarine : BaseVehicle, IPoolVehicle, IEngineControllerUser, I
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_0071: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0076: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d8: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
-		info.msg.submarine = Pool.Get<Submarine> ();
+		info.msg.submarine = Facepunch.Pool.Get<Submarine> ();
 		info.msg.submarine.throttle = ThrottleInput;
 		info.msg.submarine.upDown = UpDownInput;
 		info.msg.submarine.rudder = RudderInput;
@@ -753,7 +673,7 @@ public class BaseSubmarine : BaseVehicle, IPoolVehicle, IEngineControllerUser, I
 	public StorageContainer GetTorpedoContainer ()
 	{
 		BaseEntity baseEntity = torpedoStorageInstance.Get (base.isServer);
-		if ((Object)(object)baseEntity != (Object)null && baseEntity.IsValid ()) {
+		if (baseEntity != null && baseEntity.IsValid ()) {
 			return baseEntity as StorageContainer;
 		}
 		return null;
@@ -762,7 +682,7 @@ public class BaseSubmarine : BaseVehicle, IPoolVehicle, IEngineControllerUser, I
 	public StorageContainer GetItemContainer ()
 	{
 		BaseEntity baseEntity = itemStorageInstance.Get (base.isServer);
-		if ((Object)(object)baseEntity != (Object)null && baseEntity.IsValid ()) {
+		if (baseEntity != null && baseEntity.IsValid ()) {
 			return baseEntity as StorageContainer;
 		}
 		return null;
@@ -770,17 +690,14 @@ public class BaseSubmarine : BaseVehicle, IPoolVehicle, IEngineControllerUser, I
 
 	private void ProcessCollision (Collision collision)
 	{
-		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
-		if (!base.isClient && collision != null && !((Object)(object)collision.gameObject == (Object)null) && !((Object)(object)collision.gameObject == (Object)null)) {
-			Vector3 impulse = collision.impulse;
-			float num = ((Vector3)(ref impulse)).magnitude / Time.fixedDeltaTime;
-			float num2 = Mathf.InverseLerp (100000f, 2500000f, num);
-			if (num2 > 0f) {
-				float num3 = Mathf.Lerp (1f, 200f, num2);
-				maxDamageThisTick = Mathf.Max (maxDamageThisTick, num3);
+		if (!base.isClient && collision != null && !(collision.gameObject == null) && !(collision.gameObject == null)) {
+			float value = collision.impulse.magnitude / UnityEngine.Time.fixedDeltaTime;
+			float num = Mathf.InverseLerp (100000f, 2500000f, value);
+			if (num > 0f) {
+				float b = Mathf.Lerp (1f, 200f, num);
+				maxDamageThisTick = Mathf.Max (maxDamageThisTick, b);
 			}
-			if (num2 > 0f) {
+			if (num > 0f) {
 				GameObjectRef effectGO = ((curSubDepthY > 2f) ? underWatercollisionEffect : aboveWatercollisionEffect);
 				TryShowCollisionFX (collision, effectGO);
 			}
@@ -800,8 +717,7 @@ public class BaseSubmarine : BaseVehicle, IPoolVehicle, IEngineControllerUser, I
 
 	private void SubmarineDecay ()
 	{
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		BaseBoat.WaterVehicleDecay (this, 60f, TimeSince.op_Implicit (timeSinceLastUsed), outsidedecayminutes, deepwaterdecayminutes, MotorRowboat.decaystartdelayminutes, preventDecayIndoors: true);
+		BaseBoat.WaterVehicleDecay (this, 60f, timeSinceLastUsed, outsidedecayminutes, deepwaterdecayminutes, MotorRowboat.decaystartdelayminutes, preventDecayIndoors: true);
 	}
 
 	[RPC_Server]
@@ -820,7 +736,7 @@ public class BaseSubmarine : BaseVehicle, IPoolVehicle, IEngineControllerUser, I
 		BasePlayer player = msg.player;
 		if (CanBeLooted (player) && PlayerIsMounted (player)) {
 			StorageContainer torpedoContainer = GetTorpedoContainer ();
-			if ((Object)(object)torpedoContainer != (Object)null) {
+			if (torpedoContainer != null) {
 				torpedoContainer.PlayerOpenLoot (player);
 			}
 		}
@@ -833,7 +749,7 @@ public class BaseSubmarine : BaseVehicle, IPoolVehicle, IEngineControllerUser, I
 		BasePlayer player = msg.player;
 		if (CanBeLooted (player)) {
 			StorageContainer itemContainer = GetItemContainer ();
-			if ((Object)(object)itemContainer != (Object)null) {
+			if (itemContainer != null) {
 				itemContainer.PlayerOpenLoot (player);
 			}
 		}
@@ -844,7 +760,7 @@ public class BaseSubmarine : BaseVehicle, IPoolVehicle, IEngineControllerUser, I
 		if (wasOnSurface && GameInfo.HasAchievements) {
 			wasOnSurface = false;
 			BasePlayer driver = GetDriver ();
-			if ((Object)(object)driver != (Object)null) {
+			if (driver != null) {
 				driver.GiveAchievement ("SUBMARINE_MOONPOOL");
 			}
 		}
@@ -853,15 +769,12 @@ public class BaseSubmarine : BaseVehicle, IPoolVehicle, IEngineControllerUser, I
 	public override void InitShared ()
 	{
 		base.InitShared ();
-		waterLayerMask = LayerMask.GetMask (new string[1] { "Water" });
+		waterLayerMask = LayerMask.GetMask ("Water");
 		engineController = new VehicleEngineController<BaseSubmarine> (this, base.isServer, engineStartupTime, fuelStoragePrefab);
 	}
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_007f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e4: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (info.msg.submarine != null) {
 			ThrottleInput = info.msg.submarine.throttle;
@@ -909,12 +822,10 @@ public class BaseSubmarine : BaseVehicle, IPoolVehicle, IEngineControllerUser, I
 
 	public float GetSpeed ()
 	{
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
 		if (IsStationary ()) {
 			return 0f;
 		}
-		return Vector3.Dot (Velocity, ((Component)this).transform.forward);
+		return Vector3.Dot (Velocity, base.transform.forward);
 	}
 
 	public override bool CanBeLooted (BasePlayer player)
@@ -953,13 +864,9 @@ public class BaseSubmarine : BaseVehicle, IPoolVehicle, IEngineControllerUser, I
 
 	private void UpdatePhysicalRudder (float turnInput, float deltaTime)
 	{
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0063: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
 		float num = (0f - turnInput) * maxRudderAngle;
-		float num2 = ((!base.IsMovingOrOn) ? num : Mathf.MoveTowards (PhysicalRudderAngle, num, 200f * deltaTime));
-		Quaternion localRotation = Quaternion.Euler (0f, num2, 0f);
+		float y = ((!base.IsMovingOrOn) ? num : Mathf.MoveTowards (PhysicalRudderAngle, num, 200f * deltaTime));
+		Quaternion localRotation = Quaternion.Euler (0f, y, 0f);
 		if (base.isClient) {
 			rudderVisualTransform.localRotation = localRotation;
 		}
@@ -973,36 +880,26 @@ public class BaseSubmarine : BaseVehicle, IPoolVehicle, IEngineControllerUser, I
 
 	private void UpdateWaterInfo ()
 	{
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
 		waterSurfaceY = GetWaterSurfaceY ();
-		curSubDepthY = waterSurfaceY - ((Component)this).transform.position.y;
+		curSubDepthY = waterSurfaceY - base.transform.position.y;
 	}
 
 	private float GetWaterSurfaceY ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006f: Unknown result type (might be due to invalid IL or missing references)
-		RaycastHit val = default(RaycastHit);
-		if (Physics.Raycast (((Component)this).transform.position - Vector3.up * 1.5f, Vector3.up, ref val, 5f, waterLayerMask, (QueryTriggerInteraction)2)) {
-			return ((RaycastHit)(ref val)).point.y;
+		if (UnityEngine.Physics.Raycast (base.transform.position - Vector3.up * 1.5f, Vector3.up, out var hitInfo, 5f, waterLayerMask, QueryTriggerInteraction.Collide)) {
+			return hitInfo.point.y;
 		}
-		WaterLevel.WaterInfo waterInfo = WaterLevel.GetWaterInfo (((Component)this).transform.position, waves: true, volumes: true, this);
-		return waterInfo.isValid ? waterInfo.surfaceLevel : (((Component)this).transform.position.y - 1f);
+		WaterLevel.WaterInfo waterInfo = WaterLevel.GetWaterInfo (base.transform.position, waves: true, volumes: true, this);
+		return waterInfo.isValid ? waterInfo.surfaceLevel : (base.transform.position.y - 1f);
 	}
 
 	void IEngineControllerUser.Invoke (Action action, float time)
 	{
-		((FacepunchBehaviour)this).Invoke (action, time);
+		Invoke (action, time);
 	}
 
 	void IEngineControllerUser.CancelInvoke (Action action)
 	{
-		((FacepunchBehaviour)this).CancelInvoke (action);
+		CancelInvoke (action);
 	}
 }

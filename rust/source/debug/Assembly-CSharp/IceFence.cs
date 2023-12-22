@@ -10,8 +10,8 @@ public class IceFence : GraveyardFence
 
 	public int GetStyleFromID ()
 	{
-		uint num = (uint)net.ID.Value;
-		return SeedRandom.Range (ref num, 0, styles.Length);
+		uint seed = (uint)net.ID.Value;
+		return SeedRandom.Range (ref seed, 0, styles.Length);
 	}
 
 	public override void ServerInit ()
@@ -31,10 +31,10 @@ public class IceFence : GraveyardFence
 	public void SetStyle (int style)
 	{
 		GameObject[] array = styles;
-		foreach (GameObject val in array) {
-			val.gameObject.SetActive (false);
+		foreach (GameObject gameObject in array) {
+			gameObject.gameObject.SetActive (value: false);
 		}
-		styles [style].gameObject.SetActive (true);
+		styles [style].gameObject.SetActive (value: true);
 	}
 
 	public override void UpdatePillars ()

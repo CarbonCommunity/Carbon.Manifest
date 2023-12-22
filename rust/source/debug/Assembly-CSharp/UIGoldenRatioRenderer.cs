@@ -26,28 +26,11 @@ public class UIGoldenRatioRenderer : UILineRenderer
 
 	private void DrawSpiral (VertexHelper vh)
 	{
-		//IL_0037: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0163: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0170: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0175: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0177: Unknown result type (might be due to invalid IL or missing references)
-		//IL_017e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0188: Unknown result type (might be due to invalid IL or missing references)
-		//IL_018f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01dd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0214: Unknown result type (might be due to invalid IL or missing references)
 		_points.Clear ();
 		_rects.Clear ();
 		float num = (1f + Mathf.Sqrt (5f)) / 2f;
-		Rect pixelRect = ((Graphic)this).canvas.pixelRect;
-		canvasWidth = (int)((Rect)(ref pixelRect)).width;
-		pixelRect = ((Graphic)this).canvas.pixelRect;
-		canvasHeight = (int)((Rect)(ref pixelRect)).height;
+		canvasWidth = (int)base.canvas.pixelRect.width;
+		canvasHeight = (int)base.canvas.pixelRect.height;
 		Orientations orientation;
 		float num2;
 		float num3;
@@ -77,17 +60,16 @@ public class UIGoldenRatioRenderer : UILineRenderer
 		List<Vector2> list = new List<Vector2> ();
 		DrawPhiRectangles (vh, list, num4, num5, num3, num2, orientation);
 		if (list.Count > 1) {
-			Vector2 val = list [0];
-			Vector2 val2 = list [list.Count - 1];
-			float num6 = val.x - val2.x;
-			float num7 = val.y - val2.y;
+			Vector2 vector = list [0];
+			Vector2 vector2 = list [list.Count - 1];
+			float num6 = vector.x - vector2.x;
+			float num7 = vector.y - vector2.y;
 			float num8 = Mathf.Sqrt (num6 * num6 + num7 * num7);
 			float num9 = Mathf.Atan2 (num7, num6);
 			float num10 = (float)Math.PI / 50f;
 			float num11 = 1f - 1f / num / 25f * 0.78f;
-			Vector2 item = default(Vector2);
 			while (num8 > 32f) {
-				((Vector2)(ref item))..ctor (val2.x + num8 * Mathf.Cos (num9), (float)canvasHeight - (val2.y + num8 * Mathf.Sin (num9)));
+				Vector2 item = new Vector2 (vector2.x + num8 * Mathf.Cos (num9), (float)canvasHeight - (vector2.y + num8 * Mathf.Sin (num9)));
 				_points.Add (item);
 				num9 += num10;
 				num8 *= num11;
@@ -97,11 +79,6 @@ public class UIGoldenRatioRenderer : UILineRenderer
 
 	private void DrawPhiRectangles (VertexHelper vh, List<Vector2> points, float x, float y, float width, float height, Orientations orientation)
 	{
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e1: Unknown result type (might be due to invalid IL or missing references)
 		if (!(width < 1f) && !(height < 1f)) {
 			if (width >= 10f && height >= 10f) {
 				_rects.Add (new Rect (x, y, width, height));
@@ -136,13 +113,7 @@ public class UIGoldenRatioRenderer : UILineRenderer
 
 	protected override void OnPopulateMesh (VertexHelper vh)
 	{
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0084: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0133: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)((Graphic)this).canvas == (Object)null) {
+		if (base.canvas == null) {
 			return;
 		}
 		relativeSize = false;
@@ -150,50 +121,26 @@ public class UIGoldenRatioRenderer : UILineRenderer
 		m_points = _points.ToArray ();
 		base.OnPopulateMesh (vh);
 		foreach (Rect rect in _rects) {
-			Rect current = rect;
-			DrawRect (vh, new Rect (((Rect)(ref current)).x, ((Rect)(ref current)).y - lineThickness2 * 0.5f, ((Rect)(ref current)).width, lineThickness2));
-			DrawRect (vh, new Rect (((Rect)(ref current)).x - lineThickness2 * 0.5f, ((Rect)(ref current)).y, lineThickness2, ((Rect)(ref current)).height));
-			DrawRect (vh, new Rect (((Rect)(ref current)).x, ((Rect)(ref current)).y + ((Rect)(ref current)).height - lineThickness2 * 0.5f, ((Rect)(ref current)).width, lineThickness2));
-			DrawRect (vh, new Rect (((Rect)(ref current)).x + ((Rect)(ref current)).width - lineThickness2 * 0.5f, ((Rect)(ref current)).y, lineThickness2, ((Rect)(ref current)).height));
+			DrawRect (vh, new Rect (rect.x, rect.y - lineThickness2 * 0.5f, rect.width, lineThickness2));
+			DrawRect (vh, new Rect (rect.x - lineThickness2 * 0.5f, rect.y, lineThickness2, rect.height));
+			DrawRect (vh, new Rect (rect.x, rect.y + rect.height - lineThickness2 * 0.5f, rect.width, lineThickness2));
+			DrawRect (vh, new Rect (rect.x + rect.width - lineThickness2 * 0.5f, rect.y, lineThickness2, rect.height));
 		}
 	}
 
 	private void DrawRect (VertexHelper vh, Rect rect)
 	{
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0063: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0085: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00aa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00af: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00de: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ef: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f0: Unknown result type (might be due to invalid IL or missing references)
-		Vector2[] array = (Vector2[])(object)new Vector2[4] {
-			new Vector2 (((Rect)(ref rect)).x, ((Rect)(ref rect)).y),
-			new Vector2 (((Rect)(ref rect)).x + ((Rect)(ref rect)).width, ((Rect)(ref rect)).y),
-			new Vector2 (((Rect)(ref rect)).x + ((Rect)(ref rect)).width, ((Rect)(ref rect)).y + ((Rect)(ref rect)).height),
-			new Vector2 (((Rect)(ref rect)).x, ((Rect)(ref rect)).y + ((Rect)(ref rect)).height)
+		Vector2[] array = new Vector2[4] {
+			new Vector2 (rect.x, rect.y),
+			new Vector2 (rect.x + rect.width, rect.y),
+			new Vector2 (rect.x + rect.width, rect.y + rect.height),
+			new Vector2 (rect.x, rect.y + rect.height)
 		};
-		UIVertex[] array2 = (UIVertex[])(object)new UIVertex[4];
+		UIVertex[] array2 = new UIVertex[4];
 		for (int i = 0; i < array2.Length; i++) {
 			UIVertex simpleVert = UIVertex.simpleVert;
-			simpleVert.color = Color32.op_Implicit (((Graphic)this).color);
-			Vector2 val = array [i];
-			Rect pixelRect = ((Graphic)this).canvas.pixelRect;
-			simpleVert.position = Vector2.op_Implicit (Vector2Ex.WithY (val, ((Rect)(ref pixelRect)).height - array [i].y));
+			simpleVert.color = color;
+			simpleVert.position = array [i].WithY (base.canvas.pixelRect.height - array [i].y);
 			array2 [i] = simpleVert;
 		}
 		vh.AddUIVertexQuad (array2);

@@ -1,4 +1,3 @@
-using System;
 using Rust;
 using UnityEngine;
 
@@ -48,7 +47,6 @@ public class ScrapTransportHelicopter : MiniCopter, TriggerHurtNotChild.IHurtTri
 
 	public override void ServerInit ()
 	{
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
 		base.ServerInit ();
 		rigidBody.inertiaTensor = new Vector3 (19082f, 14356f, 7940f);
 	}
@@ -56,7 +54,7 @@ public class ScrapTransportHelicopter : MiniCopter, TriggerHurtNotChild.IHurtTri
 	public override void OnHealthChanged (float oldvalue, float newvalue)
 	{
 		if (base.isServer) {
-			((FacepunchBehaviour)this).Invoke ((Action)DelayedNetworking, 0.15f);
+			Invoke (DelayedNetworking, 0.15f);
 		}
 	}
 
@@ -73,15 +71,15 @@ public class ScrapTransportHelicopter : MiniCopter, TriggerHurtNotChild.IHurtTri
 	public override void OnFlagsChanged (Flags old, Flags next)
 	{
 		base.OnFlagsChanged (old, next);
-		if (!GameInfo.HasAchievements || !base.isServer || old.HasFlag (Flags.On) || !next.HasFlag (Flags.On) || !((Object)(object)GetDriver () != (Object)null)) {
+		if (!GameInfo.HasAchievements || !base.isServer || old.HasFlag (Flags.On) || !next.HasFlag (Flags.On) || !(GetDriver () != null)) {
 			return;
 		}
 		int num = 0;
 		foreach (BaseEntity child in children) {
-			if ((Object)(object)child.ToPlayer () != (Object)null) {
+			if (child.ToPlayer () != null) {
 				num++;
 			}
-			if (child is BaseVehicleSeat baseVehicleSeat && (Object)(object)baseVehicleSeat.GetMounted () != (Object)null && (Object)(object)baseVehicleSeat.GetMounted () != (Object)(object)GetDriver ()) {
+			if (child is BaseVehicleSeat baseVehicleSeat && baseVehicleSeat.GetMounted () != null && baseVehicleSeat.GetMounted () != GetDriver ()) {
 				num++;
 			}
 		}

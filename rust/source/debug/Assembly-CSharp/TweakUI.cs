@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class TweakUI : SingletonComponent<TweakUI>
@@ -7,7 +6,7 @@ public class TweakUI : SingletonComponent<TweakUI>
 
 	private void Update ()
 	{
-		if (Input.GetKeyDown ((KeyCode)283) && CanToggle ()) {
+		if (Input.GetKeyDown (KeyCode.F2) && CanToggle ()) {
 			SetVisible (!isOpen);
 		}
 	}
@@ -22,12 +21,11 @@ public class TweakUI : SingletonComponent<TweakUI>
 
 	public void SetVisible (bool b)
 	{
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
 		if (b) {
 			isOpen = true;
 			return;
 		}
 		isOpen = false;
-		ConsoleSystem.Run (Option.Client, "writecfg", Array.Empty<object> ());
+		ConsoleSystem.Run (ConsoleSystem.Option.Client, "writecfg");
 	}
 }

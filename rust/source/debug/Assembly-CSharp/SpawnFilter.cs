@@ -5,23 +5,22 @@ using UnityEngine;
 public class SpawnFilter
 {
 	[InspectorFlags]
-	public Enum SplatType = (Enum)(-1);
+	public TerrainSplat.Enum SplatType = (TerrainSplat.Enum)(-1);
 
 	[InspectorFlags]
-	public Enum BiomeType = (Enum)(-1);
+	public TerrainBiome.Enum BiomeType = (TerrainBiome.Enum)(-1);
 
 	[InspectorFlags]
-	public Enum TopologyAny = (Enum)(-1);
+	public TerrainTopology.Enum TopologyAny = (TerrainTopology.Enum)(-1);
 
 	[InspectorFlags]
-	public Enum TopologyAll = (Enum)0;
+	public TerrainTopology.Enum TopologyAll = (TerrainTopology.Enum)0;
 
 	[InspectorFlags]
-	public Enum TopologyNot = (Enum)0;
+	public TerrainTopology.Enum TopologyNot = (TerrainTopology.Enum)0;
 
 	public bool Test (Vector3 worldPos)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
 		return GetFactor (worldPos) > 0.5f;
 	}
 
@@ -32,8 +31,6 @@ public class SpawnFilter
 
 	public float GetFactor (Vector3 worldPos, bool checkPlacementMap = true)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
 		float normX = TerrainMeta.NormalizeX (worldPos.x);
 		float normZ = TerrainMeta.NormalizeZ (worldPos.z);
 		return GetFactor (normX, normZ, checkPlacementMap);
@@ -41,48 +38,38 @@ public class SpawnFilter
 
 	public float GetFactor (float normX, float normZ, bool checkPlacementMap = true)
 	{
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0056: Expected I4, but got Unknown
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005d: Expected I4, but got Unknown
-		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0064: Expected I4, but got Unknown
-		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006b: Expected I4, but got Unknown
-		//IL_006c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0073: Expected I4, but got Unknown
-		if ((Object)(object)TerrainMeta.TopologyMap == (Object)null) {
+		if (TerrainMeta.TopologyMap == null) {
 			return 0f;
 		}
-		if (checkPlacementMap && (Object)(object)TerrainMeta.PlacementMap != (Object)null && TerrainMeta.PlacementMap.GetBlocked (normX, normZ)) {
+		if (checkPlacementMap && TerrainMeta.PlacementMap != null && TerrainMeta.PlacementMap.GetBlocked (normX, normZ)) {
 			return 0f;
 		}
-		int num = (int)SplatType;
-		int num2 = (int)BiomeType;
-		int num3 = (int)TopologyAny;
-		int num4 = (int)TopologyAll;
-		int num5 = (int)TopologyNot;
-		if (num3 == 0) {
-			Debug.LogError ((object)"Empty topology filter is invalid.");
-		} else if (num3 != -1 || num4 != 0 || num5 != 0) {
+		int splatType = (int)SplatType;
+		int biomeType = (int)BiomeType;
+		int topologyAny = (int)TopologyAny;
+		int topologyAll = (int)TopologyAll;
+		int topologyNot = (int)TopologyNot;
+		if (topologyAny == 0) {
+			Debug.LogError ("Empty topology filter is invalid.");
+		} else if (topologyAny != -1 || topologyAll != 0 || topologyNot != 0) {
 			int topology = TerrainMeta.TopologyMap.GetTopology (normX, normZ);
-			if (num3 != -1 && (topology & num3) == 0) {
+			if (topologyAny != -1 && (topology & topologyAny) == 0) {
 				return 0f;
 			}
-			if (num5 != 0 && (topology & num5) != 0) {
+			if (topologyNot != 0 && (topology & topologyNot) != 0) {
 				return 0f;
 			}
-			if (num4 != 0 && (topology & num4) != num4) {
+			if (topologyAll != 0 && (topology & topologyAll) != topologyAll) {
 				return 0f;
 			}
 		}
-		switch (num2) {
+		switch (biomeType) {
 		case 0:
-			Debug.LogError ((object)"Empty biome filter is invalid.");
+			Debug.LogError ("Empty biome filter is invalid.");
 			break;
 		default: {
 			int biomeMaxType = TerrainMeta.BiomeMap.GetBiomeMaxType (normX, normZ);
-			if ((biomeMaxType & num2) == 0) {
+			if ((biomeMaxType & biomeType) == 0) {
 				return 0f;
 			}
 			break;
@@ -90,12 +77,12 @@ public class SpawnFilter
 		case -1:
 			break;
 		}
-		switch (num) {
+		switch (splatType) {
 		case 0:
-			Debug.LogError ((object)"Empty splat filter is invalid.");
+			Debug.LogError ("Empty splat filter is invalid.");
 			break;
 		default:
-			return TerrainMeta.SplatMap.GetSplat (normX, normZ, num);
+			return TerrainMeta.SplatMap.GetSplat (normX, normZ, splatType);
 		case -1:
 			break;
 		}

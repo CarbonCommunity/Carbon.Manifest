@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Network;
@@ -86,9 +87,9 @@ public class StrobeLight : IOEntity
 		SendNetworkUpdateImmediate ();
 		UpdateSpeedFlags ();
 		if (wantsOn) {
-			((FacepunchBehaviour)this).InvokeRandomized ((Action)SelfDamage, 0f, 10f, 0.1f);
+			InvokeRandomized (SelfDamage, 0f, 10f, 0.1f);
 		} else {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)SelfDamage);
+			CancelInvoke (SelfDamage);
 		}
 	}
 
@@ -124,82 +125,61 @@ public class StrobeLight : IOEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("StrobeLight.OnRpcMessage", 0);
-		try {
-			if (rpc == 1433326740 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("StrobeLight.OnRpcMessage")) {
+			if (rpc == 1433326740 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - SetStrobe "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - SetStrobe "));
 				}
-				TimeWarning val2 = TimeWarning.New ("SetStrobe", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("SetStrobe")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (1433326740u, "SetStrobe", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage strobe = rPCMessage;
 							SetStrobe (strobe);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in SetStrobe");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 1814332702 && (Object)(object)player != (Object)null) {
+			if (rpc == 1814332702 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - SetStrobeSpeed "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - SetStrobeSpeed "));
 				}
-				TimeWarning val5 = TimeWarning.New ("SetStrobeSpeed", 0);
-				try {
-					TimeWarning val6 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("SetStrobeSpeed")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (1814332702u, "SetStrobeSpeed", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val6)?.Dispose ();
 					}
 					try {
-						TimeWarning val7 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage strobeSpeed = rPCMessage;
 							SetStrobeSpeed (strobeSpeed);
-						} finally {
-							((IDisposable)val7)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in SetStrobeSpeed");
 					}
-				} finally {
-					((IDisposable)val5)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}

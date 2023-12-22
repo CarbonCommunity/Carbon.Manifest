@@ -74,9 +74,9 @@ public class TerrainConfig : ScriptableObject
 
 	public bool CastShadows = true;
 
-	public LayerMask GroundMask = LayerMask.op_Implicit (0);
+	public LayerMask GroundMask = 0;
 
-	public LayerMask WaterMask = LayerMask.op_Implicit (0);
+	public LayerMask WaterMask = 0;
 
 	public PhysicMaterial GenericMaterial = null;
 
@@ -86,9 +86,9 @@ public class TerrainConfig : ScriptableObject
 
 	public Material MarginMaterial = null;
 
-	public Texture[] AlbedoArrays = (Texture[])(object)new Texture[3];
+	public Texture[] AlbedoArrays = new Texture[3];
 
-	public Texture[] NormalArrays = (Texture[])(object)new Texture[3];
+	public Texture[] NormalArrays = new Texture[3];
 
 	public float HeightMapErrorMin = 5f;
 
@@ -120,7 +120,7 @@ public class TerrainConfig : ScriptableObject
 
 	public PhysicMaterial[] GetPhysicMaterials ()
 	{
-		PhysicMaterial[] array = (PhysicMaterial[])(object)new PhysicMaterial[Splats.Length];
+		PhysicMaterial[] array = new PhysicMaterial[Splats.Length];
 		for (int i = 0; i < Splats.Length; i++) {
 			array [i] = Splats [i].Material;
 		}
@@ -129,9 +129,7 @@ public class TerrainConfig : ScriptableObject
 
 	public Color[] GetAridColors ()
 	{
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		Color[] array = (Color[])(object)new Color[Splats.Length];
+		Color[] array = new Color[Splats.Length];
 		for (int i = 0; i < Splats.Length; i++) {
 			array [i] = Splats [i].AridColor;
 		}
@@ -140,24 +138,18 @@ public class TerrainConfig : ScriptableObject
 
 	public void GetAridOverlayConstants (out Color[] color, out Vector4[] param)
 	{
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0060: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
-		color = (Color[])(object)new Color[Splats.Length];
-		param = (Vector4[])(object)new Vector4[Splats.Length];
+		color = new Color[Splats.Length];
+		param = new Vector4[Splats.Length];
 		for (int i = 0; i < Splats.Length; i++) {
 			SplatOverlay aridOverlay = Splats [i].AridOverlay;
-			color [i] = ((Color)(ref aridOverlay.Color)).linear;
+			color [i] = aridOverlay.Color.linear;
 			param [i] = new Vector4 (aridOverlay.Smoothness, aridOverlay.NormalIntensity, aridOverlay.BlendFactor, aridOverlay.BlendFalloff);
 		}
 	}
 
 	public Color[] GetTemperateColors ()
 	{
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		Color[] array = (Color[])(object)new Color[Splats.Length];
+		Color[] array = new Color[Splats.Length];
 		for (int i = 0; i < Splats.Length; i++) {
 			array [i] = Splats [i].TemperateColor;
 		}
@@ -166,24 +158,18 @@ public class TerrainConfig : ScriptableObject
 
 	public void GetTemperateOverlayConstants (out Color[] color, out Vector4[] param)
 	{
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0060: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
-		color = (Color[])(object)new Color[Splats.Length];
-		param = (Vector4[])(object)new Vector4[Splats.Length];
+		color = new Color[Splats.Length];
+		param = new Vector4[Splats.Length];
 		for (int i = 0; i < Splats.Length; i++) {
 			SplatOverlay temperateOverlay = Splats [i].TemperateOverlay;
-			color [i] = ((Color)(ref temperateOverlay.Color)).linear;
+			color [i] = temperateOverlay.Color.linear;
 			param [i] = new Vector4 (temperateOverlay.Smoothness, temperateOverlay.NormalIntensity, temperateOverlay.BlendFactor, temperateOverlay.BlendFalloff);
 		}
 	}
 
 	public Color[] GetTundraColors ()
 	{
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		Color[] array = (Color[])(object)new Color[Splats.Length];
+		Color[] array = new Color[Splats.Length];
 		for (int i = 0; i < Splats.Length; i++) {
 			array [i] = Splats [i].TundraColor;
 		}
@@ -192,24 +178,18 @@ public class TerrainConfig : ScriptableObject
 
 	public void GetTundraOverlayConstants (out Color[] color, out Vector4[] param)
 	{
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0060: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
-		color = (Color[])(object)new Color[Splats.Length];
-		param = (Vector4[])(object)new Vector4[Splats.Length];
+		color = new Color[Splats.Length];
+		param = new Vector4[Splats.Length];
 		for (int i = 0; i < Splats.Length; i++) {
 			SplatOverlay tundraOverlay = Splats [i].TundraOverlay;
-			color [i] = ((Color)(ref tundraOverlay.Color)).linear;
+			color [i] = tundraOverlay.Color.linear;
 			param [i] = new Vector4 (tundraOverlay.Smoothness, tundraOverlay.NormalIntensity, tundraOverlay.BlendFactor, tundraOverlay.BlendFalloff);
 		}
 	}
 
 	public Color[] GetArcticColors ()
 	{
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		Color[] array = (Color[])(object)new Color[Splats.Length];
+		Color[] array = new Color[Splats.Length];
 		for (int i = 0; i < Splats.Length; i++) {
 			array [i] = Splats [i].ArcticColor;
 		}
@@ -218,15 +198,11 @@ public class TerrainConfig : ScriptableObject
 
 	public void GetArcticOverlayConstants (out Color[] color, out Vector4[] param)
 	{
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0060: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
-		color = (Color[])(object)new Color[Splats.Length];
-		param = (Vector4[])(object)new Vector4[Splats.Length];
+		color = new Color[Splats.Length];
+		param = new Vector4[Splats.Length];
 		for (int i = 0; i < Splats.Length; i++) {
 			SplatOverlay arcticOverlay = Splats [i].ArcticOverlay;
-			color [i] = ((Color)(ref arcticOverlay.Color)).linear;
+			color [i] = arcticOverlay.Color.linear;
 			param [i] = new Vector4 (arcticOverlay.Smoothness, arcticOverlay.NormalIntensity, arcticOverlay.BlendFactor, arcticOverlay.BlendFalloff);
 		}
 	}
@@ -264,9 +240,7 @@ public class TerrainConfig : ScriptableObject
 
 	public Vector3[] GetPackedUVMIX ()
 	{
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-		Vector3[] array = (Vector3[])(object)new Vector3[Splats.Length];
+		Vector3[] array = new Vector3[Splats.Length];
 		for (int i = 0; i < Splats.Length; i++) {
 			array [i] = new Vector3 (Splats [i].UVMIXMult, Splats [i].UVMIXStart, Splats [i].UVMIXDist);
 		}
@@ -275,32 +249,31 @@ public class TerrainConfig : ScriptableObject
 
 	public GroundType GetCurrentGroundType (bool isGrounded, RaycastHit hit)
 	{
-		//IL_0206: Unknown result type (might be due to invalid IL or missing references)
 		if (string.IsNullOrEmpty (grassMatName)) {
 			dirtMatNames = new List<string> ();
 			stoneyMatNames = new List<string> ();
 			SplatType[] splats = Splats;
 			foreach (SplatType splatType in splats) {
 				string text = splatType.Name.ToLower ();
-				string name = ((Object)splatType.Material).name;
+				string item = splatType.Material.name;
 				switch (text) {
 				case "grass":
-					grassMatName = name;
+					grassMatName = item;
 					break;
 				case "snow":
-					snowMatName = name;
+					snowMatName = item;
 					break;
 				case "sand":
-					sandMatName = name;
+					sandMatName = item;
 					break;
 				case "dirt":
 				case "forest":
 				case "tundra":
-					dirtMatNames.Add (name);
+					dirtMatNames.Add (item);
 					break;
 				case "stones":
 				case "gravel":
-					stoneyMatNames.Add (name);
+					stoneyMatNames.Add (item);
 					break;
 				}
 			}
@@ -308,30 +281,30 @@ public class TerrainConfig : ScriptableObject
 		if (!isGrounded) {
 			return GroundType.None;
 		}
-		if ((Object)(object)((RaycastHit)(ref hit)).collider == (Object)null) {
+		if (hit.collider == null) {
 			return GroundType.HardSurface;
 		}
-		PhysicMaterial materialAt = ((RaycastHit)(ref hit)).collider.GetMaterialAt (((RaycastHit)(ref hit)).point);
-		if ((Object)(object)materialAt == (Object)null) {
+		PhysicMaterial materialAt = hit.collider.GetMaterialAt (hit.point);
+		if (materialAt == null) {
 			return GroundType.HardSurface;
 		}
-		string name2 = ((Object)materialAt).name;
-		if (name2 == grassMatName) {
+		string text2 = materialAt.name;
+		if (text2 == grassMatName) {
 			return GroundType.Grass;
 		}
-		if (name2 == sandMatName) {
+		if (text2 == sandMatName) {
 			return GroundType.Sand;
 		}
-		if (name2 == snowMatName) {
+		if (text2 == snowMatName) {
 			return GroundType.Snow;
 		}
 		for (int j = 0; j < dirtMatNames.Count; j++) {
-			if (dirtMatNames [j] == name2) {
+			if (dirtMatNames [j] == text2) {
 				return GroundType.Dirt;
 			}
 		}
 		for (int k = 0; k < stoneyMatNames.Count; k++) {
-			if (stoneyMatNames [k] == name2) {
+			if (stoneyMatNames [k] == text2) {
 				return GroundType.Gravel;
 			}
 		}

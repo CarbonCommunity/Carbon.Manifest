@@ -10,30 +10,24 @@ public class TriggerNoSpray : TriggerBase
 
 	private void OnEnable ()
 	{
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		cachedTransform = ((Component)this).transform;
+		cachedTransform = base.transform;
 		cachedBounds = new OBB (cachedTransform, new Bounds (TriggerCollider.center, TriggerCollider.size));
 	}
 
 	internal override GameObject InterestedInObject (GameObject obj)
 	{
 		BaseEntity baseEntity = obj.ToBaseEntity ();
-		if ((Object)(object)baseEntity == (Object)null) {
+		if (baseEntity == null) {
 			return null;
 		}
-		if ((Object)(object)baseEntity.ToPlayer () == (Object)null) {
+		if (baseEntity.ToPlayer () == null) {
 			return null;
 		}
-		return ((Component)baseEntity).gameObject;
+		return baseEntity.gameObject;
 	}
 
 	public bool IsPositionValid (Vector3 worldPosition)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		return !((OBB)(ref cachedBounds)).Contains (worldPosition);
+		return !cachedBounds.Contains (worldPosition);
 	}
 }

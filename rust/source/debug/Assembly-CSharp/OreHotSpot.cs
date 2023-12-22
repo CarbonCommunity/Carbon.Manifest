@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public class OreHotSpot : BaseCombatEntity, ILOD
 {
 	public float visualDistance = 20f;
@@ -25,7 +23,7 @@ public class OreHotSpot : BaseCombatEntity, ILOD
 	public override void OnAttacked (HitInfo info)
 	{
 		base.OnAttacked (info);
-		if (!base.isClient && Object.op_Implicit ((Object)(object)owner)) {
+		if (!base.isClient && (bool)owner) {
 			owner.OnAttacked (info);
 		}
 	}
@@ -38,10 +36,8 @@ public class OreHotSpot : BaseCombatEntity, ILOD
 
 	public void FireFinishEffect ()
 	{
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
 		if (finishEffect.isValid) {
-			Effect.server.Run (finishEffect.resourcePath, ((Component)this).transform.position, ((Component)this).transform.forward);
+			Effect.server.Run (finishEffect.resourcePath, base.transform.position, base.transform.forward);
 		}
 	}
 }

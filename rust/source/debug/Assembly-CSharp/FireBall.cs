@@ -1,3 +1,4 @@
+#define ENABLE_PROFILER
 using System;
 using System.Collections.Generic;
 using Facepunch;
@@ -30,7 +31,7 @@ public class FireBall : BaseEntity, ISplashable
 
 	public bool canMerge = false;
 
-	public LayerMask AttackLayers = LayerMask.op_Implicit (1220225809);
+	public LayerMask AttackLayers = 1220225809;
 
 	public bool ignoreNPC = false;
 
@@ -46,21 +47,14 @@ public class FireBall : BaseEntity, ISplashable
 
 	public void SetDelayedVelocity (Vector3 delayed)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
 		if (!(delayedVelocity != Vector3.zero)) {
 			delayedVelocity = delayed;
-			((FacepunchBehaviour)this).Invoke ((Action)ApplyDelayedVelocity, 0.1f);
+			Invoke (ApplyDelayedVelocity, 0.1f);
 		}
 	}
 
 	private void ApplyDelayedVelocity ()
 	{
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
 		SetVelocity (delayedVelocity);
 		delayedVelocity = Vector3.zero;
 	}
@@ -68,11 +62,11 @@ public class FireBall : BaseEntity, ISplashable
 	public override void ServerInit ()
 	{
 		base.ServerInit ();
-		((FacepunchBehaviour)this).InvokeRepeating ((Action)Think, Random.Range (0f, 1f), tickRate);
-		float num = Random.Range (lifeTimeMin, lifeTimeMax);
-		float num2 = num * Random.Range (0.9f, 1.1f);
-		((FacepunchBehaviour)this).Invoke ((Action)Extinguish, num2);
-		((FacepunchBehaviour)this).Invoke ((Action)TryToSpread, num * Random.Range (0.3f, 0.5f));
+		InvokeRepeating (Think, UnityEngine.Random.Range (0f, 1f), tickRate);
+		float num = UnityEngine.Random.Range (lifeTimeMin, lifeTimeMax);
+		float num2 = num * UnityEngine.Random.Range (0.9f, 1.1f);
+		Invoke (Extinguish, num2);
+		Invoke (TryToSpread, num * UnityEngine.Random.Range (0.3f, 0.5f));
 		deathTime = Time.realtimeSinceStartup + num2;
 		spawnTime = Time.realtimeSinceStartup;
 	}
@@ -84,9 +78,9 @@ public class FireBall : BaseEntity, ISplashable
 
 	public void AddLife (float amountToAdd)
 	{
-		float num = Mathf.Clamp (GetDeathTime () + amountToAdd, 0f, MaxLifeTime ());
-		((FacepunchBehaviour)this).Invoke ((Action)Extinguish, num);
-		deathTime = num;
+		float time = Mathf.Clamp (GetDeathTime () + amountToAdd, 0f, MaxLifeTime ());
+		Invoke (Extinguish, time);
+		deathTime = time;
 	}
 
 	public float MaxLifeTime ()
@@ -105,30 +99,17 @@ public class FireBall : BaseEntity, ISplashable
 
 	public void TryToSpread ()
 	{
-		//IL_0059: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0063: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0069: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0091: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0096: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ef: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0100: Unknown result type (might be due to invalid IL or missing references)
 		float num = 0.9f - generation * 0.1f;
-		if (Random.Range (0f, 1f) < num && spreadSubEntity.isValid) {
+		if (UnityEngine.Random.Range (0f, 1f) < num && spreadSubEntity.isValid) {
 			BaseEntity baseEntity = GameManager.server.CreateEntity (spreadSubEntity.resourcePath);
-			if (Object.op_Implicit ((Object)(object)baseEntity)) {
-				((Component)baseEntity).transform.position = ((Component)this).transform.position + Vector3.up * 0.25f;
+			if ((bool)baseEntity) {
+				baseEntity.transform.position = base.transform.position + Vector3.up * 0.25f;
 				baseEntity.Spawn ();
 				float aimCone = 45f;
 				Vector3 modifiedAimConeDirection = AimConeUtil.GetModifiedAimConeDirection (aimCone, Vector3.up);
-				baseEntity.creatorEntity = (((Object)(object)creatorEntity == (Object)null) ? baseEntity : creatorEntity);
-				baseEntity.SetVelocity (modifiedAimConeDirection * Random.Range (5f, 8f));
-				((Component)baseEntity).SendMessage ("SetGeneration", (object)(generation + 1f));
+				baseEntity.creatorEntity = ((creatorEntity == null) ? baseEntity : creatorEntity);
+				baseEntity.SetVelocity (modifiedAimConeDirection * UnityEngine.Random.Range (5f, 8f));
+				baseEntity.SendMessage ("SetGeneration", generation + 1f);
 			}
 		}
 	}
@@ -140,14 +121,10 @@ public class FireBall : BaseEntity, ISplashable
 
 	public void Think ()
 	{
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
 		if (base.isServer) {
 			Profiler.BeginSample ("FireThink");
-			SetResting (Vector3.Distance (lastPos, ((Component)this).transform.localPosition) < 0.25f);
-			lastPos = ((Component)this).transform.localPosition;
+			SetResting (Vector3.Distance (lastPos, base.transform.localPosition) < 0.25f);
+			lastPos = base.transform.localPosition;
 			if (IsResting ()) {
 				DoRadialDamage ();
 			}
@@ -163,46 +140,31 @@ public class FireBall : BaseEntity, ISplashable
 
 	public void DoRadialDamage ()
 	{
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0096: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_016b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01c7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01cc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01de: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ac: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b1: Unknown result type (might be due to invalid IL or missing references)
-		List<Collider> list = Pool.GetList<Collider> ();
-		Vector3 position = ((Component)this).transform.position + new Vector3 (0f, radius * 0.75f, 0f);
-		Vis.Colliders<Collider> (position, radius, list, LayerMask.op_Implicit (AttackLayers), (QueryTriggerInteraction)2);
+		List<Collider> obj = Pool.GetList<Collider> ();
+		Vector3 position = base.transform.position + new Vector3 (0f, radius * 0.75f, 0f);
+		Vis.Colliders (position, radius, obj, AttackLayers);
 		HitInfo hitInfo = new HitInfo ();
 		hitInfo.DoHitEffects = true;
 		hitInfo.DidHit = true;
 		hitInfo.HitBone = 0u;
-		hitInfo.Initiator = (((Object)(object)creatorEntity == (Object)null) ? ((Component)this).gameObject.ToBaseEntity () : creatorEntity);
-		hitInfo.PointStart = ((Component)this).transform.position;
-		foreach (Collider item in list) {
-			if (item.isTrigger && (((Component)item).gameObject.layer == 29 || ((Component)item).gameObject.layer == 18)) {
+		hitInfo.Initiator = ((creatorEntity == null) ? base.gameObject.ToBaseEntity () : creatorEntity);
+		hitInfo.PointStart = base.transform.position;
+		foreach (Collider item in obj) {
+			if (item.isTrigger && (item.gameObject.layer == 29 || item.gameObject.layer == 18)) {
 				continue;
 			}
-			BaseCombatEntity baseCombatEntity = ((Component)item).gameObject.ToBaseEntity () as BaseCombatEntity;
-			if (!((Object)(object)baseCombatEntity == (Object)null) && baseCombatEntity.isServer && baseCombatEntity.IsAlive () && (!ignoreNPC || !baseCombatEntity.IsNpc) && baseCombatEntity.IsVisible (position)) {
+			BaseCombatEntity baseCombatEntity = item.gameObject.ToBaseEntity () as BaseCombatEntity;
+			if (!(baseCombatEntity == null) && baseCombatEntity.isServer && baseCombatEntity.IsAlive () && (!ignoreNPC || !baseCombatEntity.IsNpc) && baseCombatEntity.IsVisible (position)) {
 				if (baseCombatEntity is BasePlayer) {
 					Effect.server.Run ("assets/bundled/prefabs/fx/impacts/additive/fire.prefab", baseCombatEntity, 0u, new Vector3 (0f, 1f, 0f), Vector3.up);
 				}
-				hitInfo.PointEnd = ((Component)baseCombatEntity).transform.position;
-				hitInfo.HitPositionWorld = ((Component)baseCombatEntity).transform.position;
+				hitInfo.PointEnd = baseCombatEntity.transform.position;
+				hitInfo.HitPositionWorld = baseCombatEntity.transform.position;
 				hitInfo.damageTypes.Set (DamageType.Heat, damagePerSecond * tickRate);
 				baseCombatEntity.OnAttacked (hitInfo);
 			}
 		}
-		Pool.FreeList<Collider> (ref list);
+		Pool.FreeList (ref obj);
 	}
 
 	public bool CanMerge ()
@@ -217,29 +179,28 @@ public class FireBall : BaseEntity, ISplashable
 
 	public void SetResting (bool isResting)
 	{
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
 		if (isResting != IsResting () && isResting && TimeAlive () > 1f && CanMerge ()) {
-			List<Collider> list = Pool.GetList<Collider> ();
-			Vis.Colliders<Collider> (((Component)this).transform.position, 0.5f, list, 512, (QueryTriggerInteraction)2);
-			foreach (Collider item in list) {
-				BaseEntity baseEntity = ((Component)item).gameObject.ToBaseEntity ();
-				if (Object.op_Implicit ((Object)(object)baseEntity)) {
+			List<Collider> obj = Pool.GetList<Collider> ();
+			Vis.Colliders (base.transform.position, 0.5f, obj, 512);
+			foreach (Collider item in obj) {
+				BaseEntity baseEntity = item.gameObject.ToBaseEntity ();
+				if ((bool)baseEntity) {
 					FireBall fireBall = baseEntity.ToServer<FireBall> ();
-					if (Object.op_Implicit ((Object)(object)fireBall) && fireBall.CanMerge () && (Object)(object)fireBall != (Object)(object)this) {
-						((FacepunchBehaviour)fireBall).Invoke ((Action)Extinguish, 1f);
+					if ((bool)fireBall && fireBall.CanMerge () && fireBall != this) {
+						fireBall.Invoke (Extinguish, 1f);
 						fireBall.canMerge = false;
 						AddLife (fireBall.TimeLeft () * 0.25f);
 					}
 				}
 			}
-			Pool.FreeList<Collider> (ref list);
+			Pool.FreeList (ref obj);
 		}
 		SetFlag (Flags.OnFire, isResting);
 	}
 
 	public void Extinguish ()
 	{
-		((FacepunchBehaviour)this).CancelInvoke ((Action)Extinguish);
+		CancelInvoke (Extinguish);
 		if (!base.IsDestroyed) {
 			Kill ();
 		}

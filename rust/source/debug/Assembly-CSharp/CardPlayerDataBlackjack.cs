@@ -29,7 +29,7 @@ public class CardPlayerDataBlackjack : CardPlayerData
 	public override void Dispose ()
 	{
 		base.Dispose ();
-		Pool.FreeList<PlayingCard> (ref SplitCards);
+		Pool.FreeList (ref SplitCards);
 	}
 
 	public override int GetTotalBetThisRound ()
@@ -73,18 +73,18 @@ public class CardPlayerDataBlackjack : CardPlayerData
 	public override void Save (CardGame syncData)
 	{
 		base.Save (syncData);
-		BlackjackCardPlayer val = Pool.Get<BlackjackCardPlayer> ();
-		val.splitCards = Pool.GetList<int> ();
+		CardGame.BlackjackCardPlayer blackjackCardPlayer = Pool.Get<CardGame.BlackjackCardPlayer> ();
+		blackjackCardPlayer.splitCards = Pool.GetList<int> ();
 		foreach (PlayingCard splitCard in SplitCards) {
-			val.splitCards.Add (base.SendCardDetails ? splitCard.GetIndex () : (-1));
+			blackjackCardPlayer.splitCards.Add (base.SendCardDetails ? splitCard.GetIndex () : (-1));
 		}
-		val.splitBetThisRound = splitBetThisRound;
-		val.insuranceBetThisRound = insuranceBetThisRound;
-		val.playingSplitCards = playingSplitCards;
+		blackjackCardPlayer.splitBetThisRound = splitBetThisRound;
+		blackjackCardPlayer.insuranceBetThisRound = insuranceBetThisRound;
+		blackjackCardPlayer.playingSplitCards = playingSplitCards;
 		if (syncData.blackjack.players == null) {
-			syncData.blackjack.players = Pool.GetList<BlackjackCardPlayer> ();
+			syncData.blackjack.players = Pool.GetList<CardGame.BlackjackCardPlayer> ();
 		}
-		syncData.blackjack.players.Add (val);
+		syncData.blackjack.players.Add (blackjackCardPlayer);
 	}
 
 	public bool TrySwitchToSplitHand ()
@@ -99,13 +99,13 @@ public class CardPlayerDataBlackjack : CardPlayerData
 
 	private void SwapSplitCardsWithMain ()
 	{
-		List<PlayingCard> list = Pool.GetList<PlayingCard> ();
-		list.AddRange (Cards);
+		List<PlayingCard> obj = Pool.GetList<PlayingCard> ();
+		obj.AddRange (Cards);
 		Cards.Clear ();
 		Cards.AddRange (SplitCards);
 		SplitCards.Clear ();
-		SplitCards.AddRange (list);
-		Pool.FreeList<PlayingCard> (ref list);
+		SplitCards.AddRange (obj);
+		Pool.FreeList (ref obj);
 		int num = betThisRound;
 		int num2 = splitBetThisRound;
 		splitBetThisRound = num;

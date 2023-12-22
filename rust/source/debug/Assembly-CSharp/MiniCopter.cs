@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -136,9 +137,9 @@ public class MiniCopter : BaseHelicopterVehicle, IEngineControllerUser, IEntity,
 	public void RPC_OpenFuel (RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
-		if (!((Object)(object)player == (Object)null)) {
+		if (!(player == null)) {
 			BasePlayer driver = GetDriver ();
-			if ((!((Object)(object)driver != (Object)null) || !((Object)(object)driver != (Object)(object)player)) && (!IsSafe () || !((Object)(object)player != (Object)(object)creatorEntity))) {
+			if ((!(driver != null) || !(driver != player)) && (!IsSafe () || !(player != creatorEntity))) {
 				engineController.FuelSystem.LootFuel (player);
 			}
 		}
@@ -186,10 +187,6 @@ public class MiniCopter : BaseHelicopterVehicle, IEngineControllerUser, IEntity,
 
 	public override void SetDefaultInputState ()
 	{
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0062: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006d: Unknown result type (might be due to invalid IL or missing references)
 		currentInputState.Reset ();
 		cachedRoll = 0f;
 		cachedYaw = 0f;
@@ -198,8 +195,8 @@ public class MiniCopter : BaseHelicopterVehicle, IEngineControllerUser, IEntity,
 			return;
 		}
 		if (HasDriver ()) {
-			float num = Vector3.Dot (Vector3.up, ((Component)this).transform.right);
-			float num2 = Vector3.Dot (Vector3.up, ((Component)this).transform.forward);
+			float num = Vector3.Dot (Vector3.up, base.transform.right);
+			float num2 = Vector3.Dot (Vector3.up, base.transform.forward);
 			currentInputState.roll = ((num < 0f) ? 1f : 0f);
 			currentInputState.roll -= ((num > 0f) ? 1f : 0f);
 			if (num2 < -0f) {
@@ -214,7 +211,7 @@ public class MiniCopter : BaseHelicopterVehicle, IEngineControllerUser, IEntity,
 
 	private void ApplyForceAtWheels ()
 	{
-		if (!((Object)(object)rigidBody == (Object)null)) {
+		if (!(rigidBody == null)) {
 			float num = 50f;
 			float num2 = 0f;
 			float num3 = 0f;
@@ -269,18 +266,17 @@ public class MiniCopter : BaseHelicopterVehicle, IEngineControllerUser, IEntity,
 
 	public override void ServerInit ()
 	{
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
 		base.ServerInit ();
-		lastEngineOnTime = Time.realtimeSinceStartup;
+		lastEngineOnTime = UnityEngine.Time.realtimeSinceStartup;
 		rigidBody.inertiaTensor = rigidBody.inertiaTensor;
-		preventBuildingObject.SetActive (true);
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)UpdateNetwork, 0f, 0.2f, 0.05f);
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)DecayTick, Random.Range (30f, 60f), 60f, 6f);
+		preventBuildingObject.SetActive (value: true);
+		InvokeRandomized (UpdateNetwork, 0f, 0.2f, 0.05f);
+		InvokeRandomized (DecayTick, UnityEngine.Random.Range (30f, 60f), 60f, 6f);
 	}
 
 	public void DecayTick ()
 	{
-		if (base.healthFraction != 0f && !IsOn () && !(Time.time < lastEngineOnTime + 600f)) {
+		if (base.healthFraction != 0f && !IsOn () && !(UnityEngine.Time.time < lastEngineOnTime + 600f)) {
 			float num = 1f / (IsOutside () ? outsidedecayminutes : insidedecayminutes);
 			Hurt (MaxHealth () * num, DamageType.Decay, this, useProtection: false);
 		}
@@ -301,7 +297,7 @@ public class MiniCopter : BaseHelicopterVehicle, IEngineControllerUser, IEntity,
 		if (engineController.IsOff) {
 			return HasDriver ();
 		}
-		return HasDriver () || Time.time <= lastPlayerInputTime + 1f;
+		return HasDriver () || UnityEngine.Time.time <= lastPlayerInputTime + 1f;
 	}
 
 	public void OnEngineStartFailed ()
@@ -312,7 +308,7 @@ public class MiniCopter : BaseHelicopterVehicle, IEngineControllerUser, IEntity,
 	{
 		base.OnFlagsChanged (old, next);
 		if (base.isServer && CurEngineState == VehicleEngineController<MiniCopter>.EngineState.Off) {
-			lastEngineOnTime = Time.time;
+			lastEngineOnTime = UnityEngine.Time.time;
 		}
 	}
 
@@ -338,16 +334,13 @@ public class MiniCopter : BaseHelicopterVehicle, IEngineControllerUser, IEntity,
 
 	public void UpdateCOM ()
 	{
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
 		rigidBody.centerOfMass = com.localPosition;
 	}
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
-		info.msg.miniCopter = Pool.Get<Minicopter> ();
+		info.msg.miniCopter = Facepunch.Pool.Get<Minicopter> ();
 		info.msg.miniCopter.fuelStorageID = engineController.FuelSystem.fuelStorageInstance.uid;
 		info.msg.miniCopter.fuelFraction = GetFuelFraction ();
 		info.msg.miniCopter.pitch = currentInputState.pitch;
@@ -358,9 +351,9 @@ public class MiniCopter : BaseHelicopterVehicle, IEngineControllerUser, IEntity,
 	public override void DismountAllPlayers ()
 	{
 		foreach (MountPointInfo mountPoint in mountPoints) {
-			if ((Object)(object)mountPoint.mountable != (Object)null) {
+			if (mountPoint.mountable != null) {
 				BasePlayer mounted = mountPoint.mountable.GetMounted ();
-				if (Object.op_Implicit ((Object)(object)mounted)) {
+				if ((bool)mounted) {
 					mounted.Hurt (10000f, DamageType.Explosion, this, useProtection: false);
 				}
 			}
@@ -369,31 +362,15 @@ public class MiniCopter : BaseHelicopterVehicle, IEngineControllerUser, IEntity,
 
 	protected override void DoPushAction (BasePlayer player)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0069: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0070: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0088: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 val = Vector3Ex.Direction2D (((Component)player).transform.position, ((Component)this).transform.position);
-		Vector3 val2 = player.eyes.BodyForward ();
-		val2.y = 0.25f;
-		Vector3 val3 = ((Component)this).transform.position + val * 2f;
+		Vector3 vector = Vector3Ex.Direction2D (player.transform.position, base.transform.position);
+		Vector3 vector2 = player.eyes.BodyForward ();
+		vector2.y = 0.25f;
+		Vector3 position = base.transform.position + vector * 2f;
 		float num = rigidBody.mass * 2f;
-		rigidBody.AddForceAtPosition (val2 * num, val3, (ForceMode)1);
-		rigidBody.AddForce (Vector3.up * 3f, (ForceMode)1);
+		rigidBody.AddForceAtPosition (vector2 * num, position, ForceMode.Impulse);
+		rigidBody.AddForce (Vector3.up * 3f, ForceMode.Impulse);
 		isPushing = true;
-		((FacepunchBehaviour)this).Invoke ((Action)DisablePushing, 0.5f);
+		Invoke (DisablePushing, 0.5f);
 	}
 
 	private void DisablePushing ()
@@ -408,7 +385,6 @@ public class MiniCopter : BaseHelicopterVehicle, IEngineControllerUser, IEntity,
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (info.msg.miniCopter != null) {
 			engineController.FuelSystem.fuelStorageInstance.uid = info.msg.miniCopter.fuelStorageID;
@@ -436,57 +412,45 @@ public class MiniCopter : BaseHelicopterVehicle, IEngineControllerUser, IEntity,
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("MiniCopter.OnRpcMessage", 0);
-		try {
-			if (rpc == 1851540757 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("MiniCopter.OnRpcMessage")) {
+			if (rpc == 1851540757 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_OpenFuel "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_OpenFuel "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_OpenFuel", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_OpenFuel")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (1851540757u, "RPC_OpenFuel", this, player, 6f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							RPC_OpenFuel (msg2);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_OpenFuel");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
 
 	void IEngineControllerUser.Invoke (Action action, float time)
 	{
-		((FacepunchBehaviour)this).Invoke (action, time);
+		Invoke (action, time);
 	}
 
 	void IEngineControllerUser.CancelInvoke (Action action)
 	{
-		((FacepunchBehaviour)this).CancelInvoke (action);
+		CancelInvoke (action);
 	}
 }

@@ -32,43 +32,37 @@ public class TerrainGenerator : SingletonComponent<TerrainGenerator>
 
 	public GameObject CreateTerrain (int heightmapResolution, int alphamapResolution)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Expected O, but got Unknown
-		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0083: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0088: Unknown result type (might be due to invalid IL or missing references)
-		TerrainData val = new TerrainData ();
-		val.baseMapResolution = GetBaseMapRes ();
-		val.heightmapResolution = heightmapResolution;
-		val.alphamapResolution = alphamapResolution;
-		val.size = new Vector3 ((float)World.Size, 1000f, (float)World.Size);
-		Terrain component = Terrain.CreateTerrainGameObject (val).GetComponent<Terrain> ();
-		((Component)component).transform.position = ((Component)this).transform.position + new Vector3 ((float)(0L - (long)World.Size) * 0.5f, 0f, (float)(0L - (long)World.Size) * 0.5f);
+		TerrainData terrainData = new TerrainData ();
+		terrainData.baseMapResolution = GetBaseMapRes ();
+		terrainData.heightmapResolution = heightmapResolution;
+		terrainData.alphamapResolution = alphamapResolution;
+		terrainData.size = new Vector3 (World.Size, 1000f, World.Size);
+		Terrain component = Terrain.CreateTerrainGameObject (terrainData).GetComponent<Terrain> ();
+		component.transform.position = base.transform.position + new Vector3 ((float)(0L - (long)World.Size) * 0.5f, 0f, (float)(0L - (long)World.Size) * 0.5f);
 		component.drawInstanced = false;
 		component.castShadows = config.CastShadows;
-		component.materialType = (MaterialType)3;
+		component.materialType = Terrain.MaterialType.Custom;
 		component.materialTemplate = config.Material;
-		((Component)component).gameObject.tag = ((Component)this).gameObject.tag;
-		((Component)component).gameObject.layer = ((Component)this).gameObject.layer;
-		TerrainCollider component2 = ((Component)component).gameObject.GetComponent<TerrainCollider> ();
-		((Collider)component2).sharedMaterial = config.GenericMaterial;
-		TerrainMeta terrainMeta = ((Component)component).gameObject.AddComponent<TerrainMeta> ();
-		((Component)component).gameObject.AddComponent<TerrainPhysics> ();
-		((Component)component).gameObject.AddComponent<TerrainColors> ();
-		((Component)component).gameObject.AddComponent<TerrainCollision> ();
-		((Component)component).gameObject.AddComponent<TerrainBiomeMap> ();
-		((Component)component).gameObject.AddComponent<TerrainAlphaMap> ();
-		((Component)component).gameObject.AddComponent<TerrainHeightMap> ();
-		((Component)component).gameObject.AddComponent<TerrainSplatMap> ();
-		((Component)component).gameObject.AddComponent<TerrainTopologyMap> ();
-		((Component)component).gameObject.AddComponent<TerrainWaterMap> ();
-		((Component)component).gameObject.AddComponent<TerrainPlacementMap> ();
-		((Component)component).gameObject.AddComponent<TerrainPath> ();
-		((Component)component).gameObject.AddComponent<TerrainTexturing> ();
+		component.gameObject.tag = base.gameObject.tag;
+		component.gameObject.layer = base.gameObject.layer;
+		TerrainCollider component2 = component.gameObject.GetComponent<TerrainCollider> ();
+		component2.sharedMaterial = config.GenericMaterial;
+		TerrainMeta terrainMeta = component.gameObject.AddComponent<TerrainMeta> ();
+		component.gameObject.AddComponent<TerrainPhysics> ();
+		component.gameObject.AddComponent<TerrainColors> ();
+		component.gameObject.AddComponent<TerrainCollision> ();
+		component.gameObject.AddComponent<TerrainBiomeMap> ();
+		component.gameObject.AddComponent<TerrainAlphaMap> ();
+		component.gameObject.AddComponent<TerrainHeightMap> ();
+		component.gameObject.AddComponent<TerrainSplatMap> ();
+		component.gameObject.AddComponent<TerrainTopologyMap> ();
+		component.gameObject.AddComponent<TerrainWaterMap> ();
+		component.gameObject.AddComponent<TerrainPlacementMap> ();
+		component.gameObject.AddComponent<TerrainPath> ();
+		component.gameObject.AddComponent<TerrainTexturing> ();
 		terrainMeta.terrain = component;
 		terrainMeta.config = config;
-		Object.DestroyImmediate ((Object)(object)((Component)this).gameObject);
-		return ((Component)component).gameObject;
+		Object.DestroyImmediate (base.gameObject);
+		return component.gameObject;
 	}
 }

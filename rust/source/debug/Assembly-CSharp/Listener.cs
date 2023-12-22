@@ -1,7 +1,7 @@
+#define ENABLE_PROFILER
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Net;
 using System.Threading;
 using CompanionServer;
@@ -23,8 +23,6 @@ public class Listener : IDisposable, IBroadcastSender<Connection, AppBroadcast>
 
 		public Message (Connection connection, MemoryBuffer buffer)
 		{
-			//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-			//IL_000a: Unknown result type (might be due to invalid IL or missing references)
 			Connection = connection;
 			Buffer = buffer;
 		}
@@ -64,8 +62,6 @@ public class Listener : IDisposable, IBroadcastSender<Connection, AppBroadcast>
 
 	public Listener (IPAddress ipAddress, int port)
 	{
-		//IL_00c3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cd: Expected O, but got Unknown
 		Address = ipAddress;
 		Port = port;
 		Limiter = new ConnectionLimiter ();
@@ -75,10 +71,8 @@ public class Listener : IDisposable, IBroadcastSender<Connection, AppBroadcast>
 		_pairingTokenBuckets = new TokenBucketList<ulong> (5.0, 0.1);
 		_messageQueue = new Queue<Message> ();
 		SynchronizationContext syncContext = SynchronizationContext.Current;
-		_server = new WebSocketServer ($"ws://{Address}:{Port}/", true);
-		_server.Start ((Action<IWebSocketConnection>)delegate(IWebSocketConnection socket) {
-			//IL_00a2: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00ac: Expected O, but got Unknown
+		_server = new WebSocketServer ($"ws://{Address}:{Port}/");
+		_server.Start (delegate(IWebSocketConnection socket) {
 			IPAddress address = socket.ConnectionInfo.ClientIpAddress;
 			if (!Limiter.TryAdd (address) || _ipBans.IsBanned (address)) {
 				socket.Close ();
@@ -91,8 +85,8 @@ public class Listener : IDisposable, IBroadcastSender<Connection, AppBroadcast>
 						((Connection)c).OnClose ();
 					}, conn);
 				};
-				socket.OnBinary = new BinaryDataHandler (conn.OnMessage);
-				socket.OnError = Debug.LogError;
+				socket.OnBinary = conn.OnMessage;
+				socket.OnError = UnityEngine.Debug.LogError;
 			}
 		});
 		_stopwatch = new Stopwatch ();
@@ -103,18 +97,14 @@ public class Listener : IDisposable, IBroadcastSender<Connection, AppBroadcast>
 
 	public void Dispose ()
 	{
-		WebSocketServer server = _server;
-		if (server != null) {
-			server.Dispose ();
-		}
+		_server?.Dispose ();
 	}
 
 	internal void Enqueue (Connection connection, MemoryBuffer data)
 	{
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
 		lock (_messageQueue) {
 			if (!App.update || _messageQueue.Count >= App.queuelimit) {
-				((MemoryBuffer)(ref data)).Dispose ();
+				data.Dispose ();
 				return;
 			}
 			Message item = new Message (connection, data);
@@ -124,15 +114,11 @@ public class Listener : IDisposable, IBroadcastSender<Connection, AppBroadcast>
 
 	public void Update ()
 	{
-		//IL_00c7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00eb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f0: Unknown result type (might be due to invalid IL or missing references)
 		if (!App.update) {
 			return;
 		}
 		Profiler.BeginSample ("CompanionServer.Update");
-		TimeWarning val = TimeWarning.New ("CompanionServer.MessageQueue", 0);
-		try {
+		using (TimeWarning.New ("CompanionServer.MessageQueue")) {
 			lock (_messageQueue) {
 				_stopwatch.Restart ();
 				while (_messageQueue.Count > 0 && _stopwatch.Elapsed.TotalMilliseconds < 5.0) {
@@ -142,11 +128,9 @@ public class Listener : IDisposable, IBroadcastSender<Connection, AppBroadcast>
 					Profiler.EndSample ();
 				}
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
-		if (RealTimeSince.op_Implicit (_lastCleanup) >= 3f) {
-			_lastCleanup = RealTimeSince.op_Implicit (0f);
+		if ((float)_lastCleanup >= 3f) {
+			_lastCleanup = 0f;
 			Profiler.BeginSample ("CompanionServer.CleanupIPTokenBuckets");
 			_ipTokenBuckets.Cleanup ();
 			Profiler.EndSample ();
@@ -165,27 +149,17 @@ public class Listener : IDisposable, IBroadcastSender<Connection, AppBroadcast>
 
 	private void Dispatch (Message message)
 	{
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
 		MemoryBuffer buffer = message.Buffer;
 		AppRequest request;
 		try {
-			ByteArrayStream stream = Stream;
-			MemoryBuffer buffer2 = message.Buffer;
-			byte[] data = ((MemoryBuffer)(ref buffer2)).Data;
-			buffer2 = message.Buffer;
-			stream.SetData (data, 0, ((MemoryBuffer)(ref buffer2)).Length);
-			request = AppRequest.Deserialize ((Stream)(object)Stream);
+			Stream.SetData (message.Buffer.Data, 0, message.Buffer.Length);
+			request = AppRequest.Deserialize (Stream);
 		} catch {
-			DebugEx.LogWarning ((object)$"Malformed companion packet from {message.Connection.Address}", (StackTraceLogType)0);
+			DebugEx.LogWarning ($"Malformed companion packet from {message.Connection.Address}");
 			message.Connection.Close ();
 			throw;
 		} finally {
-			((MemoryBuffer)(ref buffer)).Dispose ();
+			buffer.Dispose ();
 		}
 		if (Handle<AppEmpty, Info> ((AppRequest r) => r.getInfo, out var requestHandler2) || Handle<AppEmpty, CompanionServer.Handlers.Time> ((AppRequest r) => r.getTime, out requestHandler2) || Handle<AppEmpty, Map> ((AppRequest r) => r.getMap, out requestHandler2) || Handle<AppEmpty, TeamInfo> ((AppRequest r) => r.getTeamInfo, out requestHandler2) || Handle<AppEmpty, TeamChat> ((AppRequest r) => r.getTeamChat, out requestHandler2) || Handle<AppSendMessage, SendTeamChat> ((AppRequest r) => r.sendTeamMessage, out requestHandler2) || Handle<AppEmpty, EntityInfo> ((AppRequest r) => r.getEntityInfo, out requestHandler2) || Handle<AppSetEntityValue, SetEntityValue> ((AppRequest r) => r.setEntityValue, out requestHandler2) || Handle<AppEmpty, CheckSubscription> ((AppRequest r) => r.checkSubscription, out requestHandler2) || Handle<AppFlag, SetSubscription> ((AppRequest r) => r.setSubscription, out requestHandler2) || Handle<AppEmpty, MapMarkers> ((AppRequest r) => r.getMapMarkers, out requestHandler2) || Handle<AppPromoteToLeader, PromoteToLeader> ((AppRequest r) => r.promoteToLeader, out requestHandler2) || Handle<AppCameraSubscribe, CameraSubscribe> ((AppRequest r) => r.cameraSubscribe, out requestHandler2) || Handle<AppEmpty, CameraUnsubscribe> ((AppRequest r) => r.cameraUnsubscribe, out requestHandler2) || Handle<AppCameraInput, CameraInput> ((AppRequest r) => r.cameraInput, out requestHandler2)) {
 			try {
@@ -202,61 +176,54 @@ public class Listener : IDisposable, IBroadcastSender<Connection, AppBroadcast>
 					break;
 				}
 			} catch (Exception arg) {
-				Debug.LogError ((object)$"AppRequest threw an exception: {arg}");
+				UnityEngine.Debug.LogError ($"AppRequest threw an exception: {arg}");
 				requestHandler2.SendError ("server_error");
 			}
-			Pool.FreeDynamic<IHandler> (ref requestHandler2);
+			Facepunch.Pool.FreeDynamic (ref requestHandler2);
 		} else {
-			AppResponse val = Pool.Get<AppResponse> ();
-			val.seq = request.seq;
-			val.error = Pool.Get<AppError> ();
-			val.error.error = "unhandled";
-			message.Connection.Send (val);
+			AppResponse appResponse = Facepunch.Pool.Get<AppResponse> ();
+			appResponse.seq = request.seq;
+			appResponse.error = Facepunch.Pool.Get<AppError> ();
+			appResponse.error.error = "unhandled";
+			message.Connection.Send (appResponse);
 			request.Dispose ();
 		}
-		bool Handle<TProto, THandler> (Func<AppRequest, TProto> protoSelector, out IHandler requestHandler) where TProto : class where THandler : BaseHandler<TProto>, new()
+		bool Handle<TProto, THandler> (Func<AppRequest, TProto> protoSelector, out CompanionServer.Handlers.IHandler requestHandler) where TProto : class where THandler : BaseHandler<TProto>, new()
 		{
-			TProto val2 = protoSelector (request);
-			if (val2 == null) {
+			TProto val = protoSelector (request);
+			if (val == null) {
 				requestHandler = null;
 				return false;
 			}
-			THandler val3 = Pool.Get<THandler> ();
-			val3.Initialize (_playerTokenBuckets, message.Connection, request, val2);
-			requestHandler = val3;
+			THandler val2 = Facepunch.Pool.Get<THandler> ();
+			val2.Initialize (_playerTokenBuckets, message.Connection, request, val);
+			requestHandler = val2;
 			return true;
 		}
 	}
 
 	public void BroadcastTo (List<Connection> targets, AppBroadcast broadcast)
 	{
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
 		Profiler.BeginSample ("CompanionServer.BroadcastTo");
 		MemoryBuffer broadcastBuffer = GetBroadcastBuffer (broadcast);
 		foreach (Connection target in targets) {
-			target.SendRaw (((MemoryBuffer)(ref broadcastBuffer)).DontDispose ());
+			target.SendRaw (broadcastBuffer.DontDispose ());
 		}
-		((MemoryBuffer)(ref broadcastBuffer)).Dispose ();
+		broadcastBuffer.Dispose ();
 		Profiler.EndSample ();
 	}
 
 	private static MemoryBuffer GetBroadcastBuffer (AppBroadcast broadcast)
 	{
-		//IL_0060: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
-		MemoryBuffer val = default(MemoryBuffer);
-		((MemoryBuffer)(ref val))..ctor (65536);
-		Stream.SetData (((MemoryBuffer)(ref val)).Data, 0, ((MemoryBuffer)(ref val)).Length);
-		AppMessage val2 = Pool.Get<AppMessage> ();
-		val2.broadcast = broadcast;
-		val2.ToProto ((Stream)(object)Stream);
-		if (val2.ShouldPool) {
-			val2.Dispose ();
+		MemoryBuffer memoryBuffer = new MemoryBuffer (65536);
+		Stream.SetData (memoryBuffer.Data, 0, memoryBuffer.Length);
+		AppMessage appMessage = Facepunch.Pool.Get<AppMessage> ();
+		appMessage.broadcast = broadcast;
+		appMessage.ToProto (Stream);
+		if (appMessage.ShouldPool) {
+			appMessage.Dispose ();
 		}
-		return ((MemoryBuffer)(ref val)).Slice ((int)((Stream)(object)Stream).Position);
+		return memoryBuffer.Slice ((int)Stream.Position);
 	}
 
 	public bool CanSendPairingNotification (ulong playerId)

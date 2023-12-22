@@ -19,8 +19,8 @@ public class ItemSkinDirectory : ScriptableObject
 
 		public SteamInventoryItem invItem {
 			get {
-				if ((Object)(object)_invItem == (Object)null && !string.IsNullOrEmpty (name)) {
-					_invItem = FileSystem.Load<SteamInventoryItem> (name, true);
+				if (_invItem == null && !string.IsNullOrEmpty (name)) {
+					_invItem = FileSystem.Load<SteamInventoryItem> (name);
 				}
 				return _invItem;
 			}
@@ -33,9 +33,9 @@ public class ItemSkinDirectory : ScriptableObject
 
 	public static ItemSkinDirectory Instance {
 		get {
-			if ((Object)(object)_Instance == (Object)null) {
-				_Instance = FileSystem.Load<ItemSkinDirectory> ("assets/skins.asset", true);
-				if ((Object)(object)_Instance == (Object)null) {
+			if (_Instance == null) {
+				_Instance = FileSystem.Load<ItemSkinDirectory> ("assets/skins.asset");
+				if (_Instance == null) {
 					throw new Exception ("Couldn't load assets/skins.asset");
 				}
 				if (_Instance.skins == null || _Instance.skins.Length == 0) {

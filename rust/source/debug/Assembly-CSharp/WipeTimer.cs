@@ -91,7 +91,7 @@ public class WipeTimer : BaseEntity
 	{
 		base.ServerInit ();
 		RecalculateWipeFrequency ();
-		((FacepunchBehaviour)this).InvokeRepeating ((Action)TryAndUpdate, 1f, 4f);
+		InvokeRepeating (TryAndUpdate, 1f, 4f);
 	}
 
 	public void RecalculateWipeFrequency ()
@@ -121,7 +121,7 @@ public class WipeTimer : BaseEntity
 	{
 		base.Save (info);
 		if (!info.forDisk && info.msg.landmine == null) {
-			info.msg.landmine = Pool.Get<Landmine> ();
+			info.msg.landmine = Facepunch.Pool.Get<ProtoBuf.Landmine> ();
 			info.msg.landmine.triggeredID = (ulong)GetTicksUntilWipe ();
 		}
 	}
@@ -139,17 +139,17 @@ public class WipeTimer : BaseEntity
 	}
 
 	[ServerVar]
-	public static void PrintWipe (Arg arg)
+	public static void PrintWipe (ConsoleSystem.Arg arg)
 	{
-		if ((Object)(object)serverinstance == (Object)null) {
+		if (serverinstance == null) {
 			arg.ReplyWith ("WipeTimer not found!");
 			return;
 		}
 		serverinstance.RecalculateWipeFrequency ();
 		serverinstance.TryAndUpdate ();
 		TimeZoneInfo timeZone = GetTimeZone ();
-		string text = default(string);
-		string text2 = (TZConvert.TryWindowsToIana (timeZone.Id, ref text) ? text : timeZone.Id);
+		string ianaTimeZoneName;
+		string text = (TZConvert.TryWindowsToIana (timeZone.Id, out ianaTimeZoneName) ? ianaTimeZoneName : timeZone.Id);
 		DateTimeOffset dateTimeOffset = DateTimeOffset.UtcNow.AddDays (daysToAddTest).AddHours (hoursToAddTest);
 		DateTimeOffset wipeTime = serverinstance.GetWipeTime (dateTimeOffset);
 		TimeSpan timeSpan = wipeTime - dateTimeOffset;
@@ -157,7 +157,7 @@ public class WipeTimer : BaseEntity
 		CronExpression cronExpression = GetCronExpression (serverinstance.wipeFrequency, serverinstance.useWipeDayOverride ? ((int)serverinstance.wipeDayOfWeekOverride) : wipeDayOfWeek, wipeHourOfDay);
 		StringBuilder stringBuilder = new StringBuilder ();
 		stringBuilder.AppendLine ($"Frequency: {serverinstance.wipeFrequency}");
-		stringBuilder.AppendLine ("Timezone: " + timeZone.StandardName + " (ID=" + timeZone.Id + ", IANA=" + text2 + ")");
+		stringBuilder.AppendLine ("Timezone: " + timeZone.StandardName + " (ID=" + timeZone.Id + ", IANA=" + text + ")");
 		stringBuilder.AppendLine ($"Wipe day of week: {(DayOfWeek)wipeDayOfWeek}");
 		stringBuilder.AppendLine ($"Wipe hour: {wipeHourOfDay}");
 		stringBuilder.AppendLine ($"Test time: {dateTimeOffset:O}");
@@ -168,7 +168,7 @@ public class WipeTimer : BaseEntity
 		stringBuilder.AppendLine ("Cron: " + cronString);
 		stringBuilder.AppendLine ("Next 10 occurrences:");
 		int num = 0;
-		foreach (DateTimeOffset item in cronExpression.GetOccurrences (dateTimeOffset, dateTimeOffset.AddYears (2), timeZone, true, false).Take (10)) {
+		foreach (DateTimeOffset item in cronExpression.GetOccurrences (dateTimeOffset, dateTimeOffset.AddYears (2), timeZone).Take (10)) {
 			stringBuilder.AppendLine ($"  {num}. {item:O}");
 			num++;
 		}
@@ -176,13 +176,13 @@ public class WipeTimer : BaseEntity
 	}
 
 	[ServerVar]
-	public static void PrintTimeZones (Arg arg)
+	public static void PrintTimeZones (ConsoleSystem.Arg arg)
 	{
 		List<string> systemTzs = (from z in TimeZoneInfo.GetSystemTimeZones ()
 			select z.Id).ToList ();
 		IReadOnlyCollection<string> knownWindowsTimeZoneIds = TZConvert.KnownWindowsTimeZoneIds;
 		IReadOnlyCollection<string> knownIanaTimeZoneNames = TZConvert.KnownIanaTimeZoneNames;
-		arg.ReplyWith (JsonConvert.SerializeObject ((object)new {
+		arg.ReplyWith (JsonConvert.SerializeObject (new {
 			systemTzs = systemTzs,
 			windowsTzs = knownWindowsTimeZoneIds,
 			ianaTzs = knownIanaTimeZoneNames
@@ -196,9 +196,9 @@ public class WipeTimer : BaseEntity
 		}
 		try {
 			CronExpression cronExpression = GetCronExpression (wipeFrequency, useWipeDayOverride ? ((int)wipeDayOfWeekOverride) : wipeDayOfWeek, wipeHourOfDay);
-			return cronExpression.GetNextOccurrence (nowTime, GetTimeZone (), false) ?? DateTimeOffset.MaxValue;
-		} catch (Exception ex) {
-			Debug.LogException (ex);
+			return cronExpression.GetNextOccurrence (nowTime, GetTimeZone ()) ?? DateTimeOffset.MaxValue;
+		} catch (Exception exception) {
+			Debug.LogException (exception);
 			return DateTimeOffset.MaxValue;
 		}
 	}
@@ -206,7 +206,7 @@ public class WipeTimer : BaseEntity
 	private static CronExpression GetCronExpression (WipeFrequency frequency, int dayOfWeek, float hourOfDay)
 	{
 		string cronString = GetCronString (frequency, dayOfWeek, hourOfDay);
-		if (cronString == cronExprCacheKey && cronExprCache != (CronExpression)null) {
+		if (cronString == cronExprCacheKey && cronExprCache != null) {
 			return cronExprCache;
 		}
 		cronExprCache = CronExpression.Parse (cronString);
@@ -253,7 +253,7 @@ public class WipeTimer : BaseEntity
 		if (wipeTimezone == timezoneCacheKey && timezoneCache != null) {
 			return timezoneCache;
 		}
-		if (TZConvert.TryGetTimeZoneInfo (wipeTimezone, ref timezoneCache)) {
+		if (TZConvert.TryGetTimeZoneInfo (wipeTimezone, out timezoneCache)) {
 			timezoneCacheKey = wipeTimezone;
 			return timezoneCache;
 		}

@@ -12,9 +12,6 @@ public class ItemModUnwrap : ItemMod
 
 	public override void ServerCommand (Item item, string command, BasePlayer player)
 	{
-		//IL_008d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0094: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009a: Unknown result type (might be due to invalid IL or missing references)
 		if (command == "unwrap" && item.amount > 0) {
 			item.UseItem ();
 			int num = Random.Range (minTries, maxTries + 1);

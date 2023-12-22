@@ -34,8 +34,6 @@ public static class MeshCache
 
 	public static Data Get (Mesh mesh)
 	{
-		//IL_0094: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0099: Unknown result type (might be due to invalid IL or missing references)
 		if (!dictionary.TryGetValue (mesh, out var value)) {
 			value = new Data ();
 			value.mesh = mesh;

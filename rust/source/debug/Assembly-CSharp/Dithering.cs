@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -12,17 +13,16 @@ internal sealed class Dithering
 
 	internal void Render (PostProcessRenderContext context)
 	{
-		//IL_00a3: Unknown result type (might be due to invalid IL or missing references)
 		Texture2D[] blueNoise = context.resources.blueNoise64;
 		Assert.IsTrue (blueNoise != null && blueNoise.Length != 0);
 		if (++m_NoiseTextureIndex >= blueNoise.Length) {
 			m_NoiseTextureIndex = 0;
 		}
-		float value = Random.value;
-		float value2 = Random.value;
-		Texture2D val = blueNoise [m_NoiseTextureIndex];
+		float value = UnityEngine.Random.value;
+		float value2 = UnityEngine.Random.value;
+		Texture2D texture2D = blueNoise [m_NoiseTextureIndex];
 		PropertySheet uberSheet = context.uberSheet;
-		uberSheet.properties.SetTexture (ShaderIDs.DitheringTex, (Texture)(object)val);
-		uberSheet.properties.SetVector (ShaderIDs.Dithering_Coords, new Vector4 ((float)context.screenWidth / (float)((Texture)val).width, (float)context.screenHeight / (float)((Texture)val).height, value, value2));
+		uberSheet.properties.SetTexture (ShaderIDs.DitheringTex, texture2D);
+		uberSheet.properties.SetVector (ShaderIDs.Dithering_Coords, new Vector4 ((float)context.screenWidth / (float)texture2D.width, (float)context.screenHeight / (float)texture2D.height, value, value2));
 	}
 }

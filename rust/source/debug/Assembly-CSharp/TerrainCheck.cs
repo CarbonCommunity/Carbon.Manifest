@@ -9,9 +9,6 @@ public class TerrainCheck : PrefabAttribute
 
 	public bool Check (Vector3 pos)
 	{
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
 		float extents = Extents;
 		float height = TerrainMeta.HeightMap.GetHeight (pos);
 		float num = pos.y - extents;

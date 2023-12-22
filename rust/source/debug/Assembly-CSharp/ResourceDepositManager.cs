@@ -77,11 +77,6 @@ public class ResourceDepositManager : BaseEntity
 
 	public static Vector2i GetIndexFrom (Vector3 pos)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
 		return new Vector2i ((int)pos.x / 20, (int)pos.z / 20);
 	}
 
@@ -98,78 +93,56 @@ public class ResourceDepositManager : BaseEntity
 
 	public ResourceDeposit CreateFromPosition (Vector3 pos)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0059: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0331: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0339: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ac: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0290: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02a3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01fa: Unknown result type (might be due to invalid IL or missing references)
 		Vector2i indexFrom = GetIndexFrom (pos);
-		State state = Random.state;
-		uint num = SeedEx.Seed (new Vector2 ((float)indexFrom.x, (float)indexFrom.y), World.Seed + World.Salt);
-		Random.InitState ((int)num);
+		UnityEngine.Random.State state = UnityEngine.Random.state;
+		uint seed = new Vector2 (indexFrom.x, indexFrom.y).Seed (World.Seed + World.Salt);
+		UnityEngine.Random.InitState ((int)seed);
 		ResourceDeposit resourceDeposit = new ResourceDeposit ();
-		resourceDeposit.origin = new Vector3 ((float)(indexFrom.x * 20), 0f, (float)(indexFrom.y * 20));
-		float num2 = Random.Range (0f, 1f);
-		if (num2 < 0.5f) {
+		resourceDeposit.origin = new Vector3 (indexFrom.x * 20, 0f, indexFrom.y * 20);
+		float num = UnityEngine.Random.Range (0f, 1f);
+		if (num < 0.5f) {
 			resourceDeposit.Add (ItemManager.FindItemDefinition ("stones"), 1f, 100, 1f, ResourceDeposit.surveySpawnType.ITEM);
 		} else if (0 == 0) {
-			resourceDeposit.Add (ItemManager.FindItemDefinition ("stones"), 1f, Random.Range (30000, 100000), Random.Range (0.3f, 0.5f), ResourceDeposit.surveySpawnType.ITEM);
-			float num3 = 0f;
+			resourceDeposit.Add (ItemManager.FindItemDefinition ("stones"), 1f, UnityEngine.Random.Range (30000, 100000), UnityEngine.Random.Range (0.3f, 0.5f), ResourceDeposit.surveySpawnType.ITEM);
+			float num2 = 0f;
 			if (World.Procedural) {
-				float num4 = ((TerrainMeta.BiomeMap.GetBiome (pos, 2) > 0.5f) ? 1f : 0f);
-				num3 = num4 * 0.25f;
+				float num3 = ((TerrainMeta.BiomeMap.GetBiome (pos, 2) > 0.5f) ? 1f : 0f);
+				num2 = num3 * 0.25f;
 			} else {
-				num3 = 0.1f;
+				num2 = 0.1f;
 			}
-			if (Random.Range (0f, 1f) >= 1f - num3) {
-				resourceDeposit.Add (ItemManager.FindItemDefinition ("metal.ore"), 1f, Random.Range (10000, 100000), Random.Range (2f, 4f), ResourceDeposit.surveySpawnType.ITEM);
+			if (UnityEngine.Random.Range (0f, 1f) >= 1f - num2) {
+				resourceDeposit.Add (ItemManager.FindItemDefinition ("metal.ore"), 1f, UnityEngine.Random.Range (10000, 100000), UnityEngine.Random.Range (2f, 4f), ResourceDeposit.surveySpawnType.ITEM);
 			}
-			float num5 = 0f;
+			float num4 = 0f;
 			if (World.Procedural) {
-				float num6 = ((TerrainMeta.BiomeMap.GetBiome (pos, 1) > 0.5f) ? 1f : 0f);
-				num5 = num6 * (0.25f + 0.25f * (TerrainMeta.TopologyMap.GetTopology (pos, 8) ? 1f : 0f) + 0.25f * (TerrainMeta.TopologyMap.GetTopology (pos, 1) ? 1f : 0f));
+				float num5 = ((TerrainMeta.BiomeMap.GetBiome (pos, 1) > 0.5f) ? 1f : 0f);
+				num4 = num5 * (0.25f + 0.25f * (TerrainMeta.TopologyMap.GetTopology (pos, 8) ? 1f : 0f) + 0.25f * (TerrainMeta.TopologyMap.GetTopology (pos, 1) ? 1f : 0f));
 			} else {
-				num5 = 0.1f;
+				num4 = 0.1f;
 			}
-			if (Random.Range (0f, 1f) >= 1f - num5) {
-				resourceDeposit.Add (ItemManager.FindItemDefinition ("sulfur.ore"), 1f, Random.Range (10000, 100000), Random.Range (4f, 4f), ResourceDeposit.surveySpawnType.ITEM);
+			if (UnityEngine.Random.Range (0f, 1f) >= 1f - num4) {
+				resourceDeposit.Add (ItemManager.FindItemDefinition ("sulfur.ore"), 1f, UnityEngine.Random.Range (10000, 100000), UnityEngine.Random.Range (4f, 4f), ResourceDeposit.surveySpawnType.ITEM);
 			}
-			float num7 = 0f;
+			float num6 = 0f;
 			if (World.Procedural) {
 				if (TerrainMeta.BiomeMap.GetBiome (pos, 8) > 0.5f || TerrainMeta.BiomeMap.GetBiome (pos, 4) > 0.5f) {
-					num7 += 0.25f;
+					num6 += 0.25f;
 				}
 			} else {
-				num7 += 0.15f;
+				num6 += 0.15f;
 			}
-			if (Random.Range (0f, 1f) >= 1f - num7) {
-				resourceDeposit.Add (ItemManager.FindItemDefinition ("hq.metal.ore"), 1f, Random.Range (5000, 10000), Random.Range (30f, 50f), ResourceDeposit.surveySpawnType.ITEM);
+			if (UnityEngine.Random.Range (0f, 1f) >= 1f - num6) {
+				resourceDeposit.Add (ItemManager.FindItemDefinition ("hq.metal.ore"), 1f, UnityEngine.Random.Range (5000, 10000), UnityEngine.Random.Range (30f, 50f), ResourceDeposit.surveySpawnType.ITEM);
 			}
 		}
 		_deposits.Add (indexFrom, resourceDeposit);
-		Random.state = state;
+		UnityEngine.Random.state = state;
 		return resourceDeposit;
 	}
 
 	public ResourceDeposit GetFromPosition (Vector3 pos)
 	{
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000a: Unknown result type (might be due to invalid IL or missing references)
 		ResourceDeposit value = null;
 		if (_deposits.TryGetValue (GetIndexFrom (pos), out value)) {
 			return value;
@@ -179,8 +152,6 @@ public class ResourceDepositManager : BaseEntity
 
 	public static ResourceDeposit GetOrCreate (Vector3 pos)
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
 		ResourceDeposit fromPosition = Get ().GetFromPosition (pos);
 		if (fromPosition != null) {
 			return fromPosition;

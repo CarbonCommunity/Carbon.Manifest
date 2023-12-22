@@ -1,4 +1,3 @@
-using System;
 using Rust;
 using UnityEngine;
 
@@ -35,7 +34,7 @@ public class WaterPurifier : LiquidContainer
 	public override void ServerInit ()
 	{
 		base.ServerInit ();
-		if (!Application.isLoadingSave) {
+		if (!Rust.Application.isLoadingSave) {
 			SpawnStorageEnt (load: false);
 		}
 	}
@@ -48,20 +47,18 @@ public class WaterPurifier : LiquidContainer
 
 	protected virtual void SpawnStorageEnt (bool load)
 	{
-		//IL_00b3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00be: Unknown result type (might be due to invalid IL or missing references)
 		if (load) {
 			BaseEntity baseEntity = GetParentEntity ();
-			if (Object.op_Implicit ((Object)(object)baseEntity)) {
+			if ((bool)baseEntity) {
 				foreach (BaseEntity child in baseEntity.children) {
-					if ((Object)(object)child != (Object)(object)this && child is LiquidContainer liquidContainer) {
+					if (child != this && child is LiquidContainer liquidContainer) {
 						waterStorage = liquidContainer;
 						break;
 					}
 				}
 			}
 		}
-		if ((Object)(object)waterStorage != (Object)null) {
+		if (waterStorage != null) {
 			waterStorage.SetConnectedTo (this);
 			return;
 		}
@@ -90,9 +87,9 @@ public class WaterPurifier : LiquidContainer
 
 	public void CheckCoolDown ()
 	{
-		if (!Object.op_Implicit ((Object)(object)GetParentEntity ()) || !GetParentEntity ().IsOn () || !HasDirtyWater ()) {
+		if (!GetParentEntity () || !GetParentEntity ().IsOn () || !HasDirtyWater ()) {
 			SetFlag (Flags.Reserved1, b: false);
-			((FacepunchBehaviour)this).CancelInvoke ((Action)CheckCoolDown);
+			CancelInvoke (CheckCoolDown);
 		}
 	}
 
@@ -104,10 +101,10 @@ public class WaterPurifier : LiquidContainer
 
 	public void Cook (float timeCooked)
 	{
-		if (!((Object)(object)waterStorage == (Object)null)) {
+		if (!(waterStorage == null)) {
 			bool flag = HasDirtyWater ();
 			if (!IsBoiling () && flag) {
-				((FacepunchBehaviour)this).InvokeRepeating ((Action)CheckCoolDown, 2f, 2f);
+				InvokeRepeating (CheckCoolDown, 2f, 2f);
 				SetFlag (Flags.Reserved1, b: true);
 			}
 			if (IsBoiling () && flag) {
@@ -141,7 +138,7 @@ public class WaterPurifier : LiquidContainer
 		int num3 = Mathf.FloorToInt (pendingFreshWater);
 		pendingFreshWater -= num3;
 		Item slot3 = waterStorage.inventory.GetSlot (0);
-		if (slot3 != null && (Object)(object)slot3.info != (Object)(object)freshWater) {
+		if (slot3 != null && slot3.info != freshWater) {
 			slot3.RemoveFromContainer ();
 			slot3.Remove ();
 		}

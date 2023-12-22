@@ -18,8 +18,6 @@ public class PrefabPoolCollection
 
 	public GameObject Pop (uint id, Vector3 pos = default(Vector3), Quaternion rot = default(Quaternion))
 	{
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
 		if (storage.TryGetValue (id, out var value)) {
 			return value.Pop (pos, rot);
 		}
@@ -35,8 +33,8 @@ public class PrefabPoolCollection
 			return;
 		}
 		foreach (KeyValuePair<uint, PrefabPool> item2 in storage) {
-			string text = StringPool.Get (item2.Key);
-			if (StringEx.Contains (text, filter, CompareOptions.IgnoreCase)) {
+			string haystack = StringPool.Get (item2.Key);
+			if (haystack.Contains (filter, CompareOptions.IgnoreCase)) {
 				item2.Value.Clear ();
 			}
 		}

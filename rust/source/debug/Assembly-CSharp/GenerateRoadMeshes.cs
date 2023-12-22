@@ -21,11 +21,8 @@ public class GenerateRoadMeshes : ProceduralComponent
 
 	public override void Process (uint seed)
 	{
-		//IL_00b1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b8: Expected O, but got Unknown
-		//IL_00c1: Unknown result type (might be due to invalid IL or missing references)
 		if (RoadMeshes == null || RoadMeshes.Length == 0) {
-			RoadMeshes = (Mesh[])(object)new Mesh[1] { RoadMesh };
+			RoadMeshes = new Mesh[1] { RoadMesh };
 		}
 		List<PathList> roads = TerrainMeta.Path.Roads;
 		foreach (PathList item in roads) {
@@ -33,16 +30,16 @@ public class GenerateRoadMeshes : ProceduralComponent
 				continue;
 			}
 			foreach (PathList.MeshObject item2 in item.CreateMesh (RoadMeshes, 0f, snapToTerrain: true, !item.Path.Circular, !item.Path.Circular)) {
-				GameObject val = new GameObject ("Road Mesh");
-				val.transform.position = item2.Position;
-				val.layer = 16;
-				val.SetHierarchyGroup (item.Name);
-				val.SetActive (false);
-				MeshCollider val2 = val.AddComponent<MeshCollider> ();
-				((Collider)val2).sharedMaterial = RoadPhysicMaterial;
-				val2.sharedMesh = item2.Meshes [0];
-				val.AddComponent<AddToHeightMap> ();
-				val.SetActive (true);
+				GameObject gameObject = new GameObject ("Road Mesh");
+				gameObject.transform.position = item2.Position;
+				gameObject.layer = 16;
+				gameObject.SetHierarchyGroup (item.Name);
+				gameObject.SetActive (value: false);
+				MeshCollider meshCollider = gameObject.AddComponent<MeshCollider> ();
+				meshCollider.sharedMaterial = RoadPhysicMaterial;
+				meshCollider.sharedMesh = item2.Meshes [0];
+				gameObject.AddComponent<AddToHeightMap> ();
+				gameObject.SetActive (value: true);
 			}
 		}
 	}

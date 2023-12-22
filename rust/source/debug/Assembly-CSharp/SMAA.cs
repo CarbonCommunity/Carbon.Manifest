@@ -38,11 +38,9 @@ public class SMAA : MonoBehaviour
 
 	public Material Material {
 		get {
-			//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0023: Expected O, but got Unknown
-			if ((Object)(object)m_Material == (Object)null) {
+			if (m_Material == null) {
 				m_Material = new Material (Shader);
-				((Object)m_Material).hideFlags = (HideFlags)61;
+				m_Material.hideFlags = HideFlags.HideAndDontSave;
 			}
 			return m_Material;
 		}

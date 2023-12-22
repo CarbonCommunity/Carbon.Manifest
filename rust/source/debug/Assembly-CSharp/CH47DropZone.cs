@@ -16,12 +16,10 @@ public class CH47DropZone : MonoBehaviour
 
 	public static CH47DropZone GetClosest (Vector3 pos)
 	{
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
 		float num = float.PositiveInfinity;
 		CH47DropZone result = null;
 		foreach (CH47DropZone dropZone in dropZones) {
-			float num2 = Vector3Ex.Distance2D (pos, ((Component)dropZone).transform.position);
+			float num2 = Vector3Ex.Distance2D (pos, dropZone.transform.position);
 			if (num2 < num) {
 				num = num2;
 				result = dropZone;
@@ -49,9 +47,7 @@ public class CH47DropZone : MonoBehaviour
 
 	public void OnDrawGizmos ()
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
 		Gizmos.color = Color.yellow;
-		Gizmos.DrawSphere (((Component)this).transform.position, 5f);
+		Gizmos.DrawSphere (base.transform.position, 5f);
 	}
 }

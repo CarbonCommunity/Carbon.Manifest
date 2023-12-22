@@ -19,34 +19,28 @@ public class UIGene : MonoBehaviour
 
 	public void Init (GrowableGene gene)
 	{
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0037: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
 		bool flag = gene.IsPositive ();
-		((Graphic)ImageBG).color = (flag ? PositiveColour : NegativeColour);
-		((Graphic)TextGene).color = (flag ? PositiveTextColour : NegativeTextColour);
+		ImageBG.color = (flag ? PositiveColour : NegativeColour);
+		TextGene.color = (flag ? PositiveTextColour : NegativeTextColour);
 		TextGene.text = gene.GetDisplayCharacter ();
 		Show ();
 	}
 
 	public void InitPrevious (GrowableGene gene)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		((Graphic)ImageBG).color = Color.black;
-		((Graphic)TextGene).color = Color.grey;
+		ImageBG.color = Color.black;
+		TextGene.color = Color.grey;
 		TextGene.text = GrowableGene.GetDisplayCharacter (gene.PreviousType);
 		Show ();
 	}
 
 	public void Hide ()
 	{
-		Child.gameObject.SetActive (false);
+		Child.gameObject.SetActive (value: false);
 	}
 
 	public void Show ()
 	{
-		Child.gameObject.SetActive (true);
+		Child.gameObject.SetActive (value: true);
 	}
 }

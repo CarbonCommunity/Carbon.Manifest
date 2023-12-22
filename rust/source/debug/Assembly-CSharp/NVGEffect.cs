@@ -1,3 +1,4 @@
+#define ENABLE_PROFILER
 using System;
 using UnityEngine;
 using UnityEngine.Profiling;
@@ -45,34 +46,16 @@ public class NVGEffect : PostEffectsBase, IImageEffect
 
 	public ColorCorrectionParams ColorCorrection1 = new ColorCorrectionParams {
 		saturation = 1f,
-		redChannel = new AnimationCurve ((Keyframe[])(object)new Keyframe[2] {
-			new Keyframe (0f, 0f),
-			new Keyframe (1f, 1f)
-		}),
-		greenChannel = new AnimationCurve ((Keyframe[])(object)new Keyframe[2] {
-			new Keyframe (0f, 0f),
-			new Keyframe (1f, 1f)
-		}),
-		blueChannel = new AnimationCurve ((Keyframe[])(object)new Keyframe[2] {
-			new Keyframe (0f, 0f),
-			new Keyframe (1f, 1f)
-		})
+		redChannel = new AnimationCurve (new Keyframe (0f, 0f), new Keyframe (1f, 1f)),
+		greenChannel = new AnimationCurve (new Keyframe (0f, 0f), new Keyframe (1f, 1f)),
+		blueChannel = new AnimationCurve (new Keyframe (0f, 0f), new Keyframe (1f, 1f))
 	};
 
 	public ColorCorrectionParams ColorCorrection2 = new ColorCorrectionParams {
 		saturation = 1f,
-		redChannel = new AnimationCurve ((Keyframe[])(object)new Keyframe[2] {
-			new Keyframe (0f, 0f),
-			new Keyframe (1f, 1f)
-		}),
-		greenChannel = new AnimationCurve ((Keyframe[])(object)new Keyframe[2] {
-			new Keyframe (0f, 0f),
-			new Keyframe (1f, 1f)
-		}),
-		blueChannel = new AnimationCurve ((Keyframe[])(object)new Keyframe[2] {
-			new Keyframe (0f, 0f),
-			new Keyframe (1f, 1f)
-		})
+		redChannel = new AnimationCurve (new Keyframe (0f, 0f), new Keyframe (1f, 1f)),
+		greenChannel = new AnimationCurve (new Keyframe (0f, 0f), new Keyframe (1f, 1f)),
+		blueChannel = new AnimationCurve (new Keyframe (0f, 0f), new Keyframe (1f, 1f))
 	};
 
 	public NoiseAndGrainParams NoiseAndGrain = new NoiseAndGrainParams {
@@ -85,7 +68,7 @@ public class NVGEffect : PostEffectsBase, IImageEffect
 		intensities = new Vector3 (1f, 1f, 1f),
 		tiling = new Vector3 (60f, 70f, 80f),
 		monochromeTiling = 55f,
-		filterMode = (FilterMode)0
+		filterMode = FilterMode.Point
 	};
 
 	private Texture2D rgbChannelTex1;
@@ -109,25 +92,22 @@ public class NVGEffect : PostEffectsBase, IImageEffect
 
 	private void OnDestroy ()
 	{
-		if ((Object)(object)rgbChannelTex1 != (Object)null) {
-			Object.DestroyImmediate ((Object)(object)rgbChannelTex1);
+		if (rgbChannelTex1 != null) {
+			UnityEngine.Object.DestroyImmediate (rgbChannelTex1);
 			rgbChannelTex1 = null;
 		}
-		if ((Object)(object)rgbChannelTex2 != (Object)null) {
-			Object.DestroyImmediate ((Object)(object)rgbChannelTex2);
+		if (rgbChannelTex2 != null) {
+			UnityEngine.Object.DestroyImmediate (rgbChannelTex2);
 			rgbChannelTex2 = null;
 		}
-		if ((Object)(object)material != (Object)null) {
-			Object.DestroyImmediate ((Object)(object)material);
+		if (material != null) {
+			UnityEngine.Object.DestroyImmediate (material);
 			material = null;
 		}
 	}
 
 	private void UpdateColorCorrectionTexture (ColorCorrectionParams param, ref Texture2D tex)
 	{
-		//IL_0099: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d8: Unknown result type (might be due to invalid IL or missing references)
 		if (param.redChannel != null && param.greenChannel != null && param.blueChannel != null) {
 			for (float num = 0f; num <= 1f; num += 0.003921569f) {
 				float num2 = Mathf.Clamp (param.redChannel.Evaluate (num), 0f, 1f);
@@ -143,63 +123,42 @@ public class NVGEffect : PostEffectsBase, IImageEffect
 
 	public void UpdateTextures ()
 	{
-		((PostEffectsBase)this).CheckResources ();
+		CheckResources ();
 		UpdateColorCorrectionTexture (ColorCorrection1, ref rgbChannelTex1);
 		UpdateColorCorrectionTexture (ColorCorrection2, ref rgbChannelTex2);
 	}
 
 	public override bool CheckResources ()
 	{
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0068: Expected O, but got Unknown
-		//IL_0072: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0077: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0080: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008d: Expected O, but got Unknown
-		((PostEffectsBase)this).CheckSupport (false);
-		material = ((PostEffectsBase)this).CheckShaderAndCreateMaterial (Shader, material);
-		if ((Object)(object)rgbChannelTex1 == (Object)null || (Object)(object)rgbChannelTex2 == (Object)null) {
-			rgbChannelTex1 = new Texture2D (256, 4, (TextureFormat)5, false, true) {
-				hideFlags = (HideFlags)52,
-				wrapMode = (TextureWrapMode)1
+		CheckSupport (needDepth: false);
+		material = CheckShaderAndCreateMaterial (Shader, material);
+		if (rgbChannelTex1 == null || rgbChannelTex2 == null) {
+			rgbChannelTex1 = new Texture2D (256, 4, TextureFormat.ARGB32, mipChain: false, linear: true) {
+				hideFlags = HideFlags.DontSave,
+				wrapMode = TextureWrapMode.Clamp
 			};
-			rgbChannelTex2 = new Texture2D (256, 4, (TextureFormat)5, false, true) {
-				hideFlags = (HideFlags)52,
-				wrapMode = (TextureWrapMode)1
+			rgbChannelTex2 = new Texture2D (256, 4, TextureFormat.ARGB32, mipChain: false, linear: true) {
+				hideFlags = HideFlags.DontSave,
+				wrapMode = TextureWrapMode.Clamp
 			};
 		}
-		if (!base.isSupported) {
-			((PostEffectsBase)this).ReportAutoDisable ();
+		if (!isSupported) {
+			ReportAutoDisable ();
 		}
-		return base.isSupported;
+		return isSupported;
 	}
 
 	public bool IsActive ()
 	{
-		return ((Behaviour)this).enabled && ((PostEffectsBase)this).CheckResources () && (Object)(object)NoiseTexture != (Object)null;
+		return base.enabled && CheckResources () && NoiseTexture != null;
 	}
 
 	public void OnRenderImage (RenderTexture source, RenderTexture destination)
 	{
-		//IL_011e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0117: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0123: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0153: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0163: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0168: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ed: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01fd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0202: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0238: Unknown result type (might be due to invalid IL or missing references)
-		if (!((PostEffectsBase)this).CheckResources ()) {
-			Graphics.Blit ((Texture)(object)source, destination);
-			if ((Object)(object)NoiseTexture == (Object)null) {
-				Debug.LogWarning ((object)"[NVGEffect] Noise & Grain effect failing as noise texture is not assigned. please assign.", (Object)(object)((Component)this).transform);
+		if (!CheckResources ()) {
+			Graphics.Blit (source, destination);
+			if (NoiseTexture == null) {
+				Debug.LogWarning ("[NVGEffect] Noise & Grain effect failing as noise texture is not assigned. please assign.", base.transform);
 			}
 			return;
 		}
@@ -208,35 +167,35 @@ public class NVGEffect : PostEffectsBase, IImageEffect
 			UpdateTextures ();
 			updateTexturesOnStartup = false;
 		}
-		material.SetTexture ("_MainTex", (Texture)(object)source);
-		material.SetTexture ("_RgbTex1", (Texture)(object)rgbChannelTex1);
+		material.SetTexture ("_MainTex", source);
+		material.SetTexture ("_RgbTex1", rgbChannelTex1);
 		material.SetFloat ("_Saturation1", ColorCorrection1.saturation);
-		material.SetTexture ("_RgbTex2", (Texture)(object)rgbChannelTex2);
+		material.SetTexture ("_RgbTex2", rgbChannelTex2);
 		material.SetFloat ("_Saturation2", ColorCorrection2.saturation);
-		material.SetTexture ("_NoiseTex", (Texture)(object)NoiseTexture);
-		material.SetVector ("_NoisePerChannel", Vector4.op_Implicit (NoiseAndGrain.monochrome ? Vector3.one : NoiseAndGrain.intensities));
-		material.SetVector ("_NoiseTilingPerChannel", Vector4.op_Implicit (NoiseAndGrain.monochrome ? (Vector3.one * NoiseAndGrain.monochromeTiling) : NoiseAndGrain.tiling));
-		material.SetVector ("_MidGrey", Vector4.op_Implicit (new Vector3 (NoiseAndGrain.midGrey, 1f / (1f - NoiseAndGrain.midGrey), -1f / NoiseAndGrain.midGrey)));
-		material.SetVector ("_NoiseAmount", Vector4.op_Implicit (new Vector3 (NoiseAndGrain.generalIntensity, NoiseAndGrain.blackIntensity, NoiseAndGrain.whiteIntensity) * NoiseAndGrain.intensityMultiplier));
-		if (Object.op_Implicit ((Object)(object)NoiseTexture)) {
-			((Texture)NoiseTexture).wrapMode = (TextureWrapMode)0;
-			((Texture)NoiseTexture).filterMode = NoiseAndGrain.filterMode;
+		material.SetTexture ("_NoiseTex", NoiseTexture);
+		material.SetVector ("_NoisePerChannel", NoiseAndGrain.monochrome ? Vector3.one : NoiseAndGrain.intensities);
+		material.SetVector ("_NoiseTilingPerChannel", NoiseAndGrain.monochrome ? (Vector3.one * NoiseAndGrain.monochromeTiling) : NoiseAndGrain.tiling);
+		material.SetVector ("_MidGrey", new Vector3 (NoiseAndGrain.midGrey, 1f / (1f - NoiseAndGrain.midGrey), -1f / NoiseAndGrain.midGrey));
+		material.SetVector ("_NoiseAmount", new Vector3 (NoiseAndGrain.generalIntensity, NoiseAndGrain.blackIntensity, NoiseAndGrain.whiteIntensity) * NoiseAndGrain.intensityMultiplier);
+		if ((bool)NoiseTexture) {
+			NoiseTexture.wrapMode = TextureWrapMode.Repeat;
+			NoiseTexture.filterMode = NoiseAndGrain.filterMode;
 		}
 		RenderTexture.active = destination;
-		float num = (float)((Texture)NoiseTexture).width * 1f;
-		float num2 = 1f * (float)((Texture)source).width / NOISE_TILE_AMOUNT;
+		float num = (float)NoiseTexture.width * 1f;
+		float num2 = 1f * (float)source.width / NOISE_TILE_AMOUNT;
 		GL.PushMatrix ();
 		GL.LoadOrtho ();
-		float num3 = 1f * (float)((Texture)source).width / (1f * (float)((Texture)source).height);
+		float num3 = 1f * (float)source.width / (1f * (float)source.height);
 		float num4 = 1f / num2;
 		float num5 = num4 * num3;
-		float num6 = num / ((float)((Texture)NoiseTexture).width * 1f);
+		float num6 = num / ((float)NoiseTexture.width * 1f);
 		material.SetPass (0);
 		GL.Begin (7);
 		for (float num7 = 0f; num7 < 1f; num7 += num4) {
 			for (float num8 = 0f; num8 < 1f; num8 += num5) {
-				float num9 = Random.Range (0f, 1f);
-				float num10 = Random.Range (0f, 1f);
+				float num9 = UnityEngine.Random.Range (0f, 1f);
+				float num10 = UnityEngine.Random.Range (0f, 1f);
 				num9 = Mathf.Floor (num9 * num) / num;
 				num10 = Mathf.Floor (num10 * num) / num;
 				float num11 = 1f / num;

@@ -1,3 +1,5 @@
+#define ENABLE_PROFILER
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -40,121 +42,91 @@ public class PhotoFrame : StorageContainer, ILOD, IImageReceiver, ISignage, IUGC
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("PhotoFrame.OnRpcMessage", 0);
-		try {
-			if (rpc == 1455609404 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("PhotoFrame.OnRpcMessage")) {
+			if (rpc == 1455609404 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - LockSign "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - LockSign "));
 				}
-				TimeWarning val2 = TimeWarning.New ("LockSign", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("LockSign")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (1455609404u, "LockSign", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							LockSign (msg2);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in LockSign");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 4149904254u && (Object)(object)player != (Object)null) {
+			if (rpc == 4149904254u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - UnLockSign "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - UnLockSign "));
 				}
-				TimeWarning val5 = TimeWarning.New ("UnLockSign", 0);
-				try {
-					TimeWarning val6 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("UnLockSign")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (4149904254u, "UnLockSign", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val6)?.Dispose ();
 					}
 					try {
-						TimeWarning val7 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg3 = rPCMessage;
 							UnLockSign (msg3);
-						} finally {
-							((IDisposable)val7)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in UnLockSign");
 					}
-				} finally {
-					((IDisposable)val5)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 1255380462 && (Object)(object)player != (Object)null) {
+			if (rpc == 1255380462 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - UpdateSign "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - UpdateSign "));
 				}
-				TimeWarning val8 = TimeWarning.New ("UpdateSign", 0);
-				try {
-					TimeWarning val9 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("UpdateSign")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (1255380462u, "UpdateSign", this, player, 3uL)) {
 							return true;
 						}
 						if (!RPC_Server.MaxDistance.Test (1255380462u, "UpdateSign", this, player, 5f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val9)?.Dispose ();
 					}
 					try {
-						TimeWarning val10 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg4 = rPCMessage;
 							UpdateSign (msg4);
-						} finally {
-							((IDisposable)val10)?.Dispose ();
 						}
-					} catch (Exception ex3) {
-						Debug.LogException (ex3);
+					} catch (Exception exception3) {
+						Debug.LogException (exception3);
 						player.Kick ("RPC Error in UpdateSign");
 					}
-				} finally {
-					((IDisposable)val8)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -194,9 +166,7 @@ public class PhotoFrame : StorageContainer, ILOD, IImageReceiver, ISignage, IUGC
 	[RPC_Server.CallsPerSecond (3uL)]
 	public void UpdateSign (RPCMessage msg)
 	{
-		//IL_00aa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c3: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)msg.player == (Object)null) {
+		if (msg.player == null) {
 			return;
 		}
 		Profiler.BeginSample ("CanUpdateSign");
@@ -206,7 +176,7 @@ public class PhotoFrame : StorageContainer, ILOD, IImageReceiver, ISignage, IUGC
 			return;
 		}
 		Profiler.BeginSample ("BytesWithSize");
-		byte[] array = msg.read.BytesWithSize (10485760u);
+		byte[] array = msg.read.BytesWithSize ();
 		Profiler.EndSample ();
 		if (array != null) {
 			Profiler.BeginSample ("IsValidPNG");
@@ -244,7 +214,6 @@ public class PhotoFrame : StorageContainer, ILOD, IImageReceiver, ISignage, IUGC
 
 	public override void OnKilled (HitInfo info)
 	{
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
 		if (net != null) {
 			FileStorage.server.RemoveAllByEntity (net.ID);
 		}
@@ -264,7 +233,6 @@ public class PhotoFrame : StorageContainer, ILOD, IImageReceiver, ISignage, IUGC
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (info.msg.photoFrame != null) {
 			_photoEntity.uid = info.msg.photoFrame.photoEntityId;
@@ -275,7 +243,7 @@ public class PhotoFrame : StorageContainer, ILOD, IImageReceiver, ISignage, IUGC
 		}
 		if (info.msg.photoFrame.editHistory != null) {
 			if (editHistory == null) {
-				editHistory = Pool.GetList<ulong> ();
+				editHistory = Facepunch.Pool.GetList<ulong> ();
 			}
 			editHistory.Clear ();
 			{
@@ -286,7 +254,7 @@ public class PhotoFrame : StorageContainer, ILOD, IImageReceiver, ISignage, IUGC
 			}
 		}
 		if (editHistory != null) {
-			Pool.FreeList<ulong> (ref editHistory);
+			Facepunch.Pool.FreeList (ref editHistory);
 		}
 	}
 
@@ -297,16 +265,14 @@ public class PhotoFrame : StorageContainer, ILOD, IImageReceiver, ISignage, IUGC
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
-		info.msg.photoFrame = Pool.Get<PhotoFrame> ();
+		info.msg.photoFrame = Facepunch.Pool.Get<ProtoBuf.PhotoFrame> ();
 		info.msg.photoFrame.photoEntityId = _photoEntity.uid;
 		info.msg.photoFrame.overlayImageCrc = _overlayTextureCrc;
 		if (editHistory.Count <= 0) {
 			return;
 		}
-		info.msg.photoFrame.editHistory = Pool.GetList<ulong> ();
+		info.msg.photoFrame.editHistory = Facepunch.Pool.GetList<ulong> ();
 		foreach (ulong item in editHistory) {
 			info.msg.photoFrame.editHistory.Add (item);
 		}
@@ -314,18 +280,11 @@ public class PhotoFrame : StorageContainer, ILOD, IImageReceiver, ISignage, IUGC
 
 	public override void OnItemAddedOrRemoved (Item item, bool added)
 	{
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0070: Unknown result type (might be due to invalid IL or missing references)
 		base.OnItemAddedOrRemoved (item, added);
 		Item item2 = ((base.inventory.itemList.Count > 0) ? base.inventory.itemList [0] : null);
-		NetworkableId val = (NetworkableId)((item2 != null && item2.IsValid ()) ? item2.instanceData.subEntity : default(NetworkableId));
-		if (val != _photoEntity.uid) {
-			_photoEntity.uid = val;
+		NetworkableId networkableId = ((item2 != null && item2.IsValid ()) ? item2.instanceData.subEntity : default(NetworkableId));
+		if (networkableId != _photoEntity.uid) {
+			_photoEntity.uid = networkableId;
 			SendNetworkUpdate ();
 		}
 	}
@@ -333,19 +292,17 @@ public class PhotoFrame : StorageContainer, ILOD, IImageReceiver, ISignage, IUGC
 	public override void OnPickedUpPreItemMove (Item createdItem, BasePlayer player)
 	{
 		base.OnPickedUpPreItemMove (createdItem, player);
-		ItemModSign itemModSign = default(ItemModSign);
-		if (_overlayTextureCrc != 0 && ((Component)createdItem.info).TryGetComponent<ItemModSign> (ref itemModSign)) {
-			itemModSign.OnSignPickedUp (this, this, createdItem);
+		if (_overlayTextureCrc != 0 && createdItem.info.TryGetComponent<ItemModSign> (out var component)) {
+			component.OnSignPickedUp (this, this, createdItem);
 		}
 	}
 
 	public override void OnDeployed (BaseEntity parent, BasePlayer deployedBy, Item fromItem)
 	{
 		base.OnDeployed (parent, deployedBy, fromItem);
-		ItemModSign itemModSign = default(ItemModSign);
-		if (((Component)fromItem.info).TryGetComponent<ItemModSign> (ref itemModSign)) {
+		if (fromItem.info.TryGetComponent<ItemModSign> (out var _)) {
 			SignContent associatedEntity = ItemModAssociatedEntity<SignContent>.GetAssociatedEntity (fromItem);
-			if ((Object)(object)associatedEntity != (Object)null) {
+			if (associatedEntity != null) {
 				associatedEntity.CopyInfoToSign (this, this);
 			}
 		}
@@ -379,15 +336,6 @@ public class PhotoFrame : StorageContainer, ILOD, IImageReceiver, ISignage, IUGC
 
 	public override bool CanPickup (BasePlayer player)
 	{
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		int result;
-		if (base.CanPickup (player)) {
-			NetworkableId uid = _photoEntity.uid;
-			result = ((!((NetworkableId)(ref uid)).IsValid) ? 1 : 0);
-		} else {
-			result = 0;
-		}
-		return (byte)result != 0;
+		return base.CanPickup (player) && !_photoEntity.uid.IsValid;
 	}
 }

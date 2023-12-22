@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch.Rust;
@@ -17,46 +18,34 @@ public class FuelGenerator : ContainerIOEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("FuelGenerator.OnRpcMessage", 0);
-		try {
-			if (rpc == 1401355317 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("FuelGenerator.OnRpcMessage")) {
+			if (rpc == 1401355317 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_EngineSwitch "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_EngineSwitch "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_EngineSwitch", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_EngineSwitch")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (1401355317u, "RPC_EngineSwitch", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							RPC_EngineSwitch (msg2);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_EngineSwitch");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -80,7 +69,7 @@ public class FuelGenerator : ContainerIOEntity
 	{
 		if (IsOn ()) {
 			UpdateCurrentEnergy ();
-			((FacepunchBehaviour)this).InvokeRepeating ((Action)FuelConsumption, fuelTickRate, fuelTickRate);
+			InvokeRepeating (FuelConsumption, fuelTickRate, fuelTickRate);
 		}
 		base.Init ();
 	}
@@ -165,7 +154,7 @@ public class FuelGenerator : ContainerIOEntity
 			SetFlag (Flags.On, b: true);
 			UpdateCurrentEnergy ();
 			MarkDirty ();
-			((FacepunchBehaviour)this).InvokeRepeating ((Action)FuelConsumption, fuelTickRate, fuelTickRate);
+			InvokeRepeating (FuelConsumption, fuelTickRate, fuelTickRate);
 		}
 	}
 
@@ -182,7 +171,7 @@ public class FuelGenerator : ContainerIOEntity
 			SetFlag (Flags.On, b: false);
 			UpdateCurrentEnergy ();
 			MarkDirty ();
-			((FacepunchBehaviour)this).CancelInvoke ((Action)FuelConsumption);
+			CancelInvoke (FuelConsumption);
 		}
 	}
 }

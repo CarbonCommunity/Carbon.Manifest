@@ -34,23 +34,18 @@ public class VisualStorageContainer : LootContainer
 
 	public override void PopulateLoot ()
 	{
-		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0056: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
 		base.PopulateLoot ();
 		for (int i = 0; i < inventorySlots; i++) {
 			Item slot = base.inventory.GetSlot (i);
 			if (slot == null) {
 				continue;
 			}
-			DroppedItem component = ((Component)slot.Drop (((Component)displayNodes [i]).transform.position + new Vector3 (0f, 0.25f, 0f), Vector3.zero, ((Component)displayNodes [i]).transform.rotation)).GetComponent<DroppedItem> ();
-			if (Object.op_Implicit ((Object)(object)component)) {
+			DroppedItem component = slot.Drop (displayNodes [i].transform.position + new Vector3 (0f, 0.25f, 0f), Vector3.zero, displayNodes [i].transform.rotation).GetComponent<DroppedItem> ();
+			if ((bool)component) {
 				ReceiveCollisionMessages (b: false);
-				((FacepunchBehaviour)this).CancelInvoke ((Action)component.IdleDestroy);
-				Rigidbody componentInChildren = ((Component)component).GetComponentInChildren<Rigidbody> ();
-				if (Object.op_Implicit ((Object)(object)componentInChildren)) {
+				CancelInvoke (component.IdleDestroy);
+				Rigidbody componentInChildren = component.GetComponentInChildren<Rigidbody> ();
+				if ((bool)componentInChildren) {
 					componentInChildren.constraints = (RigidbodyConstraints)10;
 				}
 			}
@@ -66,15 +61,13 @@ public class VisualStorageContainer : LootContainer
 		foreach (DisplayModel displayModel in array) {
 			if (displayModel != null) {
 				Rigidbody componentInChildren = displayModel.displayModel.GetComponentInChildren<Rigidbody> ();
-				Object.Destroy ((Object)(object)componentInChildren);
+				UnityEngine.Object.Destroy (componentInChildren);
 			}
 		}
 	}
 
 	public void SetItemsVisible (bool vis)
 	{
-		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
 		if (displayModels == null) {
 			return;
 		}
@@ -82,10 +75,10 @@ public class VisualStorageContainer : LootContainer
 		foreach (DisplayModel displayModel in array) {
 			if (displayModel != null) {
 				LODGroup componentInChildren = displayModel.displayModel.GetComponentInChildren<LODGroup> ();
-				if (Object.op_Implicit ((Object)(object)componentInChildren)) {
-					componentInChildren.localReferencePoint = (Vector3)(vis ? Vector3.zero : new Vector3 (10000f, 10000f, 10000f));
+				if ((bool)componentInChildren) {
+					componentInChildren.localReferencePoint = (vis ? Vector3.zero : new Vector3 (10000f, 10000f, 10000f));
 				} else {
-					Debug.Log ((object)("VisualStorageContainer item missing LODGroup" + ((Object)displayModel.displayModel.gameObject).name));
+					Debug.Log ("VisualStorageContainer item missing LODGroup" + displayModel.displayModel.gameObject.name);
 				}
 			}
 		}
@@ -97,42 +90,38 @@ public class VisualStorageContainer : LootContainer
 		SetItemsVisible (vis: true);
 	}
 
-	public void UpdateVisibleItems (ItemContainer msg)
+	public void UpdateVisibleItems (ProtoBuf.ItemContainer msg)
 	{
-		//IL_00e8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0101: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0119: Unknown result type (might be due to invalid IL or missing references)
 		for (int i = 0; i < displayModels.Length; i++) {
 			DisplayModel displayModel = displayModels [i];
 			if (displayModel != null) {
-				Object.Destroy ((Object)(object)displayModel.displayModel);
+				UnityEngine.Object.Destroy (displayModel.displayModel);
 				displayModels [i] = null;
 			}
 		}
 		if (msg == null) {
 			return;
 		}
-		foreach (Item content in msg.contents) {
+		foreach (ProtoBuf.Item content in msg.contents) {
 			ItemDefinition itemDefinition = ItemManager.FindItemDefinition (content.itemid);
-			GameObject val = null;
-			val = ((itemDefinition.worldModelPrefab == null || !itemDefinition.worldModelPrefab.isValid) ? Object.Instantiate<GameObject> (defaultDisplayModel) : itemDefinition.worldModelPrefab.Instantiate ());
-			if (Object.op_Implicit ((Object)(object)val)) {
-				val.transform.SetPositionAndRotation (((Component)displayNodes [content.slot]).transform.position + new Vector3 (0f, 0.25f, 0f), ((Component)displayNodes [content.slot]).transform.rotation);
-				Rigidbody val2 = val.AddComponent<Rigidbody> ();
-				val2.mass = 1f;
-				val2.drag = 0.1f;
-				val2.angularDrag = 0.1f;
-				val2.interpolation = (RigidbodyInterpolation)1;
-				val2.constraints = (RigidbodyConstraints)10;
-				displayModels [content.slot].displayModel = val;
+			GameObject gameObject = null;
+			gameObject = ((itemDefinition.worldModelPrefab == null || !itemDefinition.worldModelPrefab.isValid) ? UnityEngine.Object.Instantiate (defaultDisplayModel) : itemDefinition.worldModelPrefab.Instantiate ());
+			if ((bool)gameObject) {
+				gameObject.transform.SetPositionAndRotation (displayNodes [content.slot].transform.position + new Vector3 (0f, 0.25f, 0f), displayNodes [content.slot].transform.rotation);
+				Rigidbody rigidbody = gameObject.AddComponent<Rigidbody> ();
+				rigidbody.mass = 1f;
+				rigidbody.drag = 0.1f;
+				rigidbody.angularDrag = 0.1f;
+				rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
+				rigidbody.constraints = (RigidbodyConstraints)10;
+				displayModels [content.slot].displayModel = gameObject;
 				displayModels [content.slot].slot = content.slot;
 				displayModels [content.slot].def = itemDefinition;
-				val.SetActive (true);
+				gameObject.SetActive (value: true);
 			}
 		}
 		SetItemsVisible (vis: false);
-		((FacepunchBehaviour)this).CancelInvoke ((Action)ItemUpdateComplete);
-		((FacepunchBehaviour)this).Invoke ((Action)ItemUpdateComplete, 1f);
+		CancelInvoke (ItemUpdateComplete);
+		Invoke (ItemUpdateComplete, 1f);
 	}
 }

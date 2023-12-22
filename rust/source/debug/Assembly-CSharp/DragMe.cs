@@ -29,8 +29,6 @@ public class DragMe : MonoBehaviour, IBeginDragHandler, IEventSystemHandler, IDr
 
 	public void CancelDrag ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Expected O, but got Unknown
 		OnEndDrag (new PointerEventData (EventSystem.current));
 	}
 }

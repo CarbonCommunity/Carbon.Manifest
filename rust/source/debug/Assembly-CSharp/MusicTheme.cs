@@ -42,9 +42,9 @@ public class MusicTheme : ScriptableObject
 
 		public float jumpMaximumIntensity = 0.5f;
 
-		public int endingBar => ((Object)(object)musicClip == (Object)null) ? startingBar : (startingBar + musicClip.lengthInBarsWithTail);
+		public int endingBar => (musicClip == null) ? startingBar : (startingBar + musicClip.lengthInBarsWithTail);
 
-		public bool isControlClip => (Object)(object)musicClip == (Object)null;
+		public bool isControlClip => musicClip == null;
 
 		public bool CanPlay (float intensity)
 		{
@@ -99,10 +99,10 @@ public class MusicTheme : ScriptableObject
 	public ValueRange snow = new ValueRange (0f, 1f);
 
 	[InspectorFlags]
-	public Enum biomes = (Enum)(-1);
+	public TerrainBiome.Enum biomes = (TerrainBiome.Enum)(-1);
 
 	[InspectorFlags]
-	public Enum topologies = (Enum)(-1);
+	public TerrainTopology.Enum topologies = (TerrainTopology.Enum)(-1);
 
 	public AnimationCurve time = AnimationCurve.Linear (0f, 0f, 24f, 0f);
 
@@ -138,7 +138,7 @@ public class MusicTheme : ScriptableObject
 					activeClips [j].Add (positionedClip);
 				}
 			}
-			if ((Object)(object)positionedClip.musicClip != (Object)null) {
+			if (positionedClip.musicClip != null) {
 				AudioClip audioClip = positionedClip.musicClip.audioClip;
 				if (!audioClipDict.ContainsKey (audioClip)) {
 					audioClipDict.Add (audioClip, value: true);
@@ -162,7 +162,7 @@ public class MusicTheme : ScriptableObject
 
 	private int ActiveClipCollectionID (int bar)
 	{
-		return Mathf.FloorToInt (Mathf.Max ((float)(bar / 4), 0f));
+		return Mathf.FloorToInt (Mathf.Max (bar / 4, 0f));
 	}
 
 	public Layer LayerById (int id)
@@ -185,7 +185,7 @@ public class MusicTheme : ScriptableObject
 		int num = 0;
 		for (int i = 0; i < clips.Count; i++) {
 			PositionedClip positionedClip = clips [i];
-			if (!((Object)(object)positionedClip.musicClip == (Object)null)) {
+			if (!(positionedClip.musicClip == null)) {
 				int num2 = positionedClip.startingBar + positionedClip.musicClip.lengthInBars;
 				if (num2 > num) {
 					num = num2;
@@ -197,23 +197,13 @@ public class MusicTheme : ScriptableObject
 
 	public bool CanPlayInEnvironment (int currentBiome, int currentTopology, float currentRain, float currentSnow, float currentWind)
 	{
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0044: Invalid comparison between Unknown and I4
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004f: Invalid comparison between Unknown and I4
-		//IL_0060: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0066: Invalid comparison between Unknown and I4
-		//IL_0069: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0071: Invalid comparison between Unknown and I4
-		if (Object.op_Implicit ((Object)(object)TOD_Sky.Instance) && time.Evaluate (TOD_Sky.Instance.Cycle.Hour) < 0f) {
+		if ((bool)TOD_Sky.Instance && time.Evaluate (TOD_Sky.Instance.Cycle.Hour) < 0f) {
 			return false;
 		}
-		if ((int)biomes != -1 && (biomes & currentBiome) == 0) {
+		if (biomes != (TerrainBiome.Enum)(-1) && ((uint)biomes & (uint)currentBiome) == 0) {
 			return false;
 		}
-		if ((int)topologies != -1 && (topologies & currentTopology) > 0) {
+		if (topologies != (TerrainTopology.Enum)(-1) && ((uint)topologies & (uint)currentTopology) != 0) {
 			return false;
 		}
 		if (((rain.min > 0f || rain.max < 1f) && currentRain < rain.min) || currentRain > rain.max) {
@@ -230,10 +220,8 @@ public class MusicTheme : ScriptableObject
 
 	public bool FirstClipsLoaded ()
 	{
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Invalid comparison between Unknown and I4
 		for (int i = 0; i < firstAudioClips.Count; i++) {
-			if ((int)firstAudioClips [i].loadState != 2) {
+			if (firstAudioClips [i].loadState != AudioDataLoadState.Loaded) {
 				return false;
 			}
 		}

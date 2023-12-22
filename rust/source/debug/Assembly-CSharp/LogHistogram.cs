@@ -14,14 +14,6 @@ internal sealed class LogHistogram
 
 	public void Generate (PostProcessRenderContext context)
 	{
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0104: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0119: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Expected O, but got Unknown
 		if (data == null) {
 			data = new ComputeBuffer (128, 4);
 		}
@@ -29,31 +21,25 @@ internal sealed class LogHistogram
 		ComputeShader exposureHistogram = context.resources.computeShaders.exposureHistogram;
 		CommandBuffer command = context.command;
 		command.BeginSample ("LogHistogram");
-		int num = exposureHistogram.FindKernel ("KEyeHistogramClear");
-		command.SetComputeBufferParam (exposureHistogram, num, "_HistogramBuffer", data);
-		uint num2 = default(uint);
-		uint num3 = default(uint);
-		uint num4 = default(uint);
-		exposureHistogram.GetKernelThreadGroupSizes (num, ref num2, ref num3, ref num4);
-		command.DispatchCompute (exposureHistogram, num, Mathf.CeilToInt (128f / (float)num2), 1, 1);
-		num = exposureHistogram.FindKernel ("KEyeHistogram");
-		command.SetComputeBufferParam (exposureHistogram, num, "_HistogramBuffer", data);
-		command.SetComputeTextureParam (exposureHistogram, num, "_Source", context.source);
+		int kernelIndex = exposureHistogram.FindKernel ("KEyeHistogramClear");
+		command.SetComputeBufferParam (exposureHistogram, kernelIndex, "_HistogramBuffer", data);
+		exposureHistogram.GetKernelThreadGroupSizes (kernelIndex, out var x, out var y, out var z);
+		command.DispatchCompute (exposureHistogram, kernelIndex, Mathf.CeilToInt (128f / (float)x), 1, 1);
+		kernelIndex = exposureHistogram.FindKernel ("KEyeHistogram");
+		command.SetComputeBufferParam (exposureHistogram, kernelIndex, "_HistogramBuffer", data);
+		command.SetComputeTextureParam (exposureHistogram, kernelIndex, "_Source", context.source);
 		command.SetComputeVectorParam (exposureHistogram, "_ScaleOffsetRes", histogramScaleOffsetRes);
-		exposureHistogram.GetKernelThreadGroupSizes (num, ref num2, ref num3, ref num4);
-		command.DispatchCompute (exposureHistogram, num, Mathf.CeilToInt (histogramScaleOffsetRes.z / 2f / (float)num2), Mathf.CeilToInt (histogramScaleOffsetRes.w / 2f / (float)num3), 1);
+		exposureHistogram.GetKernelThreadGroupSizes (kernelIndex, out x, out y, out z);
+		command.DispatchCompute (exposureHistogram, kernelIndex, Mathf.CeilToInt (histogramScaleOffsetRes.z / 2f / (float)x), Mathf.CeilToInt (histogramScaleOffsetRes.w / 2f / (float)y), 1);
 		command.EndSample ("LogHistogram");
 	}
 
 	public Vector4 GetHistogramScaleOffsetRes (PostProcessRenderContext context)
 	{
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
 		float num = 18f;
 		float num2 = 1f / num;
-		float num3 = 9f * num2;
-		return new Vector4 (num2, num3, (float)context.width, (float)context.height);
+		float y = 9f * num2;
+		return new Vector4 (num2, y, context.width, context.height);
 	}
 
 	public void Release ()

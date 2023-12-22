@@ -55,6 +55,6 @@ public class StackOfCards
 		foreach (PlayingCard card in cards) {
 			stringBuilder.AppendLine (string.Concat (card.Rank, " of ", card.Suit));
 		}
-		Debug.Log ((object)stringBuilder.ToString ());
+		Debug.Log (stringBuilder.ToString ());
 	}
 }

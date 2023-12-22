@@ -79,9 +79,9 @@ public class Explosion_Bloom : MonoBehaviour
 
 	private const int kMaxIterations = 16;
 
-	private RenderTexture[] m_blurBuffer1 = (RenderTexture[])(object)new RenderTexture[16];
+	private RenderTexture[] m_blurBuffer1 = new RenderTexture[16];
 
-	private RenderTexture[] m_blurBuffer2 = (RenderTexture[])(object)new RenderTexture[16];
+	private RenderTexture[] m_blurBuffer2 = new RenderTexture[16];
 
 	private int m_Threshold;
 
@@ -97,7 +97,7 @@ public class Explosion_Bloom : MonoBehaviour
 
 	public Shader shader {
 		get {
-			if ((Object)(object)m_Shader == (Object)null) {
+			if (m_Shader == null) {
 				m_Shader = Shader.Find ("Hidden/KriptoFX/PostEffects/Explosion_Bloom");
 			}
 			return m_Shader;
@@ -106,7 +106,7 @@ public class Explosion_Bloom : MonoBehaviour
 
 	public Material material {
 		get {
-			if ((Object)(object)m_Material == (Object)null) {
+			if (m_Material == null) {
 				m_Material = CheckShaderAndCreateMaterial (shader);
 			}
 			return m_Material;
@@ -117,20 +117,20 @@ public class Explosion_Bloom : MonoBehaviour
 
 	public static bool IsSupported (Shader s, bool needDepth, bool needHdr, MonoBehaviour effect)
 	{
-		if ((Object)(object)s == (Object)null || !s.isSupported) {
-			Debug.LogWarningFormat ("Missing shader for image effect {0}", new object[1] { effect });
+		if (s == null || !s.isSupported) {
+			Debug.LogWarningFormat ("Missing shader for image effect {0}", effect);
 			return false;
 		}
 		if (!SystemInfo.supportsImageEffects) {
-			Debug.LogWarningFormat ("Image effects aren't supported on this device ({0})", new object[1] { effect });
+			Debug.LogWarningFormat ("Image effects aren't supported on this device ({0})", effect);
 			return false;
 		}
-		if (needDepth && !SystemInfo.SupportsRenderTextureFormat ((RenderTextureFormat)1)) {
-			Debug.LogWarningFormat ("Depth textures aren't supported on this device ({0})", new object[1] { effect });
+		if (needDepth && !SystemInfo.SupportsRenderTextureFormat (RenderTextureFormat.Depth)) {
+			Debug.LogWarningFormat ("Depth textures aren't supported on this device ({0})", effect);
 			return false;
 		}
-		if (needHdr && !SystemInfo.SupportsRenderTextureFormat ((RenderTextureFormat)2)) {
-			Debug.LogWarningFormat ("Floating point textures aren't supported on this device ({0})", new object[1] { effect });
+		if (needHdr && !SystemInfo.SupportsRenderTextureFormat (RenderTextureFormat.ARGBHalf)) {
+			Debug.LogWarningFormat ("Floating point textures aren't supported on this device ({0})", effect);
 			return false;
 		}
 		return true;
@@ -138,14 +138,12 @@ public class Explosion_Bloom : MonoBehaviour
 
 	public static Material CheckShaderAndCreateMaterial (Shader s)
 	{
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Expected O, but got Unknown
-		if ((Object)(object)s == (Object)null || !s.isSupported) {
+		if (s == null || !s.isSupported) {
 			return null;
 		}
-		Material val = new Material (s);
-		((Object)val).hideFlags = (HideFlags)52;
-		return val;
+		Material material = new Material (s);
+		material.hideFlags = HideFlags.DontSave;
+		return material;
 	}
 
 	private void Awake ()
@@ -160,72 +158,65 @@ public class Explosion_Bloom : MonoBehaviour
 
 	private void OnEnable ()
 	{
-		if (!IsSupported (shader, needDepth: true, needHdr: false, (MonoBehaviour)(object)this)) {
-			((Behaviour)this).enabled = false;
+		if (!IsSupported (shader, needDepth: true, needHdr: false, this)) {
+			base.enabled = false;
 		}
 	}
 
 	private void OnDisable ()
 	{
-		if ((Object)(object)m_Material != (Object)null) {
-			Object.DestroyImmediate ((Object)(object)m_Material);
+		if (m_Material != null) {
+			UnityEngine.Object.DestroyImmediate (m_Material);
 		}
 		m_Material = null;
 	}
 
 	private void OnRenderImage (RenderTexture source, RenderTexture destination)
 	{
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ce: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0160: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ad: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0240: Unknown result type (might be due to invalid IL or missing references)
 		bool isMobilePlatform = Application.isMobilePlatform;
-		int num = ((Texture)source).width;
-		int num2 = ((Texture)source).height;
+		int num = source.width;
+		int num2 = source.height;
 		if (!settings.highQuality) {
 			num /= 2;
 			num2 /= 2;
 		}
-		RenderTextureFormat val = (RenderTextureFormat)(isMobilePlatform ? 7 : 9);
-		float num3 = Mathf.Log ((float)num2, 2f) + settings.radius - 8f;
+		RenderTextureFormat format = (isMobilePlatform ? RenderTextureFormat.Default : RenderTextureFormat.DefaultHDR);
+		float num3 = Mathf.Log (num2, 2f) + settings.radius - 8f;
 		int num4 = (int)num3;
 		int num5 = Mathf.Clamp (num4, 1, 16);
 		float thresholdLinear = settings.thresholdLinear;
 		material.SetFloat (m_Threshold, thresholdLinear);
 		float num6 = thresholdLinear * settings.softKnee + 1E-05f;
-		Vector3 val2 = default(Vector3);
-		((Vector3)(ref val2))..ctor (thresholdLinear - num6, num6 * 2f, 0.25f / num6);
-		material.SetVector (m_Curve, Vector4.op_Implicit (val2));
+		Vector3 vector = new Vector3 (thresholdLinear - num6, num6 * 2f, 0.25f / num6);
+		material.SetVector (m_Curve, vector);
 		bool flag = !settings.highQuality && settings.antiFlicker;
 		material.SetFloat (m_PrefilterOffs, flag ? (-0.5f) : 0f);
 		material.SetFloat (m_SampleScale, 0.5f + num3 - (float)num4);
 		material.SetFloat (m_Intensity, Mathf.Max (0f, settings.intensity));
-		RenderTexture temporary = RenderTexture.GetTemporary (num, num2, 0, val);
-		Graphics.Blit ((Texture)(object)source, temporary, material, settings.antiFlicker ? 1 : 0);
-		RenderTexture val3 = temporary;
+		RenderTexture temporary = RenderTexture.GetTemporary (num, num2, 0, format);
+		Graphics.Blit (source, temporary, material, settings.antiFlicker ? 1 : 0);
+		RenderTexture renderTexture = temporary;
 		for (int i = 0; i < num5; i++) {
-			m_blurBuffer1 [i] = RenderTexture.GetTemporary (((Texture)val3).width / 2, ((Texture)val3).height / 2, 0, val);
-			Graphics.Blit ((Texture)(object)val3, m_blurBuffer1 [i], material, (i == 0) ? (settings.antiFlicker ? 3 : 2) : 4);
-			val3 = m_blurBuffer1 [i];
+			m_blurBuffer1 [i] = RenderTexture.GetTemporary (renderTexture.width / 2, renderTexture.height / 2, 0, format);
+			Graphics.Blit (renderTexture, m_blurBuffer1 [i], material, (i == 0) ? (settings.antiFlicker ? 3 : 2) : 4);
+			renderTexture = m_blurBuffer1 [i];
 		}
 		for (int num7 = num5 - 2; num7 >= 0; num7--) {
-			RenderTexture val4 = m_blurBuffer1 [num7];
-			material.SetTexture (m_BaseTex, (Texture)(object)val4);
-			m_blurBuffer2 [num7] = RenderTexture.GetTemporary (((Texture)val4).width, ((Texture)val4).height, 0, val);
-			Graphics.Blit ((Texture)(object)val3, m_blurBuffer2 [num7], material, settings.highQuality ? 6 : 5);
-			val3 = m_blurBuffer2 [num7];
+			RenderTexture renderTexture2 = m_blurBuffer1 [num7];
+			material.SetTexture (m_BaseTex, renderTexture2);
+			m_blurBuffer2 [num7] = RenderTexture.GetTemporary (renderTexture2.width, renderTexture2.height, 0, format);
+			Graphics.Blit (renderTexture, m_blurBuffer2 [num7], material, settings.highQuality ? 6 : 5);
+			renderTexture = m_blurBuffer2 [num7];
 		}
 		int num8 = 7;
 		num8 += (settings.highQuality ? 1 : 0);
-		material.SetTexture (m_BaseTex, (Texture)(object)source);
-		Graphics.Blit ((Texture)(object)val3, destination, material, num8);
+		material.SetTexture (m_BaseTex, source);
+		Graphics.Blit (renderTexture, destination, material, num8);
 		for (int j = 0; j < 16; j++) {
-			if ((Object)(object)m_blurBuffer1 [j] != (Object)null) {
+			if (m_blurBuffer1 [j] != null) {
 				RenderTexture.ReleaseTemporary (m_blurBuffer1 [j]);
 			}
-			if ((Object)(object)m_blurBuffer2 [j] != (Object)null) {
+			if (m_blurBuffer2 [j] != null) {
 				RenderTexture.ReleaseTemporary (m_blurBuffer2 [j]);
 			}
 			m_blurBuffer1 [j] = null;

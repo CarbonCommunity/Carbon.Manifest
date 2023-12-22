@@ -4,7 +4,7 @@ public class RiverInfo : MonoBehaviour
 {
 	protected void Awake ()
 	{
-		if (Object.op_Implicit ((Object)(object)TerrainMeta.Path)) {
+		if ((bool)TerrainMeta.Path) {
 			TerrainMeta.Path.RiverObjs.Add (this);
 		}
 	}

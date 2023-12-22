@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using ConVar;
 using Facepunch;
 using Newtonsoft.Json.Linq;
@@ -46,10 +45,10 @@ public class BoomBox : EntityComponent<BaseEntity>, INotifyLOD
 
 	public BaseEntity BaseEntity => base.baseEntity;
 
-	private bool isClient => (Object)(object)base.baseEntity != (Object)null && base.baseEntity.isClient;
+	private bool isClient => base.baseEntity != null && base.baseEntity.isClient;
 
 	[ServerVar]
-	public static void ClearRadioByUser (Arg arg)
+	public static void ClearRadioByUser (ConsoleSystem.Arg arg)
 	{
 		ulong uInt = arg.GetUInt64 (0, 0uL);
 		int num = 0;
@@ -75,13 +74,11 @@ public class BoomBox : EntityComponent<BaseEntity>, INotifyLOD
 
 	private static Dictionary<string, string> GetStationData ()
 	{
-		JObject val = Application.Manifest?.Metadata;
-		JToken val2 = ((val != null) ? val ["RadioStations"] : null);
-		JArray val3;
-		if ((val3 = (JArray)(object)((val2 is JArray) ? val2 : null)) != null && ((JContainer)val3).Count > 0) {
+		JToken jToken = (Facepunch.Application.Manifest?.Metadata)? ["RadioStations"];
+		if (jToken is JArray { Count: >0 } jArray) {
 			string[] array = new string[2];
 			Dictionary<string, string> dictionary = new Dictionary<string, string> ();
-			foreach (string item in ((JToken)val3).Values<string> ()) {
+			foreach (string item in jArray.Values<string> ()) {
 				array = item.Split (',');
 				if (!dictionary.ContainsKey (array [0])) {
 					dictionary.Add (array [0], array [1]);
@@ -110,12 +107,12 @@ public class BoomBox : EntityComponent<BaseEntity>, INotifyLOD
 		if (!string.IsNullOrEmpty (ServerUrlList)) {
 			string[] array = ServerUrlList.Split (',');
 			if (array.Length % 2 != 0) {
-				Debug.Log ((object)"Invalid number of stations in BoomBox.ServerUrlList, ensure you always have a name and a url");
+				Debug.Log ("Invalid number of stations in BoomBox.ServerUrlList, ensure you always have a name and a url");
 				return;
 			}
 			for (int i = 0; i < array.Length; i += 2) {
 				if (ServerValidStations.ContainsKey (array [i])) {
-					Debug.Log ((object)("Duplicate station name detected in BoomBox.ServerUrlList, all station names must be unique: " + array [i]));
+					Debug.Log ("Duplicate station name detected in BoomBox.ServerUrlList, all station names must be unique: " + array [i]);
 				} else {
 					ServerValidStations.Add (array [i], array [i + 1]);
 				}
@@ -126,9 +123,9 @@ public class BoomBox : EntityComponent<BaseEntity>, INotifyLOD
 
 	public void Server_UpdateRadioIP (BaseEntity.RPCMessage msg)
 	{
-		string text = msg.read.String (256);
+		string text = msg.read.String ();
 		if (IsStationValid (text)) {
-			if ((Object)(object)msg.player != (Object)null) {
+			if (msg.player != null) {
 				ulong userID = msg.player.userID;
 				AssignedRadioBy = userID;
 			}
@@ -143,7 +140,7 @@ public class BoomBox : EntityComponent<BaseEntity>, INotifyLOD
 	public void Save (BaseNetworkable.SaveInfo info)
 	{
 		if (info.msg.boomBox == null) {
-			info.msg.boomBox = Pool.Get<BoomBox> ();
+			info.msg.boomBox = Facepunch.Pool.Get<ProtoBuf.BoomBox> ();
 		}
 		info.msg.boomBox.radioIp = CurrentRadioIp;
 		info.msg.boomBox.assignedRadioBy = AssignedRadioBy;
@@ -173,7 +170,7 @@ public class BoomBox : EntityComponent<BaseEntity>, INotifyLOD
 	public void ServerTogglePlay (BaseEntity.RPCMessage msg)
 	{
 		if (IsPowered ()) {
-			bool play = ((Stream)(object)msg.read).ReadByte () == 1;
+			bool play = msg.read.ReadByte () == 1;
 			ServerTogglePlay (play);
 		}
 	}
@@ -185,25 +182,24 @@ public class BoomBox : EntityComponent<BaseEntity>, INotifyLOD
 
 	public void ServerTogglePlay (bool play)
 	{
-		if (!((Object)(object)base.baseEntity == (Object)null)) {
+		if (!(base.baseEntity == null)) {
 			SetFlag (BaseEntity.Flags.On, play);
 			if (base.baseEntity is IOEntity iOEntity) {
 				iOEntity.SendChangedToRoot (forceUpdate: true);
 				iOEntity.MarkDirtyForceUpdateOutputs ();
 			}
-			if (play && !((FacepunchBehaviour)this).IsInvoking ((Action)DeductCondition) && ConditionLossRate > 0f) {
-				((FacepunchBehaviour)this).InvokeRepeating ((Action)DeductCondition, 1f, 1f);
-			} else if (((FacepunchBehaviour)this).IsInvoking ((Action)DeductCondition)) {
-				((FacepunchBehaviour)this).CancelInvoke ((Action)DeductCondition);
+			if (play && !IsInvoking (DeductCondition) && ConditionLossRate > 0f) {
+				InvokeRepeating (DeductCondition, 1f, 1f);
+			} else if (IsInvoking (DeductCondition)) {
+				CancelInvoke (DeductCondition);
 			}
 		}
 	}
 
 	public void OnCassetteInserted (Cassette c)
 	{
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		if (!((Object)(object)base.baseEntity == (Object)null)) {
-			base.baseEntity.ClientRPC<NetworkableId> (null, "Client_OnCassetteInserted", c.net.ID);
+		if (!(base.baseEntity == null)) {
+			base.baseEntity.ClientRPC (null, "Client_OnCassetteInserted", c.net.ID);
 			ServerTogglePlay (play: false);
 			SetFlag (BaseEntity.Flags.Reserved1, state: true);
 			base.baseEntity.SendNetworkUpdate ();
@@ -212,7 +208,7 @@ public class BoomBox : EntityComponent<BaseEntity>, INotifyLOD
 
 	public void OnCassetteRemoved (Cassette c)
 	{
-		if (!((Object)(object)base.baseEntity == (Object)null)) {
+		if (!(base.baseEntity == null)) {
 			base.baseEntity.ClientRPC (null, "Client_OnCassetteRemoved");
 			ServerTogglePlay (play: false);
 			SetFlag (BaseEntity.Flags.Reserved1, state: false);
@@ -221,7 +217,7 @@ public class BoomBox : EntityComponent<BaseEntity>, INotifyLOD
 
 	private bool IsPowered ()
 	{
-		if ((Object)(object)base.baseEntity == (Object)null) {
+		if (base.baseEntity == null) {
 			return false;
 		}
 		return base.baseEntity.HasFlag (BaseEntity.Flags.Reserved8) || base.baseEntity is HeldBoomBox;
@@ -229,7 +225,7 @@ public class BoomBox : EntityComponent<BaseEntity>, INotifyLOD
 
 	private bool IsOn ()
 	{
-		if ((Object)(object)base.baseEntity == (Object)null) {
+		if (base.baseEntity == null) {
 			return false;
 		}
 		return base.baseEntity.IsOn ();
@@ -237,7 +233,7 @@ public class BoomBox : EntityComponent<BaseEntity>, INotifyLOD
 
 	private bool HasFlag (BaseEntity.Flags f)
 	{
-		if ((Object)(object)base.baseEntity == (Object)null) {
+		if (base.baseEntity == null) {
 			return false;
 		}
 		return base.baseEntity.HasFlag (f);
@@ -245,7 +241,7 @@ public class BoomBox : EntityComponent<BaseEntity>, INotifyLOD
 
 	private void SetFlag (BaseEntity.Flags f, bool state)
 	{
-		if ((Object)(object)base.baseEntity != (Object)null) {
+		if (base.baseEntity != null) {
 			base.baseEntity.SetFlag (f, state);
 		}
 	}

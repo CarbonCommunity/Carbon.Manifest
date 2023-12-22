@@ -111,7 +111,7 @@ public class TexasHoldEmController : CardGameController
 		} else if (cards.Count == 7) {
 			result = PokerLib.Eval7Hand (array);
 		} else {
-			Debug.LogError ((object)"Currently we can only evaluate five or seven card hands.");
+			Debug.LogError ("Currently we can only evaluate five or seven card hands.");
 		}
 		return result;
 	}
@@ -148,7 +148,7 @@ public class TexasHoldEmController : CardGameController
 	public override void Save (CardGame syncData)
 	{
 		base.Save (syncData);
-		syncData.texasHoldEm = Pool.Get<TexasHoldEm> ();
+		syncData.texasHoldEm = Pool.Get<CardGame.TexasHoldEm> ();
 		syncData.texasHoldEm.dealerIndex = dealerIndex;
 		syncData.texasHoldEm.communityCards = Pool.GetList<int> ();
 		syncData.texasHoldEm.biggestRaiseThisTurn = BiggestRaiseThisTurn;
@@ -190,17 +190,17 @@ public class TexasHoldEmController : CardGameController
 	protected override void SubEndRound ()
 	{
 		int num = 0;
-		List<CardPlayerData> list = Pool.GetList<CardPlayerData> ();
+		List<CardPlayerData> obj = Pool.GetList<CardPlayerData> ();
 		CardPlayerData[] playerData = base.PlayerData;
 		foreach (CardPlayerData cardPlayerData in playerData) {
 			if (cardPlayerData.betThisRound > 0) {
-				list.Add (cardPlayerData);
+				obj.Add (cardPlayerData);
 			}
 			if (cardPlayerData.HasUserInCurrentRound) {
 				num++;
 			}
 		}
-		if (list.Count == 0) {
+		if (obj.Count == 0) {
 			StorageContainer pot = base.Owner.GetPot ();
 			pot.inventory.Clear ();
 			return;
@@ -218,7 +218,7 @@ public class TexasHoldEmController : CardGameController
 		foreach (CardPlayerData cardPlayerData3 in playerData3) {
 			cardPlayerData3.remainingToPayOut = cardPlayerData3.betThisRound;
 		}
-		while (list.Count > 1) {
+		while (obj.Count > 1) {
 			int num3 = int.MaxValue;
 			int num4 = 0;
 			CardPlayerData[] playerData4 = base.PlayerData;
@@ -231,7 +231,7 @@ public class TexasHoldEmController : CardGameController
 				}
 			}
 			int num5 = num3 * num4;
-			foreach (CardPlayerData item in list) {
+			foreach (CardPlayerData item in obj) {
 				item.betThisRound -= num3;
 			}
 			int num6 = int.MaxValue;
@@ -261,28 +261,28 @@ public class TexasHoldEmController : CardGameController
 					AddRoundResult (item4, num8, (int)resultCode);
 				}
 			}
-			for (int num9 = list.Count - 1; num9 >= 0; num9--) {
-				if (list [num9].betThisRound == 0) {
-					list.RemoveAt (num9);
+			for (int num9 = obj.Count - 1; num9 >= 0; num9--) {
+				if (obj [num9].betThisRound == 0) {
+					obj.RemoveAt (num9);
 				}
 			}
 			flag2 = false;
 		}
-		if (list.Count == 1) {
-			int num10 = list [0].betThisRound + num2;
+		if (obj.Count == 1) {
+			int num10 = obj [0].betThisRound + num2;
 			num2 = 0;
-			PayOutFromPot (list [0], num10);
+			PayOutFromPot (obj [0], num10);
 			PokerRoundResult resultCode2 = ((base.resultInfo.results.Count == 0) ? PokerRoundResult.PrimaryWinner : PokerRoundResult.SecondaryWinner);
-			AddRoundResult (list [0], num10, (int)resultCode2);
+			AddRoundResult (obj [0], num10, (int)resultCode2);
 		}
-		base.Owner.ClientRPC<RoundResults> (null, "OnResultsDeclared", base.resultInfo);
+		base.Owner.ClientRPC (null, "OnResultsDeclared", base.resultInfo);
 		StorageContainer pot2 = base.Owner.GetPot ();
 		int amount = pot2.inventory.GetAmount (base.ScrapItemID, onlyUsableAmounts: true);
 		if (amount > 0) {
-			Debug.LogError ((object)$"{GetType ().Name}: Something went wrong in the winner calculation. Pot still has {amount} scrap left over after payouts. Expected 0. Clearing it.");
+			Debug.LogError ($"{GetType ().Name}: Something went wrong in the winner calculation. Pot still has {amount} scrap left over after payouts. Expected 0. Clearing it.");
 			pot2.inventory.Clear ();
 		}
-		Pool.FreeList<CardPlayerData> (ref list);
+		Pool.FreeList (ref obj);
 	}
 
 	protected override void AddRoundResult (CardPlayerData pData, int winnings, int winState)
@@ -290,7 +290,7 @@ public class TexasHoldEmController : CardGameController
 		base.AddRoundResult (pData, winnings, winState);
 		if (GameInfo.HasAchievements) {
 			BasePlayer basePlayer = base.Owner.IDToPlayer (pData.UserID);
-			if ((Object)(object)basePlayer != (Object)null) {
+			if (basePlayer != null) {
 				basePlayer.stats.Add ("won_hand_texas_holdem", 1);
 				basePlayer.stats.Save (forceSteamSave: true);
 			}
@@ -320,7 +320,7 @@ public class TexasHoldEmController : CardGameController
 				if (deck.TryTakeCard (out var card)) {
 					item.Cards.Add (card);
 				} else {
-					Debug.LogError ((object)(GetType ().Name + ": No more cards in the deck to deal!"));
+					Debug.LogError (GetType ().Name + ": No more cards in the deck to deal!");
 				}
 			}
 		}
@@ -462,14 +462,14 @@ public class TexasHoldEmController : CardGameController
 			num = ++num % num2;
 			num3++;
 			if (num3 > num2) {
-				Debug.LogError ((object)(GetType ().Name + ": This should never happen. Ended turn with no players in game?."));
+				Debug.LogError (GetType ().Name + ": This should never happen. Ended turn with no players in game?.");
 				EndRoundWithDelay ();
 				return;
 			}
 		}
 		int num4 = GameToRoundIndex (num);
 		if (num4 < 0 || num4 > NumPlayersInCurrentRound ()) {
-			Debug.LogError ((object)$"StartNextCycle NewActiveIndex is out of range: {num4}. Clamping it to between 0 and {NumPlayersInCurrentRound ()}.");
+			Debug.LogError ($"StartNextCycle NewActiveIndex is out of range: {num4}. Clamping it to between 0 and {NumPlayersInCurrentRound ()}.");
 			num4 = Mathf.Clamp (num4, 0, NumPlayersInCurrentRound ());
 		}
 		int startIndex = num4;
@@ -516,11 +516,11 @@ public class TexasHoldEmController : CardGameController
 			return;
 		}
 		foreach (CardPlayerData item in PlayersInRound ()) {
-			List<PlayingCard> list = Pool.GetList<PlayingCard> ();
-			list.AddRange (item.Cards);
-			list.AddRange (communityCards);
-			ushort finalScore = EvaluatePokerHand (list);
-			Pool.FreeList<PlayingCard> (ref list);
+			List<PlayingCard> obj = Pool.GetList<PlayingCard> ();
+			obj.AddRange (item.Cards);
+			obj.AddRange (communityCards);
+			ushort finalScore = EvaluatePokerHand (obj);
+			Pool.FreeList (ref obj);
 			item.finalScore = finalScore;
 		}
 		EndRoundWithDelay ();

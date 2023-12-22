@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -9,7 +10,7 @@ using UnityEngine.Assertions;
 
 public class TreeManager : BaseEntity
 {
-	public static ListHashSet<BaseEntity> entities = new ListHashSet<BaseEntity> (8);
+	public static ListHashSet<BaseEntity> entities = new ListHashSet<BaseEntity> ();
 
 	public static TreeManager server;
 
@@ -17,59 +18,40 @@ public class TreeManager : BaseEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("TreeManager.OnRpcMessage", 0);
-		try {
-			if (rpc == 1907121457 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("TreeManager.OnRpcMessage")) {
+			if (rpc == 1907121457 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - SERVER_RequestTrees "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - SERVER_RequestTrees "));
 				}
-				TimeWarning val2 = TimeWarning.New ("SERVER_RequestTrees", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("SERVER_RequestTrees")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (1907121457u, "SERVER_RequestTrees", this, player, 0uL)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							SERVER_RequestTrees (msg2);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in SERVER_RequestTrees");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
 
-	public static Vector3 ProtoHalf3ToVec3 (Half3 half3)
+	public static Vector3 ProtoHalf3ToVec3 (ProtoBuf.Half3 half3)
 	{
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0031: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
 		Vector3 result = default(Vector3);
 		result.x = Mathf.HalfToFloat ((ushort)half3.x);
 		result.y = Mathf.HalfToFloat ((ushort)half3.y);
@@ -77,16 +59,9 @@ public class TreeManager : BaseEntity
 		return result;
 	}
 
-	public static Half3 Vec3ToProtoHalf3 (Vector3 vec3)
+	public static ProtoBuf.Half3 Vec3ToProtoHalf3 (Vector3 vec3)
 	{
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		Half3 result = default(Half3);
+		ProtoBuf.Half3 result = default(ProtoBuf.Half3);
 		result.x = Mathf.FloatToHalf (vec3.x);
 		result.y = Mathf.FloatToHalf (vec3.y);
 		result.z = Mathf.FloatToHalf (vec3.z);
@@ -101,65 +76,54 @@ public class TreeManager : BaseEntity
 
 	public static void OnTreeDestroyed (BaseEntity billboardEntity)
 	{
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
 		entities.Remove (billboardEntity);
-		if (!Application.isLoading && !Application.isQuitting) {
-			server.ClientRPC<NetworkableId> (null, "CLIENT_TreeDestroyed", billboardEntity.net.ID);
+		if (!Rust.Application.isLoading && !Rust.Application.isQuitting) {
+			server.ClientRPC (null, "CLIENT_TreeDestroyed", billboardEntity.net.ID);
 		}
 	}
 
 	public static void OnTreeSpawned (BaseEntity billboardEntity)
 	{
 		entities.Add (billboardEntity);
-		if (Application.isLoading || Application.isQuitting) {
+		if (Rust.Application.isLoading || Rust.Application.isQuitting) {
 			return;
 		}
-		Tree val = Pool.Get<Tree> ();
-		try {
-			ExtractTreeNetworkData (billboardEntity, val);
-			server.ClientRPC<Tree> (null, "CLIENT_TreeSpawned", val);
-		} finally {
-			((IDisposable)val)?.Dispose ();
-		}
+		using ProtoBuf.Tree tree = Facepunch.Pool.Get<ProtoBuf.Tree> ();
+		ExtractTreeNetworkData (billboardEntity, tree);
+		server.ClientRPC (null, "CLIENT_TreeSpawned", tree);
 	}
 
-	private static void ExtractTreeNetworkData (BaseEntity billboardEntity, Tree tree)
+	private static void ExtractTreeNetworkData (BaseEntity billboardEntity, ProtoBuf.Tree tree)
 	{
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
 		tree.netId = billboardEntity.net.ID;
 		tree.prefabId = billboardEntity.prefabID;
-		tree.position = Vec3ToProtoHalf3 (((Component)billboardEntity).transform.position);
-		tree.scale = ((Component)billboardEntity).transform.lossyScale.y;
+		tree.position = Vec3ToProtoHalf3 (billboardEntity.transform.position);
+		tree.scale = billboardEntity.transform.lossyScale.y;
 	}
 
 	public static void SendSnapshot (BasePlayer player)
 	{
 		BufferList<BaseEntity> values = entities.Values;
-		TreeList val = null;
+		TreeList treeList = null;
 		for (int i = 0; i < values.Count; i++) {
 			BaseEntity billboardEntity = values [i];
-			Tree val2 = Pool.Get<Tree> ();
-			ExtractTreeNetworkData (billboardEntity, val2);
-			if (val == null) {
-				val = Pool.Get<TreeList> ();
-				val.trees = Pool.GetList<Tree> ();
+			ProtoBuf.Tree tree = Facepunch.Pool.Get<ProtoBuf.Tree> ();
+			ExtractTreeNetworkData (billboardEntity, tree);
+			if (treeList == null) {
+				treeList = Facepunch.Pool.Get<TreeList> ();
+				treeList.trees = Facepunch.Pool.GetList<ProtoBuf.Tree> ();
 			}
-			val.trees.Add (val2);
-			if (val.trees.Count >= 100) {
-				server.ClientRPCPlayer<TreeList> (null, player, "CLIENT_ReceiveTrees", val);
-				val.Dispose ();
-				val = null;
+			treeList.trees.Add (tree);
+			if (treeList.trees.Count >= 100) {
+				server.ClientRPCPlayer (null, player, "CLIENT_ReceiveTrees", treeList);
+				treeList.Dispose ();
+				treeList = null;
 			}
 		}
-		if (val != null) {
-			server.ClientRPCPlayer<TreeList> (null, player, "CLIENT_ReceiveTrees", val);
-			val.Dispose ();
-			val = null;
+		if (treeList != null) {
+			server.ClientRPCPlayer (null, player, "CLIENT_ReceiveTrees", treeList);
+			treeList.Dispose ();
+			treeList = null;
 		}
 	}
 

@@ -1,3 +1,4 @@
+#define ENABLE_PROFILER
 using UnityEngine;
 using UnityEngine.Profiling;
 
@@ -21,7 +22,7 @@ public class FlameJet : MonoBehaviour
 
 	private Vector3[] lastWorldSegments = null;
 
-	private Vector3[] currentSegments = (Vector3[])(object)new Vector3[0];
+	private Vector3[] currentSegments = new Vector3[0];
 
 	public Color startColor;
 
@@ -31,14 +32,12 @@ public class FlameJet : MonoBehaviour
 
 	private void Initialize ()
 	{
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
 		currentColor = startColor;
 		tesselation = 0.1f;
 		numSegments = Mathf.CeilToInt (maxLength / tesselation);
 		spacing = maxLength / (float)numSegments;
 		if (currentSegments.Length != numSegments) {
-			currentSegments = (Vector3[])(object)new Vector3[numSegments];
+			currentSegments = new Vector3[numSegments];
 		}
 	}
 
@@ -66,53 +65,30 @@ public class FlameJet : MonoBehaviour
 
 	private void UpdateLine ()
 	{
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ae: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00da: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00df: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ef: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0102: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0107: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0109: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0117: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0126: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0171: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0173: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0178: Unknown result type (might be due to invalid IL or missing references)
 		currentColor.a = Mathf.Lerp (currentColor.a, on ? 1f : 0f, Time.deltaTime * 40f);
 		line.SetColors (currentColor, endColor);
 		if (lastWorldSegments == null) {
-			lastWorldSegments = (Vector3[])(object)new Vector3[numSegments];
+			lastWorldSegments = new Vector3[numSegments];
 		}
 		Profiler.BeginSample ("CalculatePoints");
 		int num = currentSegments.Length;
-		Vector3 val3 = default(Vector3);
 		for (int i = 0; i < num; i++) {
-			float num2 = 0f;
-			float num3 = 0f;
+			float x = 0f;
+			float y = 0f;
 			if (lastWorldSegments != null && lastWorldSegments [i] != Vector3.zero && i > 0) {
-				Vector3 val = ((Component)this).transform.InverseTransformPoint (lastWorldSegments [i]);
-				float num4 = (float)i / (float)currentSegments.Length;
-				Vector3 val2 = Vector3.Lerp (val, Vector3.zero, Time.deltaTime * drag);
-				val2 = Vector3.Lerp (Vector3.zero, val2, Mathf.Sqrt (num4));
-				num2 = val2.x;
-				num3 = val2.y;
+				Vector3 a = base.transform.InverseTransformPoint (lastWorldSegments [i]);
+				float f = (float)i / (float)currentSegments.Length;
+				Vector3 b = Vector3.Lerp (a, Vector3.zero, Time.deltaTime * drag);
+				b = Vector3.Lerp (Vector3.zero, b, Mathf.Sqrt (f));
+				x = b.x;
+				y = b.y;
 			}
 			if (i == 0) {
-				num2 = (num3 = 0f);
+				x = (y = 0f);
 			}
-			((Vector3)(ref val3))..ctor (num2, num3, (float)i * spacing);
-			currentSegments [i] = val3;
-			lastWorldSegments [i] = ((Component)this).transform.TransformPoint (val3);
+			Vector3 vector = new Vector3 (x, y, (float)i * spacing);
+			currentSegments [i] = vector;
+			lastWorldSegments [i] = base.transform.TransformPoint (vector);
 		}
 		Profiler.EndSample ();
 		Profiler.BeginSample ("SetSegments");

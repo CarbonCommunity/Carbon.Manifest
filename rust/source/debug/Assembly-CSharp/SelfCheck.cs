@@ -10,8 +10,8 @@ public static class SelfCheck
 		if (FileSystem.Backend.isError) {
 			return Failed ("Asset Bundle Error: " + FileSystem.Backend.loadingError);
 		}
-		GameManifest gameManifest = FileSystem.Load<GameManifest> ("Assets/manifest.asset", true);
-		if ((Object)(object)gameManifest == (Object)null) {
+		GameManifest gameManifest = FileSystem.Load<GameManifest> ("Assets/manifest.asset");
+		if (gameManifest == null) {
 			return Failed ("Couldn't load game manifest - verify your game content!");
 		}
 		if (!TestRustNative ()) {
@@ -31,11 +31,11 @@ public static class SelfCheck
 
 	private static bool Failed (string Message)
 	{
-		if (Object.op_Implicit ((Object)(object)SingletonComponent<Bootstrap>.Instance)) {
+		if ((bool)SingletonComponent<Bootstrap>.Instance) {
 			SingletonComponent<Bootstrap>.Instance.messageString = "";
 			SingletonComponent<Bootstrap>.Instance.ThrowError (Message);
 		}
-		Debug.LogError ((object)("SelfCheck Failed: " + Message));
+		Debug.LogError ("SelfCheck Failed: " + Message);
 		return false;
 	}
 

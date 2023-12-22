@@ -25,7 +25,7 @@ public struct RaycastRaySetupJob : IJobParallelFor
 
 	public int sampleOffset;
 
-	[ReadOnly]
+	[Unity.Collections.ReadOnly]
 	public NativeArray<int2> samplePositions;
 
 	[WriteOnly]
@@ -34,37 +34,12 @@ public struct RaycastRaySetupJob : IJobParallelFor
 
 	public void Execute (int index)
 	{
-		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0087: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0092: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0094: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0099: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00aa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ba: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cd: Unknown result type (might be due to invalid IL or missing references)
 		int num;
 		for (num = sampleOffset + index; num >= samplePositions.Length; num -= samplePositions.Length) {
 		}
-		float2 val = (float2.op_Implicit (samplePositions [num]) - halfRes) / res;
-		float3 val2 = default(float3);
-		((float3)(ref val2))..ctor (val.x * worldHeight * aspectRatio, val.y * worldHeight, 1f);
-		float3 val3 = math.mul (cameraRot, val2);
-		float3 val4 = cameraPos + val3 * nearPlane;
-		raycastCommands [index] = new RaycastCommand (float3.op_Implicit (val4), float3.op_Implicit (val3), farPlane, layerMask, 1);
+		float2 @float = (samplePositions [num] - halfRes) / res;
+		float3 float2 = math.mul (v: new float3 (@float.x * worldHeight * aspectRatio, @float.y * worldHeight, 1f), q: cameraRot);
+		float3 float3 = cameraPos + float2 * nearPlane;
+		raycastCommands [index] = new RaycastCommand (float3, float2, farPlane, layerMask);
 	}
 }

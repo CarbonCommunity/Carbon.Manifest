@@ -1,4 +1,3 @@
-using System;
 using ConVar;
 using ProtoBuf;
 using UnityEngine;
@@ -25,10 +24,7 @@ public class GingerbreadNPC : HumanNPC, IClientBrainStateListener
 			return "assets/prefabs/npc/murderer/murderer_corpse.prefab";
 			static float GetFloatBasedOnUserID (ulong steamid, ulong seed)
 			{
-				//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-				//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-				//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-				State state = Random.state;
+				Random.State state = Random.state;
 				Random.InitState ((int)(seed + steamid));
 				float result = Random.Range (0f, 1f);
 				Random.state = state;
@@ -55,16 +51,11 @@ public class GingerbreadNPC : HumanNPC, IClientBrainStateListener
 
 	public override BaseCorpse CreateCorpse ()
 	{
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0056: Unknown result type (might be due to invalid IL or missing references)
-		TimeWarning val = TimeWarning.New ("Create corpse", 0);
-		try {
+		using (TimeWarning.New ("Create corpse")) {
 			string corpseResourcePath = CorpseResourcePath;
 			NPCPlayerCorpse nPCPlayerCorpse = DropCorpse (corpseResourcePath) as NPCPlayerCorpse;
-			if (Object.op_Implicit ((Object)(object)nPCPlayerCorpse)) {
-				((Component)nPCPlayerCorpse).transform.position = ((Component)nPCPlayerCorpse).transform.position + Vector3.down * NavAgent.baseOffset;
+			if ((bool)nPCPlayerCorpse) {
+				nPCPlayerCorpse.transform.position = nPCPlayerCorpse.transform.position + Vector3.down * NavAgent.baseOffset;
 				nPCPlayerCorpse.SetLootableIn (2f);
 				nPCPlayerCorpse.SetFlag (Flags.Reserved5, HasPlayerFlag (PlayerFlags.DisplaySash));
 				nPCPlayerCorpse.SetFlag (Flags.Reserved2, b: true);
@@ -90,12 +81,10 @@ public class GingerbreadNPC : HumanNPC, IClientBrainStateListener
 				}
 			}
 			return nPCPlayerCorpse;
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 	}
 
-	public override void AttackerInfo (DeathInfo info)
+	public override void AttackerInfo (PlayerLifeStory.DeathInfo info)
 	{
 		base.AttackerInfo (info);
 		info.inflictorName = inventory.containerBelt.GetSlot (0).info.shortname;

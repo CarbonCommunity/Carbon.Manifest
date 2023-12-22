@@ -28,7 +28,7 @@ public class SubsurfaceProfileTexture
 
 	private Texture2D texture = null;
 
-	private Vector4[] transmissionTints = (Vector4[])(object)new Vector4[16];
+	private Vector4[] transmissionTints = new Vector4[16];
 
 	private const int KernelSize0 = 24;
 
@@ -42,7 +42,7 @@ public class SubsurfaceProfileTexture
 
 	public Texture2D Texture {
 		get {
-			if ((Object)(object)texture == (Object)null) {
+			if (texture == null) {
 				CreateResources ();
 			}
 			return texture;
@@ -51,7 +51,7 @@ public class SubsurfaceProfileTexture
 
 	public Vector4[] TransmissionTints {
 		get {
-			if ((Object)(object)texture == (Object)null) {
+			if (texture == null) {
 				CreateResources ();
 			}
 			return transmissionTints;
@@ -62,20 +62,13 @@ public class SubsurfaceProfileTexture
 	{
 		entries.Add (profile);
 		if (entries.Count > 15) {
-			Debug.LogWarning ((object)$"[SubsurfaceScattering] Maximum number of supported Subsurface Profiles has been reached ({entries.Count}/{15}). Please remove some.");
+			Debug.LogWarning ($"[SubsurfaceScattering] Maximum number of supported Subsurface Profiles has been reached ({entries.Count}/{15}). Please remove some.");
 		}
 		ReleaseResources ();
 	}
 
 	public static Color Clamp (Color color, float min = 0f, float max = 1f)
 	{
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
 		Color result = default(Color);
 		result.r = Mathf.Clamp (color.r, min, max);
 		result.g = Mathf.Clamp (color.g, min, max);
@@ -86,58 +79,35 @@ public class SubsurfaceProfileTexture
 
 	private void WriteKernel (ref Color[] pixels, ref Color[] kernel, int id, int y, in SubsurfaceProfileData data)
 	{
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0069: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0077: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0078: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0084: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0085: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cb: Unknown result type (might be due to invalid IL or missing references)
-		Color val = Clamp (data.SubsurfaceColor);
+		Color color = Clamp (data.SubsurfaceColor);
 		Color falloffColor = Clamp (data.FalloffColor, 0.009f);
-		transmissionTints [id] = Color.op_Implicit (data.TransmissionTint);
-		kernel [0] = val;
+		transmissionTints [id] = data.TransmissionTint;
+		kernel [0] = color;
 		kernel [0].a = data.ScatterRadius;
-		SeparableSSS.CalculateKernel (kernel, 1, 24, val, falloffColor);
-		SeparableSSS.CalculateKernel (kernel, 25, 16, val, falloffColor);
-		SeparableSSS.CalculateKernel (kernel, 41, 8, val, falloffColor);
+		SeparableSSS.CalculateKernel (kernel, 1, 24, color, falloffColor);
+		SeparableSSS.CalculateKernel (kernel, 25, 16, color, falloffColor);
+		SeparableSSS.CalculateKernel (kernel, 41, 8, color, falloffColor);
 		int num = 49 * y;
 		for (int i = 0; i < 49; i++) {
-			Color val2 = kernel [i];
-			val2.a *= ((i > 0) ? (data.ScatterRadius / 1024f) : 1f);
-			pixels [num + i] = val2;
+			Color color2 = kernel [i];
+			color2.a *= ((i > 0) ? (data.ScatterRadius / 1024f) : 1f);
+			pixels [num + i] = color2;
 		}
 	}
 
 	private void CreateResources ()
 	{
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0045: Expected O, but got Unknown
 		if (entries.Count <= 0) {
 			return;
 		}
 		int num = Mathf.Min (entries.Count, 15) + 1;
 		ReleaseResources ();
-		texture = new Texture2D (49, num, (TextureFormat)17, false, true);
-		((Object)texture).name = "SubsurfaceProfiles";
-		((Texture)texture).wrapMode = (TextureWrapMode)1;
-		((Texture)texture).filterMode = (FilterMode)1;
+		texture = new Texture2D (49, num, TextureFormat.RGBAHalf, mipChain: false, linear: true);
+		texture.name = "SubsurfaceProfiles";
+		texture.wrapMode = TextureWrapMode.Clamp;
+		texture.filterMode = FilterMode.Bilinear;
 		Color[] pixels = texture.GetPixels (0);
-		Color[] kernel = (Color[])(object)new Color[49];
+		Color[] kernel = new Color[49];
 		int num2 = num - 1;
 		int id = 0;
 		int id2 = id++;
@@ -152,24 +122,18 @@ public class SubsurfaceProfileTexture
 			}
 		}
 		texture.SetPixels (pixels, 0);
-		texture.Apply (false, false);
+		texture.Apply (updateMipmaps: false, makeNoLongerReadable: false);
 	}
 
 	public void ReleaseResources ()
 	{
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)texture != (Object)null) {
-			Object.DestroyImmediate ((Object)(object)texture);
+		if (texture != null) {
+			Object.DestroyImmediate (texture);
 			texture = null;
 		}
 		if (transmissionTints != null) {
 			for (int i = 0; i < transmissionTints.Length; i++) {
-				Vector4[] array = transmissionTints;
-				int num = i;
-				SubsurfaceProfileData @default = SubsurfaceProfileData.Default;
-				array [num] = Color.op_Implicit (((Color)(ref @default.TransmissionTint)).linear);
+				transmissionTints [i] = SubsurfaceProfileData.Default.TransmissionTint.linear;
 			}
 		}
 	}

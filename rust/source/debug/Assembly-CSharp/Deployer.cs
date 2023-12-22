@@ -1,3 +1,5 @@
+#define ENABLE_PROFILER
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch.Rust;
@@ -10,46 +12,34 @@ public class Deployer : HeldEntity
 {
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("Deployer.OnRpcMessage", 0);
-		try {
-			if (rpc == 3001117906u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("Deployer.OnRpcMessage")) {
+			if (rpc == 3001117906u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - DoDeploy "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - DoDeploy "));
 				}
-				TimeWarning val2 = TimeWarning.New ("DoDeploy", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("DoDeploy")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsActiveItem.Test (3001117906u, "DoDeploy", this, player)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							DoDeploy (msg2);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in DoDeploy");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -57,16 +47,16 @@ public class Deployer : HeldEntity
 	public ItemModDeployable GetModDeployable ()
 	{
 		ItemDefinition ownerItemDefinition = GetOwnerItemDefinition ();
-		if ((Object)(object)ownerItemDefinition == (Object)null) {
+		if (ownerItemDefinition == null) {
 			return null;
 		}
-		return ((Component)ownerItemDefinition).GetComponent<ItemModDeployable> ();
+		return ownerItemDefinition.GetComponent<ItemModDeployable> ();
 	}
 
 	public Deployable GetDeployable ()
 	{
 		ItemModDeployable modDeployable = GetModDeployable ();
-		if ((Object)(object)modDeployable == (Object)null) {
+		if (modDeployable == null) {
 			return null;
 		}
 		return modDeployable.GetDeployable (this);
@@ -74,29 +64,16 @@ public class Deployer : HeldEntity
 
 	public Quaternion GetDeployedRotation (Vector3 normal, Vector3 placeDir)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
 		return Quaternion.LookRotation (normal, placeDir) * Quaternion.Euler (90f, 0f, 0f);
 	}
 
 	public bool IsPlacementAngleAcceptable (Vector3 pos, Quaternion rot)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 val = rot * Vector3.up;
+		Vector3 lhs = rot * Vector3.up;
 		bool flag = true;
-		float num = Vector3.Dot (val, Vector3.up);
-		float num2 = Mathf.Acos (num);
-		if (num2 <= 0.610865235f) {
+		float f = Vector3.Dot (lhs, Vector3.up);
+		float num = Mathf.Acos (f);
+		if (num <= 0.610865235f) {
 			return true;
 		}
 		return false;
@@ -104,34 +81,19 @@ public class Deployer : HeldEntity
 
 	public bool CheckPlacement (Deployable deployable, Ray ray, float fDistance)
 	{
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0073: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0078: Unknown result type (might be due to invalid IL or missing references)
-		TimeWarning val = TimeWarning.New ("Deploy.CheckPlacement", 0);
-		try {
-			RaycastHit val2 = default(RaycastHit);
-			if (!Physics.Raycast (ray, ref val2, fDistance, 1235288065)) {
+		using (TimeWarning.New ("Deploy.CheckPlacement")) {
+			if (!UnityEngine.Physics.Raycast (ray, out var hitInfo, fDistance, 1235288065)) {
 				return false;
 			}
 			DeployVolume[] volumes = PrefabAttribute.server.FindAll<DeployVolume> (deployable.prefabID);
-			Vector3 point = ((RaycastHit)(ref val2)).point;
-			Quaternion deployedRotation = GetDeployedRotation (((RaycastHit)(ref val2)).normal, ((Ray)(ref ray)).direction);
+			Vector3 point = hitInfo.point;
+			Quaternion deployedRotation = GetDeployedRotation (hitInfo.normal, ray.direction);
 			if (DeployVolume.Check (point, deployedRotation, volumes)) {
 				return false;
 			}
-			if (!IsPlacementAngleAcceptable (((RaycastHit)(ref val2)).point, deployedRotation)) {
+			if (!IsPlacementAngleAcceptable (hitInfo.point, deployedRotation)) {
 				return false;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return true;
 	}
@@ -140,13 +102,6 @@ public class Deployer : HeldEntity
 	[RPC_Server.IsActiveItem]
 	private void DoDeploy (RPCMessage msg)
 	{
-		//IL_0031: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
 		if (!msg.player.CanInteract ()) {
 			return;
 		}
@@ -168,19 +123,11 @@ public class Deployer : HeldEntity
 
 	public void DoDeploy_Slot (Deployable deployable, Ray ray, NetworkableId entityID)
 	{
-		//IL_0056: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0118: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0122: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0128: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01bb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01c0: Unknown result type (might be due to invalid IL or missing references)
 		if (!HasItemAmount ()) {
 			return;
 		}
 		BasePlayer ownerPlayer = GetOwnerPlayer ();
-		if (!Object.op_Implicit ((Object)(object)ownerPlayer)) {
+		if (!ownerPlayer) {
 			return;
 		}
 		if (!ownerPlayer.CanBuild ()) {
@@ -188,7 +135,7 @@ public class Deployer : HeldEntity
 			return;
 		}
 		BaseEntity baseEntity = BaseNetworkable.serverEntities.Find (entityID) as BaseEntity;
-		if ((Object)(object)baseEntity == (Object)null || !baseEntity.HasSlot (deployable.slot) || (Object)(object)baseEntity.GetSlot (deployable.slot) != (Object)null) {
+		if (baseEntity == null || !baseEntity.HasSlot (deployable.slot) || baseEntity.GetSlot (deployable.slot) != null) {
 			return;
 		}
 		if (ownerPlayer.Distance (baseEntity) > 3f) {
@@ -202,7 +149,7 @@ public class Deployer : HeldEntity
 		Item ownerItem = GetOwnerItem ();
 		ItemModDeployable modDeployable = GetModDeployable ();
 		BaseEntity baseEntity2 = GameManager.server.CreateEntity (modDeployable.entityPrefab.resourcePath);
-		if ((Object)(object)baseEntity2 != (Object)null) {
+		if (baseEntity2 != null) {
 			baseEntity2.skinID = ownerItem.skin;
 			baseEntity2.SetParent (baseEntity, baseEntity.GetSlotAnchorName (deployable.slot));
 			baseEntity2.OwnerID = ownerPlayer.userID;
@@ -210,7 +157,7 @@ public class Deployer : HeldEntity
 			baseEntity2.Spawn ();
 			baseEntity.SetSlot (deployable.slot, baseEntity2);
 			if (deployable.placeEffect.isValid) {
-				Effect.server.Run (deployable.placeEffect.resourcePath, ((Component)baseEntity).transform.position, Vector3.up);
+				Effect.server.Run (deployable.placeEffect.resourcePath, baseEntity.transform.position, Vector3.up);
 			}
 		}
 		modDeployable.OnDeployed (baseEntity2, ownerPlayer);
@@ -220,25 +167,11 @@ public class Deployer : HeldEntity
 
 	public void DoDeploy_Regular (Deployable deployable, Ray ray)
 	{
-		//IL_0085: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ca: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00db: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ed: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0113: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0114: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0116: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014d: Unknown result type (might be due to invalid IL or missing references)
 		if (!HasItemAmount ()) {
 			return;
 		}
 		BasePlayer ownerPlayer = GetOwnerPlayer ();
-		if (!Object.op_Implicit ((Object)(object)ownerPlayer)) {
+		if (!ownerPlayer) {
 			return;
 		}
 		if (!ownerPlayer.CanBuild ()) {
@@ -246,12 +179,11 @@ public class Deployer : HeldEntity
 		} else if (ConVar.AntiHack.objectplacement && ownerPlayer.TriggeredAntiHack ()) {
 			ownerPlayer.ChatMessage ("AntiHack!");
 		} else {
-			RaycastHit val = default(RaycastHit);
-			if (!CheckPlacement (deployable, ray, 8f) || !Physics.Raycast (ray, ref val, 8f, 1235288065)) {
+			if (!CheckPlacement (deployable, ray, 8f) || !UnityEngine.Physics.Raycast (ray, out var hitInfo, 8f, 1235288065)) {
 				return;
 			}
-			Vector3 point = ((RaycastHit)(ref val)).point;
-			Quaternion deployedRotation = GetDeployedRotation (((RaycastHit)(ref val)).normal, ((Ray)(ref ray)).direction);
+			Vector3 point = hitInfo.point;
+			Quaternion deployedRotation = GetDeployedRotation (hitInfo.normal, ray.direction);
 			Item ownerItem = GetOwnerItem ();
 			ItemModDeployable modDeployable = GetModDeployable ();
 			if (ownerPlayer.Distance (point) > 3f) {
@@ -263,12 +195,12 @@ public class Deployer : HeldEntity
 				return;
 			}
 			BaseEntity baseEntity = GameManager.server.CreateEntity (modDeployable.entityPrefab.resourcePath, point, deployedRotation);
-			if (!Object.op_Implicit ((Object)(object)baseEntity)) {
-				Debug.LogWarning ((object)("Couldn't create prefab:" + modDeployable.entityPrefab.resourcePath));
+			if (!baseEntity) {
+				Debug.LogWarning ("Couldn't create prefab:" + modDeployable.entityPrefab.resourcePath);
 				return;
 			}
 			baseEntity.skinID = ownerItem.skin;
-			((Component)baseEntity).SendMessage ("SetDeployedBy", (object)ownerPlayer, (SendMessageOptions)1);
+			baseEntity.SendMessage ("SetDeployedBy", ownerPlayer, SendMessageOptions.DontRequireReceiver);
 			baseEntity.OwnerID = ownerPlayer.userID;
 			baseEntity.Spawn ();
 			modDeployable.OnDeployed (baseEntity, ownerPlayer);

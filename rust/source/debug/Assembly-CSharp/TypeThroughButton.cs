@@ -12,32 +12,27 @@ public class TypeThroughButton : Button, IUpdateSelectedHandler, IEventSystemHan
 
 	public void OnUpdateSelected (BaseEventData eventData)
 	{
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Invalid comparison between Unknown and I4
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Expected O, but got Unknown
-		if ((Object)(object)typingTarget == (Object)null) {
+		if (typingTarget == null) {
 			return;
 		}
 		while (Event.PopEvent (_processingEvent)) {
-			if ((int)_processingEvent.rawType == 4 && _processingEvent.character != 0) {
+			if (_processingEvent.rawType == EventType.KeyDown && _processingEvent.character != 0) {
 				Event e = new Event (_processingEvent);
-				((MonoBehaviour)Global.Runner).StartCoroutine (DelayedActivateTextField (e));
+				Global.Runner.StartCoroutine (DelayedActivateTextField (e));
 				break;
 			}
 		}
-		((AbstractEventData)eventData).Use ();
+		eventData.Use ();
 	}
 
 	private IEnumerator DelayedActivateTextField (Event e)
 	{
 		typingTarget.ActivateInputField ();
-		((Selectable)typingTarget).Select ();
+		typingTarget.Select ();
 		if (e.character != ' ') {
-			InputField obj = typingTarget;
-			obj.text += " ";
+			typingTarget.text += " ";
 		}
-		typingTarget.MoveTextEnd (false);
+		typingTarget.MoveTextEnd (shift: false);
 		typingTarget.ProcessEvent (e);
 		yield return null;
 		typingTarget.caretPosition = typingTarget.text.Length;

@@ -1,4 +1,5 @@
-using System;
+#define UNITY_ASSERTIONS
+#define ENABLE_PROFILER
 using System.Collections.Generic;
 using Facepunch;
 using Network;
@@ -21,10 +22,7 @@ public class PlayerLoot : EntityComponent<BasePlayer>
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("PlayerLoot.OnRpcMessage", 0);
-		try {
-		} finally {
-			((IDisposable)val)?.Dispose ();
+		using (TimeWarning.New ("PlayerLoot.OnRpcMessage")) {
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -41,8 +39,8 @@ public class PlayerLoot : EntityComponent<BasePlayer>
 		}
 		Profiler.BeginSample ("PlayerLoot.Clear");
 		MarkDirty ();
-		if (Object.op_Implicit ((Object)(object)entitySource)) {
-			((Component)entitySource).SendMessage ("PlayerStoppedLooting", (object)base.baseEntity, (SendMessageOptions)1);
+		if ((bool)entitySource) {
+			entitySource.SendMessage ("PlayerStoppedLooting", base.baseEntity, SendMessageOptions.DontRequireReceiver);
 		}
 		foreach (ItemContainer container in containers) {
 			if (container != null) {
@@ -57,7 +55,6 @@ public class PlayerLoot : EntityComponent<BasePlayer>
 
 	public ItemContainer FindContainer (ItemContainerId id)
 	{
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
 		Check ();
 		if (!IsLooting ()) {
 			return null;
@@ -73,7 +70,6 @@ public class PlayerLoot : EntityComponent<BasePlayer>
 
 	public Item FindItem (ItemId id)
 	{
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
 		Check ();
 		if (!IsLooting ()) {
 			return null;
@@ -89,11 +85,10 @@ public class PlayerLoot : EntityComponent<BasePlayer>
 
 	public void Check ()
 	{
-		//IL_0098: Unknown result type (might be due to invalid IL or missing references)
 		if (!IsLooting () || !base.baseEntity.isServer) {
 			return;
 		}
-		if ((Object)(object)entitySource == (Object)null) {
+		if (entitySource == null) {
 			base.baseEntity.ChatMessage ("Stopping Looting because lootable doesn't exist!");
 			Clear ();
 		} else if (!entitySource.CanBeLooted (base.baseEntity)) {
@@ -104,8 +99,8 @@ public class PlayerLoot : EntityComponent<BasePlayer>
 			}
 			float num = entitySource.Distance (base.baseEntity.eyes.position);
 			if (num > 3f) {
-				LootDistanceOverride component = ((Component)entitySource).GetComponent<LootDistanceOverride> ();
-				if ((Object)(object)component == (Object)null || num > component.amount) {
+				LootDistanceOverride component = entitySource.GetComponent<LootDistanceOverride> ();
+				if (component == null || num > component.amount) {
 					Clear ();
 				}
 			}
@@ -117,7 +112,7 @@ public class PlayerLoot : EntityComponent<BasePlayer>
 		Profiler.BeginSample ("MarkDirty");
 		if (!isInvokingSendUpdate) {
 			isInvokingSendUpdate = true;
-			((FacepunchBehaviour)this).Invoke ((Action)SendUpdate, 0.1f);
+			Invoke (SendUpdate, 0.1f);
 		}
 		Profiler.EndSample ();
 	}
@@ -127,7 +122,7 @@ public class PlayerLoot : EntityComponent<BasePlayer>
 		Profiler.BeginSample ("SendImmediate");
 		if (isInvokingSendUpdate) {
 			isInvokingSendUpdate = false;
-			((FacepunchBehaviour)this).CancelInvoke ((Action)SendUpdate);
+			CancelInvoke (SendUpdate);
 		}
 		SendUpdate ();
 		Profiler.EndSample ();
@@ -135,32 +130,25 @@ public class PlayerLoot : EntityComponent<BasePlayer>
 
 	private void SendUpdate ()
 	{
-		//IL_005f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0064: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0082: Unknown result type (might be due to invalid IL or missing references)
 		isInvokingSendUpdate = false;
 		if (!base.baseEntity.IsValid ()) {
 			return;
 		}
 		Profiler.BeginSample ("PlayerLoot.SendUpdate");
-		PlayerUpdateLoot val = Pool.Get<PlayerUpdateLoot> ();
-		try {
-			if (Object.op_Implicit ((Object)(object)entitySource) && entitySource.net != null) {
-				val.entityID = entitySource.net.ID;
+		using (PlayerUpdateLoot playerUpdateLoot = Pool.Get<PlayerUpdateLoot> ()) {
+			if ((bool)entitySource && entitySource.net != null) {
+				playerUpdateLoot.entityID = entitySource.net.ID;
 			}
 			if (itemSource != null) {
-				val.itemID = itemSource.uid;
+				playerUpdateLoot.itemID = itemSource.uid;
 			}
 			if (containers.Count > 0) {
-				val.containers = Pool.Get<List<ItemContainer>> ();
+				playerUpdateLoot.containers = Pool.Get<List<ProtoBuf.ItemContainer>> ();
 				foreach (ItemContainer container in containers) {
-					val.containers.Add (container.Save ());
+					playerUpdateLoot.containers.Add (container.Save ());
 				}
 			}
-			base.baseEntity.ClientRPCPlayer<PlayerUpdateLoot> (null, base.baseEntity, "UpdateLoot", val);
-		} finally {
-			((IDisposable)val)?.Dispose ();
+			base.baseEntity.ClientRPCPlayer (null, base.baseEntity, "UpdateLoot", playerUpdateLoot);
 		}
 		Profiler.EndSample ();
 	}
@@ -168,7 +156,7 @@ public class PlayerLoot : EntityComponent<BasePlayer>
 	public bool StartLootingEntity (BaseEntity targetEntity, bool doPositionChecks = true)
 	{
 		Clear ();
-		if (!Object.op_Implicit ((Object)(object)targetEntity)) {
+		if (!targetEntity) {
 			return false;
 		}
 		if (!targetEntity.OnStartBeingLooted (base.baseEntity)) {

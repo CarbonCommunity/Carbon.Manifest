@@ -17,9 +17,9 @@ public class ConnectionQueue
 	public void SkipQueue (ulong userid)
 	{
 		for (int i = 0; i < queue.Count; i++) {
-			Connection val = queue [i];
-			if (val.userid == userid) {
-				JoinGame (val);
+			Connection connection = queue [i];
+			if (connection.userid == userid) {
+				JoinGame (connection);
 				break;
 			}
 		}
@@ -27,8 +27,7 @@ public class ConnectionQueue
 
 	internal void Join (Connection connection)
 	{
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
-		connection.state = (State)2;
+		connection.state = Connection.State.InQueue;
 		queue.Add (connection);
 		nextMessageTime = 0f;
 		if (CanJumpQueue (connection)) {
@@ -58,14 +57,13 @@ public class ConnectionQueue
 
 	private void SendMessage (Connection c, int position)
 	{
-		//IL_0086: Unknown result type (might be due to invalid IL or missing references)
 		string empty = string.Empty;
 		empty = ((position <= 0) ? string.Format ("YOU'RE NEXT - {1:N0} PLAYERS BEHIND YOU", position, queue.Count - position - 1) : $"{position:N0} PLAYERS AHEAD OF YOU, {queue.Count - position - 1:N0} PLAYERS BEHIND");
-		NetWrite val = ((BaseNetwork)Net.sv).StartWrite ();
-		val.PacketID ((Type)16);
-		val.String ("QUEUE");
-		val.String (empty);
-		val.Send (new SendInfo (c));
+		NetWrite netWrite = Net.sv.StartWrite ();
+		netWrite.PacketID (Message.Type.Message);
+		netWrite.String ("QUEUE");
+		netWrite.String (empty);
+		netWrite.Send (new SendInfo (c));
 	}
 
 	public void RemoveConnection (Connection connection)
@@ -78,9 +76,8 @@ public class ConnectionQueue
 
 	private void JoinGame (Connection connection)
 	{
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
 		queue.Remove (connection);
-		connection.state = (State)3;
+		connection.state = Connection.State.Welcoming;
 		nextMessageTime = 0f;
 		joining.Add (connection);
 		SingletonComponent<ServerMgr>.Instance.JoinGame (connection);
@@ -112,8 +109,8 @@ public class ConnectionQueue
 	public bool IsQueued (ulong userid)
 	{
 		for (int i = 0; i < queue.Count; i++) {
-			Connection val = queue [i];
-			if (val.userid == userid) {
+			Connection connection = queue [i];
+			if (connection.userid == userid) {
 				return true;
 			}
 		}
@@ -123,8 +120,8 @@ public class ConnectionQueue
 	public bool IsJoining (ulong userid)
 	{
 		for (int i = 0; i < joining.Count; i++) {
-			Connection val = joining [i];
-			if (val.userid == userid) {
+			Connection connection = joining [i];
+			if (connection.userid == userid) {
 				return true;
 			}
 		}

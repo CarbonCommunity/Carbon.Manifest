@@ -6,9 +6,6 @@ public class CreateEffect : MonoBehaviour
 
 	public void OnEnable ()
 	{
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		Effect.client.Run (EffectToCreate.resourcePath, ((Component)this).transform.position, ((Component)this).transform.up, ((Component)this).transform.forward);
+		Effect.client.Run (EffectToCreate.resourcePath, base.transform.position, base.transform.up, base.transform.forward);
 	}
 }

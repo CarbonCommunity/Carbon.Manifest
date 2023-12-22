@@ -88,7 +88,7 @@ public class SoundDefinition : ScriptableObject
 				return 0f;
 			}
 			AudioSource component = template.Get ().GetComponent<AudioSource> ();
-			if ((Object)(object)component == (Object)null) {
+			if (component == null) {
 				return 0f;
 			}
 			return component.maxDistance;
@@ -100,7 +100,7 @@ public class SoundDefinition : ScriptableObject
 		float num = 0f;
 		for (int i = 0; i < weightedAudioClips.Count; i++) {
 			AudioClip audioClip = weightedAudioClips [i].audioClip;
-			if (Object.op_Implicit ((Object)(object)audioClip)) {
+			if ((bool)audioClip) {
 				num = Mathf.Max (audioClip.length, num);
 			}
 		}
@@ -108,7 +108,7 @@ public class SoundDefinition : ScriptableObject
 			List<WeightedAudioClip> audioClips = distanceAudioClips [j].audioClips;
 			for (int k = 0; k < audioClips.Count; k++) {
 				AudioClip audioClip2 = audioClips [k].audioClip;
-				if (Object.op_Implicit ((Object)(object)audioClip2)) {
+				if ((bool)audioClip2) {
 					num = Mathf.Max (audioClip2.length, num);
 				}
 			}

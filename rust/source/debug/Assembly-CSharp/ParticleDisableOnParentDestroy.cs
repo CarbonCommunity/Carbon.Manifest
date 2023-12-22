@@ -6,10 +6,10 @@ public class ParticleDisableOnParentDestroy : MonoBehaviour, IOnParentDestroying
 
 	public void OnParentDestroying ()
 	{
-		((Component)this).transform.parent = null;
-		((Component)this).GetComponent<ParticleSystem> ().enableEmission = false;
+		base.transform.parent = null;
+		GetComponent<ParticleSystem> ().enableEmission = false;
 		if (destroyAfterSeconds > 0f) {
-			GameManager.Destroy (((Component)this).gameObject, destroyAfterSeconds);
+			GameManager.Destroy (base.gameObject, destroyAfterSeconds);
 		}
 	}
 }

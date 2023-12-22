@@ -65,7 +65,7 @@ public class SpawnPopulation : BaseScriptableObject
 				foreach (GameObjectRef gameObjectRef in resourceList) {
 					string resourcePath = gameObjectRef.resourcePath;
 					if (string.IsNullOrEmpty (resourcePath)) {
-						Debug.LogWarning ((object)(((Object)this).name + " resource list contains invalid resource path for GUID " + gameObjectRef.guid), (Object)(object)this);
+						Debug.LogWarning (base.name + " resource list contains invalid resource path for GUID " + gameObjectRef.guid, this);
 					} else {
 						list.Add (resourcePath);
 					}
@@ -102,7 +102,7 @@ public class SpawnPopulation : BaseScriptableObject
 
 	protected virtual int GetPrefabWeight (Prefab<Spawnable> prefab)
 	{
-		return (!Object.op_Implicit ((Object)(object)prefab.Parameters)) ? 1 : prefab.Parameters.Count;
+		return (!prefab.Parameters) ? 1 : prefab.Parameters.Count;
 	}
 
 	public bool TryTakeRandomPrefab (out Prefab<Spawnable> result)

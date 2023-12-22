@@ -1,4 +1,4 @@
-using System;
+#define UNITY_ASSERTIONS
 using UnityEngine;
 using VLB;
 
@@ -10,7 +10,7 @@ public static class Noise3D
 
 	private static Texture3D ms_NoiseTexture = null;
 
-	private const HideFlags kHideFlags = 61;
+	private const HideFlags kHideFlags = HideFlags.HideAndDontSave;
 
 	private const int kMinShaderLevel = 35;
 
@@ -19,7 +19,7 @@ public static class Noise3D
 			if (!ms_IsSupportedChecked) {
 				ms_IsSupported = SystemInfo.graphicsShaderLevel >= 35;
 				if (!ms_IsSupported) {
-					Debug.LogWarning ((object)isNotSupportedString);
+					Debug.LogWarning (isNotSupportedString);
 				}
 				ms_IsSupportedChecked = true;
 			}
@@ -27,7 +27,7 @@ public static class Noise3D
 		}
 	}
 
-	public static bool isProperlyLoaded => (Object)(object)ms_NoiseTexture != (Object)null;
+	public static bool isProperlyLoaded => ms_NoiseTexture != null;
 
 	public static string isNotSupportedString => $"3D Noise requires higher shader capabilities (Shader Model 3.5 / OpenGL ES 3.0), which are not available on the current platform: graphicsShaderLevel (current/required) = {SystemInfo.graphicsShaderLevel} / {35}";
 
@@ -39,45 +39,39 @@ public static class Noise3D
 
 	public static void LoadIfNeeded ()
 	{
-		//IL_0073: Unknown result type (might be due to invalid IL or missing references)
 		if (!isSupported) {
 			return;
 		}
-		if ((Object)(object)ms_NoiseTexture == (Object)null) {
+		if (ms_NoiseTexture == null) {
 			ms_NoiseTexture = LoadTexture3D (Config.Instance.noise3DData, Config.Instance.noise3DSize);
-			if (Object.op_Implicit ((Object)(object)ms_NoiseTexture)) {
-				((Object)ms_NoiseTexture).hideFlags = (HideFlags)61;
+			if ((bool)ms_NoiseTexture) {
+				ms_NoiseTexture.hideFlags = HideFlags.HideAndDontSave;
 			}
 		}
-		Shader.SetGlobalTexture ("_VLB_NoiseTex3D", (Texture)(object)ms_NoiseTexture);
+		Shader.SetGlobalTexture ("_VLB_NoiseTex3D", ms_NoiseTexture);
 		Shader.SetGlobalVector ("_VLB_NoiseGlobal", Config.Instance.globalNoiseParam);
 	}
 
 	private static Texture3D LoadTexture3D (TextAsset textData, int size)
 	{
-		//IL_0078: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007e: Expected O, but got Unknown
-		//IL_0094: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0099: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009e: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)textData == (Object)null) {
-			Debug.LogErrorFormat ("Fail to open Noise 3D Data", Array.Empty<object> ());
+		if (textData == null) {
+			Debug.LogErrorFormat ("Fail to open Noise 3D Data");
 			return null;
 		}
 		byte[] bytes = textData.bytes;
 		Debug.Assert (bytes != null);
 		int num = Mathf.Max (0, size * size * size);
 		if (bytes.Length != num) {
-			Debug.LogErrorFormat ("Noise 3D Data file has not the proper size {0}x{0}x{0}", new object[1] { size });
+			Debug.LogErrorFormat ("Noise 3D Data file has not the proper size {0}x{0}x{0}", size);
 			return null;
 		}
-		Texture3D val = new Texture3D (size, size, size, (TextureFormat)1, false);
-		Color[] array = (Color[])(object)new Color[num];
+		Texture3D texture3D = new Texture3D (size, size, size, TextureFormat.Alpha8, mipChain: false);
+		Color[] array = new Color[num];
 		for (int i = 0; i < num; i++) {
-			array [i] = Color32.op_Implicit (new Color32 ((byte)0, (byte)0, (byte)0, bytes [i]));
+			array [i] = new Color32 (0, 0, 0, bytes [i]);
 		}
-		val.SetPixels (array);
-		val.Apply ();
-		return val;
+		texture3D.SetPixels (array);
+		texture3D.Apply ();
+		return texture3D;
 	}
 }

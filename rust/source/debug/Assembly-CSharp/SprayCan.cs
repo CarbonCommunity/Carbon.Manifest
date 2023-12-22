@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,7 +60,7 @@ public class SprayCan : HeldEntity
 
 	public GameObjectRef LinePrefab = null;
 
-	public Color[] SprayColours = (Color[])(object)new Color[0];
+	public Color[] SprayColours = new Color[0];
 
 	public float[] SprayWidths = new float[3] { 0.1f, 0.2f, 0.3f };
 
@@ -73,21 +74,21 @@ public class SprayCan : HeldEntity
 
 	public SteamInventoryItem FreeSprayUnlockItem = null;
 
-	public MinMaxGradient DecalSprayGradient;
+	public ParticleSystem.MinMaxGradient DecalSprayGradient;
 
 	public SoundDefinition SprayLoopDef;
 
-	public static Phrase FreeSprayNamePhrase = new Phrase ("freespray_radial", "Free Spray");
+	public static Translate.Phrase FreeSprayNamePhrase = new Translate.Phrase ("freespray_radial", "Free Spray");
 
-	public static Phrase FreeSprayDescPhrase = new Phrase ("freespray_radial_desc", "Spray shapes freely with various colors");
+	public static Translate.Phrase FreeSprayDescPhrase = new Translate.Phrase ("freespray_radial_desc", "Spray shapes freely with various colors");
 
-	public static Phrase BuildingSkinDefaultPhrase = new Phrase ("buildingskin_default", "Automatic colour");
+	public static Translate.Phrase BuildingSkinDefaultPhrase = new Translate.Phrase ("buildingskin_default", "Automatic colour");
 
-	public static Phrase BuildingSkinDefaultDescPhrase = new Phrase ("buildingskin_default_desc", "Reset the block to random colouring");
+	public static Translate.Phrase BuildingSkinDefaultDescPhrase = new Translate.Phrase ("buildingskin_default_desc", "Reset the block to random colouring");
 
-	public static Phrase BuildingSkinColourPhrase = new Phrase ("buildingskin_colour", "Set colour");
+	public static Translate.Phrase BuildingSkinColourPhrase = new Translate.Phrase ("buildingskin_colour", "Set colour");
 
-	public static Phrase BuildingSkinColourDescPhrase = new Phrase ("buildingskin_colour_desc", "Set the block to the highlighted colour");
+	public static Translate.Phrase BuildingSkinColourDescPhrase = new Translate.Phrase ("buildingskin_colour_desc", "Set the block to the highlighted colour");
 
 	[FormerlySerializedAs ("ShippingCOntainerColourLookup")]
 	public ConstructionSkin_ColourLookup ShippingContainerColourLookup;
@@ -96,160 +97,121 @@ public class SprayCan : HeldEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("SprayCan.OnRpcMessage", 0);
-		try {
-			if (rpc == 3490735573u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("SprayCan.OnRpcMessage")) {
+			if (rpc == 3490735573u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - BeginFreehandSpray "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - BeginFreehandSpray "));
 				}
-				TimeWarning val2 = TimeWarning.New ("BeginFreehandSpray", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("BeginFreehandSpray")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsActiveItem.Test (3490735573u, "BeginFreehandSpray", this, player)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							BeginFreehandSpray (msg2);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in BeginFreehandSpray");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 151738090 && (Object)(object)player != (Object)null) {
+			if (rpc == 151738090 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - ChangeItemSkin "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - ChangeItemSkin "));
 				}
-				TimeWarning val5 = TimeWarning.New ("ChangeItemSkin", 0);
-				try {
-					TimeWarning val6 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("ChangeItemSkin")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (151738090u, "ChangeItemSkin", this, player, 2uL)) {
 							return true;
 						}
 						if (!RPC_Server.IsActiveItem.Test (151738090u, "ChangeItemSkin", this, player)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val6)?.Dispose ();
 					}
 					try {
-						TimeWarning val7 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg3 = rPCMessage;
 							ChangeItemSkin (msg3);
-						} finally {
-							((IDisposable)val7)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in ChangeItemSkin");
 					}
-				} finally {
-					((IDisposable)val5)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 396000799 && (Object)(object)player != (Object)null) {
+			if (rpc == 396000799 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - CreateSpray "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - CreateSpray "));
 				}
-				TimeWarning val8 = TimeWarning.New ("CreateSpray", 0);
-				try {
-					TimeWarning val9 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("CreateSpray")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsActiveItem.Test (396000799u, "CreateSpray", this, player)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val9)?.Dispose ();
 					}
 					try {
-						TimeWarning val10 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg4 = rPCMessage;
 							CreateSpray (msg4);
-						} finally {
-							((IDisposable)val10)?.Dispose ();
 						}
-					} catch (Exception ex3) {
-						Debug.LogException (ex3);
+					} catch (Exception exception3) {
+						Debug.LogException (exception3);
 						player.Kick ("RPC Error in CreateSpray");
 					}
-				} finally {
-					((IDisposable)val8)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 14517645 && (Object)(object)player != (Object)null) {
+			if (rpc == 14517645 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_SetBlockColourId "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_SetBlockColourId "));
 				}
-				TimeWarning val11 = TimeWarning.New ("Server_SetBlockColourId", 0);
-				try {
-					TimeWarning val12 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_SetBlockColourId")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (14517645u, "Server_SetBlockColourId", this, player, 3uL)) {
 							return true;
 						}
 						if (!RPC_Server.IsActiveItem.Test (14517645u, "Server_SetBlockColourId", this, player)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val12)?.Dispose ();
 					}
 					try {
-						TimeWarning val13 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg5 = rPCMessage;
 							Server_SetBlockColourId (msg5);
-						} finally {
-							((IDisposable)val13)?.Dispose ();
 						}
-					} catch (Exception ex4) {
-						Debug.LogException (ex4);
+					} catch (Exception exception4) {
+						Debug.LogException (exception4);
 						player.Kick ("RPC Error in Server_SetBlockColourId");
 					}
-				} finally {
-					((IDisposable)val11)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -258,24 +220,13 @@ public class SprayCan : HeldEntity
 	[RPC_Server.IsActiveItem]
 	private void BeginFreehandSpray (RPCMessage msg)
 	{
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0037: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0097: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014f: Unknown result type (might be due to invalid IL or missing references)
 		if (!IsBusy () && CanSprayFreehand (msg.player)) {
-			Vector3 val = msg.read.Vector3 ();
+			Vector3 vector = msg.read.Vector3 ();
 			Vector3 atNormal = msg.read.Vector3 ();
 			int num = msg.read.Int32 ();
 			int num2 = msg.read.Int32 ();
-			if (num >= 0 && num < SprayColours.Length && num2 >= 0 && num2 < SprayWidths.Length && !(Vector3.Distance (val, ((Component)GetOwnerPlayer ()).transform.position) > 3f)) {
-				SprayCanSpray_Freehand sprayCanSpray_Freehand = GameManager.server.CreateEntity (LinePrefab.resourcePath, val, Quaternion.identity) as SprayCanSpray_Freehand;
+			if (num >= 0 && num < SprayColours.Length && num2 >= 0 && num2 < SprayWidths.Length && !(Vector3.Distance (vector, GetOwnerPlayer ().transform.position) > 3f)) {
+				SprayCanSpray_Freehand sprayCanSpray_Freehand = GameManager.server.CreateEntity (LinePrefab.resourcePath, vector, Quaternion.identity) as SprayCanSpray_Freehand;
 				sprayCanSpray_Freehand.AddInitialPoint (atNormal);
 				sprayCanSpray_Freehand.SetColour (SprayColours [num]);
 				sprayCanSpray_Freehand.SetWidth (SprayWidths [num2]);
@@ -285,7 +236,7 @@ public class SprayCan : HeldEntity
 				ClientRPC (null, "Client_ChangeSprayColour", num);
 				SetFlag (Flags.Busy, b: true);
 				SetFlag (Flags.Reserved1, b: true);
-				CheckAchievementPosition (val);
+				CheckAchievementPosition (vector);
 			}
 		}
 	}
@@ -297,7 +248,7 @@ public class SprayCan : HeldEntity
 		if (allowNewSprayImmediately) {
 			ClearBusy ();
 		} else {
-			((FacepunchBehaviour)this).Invoke ((Action)ClearBusy, 0.1f);
+			Invoke (ClearBusy, 0.1f);
 		}
 	}
 
@@ -306,18 +257,17 @@ public class SprayCan : HeldEntity
 		if (player.UnlockAllSkins) {
 			return true;
 		}
-		return (Object)(object)FreeSprayUnlockItem != (Object)null && (player.blueprints.steamInventory.HasItem (FreeSprayUnlockItem.id) || FreeSprayUnlockItem.HasUnlocked (player.userID));
+		return FreeSprayUnlockItem != null && (player.blueprints.steamInventory.HasItem (FreeSprayUnlockItem.id) || FreeSprayUnlockItem.HasUnlocked (player.userID));
 	}
 
 	private bool IsSprayBlockedByTrigger (Vector3 pos)
 	{
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer ownerPlayer = GetOwnerPlayer ();
-		if ((Object)(object)ownerPlayer == (Object)null) {
+		if (ownerPlayer == null) {
 			return true;
 		}
 		TriggerNoSpray triggerNoSpray = ownerPlayer.FindTrigger<TriggerNoSpray> ();
-		if ((Object)(object)triggerNoSpray == (Object)null) {
+		if (triggerNoSpray == null) {
 			return false;
 		}
 		return !triggerNoSpray.IsPositionValid (pos);
@@ -328,42 +278,13 @@ public class SprayCan : HeldEntity
 	[RPC_Server.CallsPerSecond (2uL)]
 	private void ChangeItemSkin (RPCMessage msg)
 	{
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0101: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0110: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0115: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0122: Unknown result type (might be due to invalid IL or missing references)
-		//IL_079e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0357: Unknown result type (might be due to invalid IL or missing references)
-		//IL_035c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0365: Unknown result type (might be due to invalid IL or missing references)
-		//IL_036a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0419: Unknown result type (might be due to invalid IL or missing references)
-		//IL_041e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_042c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0431: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0502: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0504: Unknown result type (might be due to invalid IL or missing references)
-		//IL_04f7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_051e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0523: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0525: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0513: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0545: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0554: Unknown result type (might be due to invalid IL or missing references)
-		//IL_072e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0747: Unknown result type (might be due to invalid IL or missing references)
 		if (IsBusy ()) {
 			return;
 		}
 		NetworkableId uid = msg.read.EntityID ();
 		BaseNetworkable baseNetworkable = BaseNetworkable.serverEntities.Find (uid);
 		int targetSkin = msg.read.Int32 ();
-		if ((Object)(object)msg.player == (Object)null || !msg.player.CanBuild ()) {
+		if (msg.player == null || !msg.player.CanBuild ()) {
 			return;
 		}
 		bool flag = false;
@@ -374,9 +295,8 @@ public class SprayCan : HeldEntity
 			SprayFailResponse (SprayFailReason.SkinNotOwned);
 			return;
 		}
-		if ((Object)(object)baseNetworkable != (Object)null && baseNetworkable is BaseEntity baseEntity2) {
-			OBB val = baseEntity2.WorldSpaceBounds ();
-			Vector3 position = ((OBB)(ref val)).ClosestPoint (msg.player.eyes.position);
+		if (baseNetworkable != null && baseNetworkable is BaseEntity baseEntity2) {
+			Vector3 position = baseEntity2.WorldSpaceBounds ().ClosestPoint (msg.player.eyes.position);
 			if (!msg.player.IsVisible (position, 3f)) {
 				SprayFailResponse (SprayFailReason.LineOfSight);
 				return;
@@ -398,16 +318,16 @@ public class SprayCan : HeldEntity
 			ItemDefinition itemDefinition = null;
 			ulong num = ItemDefinition.FindSkin (def.itemid, targetSkin);
 			ItemSkinDirectory.Skin skin = def.skins.FirstOrDefault ((ItemSkinDirectory.Skin x) => x.id == targetSkin);
-			if ((Object)(object)skin.invItem != (Object)null && skin.invItem is ItemSkin itemSkin) {
-				if ((Object)(object)itemSkin.Redirect != (Object)null) {
+			if (skin.invItem != null && skin.invItem is ItemSkin itemSkin) {
+				if (itemSkin.Redirect != null) {
 					itemDefinition = itemSkin.Redirect;
-				} else if (GetItemDefinitionForEntity (baseEntity2, out def, useRedirect: false) && (Object)(object)def.isRedirectOf != (Object)null) {
+				} else if (GetItemDefinitionForEntity (baseEntity2, out def, useRedirect: false) && def.isRedirectOf != null) {
 					itemDefinition = def.isRedirectOf;
 				}
-			} else if ((Object)(object)def.isRedirectOf != (Object)null || (GetItemDefinitionForEntity (baseEntity2, out def, useRedirect: false) && (Object)(object)def.isRedirectOf != (Object)null)) {
+			} else if (def.isRedirectOf != null || (GetItemDefinitionForEntity (baseEntity2, out def, useRedirect: false) && def.isRedirectOf != null)) {
 				itemDefinition = def.isRedirectOf;
 			}
-			if ((Object)(object)itemDefinition == (Object)null) {
+			if (itemDefinition == null) {
 				baseEntity2.skinID = num;
 				baseEntity2.SendNetworkUpdate ();
 				Analytics.Server.SkinUsed (def.shortname, targetSkin);
@@ -417,12 +337,12 @@ public class SprayCan : HeldEntity
 					return;
 				}
 				if (!GetEntityPrefabPath (itemDefinition, out var resourcePath)) {
-					Debug.LogWarning ((object)("Cannot find resource path of redirect entity to spawn! " + ((Object)((Component)itemDefinition).gameObject).name));
+					Debug.LogWarning ("Cannot find resource path of redirect entity to spawn! " + itemDefinition.gameObject.name);
 					SprayFailResponse (SprayFailReason.InvalidItem);
 					return;
 				}
-				Vector3 localPosition = ((Component)baseEntity2).transform.localPosition;
-				Quaternion localRotation = ((Component)baseEntity2).transform.localRotation;
+				Vector3 localPosition = baseEntity2.transform.localPosition;
+				Quaternion localRotation = baseEntity2.transform.localRotation;
 				BaseEntity baseEntity3 = baseEntity2.GetParentEntity ();
 				float health = baseEntity2.Health ();
 				EntityRef[] slots = baseEntity2.GetSlots ();
@@ -430,17 +350,17 @@ public class SprayCan : HeldEntity
 				bool flag2 = baseEntity2 is Door;
 				Dictionary<ContainerSet, List<Item>> dictionary2 = new Dictionary<ContainerSet, List<Item>> ();
 				SaveEntityStorage (baseEntity2, dictionary2, 0);
-				List<ChildPreserveInfo> list = Pool.GetList<ChildPreserveInfo> ();
+				List<ChildPreserveInfo> obj = Facepunch.Pool.GetList<ChildPreserveInfo> ();
 				if (flag2) {
 					foreach (BaseEntity child in baseEntity2.children) {
-						list.Add (new ChildPreserveInfo {
+						obj.Add (new ChildPreserveInfo {
 							TargetEntity = child,
 							TargetBone = child.parentBone,
-							LocalPosition = ((Component)child).transform.localPosition,
-							LocalRotation = ((Component)child).transform.localRotation
+							LocalPosition = child.transform.localPosition,
+							LocalRotation = child.transform.localRotation
 						});
 					}
-					foreach (ChildPreserveInfo item in list) {
+					foreach (ChildPreserveInfo item in obj) {
 						item.TargetEntity.SetParent (null, worldPositionStays: true);
 					}
 				} else {
@@ -450,11 +370,11 @@ public class SprayCan : HeldEntity
 					}
 				}
 				baseEntity2.Kill ();
-				baseEntity2 = GameManager.server.CreateEntity (resourcePath, ((Object)(object)baseEntity3 != (Object)null) ? ((Component)baseEntity3).transform.TransformPoint (localPosition) : localPosition, ((Object)(object)baseEntity3 != (Object)null) ? (((Component)baseEntity3).transform.rotation * localRotation) : localRotation);
+				baseEntity2 = GameManager.server.CreateEntity (resourcePath, (baseEntity3 != null) ? baseEntity3.transform.TransformPoint (localPosition) : localPosition, (baseEntity3 != null) ? (baseEntity3.transform.rotation * localRotation) : localRotation);
 				baseEntity2.SetParent (baseEntity3);
-				((Component)baseEntity2).transform.localPosition = localPosition;
-				((Component)baseEntity2).transform.localRotation = localRotation;
-				if (GetItemDefinitionForEntity (baseEntity2, out var def2, useRedirect: false) && (Object)(object)def2.isRedirectOf != (Object)null) {
+				baseEntity2.transform.localPosition = localPosition;
+				baseEntity2.transform.localRotation = localRotation;
+				if (GetItemDefinitionForEntity (baseEntity2, out var def2, useRedirect: false) && def2.isRedirectOf != null) {
 					baseEntity2.skinID = 0uL;
 				} else {
 					baseEntity2.skinID = num;
@@ -477,29 +397,29 @@ public class SprayCan : HeldEntity
 					}
 					foreach (KeyValuePair<ContainerSet, List<Item>> item2 in dictionary2) {
 						foreach (Item item3 in item2.Value) {
-							Debug.Log ((object)$"Deleting {item3} as it has no new container");
+							Debug.Log ($"Deleting {item3} as it has no new container");
 							item3.Remove ();
 						}
 					}
 					Analytics.Server.SkinUsed (def.shortname, targetSkin);
 				}
 				if (flag2) {
-					foreach (ChildPreserveInfo item4 in list) {
+					foreach (ChildPreserveInfo item4 in obj) {
 						item4.TargetEntity.SetParent (baseEntity2, item4.TargetBone, worldPositionStays: true);
-						((Component)item4.TargetEntity).transform.localPosition = item4.LocalPosition;
-						((Component)item4.TargetEntity).transform.localRotation = item4.LocalRotation;
+						item4.TargetEntity.transform.localPosition = item4.LocalPosition;
+						item4.TargetEntity.transform.localRotation = item4.LocalRotation;
 						item4.TargetEntity.SendNetworkUpdate ();
 					}
 					baseEntity2.SetSlots (slots);
 				}
-				Pool.FreeList<ChildPreserveInfo> (ref list);
+				Facepunch.Pool.FreeList (ref obj);
 			}
-			ClientRPC<int, NetworkableId> (null, "Client_ReskinResult", 1, baseEntity2.net.ID);
+			ClientRPC (null, "Client_ReskinResult", 1, baseEntity2.net.ID);
 		}
 		LoseCondition (ConditionLossPerReskin);
 		ClientRPC (null, "Client_ChangeSprayColour", -1);
 		SetFlag (Flags.Busy, b: true);
-		((FacepunchBehaviour)this).Invoke ((Action)ClearBusy, SprayCooldown);
+		Invoke (ClearBusy, SprayCooldown);
 		static void RestoreEntityStorage (BaseEntity baseEntity, int index, Dictionary<ContainerSet, List<Item>> copy)
 		{
 			if (baseEntity is IItemContainerEntity itemContainerEntity) {
@@ -534,7 +454,7 @@ public class SprayCan : HeldEntity
 						return;
 					}
 				}
-				Debug.Log ((object)"Multiple containers with the same prefab id being added during vehicle reskin");
+				Debug.Log ("Multiple containers with the same prefab id being added during vehicle reskin");
 			}
 		}
 		void SprayFailResponse (SprayFailReason reason)
@@ -546,19 +466,16 @@ public class SprayCan : HeldEntity
 	private bool GetEntityPrefabPath (ItemDefinition def, out string resourcePath)
 	{
 		resourcePath = string.Empty;
-		ItemModDeployable itemModDeployable = default(ItemModDeployable);
-		if (((Component)def).TryGetComponent<ItemModDeployable> (ref itemModDeployable)) {
-			resourcePath = itemModDeployable.entityPrefab.resourcePath;
+		if (def.TryGetComponent<ItemModDeployable> (out var component)) {
+			resourcePath = component.entityPrefab.resourcePath;
 			return true;
 		}
-		ItemModEntity itemModEntity = default(ItemModEntity);
-		if (((Component)def).TryGetComponent<ItemModEntity> (ref itemModEntity)) {
-			resourcePath = itemModEntity.entityPrefab.resourcePath;
+		if (def.TryGetComponent<ItemModEntity> (out var component2)) {
+			resourcePath = component2.entityPrefab.resourcePath;
 			return true;
 		}
-		ItemModEntityReference itemModEntityReference = default(ItemModEntityReference);
-		if (((Component)def).TryGetComponent<ItemModEntityReference> (ref itemModEntityReference)) {
-			resourcePath = itemModEntityReference.entityPrefab.resourcePath;
+		if (def.TryGetComponent<ItemModEntityReference> (out var component3)) {
+			resourcePath = component3.entityPrefab.resourcePath;
 			return true;
 		}
 		return false;
@@ -568,65 +485,34 @@ public class SprayCan : HeldEntity
 	[RPC_Server.IsActiveItem]
 	private void CreateSpray (RPCMessage msg)
 	{
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0066: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0078: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ac: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ae: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ba: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00dd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0171: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0172: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a3: Unknown result type (might be due to invalid IL or missing references)
 		if (IsBusy ()) {
 			return;
 		}
 		ClientRPC (null, "Client_ChangeSprayColour", -1);
 		SetFlag (Flags.Busy, b: true);
-		((FacepunchBehaviour)this).Invoke ((Action)ClearBusy, SprayCooldown);
-		Vector3 val = msg.read.Vector3 ();
-		Vector3 val2 = msg.read.Vector3 ();
-		Vector3 val3 = msg.read.Vector3 ();
+		Invoke (ClearBusy, SprayCooldown);
+		Vector3 vector = msg.read.Vector3 ();
+		Vector3 vector2 = msg.read.Vector3 ();
+		Vector3 point = msg.read.Vector3 ();
 		int num = msg.read.Int32 ();
-		if (!(Vector3.Distance (val, ((Component)this).transform.position) > 4.5f)) {
-			Plane val4 = default(Plane);
-			((Plane)(ref val4))..ctor (val2, val);
-			Vector3 val5 = ((Plane)(ref val4)).ClosestPointOnPlane (val3);
-			Vector3 val6 = val5 - val;
-			Quaternion val7 = Quaternion.LookRotation (((Vector3)(ref val6)).normalized, val2);
-			val7 *= Quaternion.Euler (0f, 0f, 90f);
+		if (!(Vector3.Distance (vector, base.transform.position) > 4.5f)) {
+			Vector3 vector3 = new Plane (vector2, vector).ClosestPointOnPlane (point);
+			Quaternion rot = Quaternion.LookRotation ((vector3 - vector).normalized, vector2);
+			rot *= Quaternion.Euler (0f, 0f, 90f);
 			bool flag = false;
 			if (msg.player.IsDeveloper) {
 				flag = true;
 			}
 			if (num != 0 && !flag && !msg.player.blueprints.CheckSkinOwnership (num, msg.player.userID)) {
-				Debug.Log ((object)$"SprayCan.ChangeItemSkin player does not have item :{num}:");
+				Debug.Log ($"SprayCan.ChangeItemSkin player does not have item :{num}:");
 				return;
 			}
 			ulong num2 = ItemDefinition.FindSkin (SprayDecalItem.itemid, num);
-			BaseEntity baseEntity = GameManager.server.CreateEntity (SprayDecalEntityRef.resourcePath, val, val7);
+			BaseEntity baseEntity = GameManager.server.CreateEntity (SprayDecalEntityRef.resourcePath, vector, rot);
 			baseEntity.skinID = num2;
 			baseEntity.OnDeployed (null, GetOwnerPlayer (), GetItem ());
 			baseEntity.Spawn ();
-			CheckAchievementPosition (val);
+			CheckAchievementPosition (vector);
 			LoseCondition (ConditionLossPerSpray);
 		}
 	}
@@ -650,7 +536,7 @@ public class SprayCan : HeldEntity
 	{
 		if (IsDisabled ()) {
 			ClearBusy ();
-			if ((Object)(object)paintingLine != (Object)null) {
+			if (paintingLine != null) {
 				paintingLine.Kill ();
 			}
 			paintingLine = null;
@@ -662,21 +548,18 @@ public class SprayCan : HeldEntity
 	[RPC_Server.CallsPerSecond (3uL)]
 	private void Server_SetBlockColourId (RPCMessage msg)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0070: Unknown result type (might be due to invalid IL or missing references)
 		NetworkableId uid = msg.read.EntityID ();
 		uint num = msg.read.UInt32 ();
 		BasePlayer player = msg.player;
 		SetFlag (Flags.Busy, b: true);
-		((FacepunchBehaviour)this).Invoke ((Action)ClearBusy, 0.1f);
-		if ((Object)(object)player == (Object)null || !player.CanBuild ()) {
+		Invoke (ClearBusy, 0.1f);
+		if (player == null || !player.CanBuild ()) {
 			return;
 		}
 		BasePlayer ownerPlayer = GetOwnerPlayer ();
 		BuildingBlock buildingBlock = BaseNetworkable.serverEntities.Find (uid) as BuildingBlock;
-		if ((Object)(object)buildingBlock != (Object)null) {
-			float num2 = player.Distance ((BaseEntity)buildingBlock);
+		if (buildingBlock != null) {
+			float num2 = player.Distance (buildingBlock);
 			if (num2 > 4f) {
 				return;
 			}
@@ -684,7 +567,7 @@ public class SprayCan : HeldEntity
 			buildingBlock.SetCustomColour (num);
 			Analytics.Azure.OnBuildingBlockColorChanged (ownerPlayer, buildingBlock, customColour, num);
 		}
-		if ((Object)(object)ownerPlayer != (Object)null) {
+		if (ownerPlayer != null) {
 			ownerPlayer.LastBlockColourChangeId = num;
 		}
 	}
@@ -711,15 +594,15 @@ public class SprayCan : HeldEntity
 	{
 		def = null;
 		if (be is BaseCombatEntity baseCombatEntity) {
-			if (baseCombatEntity.pickup.enabled && (Object)(object)baseCombatEntity.pickup.itemTarget != (Object)null) {
+			if (baseCombatEntity.pickup.enabled && baseCombatEntity.pickup.itemTarget != null) {
 				def = baseCombatEntity.pickup.itemTarget;
-			} else if (baseCombatEntity.repair.enabled && (Object)(object)baseCombatEntity.repair.itemTarget != (Object)null) {
+			} else if (baseCombatEntity.repair.enabled && baseCombatEntity.repair.itemTarget != null) {
 				def = baseCombatEntity.repair.itemTarget;
 			}
 		}
-		if (useRedirect && (Object)(object)def != (Object)null && (Object)(object)def.isRedirectOf != (Object)null) {
+		if (useRedirect && def != null && def.isRedirectOf != null) {
 			def = def.isRedirectOf;
 		}
-		return (Object)(object)def != (Object)null;
+		return def != null;
 	}
 }

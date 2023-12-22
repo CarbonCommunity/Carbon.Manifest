@@ -3,7 +3,6 @@ using System.Linq;
 using Rust.UI;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class ItemListTools : MonoBehaviour
@@ -48,39 +47,37 @@ public class ItemListTools : MonoBehaviour
 
 	private void RebuildCategories ()
 	{
-		//IL_016d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0177: Expected O, but got Unknown
 		for (int i = 0; i < categoryButton.transform.parent.childCount; i++) {
 			Transform child = categoryButton.transform.parent.GetChild (i);
-			if (!((Object)(object)child == (Object)(object)categoryButton.transform)) {
-				GameManager.Destroy (((Component)child).gameObject);
+			if (!(child == categoryButton.transform)) {
+				GameManager.Destroy (child.gameObject);
 			}
 		}
-		categoryButton.SetActive (true);
+		categoryButton.SetActive (value: true);
 		IEnumerable<IGrouping<ItemCategory, ItemDefinition>> source = from x in ItemManager.GetItemDefinitions ()
 			group x by x.category;
 		foreach (IGrouping<ItemCategory, ItemDefinition> item in source.OrderBy ((IGrouping<ItemCategory, ItemDefinition> x) => x.First ().category)) {
-			GameObject val = Object.Instantiate<GameObject> (categoryButton);
-			val.transform.SetParent (categoryButton.transform.parent, false);
-			TextMeshProUGUI componentInChildren = val.GetComponentInChildren<TextMeshProUGUI> ();
-			((TMP_Text)componentInChildren).text = item.First ().category.ToString ();
-			Button btn = val.GetComponentInChildren<Button> ();
+			GameObject gameObject = Object.Instantiate (categoryButton);
+			gameObject.transform.SetParent (categoryButton.transform.parent, worldPositionStays: false);
+			TextMeshProUGUI componentInChildren = gameObject.GetComponentInChildren<TextMeshProUGUI> ();
+			componentInChildren.text = item.First ().category.ToString ();
+			Button btn = gameObject.GetComponentInChildren<Button> ();
 			ItemDefinition[] itemArray = item.ToArray ();
-			((UnityEvent)btn.onClick).AddListener ((UnityAction)delegate {
-				if (Object.op_Implicit ((Object)(object)lastCategory)) {
-					((Selectable)lastCategory).interactable = true;
+			btn.onClick.AddListener (delegate {
+				if ((bool)lastCategory) {
+					lastCategory.interactable = true;
 				}
 				lastCategory = btn;
-				((Selectable)lastCategory).interactable = false;
+				lastCategory.interactable = false;
 				SwitchItemCategory (itemArray);
 			});
-			if ((Object)(object)lastCategory == (Object)null) {
+			if (lastCategory == null) {
 				lastCategory = btn;
-				((Selectable)lastCategory).interactable = false;
+				lastCategory.interactable = false;
 				SwitchItemCategory (itemArray);
 			}
 		}
-		categoryButton.SetActive (false);
+		categoryButton.SetActive (value: false);
 	}
 
 	private void SwitchItemCategory (ItemDefinition[] defs)
@@ -92,34 +89,34 @@ public class ItemListTools : MonoBehaviour
 
 	public void FilterItems (string searchText)
 	{
-		if ((Object)(object)itemButton == (Object)null) {
+		if (itemButton == null) {
 			return;
 		}
 		for (int i = 0; i < itemButton.transform.parent.childCount; i++) {
 			Transform child = itemButton.transform.parent.GetChild (i);
-			if (!((Object)(object)child == (Object)(object)itemButton.transform)) {
-				GameManager.Destroy (((Component)child).gameObject);
+			if (!(child == itemButton.transform)) {
+				GameManager.Destroy (child.gameObject);
 			}
 		}
-		itemButton.SetActive (true);
+		itemButton.SetActive (value: true);
 		bool flag = !string.IsNullOrEmpty (searchText);
 		string value = (flag ? searchText.ToLower () : null);
 		IOrderedEnumerable<ItemDefinition> orderedEnumerable = (flag ? allItems : currentItems);
 		int num = 0;
 		foreach (ItemDefinition item in orderedEnumerable) {
 			if (!item.hidden && (!flag || item.displayName.translated.ToLower ().Contains (value))) {
-				GameObject val = Object.Instantiate<GameObject> (itemButton);
-				val.transform.SetParent (itemButton.transform.parent, false);
-				TextMeshProUGUI componentInChildren = val.GetComponentInChildren<TextMeshProUGUI> ();
-				((TMP_Text)componentInChildren).text = item.displayName.translated;
-				val.GetComponentInChildren<ItemButtonTools> ().itemDef = item;
-				val.GetComponentInChildren<ItemButtonTools> ().image.sprite = item.iconSprite;
+				GameObject gameObject = Object.Instantiate (itemButton);
+				gameObject.transform.SetParent (itemButton.transform.parent, worldPositionStays: false);
+				TextMeshProUGUI componentInChildren = gameObject.GetComponentInChildren<TextMeshProUGUI> ();
+				componentInChildren.text = item.displayName.translated;
+				gameObject.GetComponentInChildren<ItemButtonTools> ().itemDef = item;
+				gameObject.GetComponentInChildren<ItemButtonTools> ().image.sprite = item.iconSprite;
 				num++;
 				if (num >= 160) {
 					break;
 				}
 			}
 		}
-		itemButton.SetActive (false);
+		itemButton.SetActive (value: false);
 	}
 }

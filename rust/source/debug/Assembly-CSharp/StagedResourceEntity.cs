@@ -1,3 +1,4 @@
+#define ENABLE_PROFILER
 using System;
 using System.Collections.Generic;
 using Facepunch;
@@ -26,10 +27,7 @@ public class StagedResourceEntity : ResourceEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("StagedResourceEntity.OnRpcMessage", 0);
-		try {
-		} finally {
-			((IDisposable)val)?.Dispose ();
+		using (TimeWarning.New ("StagedResourceEntity.OnRpcMessage")) {
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -64,7 +62,7 @@ public class StagedResourceEntity : ResourceEntity
 
 	protected override void OnHealthChanged ()
 	{
-		((FacepunchBehaviour)this).Invoke ((Action)UpdateNetworkStage, 0.1f);
+		Invoke (UpdateNetworkStage, 0.1f);
 	}
 
 	protected virtual void UpdateNetworkStage ()
@@ -101,7 +99,7 @@ public class StagedResourceEntity : ResourceEntity
 				stages [i].instance.SetActive (i == stage);
 			}
 			Profiler.EndSample ();
-			GroundWatch.PhysicsChanged (((Component)this).gameObject);
+			GroundWatch.PhysicsChanged (base.gameObject);
 		}
 	}
 }

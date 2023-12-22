@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Network;
@@ -10,46 +11,34 @@ public class CustomTimerSwitch : TimerSwitch
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("CustomTimerSwitch.OnRpcMessage", 0);
-		try {
-			if (rpc == 1019813162 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("CustomTimerSwitch.OnRpcMessage")) {
+			if (rpc == 1019813162 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - SERVER_SetTime "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - SERVER_SetTime "));
 				}
-				TimeWarning val2 = TimeWarning.New ("SERVER_SetTime", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("SERVER_SetTime")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (1019813162u, "SERVER_SetTime", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							SERVER_SetTime (msg2);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in SERVER_SetTime");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -75,6 +64,6 @@ public class CustomTimerSwitch : TimerSwitch
 
 	public bool CanPlayerAdmin (BasePlayer player)
 	{
-		return (Object)(object)player != (Object)null && player.CanBuild () && !IsOn ();
+		return player != null && player.CanBuild () && !IsOn ();
 	}
 }

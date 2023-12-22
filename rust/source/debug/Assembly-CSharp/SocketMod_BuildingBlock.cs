@@ -14,38 +14,26 @@ public class SocketMod_BuildingBlock : SocketMod
 
 	private void OnDrawGizmosSelected ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-		Gizmos.matrix = ((Component)this).transform.localToWorldMatrix;
+		Gizmos.matrix = base.transform.localToWorldMatrix;
 		Gizmos.color = (wantsCollide ? new Color (0f, 1f, 0f, 0.7f) : new Color (1f, 0f, 0f, 0.7f));
 		Gizmos.DrawSphere (Vector3.zero, sphereRadius);
 	}
 
 	public override bool DoCheck (Construction.Placement place)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
 		Vector3 position = place.position + place.rotation * worldPosition;
-		List<BuildingBlock> list = Pool.GetList<BuildingBlock> ();
-		Vis.Entities (position, sphereRadius, list, ((LayerMask)(ref layerMask)).value, queryTriggers);
-		bool flag = list.Count > 0;
+		List<BuildingBlock> obj = Pool.GetList<BuildingBlock> ();
+		Vis.Entities (position, sphereRadius, obj, layerMask.value, queryTriggers);
+		bool flag = obj.Count > 0;
 		if (flag && wantsCollide) {
-			Pool.FreeList<BuildingBlock> (ref list);
+			Pool.FreeList (ref obj);
 			return true;
 		}
 		if (flag && !wantsCollide) {
-			Pool.FreeList<BuildingBlock> (ref list);
+			Pool.FreeList (ref obj);
 			return false;
 		}
-		Pool.FreeList<BuildingBlock> (ref list);
+		Pool.FreeList (ref obj);
 		return !wantsCollide;
 	}
 }

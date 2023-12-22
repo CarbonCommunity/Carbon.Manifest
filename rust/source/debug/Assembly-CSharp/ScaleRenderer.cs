@@ -44,7 +44,7 @@ public class ScaleRenderer : MonoBehaviour
 
 	public virtual void SetRendererEnabled (bool isEnabled)
 	{
-		if (Object.op_Implicit ((Object)(object)myRenderer) && myRenderer.enabled != isEnabled) {
+		if ((bool)myRenderer && myRenderer.enabled != isEnabled) {
 			myRenderer.enabled = isEnabled;
 		}
 	}

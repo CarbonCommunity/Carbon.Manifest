@@ -10,32 +10,30 @@ public class ChildrenFromScene : MonoBehaviour
 
 	private IEnumerator Start ()
 	{
-		Debug.LogWarning ((object)("WARNING: CHILDRENFROMSCENE(" + SceneName + ") - WE SHOULDN'T BE USING THIS SHITTY COMPONENT NOW WE HAVE AWESOME PREFABS"), (Object)(object)((Component)this).gameObject);
-		Scene scene = SceneManager.GetSceneByName (SceneName);
-		if (!((Scene)(ref scene)).isLoaded) {
-			yield return SceneManager.LoadSceneAsync (SceneName, (LoadSceneMode)1);
+		Debug.LogWarning ("WARNING: CHILDRENFROMSCENE(" + SceneName + ") - WE SHOULDN'T BE USING THIS SHITTY COMPONENT NOW WE HAVE AWESOME PREFABS", base.gameObject);
+		if (!SceneManager.GetSceneByName (SceneName).isLoaded) {
+			yield return SceneManager.LoadSceneAsync (SceneName, LoadSceneMode.Additive);
 		}
-		scene = SceneManager.GetSceneByName (SceneName);
-		GameObject[] objects = ((Scene)(ref scene)).GetRootGameObjects ();
+		Scene scene = SceneManager.GetSceneByName (SceneName);
+		GameObject[] objects = scene.GetRootGameObjects ();
 		GameObject[] array = objects;
 		foreach (GameObject ob in array) {
-			ob.transform.SetParent (((Component)this).transform, false);
+			ob.transform.SetParent (base.transform, worldPositionStays: false);
 			ob.Identity ();
-			Transform transform = ob.transform;
-			RectTransform rt = (RectTransform)(object)((transform is RectTransform) ? transform : null);
-			if (Object.op_Implicit ((Object)(object)rt)) {
+			RectTransform rt = ob.transform as RectTransform;
+			if ((bool)rt) {
 				rt.pivot = Vector2.zero;
 				rt.anchoredPosition = Vector2.zero;
 				rt.anchorMin = Vector2.zero;
 				rt.anchorMax = Vector2.one;
 				rt.sizeDelta = Vector2.one;
 			}
-			SingletonComponent[] componentsInChildren = ob.GetComponentsInChildren<SingletonComponent> (true);
+			SingletonComponent[] componentsInChildren = ob.GetComponentsInChildren<SingletonComponent> (includeInactive: true);
 			foreach (SingletonComponent s in componentsInChildren) {
 				s.SingletonSetup ();
 			}
 			if (StartChildrenDisabled) {
-				ob.SetActive (false);
+				ob.SetActive (value: false);
 			}
 		}
 		SceneManager.UnloadSceneAsync (scene);

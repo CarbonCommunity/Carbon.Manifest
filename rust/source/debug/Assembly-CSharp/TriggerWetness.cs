@@ -14,37 +14,28 @@ public class TriggerWetness : TriggerBase
 
 	public float WorkoutWetness (Vector3 position)
 	{
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-		if (ApplyLocalHeightCheck) {
-			Vector3 val = ((Component)this).transform.InverseTransformPoint (position);
-			if (val.y < MinLocalHeight) {
-				return 0f;
-			}
+		if (ApplyLocalHeightCheck && base.transform.InverseTransformPoint (position).y < MinLocalHeight) {
+			return 0f;
 		}
-		float num = Vector3Ex.Distance2D (OriginTransform.position, position) / TargetCollider.radius;
-		num = Mathf.Clamp01 (num);
-		num = 1f - num;
-		return Mathf.Lerp (0f, Wetness, num);
+		float value = Vector3Ex.Distance2D (OriginTransform.position, position) / TargetCollider.radius;
+		value = Mathf.Clamp01 (value);
+		value = 1f - value;
+		return Mathf.Lerp (0f, Wetness, value);
 	}
 
 	internal override GameObject InterestedInObject (GameObject obj)
 	{
 		obj = base.InterestedInObject (obj);
-		if ((Object)(object)obj == (Object)null) {
+		if (obj == null) {
 			return null;
 		}
 		BaseEntity baseEntity = obj.ToBaseEntity ();
-		if ((Object)(object)baseEntity == (Object)null) {
+		if (baseEntity == null) {
 			return null;
 		}
 		if (baseEntity.isClient) {
 			return null;
 		}
-		return ((Component)baseEntity).gameObject;
+		return baseEntity.gameObject;
 	}
 }

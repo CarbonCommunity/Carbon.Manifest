@@ -14,29 +14,26 @@ public class ProcessedTexture
 
 	protected RenderTexture CreateRenderTexture (string name, int width, int height, bool linear)
 	{
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Expected O, but got Unknown
-		RenderTexture val = new RenderTexture (width, height, 0, (RenderTextureFormat)0, (RenderTextureReadWrite)(linear ? 1 : 2));
-		((Object)val).hideFlags = (HideFlags)52;
-		((Object)val).name = name;
-		((Texture)val).filterMode = (FilterMode)1;
-		((Texture)val).anisoLevel = 0;
-		val.Create ();
-		return val;
+		RenderTexture renderTexture = new RenderTexture (width, height, 0, RenderTextureFormat.ARGB32, linear ? RenderTextureReadWrite.Linear : RenderTextureReadWrite.sRGB);
+		renderTexture.hideFlags = HideFlags.DontSave;
+		renderTexture.name = name;
+		renderTexture.filterMode = FilterMode.Bilinear;
+		renderTexture.anisoLevel = 0;
+		renderTexture.Create ();
+		return renderTexture;
 	}
 
 	protected void DestroyRenderTexture (ref RenderTexture rt)
 	{
-		if (!((Object)(object)rt == (Object)null)) {
-			Object.Destroy ((Object)(object)rt);
+		if (!(rt == null)) {
+			Object.Destroy (rt);
 			rt = null;
 		}
 	}
 
 	protected RenderTexture CreateTemporary ()
 	{
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		return RenderTexture.GetTemporary (((Texture)result).width, ((Texture)result).height, result.depth, result.format, (RenderTextureReadWrite)((!result.sRGB) ? 1 : 2));
+		return RenderTexture.GetTemporary (result.width, result.height, result.depth, result.format, (!result.sRGB) ? RenderTextureReadWrite.Linear : RenderTextureReadWrite.sRGB);
 	}
 
 	protected void ReleaseTemporary (RenderTexture rt)
@@ -51,23 +48,21 @@ public class ProcessedTexture
 
 	protected Material CreateMaterial (Shader shader)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0008: Expected O, but got Unknown
-		Material val = new Material (shader);
-		((Object)val).hideFlags = (HideFlags)52;
-		return val;
+		Material material = new Material (shader);
+		material.hideFlags = HideFlags.DontSave;
+		return material;
 	}
 
 	protected void DestroyMaterial (ref Material mat)
 	{
-		if (!((Object)(object)mat == (Object)null)) {
-			Object.Destroy ((Object)(object)mat);
+		if (!(mat == null)) {
+			Object.Destroy (mat);
 			mat = null;
 		}
 	}
 
 	public static implicit operator Texture (ProcessedTexture t)
 	{
-		return (Texture)(object)t.result;
+		return t.result;
 	}
 }

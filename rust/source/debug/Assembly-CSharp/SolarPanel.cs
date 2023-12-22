@@ -1,4 +1,4 @@
-using System;
+#define ENABLE_PROFILER
 using UnityEngine;
 using UnityEngine.Profiling;
 
@@ -32,31 +32,23 @@ public class SolarPanel : IOEntity
 	public override void ServerInit ()
 	{
 		base.ServerInit ();
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)SunUpdate, 1f, 5f, 2f);
+		InvokeRandomized (SunUpdate, 1f, 5f, 2f);
 	}
 
 	public void SunUpdate ()
 	{
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0078: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0083: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0088: Unknown result type (might be due to invalid IL or missing references)
 		int num = currentEnergy;
 		Profiler.BeginSample ("SolarPanel.SunUpdate");
 		if (TOD_Sky.Instance.IsNight) {
 			num = 0;
 		} else {
 			Vector3 sunDirection = TOD_Sky.Instance.SunDirection;
-			float num2 = Vector3.Dot (((Component)sunSampler).transform.forward, sunDirection);
-			float num3 = Mathf.InverseLerp (dot_minimum, dot_maximum, num2);
-			if (num3 > 0f && !IsVisible (((Component)sunSampler).transform.position + sunDirection * 100f, 101f)) {
-				num3 = 0f;
+			float value = Vector3.Dot (sunSampler.transform.forward, sunDirection);
+			float num2 = Mathf.InverseLerp (dot_minimum, dot_maximum, value);
+			if (num2 > 0f && !IsVisible (sunSampler.transform.position + sunDirection * 100f, 101f)) {
+				num2 = 0f;
 			}
-			num = Mathf.FloorToInt ((float)maximalPowerOutput * num3 * base.healthFraction);
+			num = Mathf.FloorToInt ((float)maximalPowerOutput * num2 * base.healthFraction);
 		}
 		bool flag = currentEnergy != num;
 		currentEnergy = num;

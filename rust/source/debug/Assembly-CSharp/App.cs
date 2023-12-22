@@ -46,8 +46,8 @@ public class App : ConsoleSystem
 	public static async void pair (Arg arg)
 	{
 		BasePlayer player = arg.Player ();
-		if (!((Object)(object)player == (Object)null)) {
-			NotificationSendResult result = await Util.SendPairNotification (data: Util.GetPlayerPairingData (player), type: "server", player: player, title: StringExtensions.Truncate (ConVar.Server.hostname, 128, (string)null), message: "Tap to pair with this server.");
+		if (!(player == null)) {
+			NotificationSendResult result = await Util.SendPairNotification (data: Util.GetPlayerPairingData (player), type: "server", player: player, title: ConVar.Server.hostname.Truncate (128), message: "Tap to pair with this server.");
 			arg.ReplyWith ((result == NotificationSendResult.Sent) ? "Sent pairing notification." : result.ToErrorMessage ());
 		}
 	}
@@ -56,7 +56,7 @@ public class App : ConsoleSystem
 	public static void regeneratetoken (Arg arg)
 	{
 		BasePlayer basePlayer = arg.Player ();
-		if (!((Object)(object)basePlayer == (Object)null)) {
+		if (!(basePlayer == null)) {
 			SingletonComponent<ServerMgr>.Instance.persistance.RegenerateAppToken (basePlayer.userID);
 			arg.ReplyWith ("Regenerated Rust+ token");
 		}
@@ -82,8 +82,8 @@ public class App : ConsoleSystem
 	[ServerVar]
 	public static void connections (Arg arg)
 	{
-		string text = CompanionServer.Server.Listener?.Limiter?.ToString () ?? "Not available";
-		arg.ReplyWith (text);
+		string strValue = CompanionServer.Server.Listener?.Limiter?.ToString () ?? "Not available";
+		arg.ReplyWith (strValue);
 	}
 
 	[ServerVar]
@@ -94,8 +94,8 @@ public class App : ConsoleSystem
 			arg.ReplyWith ("Usage: app.appban <steamID64>");
 			return;
 		}
-		string text = (SingletonComponent<ServerMgr>.Instance.persistance.SetAppTokenLocked (uLong, locked: true) ? $"Banned {uLong} from using the companion app" : $"{uLong} is already banned from using the companion app");
-		arg.ReplyWith (text);
+		string strValue = (SingletonComponent<ServerMgr>.Instance.persistance.SetAppTokenLocked (uLong, locked: true) ? $"Banned {uLong} from using the companion app" : $"{uLong} is already banned from using the companion app");
+		arg.ReplyWith (strValue);
 	}
 
 	[ServerVar]
@@ -106,15 +106,15 @@ public class App : ConsoleSystem
 			arg.ReplyWith ("Usage: app.appunban <steamID64>");
 			return;
 		}
-		string text = (SingletonComponent<ServerMgr>.Instance.persistance.SetAppTokenLocked (uLong, locked: false) ? $"Unbanned {uLong}, they can use the companion app again" : $"{uLong} is not banned from using the companion app");
-		arg.ReplyWith (text);
+		string strValue = (SingletonComponent<ServerMgr>.Instance.persistance.SetAppTokenLocked (uLong, locked: false) ? $"Unbanned {uLong}, they can use the companion app again" : $"{uLong} is not banned from using the companion app");
+		arg.ReplyWith (strValue);
 	}
 
 	public static IPAddress GetListenIP ()
 	{
 		if (!string.IsNullOrWhiteSpace (listenip)) {
 			if (!IPAddress.TryParse (listenip, out var address) || address.AddressFamily != AddressFamily.InterNetwork) {
-				Debug.LogError ((object)("Invalid app.listenip: " + listenip));
+				Debug.LogError ("Invalid app.listenip: " + listenip);
 				return IPAddress.Any;
 			}
 			return address;

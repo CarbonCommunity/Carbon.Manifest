@@ -20,6 +20,6 @@ public sealed class MotionBlur : PostProcessEffectSettings
 
 	public override bool IsEnabledAndSupported (PostProcessRenderContext context)
 	{
-		return enabled.value && shutterAngle.value > 0f && SystemInfo.supportsMotionVectors && ((RenderTextureFormat)13).IsSupported () && !RuntimeUtilities.isVREnabled;
+		return enabled.value && shutterAngle.value > 0f && SystemInfo.supportsMotionVectors && RenderTextureFormat.RGHalf.IsSupported () && !RuntimeUtilities.isVREnabled;
 	}
 }

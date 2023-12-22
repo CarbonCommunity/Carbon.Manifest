@@ -1,10 +1,11 @@
+#define ENABLE_PROFILER
 using CompanionServer;
 using CompanionServer.Handlers;
 using Facepunch;
 using ProtoBuf;
 using UnityEngine.Profiling;
 
-public abstract class BaseHandler<T> : IHandler, IPooled where T : class
+public abstract class BaseHandler<T> : IHandler, Pool.IPooled where T : class
 {
 	private TokenBucketList<ulong> _playerBuckets;
 
@@ -80,27 +81,27 @@ public abstract class BaseHandler<T> : IHandler, IPooled where T : class
 	protected void SendSuccess ()
 	{
 		AppSuccess success = Pool.Get<AppSuccess> ();
-		AppResponse val = Pool.Get<AppResponse> ();
-		val.success = success;
-		Send (val);
+		AppResponse appResponse = Pool.Get<AppResponse> ();
+		appResponse.success = success;
+		Send (appResponse);
 	}
 
 	public void SendError (string code)
 	{
-		AppError val = Pool.Get<AppError> ();
-		val.error = code;
-		AppResponse val2 = Pool.Get<AppResponse> ();
-		val2.error = val;
-		Send (val2);
+		AppError appError = Pool.Get<AppError> ();
+		appError.error = code;
+		AppResponse appResponse = Pool.Get<AppResponse> ();
+		appResponse.error = appError;
+		Send (appResponse);
 	}
 
 	public void SendFlag (bool value)
 	{
-		AppFlag val = Pool.Get<AppFlag> ();
-		val.value = value;
-		AppResponse val2 = Pool.Get<AppResponse> ();
-		val2.flag = val;
-		Send (val2);
+		AppFlag appFlag = Pool.Get<AppFlag> ();
+		appFlag.value = value;
+		AppResponse appResponse = Pool.Get<AppResponse> ();
+		appResponse.flag = appFlag;
+		Send (appResponse);
 	}
 
 	protected void Send (AppResponse response)

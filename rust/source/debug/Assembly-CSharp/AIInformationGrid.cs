@@ -1,3 +1,4 @@
+#define ENABLE_PROFILER
 using UnityEngine;
 using UnityEngine.Profiling;
 
@@ -28,54 +29,30 @@ public class AIInformationGrid : MonoBehaviour
 	[ContextMenu ("Init")]
 	public void Init ()
 	{
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0072: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0083: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0108: Unknown result type (might be due to invalid IL or missing references)
-		//IL_012d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0159: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_016d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0184: Unknown result type (might be due to invalid IL or missing references)
-		//IL_019e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e4: Unknown result type (might be due to invalid IL or missing references)
-		AIInformationZone component = ((Component)this).GetComponent<AIInformationZone> ();
-		if ((Object)(object)component == (Object)null) {
-			Debug.LogWarning ((object)"Unable to Init AIInformationGrid, no AIInformationZone found!");
+		AIInformationZone component = GetComponent<AIInformationZone> ();
+		if (component == null) {
+			Debug.LogWarning ("Unable to Init AIInformationGrid, no AIInformationZone found!");
 			return;
 		}
 		BoundingBox = component.bounds;
-		((Bounds)(ref BoundingBox)).center = ((Component)this).transform.position + ((Bounds)(ref component.bounds)).center + new Vector3 (0f, ((Bounds)(ref BoundingBox)).extents.y, 0f);
-		float num = ((Bounds)(ref BoundingBox)).extents.x * 2f;
-		float num2 = ((Bounds)(ref BoundingBox)).extents.z * 2f;
+		BoundingBox.center = base.transform.position + component.bounds.center + new Vector3 (0f, BoundingBox.extents.y, 0f);
+		float num = BoundingBox.extents.x * 2f;
+		float num2 = BoundingBox.extents.z * 2f;
 		xCellCount = (int)Mathf.Ceil (num / (float)CellSize);
 		zCellCount = (int)Mathf.Ceil (num2 / (float)CellSize);
 		Cells = new AIInformationCell[xCellCount * zCellCount];
-		Vector3 val = (origin = ((Bounds)(ref BoundingBox)).min);
-		val.x = ((Bounds)(ref BoundingBox)).min.x + (float)CellSize / 2f;
-		val.z = ((Bounds)(ref BoundingBox)).min.z + (float)CellSize / 2f;
-		Bounds bounds = default(Bounds);
+		Vector3 vector = (origin = BoundingBox.min);
+		vector.x = BoundingBox.min.x + (float)CellSize / 2f;
+		vector.z = BoundingBox.min.z + (float)CellSize / 2f;
 		for (int i = 0; i < zCellCount; i++) {
 			for (int j = 0; j < xCellCount; j++) {
-				Vector3 val2 = val;
-				((Bounds)(ref bounds))..ctor (val2, new Vector3 ((float)CellSize, ((Bounds)(ref BoundingBox)).extents.y * 2f, (float)CellSize));
-				Cells [GetIndex (j, i)] = new AIInformationCell (bounds, ((Component)this).gameObject, j, i);
-				val.x += CellSize;
+				Vector3 center = vector;
+				Bounds bounds = new Bounds (center, new Vector3 (CellSize, BoundingBox.extents.y * 2f, CellSize));
+				Cells [GetIndex (j, i)] = new AIInformationCell (bounds, base.gameObject, j, i);
+				vector.x += CellSize;
 			}
-			val.x = ((Bounds)(ref BoundingBox)).min.x + (float)CellSize / 2f;
-			val.z += CellSize;
+			vector.x = BoundingBox.min.x + (float)CellSize / 2f;
+			vector.z += CellSize;
 		}
 	}
 
@@ -91,7 +68,6 @@ public class AIInformationGrid : MonoBehaviour
 
 	public AIMovePoint[] GetMovePointsInRange (Vector3 position, float maxRange, out int pointCount)
 	{
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
 		Profiler.BeginSample ("AIInformationGrid.GetMovePointsInRange");
 		pointCount = 0;
 		int cellCount;
@@ -114,7 +90,6 @@ public class AIInformationGrid : MonoBehaviour
 
 	public AICoverPoint[] GetCoverPointsInRange (Vector3 position, float maxRange, out int pointCount)
 	{
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
 		Profiler.BeginSample ("AIInformationGrid.GetCoverPointsInRange");
 		pointCount = 0;
 		int cellCount;
@@ -137,7 +112,6 @@ public class AIInformationGrid : MonoBehaviour
 
 	public AIInformationCell[] GetCellsInRange (Vector3 position, float maxRange, out int cellCount)
 	{
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
 		Profiler.BeginSample ("AIInformationGrid.GetCellsInRange");
 		cellCount = 0;
 		int num = (int)(maxRange / (float)CellSize);
@@ -166,23 +140,15 @@ public class AIInformationGrid : MonoBehaviour
 
 	public AIInformationCell GetCell (Vector3 position)
 	{
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005b: Unknown result type (might be due to invalid IL or missing references)
 		if (Cells == null) {
 			return null;
 		}
-		Vector3 val = position - origin;
-		if (val.x < 0f || val.z < 0f) {
+		Vector3 vector = position - origin;
+		if (vector.x < 0f || vector.z < 0f) {
 			return null;
 		}
-		int num = (int)(val.x / (float)CellSize);
-		int num2 = (int)(val.z / (float)CellSize);
+		int num = (int)(vector.x / (float)CellSize);
+		int num2 = (int)(vector.z / (float)CellSize);
 		if (num < 0 || num >= xCellCount) {
 			return null;
 		}
@@ -199,7 +165,6 @@ public class AIInformationGrid : MonoBehaviour
 
 	public void DebugDraw ()
 	{
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
 		if (Cells != null) {
 			AIInformationCell[] cells = Cells;
 			for (int i = 0; i < cells.Length; i++) {

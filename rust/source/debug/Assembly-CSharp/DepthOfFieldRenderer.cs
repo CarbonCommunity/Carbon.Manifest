@@ -33,35 +33,25 @@ internal sealed class DepthOfFieldRenderer : PostProcessEffectRenderer<DepthOfFi
 	public DepthOfFieldRenderer ()
 	{
 		for (int i = 0; i < 2; i++) {
-			m_CoCHistoryTextures [i] = (RenderTexture[])(object)new RenderTexture[2];
+			m_CoCHistoryTextures [i] = new RenderTexture[2];
 			m_HistoryPingPong [i] = 0;
 		}
 	}
 
 	public override DepthTextureMode GetCameraFlags ()
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0005: Unknown result type (might be due to invalid IL or missing references)
-		return (DepthTextureMode)1;
+		return DepthTextureMode.Depth;
 	}
 
 	private RenderTextureFormat SelectFormat (RenderTextureFormat primary, RenderTextureFormat secondary)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
 		if (primary.IsSupported ()) {
 			return primary;
 		}
 		if (secondary.IsSupported ()) {
 			return secondary;
 		}
-		return (RenderTextureFormat)7;
+		return RenderTextureFormat.Default;
 	}
 
 	private float CalculateMaxCoCRadius (int screenHeight)
@@ -72,87 +62,57 @@ internal sealed class DepthOfFieldRenderer : PostProcessEffectRenderer<DepthOfFi
 
 	private RenderTexture CheckHistory (int eye, int id, PostProcessRenderContext context, RenderTextureFormat format)
 	{
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-		RenderTexture val = m_CoCHistoryTextures [eye] [id];
-		if (m_ResetHistory || (Object)(object)val == (Object)null || !val.IsCreated () || ((Texture)val).width != context.width || ((Texture)val).height != context.height) {
-			RenderTexture.ReleaseTemporary (val);
-			val = context.GetScreenSpaceTemporaryRT (0, format, (RenderTextureReadWrite)1);
-			((Object)val).name = "CoC History, Eye: " + eye + ", ID: " + id;
-			((Texture)val).filterMode = (FilterMode)1;
-			val.Create ();
-			m_CoCHistoryTextures [eye] [id] = val;
+		RenderTexture renderTexture = m_CoCHistoryTextures [eye] [id];
+		if (m_ResetHistory || renderTexture == null || !renderTexture.IsCreated () || renderTexture.width != context.width || renderTexture.height != context.height) {
+			RenderTexture.ReleaseTemporary (renderTexture);
+			renderTexture = context.GetScreenSpaceTemporaryRT (0, format, RenderTextureReadWrite.Linear);
+			renderTexture.name = "CoC History, Eye: " + eye + ", ID: " + id;
+			renderTexture.filterMode = FilterMode.Bilinear;
+			renderTexture.Create ();
+			m_CoCHistoryTextures [eye] [id] = renderTexture;
 		}
-		return val;
+		return renderTexture;
 	}
 
 	public override void Render (PostProcessRenderContext context)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0150: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0168: Unknown result type (might be due to invalid IL or missing references)
-		//IL_029b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02b7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02c1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02e3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0303: Unknown result type (might be due to invalid IL or missing references)
-		//IL_030d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_033e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0348: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0392: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0398: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0380: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01c2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01c7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01dc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ea: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0215: Unknown result type (might be due to invalid IL or missing references)
-		//IL_022e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0250: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0257: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0286: Unknown result type (might be due to invalid IL or missing references)
 		RenderTextureFormat sourceFormat = context.sourceFormat;
-		RenderTextureFormat val = SelectFormat ((RenderTextureFormat)16, (RenderTextureFormat)15);
+		RenderTextureFormat renderTextureFormat = SelectFormat (RenderTextureFormat.R8, RenderTextureFormat.RHalf);
 		float num = 0.024f * ((float)context.height / 1080f);
 		float num2 = base.settings.focalLength.value / 1000f;
 		float num3 = Mathf.Max (base.settings.focusDistance.value, num2);
 		float num4 = (float)context.screenWidth / (float)context.screenHeight;
-		float num5 = num2 * num2 / (base.settings.aperture.value * (num3 - num2) * num * 2f);
-		float num6 = CalculateMaxCoCRadius (context.screenHeight);
+		float value = num2 * num2 / (base.settings.aperture.value * (num3 - num2) * num * 2f);
+		float num5 = CalculateMaxCoCRadius (context.screenHeight);
 		PropertySheet propertySheet = context.propertySheets.Get (context.resources.shaders.depthOfField);
 		propertySheet.properties.Clear ();
 		propertySheet.properties.SetFloat (ShaderIDs.Distance, num3);
-		propertySheet.properties.SetFloat (ShaderIDs.LensCoeff, num5);
-		propertySheet.properties.SetFloat (ShaderIDs.MaxCoC, num6);
-		propertySheet.properties.SetFloat (ShaderIDs.RcpMaxCoC, 1f / num6);
+		propertySheet.properties.SetFloat (ShaderIDs.LensCoeff, value);
+		propertySheet.properties.SetFloat (ShaderIDs.MaxCoC, num5);
+		propertySheet.properties.SetFloat (ShaderIDs.RcpMaxCoC, 1f / num5);
 		propertySheet.properties.SetFloat (ShaderIDs.RcpAspect, 1f / num4);
 		CommandBuffer command = context.command;
 		command.BeginSample ("DepthOfField");
-		context.GetScreenSpaceTemporaryRT (command, ShaderIDs.CoCTex, 0, val, (RenderTextureReadWrite)1, (FilterMode)1);
-		command.BlitFullscreenTriangle (RenderTargetIdentifier.op_Implicit ((BuiltinRenderTextureType)0), RenderTargetIdentifier.op_Implicit (ShaderIDs.CoCTex), propertySheet, 0);
+		context.GetScreenSpaceTemporaryRT (command, ShaderIDs.CoCTex, 0, renderTextureFormat, RenderTextureReadWrite.Linear);
+		command.BlitFullscreenTriangle (BuiltinRenderTextureType.None, ShaderIDs.CoCTex, propertySheet, 0);
 		if (context.IsTemporalAntialiasingActive () || context.dlssEnabled) {
 			float motionBlending = context.temporalAntialiasing.motionBlending;
-			float num7 = (m_ResetHistory ? 0f : motionBlending);
+			float z = (m_ResetHistory ? 0f : motionBlending);
 			Vector2 jitter = context.temporalAntialiasing.jitter;
-			propertySheet.properties.SetVector (ShaderIDs.TaaParams, Vector4.op_Implicit (new Vector3 (jitter.x, jitter.y, num7)));
-			int num8 = m_HistoryPingPong [context.xrActiveEye];
-			RenderTexture val2 = CheckHistory (context.xrActiveEye, ++num8 % 2, context, val);
-			RenderTexture val3 = CheckHistory (context.xrActiveEye, ++num8 % 2, context, val);
-			m_HistoryPingPong [context.xrActiveEye] = ++num8 % 2;
-			command.BlitFullscreenTriangle (RenderTargetIdentifier.op_Implicit ((Texture)(object)val2), RenderTargetIdentifier.op_Implicit ((Texture)(object)val3), propertySheet, 1);
+			propertySheet.properties.SetVector (ShaderIDs.TaaParams, new Vector3 (jitter.x, jitter.y, z));
+			int num6 = m_HistoryPingPong [context.xrActiveEye];
+			RenderTexture renderTexture = CheckHistory (context.xrActiveEye, ++num6 % 2, context, renderTextureFormat);
+			RenderTexture renderTexture2 = CheckHistory (context.xrActiveEye, ++num6 % 2, context, renderTextureFormat);
+			m_HistoryPingPong [context.xrActiveEye] = ++num6 % 2;
+			command.BlitFullscreenTriangle (renderTexture, renderTexture2, propertySheet, 1);
 			command.ReleaseTemporaryRT (ShaderIDs.CoCTex);
-			command.SetGlobalTexture (ShaderIDs.CoCTex, RenderTargetIdentifier.op_Implicit ((Texture)(object)val3));
+			command.SetGlobalTexture (ShaderIDs.CoCTex, renderTexture2);
 		}
-		context.GetScreenSpaceTemporaryRT (command, ShaderIDs.DepthOfFieldTex, 0, sourceFormat, (RenderTextureReadWrite)0, (FilterMode)1, context.width / 2, context.height / 2);
-		command.BlitFullscreenTriangle (context.source, RenderTargetIdentifier.op_Implicit (ShaderIDs.DepthOfFieldTex), propertySheet, 2);
-		context.GetScreenSpaceTemporaryRT (command, ShaderIDs.DepthOfFieldTemp, 0, sourceFormat, (RenderTextureReadWrite)0, (FilterMode)1, context.width / 2, context.height / 2);
-		command.BlitFullscreenTriangle (RenderTargetIdentifier.op_Implicit (ShaderIDs.DepthOfFieldTex), RenderTargetIdentifier.op_Implicit (ShaderIDs.DepthOfFieldTemp), propertySheet, (int)(3 + base.settings.kernelSize.value));
-		command.BlitFullscreenTriangle (RenderTargetIdentifier.op_Implicit (ShaderIDs.DepthOfFieldTemp), RenderTargetIdentifier.op_Implicit (ShaderIDs.DepthOfFieldTex), propertySheet, 7);
+		context.GetScreenSpaceTemporaryRT (command, ShaderIDs.DepthOfFieldTex, 0, sourceFormat, RenderTextureReadWrite.Default, FilterMode.Bilinear, context.width / 2, context.height / 2);
+		command.BlitFullscreenTriangle (context.source, ShaderIDs.DepthOfFieldTex, propertySheet, 2);
+		context.GetScreenSpaceTemporaryRT (command, ShaderIDs.DepthOfFieldTemp, 0, sourceFormat, RenderTextureReadWrite.Default, FilterMode.Bilinear, context.width / 2, context.height / 2);
+		command.BlitFullscreenTriangle (ShaderIDs.DepthOfFieldTex, ShaderIDs.DepthOfFieldTemp, propertySheet, (int)(3 + base.settings.kernelSize.value));
+		command.BlitFullscreenTriangle (ShaderIDs.DepthOfFieldTemp, ShaderIDs.DepthOfFieldTex, propertySheet, 7);
 		command.ReleaseTemporaryRT (ShaderIDs.DepthOfFieldTemp);
 		if (context.IsDebugOverlayEnabled (DebugOverlay.DepthOfField)) {
 			context.PushDebugOverlay (command, context.source, propertySheet, 9);

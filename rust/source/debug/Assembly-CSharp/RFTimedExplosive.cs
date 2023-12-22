@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -24,56 +25,41 @@ public class RFTimedExplosive : TimedExplosive, IRFObject
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("RFTimedExplosive.OnRpcMessage", 0);
-		try {
-			if (rpc == 2778075470u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("RFTimedExplosive.OnRpcMessage")) {
+			if (rpc == 2778075470u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Pickup "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Pickup "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Pickup", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Pickup")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (2778075470u, "Pickup", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							Pickup (msg2);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in Pickup");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
 
 	public Vector3 GetPosition ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		return ((Component)this).transform.position;
+		return base.transform.position;
 	}
 
 	public float GetMaxRange ()
@@ -83,8 +69,8 @@ public class RFTimedExplosive : TimedExplosive, IRFObject
 
 	public void RFSignalUpdate (bool on)
 	{
-		if (IsArmed () && on && !((FacepunchBehaviour)this).IsInvoking ((Action)Explode)) {
-			((FacepunchBehaviour)this).Invoke ((Action)Explode, Random.Range (0f, 0.2f));
+		if (IsArmed () && on && !IsInvoking (Explode)) {
+			Invoke (Explode, UnityEngine.Random.Range (0f, 0.2f));
 		}
 	}
 
@@ -108,10 +94,10 @@ public class RFTimedExplosive : TimedExplosive, IRFObject
 			return;
 		}
 		if (GetFrequency () > 0) {
-			if (((FacepunchBehaviour)this).IsInvoking ((Action)Explode)) {
-				((FacepunchBehaviour)this).CancelInvoke ((Action)Explode);
+			if (IsInvoking (Explode)) {
+				CancelInvoke (Explode);
 			}
-			((FacepunchBehaviour)this).Invoke ((Action)ArmRF, fuseLength);
+			Invoke (ArmRF, fuseLength);
 			SetFlag (Flags.Reserved1, b: true, recursive: false, networkupdate: false);
 			SetFlag (Flags.Reserved2, b: true);
 		} else {
@@ -136,7 +122,7 @@ public class RFTimedExplosive : TimedExplosive, IRFObject
 	{
 		base.Save (info);
 		if (info.msg.explosive == null) {
-			info.msg.explosive = Pool.Get<TimedExplosive> ();
+			info.msg.explosive = Facepunch.Pool.Get<ProtoBuf.TimedExplosive> ();
 		}
 		if (info.forDisk) {
 			info.msg.explosive.freq = GetFrequency ();
@@ -148,14 +134,14 @@ public class RFTimedExplosive : TimedExplosive, IRFObject
 	{
 		base.ServerInit ();
 		SetFrequency (RFFrequency);
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)DecayCheck, decayTickDuration, decayTickDuration, 10f);
+		InvokeRandomized (DecayCheck, decayTickDuration, decayTickDuration, 10f);
 	}
 
 	public void DecayCheck ()
 	{
 		BuildingPrivlidge buildingPrivilege = GetBuildingPrivilege ();
 		BasePlayer basePlayer = BasePlayer.FindByID (creatorPlayerID);
-		if ((Object)(object)basePlayer != (Object)null && ((Object)(object)buildingPrivilege == (Object)null || !buildingPrivilege.IsAuthed (basePlayer))) {
+		if (basePlayer != null && (buildingPrivilege == null || !buildingPrivilege.IsAuthed (basePlayer))) {
 			minutesDecayed += decayTickDuration / 60f;
 		}
 		if (minutesDecayed >= minutesUntilDecayed) {
@@ -167,8 +153,8 @@ public class RFTimedExplosive : TimedExplosive, IRFObject
 	{
 		base.PostServerLoad ();
 		if (RFFrequency > 0) {
-			if (((FacepunchBehaviour)this).IsInvoking ((Action)Explode)) {
-				((FacepunchBehaviour)this).CancelInvoke ((Action)Explode);
+			if (IsInvoking (Explode)) {
+				CancelInvoke (Explode);
 			}
 			SetFrequency (RFFrequency);
 			ArmRF ();
@@ -192,8 +178,8 @@ public class RFTimedExplosive : TimedExplosive, IRFObject
 	public override void SetCreatorEntity (BaseEntity newCreatorEntity)
 	{
 		base.SetCreatorEntity (newCreatorEntity);
-		BasePlayer component = ((Component)newCreatorEntity).GetComponent<BasePlayer> ();
-		if (Object.op_Implicit ((Object)(object)component)) {
+		BasePlayer component = newCreatorEntity.GetComponent<BasePlayer> ();
+		if ((bool)component) {
 			creatorPlayerID = component.userID;
 			if (GetFrequency () > 0) {
 				component.ConsoleMessage ("Frequency is:" + GetFrequency ());

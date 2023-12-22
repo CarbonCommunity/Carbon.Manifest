@@ -18,12 +18,10 @@ public class CH47LandingZone : MonoBehaviour
 
 	public static CH47LandingZone GetClosest (Vector3 pos)
 	{
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
 		float num = float.PositiveInfinity;
 		CH47LandingZone result = null;
 		foreach (CH47LandingZone landingZone in landingZones) {
-			float num2 = Vector3Ex.Distance2D (pos, ((Component)landingZone).transform.position);
+			float num2 = Vector3Ex.Distance2D (pos, landingZone.transform.position);
 			if (num2 < num) {
 				num = num2;
 				result = landingZone;
@@ -51,18 +49,12 @@ public class CH47LandingZone : MonoBehaviour
 
 	public void OnDrawGizmos ()
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
 		Color magenta = Color.magenta;
 		magenta.a = 0.25f;
 		Gizmos.color = magenta;
-		GizmosUtil.DrawCircleY (((Component)this).transform.position, 6f);
+		GizmosUtil.DrawCircleY (base.transform.position, 6f);
 		magenta.a = 1f;
 		Gizmos.color = magenta;
-		GizmosUtil.DrawWireCircleY (((Component)this).transform.position, 6f);
+		GizmosUtil.DrawWireCircleY (base.transform.position, 6f);
 	}
 }

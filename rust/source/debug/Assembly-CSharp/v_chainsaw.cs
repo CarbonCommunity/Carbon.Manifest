@@ -52,15 +52,10 @@ public class v_chainsaw : MonoBehaviour
 
 	public void OnEnable ()
 	{
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Expected O, but got Unknown
 		if (block == null) {
 			block = new MaterialPropertyBlock ();
 		}
-		saveST = Vector4.op_Implicit (chainRenderer.sharedMaterial.GetVector ("_MainTex_ST"));
+		saveST = chainRenderer.sharedMaterial.GetVector ("_MainTex_ST");
 	}
 
 	private void Awake ()
@@ -74,10 +69,9 @@ public class v_chainsaw : MonoBehaviour
 
 	private void ScrollChainTexture ()
 	{
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		float num = (chainAmount = (chainAmount + Time.deltaTime * chainSpeed) % 1f);
+		float z = (chainAmount = (chainAmount + Time.deltaTime * chainSpeed) % 1f);
 		block.Clear ();
-		block.SetVector ("_MainTex_ST", new Vector4 (saveST.x, saveST.y, num, 0f));
+		block.SetVector ("_MainTex_ST", new Vector4 (saveST.x, saveST.y, z, 0f));
 		chainRenderer.SetPropertyBlock (block);
 	}
 
@@ -86,63 +80,63 @@ public class v_chainsaw : MonoBehaviour
 		chainsawAnimator.SetBool ("attacking", bAttacking);
 		smokeEffect.enableEmission = bEngineOn;
 		if (bHitMetal) {
-			chainsawAnimator.SetBool ("attackHit", true);
+			chainsawAnimator.SetBool ("attackHit", value: true);
 			ParticleSystem[] array = hitMetalFX;
-			foreach (ParticleSystem val in array) {
-				val.enableEmission = true;
+			foreach (ParticleSystem particleSystem in array) {
+				particleSystem.enableEmission = true;
 			}
 			ParticleSystem[] array2 = hitWoodFX;
-			foreach (ParticleSystem val2 in array2) {
-				val2.enableEmission = false;
+			foreach (ParticleSystem particleSystem2 in array2) {
+				particleSystem2.enableEmission = false;
 			}
 			ParticleSystem[] array3 = hitFleshFX;
-			foreach (ParticleSystem val3 in array3) {
-				val3.enableEmission = false;
+			foreach (ParticleSystem particleSystem3 in array3) {
+				particleSystem3.enableEmission = false;
 			}
 			DoHitSound (hitMetalSoundDef);
 		} else if (bHitWood) {
-			chainsawAnimator.SetBool ("attackHit", true);
+			chainsawAnimator.SetBool ("attackHit", value: true);
 			ParticleSystem[] array4 = hitMetalFX;
-			foreach (ParticleSystem val4 in array4) {
-				val4.enableEmission = false;
+			foreach (ParticleSystem particleSystem4 in array4) {
+				particleSystem4.enableEmission = false;
 			}
 			ParticleSystem[] array5 = hitWoodFX;
-			foreach (ParticleSystem val5 in array5) {
-				val5.enableEmission = true;
+			foreach (ParticleSystem particleSystem5 in array5) {
+				particleSystem5.enableEmission = true;
 			}
 			ParticleSystem[] array6 = hitFleshFX;
-			foreach (ParticleSystem val6 in array6) {
-				val6.enableEmission = false;
+			foreach (ParticleSystem particleSystem6 in array6) {
+				particleSystem6.enableEmission = false;
 			}
 			DoHitSound (hitWoodSoundDef);
 		} else if (bHitFlesh) {
-			chainsawAnimator.SetBool ("attackHit", true);
+			chainsawAnimator.SetBool ("attackHit", value: true);
 			ParticleSystem[] array7 = hitMetalFX;
-			foreach (ParticleSystem val7 in array7) {
-				val7.enableEmission = false;
+			foreach (ParticleSystem particleSystem7 in array7) {
+				particleSystem7.enableEmission = false;
 			}
 			ParticleSystem[] array8 = hitWoodFX;
-			foreach (ParticleSystem val8 in array8) {
-				val8.enableEmission = false;
+			foreach (ParticleSystem particleSystem8 in array8) {
+				particleSystem8.enableEmission = false;
 			}
 			ParticleSystem[] array9 = hitFleshFX;
-			foreach (ParticleSystem val9 in array9) {
-				val9.enableEmission = true;
+			foreach (ParticleSystem particleSystem9 in array9) {
+				particleSystem9.enableEmission = true;
 			}
 			DoHitSound (hitFleshSoundDef);
 		} else {
-			chainsawAnimator.SetBool ("attackHit", false);
+			chainsawAnimator.SetBool ("attackHit", value: false);
 			ParticleSystem[] array10 = hitMetalFX;
-			foreach (ParticleSystem val10 in array10) {
-				val10.enableEmission = false;
+			foreach (ParticleSystem particleSystem10 in array10) {
+				particleSystem10.enableEmission = false;
 			}
 			ParticleSystem[] array11 = hitWoodFX;
-			foreach (ParticleSystem val11 in array11) {
-				val11.enableEmission = false;
+			foreach (ParticleSystem particleSystem11 in array11) {
+				particleSystem11.enableEmission = false;
 			}
 			ParticleSystem[] array12 = hitFleshFX;
-			foreach (ParticleSystem val12 in array12) {
-				val12.enableEmission = false;
+			foreach (ParticleSystem particleSystem12 in array12) {
+				particleSystem12.enableEmission = false;
 			}
 		}
 	}

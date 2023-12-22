@@ -47,11 +47,6 @@ public class GenerateRailRing : ProceduralComponent
 
 	public override void Process (uint seed)
 	{
-		//IL_03b2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03b7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_08f2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0a16: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0a3a: Unknown result type (might be due to invalid IL or missing references)
 		if (World.Networked) {
 			TerrainMeta.Path.Rails.Clear ();
 			TerrainMeta.Path.Rails.AddRange (World.GetPaths ("Rail"));
@@ -119,8 +114,7 @@ public class GenerateRailRing : ProceduralComponent
 				RingNode ringNode2 = null;
 				foreach (RingNode item3 in list) {
 					if (item3.path == null) {
-						Vector2 val = new Vector2 ((float)(item3.position.x - point.x), (float)(item3.position.y - point.y));
-						float num6 = ((Vector2)(ref val)).magnitude;
+						float num6 = new Vector2 (item3.position.x - point.x, item3.position.y - point.y).magnitude;
 						if (item3.prev.path == null) {
 							num6 *= 1.5f;
 						}
@@ -216,10 +210,10 @@ public class GenerateRailRing : ProceduralComponent
 			for (PathFinder.Node node12 = node10; node12 != null; node12 = node12.next) {
 				float normX = ((float)node12.point.x + 0.5f) / (float)length;
 				float normZ = ((float)node12.point.y + 0.5f) / (float)length;
-				float num11 = TerrainMeta.DenormalizeX (normX);
-				float num12 = TerrainMeta.DenormalizeZ (normZ);
-				float num13 = Mathf.Max (TerrainMeta.HeightMap.GetHeight (normX, normZ), 1f);
-				list2.Add (new Vector3 (num11, num13, num12));
+				float x = TerrainMeta.DenormalizeX (normX);
+				float z = TerrainMeta.DenormalizeZ (normZ);
+				float y = Mathf.Max (TerrainMeta.HeightMap.GetHeight (normX, normZ), 1f);
+				list2.Add (new Vector3 (x, y, z));
 			}
 			if (list2.Count >= 2) {
 				int count = TerrainMeta.Path.Rails.Count;

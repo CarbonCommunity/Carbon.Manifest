@@ -19,12 +19,10 @@ public class TirednessAboveAIEvent : BaseAIEvent
 
 	public override AIEventData ToProto ()
 	{
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Expected O, but got Unknown
-		AIEventData val = base.ToProto ();
-		val.tirednessAboveData = new TirednessAboveAIEventData ();
-		val.tirednessAboveData.value = Value;
-		return val;
+		AIEventData aIEventData = base.ToProto ();
+		aIEventData.tirednessAboveData = new TirednessAboveAIEventData ();
+		aIEventData.tirednessAboveData.value = Value;
+		return aIEventData;
 	}
 
 	public override void Execute (AIMemory memory, AIBrainSenses senses, StateStatus stateStatus)

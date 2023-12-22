@@ -51,8 +51,6 @@ public class OccludeeState : OcclusionCulling.SmartListValue
 
 	public OccludeeState Initialize (OcclusionCulling.SimpleList<State> states, OcclusionCulling.BufferSet set, int slot, Vector4 sphereBounds, bool isVisible, float minTimeVisible, bool isStatic, int layer, OcclusionCulling.OnVisibilityChanged onVisibilityChanged)
 	{
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
 		states [slot] = new State {
 			sphereBounds = sphereBounds,
 			minTimeVisible = minTimeVisible,

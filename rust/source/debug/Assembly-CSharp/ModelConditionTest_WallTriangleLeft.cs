@@ -18,10 +18,6 @@ public class ModelConditionTest_WallTriangleLeft : ModelConditionTest
 
 	public static bool CheckCondition (BaseEntity ent)
 	{
-		//IL_010c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0118: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0165: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0171: Unknown result type (might be due to invalid IL or missing references)
 		if (CheckSocketOccupied (ent, "wall/sockets/wall-female")) {
 			return false;
 		}
@@ -46,17 +42,17 @@ public class ModelConditionTest_WallTriangleLeft : ModelConditionTest
 		}
 		for (int i = 0; i < entityLink.connections.Count; i++) {
 			BuildingBlock buildingBlock = entityLink.connections [i].owner as BuildingBlock;
-			if ((Object)(object)buildingBlock == (Object)null) {
+			if (buildingBlock == null) {
 				continue;
 			}
 			if (buildingBlock.blockDefinition.info.name.token == "roof") {
-				float num = Vector3.Angle (((Component)ent).transform.forward, ((Component)buildingBlock).transform.forward);
+				float num = Vector3.Angle (ent.transform.forward, buildingBlock.transform.forward);
 				if (num < 10f) {
 					return true;
 				}
 			}
 			if (buildingBlock.blockDefinition.info.name.token == "roof_triangle") {
-				float num2 = Vector3.Angle (((Component)ent).transform.forward, ((Component)buildingBlock).transform.forward);
+				float num2 = Vector3.Angle (ent.transform.forward, buildingBlock.transform.forward);
 				if (num2 < 40f) {
 					return true;
 				}

@@ -33,9 +33,8 @@ public class EntityFuelSystem
 
 	public bool IsInFuelInteractionRange (BasePlayer player)
 	{
-		//IL_0031: Unknown result type (might be due to invalid IL or missing references)
 		StorageContainer fuelContainer = GetFuelContainer ();
-		if ((Object)(object)fuelContainer != (Object)null) {
+		if (fuelContainer != null) {
 			float num = 0f;
 			if (isServer) {
 				num = 3f;
@@ -64,7 +63,7 @@ public class EntityFuelSystem
 	public Item GetFuelItem ()
 	{
 		StorageContainer fuelContainer = GetFuelContainer ();
-		if ((Object)(object)fuelContainer == (Object)null) {
+		if (fuelContainer == null) {
 			return null;
 		}
 		return fuelContainer.inventory.GetSlot (0);
@@ -100,7 +99,7 @@ public class EntityFuelSystem
 	public int TryUseFuel (float seconds, float fuelUsedPerSecond)
 	{
 		StorageContainer fuelContainer = GetFuelContainer ();
-		if ((Object)(object)fuelContainer == (Object)null) {
+		if (fuelContainer == null) {
 			return 0;
 		}
 		Item slot = fuelContainer.inventory.GetSlot (0);
@@ -127,7 +126,7 @@ public class EntityFuelSystem
 
 	public void AddStartingFuel (int amount)
 	{
-		GetFuelContainer ().inventory.AddItem (GetFuelContainer ().allowedItem, Mathf.FloorToInt ((float)amount), 0uL);
+		GetFuelContainer ().inventory.AddItem (GetFuelContainer ().allowedItem, Mathf.FloorToInt (amount), 0uL);
 	}
 
 	public void AdminAddFuel ()

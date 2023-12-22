@@ -1,3 +1,4 @@
+#define ENABLE_PROFILER
 using System;
 using System.Collections.Generic;
 using Facepunch;
@@ -42,11 +43,9 @@ public class BaseHelicopter : BaseCombatEntity
 
 		public void Hurt (float amount, HitInfo info)
 		{
-			//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-			//IL_004b: Unknown result type (might be due to invalid IL or missing references)
 			if (!isDestroyed) {
 				health -= amount;
-				Effect.server.Run (damagedParticles.resourcePath, body, StringPool.Get (bonenames [Random.Range (0, bonenames.Length)]), Vector3.zero, Vector3.up, null, broadcast: true);
+				Effect.server.Run (damagedParticles.resourcePath, body, StringPool.Get (bonenames [UnityEngine.Random.Range (0, bonenames.Length)]), Vector3.zero, Vector3.up, null, broadcast: true);
 				if (health <= 0f) {
 					health = 0f;
 					WeakspotDestroyed ();
@@ -61,10 +60,8 @@ public class BaseHelicopter : BaseCombatEntity
 
 		public void WeakspotDestroyed ()
 		{
-			//IL_0033: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0038: Unknown result type (might be due to invalid IL or missing references)
 			isDestroyed = true;
-			Effect.server.Run (destroyedParticles.resourcePath, body, StringPool.Get (bonenames [Random.Range (0, bonenames.Length)]), Vector3.zero, Vector3.up, null, broadcast: true);
+			Effect.server.Run (destroyedParticles.resourcePath, body, StringPool.Get (bonenames [UnityEngine.Random.Range (0, bonenames.Length)]), Vector3.zero, Vector3.up, null, broadcast: true);
 			body.Hurt (body.MaxHealth () * healthFractionOnDestroyed, DamageType.Generic, null, useProtection: false);
 		}
 	}
@@ -179,10 +176,7 @@ public class BaseHelicopter : BaseCombatEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("BaseHelicopter.OnRpcMessage", 0);
-		try {
-		} finally {
-			((IDisposable)val)?.Dispose ();
+		using (TimeWarning.New ("BaseHelicopter.OnRpcMessage")) {
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -240,8 +234,6 @@ public class BaseHelicopter : BaseCombatEntity
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (info.msg.helicopter != null) {
 			spotlightTarget = info.msg.helicopter.spotlightVec;
@@ -250,18 +242,10 @@ public class BaseHelicopter : BaseCombatEntity
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005d: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
 		Profiler.BeginSample ("BaseHelicopter.Save");
 		info.msg.helicopter = Pool.Get<Helicopter> ();
-		Helicopter helicopter = info.msg.helicopter;
-		Quaternion localRotation = rotorPivot.transform.localRotation;
-		helicopter.tiltRot = ((Quaternion)(ref localRotation)).eulerAngles;
+		info.msg.helicopter.tiltRot = rotorPivot.transform.localRotation.eulerAngles;
 		info.msg.helicopter.spotlightVec = spotlightTarget;
 		info.msg.helicopter.weakspothealths = Pool.Get<List<float>> ();
 		for (int i = 0; i < weakspots.Length; i++) {
@@ -272,9 +256,8 @@ public class BaseHelicopter : BaseCombatEntity
 
 	public override void ServerInit ()
 	{
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
 		base.ServerInit ();
-		myAI = ((Component)this).GetComponent<PatrolHelicopterAI> ();
+		myAI = GetComponent<PatrolHelicopterAI> ();
 		if (!myAI.hasInterestZone) {
 			myAI.SetInitialDestination (Vector3.zero, 1.25f);
 			myAI.targetThrottleSpeed = 1f;
@@ -286,9 +269,7 @@ public class BaseHelicopter : BaseCombatEntity
 
 	public void CreateMapMarker ()
 	{
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		if (Object.op_Implicit ((Object)(object)mapMarkerInstance)) {
+		if ((bool)mapMarkerInstance) {
 			mapMarkerInstance.Kill ();
 		}
 		BaseEntity baseEntity = GameManager.server.CreateEntity (mapMarkerEntityPrefab.resourcePath, Vector3.zero, Quaternion.identity);
@@ -305,112 +286,68 @@ public class BaseHelicopter : BaseCombatEntity
 
 	public void CreateExplosionMarker (float durationMinutes)
 	{
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		BaseEntity baseEntity = GameManager.server.CreateEntity (debrisFieldMarker.resourcePath, ((Component)this).transform.position, Quaternion.identity);
+		BaseEntity baseEntity = GameManager.server.CreateEntity (debrisFieldMarker.resourcePath, base.transform.position, Quaternion.identity);
 		baseEntity.Spawn ();
-		((Component)baseEntity).SendMessage ("SetDuration", (object)durationMinutes, (SendMessageOptions)1);
+		baseEntity.SendMessage ("SetDuration", durationMinutes, SendMessageOptions.DontRequireReceiver);
 	}
 
 	public override void OnKilled (HitInfo info)
 	{
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0064: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01fa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0202: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0216: Unknown result type (might be due to invalid IL or missing references)
-		//IL_021b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0220: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0231: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0236: Unknown result type (might be due to invalid IL or missing references)
-		//IL_023b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_024d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_024f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0251: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00df: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02d7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02d8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02e9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02ee: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0305: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0358: Unknown result type (might be due to invalid IL or missing references)
-		//IL_035e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0362: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0368: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0110: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0133: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0138: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0153: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0171: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0172: Unknown result type (might be due to invalid IL or missing references)
-		//IL_017d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0182: Unknown result type (might be due to invalid IL or missing references)
 		if (base.isClient) {
 			return;
 		}
 		CreateExplosionMarker (10f);
-		Effect.server.Run (explosionEffect.resourcePath, ((Component)this).transform.position, Vector3.up, null, broadcast: true);
-		Vector3 val = myAI.GetLastMoveDir () * myAI.GetMoveSpeed () * 0.75f;
+		Effect.server.Run (explosionEffect.resourcePath, base.transform.position, Vector3.up, null, broadcast: true);
+		Vector3 vector = myAI.GetLastMoveDir () * myAI.GetMoveSpeed () * 0.75f;
 		GameObject gibSource = servergibs.Get ().GetComponent<ServerGib> ()._gibSource;
-		List<ServerGib> list = ServerGib.CreateGibs (servergibs.resourcePath, ((Component)this).gameObject, gibSource, val, 3f);
+		List<ServerGib> list = ServerGib.CreateGibs (servergibs.resourcePath, base.gameObject, gibSource, vector, 3f);
 		if (info.damageTypes.GetMajorityDamageType () != DamageType.Decay) {
 			for (int i = 0; i < 12 - maxCratesToSpawn; i++) {
-				BaseEntity baseEntity = GameManager.server.CreateEntity (this.fireBall.resourcePath, ((Component)this).transform.position, ((Component)this).transform.rotation);
-				if (!Object.op_Implicit ((Object)(object)baseEntity)) {
+				BaseEntity baseEntity = GameManager.server.CreateEntity (this.fireBall.resourcePath, base.transform.position, base.transform.rotation);
+				if (!baseEntity) {
 					continue;
 				}
-				float num = 3f;
-				float num2 = 10f;
-				Vector3 onUnitSphere = Random.onUnitSphere;
-				((Component)baseEntity).transform.position = ((Component)this).transform.position + new Vector3 (0f, 1.5f, 0f) + onUnitSphere * Random.Range (-4f, 4f);
-				Collider component = ((Component)baseEntity).GetComponent<Collider> ();
+				float min = 3f;
+				float max = 10f;
+				Vector3 onUnitSphere = UnityEngine.Random.onUnitSphere;
+				baseEntity.transform.position = base.transform.position + new Vector3 (0f, 1.5f, 0f) + onUnitSphere * UnityEngine.Random.Range (-4f, 4f);
+				Collider component = baseEntity.GetComponent<Collider> ();
 				baseEntity.Spawn ();
-				baseEntity.SetVelocity (val + onUnitSphere * Random.Range (num, num2));
+				baseEntity.SetVelocity (vector + onUnitSphere * UnityEngine.Random.Range (min, max));
 				foreach (ServerGib item in list) {
-					Physics.IgnoreCollision (component, (Collider)(object)item.GetCollider (), true);
+					Physics.IgnoreCollision (component, item.GetCollider (), ignore: true);
 				}
 			}
 		}
 		for (int j = 0; j < maxCratesToSpawn; j++) {
-			Vector3 onUnitSphere2 = Random.onUnitSphere;
-			Vector3 pos = ((Component)this).transform.position + new Vector3 (0f, 1.5f, 0f) + onUnitSphere2 * Random.Range (2f, 3f);
+			Vector3 onUnitSphere2 = UnityEngine.Random.onUnitSphere;
+			Vector3 pos = base.transform.position + new Vector3 (0f, 1.5f, 0f) + onUnitSphere2 * UnityEngine.Random.Range (2f, 3f);
 			BaseEntity baseEntity2 = GameManager.server.CreateEntity (crateToDrop.resourcePath, pos, Quaternion.LookRotation (onUnitSphere2));
 			baseEntity2.Spawn ();
 			LootContainer lootContainer = baseEntity2 as LootContainer;
-			if (Object.op_Implicit ((Object)(object)lootContainer)) {
-				((FacepunchBehaviour)lootContainer).Invoke ((Action)lootContainer.RemoveMe, 1800f);
+			if ((bool)lootContainer) {
+				lootContainer.Invoke (lootContainer.RemoveMe, 1800f);
 			}
-			Collider component2 = ((Component)baseEntity2).GetComponent<Collider> ();
-			Rigidbody val2 = ((Component)baseEntity2).gameObject.AddComponent<Rigidbody> ();
-			val2.useGravity = true;
-			val2.collisionDetectionMode = (CollisionDetectionMode)2;
-			val2.mass = 2f;
-			val2.interpolation = (RigidbodyInterpolation)1;
-			val2.velocity = val + onUnitSphere2 * Random.Range (1f, 3f);
-			val2.angularVelocity = Vector3Ex.Range (-1.75f, 1.75f);
-			val2.drag = 0.5f * (val2.mass / 5f);
-			val2.angularDrag = 0.2f * (val2.mass / 5f);
+			Collider component2 = baseEntity2.GetComponent<Collider> ();
+			Rigidbody rigidbody = baseEntity2.gameObject.AddComponent<Rigidbody> ();
+			rigidbody.useGravity = true;
+			rigidbody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+			rigidbody.mass = 2f;
+			rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
+			rigidbody.velocity = vector + onUnitSphere2 * UnityEngine.Random.Range (1f, 3f);
+			rigidbody.angularVelocity = Vector3Ex.Range (-1.75f, 1.75f);
+			rigidbody.drag = 0.5f * (rigidbody.mass / 5f);
+			rigidbody.angularDrag = 0.2f * (rigidbody.mass / 5f);
 			FireBall fireBall = GameManager.server.CreateEntity (this.fireBall.resourcePath) as FireBall;
-			if (Object.op_Implicit ((Object)(object)fireBall)) {
+			if ((bool)fireBall) {
 				fireBall.SetParent (baseEntity2);
 				fireBall.Spawn ();
-				((Component)fireBall).GetComponent<Rigidbody> ().isKinematic = true;
-				((Component)fireBall).GetComponent<Collider> ().enabled = false;
+				fireBall.GetComponent<Rigidbody> ().isKinematic = true;
+				fireBall.GetComponent<Collider> ().enabled = false;
 			}
-			((Component)baseEntity2).SendMessage ("SetLockingEnt", (object)((Component)fireBall).gameObject, (SendMessageOptions)1);
+			baseEntity2.SendMessage ("SetLockingEnt", fireBall.gameObject, SendMessageOptions.DontRequireReceiver);
 			foreach (ServerGib item2 in list) {
-				Physics.IgnoreCollision (component2, (Collider)(object)item2.GetCollider (), true);
+				Physics.IgnoreCollision (component2, item2.GetCollider (), ignore: true);
 			}
 		}
 		base.OnKilled (info);

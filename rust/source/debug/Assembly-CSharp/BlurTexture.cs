@@ -10,18 +10,16 @@ public class BlurTexture : ProcessedTexture
 
 	public void Blur (float radius)
 	{
-		Blur ((Texture)(object)result, radius);
+		Blur (result, radius);
 	}
 
 	public void Blur (Texture source, float radius)
 	{
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0066: Unknown result type (might be due to invalid IL or missing references)
-		RenderTexture val = CreateTemporary ();
+		RenderTexture renderTexture = CreateTemporary ();
 		material.SetVector ("offsets", new Vector4 (radius / (float)Screen.width, 0f, 0f, 0f));
-		Graphics.Blit (source, val, material, 0);
+		Graphics.Blit (source, renderTexture, material, 0);
 		material.SetVector ("offsets", new Vector4 (0f, radius / (float)Screen.height, 0f, 0f));
-		Graphics.Blit ((Texture)(object)val, result, material, 0);
-		ReleaseTemporary (val);
+		Graphics.Blit (renderTexture, result, material, 0);
+		ReleaseTemporary (renderTexture);
 	}
 }

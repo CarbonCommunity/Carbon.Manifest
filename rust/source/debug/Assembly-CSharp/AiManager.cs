@@ -1,3 +1,4 @@
+#define ENABLE_PROFILER
 using System;
 using Rust;
 using Rust.Ai;
@@ -88,12 +89,8 @@ public class AiManager : SingletonComponent<AiManager>, IServerComponent
 
 	internal void OnEnableCover ()
 	{
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
 		if (coverPointVolumeGrid == null) {
-			Vector3 size = TerrainMeta.Size;
-			coverPointVolumeGrid = new WorldSpaceGrid<CoverPointVolume> (size.x, CoverPointVolumeCellSize);
+			coverPointVolumeGrid = new WorldSpaceGrid<CoverPointVolume> (TerrainMeta.Size.x, CoverPointVolumeCellSize);
 		}
 	}
 
@@ -101,45 +98,28 @@ public class AiManager : SingletonComponent<AiManager>, IServerComponent
 	{
 		if (coverPointVolumeGrid != null && coverPointVolumeGrid.Cells != null) {
 			for (int i = 0; i < coverPointVolumeGrid.Cells.Length; i++) {
-				Object.Destroy ((Object)(object)coverPointVolumeGrid.Cells [i]);
+				UnityEngine.Object.Destroy (coverPointVolumeGrid.Cells [i]);
 			}
 		}
 	}
 
 	public static CoverPointVolume CreateNewCoverVolume (Vector3 point, Transform coverPointGroup)
 	{
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0060: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00eb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0125: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0136: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015a: Unknown result type (might be due to invalid IL or missing references)
 		Profiler.BeginSample ("AiManager.CreateNewCoverVolume");
-		if ((Object)(object)SingletonComponent<AiManager>.Instance != (Object)null && ((Behaviour)SingletonComponent<AiManager>.Instance).enabled && SingletonComponent<AiManager>.Instance.UseCover) {
+		if (SingletonComponent<AiManager>.Instance != null && SingletonComponent<AiManager>.Instance.enabled && SingletonComponent<AiManager>.Instance.UseCover) {
 			CoverPointVolume coverPointVolume = SingletonComponent<AiManager>.Instance.GetCoverVolumeContaining (point);
-			if ((Object)(object)coverPointVolume == (Object)null) {
-				Vector2i val = SingletonComponent<AiManager>.Instance.coverPointVolumeGrid.WorldToGridCoords (point);
+			if (coverPointVolume == null) {
+				Vector2i vector2i = SingletonComponent<AiManager>.Instance.coverPointVolumeGrid.WorldToGridCoords (point);
 				Profiler.BeginSample ("AiManager.InstantiateNewCoverPointVolume");
-				coverPointVolume = ((!((Object)(object)SingletonComponent<AiManager>.Instance.cpvPrefab != (Object)null)) ? new GameObject ("CoverPointVolume").AddComponent<CoverPointVolume> () : Object.Instantiate<CoverPointVolume> (SingletonComponent<AiManager>.Instance.cpvPrefab));
+				coverPointVolume = ((!(SingletonComponent<AiManager>.Instance.cpvPrefab != null)) ? new GameObject ("CoverPointVolume").AddComponent<CoverPointVolume> () : UnityEngine.Object.Instantiate (SingletonComponent<AiManager>.Instance.cpvPrefab));
 				Profiler.EndSample ();
 				Profiler.BeginSample ("AiManager.SetupNewCoverPointVolume");
-				((Component)coverPointVolume).transform.localPosition = default(Vector3);
-				((Component)coverPointVolume).transform.position = SingletonComponent<AiManager>.Instance.coverPointVolumeGrid.GridToWorldCoords (val) + Vector3.up * point.y;
-				((Component)coverPointVolume).transform.localScale = new Vector3 (SingletonComponent<AiManager>.Instance.CoverPointVolumeCellSize, SingletonComponent<AiManager>.Instance.CoverPointVolumeCellHeight, SingletonComponent<AiManager>.Instance.CoverPointVolumeCellSize);
+				coverPointVolume.transform.localPosition = default(Vector3);
+				coverPointVolume.transform.position = SingletonComponent<AiManager>.Instance.coverPointVolumeGrid.GridToWorldCoords (vector2i) + Vector3.up * point.y;
+				coverPointVolume.transform.localScale = new Vector3 (SingletonComponent<AiManager>.Instance.CoverPointVolumeCellSize, SingletonComponent<AiManager>.Instance.CoverPointVolumeCellHeight, SingletonComponent<AiManager>.Instance.CoverPointVolumeCellSize);
 				coverPointVolume.CoverLayerMask = SingletonComponent<AiManager>.Instance.DynamicCoverPointVolumeLayerMask;
 				coverPointVolume.CoverPointRayLength = SingletonComponent<AiManager>.Instance.CoverPointRayLength;
-				SingletonComponent<AiManager>.Instance.coverPointVolumeGrid [val] = coverPointVolume;
+				SingletonComponent<AiManager>.Instance.coverPointVolumeGrid [vector2i] = coverPointVolume;
 				Profiler.EndSample ();
 				coverPointVolume.GenerateCoverPoints (coverPointGroup);
 			}
@@ -152,15 +132,11 @@ public class AiManager : SingletonComponent<AiManager>, IServerComponent
 
 	public CoverPointVolume GetCoverVolumeContaining (Vector3 point)
 	{
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
 		if (coverPointVolumeGrid == null) {
 			return null;
 		}
-		Vector2i val = coverPointVolumeGrid.WorldToGridCoords (point);
-		return coverPointVolumeGrid [val];
+		Vector2i cellCoords = coverPointVolumeGrid.WorldToGridCoords (point);
+		return coverPointVolumeGrid [cellCoords];
 	}
 
 	public void Initialize ()
@@ -173,7 +149,7 @@ public class AiManager : SingletonComponent<AiManager>, IServerComponent
 
 	private void OnDisable ()
 	{
-		if (!Application.isQuitting) {
+		if (!Rust.Application.isQuitting) {
 			OnDisableAgency ();
 			if (UseCover) {
 				OnDisableCover ();
@@ -187,14 +163,14 @@ public class AiManager : SingletonComponent<AiManager>, IServerComponent
 			return nextInterval;
 		}
 		UpdateAgency ();
-		return Random.value + 1f;
+		return UnityEngine.Random.value + 1f;
 	}
 
 	private static bool InterestedInPlayersOnly (BaseEntity entity)
 	{
 		Profiler.BeginSample ("InterestedInPlayersOnly");
 		BasePlayer basePlayer = entity as BasePlayer;
-		if ((Object)(object)basePlayer == (Object)null) {
+		if (basePlayer == null) {
 			Profiler.EndSample ();
 			return false;
 		}

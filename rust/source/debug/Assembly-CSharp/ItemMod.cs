@@ -6,7 +6,7 @@ public class ItemMod : MonoBehaviour
 
 	public virtual void ModInit ()
 	{
-		siblingMods = ((Component)this).GetComponents<ItemMod> ();
+		siblingMods = GetComponents<ItemMod> ();
 	}
 
 	public virtual void OnItemCreated (Item item)

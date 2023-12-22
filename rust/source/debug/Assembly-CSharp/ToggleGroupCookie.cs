@@ -1,24 +1,23 @@
 using System.Linq;
 using Rust;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class ToggleGroupCookie : MonoBehaviour
 {
-	public ToggleGroup group => ((Component)this).GetComponent<ToggleGroup> ();
+	public ToggleGroup group => GetComponent<ToggleGroup> ();
 
 	private void OnEnable ()
 	{
-		string @string = PlayerPrefs.GetString ("ToggleGroupCookie_" + ((Object)this).name);
+		string @string = PlayerPrefs.GetString ("ToggleGroupCookie_" + base.name);
 		if (!string.IsNullOrEmpty (@string)) {
-			Transform val = ((Component)this).transform.Find (@string);
-			if (Object.op_Implicit ((Object)(object)val)) {
-				Toggle component = ((Component)val).GetComponent<Toggle> ();
-				if (Object.op_Implicit ((Object)(object)component)) {
-					Toggle[] componentsInChildren = ((Component)this).GetComponentsInChildren<Toggle> (true);
-					foreach (Toggle val2 in componentsInChildren) {
-						val2.isOn = false;
+			Transform transform = base.transform.Find (@string);
+			if ((bool)transform) {
+				Toggle component = transform.GetComponent<Toggle> ();
+				if ((bool)component) {
+					Toggle[] componentsInChildren = GetComponentsInChildren<Toggle> (includeInactive: true);
+					foreach (Toggle toggle in componentsInChildren) {
+						toggle.isOn = false;
 					}
 					component.isOn = false;
 					component.isOn = true;
@@ -27,37 +26,37 @@ public class ToggleGroupCookie : MonoBehaviour
 				}
 			}
 		}
-		Toggle val3 = group.ActiveToggles ().FirstOrDefault ((Toggle x) => x.isOn);
-		if (Object.op_Implicit ((Object)(object)val3)) {
-			val3.isOn = false;
-			val3.isOn = true;
+		Toggle toggle2 = group.ActiveToggles ().FirstOrDefault ((Toggle x) => x.isOn);
+		if ((bool)toggle2) {
+			toggle2.isOn = false;
+			toggle2.isOn = true;
 		}
 		SetupListeners ();
 	}
 
 	private void OnDisable ()
 	{
-		if (!Application.isQuitting) {
-			Toggle[] componentsInChildren = ((Component)this).GetComponentsInChildren<Toggle> (true);
-			foreach (Toggle val in componentsInChildren) {
-				((UnityEvent<bool>)(object)val.onValueChanged).RemoveListener ((UnityAction<bool>)OnToggleChanged);
+		if (!Rust.Application.isQuitting) {
+			Toggle[] componentsInChildren = GetComponentsInChildren<Toggle> (includeInactive: true);
+			foreach (Toggle toggle in componentsInChildren) {
+				toggle.onValueChanged.RemoveListener (OnToggleChanged);
 			}
 		}
 	}
 
 	private void SetupListeners ()
 	{
-		Toggle[] componentsInChildren = ((Component)this).GetComponentsInChildren<Toggle> (true);
-		foreach (Toggle val in componentsInChildren) {
-			((UnityEvent<bool>)(object)val.onValueChanged).AddListener ((UnityAction<bool>)OnToggleChanged);
+		Toggle[] componentsInChildren = GetComponentsInChildren<Toggle> (includeInactive: true);
+		foreach (Toggle toggle in componentsInChildren) {
+			toggle.onValueChanged.AddListener (OnToggleChanged);
 		}
 	}
 
 	private void OnToggleChanged (bool b)
 	{
-		Toggle val = ((Component)this).GetComponentsInChildren<Toggle> ().FirstOrDefault ((Toggle x) => x.isOn);
-		if (Object.op_Implicit ((Object)(object)val)) {
-			PlayerPrefs.SetString ("ToggleGroupCookie_" + ((Object)this).name, ((Object)((Component)val).gameObject).name);
+		Toggle toggle = GetComponentsInChildren<Toggle> ().FirstOrDefault ((Toggle x) => x.isOn);
+		if ((bool)toggle) {
+			PlayerPrefs.SetString ("ToggleGroupCookie_" + base.name, toggle.gameObject.name);
 		}
 	}
 }

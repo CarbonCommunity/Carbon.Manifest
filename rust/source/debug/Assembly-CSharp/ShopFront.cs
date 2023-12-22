@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Network;
@@ -33,82 +34,61 @@ public class ShopFront : StorageContainer
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("ShopFront.OnRpcMessage", 0);
-		try {
-			if (rpc == 1159607245 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("ShopFront.OnRpcMessage")) {
+			if (rpc == 1159607245 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - AcceptClicked "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - AcceptClicked "));
 				}
-				TimeWarning val2 = TimeWarning.New ("AcceptClicked", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("AcceptClicked")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (1159607245u, "AcceptClicked", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							AcceptClicked (msg2);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in AcceptClicked");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 3168107540u && (Object)(object)player != (Object)null) {
+			if (rpc == 3168107540u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - CancelClicked "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - CancelClicked "));
 				}
-				TimeWarning val5 = TimeWarning.New ("CancelClicked", 0);
-				try {
-					TimeWarning val6 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("CancelClicked")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (3168107540u, "CancelClicked", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val6)?.Dispose ();
 					}
 					try {
-						TimeWarning val7 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg3 = rPCMessage;
 							CancelClicked (msg3);
-						} finally {
-							((IDisposable)val7)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in CancelClicked");
 					}
-				} finally {
-					((IDisposable)val5)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -120,54 +100,38 @@ public class ShopFront : StorageContainer
 
 	public bool IsTradingPlayer (BasePlayer player)
 	{
-		return (Object)(object)player != (Object)null && (IsPlayerCustomer (player) || IsPlayerVendor (player));
+		return player != null && (IsPlayerCustomer (player) || IsPlayerVendor (player));
 	}
 
 	public bool IsPlayerCustomer (BasePlayer player)
 	{
-		return (Object)(object)player == (Object)(object)customerPlayer;
+		return player == customerPlayer;
 	}
 
 	public bool IsPlayerVendor (BasePlayer player)
 	{
-		return (Object)(object)player == (Object)(object)vendorPlayer;
+		return player == vendorPlayer;
 	}
 
 	public bool PlayerInVendorPos (BasePlayer player)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 right = ((Component)this).transform.right;
-		Vector3 val = ((Component)player).transform.position - ((Component)this).transform.position;
-		return Vector3.Dot (right, ((Vector3)(ref val)).normalized) <= 0f - AngleDotProduct;
+		return Vector3.Dot (base.transform.right, (player.transform.position - base.transform.position).normalized) <= 0f - AngleDotProduct;
 	}
 
 	public bool PlayerInCustomerPos (BasePlayer player)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 right = ((Component)this).transform.right;
-		Vector3 val = ((Component)player).transform.position - ((Component)this).transform.position;
-		return Vector3.Dot (right, ((Vector3)(ref val)).normalized) >= AngleDotProduct;
+		return Vector3.Dot (base.transform.right, (player.transform.position - base.transform.position).normalized) >= AngleDotProduct;
 	}
 
 	public bool LootEligable (BasePlayer player)
 	{
-		if ((Object)(object)player == (Object)null) {
+		if (player == null) {
 			return false;
 		}
-		if (PlayerInVendorPos (player) && (Object)(object)vendorPlayer == (Object)null) {
+		if (PlayerInVendorPos (player) && vendorPlayer == null) {
 			return true;
 		}
-		if (PlayerInCustomerPos (player) && (Object)(object)customerPlayer == (Object)null) {
+		if (PlayerInCustomerPos (player) && customerPlayer == null) {
 			return true;
 		}
 		return false;
@@ -180,23 +144,21 @@ public class ShopFront : StorageContainer
 		SetFlag (Flags.Reserved3, b: false);
 		vendorInventory.SetLocked (isLocked: false);
 		customerInventory.SetLocked (isLocked: false);
-		((FacepunchBehaviour)this).CancelInvoke ((Action)CompleteTrade);
+		CancelInvoke (CompleteTrade);
 	}
 
 	public void CompleteTrade ()
 	{
-		//IL_00fe: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0103: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)vendorPlayer != (Object)null && (Object)(object)customerPlayer != (Object)null && HasFlag (Flags.Reserved1) && HasFlag (Flags.Reserved2)) {
+		if (vendorPlayer != null && customerPlayer != null && HasFlag (Flags.Reserved1) && HasFlag (Flags.Reserved2)) {
 			try {
 				swappingItems = true;
 				for (int num = vendorInventory.capacity - 1; num >= 0; num--) {
 					Item slot = vendorInventory.GetSlot (num);
 					Item slot2 = customerInventory.GetSlot (num);
-					if (Object.op_Implicit ((Object)(object)customerPlayer) && slot != null) {
+					if ((bool)customerPlayer && slot != null) {
 						customerPlayer.GiveItem (slot);
 					}
-					if (Object.op_Implicit ((Object)(object)vendorPlayer) && slot2 != null) {
+					if ((bool)vendorPlayer && slot2 != null) {
 						vendorPlayer.GiveItem (slot2);
 					}
 				}
@@ -213,7 +175,7 @@ public class ShopFront : StorageContainer
 	[RPC_Server.IsVisible (3f)]
 	public void AcceptClicked (RPCMessage msg)
 	{
-		if (IsTradingPlayer (msg.player) && !((Object)(object)vendorPlayer == (Object)null) && !((Object)(object)customerPlayer == (Object)null)) {
+		if (IsTradingPlayer (msg.player) && !(vendorPlayer == null) && !(customerPlayer == null)) {
 			if (IsPlayerVendor (msg.player)) {
 				SetFlag (Flags.Reserved1, b: true);
 				vendorInventory.SetLocked (isLocked: true);
@@ -223,7 +185,7 @@ public class ShopFront : StorageContainer
 			}
 			if (HasFlag (Flags.Reserved1) && HasFlag (Flags.Reserved2)) {
 				SetFlag (Flags.Reserved3, b: true);
-				((FacepunchBehaviour)this).Invoke ((Action)CompleteTrade, 2f);
+				Invoke (CompleteTrade, 2f);
 			}
 		}
 	}
@@ -233,9 +195,9 @@ public class ShopFront : StorageContainer
 	public void CancelClicked (RPCMessage msg)
 	{
 		if (IsTradingPlayer (msg.player)) {
-			if (Object.op_Implicit ((Object)(object)vendorPlayer)) {
+			if ((bool)vendorPlayer) {
 			}
-			if (Object.op_Implicit ((Object)(object)customerPlayer)) {
+			if ((bool)customerPlayer) {
 			}
 			ResetTrade ();
 		}
@@ -275,7 +237,7 @@ public class ShopFront : StorageContainer
 
 	private bool CanAcceptVendorItem (Item item, int targetSlot)
 	{
-		if (swappingItems || ((Object)(object)vendorPlayer != (Object)null && (Object)(object)item.GetOwnerPlayer () == (Object)(object)vendorPlayer) || vendorInventory.itemList.Contains (item)) {
+		if (swappingItems || (vendorPlayer != null && item.GetOwnerPlayer () == vendorPlayer) || vendorInventory.itemList.Contains (item)) {
 			return true;
 		}
 		return false;
@@ -283,7 +245,7 @@ public class ShopFront : StorageContainer
 
 	private bool CanAcceptCustomerItem (Item item, int targetSlot)
 	{
-		if (swappingItems || ((Object)(object)customerPlayer != (Object)null && (Object)(object)item.GetOwnerPlayer () == (Object)(object)customerPlayer) || customerInventory.itemList.Contains (item)) {
+		if (swappingItems || (customerPlayer != null && item.GetOwnerPlayer () == customerPlayer) || customerInventory.itemList.Contains (item)) {
 			return true;
 		}
 		return false;
@@ -333,10 +295,10 @@ public class ShopFront : StorageContainer
 	{
 		if (IsTradingPlayer (player)) {
 			ReturnPlayerItems (player);
-			if ((Object)(object)player == (Object)(object)vendorPlayer) {
+			if (player == vendorPlayer) {
 				vendorPlayer = null;
 			}
-			if ((Object)(object)player == (Object)(object)customerPlayer) {
+			if (player == customerPlayer) {
 				customerPlayer = null;
 			}
 			UpdatePlayers ();
@@ -352,10 +314,10 @@ public class ShopFront : StorageContainer
 			player.inventory.loot.AddContainer (customerInventory);
 			player.inventory.loot.SendImmediate ();
 		}
-		if (PlayerInVendorPos (player) && (Object)(object)vendorPlayer == (Object)null) {
+		if (PlayerInVendorPos (player) && vendorPlayer == null) {
 			vendorPlayer = player;
 		} else {
-			if (!PlayerInCustomerPos (player) || !((Object)(object)customerPlayer == (Object)null)) {
+			if (!PlayerInCustomerPos (player) || !(customerPlayer == null)) {
 				return false;
 			}
 			customerPlayer = player;
@@ -367,12 +329,6 @@ public class ShopFront : StorageContainer
 
 	public void UpdatePlayers ()
 	{
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0059: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
-		ClientRPC<NetworkableId, NetworkableId> (null, "CLIENT_ReceivePlayers", (NetworkableId)(((Object)(object)vendorPlayer == (Object)null) ? default(NetworkableId) : vendorPlayer.net.ID), (NetworkableId)(((Object)(object)customerPlayer == (Object)null) ? default(NetworkableId) : customerPlayer.net.ID));
+		ClientRPC (null, "CLIENT_ReceivePlayers", (vendorPlayer == null) ? default(NetworkableId) : vendorPlayer.net.ID, (customerPlayer == null) ? default(NetworkableId) : customerPlayer.net.ID);
 	}
 }

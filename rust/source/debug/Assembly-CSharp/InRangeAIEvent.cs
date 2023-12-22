@@ -20,22 +20,18 @@ public class InRangeAIEvent : BaseAIEvent
 
 	public override AIEventData ToProto ()
 	{
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Expected O, but got Unknown
-		AIEventData val = base.ToProto ();
-		val.inRangeData = new InRangeAIEventData ();
-		val.inRangeData.range = Range;
-		return val;
+		AIEventData aIEventData = base.ToProto ();
+		aIEventData.inRangeData = new InRangeAIEventData ();
+		aIEventData.inRangeData.range = Range;
+		return aIEventData;
 	}
 
 	public override void Execute (AIMemory memory, AIBrainSenses senses, StateStatus stateStatus)
 	{
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
 		BaseEntity baseEntity = memory.Entity.Get (base.InputEntityMemorySlot);
 		base.Result = false;
-		if (!((Object)(object)baseEntity == (Object)null)) {
-			bool flag = Vector3Ex.Distance2D (((Component)base.Owner).transform.position, ((Component)baseEntity).transform.position) <= Range;
+		if (!(baseEntity == null)) {
+			bool flag = Vector3Ex.Distance2D (base.Owner.transform.position, baseEntity.transform.position) <= Range;
 			base.Result = (base.Inverted ? (!flag) : flag);
 		}
 	}

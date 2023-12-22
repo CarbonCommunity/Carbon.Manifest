@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -122,32 +123,24 @@ public class ResourceDispenser : EntityComponent<BaseEntity>, IServerComponent
 
 	public void DoGather (HitInfo info)
 	{
-		//IL_0101: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0229: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0244: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0249: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0251: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0256: Unknown result type (might be due to invalid IL or missing references)
 		if (!base.baseEntity.isServer || !info.CanGather || info.DidGather) {
 			return;
 		}
 		if (gatherType == GatherType.UNSET) {
-			Debug.LogWarning ((object)("Object :" + ((Object)((Component)this).gameObject).name + ": has unset gathertype!"));
+			Debug.LogWarning ("Object :" + base.gameObject.name + ": has unset gathertype!");
 			return;
 		}
 		float num = 0f;
 		float num2 = 0f;
-		BaseMelee baseMelee = (((Object)(object)info.Weapon == (Object)null) ? null : (info.Weapon as BaseMelee));
-		if ((Object)(object)baseMelee != (Object)null) {
+		BaseMelee baseMelee = ((info.Weapon == null) ? null : (info.Weapon as BaseMelee));
+		if (baseMelee != null) {
 			GatherPropertyEntry gatherInfoFromIndex = baseMelee.GetGatherInfoFromIndex (gatherType);
 			num = gatherInfoFromIndex.gatherDamage * info.gatherScale;
 			num2 = gatherInfoFromIndex.destroyFraction;
 			if (num == 0f) {
 				return;
 			}
-			baseMelee.SendPunch (new Vector3 (Random.Range (0.5f, 1f), Random.Range (-0.25f, -0.5f), 0f) * -30f * (gatherInfoFromIndex.conditionLost / 6f), 0.05f);
+			baseMelee.SendPunch (new Vector3 (UnityEngine.Random.Range (0.5f, 1f), UnityEngine.Random.Range (-0.25f, -0.5f), 0f) * -30f * (gatherInfoFromIndex.conditionLost / 6f), 0.05f);
 			baseMelee.LoseCondition (gatherInfoFromIndex.conditionLost);
 			if (!baseMelee.IsValid () || baseMelee.IsBroken ()) {
 				return;
@@ -170,7 +163,7 @@ public class ResourceDispenser : EntityComponent<BaseEntity>, IServerComponent
 		} else {
 			num5 = (num4 - fractionRemaining) * base.baseEntity.MaxHealth ();
 		}
-		HitInfo hitInfo = new HitInfo (info.Initiator, base.baseEntity, DamageType.Generic, num5, ((Component)this).transform.position);
+		HitInfo hitInfo = new HitInfo (info.Initiator, base.baseEntity, DamageType.Generic, num5, base.transform.position);
 		hitInfo.gatherScale = 0f;
 		hitInfo.PointStart = info.PointStart;
 		hitInfo.PointEnd = info.PointEnd;
@@ -181,7 +174,7 @@ public class ResourceDispenser : EntityComponent<BaseEntity>, IServerComponent
 
 	public void AssignFinishBonus (BasePlayer player, float fraction, AttackEntity weapon)
 	{
-		((Component)this).SendMessage ("FinishBonusAssigned", (SendMessageOptions)1);
+		SendMessage ("FinishBonusAssigned", SendMessageOptions.DontRequireReceiver);
 		if (fraction <= 0f || finishBonus == null) {
 			return;
 		}
@@ -203,13 +196,12 @@ public class ResourceDispenser : EntityComponent<BaseEntity>, IServerComponent
 
 	private void GiveResources (BasePlayer entity, float gatherDamage, float destroyFraction, AttackEntity attackWeapon)
 	{
-		//IL_023f: Unknown result type (might be due to invalid IL or missing references)
 		if (!entity.IsValid () || gatherDamage <= 0f) {
 			return;
 		}
 		ItemAmount itemAmount = null;
 		int num = containedItems.Count;
-		int num2 = Random.Range (0, containedItems.Count);
+		int num2 = UnityEngine.Random.Range (0, containedItems.Count);
 		while (num > 0) {
 			if (num2 >= containedItems.Count) {
 				num2 = 0;
@@ -226,19 +218,19 @@ public class ResourceDispenser : EntityComponent<BaseEntity>, IServerComponent
 		}
 		GiveResourceFromItem (entity, itemAmount, gatherDamage, destroyFraction, attackWeapon);
 		UpdateVars ();
-		if (Object.op_Implicit ((Object)(object)entity)) {
+		if ((bool)entity) {
 			Item item = attackWeapon.GetItem ();
 			Debug.Assert (item != null, string.Concat ("Attack Weapon ", attackWeapon, " has no Item"));
-			Debug.Assert (((ItemId)(ref attackWeapon.ownerItemUID)).IsValid, string.Concat ("Attack Weapon ", attackWeapon, " ownerItemUID is 0"));
-			Debug.Assert ((Object)(object)attackWeapon.GetParentEntity () != (Object)null, string.Concat ("Attack Weapon ", attackWeapon, " GetParentEntity is null"));
+			Debug.Assert (attackWeapon.ownerItemUID.IsValid, string.Concat ("Attack Weapon ", attackWeapon, " ownerItemUID is 0"));
+			Debug.Assert (attackWeapon.GetParentEntity () != null, string.Concat ("Attack Weapon ", attackWeapon, " GetParentEntity is null"));
 			Debug.Assert (attackWeapon.GetParentEntity ().IsValid (), string.Concat ("Attack Weapon ", attackWeapon, " GetParentEntity is not valid"));
-			Debug.Assert ((Object)(object)attackWeapon.GetParentEntity ().ToPlayer () != (Object)null, string.Concat ("Attack Weapon ", attackWeapon, " GetParentEntity is not a player"));
+			Debug.Assert (attackWeapon.GetParentEntity ().ToPlayer () != null, string.Concat ("Attack Weapon ", attackWeapon, " GetParentEntity is not a player"));
 			Debug.Assert (!attackWeapon.GetParentEntity ().ToPlayer ().IsDead (), string.Concat ("Attack Weapon ", attackWeapon, " GetParentEntity is not valid"));
 			BasePlayer ownerPlayer = attackWeapon.GetOwnerPlayer ();
-			Debug.Assert ((Object)(object)ownerPlayer != (Object)null, string.Concat ("Attack Weapon ", attackWeapon, " ownerPlayer is null"));
-			Debug.Assert ((Object)(object)ownerPlayer == (Object)(object)entity, string.Concat ("Attack Weapon ", attackWeapon, " ownerPlayer is not player"));
-			if ((Object)(object)ownerPlayer != (Object)null) {
-				Debug.Assert ((Object)(object)ownerPlayer.inventory != (Object)null, string.Concat ("Attack Weapon ", attackWeapon, " ownerPlayer inventory is null"));
+			Debug.Assert (ownerPlayer != null, string.Concat ("Attack Weapon ", attackWeapon, " ownerPlayer is null"));
+			Debug.Assert (ownerPlayer == entity, string.Concat ("Attack Weapon ", attackWeapon, " ownerPlayer is not player"));
+			if (ownerPlayer != null) {
+				Debug.Assert (ownerPlayer.inventory != null, string.Concat ("Attack Weapon ", attackWeapon, " ownerPlayer inventory is null"));
 				Debug.Assert (ownerPlayer.inventory.FindItemUID (attackWeapon.ownerItemUID) != null, string.Concat ("Attack Weapon ", attackWeapon, " FindItemUID is null"));
 			}
 		}
@@ -261,27 +253,27 @@ public class ResourceDispenser : EntityComponent<BaseEntity>, IServerComponent
 		}
 		float num = Mathf.Min (gatherDamage, base.baseEntity.Health ()) / base.baseEntity.MaxHealth ();
 		float num2 = itemAmt.startAmount / startingItemCounts;
-		float num3 = itemAmt.startAmount * num / num2;
-		float num4 = Mathf.Clamp (num3, 0f, itemAmt.amount);
-		num4 = Mathf.Round (num4);
-		float num5 = num4 * destroyFraction * 2f;
-		if (itemAmt.amount <= num4 + num5) {
-			float num6 = (num4 + num5) / itemAmt.amount;
-			num4 /= num6;
-			num5 /= num6;
+		float value = itemAmt.startAmount * num / num2;
+		float f = Mathf.Clamp (value, 0f, itemAmt.amount);
+		f = Mathf.Round (f);
+		float num3 = f * destroyFraction * 2f;
+		if (itemAmt.amount <= f + num3) {
+			float num4 = (f + num3) / itemAmt.amount;
+			f /= num4;
+			num3 /= num4;
 		}
-		itemAmt.amount -= Mathf.Floor (num4);
-		itemAmt.amount -= Mathf.Floor (num5);
-		if (num4 < 1f) {
-			num4 = ((Random.Range (0f, 1f) <= num4) ? 1f : 0f);
+		itemAmt.amount -= Mathf.Floor (f);
+		itemAmt.amount -= Mathf.Floor (num3);
+		if (f < 1f) {
+			f = ((UnityEngine.Random.Range (0f, 1f) <= f) ? 1f : 0f);
 			itemAmt.amount = 0f;
 		}
 		if (itemAmt.amount < 0f) {
 			itemAmt.amount = 0f;
 		}
-		if (num4 >= 1f) {
-			int num7 = CalculateGatherBonus (entity, itemAmt, num4);
-			int iAmount = Mathf.FloorToInt (num4) + num7;
+		if (f >= 1f) {
+			int num5 = CalculateGatherBonus (entity, itemAmt, f);
+			int iAmount = Mathf.FloorToInt (f) + num5;
 			Item item = ItemManager.CreateByItemID (itemAmt.itemid, iAmount, 0uL);
 			if (item != null) {
 				OverrideOwnership (item, attackWeapon);
@@ -293,14 +285,14 @@ public class ResourceDispenser : EntityComponent<BaseEntity>, IServerComponent
 
 	private int CalculateGatherBonus (BaseEntity entity, ItemAmount item, float amountToGive)
 	{
-		if ((Object)(object)entity == (Object)null) {
+		if (entity == null) {
 			return 0;
 		}
 		BasePlayer basePlayer = entity.ToPlayer ();
-		if ((Object)(object)basePlayer == (Object)null) {
+		if (basePlayer == null) {
 			return 0;
 		}
-		if ((Object)(object)basePlayer.modifiers == (Object)null) {
+		if (basePlayer.modifiers == null) {
 			return 0;
 		}
 		amountToGive = Mathf.FloorToInt (amountToGive);

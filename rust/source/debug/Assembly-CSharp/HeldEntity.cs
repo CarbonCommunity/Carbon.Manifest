@@ -1,3 +1,5 @@
+#define ENABLE_PROFILER
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -99,18 +101,14 @@ public class HeldEntity : BaseEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("HeldEntity.OnRpcMessage", 0);
-		try {
-		} finally {
-			((IDisposable)val)?.Dispose ();
+		using (TimeWarning.New ("HeldEntity.OnRpcMessage")) {
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
 
 	public void SendPunch (Vector3 amount, float duration)
 	{
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		ClientRPCPlayer<Vector3, float> (null, GetOwnerPlayer (), "CL_Punch", amount, duration);
+		ClientRPCPlayer (null, GetOwnerPlayer (), "CL_Punch", amount, duration);
 	}
 
 	public bool LightsOn ()
@@ -130,7 +128,7 @@ public class HeldEntity : BaseEntity
 			return null;
 		}
 		BasePlayer basePlayer = baseEntity.ToPlayer ();
-		if ((Object)(object)basePlayer == (Object)null) {
+		if (basePlayer == null) {
 			return null;
 		}
 		if (basePlayer.IsDead ()) {
@@ -142,7 +140,7 @@ public class HeldEntity : BaseEntity
 	public Connection GetOwnerConnection ()
 	{
 		BasePlayer ownerPlayer = GetOwnerPlayer ();
-		if ((Object)(object)ownerPlayer == (Object)null) {
+		if (ownerPlayer == null) {
 			return null;
 		}
 		if (ownerPlayer.net == null) {
@@ -155,7 +153,7 @@ public class HeldEntity : BaseEntity
 	{
 		Assert.IsTrue (base.isServer, "Should be server!");
 		Assert.IsTrue (player.isServer, "Player should be serverside!");
-		((Component)this).gameObject.Identity ();
+		base.gameObject.Identity ();
 		SetParent (player, handBone);
 		SetHeld (bHeld: false);
 	}
@@ -195,10 +193,10 @@ public class HeldEntity : BaseEntity
 	public void UpdateHeldItemVisibility ()
 	{
 		bool flag = false;
-		if (Object.op_Implicit ((Object)(object)GetOwnerPlayer ())) {
+		if ((bool)GetOwnerPlayer ()) {
 			Profiler.BeginSample ("HeldEntity.UpdateHolsterVisiblity");
-			bool flag2 = (Object)(object)GetOwnerPlayer ().GetHeldEntity () == (Object)(object)this;
-			flag = ((!Server.showHolsteredItems && !flag2) ? UpdateVisiblity_Invis () : (flag2 ? UpdateVisibility_Hand () : ((!holsterVisible) ? UpdateVisiblity_Invis () : UpdateVisiblity_Holster ())));
+			bool flag2 = GetOwnerPlayer ().GetHeldEntity () == this;
+			flag = ((!ConVar.Server.showHolsteredItems && !flag2) ? UpdateVisiblity_Invis () : (flag2 ? UpdateVisibility_Hand () : ((!holsterVisible) ? UpdateVisiblity_Invis () : UpdateVisiblity_Holster ())));
 			Profiler.EndSample ();
 		} else if (genericVisible) {
 			flag = UpdateVisibility_GenericVis ();
@@ -259,9 +257,6 @@ public class HeldEntity : BaseEntity
 
 	public virtual void SetHeld (bool bHeld)
 	{
-		//IL_0056: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a0: Unknown result type (might be due to invalid IL or missing references)
 		Assert.IsTrue (base.isServer, "Should be server!");
 		SetFlag (Flags.Reserved4, bHeld);
 		if (!bHeld) {
@@ -270,9 +265,9 @@ public class HeldEntity : BaseEntity
 		base.limitNetworking = !bHeld;
 		SetFlag (Flags.Disabled, !bHeld);
 		SendNetworkUpdate ();
-		if (bHeld && TimeSince.op_Implicit (lastHeldEvent) > 1f && Analytics.Server.Enabled && !GetOwnerPlayer ().IsNpc) {
+		if (bHeld && (float)lastHeldEvent > 1f && Analytics.Server.Enabled && !GetOwnerPlayer ().IsNpc) {
 			Analytics.Server.HeldItemDeployed (GetItem ().info);
-			lastHeldEvent = TimeSince.op_Implicit (0f);
+			lastHeldEvent = 0f;
 		}
 		OnHeldChanged ();
 	}
@@ -293,9 +288,8 @@ public class HeldEntity : BaseEntity
 
 	protected Item GetOwnerItem ()
 	{
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer ownerPlayer = GetOwnerPlayer ();
-		if ((Object)(object)ownerPlayer == (Object)null || (Object)(object)ownerPlayer.inventory == (Object)null) {
+		if (ownerPlayer == null || ownerPlayer.inventory == null) {
 			return null;
 		}
 		return ownerPlayer.inventory.FindItemUID (ownerItemUID);
@@ -310,7 +304,7 @@ public class HeldEntity : BaseEntity
 	{
 		Item ownerItem = GetOwnerItem ();
 		if (ownerItem == null) {
-			Debug.LogWarning ((object)"GetOwnerItem - null!", (Object)(object)this);
+			Debug.LogWarning ("GetOwnerItem - null!", this);
 			return null;
 		}
 		return ownerItem.info;
@@ -330,8 +324,6 @@ public class HeldEntity : BaseEntity
 
 	public virtual void SetupHeldEntity (Item item)
 	{
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
 		ownerItemUID = item.uid;
 		InitOwnerPlayer ();
 	}
@@ -354,7 +346,7 @@ public class HeldEntity : BaseEntity
 	private void InitOwnerPlayer ()
 	{
 		BasePlayer ownerPlayer = GetOwnerPlayer ();
-		if ((Object)(object)ownerPlayer != (Object)null) {
+		if (ownerPlayer != null) {
 			SetOwnerPlayer (ownerPlayer);
 		} else {
 			ClearOwnerPlayer ();
@@ -363,10 +355,8 @@ public class HeldEntity : BaseEntity
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
-		info.msg.heldEntity = Pool.Get<HeldEntity> ();
+		info.msg.heldEntity = Facepunch.Pool.Get<ProtoBuf.HeldEntity> ();
 		info.msg.heldEntity.itemUID = ownerItemUID;
 	}
 
@@ -416,8 +406,6 @@ public class HeldEntity : BaseEntity
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (info.msg.heldEntity != null) {
 			ownerItemUID = info.msg.heldEntity.itemUID;

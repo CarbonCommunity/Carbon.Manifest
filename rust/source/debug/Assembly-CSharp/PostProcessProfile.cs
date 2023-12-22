@@ -13,7 +13,7 @@ public sealed class PostProcessProfile : ScriptableObject
 
 	private void OnEnable ()
 	{
-		settings.RemoveAll ((PostProcessEffectSettings x) => (Object)(object)x == (Object)null);
+		settings.RemoveAll ((PostProcessEffectSettings x) => x == null);
 	}
 
 	public T AddSettings<T> () where T : PostProcessEffectSettings
@@ -26,9 +26,9 @@ public sealed class PostProcessProfile : ScriptableObject
 		if (HasSettings (type)) {
 			throw new InvalidOperationException ("Effect already exists in the stack");
 		}
-		PostProcessEffectSettings postProcessEffectSettings = (PostProcessEffectSettings)(object)ScriptableObject.CreateInstance (type);
-		((Object)postProcessEffectSettings).hideFlags = (HideFlags)3;
-		((Object)postProcessEffectSettings).name = type.Name;
+		PostProcessEffectSettings postProcessEffectSettings = (PostProcessEffectSettings)ScriptableObject.CreateInstance (type);
+		postProcessEffectSettings.hideFlags = HideFlags.HideInHierarchy | HideFlags.HideInInspector;
+		postProcessEffectSettings.name = type.Name;
 		postProcessEffectSettings.enabled.value = true;
 		settings.Add (postProcessEffectSettings);
 		isDirty = true;
@@ -54,7 +54,7 @@ public sealed class PostProcessProfile : ScriptableObject
 	{
 		int num = -1;
 		for (int i = 0; i < settings.Count; i++) {
-			if (((object)settings [i]).GetType () == type) {
+			if (settings [i].GetType () == type) {
 				num = i;
 				break;
 			}
@@ -74,7 +74,7 @@ public sealed class PostProcessProfile : ScriptableObject
 	public bool HasSettings (Type type)
 	{
 		foreach (PostProcessEffectSettings setting in settings) {
-			if (((object)setting).GetType () == type) {
+			if (setting.GetType () == type) {
 				return true;
 			}
 		}
@@ -96,7 +96,7 @@ public sealed class PostProcessProfile : ScriptableObject
 		Type typeFromHandle = typeof(T);
 		outSetting = null;
 		foreach (PostProcessEffectSettings setting in settings) {
-			if (((object)setting).GetType () == typeFromHandle) {
+			if (setting.GetType () == typeFromHandle) {
 				outSetting = (T)setting;
 				return true;
 			}

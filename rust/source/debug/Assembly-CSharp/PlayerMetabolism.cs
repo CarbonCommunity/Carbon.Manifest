@@ -1,4 +1,4 @@
-using System;
+#define ENABLE_PROFILER
 using ConVar;
 using Facepunch;
 using Network;
@@ -45,10 +45,7 @@ public class PlayerMetabolism : BaseMetabolism<BasePlayer>
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("PlayerMetabolism.OnRpcMessage", 0);
-		try {
-		} finally {
-			((IDisposable)val)?.Dispose ();
+		using (TimeWarning.New ("PlayerMetabolism.OnRpcMessage")) {
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -132,9 +129,6 @@ public class PlayerMetabolism : BaseMetabolism<BasePlayer>
 
 	protected override void RunMetabolism (BaseCombatEntity ownerEntity, float delta)
 	{
-		//IL_0548: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0564: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0581: Unknown result type (might be due to invalid IL or missing references)
 		BaseGameMode activeGameMode = BaseGameMode.GetActiveGameMode (serverside: true);
 		Profiler.BeginSample ("Temperature");
 		float currentTemperature = owner.currentTemperature;
@@ -147,7 +141,7 @@ public class PlayerMetabolism : BaseMetabolism<BasePlayer>
 		owner.SetPlayerFlag (BasePlayer.PlayerFlags.Workbench3, currentCraftLevel == 3f);
 		owner.SetPlayerFlag (BasePlayer.PlayerFlags.SafeZone, owner.InSafeZone ());
 		Profiler.EndSample ();
-		if ((Object)(object)activeGameMode == (Object)null || activeGameMode.allowTemperature) {
+		if (activeGameMode == null || activeGameMode.allowTemperature) {
 			float num = currentTemperature;
 			num -= DeltaWet () * 34f;
 			float num2 = Mathf.Clamp (owner.baseProtection.amounts [18] * 1.5f, -1f, 1f);
@@ -200,25 +194,25 @@ public class PlayerMetabolism : BaseMetabolism<BasePlayer>
 		float num15 = owner.AirFactor ();
 		float num16 = ((num15 > oxygen.value) ? 1f : 0.1f);
 		oxygen.MoveTowards (num15, delta * num16);
-		float num17 = 0f;
-		float num18 = 0f;
+		float f = 0f;
+		float f2 = 0f;
 		Profiler.BeginSample ("Weather");
 		if (owner.IsOutside (owner.eyes.position)) {
-			num17 = Climate.GetRain (owner.eyes.position) * Weather.wetness_rain;
-			num18 = Climate.GetSnow (owner.eyes.position) * Weather.wetness_snow;
+			f = Climate.GetRain (owner.eyes.position) * Weather.wetness_rain;
+			f2 = Climate.GetSnow (owner.eyes.position) * Weather.wetness_snow;
 		}
 		Profiler.EndSample ();
 		bool flag = owner.baseProtection.amounts [4] > 0f;
 		float currentEnvironmentalWetness = owner.currentEnvironmentalWetness;
 		currentEnvironmentalWetness = Mathf.Clamp (currentEnvironmentalWetness, 0f, 0.8f);
-		float num19 = owner.WaterFactor ();
-		if (!flag && num19 > 0f) {
-			wetness.value = Mathf.Max (wetness.value, Mathf.Clamp (num19, wetness.min, wetness.max));
+		float num17 = owner.WaterFactor ();
+		if (!flag && num17 > 0f) {
+			wetness.value = Mathf.Max (wetness.value, Mathf.Clamp (num17, wetness.min, wetness.max));
 		}
-		float num20 = Mathx.Max (wetness.value, num17, num18, currentEnvironmentalWetness);
-		num20 = Mathf.Min (num20, flag ? 0f : num20);
-		wetness.MoveTowards (num20, delta * 0.05f);
-		if (num19 < wetness.value && currentEnvironmentalWetness <= 0f) {
+		float num18 = Mathx.Max (wetness.value, f, f2, currentEnvironmentalWetness);
+		num18 = Mathf.Min (num18, flag ? 0f : num18);
+		wetness.MoveTowards (num18, delta * 0.05f);
+		if (num17 < wetness.value && currentEnvironmentalWetness <= 0f) {
 			wetness.MoveTowards (0f, delta * 0.2f * Mathf.InverseLerp (0f, 100f, currentTemperature));
 		}
 		poison.MoveTowards (0f, delta * (5f / 9f));
@@ -232,12 +226,12 @@ public class PlayerMetabolism : BaseMetabolism<BasePlayer>
 			}
 		}
 		if (pending_health.value > 0f) {
-			float num21 = Mathf.Min (1f * delta, pending_health.value);
-			ownerEntity.Heal (num21);
+			float num19 = Mathf.Min (1f * delta, pending_health.value);
+			ownerEntity.Heal (num19);
 			if (ownerEntity.healthFraction == 1f) {
 				pending_health.value = 0f;
 			} else {
-				pending_health.Subtract (num21);
+				pending_health.Subtract (num19);
 			}
 		}
 	}
@@ -272,49 +266,45 @@ public class PlayerMetabolism : BaseMetabolism<BasePlayer>
 			return;
 		}
 		isDirty = false;
-		PlayerMetabolism val = Save ();
-		try {
-			base.baseEntity.ClientRPCPlayerAndSpectators<PlayerMetabolism> (null, base.baseEntity, "UpdateMetabolism", val);
-		} finally {
-			((IDisposable)val)?.Dispose ();
-		}
+		using ProtoBuf.PlayerMetabolism arg = Save ();
+		base.baseEntity.ClientRPCPlayerAndSpectators (null, base.baseEntity, "UpdateMetabolism", arg);
 	}
 
 	public bool CanConsume ()
 	{
-		if (Object.op_Implicit ((Object)(object)owner) && owner.IsHeadUnderwater ()) {
+		if ((bool)owner && owner.IsHeadUnderwater ()) {
 			return false;
 		}
-		return Time.time - lastConsumeTime > 1f;
+		return UnityEngine.Time.time - lastConsumeTime > 1f;
 	}
 
 	public void MarkConsumption ()
 	{
-		lastConsumeTime = Time.time;
+		lastConsumeTime = UnityEngine.Time.time;
 	}
 
-	public PlayerMetabolism Save ()
+	public ProtoBuf.PlayerMetabolism Save ()
 	{
-		PlayerMetabolism val = Pool.Get<PlayerMetabolism> ();
-		val.calories = calories.value;
-		val.hydration = hydration.value;
-		val.heartrate = heartrate.value;
-		val.temperature = temperature.value;
-		val.radiation_level = radiation_level.value;
-		val.radiation_poisoning = radiation_poison.value;
-		val.wetness = wetness.value;
-		val.dirtyness = dirtyness.value;
-		val.oxygen = oxygen.value;
-		val.bleeding = bleeding.value;
-		val.comfort = comfort.value;
-		val.pending_health = pending_health.value;
-		if (Object.op_Implicit ((Object)(object)owner)) {
-			val.health = owner.Health ();
+		ProtoBuf.PlayerMetabolism playerMetabolism = Facepunch.Pool.Get<ProtoBuf.PlayerMetabolism> ();
+		playerMetabolism.calories = calories.value;
+		playerMetabolism.hydration = hydration.value;
+		playerMetabolism.heartrate = heartrate.value;
+		playerMetabolism.temperature = temperature.value;
+		playerMetabolism.radiation_level = radiation_level.value;
+		playerMetabolism.radiation_poisoning = radiation_poison.value;
+		playerMetabolism.wetness = wetness.value;
+		playerMetabolism.dirtyness = dirtyness.value;
+		playerMetabolism.oxygen = oxygen.value;
+		playerMetabolism.bleeding = bleeding.value;
+		playerMetabolism.comfort = comfort.value;
+		playerMetabolism.pending_health = pending_health.value;
+		if ((bool)owner) {
+			playerMetabolism.health = owner.Health ();
 		}
-		return val;
+		return playerMetabolism;
 	}
 
-	public void Load (PlayerMetabolism s)
+	public void Load (ProtoBuf.PlayerMetabolism s)
 	{
 		calories.SetValue (s.calories);
 		hydration.SetValue (s.hydration);
@@ -328,7 +318,7 @@ public class PlayerMetabolism : BaseMetabolism<BasePlayer>
 		oxygen.value = s.oxygen;
 		bleeding.value = s.bleeding;
 		pending_health.value = s.pending_health;
-		if (Object.op_Implicit ((Object)(object)owner)) {
+		if ((bool)owner) {
 			owner.health = s.health;
 		}
 	}

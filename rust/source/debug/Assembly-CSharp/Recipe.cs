@@ -37,7 +37,7 @@ public class Recipe : ScriptableObject
 
 	public string DisplayName {
 		get {
-			if ((Object)(object)ProducedItem != (Object)null) {
+			if (ProducedItem != null) {
 				return ProducedItem.displayName.translated;
 			}
 			if (SpawnedItem != null) {
@@ -49,7 +49,7 @@ public class Recipe : ScriptableObject
 
 	public string DisplayDescription {
 		get {
-			if ((Object)(object)ProducedItem != (Object)null) {
+			if (ProducedItem != null) {
 				return ProducedItem.displayDescription.translated;
 			}
 			if (SpawnedItem != null) {
@@ -61,7 +61,7 @@ public class Recipe : ScriptableObject
 
 	public Sprite DisplayIcon {
 		get {
-			if ((Object)(object)ProducedItem != (Object)null) {
+			if (ProducedItem != null) {
 				return ProducedItem.iconSprite;
 			}
 			if (SpawnedItem != null) {
@@ -82,7 +82,7 @@ public class Recipe : ScriptableObject
 		RecipeIngredient[] ingredients = Ingredients;
 		for (int i = 0; i < ingredients.Length; i++) {
 			RecipeIngredient recipeIngredient = ingredients [i];
-			if ((Object)(object)item.info == (Object)(object)recipeIngredient.Ingredient) {
+			if (item.info == recipeIngredient.Ingredient) {
 				return true;
 			}
 		}

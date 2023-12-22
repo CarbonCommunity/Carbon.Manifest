@@ -13,8 +13,8 @@ public class EggSwap : MonoBehaviour
 	public void HideAll ()
 	{
 		Renderer[] array = eggRenderers;
-		foreach (Renderer val in array) {
-			val.enabled = false;
+		foreach (Renderer renderer in array) {
+			renderer.enabled = false;
 		}
 	}
 }

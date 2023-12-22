@@ -10,24 +10,23 @@ public class RandomStaticObject : MonoBehaviour
 
 	protected void Start ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		uint num = SeedEx.Seed (((Component)this).transform.position, World.Seed + Seed);
-		if (SeedRandom.Value (ref num) > Probability) {
+		uint seed = base.transform.position.Seed (World.Seed + Seed);
+		if (SeedRandom.Value (ref seed) > Probability) {
 			for (int i = 0; i < Candidates.Length; i++) {
 				GameManager.Destroy (Candidates [i]);
 			}
-			GameManager.Destroy ((Component)(object)this);
+			GameManager.Destroy (this);
 			return;
 		}
-		int num2 = SeedRandom.Range (num, 0, ((Component)this).transform.childCount);
+		int num = SeedRandom.Range (seed, 0, base.transform.childCount);
 		for (int j = 0; j < Candidates.Length; j++) {
-			GameObject val = Candidates [j];
-			if (j == num2) {
-				val.SetActive (true);
+			GameObject gameObject = Candidates [j];
+			if (j == num) {
+				gameObject.SetActive (value: true);
 			} else {
-				GameManager.Destroy (val);
+				GameManager.Destroy (gameObject);
 			}
 		}
-		GameManager.Destroy ((Component)(object)this);
+		GameManager.Destroy (this);
 	}
 }

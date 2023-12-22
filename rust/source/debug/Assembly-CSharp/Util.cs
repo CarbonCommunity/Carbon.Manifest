@@ -7,7 +7,6 @@ using ConVar;
 using Facepunch;
 using Facepunch.Extend;
 using Facepunch.Math;
-using Network;
 using ProtoBuf;
 using UnityEngine;
 
@@ -15,40 +14,33 @@ public static class Util
 {
 	public const int OceanMargin = 500;
 
-	public static readonly Phrase NotificationEmpty = new Phrase ("app.error.empty", "Notification was not sent because it was missing some content.");
+	public static readonly Translate.Phrase NotificationEmpty = new Translate.Phrase ("app.error.empty", "Notification was not sent because it was missing some content.");
 
-	public static readonly Phrase NotificationDisabled = new Phrase ("app.error.disabled", "Rust+ features are disabled on this server.");
+	public static readonly Translate.Phrase NotificationDisabled = new Translate.Phrase ("app.error.disabled", "Rust+ features are disabled on this server.");
 
-	public static readonly Phrase NotificationRateLimit = new Phrase ("app.error.ratelimit", "You are sending too many notifications at a time. Please wait and then try again.");
+	public static readonly Translate.Phrase NotificationRateLimit = new Translate.Phrase ("app.error.ratelimit", "You are sending too many notifications at a time. Please wait and then try again.");
 
-	public static readonly Phrase NotificationServerError = new Phrase ("app.error.servererror", "The companion server failed to send the notification.");
+	public static readonly Translate.Phrase NotificationServerError = new Translate.Phrase ("app.error.servererror", "The companion server failed to send the notification.");
 
-	public static readonly Phrase NotificationNoTargets = new Phrase ("app.error.notargets", "Open the Rust+ menu in-game to pair your phone with this server.");
+	public static readonly Translate.Phrase NotificationNoTargets = new Translate.Phrase ("app.error.notargets", "Open the Rust+ menu in-game to pair your phone with this server.");
 
-	public static readonly Phrase NotificationTooManySubscribers = new Phrase ("app.error.toomanysubs", "There are too many players subscribed to these notifications.");
+	public static readonly Translate.Phrase NotificationTooManySubscribers = new Translate.Phrase ("app.error.toomanysubs", "There are too many players subscribed to these notifications.");
 
-	public static readonly Phrase NotificationUnknown = new Phrase ("app.error.unknown", "An unknown error occurred sending the notification.");
+	public static readonly Translate.Phrase NotificationUnknown = new Translate.Phrase ("app.error.unknown", "An unknown error occurred sending the notification.");
 
 	public static Vector2 WorldToMap (Vector3 worldPos)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
 		return new Vector2 (worldPos.x - TerrainMeta.Position.x, worldPos.z - TerrainMeta.Position.z);
 	}
 
 	public static void SendSignedInNotification (BasePlayer player)
 	{
-		if (!((Object)(object)player == (Object)null) && player.currentTeam != 0) {
+		if (!(player == null) && player.currentTeam != 0) {
 			RelationshipManager.PlayerTeam playerTeam = RelationshipManager.ServerInstance.FindTeam (player.currentTeam);
 			Dictionary<string, string> serverPairingData = GetServerPairingData ();
 			serverPairingData.Add ("type", "login");
 			serverPairingData.Add ("targetId", player.UserIDString);
-			serverPairingData.Add ("targetName", StringExtensions.Truncate (player.displayName, 128, (string)null));
+			serverPairingData.Add ("targetName", player.displayName.Truncate (128));
 			playerTeam?.SendNotification (NotificationChannel.PlayerLoggedIn, player.displayName + " is now online", ConVar.Server.hostname, serverPairingData, player.userID);
 		}
 	}
@@ -57,18 +49,18 @@ public static class Util
 	{
 		string value;
 		string text;
-		if (killer is BasePlayer basePlayer && ((object)basePlayer).GetType () == typeof(BasePlayer)) {
+		if (killer is BasePlayer basePlayer && basePlayer.GetType () == typeof(BasePlayer)) {
 			value = basePlayer.UserIDString;
 			text = basePlayer.displayName;
 		} else {
 			value = "";
 			text = killer.ShortPrefabName;
 		}
-		if (!((Object)(object)player == (Object)null) && !string.IsNullOrEmpty (text)) {
+		if (!(player == null) && !string.IsNullOrEmpty (text)) {
 			Dictionary<string, string> serverPairingData = GetServerPairingData ();
 			serverPairingData.Add ("type", "death");
 			serverPairingData.Add ("targetId", value);
-			serverPairingData.Add ("targetName", StringExtensions.Truncate (text, 128, (string)null));
+			serverPairingData.Add ("targetName", text.Truncate (128));
 			NotificationList.SendNotificationTo (player.userID, NotificationChannel.PlayerDied, "You were killed by " + text, ConVar.Server.hostname, serverPairingData);
 		}
 	}
@@ -90,14 +82,14 @@ public static class Util
 
 	public static Dictionary<string, string> GetServerPairingData ()
 	{
-		Dictionary<string, string> dictionary = Pool.Get<Dictionary<string, string>> ();
+		Dictionary<string, string> dictionary = Facepunch.Pool.Get<Dictionary<string, string>> ();
 		dictionary.Clear ();
 		dictionary.Add ("id", App.serverid);
-		dictionary.Add ("name", StringExtensions.Truncate (ConVar.Server.hostname, 128, (string)null));
-		dictionary.Add ("desc", StringExtensions.Truncate (ConVar.Server.description, 512, (string)null));
-		dictionary.Add ("img", StringExtensions.Truncate (ConVar.Server.headerimage, 128, (string)null));
-		dictionary.Add ("logo", StringExtensions.Truncate (ConVar.Server.logoimage, 128, (string)null));
-		dictionary.Add ("url", StringExtensions.Truncate (ConVar.Server.url, 128, (string)null));
+		dictionary.Add ("name", ConVar.Server.hostname.Truncate (128));
+		dictionary.Add ("desc", ConVar.Server.description.Truncate (512));
+		dictionary.Add ("img", ConVar.Server.headerimage.Truncate (128));
+		dictionary.Add ("logo", ConVar.Server.logoimage.Truncate (128));
+		dictionary.Add ("url", ConVar.Server.url.Truncate (128));
 		dictionary.Add ("ip", App.GetPublicIP ());
 		dictionary.Add ("port", App.port.ToString ("G", CultureInfo.InvariantCulture));
 		return dictionary;
@@ -115,66 +107,61 @@ public static class Util
 
 	public static void BroadcastAppTeamRemoval (this BasePlayer player)
 	{
-		AppBroadcast val = Pool.Get<AppBroadcast> ();
-		val.teamChanged = Pool.Get<AppTeamChanged> ();
-		val.teamChanged.playerId = player.userID;
-		val.teamChanged.teamInfo = player.GetAppTeamInfo (player.userID);
-		CompanionServer.Server.Broadcast (new PlayerTarget (player.userID), val);
+		AppBroadcast appBroadcast = Facepunch.Pool.Get<AppBroadcast> ();
+		appBroadcast.teamChanged = Facepunch.Pool.Get<AppTeamChanged> ();
+		appBroadcast.teamChanged.playerId = player.userID;
+		appBroadcast.teamChanged.teamInfo = player.GetAppTeamInfo (player.userID);
+		CompanionServer.Server.Broadcast (new PlayerTarget (player.userID), appBroadcast);
 	}
 
 	public static void BroadcastAppTeamUpdate (this RelationshipManager.PlayerTeam team)
 	{
-		AppBroadcast val = Pool.Get<AppBroadcast> ();
-		val.teamChanged = Pool.Get<AppTeamChanged> ();
-		val.ShouldPool = false;
+		AppBroadcast appBroadcast = Facepunch.Pool.Get<AppBroadcast> ();
+		appBroadcast.teamChanged = Facepunch.Pool.Get<AppTeamChanged> ();
+		appBroadcast.ShouldPool = false;
 		foreach (ulong member in team.members) {
-			val.teamChanged.playerId = member;
-			val.teamChanged.teamInfo = team.GetAppTeamInfo (member);
-			CompanionServer.Server.Broadcast (new PlayerTarget (member), val);
+			appBroadcast.teamChanged.playerId = member;
+			appBroadcast.teamChanged.teamInfo = team.GetAppTeamInfo (member);
+			CompanionServer.Server.Broadcast (new PlayerTarget (member), appBroadcast);
 		}
-		val.ShouldPool = true;
-		val.Dispose ();
+		appBroadcast.ShouldPool = true;
+		appBroadcast.Dispose ();
 	}
 
 	public static void BroadcastTeamChat (this RelationshipManager.PlayerTeam team, ulong steamId, string name, string message, string color)
 	{
 		uint current = (uint)Epoch.Current;
 		CompanionServer.Server.TeamChat.Record (team.teamID, steamId, name, message, color, current);
-		AppBroadcast val = Pool.Get<AppBroadcast> ();
-		val.teamMessage = Pool.Get<AppTeamMessage> ();
-		val.teamMessage.message = Pool.Get<AppChatMessage> ();
-		val.ShouldPool = false;
-		AppChatMessage message2 = val.teamMessage.message;
+		AppBroadcast appBroadcast = Facepunch.Pool.Get<AppBroadcast> ();
+		appBroadcast.teamMessage = Facepunch.Pool.Get<AppTeamMessage> ();
+		appBroadcast.teamMessage.message = Facepunch.Pool.Get<AppChatMessage> ();
+		appBroadcast.ShouldPool = false;
+		AppChatMessage message2 = appBroadcast.teamMessage.message;
 		message2.steamId = steamId;
 		message2.name = name;
 		message2.message = message;
 		message2.color = color;
 		message2.time = current;
 		foreach (ulong member in team.members) {
-			CompanionServer.Server.Broadcast (new PlayerTarget (member), val);
+			CompanionServer.Server.Broadcast (new PlayerTarget (member), appBroadcast);
 		}
-		val.ShouldPool = true;
-		val.Dispose ();
+		appBroadcast.ShouldPool = true;
+		appBroadcast.Dispose ();
 	}
 
 	public static void SendNotification (this RelationshipManager.PlayerTeam team, NotificationChannel channel, string title, string body, Dictionary<string, string> data, ulong ignorePlayer = 0uL)
 	{
-		List<ulong> list = Pool.GetList<ulong> ();
+		List<ulong> obj = Facepunch.Pool.GetList<ulong> ();
 		foreach (ulong member in team.members) {
-			if (member == ignorePlayer) {
-				continue;
-			}
-			BasePlayer basePlayer = RelationshipManager.FindByID (member);
-			if (!((Object)(object)basePlayer == (Object)null)) {
-				Networkable net = basePlayer.net;
-				if (((net != null) ? net.connection : null) != null) {
-					continue;
+			if (member != ignorePlayer) {
+				BasePlayer basePlayer = RelationshipManager.FindByID (member);
+				if (basePlayer == null || basePlayer.net?.connection == null) {
+					obj.Add (member);
 				}
 			}
-			list.Add (member);
 		}
-		NotificationList.SendNotificationTo (list, channel, title, body, data);
-		Pool.FreeList<ulong> (ref list);
+		NotificationList.SendNotificationTo (obj, channel, title, body, data);
+		Facepunch.Pool.FreeList (ref obj);
 	}
 
 	public static string ToErrorCode (this ValidationResult result)

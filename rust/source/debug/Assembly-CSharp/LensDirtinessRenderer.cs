@@ -23,42 +23,6 @@ public class LensDirtinessRenderer : PostProcessEffectRenderer<LensDirtinessEffe
 
 	public override void Render (PostProcessRenderContext context)
 	{
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0163: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0170: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0174: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01bf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ef: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0221: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0230: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0237: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0269: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0278: Unknown result type (might be due to invalid IL or missing references)
-		//IL_027f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02b3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02c2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02c9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02fd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0319: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0328: Unknown result type (might be due to invalid IL or missing references)
-		//IL_032f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0388: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0397: Unknown result type (might be due to invalid IL or missing references)
-		//IL_039e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03bb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03c2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03fc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0426: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0444: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0446: Unknown result type (might be due to invalid IL or missing references)
 		float value = base.settings.bloomSize.value;
 		float value2 = base.settings.gain.value;
 		float value3 = base.settings.threshold.value;
@@ -85,33 +49,33 @@ public class LensDirtinessRenderer : PostProcessEffectRenderer<LensDirtinessEffe
 		int num7 = Shader.PropertyToID ("_RTT_Bloom_2");
 		propertySheet.properties.SetFloat ("_Gain", value2);
 		propertySheet.properties.SetFloat ("_Threshold", value3);
-		command.GetTemporaryRT (num, width / 2, height / 2, 0, (FilterMode)1, context.sourceFormat);
-		command.BlitFullscreenTriangle (source, RenderTargetIdentifier.op_Implicit (num), propertySheet, 0);
+		command.GetTemporaryRT (num, width / 2, height / 2, 0, FilterMode.Bilinear, context.sourceFormat);
+		command.BlitFullscreenTriangle (source, num, propertySheet, 0);
 		propertySheet.properties.SetVector ("_Offset", new Vector4 (1f / (float)width, 1f / (float)height, 0f, 0f) * 2f);
-		command.GetTemporaryRT (num2, width / 2, height / 2, 0, (FilterMode)1, context.sourceFormat);
-		command.BlitFullscreenTriangle (RenderTargetIdentifier.op_Implicit (num), RenderTargetIdentifier.op_Implicit (num2), propertySheet, 1);
+		command.GetTemporaryRT (num2, width / 2, height / 2, 0, FilterMode.Bilinear, context.sourceFormat);
+		command.BlitFullscreenTriangle (num, num2, propertySheet, 1);
 		command.ReleaseTemporaryRT (num);
-		command.GetTemporaryRT (num3, width / 4, height / 4, 0, (FilterMode)1, context.sourceFormat);
-		command.BlitFullscreenTriangle (RenderTargetIdentifier.op_Implicit (num2), RenderTargetIdentifier.op_Implicit (num3), propertySheet, 1);
+		command.GetTemporaryRT (num3, width / 4, height / 4, 0, FilterMode.Bilinear, context.sourceFormat);
+		command.BlitFullscreenTriangle (num2, num3, propertySheet, 1);
 		command.ReleaseTemporaryRT (num2);
-		command.GetTemporaryRT (num4, width / 8, height / 8, 0, (FilterMode)1, context.sourceFormat);
-		command.BlitFullscreenTriangle (RenderTargetIdentifier.op_Implicit (num3), RenderTargetIdentifier.op_Implicit (num4), propertySheet, 1);
+		command.GetTemporaryRT (num4, width / 8, height / 8, 0, FilterMode.Bilinear, context.sourceFormat);
+		command.BlitFullscreenTriangle (num3, num4, propertySheet, 1);
 		command.ReleaseTemporaryRT (num3);
-		command.GetTemporaryRT (num5, width / 16, height / 16, 0, (FilterMode)1, context.sourceFormat);
-		command.BlitFullscreenTriangle (RenderTargetIdentifier.op_Implicit (num4), RenderTargetIdentifier.op_Implicit (num5), propertySheet, 1);
+		command.GetTemporaryRT (num5, width / 16, height / 16, 0, FilterMode.Bilinear, context.sourceFormat);
+		command.BlitFullscreenTriangle (num4, num5, propertySheet, 1);
 		command.ReleaseTemporaryRT (num4);
-		command.GetTemporaryRT (num6, width / 16, height / 16, 0, (FilterMode)1, context.sourceFormat);
-		command.GetTemporaryRT (num7, width / 16, height / 16, 0, (FilterMode)1, context.sourceFormat);
-		command.BlitFullscreenTriangle (RenderTargetIdentifier.op_Implicit (num5), RenderTargetIdentifier.op_Implicit (num6));
+		command.GetTemporaryRT (num6, width / 16, height / 16, 0, FilterMode.Bilinear, context.sourceFormat);
+		command.GetTemporaryRT (num7, width / 16, height / 16, 0, FilterMode.Bilinear, context.sourceFormat);
+		command.BlitFullscreenTriangle (num5, num6);
 		command.ReleaseTemporaryRT (num5);
 		for (int i = 1; i <= 8; i++) {
-			float num8 = value * (float)i / (float)width;
-			float num9 = value * (float)i / (float)height;
-			propertySheet.properties.SetVector ("_Offset", new Vector4 (num8, num9, 0f, 0f));
-			command.BlitFullscreenTriangle (RenderTargetIdentifier.op_Implicit (num6), RenderTargetIdentifier.op_Implicit (num7), propertySheet, 1);
-			command.BlitFullscreenTriangle (RenderTargetIdentifier.op_Implicit (num7), RenderTargetIdentifier.op_Implicit (num6), propertySheet, 1);
+			float x = value * (float)i / (float)width;
+			float y = value * (float)i / (float)height;
+			propertySheet.properties.SetVector ("_Offset", new Vector4 (x, y, 0f, 0f));
+			command.BlitFullscreenTriangle (num6, num7, propertySheet, 1);
+			command.BlitFullscreenTriangle (num7, num6, propertySheet, 1);
 		}
-		command.SetGlobalTexture ("_Bloom", RenderTargetIdentifier.op_Implicit (num7));
+		command.SetGlobalTexture ("_Bloom", num7);
 		propertySheet.properties.SetFloat ("_Dirtiness", value4);
 		propertySheet.properties.SetColor ("_BloomColor", value5);
 		propertySheet.properties.SetTexture ("_DirtinessTexture", value6);

@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -23,9 +24,9 @@ public class ExcavatorSignalComputer : BaseCombatEntity
 
 	public Text timerText;
 
-	public static readonly Phrase readyphrase = new Phrase ("excavator.signal.ready", "READY");
+	public static readonly Translate.Phrase readyphrase = new Translate.Phrase ("excavator.signal.ready", "READY");
 
-	public static readonly Phrase chargephrase = new Phrase ("excavator.signal.charging", "COMSYS CHARGING");
+	public static readonly Translate.Phrase chargephrase = new Translate.Phrase ("excavator.signal.charging", "COMSYS CHARGING");
 
 	[ServerVar]
 	public static float chargeNeededForSupplies = 600f;
@@ -34,49 +35,37 @@ public class ExcavatorSignalComputer : BaseCombatEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("ExcavatorSignalComputer.OnRpcMessage", 0);
-		try {
-			if (rpc == 1824723998 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("ExcavatorSignalComputer.OnRpcMessage")) {
+			if (rpc == 1824723998 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RequestSupplies "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RequestSupplies "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RequestSupplies", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RequestSupplies")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (1824723998u, "RequestSupplies", this, player, 5uL)) {
 							return true;
 						}
 						if (!RPC_Server.IsVisible.Test (1824723998u, "RequestSupplies", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage rpc2 = rPCMessage;
 							RequestSupplies (rpc2);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RequestSupplies");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -84,7 +73,7 @@ public class ExcavatorSignalComputer : BaseCombatEntity
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.ioEntity = Pool.Get<IOEntity> ();
+		info.msg.ioEntity = Facepunch.Pool.Get<ProtoBuf.IOEntity> ();
 		info.msg.ioEntity.genericFloat1 = chargePower;
 		info.msg.ioEntity.genericFloat2 = chargeNeededForSupplies;
 	}
@@ -92,8 +81,8 @@ public class ExcavatorSignalComputer : BaseCombatEntity
 	public override void ServerInit ()
 	{
 		base.ServerInit ();
-		lastChargeTime = Time.time;
-		((FacepunchBehaviour)this).InvokeRepeating ((Action)ChargeThink, 0f, 1f);
+		lastChargeTime = UnityEngine.Time.time;
+		InvokeRepeating (ChargeThink, 0f, 1f);
 	}
 
 	public override void PostServerLoad ()
@@ -105,8 +94,8 @@ public class ExcavatorSignalComputer : BaseCombatEntity
 	public void ChargeThink ()
 	{
 		float num = chargePower;
-		float num2 = Time.time - lastChargeTime;
-		lastChargeTime = Time.time;
+		float num2 = UnityEngine.Time.time - lastChargeTime;
+		lastChargeTime = UnityEngine.Time.time;
 		if (IsPowered ()) {
 			chargePower += num2;
 		}
@@ -132,22 +121,12 @@ public class ExcavatorSignalComputer : BaseCombatEntity
 	[RPC_Server.CallsPerSecond (5uL)]
 	public void RequestSupplies (RPCMessage rpc)
 	{
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0081: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b7: Unknown result type (might be due to invalid IL or missing references)
 		if (HasFlag (Flags.Reserved7) && IsPowered () && chargePower >= chargeNeededForSupplies) {
 			BaseEntity baseEntity = GameManager.server.CreateEntity (supplyPlanePrefab.resourcePath);
-			if (Object.op_Implicit ((Object)(object)baseEntity)) {
-				Vector3 position = dropPoints [Random.Range (0, dropPoints.Length)].position;
-				Vector3 val = default(Vector3);
-				((Vector3)(ref val))..ctor (Random.Range (-3f, 3f), 0f, Random.Range (-3f, 3f));
-				((Component)baseEntity).SendMessage ("InitDropPosition", (object)(position + val), (SendMessageOptions)1);
+			if ((bool)baseEntity) {
+				Vector3 position = dropPoints [UnityEngine.Random.Range (0, dropPoints.Length)].position;
+				Vector3 vector = new Vector3 (UnityEngine.Random.Range (-3f, 3f), 0f, UnityEngine.Random.Range (-3f, 3f));
+				baseEntity.SendMessage ("InitDropPosition", position + vector, SendMessageOptions.DontRequireReceiver);
 				baseEntity.Spawn ();
 			}
 			chargePower -= chargeNeededForSupplies;

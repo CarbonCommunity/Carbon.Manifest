@@ -20,8 +20,6 @@ public class WiggleRenderer : PostProcessEffectRenderer<Wiggle>
 
 	public override void Render (PostProcessRenderContext context)
 	{
-		//IL_0096: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009c: Unknown result type (might be due to invalid IL or missing references)
 		CommandBuffer command = context.command;
 		command.BeginSample ("Wiggle");
 		timer += base.settings.speed.value * Time.deltaTime;

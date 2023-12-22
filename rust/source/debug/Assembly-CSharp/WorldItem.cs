@@ -1,3 +1,5 @@
+#define ENABLE_PROFILER
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -33,46 +35,34 @@ public class WorldItem : BaseEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("WorldItem.OnRpcMessage", 0);
-		try {
-			if (rpc == 2778075470u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("WorldItem.OnRpcMessage")) {
+			if (rpc == 2778075470u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Pickup "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Pickup "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Pickup", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Pickup")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (2778075470u, "Pickup", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							Pickup (msg2);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in Pickup");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -82,7 +72,7 @@ public class WorldItem : BaseEntity
 		base.ServerInit ();
 		if (item != null) {
 			Profiler.BeginSample ("BroadcastMessage OnItemChanged");
-			((Component)this).BroadcastMessage ("OnItemChanged", (object)item, (SendMessageOptions)1);
+			BroadcastMessage ("OnItemChanged", item, SendMessageOptions.DontRequireReceiver);
 			Profiler.EndSample ();
 		}
 	}
@@ -91,7 +81,7 @@ public class WorldItem : BaseEntity
 	{
 		if (!_isInvokingSendItemUpdate) {
 			_isInvokingSendItemUpdate = true;
-			((FacepunchBehaviour)this).Invoke ((Action)SendItemUpdate, 0.1f);
+			Invoke (SendItemUpdate, 0.1f);
 		}
 	}
 
@@ -101,13 +91,9 @@ public class WorldItem : BaseEntity
 		if (item == null) {
 			return;
 		}
-		UpdateItem val = Pool.Get<UpdateItem> ();
-		try {
-			val.item = item.Save (bIncludeContainer: false, bIncludeOwners: false);
-			ClientRPC<UpdateItem> (null, "UpdateItem", val);
-		} finally {
-			((IDisposable)val)?.Dispose ();
-		}
+		using UpdateItem updateItem = Facepunch.Pool.Get<UpdateItem> ();
+		updateItem.item = item.Save (bIncludeContainer: false, bIncludeOwners: false);
+		ClientRPC (null, "UpdateItem", updateItem);
 	}
 
 	[RPC_Server]
@@ -130,7 +116,7 @@ public class WorldItem : BaseEntity
 		if (item != null) {
 			bool forDisk = info.forDisk;
 			Profiler.BeginSample ("WorldItem.Save");
-			info.msg.worldItem = Pool.Get<WorldItem> ();
+			info.msg.worldItem = Facepunch.Pool.Get<ProtoBuf.WorldItem> ();
 			info.msg.worldItem.item = item.Save (forDisk, bIncludeOwners: false);
 			Profiler.EndSample ();
 		}
@@ -160,7 +146,7 @@ public class WorldItem : BaseEntity
 		item = in_item;
 		if (item != null) {
 			item.OnDirty += OnItemDirty;
-			((Object)this).name = item.info.shortname + " (world)";
+			base.name = item.info.shortname + " (world)";
 			item.SetWorldEntity (this);
 			OnItemDirty (item);
 		}
@@ -188,7 +174,7 @@ public class WorldItem : BaseEntity
 		Assert.IsTrue (item == in_item, "WorldItem:OnItemDirty - dirty item isn't ours!");
 		if (item != null) {
 			Profiler.BeginSample ("BroadcastMessage OnItemChanged");
-			((Component)this).BroadcastMessage ("OnItemChanged", (object)item, (SendMessageOptions)1);
+			BroadcastMessage ("OnItemChanged", item, SendMessageOptions.DontRequireReceiver);
 			Profiler.EndSample ();
 		}
 		DoItemNetworking ();
@@ -219,12 +205,9 @@ public class WorldItem : BaseEntity
 
 	public override string ToString ()
 	{
-		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
 		if (_name == null) {
 			if (base.isServer) {
-				_name = string.Format ("{1}[{0}] {2}", (object)(NetworkableId)(((??)net?.ID) ?? default(NetworkableId)), base.ShortPrefabName, this.IsUnityNull () ? "NULL" : ((Object)this).name);
+				_name = string.Format ("{1}[{0}] {2}", net?.ID ?? default(NetworkableId), base.ShortPrefabName, this.IsUnityNull () ? "NULL" : base.name);
 			} else {
 				_name = base.ShortPrefabName;
 			}

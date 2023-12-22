@@ -2,5 +2,5 @@ using UnityEngine.EventSystems;
 
 public class FpStandaloneInputModule : StandaloneInputModule
 {
-	public PointerEventData CurrentData => (PointerEventData)(((PointerInputModule)this).m_PointerData.ContainsKey (-1) ? ((object)((PointerInputModule)this).m_PointerData [-1]) : ((object)new PointerEventData (EventSystem.current)));
+	public PointerEventData CurrentData => m_PointerData.ContainsKey (-1) ? m_PointerData [-1] : new PointerEventData (EventSystem.current);
 }

@@ -43,17 +43,17 @@ public class ItemCrafter : EntityComponent<BasePlayer>
 			return;
 		}
 		float currentCraftLevel = value.owner.currentCraftLevel;
-		if (value.endTime > Time.realtimeSinceStartup) {
+		if (value.endTime > UnityEngine.Time.realtimeSinceStartup) {
 			return;
 		}
 		if (value.endTime == 0f) {
 			float scaledDuration = GetScaledDuration (value.blueprint, currentCraftLevel);
-			value.endTime = Time.realtimeSinceStartup + scaledDuration;
+			value.endTime = UnityEngine.Time.realtimeSinceStartup + scaledDuration;
 			value.workbenchEntity = value.owner.GetCachedCraftLevelWorkbench ();
-			if ((Object)(object)value.owner != (Object)null) {
+			if (value.owner != null) {
 				value.owner.Command ("note.craft_start", value.taskUID, scaledDuration, value.amount);
 				if (value.owner.IsAdmin && Craft.instant) {
-					value.endTime = Time.realtimeSinceStartup + 1f;
+					value.endTime = UnityEngine.Time.realtimeSinceStartup + 1f;
 				}
 			}
 		} else {
@@ -92,13 +92,13 @@ public class ItemCrafter : EntityComponent<BasePlayer>
 		task.takenItems = list;
 	}
 
-	public bool CraftItem (ItemBlueprint bp, BasePlayer owner, InstanceData instanceData = null, int amount = 1, int skinID = 0, Item fromTempBlueprint = null, bool free = false)
+	public bool CraftItem (ItemBlueprint bp, BasePlayer owner, ProtoBuf.Item.InstanceData instanceData = null, int amount = 1, int skinID = 0, Item fromTempBlueprint = null, bool free = false)
 	{
 		if (!CanCraft (bp, amount, free)) {
 			return false;
 		}
 		taskUID++;
-		ItemCraftTask itemCraftTask = Pool.Get<ItemCraftTask> ();
+		ItemCraftTask itemCraftTask = Facepunch.Pool.Get<ItemCraftTask> ();
 		itemCraftTask.blueprint = bp;
 		if (!free) {
 			CollectIngredients (bp, itemCraftTask, amount, owner);
@@ -118,7 +118,7 @@ public class ItemCrafter : EntityComponent<BasePlayer>
 			itemCraftTask.conditionScale = 0.5f;
 		}
 		queue.AddLast (itemCraftTask);
-		if ((Object)(object)itemCraftTask.owner != (Object)null) {
+		if (itemCraftTask.owner != null) {
 			itemCraftTask.owner.Command ("note.craft_add", itemCraftTask.taskUID, itemCraftTask.blueprint.targetItem.itemid, amount, itemCraftTask.skinID);
 		}
 		return true;
@@ -126,10 +126,6 @@ public class ItemCrafter : EntityComponent<BasePlayer>
 
 	private void FinishCrafting (ItemCraftTask task)
 	{
-		//IL_037a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0381: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0388: Unknown result type (might be due to invalid IL or missing references)
-		//IL_038e: Unknown result type (might be due to invalid IL or missing references)
 		task.amount--;
 		task.numCrafted++;
 		ulong skin = ItemDefinition.FindSkin (task.blueprint.targetItem.itemid, task.skinID);
@@ -149,7 +145,7 @@ public class ItemCrafter : EntityComponent<BasePlayer>
 				continue;
 			}
 			foreach (Item takenItem in task.takenItems) {
-				if ((Object)(object)takenItem.info == (Object)(object)ingredient.itemDef) {
+				if (takenItem.info == ingredient.itemDef) {
 					int amount2 = takenItem.amount;
 					int num3 = Mathf.Min (amount2, num2);
 					Analytics.Azure.OnCraftMaterialConsumed (takenItem.info.shortname, num2, base.baseEntity, task.workbenchEntity, inSafezone, item.info.shortname);
@@ -181,15 +177,6 @@ public class ItemCrafter : EntityComponent<BasePlayer>
 
 	public bool CancelTask (int iID, bool ReturnItems)
 	{
-		//IL_017e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0188: Unknown result type (might be due to invalid IL or missing references)
-		//IL_018d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0192: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0197: Unknown result type (might be due to invalid IL or missing references)
-		//IL_019c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01be: Unknown result type (might be due to invalid IL or missing references)
 		if (queue.Count == 0) {
 			return false;
 		}
@@ -198,14 +185,14 @@ public class ItemCrafter : EntityComponent<BasePlayer>
 			return false;
 		}
 		itemCraftTask.cancelled = true;
-		if ((Object)(object)itemCraftTask.owner == (Object)null) {
+		if (itemCraftTask.owner == null) {
 			return true;
 		}
 		itemCraftTask.owner.Command ("note.craft_done", itemCraftTask.taskUID, 0);
 		if (itemCraftTask.takenItems != null && itemCraftTask.takenItems.Count > 0 && ReturnItems) {
 			foreach (Item takenItem in itemCraftTask.takenItems) {
 				if (takenItem != null && takenItem.amount > 0) {
-					if (takenItem.IsBlueprint () && (Object)(object)takenItem.blueprintTargetDef == (Object)(object)itemCraftTask.blueprint.targetItem) {
+					if (takenItem.IsBlueprint () && takenItem.blueprintTargetDef == itemCraftTask.blueprint.targetItem) {
 						takenItem.UseItem (itemCraftTask.numCrafted);
 					}
 					if (takenItem.amount > 0 && !takenItem.MoveToContainer (itemCraftTask.owner.inventory.containerMain)) {
@@ -270,7 +257,7 @@ public class ItemCrafter : EntityComponent<BasePlayer>
 
 	public bool CanCraft (ItemDefinition def, int amount = 1, bool free = false)
 	{
-		ItemBlueprint component = ((Component)def).GetComponent<ItemBlueprint> ();
+		ItemBlueprint component = def.GetComponent<ItemBlueprint> ();
 		if (CanCraft (component, amount, free)) {
 			return true;
 		}

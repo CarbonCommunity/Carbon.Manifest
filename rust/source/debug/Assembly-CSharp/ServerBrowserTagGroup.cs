@@ -13,7 +13,7 @@ public class ServerBrowserTagGroup : MonoBehaviour
 	private void Initialize ()
 	{
 		if (tags == null) {
-			tags = ((Component)this).GetComponentsInChildren<ServerBrowserTag> (true);
+			tags = GetComponentsInChildren<ServerBrowserTag> (includeInactive: true);
 		}
 	}
 
@@ -39,14 +39,14 @@ public class ServerBrowserTagGroup : MonoBehaviour
 		bool flag = false;
 		ServerBrowserTag[] array = tags;
 		foreach (ServerBrowserTag serverBrowserTag in array) {
-			if ((!isExclusive || !flag) && tagsEnabled <= maxTags && ((ServerInfo)(ref server)).Tags.Contains (serverBrowserTag.serverTag)) {
-				ComponentExtensions.SetActive<ServerBrowserTag> (serverBrowserTag, true);
+			if ((!isExclusive || !flag) && tagsEnabled <= maxTags && server.Tags.Contains (serverBrowserTag.serverTag)) {
+				serverBrowserTag.SetActive (active: true);
 				tagsEnabled++;
 				flag = true;
 			} else {
-				ComponentExtensions.SetActive<ServerBrowserTag> (serverBrowserTag, false);
+				serverBrowserTag.SetActive (active: false);
 			}
 		}
-		((Component)this).gameObject.SetActive (flag);
+		base.gameObject.SetActive (flag);
 	}
 }

@@ -18,34 +18,31 @@ public class EnvironmentVolume : MonoBehaviour
 
 	protected void OnEnable ()
 	{
-		if (Object.op_Implicit ((Object)(object)trigger) && !trigger.enabled) {
+		if ((bool)trigger && !trigger.enabled) {
 			trigger.enabled = true;
 		}
 	}
 
 	protected void OnDisable ()
 	{
-		if (Object.op_Implicit ((Object)(object)trigger) && trigger.enabled) {
+		if ((bool)trigger && trigger.enabled) {
 			trigger.enabled = false;
 		}
 	}
 
 	public void UpdateTrigger ()
 	{
-		//IL_006f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
-		if (!Object.op_Implicit ((Object)(object)trigger)) {
-			trigger = ((Component)this).gameObject.GetComponent<Collider> ();
+		if (!trigger) {
+			trigger = base.gameObject.GetComponent<Collider> ();
 		}
-		if (!Object.op_Implicit ((Object)(object)trigger)) {
-			trigger = (Collider)(object)((Component)this).gameObject.AddComponent<BoxCollider> ();
+		if (!trigger) {
+			trigger = base.gameObject.AddComponent<BoxCollider> ();
 		}
 		trigger.isTrigger = true;
-		Collider obj = trigger;
-		BoxCollider val = (BoxCollider)(object)((obj is BoxCollider) ? obj : null);
-		if (Object.op_Implicit ((Object)(object)val)) {
-			val.center = Center;
-			val.size = Size;
+		BoxCollider boxCollider = trigger as BoxCollider;
+		if ((bool)boxCollider) {
+			boxCollider.center = Center;
+			boxCollider.size = Size;
 		}
 	}
 }

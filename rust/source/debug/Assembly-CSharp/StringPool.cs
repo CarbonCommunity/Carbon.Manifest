@@ -19,13 +19,13 @@ public class StringPool
 		}
 		toString = new Dictionary<uint, string> ();
 		toNumber = new Dictionary<string, uint> (StringComparer.OrdinalIgnoreCase);
-		GameManifest gameManifest = FileSystem.Load<GameManifest> ("Assets/manifest.asset", true);
+		GameManifest gameManifest = FileSystem.Load<GameManifest> ("Assets/manifest.asset");
 		for (uint num = 0u; num < gameManifest.pooledStrings.Length; num++) {
 			string str = gameManifest.pooledStrings [num].str;
 			uint hash = gameManifest.pooledStrings [num].hash;
 			if (toString.TryGetValue (hash, out var value)) {
 				if (str != value) {
-					Debug.LogWarning ((object)$"Hash collision: {hash} already exists in string pool. `{str}` and `{value}` have the same hash.");
+					Debug.LogWarning ($"Hash collision: {hash} already exists in string pool. `{str}` and `{value}` have the same hash.");
 				}
 			} else {
 				toString.Add (hash, str);
@@ -45,7 +45,7 @@ public class StringPool
 		if (toString.TryGetValue (i, out var value)) {
 			return value;
 		}
-		Debug.LogWarning ((object)("StringPool.GetString - no string for ID" + i));
+		Debug.LogWarning ("StringPool.GetString - no string for ID" + i);
 		return "";
 	}
 
@@ -58,7 +58,7 @@ public class StringPool
 		if (toNumber.TryGetValue (str, out var value)) {
 			return value;
 		}
-		Debug.LogWarning ((object)("StringPool.GetNumber - no number for string " + str));
+		Debug.LogWarning ("StringPool.GetNumber - no number for string " + str);
 		return 0u;
 	}
 
@@ -66,7 +66,7 @@ public class StringPool
 	{
 		uint value = 0u;
 		if (!toNumber.TryGetValue (str, out value)) {
-			value = StringEx.ManifestHash (str);
+			value = str.ManifestHash ();
 			toString.Add (value, str);
 			toNumber.Add (str, value);
 		}

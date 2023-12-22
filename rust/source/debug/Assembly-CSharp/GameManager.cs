@@ -1,4 +1,4 @@
-using System;
+#define ENABLE_PROFILER
 using ConVar;
 using Facepunch;
 using Rust;
@@ -42,7 +42,7 @@ public class GameManager
 
 	public GameObject FindPrefab (BaseEntity ent)
 	{
-		if ((Object)(object)ent == (Object)null) {
+		if (ent == null) {
 			return null;
 		}
 		return FindPrefab (ent.PrefabName);
@@ -52,111 +52,100 @@ public class GameManager
 	{
 		Profiler.BeginSample ("FindPrefab");
 		Profiler.BeginSample ("FindProcessed");
-		GameObject val = preProcessed.Find (strPrefab);
-		if ((Object)(object)val != (Object)null) {
+		GameObject gameObject = preProcessed.Find (strPrefab);
+		if (gameObject != null) {
 			Profiler.EndSample ();
 			Profiler.EndSample ();
-			return val;
+			return gameObject;
 		}
 		Profiler.EndSample ();
 		Profiler.BeginSample ("LoadFromResources");
-		val = FileSystem.LoadPrefab (strPrefab);
-		if ((Object)(object)val == (Object)null) {
+		gameObject = FileSystem.LoadPrefab (strPrefab);
+		if (gameObject == null) {
 			Profiler.EndSample ();
 			Profiler.EndSample ();
 			return null;
 		}
 		Profiler.EndSample ();
 		Profiler.BeginSample ("PrefabPreProcess.Process");
-		preProcessed.Process (strPrefab, val);
+		preProcessed.Process (strPrefab, gameObject);
 		Profiler.EndSample ();
 		Profiler.EndSample ();
-		GameObject val2 = preProcessed.Find (strPrefab);
-		return ((Object)(object)val2 != (Object)null) ? val2 : val;
+		GameObject gameObject2 = preProcessed.Find (strPrefab);
+		return (gameObject2 != null) ? gameObject2 : gameObject;
 	}
 
 	public GameObject CreatePrefab (string strPrefab, Vector3 pos, Quaternion rot, Vector3 scale, bool active = true)
 	{
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
 		Profiler.BeginSample ("GameManager.CreatePrefab");
-		GameObject val = Instantiate (strPrefab, pos, rot);
-		if (Object.op_Implicit ((Object)(object)val)) {
-			val.transform.localScale = scale;
+		GameObject gameObject = Instantiate (strPrefab, pos, rot);
+		if ((bool)gameObject) {
+			gameObject.transform.localScale = scale;
 			if (active) {
-				val.AwakeFromInstantiate ();
+				gameObject.AwakeFromInstantiate ();
 			}
 		}
 		Profiler.EndSample ();
-		return val;
+		return gameObject;
 	}
 
 	public GameObject CreatePrefab (string strPrefab, Vector3 pos, Quaternion rot, bool active = true)
 	{
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
 		Profiler.BeginSample ("GameManager.CreatePrefab");
-		GameObject val = Instantiate (strPrefab, pos, rot);
-		if (Object.op_Implicit ((Object)(object)val) && active) {
-			val.AwakeFromInstantiate ();
+		GameObject gameObject = Instantiate (strPrefab, pos, rot);
+		if ((bool)gameObject && active) {
+			gameObject.AwakeFromInstantiate ();
 		}
 		Profiler.EndSample ();
-		return val;
+		return gameObject;
 	}
 
 	public GameObject CreatePrefab (string strPrefab, bool active = true)
 	{
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
 		Profiler.BeginSample ("GameManager.CreatePrefab");
-		GameObject val = Instantiate (strPrefab, Vector3.zero, Quaternion.identity);
-		if (Object.op_Implicit ((Object)(object)val) && active) {
-			val.AwakeFromInstantiate ();
+		GameObject gameObject = Instantiate (strPrefab, Vector3.zero, Quaternion.identity);
+		if ((bool)gameObject && active) {
+			gameObject.AwakeFromInstantiate ();
 		}
 		Profiler.EndSample ();
-		return val;
+		return gameObject;
 	}
 
 	public GameObject CreatePrefab (string strPrefab, Transform parent, bool active = true)
 	{
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
 		Profiler.BeginSample ("GameManager.CreatePrefab");
-		GameObject val = Instantiate (strPrefab, parent.position, parent.rotation);
-		if (Object.op_Implicit ((Object)(object)val)) {
-			val.transform.SetParent (parent, false);
-			val.Identity ();
+		GameObject gameObject = Instantiate (strPrefab, parent.position, parent.rotation);
+		if ((bool)gameObject) {
+			gameObject.transform.SetParent (parent, worldPositionStays: false);
+			gameObject.Identity ();
 			if (active) {
-				val.AwakeFromInstantiate ();
+				gameObject.AwakeFromInstantiate ();
 			}
 		}
 		Profiler.EndSample ();
-		return val;
+		return gameObject;
 	}
 
 	public BaseEntity CreateEntity (string strPrefab, Vector3 pos = default(Vector3), Quaternion rot = default(Quaternion), bool startActive = true)
 	{
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
 		if (string.IsNullOrEmpty (strPrefab)) {
 			return null;
 		}
-		GameObject val = CreatePrefab (strPrefab, pos, rot, startActive);
-		if ((Object)(object)val == (Object)null) {
+		GameObject gameObject = CreatePrefab (strPrefab, pos, rot, startActive);
+		if (gameObject == null) {
 			return null;
 		}
 		Profiler.BeginSample ("GetComponent");
-		BaseEntity component = val.GetComponent<BaseEntity> ();
+		BaseEntity component = gameObject.GetComponent<BaseEntity> ();
 		Profiler.EndSample ();
-		if ((Object)(object)component == (Object)null) {
-			Debug.LogError ((object)("CreateEntity called on a prefab that isn't an entity! " + strPrefab));
-			Object.Destroy ((Object)(object)val);
+		if (component == null) {
+			Debug.LogError ("CreateEntity called on a prefab that isn't an entity! " + strPrefab);
+			Object.Destroy (gameObject);
 			return null;
 		}
-		if (((Component)component).CompareTag ("CannotBeCreated")) {
-			Debug.LogWarning ((object)("CreateEntity called on a prefab that has the CannotBeCreated tag set. " + strPrefab));
-			Object.Destroy ((Object)(object)val);
+		if (component.CompareTag ("CannotBeCreated")) {
+			Debug.LogWarning ("CreateEntity called on a prefab that has the CannotBeCreated tag set. " + strPrefab);
+			Object.Destroy (gameObject);
 			return null;
 		}
 		return component;
@@ -164,65 +153,59 @@ public class GameManager
 
 	private GameObject Instantiate (string strPrefab, Vector3 pos, Quaternion rot)
 	{
-		//IL_0092: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0093: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ba: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0117: Unknown result type (might be due to invalid IL or missing references)
 		Profiler.BeginSample (strPrefab);
 		Profiler.BeginSample ("String.ToLower");
-		if (!StringEx.IsLower (strPrefab)) {
-			Debug.LogWarning ((object)("Converting prefab name to lowercase: " + strPrefab));
+		if (!strPrefab.IsLower ()) {
+			Debug.LogWarning ("Converting prefab name to lowercase: " + strPrefab);
 			strPrefab = strPrefab.ToLower ();
 		}
 		Profiler.EndSample ();
-		GameObject val = FindPrefab (strPrefab);
-		if (!Object.op_Implicit ((Object)(object)val)) {
-			Debug.LogError ((object)("Couldn't find prefab \"" + strPrefab + "\""));
+		GameObject gameObject = FindPrefab (strPrefab);
+		if (!gameObject) {
+			Debug.LogError ("Couldn't find prefab \"" + strPrefab + "\"");
 			Profiler.EndSample ();
 			return null;
 		}
 		Profiler.BeginSample ("PrefabPool.Pop");
-		GameObject val2 = pool.Pop (StringPool.Get (strPrefab), pos, rot);
+		GameObject gameObject2 = pool.Pop (StringPool.Get (strPrefab), pos, rot);
 		Profiler.EndSample ();
-		if ((Object)(object)val2 == (Object)null) {
+		if (gameObject2 == null) {
 			Profiler.BeginSample ("GameObject.Instantiate");
-			val2 = Instantiate.GameObject (val, pos, rot);
-			((Object)val2).name = strPrefab;
+			gameObject2 = Facepunch.Instantiate.GameObject (gameObject, pos, rot);
+			gameObject2.name = strPrefab;
 			Profiler.EndSample ();
 		} else {
-			val2.transform.localScale = val.transform.localScale;
+			gameObject2.transform.localScale = gameObject.transform.localScale;
 		}
-		if (!Clientside && Serverside && (Object)(object)val2.transform.parent == (Object)null) {
-			SceneManager.MoveGameObjectToScene (val2, Rust.Server.EntityScene);
+		if (!Clientside && Serverside && gameObject2.transform.parent == null) {
+			SceneManager.MoveGameObjectToScene (gameObject2, Rust.Server.EntityScene);
 		}
 		Profiler.EndSample ();
-		return val2;
+		return gameObject2;
 	}
 
 	public static void Destroy (Component component, float delay = 0f)
 	{
 		BaseEntity ent = component as BaseEntity;
 		if (ent.IsValid ()) {
-			Debug.LogError ((object)("Trying to destroy an entity without killing it first: " + ((Object)component).name));
+			Debug.LogError ("Trying to destroy an entity without killing it first: " + component.name);
 		}
 		Profiler.BeginSample ("Component.Destroy");
-		Object.Destroy ((Object)(object)component, delay);
+		Object.Destroy (component, delay);
 		Profiler.EndSample ();
 	}
 
 	public static void Destroy (GameObject instance, float delay = 0f)
 	{
-		if (Object.op_Implicit ((Object)(object)instance)) {
+		if ((bool)instance) {
 			Profiler.BeginSample ("GetComponent");
 			BaseEntity component = instance.GetComponent<BaseEntity> ();
 			Profiler.EndSample ();
 			if (component.IsValid ()) {
-				Debug.LogError ((object)("Trying to destroy an entity without killing it first: " + ((Object)instance).name));
+				Debug.LogError ("Trying to destroy an entity without killing it first: " + instance.name);
 			}
 			Profiler.BeginSample ("GameObject.Destroy");
-			Object.Destroy ((Object)(object)instance, delay);
+			Object.Destroy (instance, delay);
 			Profiler.EndSample ();
 		}
 	}
@@ -231,10 +214,10 @@ public class GameManager
 	{
 		BaseEntity ent = component as BaseEntity;
 		if (ent.IsValid ()) {
-			Debug.LogError ((object)("Trying to destroy an entity without killing it first: " + ((Object)component).name));
+			Debug.LogError ("Trying to destroy an entity without killing it first: " + component.name);
 		}
 		Profiler.BeginSample ("Component.DestroyImmediate");
-		Object.DestroyImmediate ((Object)(object)component, allowDestroyingAssets);
+		Object.DestroyImmediate (component, allowDestroyingAssets);
 		Profiler.EndSample ();
 	}
 
@@ -244,37 +227,34 @@ public class GameManager
 		BaseEntity component = instance.GetComponent<BaseEntity> ();
 		Profiler.EndSample ();
 		if (component.IsValid ()) {
-			Debug.LogError ((object)("Trying to destroy an entity without killing it first: " + ((Object)instance).name));
+			Debug.LogError ("Trying to destroy an entity without killing it first: " + instance.name);
 		}
 		Profiler.BeginSample ("GameObject.DestroyImmediate");
-		Object.DestroyImmediate ((Object)(object)instance, allowDestroyingAssets);
+		Object.DestroyImmediate (instance, allowDestroyingAssets);
 		Profiler.EndSample ();
 	}
 
 	public void Retire (GameObject instance)
 	{
-		if (!Object.op_Implicit ((Object)(object)instance)) {
+		if (!instance) {
 			return;
 		}
-		TimeWarning val = TimeWarning.New ("GameManager.Retire", 0);
-		try {
+		using (TimeWarning.New ("GameManager.Retire")) {
 			Profiler.BeginSample ("GetComponent");
 			BaseEntity component = instance.GetComponent<BaseEntity> ();
 			Profiler.EndSample ();
 			if (component.IsValid ()) {
-				Debug.LogError ((object)("Trying to retire an entity without killing it first: " + ((Object)instance).name));
+				Debug.LogError ("Trying to retire an entity without killing it first: " + instance.name);
 			}
-			if (!Application.isQuitting && Pool.enabled && instance.SupportsPooling ()) {
+			if (!Rust.Application.isQuitting && ConVar.Pool.enabled && instance.SupportsPooling ()) {
 				Profiler.BeginSample ("PrefabPool.Push");
 				pool.Push (instance);
 				Profiler.EndSample ();
 			} else {
 				Profiler.BeginSample ("GameObject.Destroy");
-				Object.Destroy ((Object)(object)instance);
+				Object.Destroy (instance);
 				Profiler.EndSample ();
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 	}
 }

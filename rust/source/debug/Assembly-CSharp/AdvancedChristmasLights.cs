@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -52,46 +53,34 @@ public class AdvancedChristmasLights : IOEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("AdvancedChristmasLights.OnRpcMessage", 0);
-		try {
-			if (rpc == 1435781224 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("AdvancedChristmasLights.OnRpcMessage")) {
+			if (rpc == 1435781224 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - SetAnimationStyle "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - SetAnimationStyle "));
 				}
-				TimeWarning val2 = TimeWarning.New ("SetAnimationStyle", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("SetAnimationStyle")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (1435781224u, "SetAnimationStyle", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage rPCMessage2 = rPCMessage;
 							SetAnimationStyle (rPCMessage2);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in SetAnimationStyle");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -113,12 +102,6 @@ public class AdvancedChristmasLights : IOEntity
 
 	public void AddPoint (Vector3 newPoint, Vector3 newNormal)
 	{
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0037: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
 		if (base.isServer && points.Count == 0) {
 			newPoint = wireEmission.position;
 		}
@@ -153,33 +136,27 @@ public class AdvancedChristmasLights : IOEntity
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_007a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0086: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008b: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
-		info.msg.lightString = Pool.Get<LightString> ();
-		info.msg.lightString.points = Pool.GetList<StringPoint> ();
+		info.msg.lightString = Facepunch.Pool.Get<LightString> ();
+		info.msg.lightString.points = Facepunch.Pool.GetList<LightString.StringPoint> ();
 		info.msg.lightString.lengthUsed = lengthUsed;
 		info.msg.lightString.animationStyle = (int)animationStyle;
 		foreach (pointEntry point in points) {
-			StringPoint val = Pool.Get<StringPoint> ();
-			val.point = point.point;
-			val.normal = point.normal;
-			info.msg.lightString.points.Add (val);
+			LightString.StringPoint stringPoint = Facepunch.Pool.Get<LightString.StringPoint> ();
+			stringPoint.point = point.point;
+			stringPoint.normal = point.normal;
+			info.msg.lightString.points.Add (stringPoint);
 		}
 	}
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (info.msg.lightString == null) {
 			return;
 		}
 		ClearPoints ();
-		foreach (StringPoint point in info.msg.lightString.points) {
+		foreach (LightString.StringPoint point in info.msg.lightString.points) {
 			AddPoint (point.point, point.normal);
 		}
 		lengthUsed = info.msg.lightString.lengthUsed;
@@ -203,12 +180,12 @@ public class AdvancedChristmasLights : IOEntity
 	[RPC_Server.IsVisible (3f)]
 	public void SetAnimationStyle (RPCMessage msg)
 	{
-		int num = msg.read.Int32 ();
-		num = Mathf.Clamp (num, 1, 7);
+		int value = msg.read.Int32 ();
+		value = Mathf.Clamp (value, 1, 7);
 		if (Global.developer > 0) {
-			Debug.Log ((object)("Set animation style to :" + num + " old was : " + (int)animationStyle));
+			Debug.Log ("Set animation style to :" + value + " old was : " + (int)animationStyle);
 		}
-		AnimationType animationType = (AnimationType)num;
+		AnimationType animationType = (AnimationType)value;
 		if (animationType != animationStyle) {
 			animationStyle = animationType;
 			SendNetworkUpdate ();

@@ -14,10 +14,8 @@ public class ElevatorLiftStatic : ElevatorLift
 
 	public override void ServerInit ()
 	{
-		//IL_0086: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0091: Unknown result type (might be due to invalid IL or missing references)
 		base.ServerInit ();
-		if (!ElevatorDoorRef.isValid || !((Object)(object)ElevatorDoorLocation != (Object)null)) {
+		if (!ElevatorDoorRef.isValid || !(ElevatorDoorLocation != null)) {
 			return;
 		}
 		foreach (BaseEntity child in children) {

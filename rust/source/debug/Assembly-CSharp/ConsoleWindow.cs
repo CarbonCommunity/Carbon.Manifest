@@ -31,7 +31,7 @@ public class ConsoleWindow
 			streamWriter.AutoFlush = true;
 			Console.SetOut (streamWriter);
 		} catch (Exception ex) {
-			Debug.Log ((object)("Couldn't redirect output: " + ex.Message));
+			Debug.Log ("Couldn't redirect output: " + ex.Message);
 		}
 	}
 

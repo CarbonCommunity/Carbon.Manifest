@@ -67,16 +67,16 @@ public class DistanceField
 				int num18 = num16 + 1;
 				float num19 = array3 [num14];
 				if (array3 [num17] + 1.41421354f < num19) {
-					num19 = (array3 [num14] = Vector2Ex.Length ((float)(num13 - (array [num14] = array [num17])), (float)(num11 - (array2 [num14] = array2 [num17]))));
+					num19 = (array3 [num14] = Vector2Ex.Length (num13 - (array [num14] = array [num17]), num11 - (array2 [num14] = array2 [num17])));
 				}
 				if (array3 [num16] + 1f < num19) {
-					num19 = (array3 [num14] = Vector2Ex.Length ((float)(num13 - (array [num14] = array [num16])), (float)(num11 - (array2 [num14] = array2 [num16]))));
+					num19 = (array3 [num14] = Vector2Ex.Length (num13 - (array [num14] = array [num16]), num11 - (array2 [num14] = array2 [num16])));
 				}
 				if (array3 [num18] + 1.41421354f < num19) {
-					num19 = (array3 [num14] = Vector2Ex.Length ((float)(num13 - (array [num14] = array [num18])), (float)(num11 - (array2 [num14] = array2 [num18]))));
+					num19 = (array3 [num14] = Vector2Ex.Length (num13 - (array [num14] = array [num18]), num11 - (array2 [num14] = array2 [num18])));
 				}
 				if (array3 [num15] + 1f < num19) {
-					num19 = (array3 [num14] = Vector2Ex.Length ((float)(num13 - (array [num14] = array [num15])), (float)(num11 - (array2 [num14] = array2 [num15]))));
+					num19 = (array3 [num14] = Vector2Ex.Length (num13 - (array [num14] = array [num15]), num11 - (array2 [num14] = array2 [num15])));
 				}
 				num13++;
 				num14++;
@@ -96,16 +96,16 @@ public class DistanceField
 				int num27 = num25 + 1;
 				float num28 = array3 [num23];
 				if (array3 [num24] + 1f < num28) {
-					num28 = (array3 [num23] = Vector2Ex.Length ((float)(num22 - (array [num23] = array [num24])), (float)(num20 - (array2 [num23] = array2 [num24]))));
+					num28 = (array3 [num23] = Vector2Ex.Length (num22 - (array [num23] = array [num24]), num20 - (array2 [num23] = array2 [num24])));
 				}
 				if (array3 [num26] + 1.41421354f < num28) {
-					num28 = (array3 [num23] = Vector2Ex.Length ((float)(num22 - (array [num23] = array [num26])), (float)(num20 - (array2 [num23] = array2 [num26]))));
+					num28 = (array3 [num23] = Vector2Ex.Length (num22 - (array [num23] = array [num26]), num20 - (array2 [num23] = array2 [num26])));
 				}
 				if (array3 [num25] + 1f < num28) {
-					num28 = (array3 [num23] = Vector2Ex.Length ((float)(num22 - (array [num23] = array [num25])), (float)(num20 - (array2 [num23] = array2 [num25]))));
+					num28 = (array3 [num23] = Vector2Ex.Length (num22 - (array [num23] = array [num25]), num20 - (array2 [num23] = array2 [num25])));
 				}
 				if (array3 [num27] + 1f < num28) {
-					num28 = (array3 [num23] = Vector2Ex.Length ((float)(num22 - (array [num23] = array [num27])), (float)(num20 - (array2 [num23] = array2 [num27]))));
+					num28 = (array3 [num23] = Vector2Ex.Length (num22 - (array [num23] = array [num27]), num20 - (array2 [num23] = array2 [num27])));
 				}
 				num22--;
 				num23--;
@@ -141,9 +141,6 @@ public class DistanceField
 
 	private static Vector3 SampleClamped (Vector3[] data, int size, int x, int y)
 	{
-		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
 		x = ((x >= 0) ? x : 0);
 		y = ((y >= 0) ? y : 0);
 		x = ((x >= size) ? (size - 1) : x);
@@ -162,38 +159,21 @@ public class DistanceField
 
 	public static void GenerateVectors (in int size, in float[] distanceField, ref Vector3[] vectorField)
 	{
-		//IL_00de: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ec: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0105: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_016a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_016f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_019d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01bd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01c2: Unknown result type (might be due to invalid IL or missing references)
 		for (int i = 1; i < size - 1; i++) {
 			for (int j = 1; j < size - 1; j++) {
-				float num = SampleClamped (distanceField, size, i, j);
-				float num2 = SampleClamped (distanceField, size, i - 1, j - 1);
-				float num3 = SampleClamped (distanceField, size, i - 1, j);
-				float num4 = SampleClamped (distanceField, size, i - 1, j + 1);
-				float num5 = SampleClamped (distanceField, size, i, j - 1);
-				float num6 = SampleClamped (distanceField, size, i, j + 1);
-				float num7 = SampleClamped (distanceField, size, i + 1, j - 1);
-				float num8 = SampleClamped (distanceField, size, i + 1, j);
-				float num9 = SampleClamped (distanceField, size, i + 1, j + 1);
-				float num10 = num7 + 2f * num8 + num9 - (num2 + 2f * num3 + num4);
-				float num11 = num4 + 2f * num6 + num9 - (num2 + 2f * num5 + num7);
-				Vector2 val = new Vector2 (0f - num10, 0f - num11);
-				Vector2 normalized = ((Vector2)(ref val)).normalized;
-				vectorField [j * size + i] = new Vector3 (normalized.x, normalized.y, num);
+				float z = SampleClamped (distanceField, size, i, j);
+				float num = SampleClamped (distanceField, size, i - 1, j - 1);
+				float num2 = SampleClamped (distanceField, size, i - 1, j);
+				float num3 = SampleClamped (distanceField, size, i - 1, j + 1);
+				float num4 = SampleClamped (distanceField, size, i, j - 1);
+				float num5 = SampleClamped (distanceField, size, i, j + 1);
+				float num6 = SampleClamped (distanceField, size, i + 1, j - 1);
+				float num7 = SampleClamped (distanceField, size, i + 1, j);
+				float num8 = SampleClamped (distanceField, size, i + 1, j + 1);
+				float num9 = num6 + 2f * num7 + num8 - (num + 2f * num2 + num3);
+				float num10 = num3 + 2f * num5 + num8 - (num + 2f * num4 + num6);
+				Vector2 normalized = new Vector2 (0f - num9, 0f - num10).normalized;
+				vectorField [j * size + i] = new Vector3 (normalized.x, normalized.y, z);
 			}
 		}
 		for (int k = 1; k < size - 1; k++) {

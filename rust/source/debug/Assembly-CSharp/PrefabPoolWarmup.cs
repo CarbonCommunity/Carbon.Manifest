@@ -12,10 +12,10 @@ public class PrefabPoolWarmup
 {
 	public static void Run (string filter = null, int countOverride = 0)
 	{
-		if (Application.isLoadingPrefabs) {
+		if (Rust.Application.isLoadingPrefabs) {
 			return;
 		}
-		Application.isLoadingPrefabs = true;
+		Rust.Application.isLoadingPrefabs = true;
 		string[] assetList = GetAssetList ();
 		if (string.IsNullOrEmpty (filter)) {
 			for (int i = 0; i < assetList.Length; i++) {
@@ -23,20 +23,20 @@ public class PrefabPoolWarmup
 			}
 		} else {
 			foreach (string text in assetList) {
-				if (StringEx.Contains (text, filter, CompareOptions.IgnoreCase)) {
+				if (text.Contains (filter, CompareOptions.IgnoreCase)) {
 					PrefabWarmup (text, countOverride);
 				}
 			}
 		}
-		Application.isLoadingPrefabs = false;
+		Rust.Application.isLoadingPrefabs = false;
 	}
 
 	public static IEnumerator Run (float deltaTime, Action<string> statusFunction = null, string format = null)
 	{
-		if (Application.isEditor || Application.isLoadingPrefabs || !Pool.prewarm) {
+		if (UnityEngine.Application.isEditor || Rust.Application.isLoadingPrefabs || !Pool.prewarm) {
 			yield break;
 		}
-		Application.isLoadingPrefabs = true;
+		Rust.Application.isLoadingPrefabs = true;
 		string[] prewarmAssets = GetAssetList ();
 		Stopwatch sw = Stopwatch.StartNew ();
 		for (int i = 0; i < prewarmAssets.Length; i++) {
@@ -48,7 +48,7 @@ public class PrefabPoolWarmup
 			}
 			PrefabWarmup (prewarmAssets [i]);
 		}
-		Application.isLoadingPrefabs = false;
+		Rust.Application.isLoadingPrefabs = false;
 	}
 
 	public static string[] GetAssetList ()
@@ -63,9 +63,9 @@ public class PrefabPoolWarmup
 		if (string.IsNullOrEmpty (path)) {
 			return;
 		}
-		GameObject val = GameManager.server.FindPrefab (path);
-		if ((Object)(object)val != (Object)null && val.SupportsPooling ()) {
-			Poolable component = val.GetComponent<Poolable> ();
+		GameObject gameObject = GameManager.server.FindPrefab (path);
+		if (gameObject != null && gameObject.SupportsPooling ()) {
+			Poolable component = gameObject.GetComponent<Poolable> ();
 			int num = component.ServerCount;
 			List<GameObject> list = new List<GameObject> ();
 			if (num > 0 && countOverride > 0) {

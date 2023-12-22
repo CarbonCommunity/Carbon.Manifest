@@ -19,13 +19,13 @@ public class ExcavatorServerEffects : MonoBehaviour
 
 	public static void SetMining (bool isMining, bool force = false)
 	{
-		if ((Object)(object)instance == (Object)null) {
+		if (instance == null) {
 			return;
 		}
 		TriggerBase[] array = instance.miningTriggers;
 		foreach (TriggerBase triggerBase in array) {
-			if (!((Object)(object)triggerBase == (Object)null)) {
-				((Component)triggerBase).gameObject.SetActive (isMining);
+			if (!(triggerBase == null)) {
+				triggerBase.gameObject.SetActive (isMining);
 			}
 		}
 	}

@@ -7,5 +7,5 @@ public class ServerBrowserTag : MonoBehaviour
 
 	public RustButton button;
 
-	public bool IsActive => (Object)(object)button != (Object)null && ((RustControl)button).IsPressed;
+	public bool IsActive => button != null && button.IsPressed;
 }

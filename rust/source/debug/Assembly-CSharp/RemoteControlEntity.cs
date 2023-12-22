@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -38,46 +39,34 @@ public class RemoteControlEntity : BaseCombatEntity, IRemoteControllable
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("RemoteControlEntity.OnRpcMessage", 0);
-		try {
-			if (rpc == 1053317251 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("RemoteControlEntity.OnRpcMessage")) {
+			if (rpc == 1053317251 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_SetID "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_SetID "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_SetID", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_SetID")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (1053317251u, "Server_SetID", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						TimeWarning val4 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							Server_SetID (msg2);
-						} finally {
-							((IDisposable)val4)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in Server_SetID");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -170,14 +159,14 @@ public class RemoteControlEntity : BaseCombatEntity, IRemoteControllable
 	[RPC_Server.MaxDistance (3f)]
 	public void Server_SetID (RPCMessage msg)
 	{
-		if ((Object)(object)msg.player == (Object)null || !CanControl (msg.player.userID) || !CanChangeID (msg.player)) {
+		if (msg.player == null || !CanControl (msg.player.userID) || !CanChangeID (msg.player)) {
 			return;
 		}
-		string text = msg.read.String (256);
+		string text = msg.read.String ();
 		if (string.IsNullOrEmpty (text) || ComputerStation.IsValidIdentifier (text)) {
-			string text2 = msg.read.String (256);
+			string text2 = msg.read.String ();
 			if (ComputerStation.IsValidIdentifier (text2) && text == GetIdentifier ()) {
-				Debug.Log ((object)"SetID success!");
+				Debug.Log ("SetID success!");
 				UpdateIdentifier (text2);
 			}
 		}
@@ -192,7 +181,7 @@ public class RemoteControlEntity : BaseCombatEntity, IRemoteControllable
 	{
 		base.Save (info);
 		if (info.forDisk || CanChangeID (info.forConnection?.player as BasePlayer)) {
-			info.msg.rcEntity = Pool.Get<RCEntity> ();
+			info.msg.rcEntity = Facepunch.Pool.Get<RCEntity> ();
 			info.msg.rcEntity.identifier = GetIdentifier ();
 		}
 	}
@@ -207,7 +196,7 @@ public class RemoteControlEntity : BaseCombatEntity, IRemoteControllable
 
 	protected virtual bool CanChangeID (BasePlayer player)
 	{
-		return (Object)(object)player != (Object)null && player.CanBuild () && player.IsBuildingAuthed () && player.IsHoldingEntity<Hammer> ();
+		return player != null && player.CanBuild () && player.IsBuildingAuthed () && player.IsHoldingEntity<Hammer> ();
 	}
 
 	public static bool IDInUse (string id)

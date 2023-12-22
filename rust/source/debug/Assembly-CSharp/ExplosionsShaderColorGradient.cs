@@ -22,15 +22,13 @@ public class ExplosionsShaderColorGradient : MonoBehaviour
 
 	private void Start ()
 	{
-		//IL_0089: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008e: Unknown result type (might be due to invalid IL or missing references)
-		Material[] materials = ((Component)this).GetComponent<Renderer> ().materials;
+		Material[] materials = GetComponent<Renderer> ().materials;
 		if (MaterialID >= materials.Length) {
-			Debug.Log ((object)"ShaderColorGradient: Material ID more than shader materials count.");
+			Debug.Log ("ShaderColorGradient: Material ID more than shader materials count.");
 		}
 		matInstance = materials [MaterialID];
 		if (!matInstance.HasProperty (ShaderProperty)) {
-			Debug.Log ((object)("ShaderColorGradient: Shader not have \"" + ShaderProperty + "\" property"));
+			Debug.Log ("ShaderColorGradient: Shader not have \"" + ShaderProperty + "\" property");
 		}
 		propertyID = Shader.PropertyToID (ShaderProperty);
 		oldColor = matInstance.GetColor (propertyID);
@@ -44,15 +42,10 @@ public class ExplosionsShaderColorGradient : MonoBehaviour
 
 	private void Update ()
 	{
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
 		float num = Time.time - startTime;
 		if (canUpdate) {
-			Color val = Color.Evaluate (num / TimeMultiplier);
-			matInstance.SetColor (propertyID, val * oldColor);
+			Color color = Color.Evaluate (num / TimeMultiplier);
+			matInstance.SetColor (propertyID, color * oldColor);
 		}
 		if (num >= TimeMultiplier) {
 			canUpdate = false;

@@ -20,8 +20,8 @@ public class AnimationEvents : BaseMonoBehaviour
 
 	protected void OnEnable ()
 	{
-		if ((Object)(object)rootObject == (Object)null) {
-			rootObject = ((Component)this).transform;
+		if (rootObject == null) {
+			rootObject = base.transform;
 		}
 	}
 }

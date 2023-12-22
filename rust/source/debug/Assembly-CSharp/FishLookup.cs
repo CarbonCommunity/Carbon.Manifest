@@ -19,57 +19,52 @@ public class FishLookup : PrefabAttribute
 
 	public static void LoadFish ()
 	{
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
 		if (AvailableFish != null) {
-			if (TimeSince.op_Implicit (lastShuffle) > 5f) {
-				AvailableFish.Shuffle ((uint)Random.Range (0, 10000));
+			if ((float)lastShuffle > 5f) {
+				AvailableFish.Shuffle ((uint)UnityEngine.Random.Range (0, 10000));
 			}
 			return;
 		}
-		List<ItemModFishable> list = Pool.GetList<ItemModFishable> ();
-		List<ItemDefinition> list2 = Pool.GetList<ItemDefinition> ();
-		ItemModFishable item = default(ItemModFishable);
-		ItemModCompostable itemModCompostable = default(ItemModCompostable);
-		foreach (ItemDefinition item2 in ItemManager.itemList) {
-			if (((Component)item2).TryGetComponent<ItemModFishable> (ref item)) {
-				list.Add (item);
+		List<ItemModFishable> obj = Pool.GetList<ItemModFishable> ();
+		List<ItemDefinition> obj2 = Pool.GetList<ItemDefinition> ();
+		foreach (ItemDefinition item in ItemManager.itemList) {
+			if (item.TryGetComponent<ItemModFishable> (out var component)) {
+				obj.Add (component);
 			}
-			if (((Component)item2).TryGetComponent<ItemModCompostable> (ref itemModCompostable) && itemModCompostable.BaitValue > 0f) {
-				list2.Add (item2);
+			if (item.TryGetComponent<ItemModCompostable> (out var component2) && component2.BaitValue > 0f) {
+				obj2.Add (item);
 			}
 		}
-		AvailableFish = list.ToArray ();
-		BaitItems = list2.ToArray ();
-		Pool.FreeList<ItemModFishable> (ref list);
-		Pool.FreeList<ItemDefinition> (ref list2);
+		AvailableFish = obj.ToArray ();
+		BaitItems = obj2.ToArray ();
+		Pool.FreeList (ref obj);
+		Pool.FreeList (ref obj2);
 	}
 
 	public ItemDefinition GetFish (Vector3 worldPos, WaterBody bodyType, ItemDefinition lure, out ItemModFishable fishable, ItemModFishable ignoreFish)
 	{
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
 		LoadFish ();
-		ItemModCompostable itemModCompostable = default(ItemModCompostable);
-		float num = (((Component)lure).TryGetComponent<ItemModCompostable> (ref itemModCompostable) ? itemModCompostable.BaitValue : 0f);
-		WaterBody.FishingTag fishingTag = (((Object)(object)bodyType != (Object)null) ? bodyType.FishingType : WaterBody.FishingTag.Ocean);
+		ItemModCompostable component;
+		float num = (lure.TryGetComponent<ItemModCompostable> (out component) ? component.BaitValue : 0f);
+		WaterBody.FishingTag fishingTag = ((bodyType != null) ? bodyType.FishingType : WaterBody.FishingTag.Ocean);
 		float num2 = WaterLevel.GetOverallWaterDepth (worldPos, waves: true, volumes: false, null, noEarlyExit: true);
 		if (worldPos.y < -10f) {
 			num2 = 10f;
 		}
-		int num3 = Random.Range (0, AvailableFish.Length);
+		int num3 = UnityEngine.Random.Range (0, AvailableFish.Length);
 		for (int i = 0; i < AvailableFish.Length; i++) {
 			num3++;
 			if (num3 >= AvailableFish.Length) {
 				num3 = 0;
 			}
 			ItemModFishable itemModFishable = AvailableFish [num3];
-			if (itemModFishable.CanBeFished && !(itemModFishable.MinimumBaitLevel > num) && (!(itemModFishable.MaximumBaitLevel > 0f) || !(num > itemModFishable.MaximumBaitLevel)) && !((Object)(object)itemModFishable == (Object)(object)ignoreFish) && (itemModFishable.RequiredTag == (WaterBody.FishingTag)(-1) || (itemModFishable.RequiredTag & fishingTag) != 0) && ((fishingTag & WaterBody.FishingTag.Ocean) != WaterBody.FishingTag.Ocean || ((!(itemModFishable.MinimumWaterDepth > 0f) || !(num2 < itemModFishable.MinimumWaterDepth)) && (!(itemModFishable.MaximumWaterDepth > 0f) || !(num2 > itemModFishable.MaximumWaterDepth)))) && !(Random.Range (0f, 1f) - num * 3f * 0.01f > itemModFishable.Chance)) {
+			if (itemModFishable.CanBeFished && !(itemModFishable.MinimumBaitLevel > num) && (!(itemModFishable.MaximumBaitLevel > 0f) || !(num > itemModFishable.MaximumBaitLevel)) && !(itemModFishable == ignoreFish) && (itemModFishable.RequiredTag == (WaterBody.FishingTag)(-1) || (itemModFishable.RequiredTag & fishingTag) != 0) && ((fishingTag & WaterBody.FishingTag.Ocean) != WaterBody.FishingTag.Ocean || ((!(itemModFishable.MinimumWaterDepth > 0f) || !(num2 < itemModFishable.MinimumWaterDepth)) && (!(itemModFishable.MaximumWaterDepth > 0f) || !(num2 > itemModFishable.MaximumWaterDepth)))) && !(UnityEngine.Random.Range (0f, 1f) - num * 3f * 0.01f > itemModFishable.Chance)) {
 				fishable = itemModFishable;
-				return ((Component)itemModFishable).GetComponent<ItemDefinition> ();
+				return itemModFishable.GetComponent<ItemDefinition> ();
 			}
 		}
 		fishable = FallbackFish;
-		return ((Component)FallbackFish).GetComponent<ItemDefinition> ();
+		return FallbackFish.GetComponent<ItemDefinition> ();
 	}
 
 	public void CheckCatchAllAchievement (BasePlayer player)

@@ -20,21 +20,13 @@ public class PatrolHelicopter : ConsoleSystem
 	[ServerVar]
 	public static void drop (Arg arg)
 	{
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0094: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer basePlayer = arg.Player ();
-		if (Object.op_Implicit ((Object)(object)basePlayer)) {
-			Debug.Log ((object)("heli called to : " + ((Component)basePlayer).transform.position));
+		if ((bool)basePlayer) {
+			Debug.Log ("heli called to : " + basePlayer.transform.position);
 			BaseEntity baseEntity = GameManager.server.CreateEntity ("assets/prefabs/npc/patrol helicopter/patrolhelicopter.prefab");
-			if (Object.op_Implicit ((Object)(object)baseEntity)) {
-				PatrolHelicopterAI component = ((Component)baseEntity).GetComponent<PatrolHelicopterAI> ();
-				component.SetInitialDestination (((Component)basePlayer).transform.position + new Vector3 (0f, 10f, 0f), 0f);
+			if ((bool)baseEntity) {
+				PatrolHelicopterAI component = baseEntity.GetComponent<PatrolHelicopterAI> ();
+				component.SetInitialDestination (basePlayer.transform.position + new Vector3 (0f, 10f, 0f), 0f);
 				baseEntity.Spawn ();
 			}
 		}
@@ -43,21 +35,13 @@ public class PatrolHelicopter : ConsoleSystem
 	[ServerVar]
 	public static void calltome (Arg arg)
 	{
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0094: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer basePlayer = arg.Player ();
-		if (Object.op_Implicit ((Object)(object)basePlayer)) {
-			Debug.Log ((object)("heli called to : " + ((Component)basePlayer).transform.position));
+		if ((bool)basePlayer) {
+			Debug.Log ("heli called to : " + basePlayer.transform.position);
 			BaseEntity baseEntity = GameManager.server.CreateEntity ("assets/prefabs/npc/patrol helicopter/patrolhelicopter.prefab");
-			if (Object.op_Implicit ((Object)(object)baseEntity)) {
-				PatrolHelicopterAI component = ((Component)baseEntity).GetComponent<PatrolHelicopterAI> ();
-				component.SetInitialDestination (((Component)basePlayer).transform.position + new Vector3 (0f, 10f, 0f));
+			if ((bool)baseEntity) {
+				PatrolHelicopterAI component = baseEntity.GetComponent<PatrolHelicopterAI> ();
+				component.SetInitialDestination (basePlayer.transform.position + new Vector3 (0f, 10f, 0f));
 				baseEntity.Spawn ();
 			}
 		}
@@ -66,15 +50,11 @@ public class PatrolHelicopter : ConsoleSystem
 	[ServerVar]
 	public static void call (Arg arg)
 	{
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0037: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer basePlayer = arg.Player ();
-		if (Object.op_Implicit ((Object)(object)basePlayer)) {
-			Debug.Log ((object)"Helicopter inbound");
+		if ((bool)basePlayer) {
+			Debug.Log ("Helicopter inbound");
 			BaseEntity baseEntity = GameManager.server.CreateEntity ("assets/prefabs/npc/patrol helicopter/patrolhelicopter.prefab");
-			if (Object.op_Implicit ((Object)(object)baseEntity)) {
+			if ((bool)baseEntity) {
 				baseEntity.Spawn ();
 			}
 		}
@@ -83,24 +63,19 @@ public class PatrolHelicopter : ConsoleSystem
 	[ServerVar]
 	public static void strafe (Arg arg)
 	{
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0082: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0091: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer basePlayer = arg.Player ();
-		if (Object.op_Implicit ((Object)(object)basePlayer)) {
+		if ((bool)basePlayer) {
 			PatrolHelicopterAI heliInstance = PatrolHelicopterAI.heliInstance;
-			RaycastHit val = default(RaycastHit);
-			if ((Object)(object)heliInstance == (Object)null) {
-				Debug.Log ((object)"no heli instance");
-			} else if (Physics.Raycast (basePlayer.eyes.HeadRay (), ref val, 1000f, 1218652417)) {
-				Debug.Log ((object)("strafing :" + ((RaycastHit)(ref val)).point));
-				heliInstance.interestZoneOrigin = ((RaycastHit)(ref val)).point;
+			RaycastHit hitInfo;
+			if (heliInstance == null) {
+				Debug.Log ("no heli instance");
+			} else if (Physics.Raycast (basePlayer.eyes.HeadRay (), out hitInfo, 1000f, 1218652417)) {
+				Debug.Log ("strafing :" + hitInfo.point);
+				heliInstance.interestZoneOrigin = hitInfo.point;
 				heliInstance.ExitCurrentState ();
-				heliInstance.State_Strafe_Enter (((RaycastHit)(ref val)).point);
+				heliInstance.State_Strafe_Enter (hitInfo.point);
 			} else {
-				Debug.Log ((object)"strafe ray missed");
+				Debug.Log ("strafe ray missed");
 			}
 		}
 	}
@@ -109,7 +84,7 @@ public class PatrolHelicopter : ConsoleSystem
 	public static void testpuzzle (Arg arg)
 	{
 		BasePlayer basePlayer = arg.Player ();
-		if (Object.op_Implicit ((Object)(object)basePlayer) && basePlayer.IsDeveloper) {
+		if ((bool)basePlayer && basePlayer.IsDeveloper) {
 		}
 	}
 }

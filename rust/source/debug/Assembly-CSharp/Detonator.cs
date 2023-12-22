@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -22,62 +23,51 @@ public class Detonator : HeldEntity, IRFObject
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("Detonator.OnRpcMessage", 0);
-		try {
-			if (rpc == 2778616053u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("Detonator.OnRpcMessage")) {
+			if (rpc == 2778616053u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - ServerSetFrequency "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - ServerSetFrequency "));
 				}
-				TimeWarning val2 = TimeWarning.New ("ServerSetFrequency", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Call", 0);
+				using (TimeWarning.New ("ServerSetFrequency")) {
 					try {
-						RPCMessage rPCMessage = default(RPCMessage);
-						rPCMessage.connection = msg.connection;
-						rPCMessage.player = player;
-						rPCMessage.read = msg.read;
-						RPCMessage msg2 = rPCMessage;
-						ServerSetFrequency (msg2);
-					} finally {
-						((IDisposable)val3)?.Dispose ();
+						using (TimeWarning.New ("Call")) {
+							RPCMessage rPCMessage = default(RPCMessage);
+							rPCMessage.connection = msg.connection;
+							rPCMessage.player = player;
+							rPCMessage.read = msg.read;
+							RPCMessage msg2 = rPCMessage;
+							ServerSetFrequency (msg2);
+						}
+					} catch (Exception exception) {
+						Debug.LogException (exception);
+						player.Kick ("RPC Error in ServerSetFrequency");
 					}
-				} catch (Exception ex) {
-					Debug.LogException (ex);
-					player.Kick ("RPC Error in ServerSetFrequency");
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 1106698135 && (Object)(object)player != (Object)null) {
+			if (rpc == 1106698135 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - SetPressed "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - SetPressed "));
 				}
-				TimeWarning val4 = TimeWarning.New ("SetPressed", 0);
-				try {
-					TimeWarning val5 = TimeWarning.New ("Call", 0);
+				using (TimeWarning.New ("SetPressed")) {
 					try {
-						RPCMessage rPCMessage = default(RPCMessage);
-						rPCMessage.connection = msg.connection;
-						rPCMessage.player = player;
-						rPCMessage.read = msg.read;
-						RPCMessage pressed = rPCMessage;
-						SetPressed (pressed);
-					} finally {
-						((IDisposable)val5)?.Dispose ();
+						using (TimeWarning.New ("Call")) {
+							RPCMessage rPCMessage = default(RPCMessage);
+							rPCMessage.connection = msg.connection;
+							rPCMessage.player = player;
+							rPCMessage.read = msg.read;
+							RPCMessage pressed = rPCMessage;
+							SetPressed (pressed);
+						}
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
+						player.Kick ("RPC Error in SetPressed");
 					}
-				} catch (Exception ex2) {
-					Debug.LogException (ex2);
-					player.Kick ("RPC Error in SetPressed");
-				} finally {
-					((IDisposable)val4)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -85,9 +75,7 @@ public class Detonator : HeldEntity, IRFObject
 	[RPC_Server]
 	public void SetPressed (RPCMessage msg)
 	{
-		//IL_006e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0073: Unknown result type (might be due to invalid IL or missing references)
-		if (!((Object)(object)msg.player == (Object)null) && !((Object)(object)msg.player != (Object)(object)GetOwnerPlayer ())) {
+		if (!(msg.player == null) && !(msg.player != GetOwnerPlayer ())) {
 			bool flag = HasFlag (Flags.On);
 			bool flag2 = msg.read.Bit ();
 			InternalSetPressed (flag2);
@@ -109,10 +97,7 @@ public class Detonator : HeldEntity, IRFObject
 
 	public Vector3 GetPosition ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		return ((Component)this).transform.position;
+		return base.transform.position;
 	}
 
 	public float GetMaxRange ()
@@ -140,12 +125,10 @@ public class Detonator : HeldEntity, IRFObject
 
 	public void ServerSetFrequency (BasePlayer player, int freq)
 	{
-		//IL_00b6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c0: Expected O, but got Unknown
-		if ((Object)(object)player == (Object)null || (Object)(object)GetOwnerPlayer () != (Object)(object)player || Time.time < nextChangeTime) {
+		if (player == null || GetOwnerPlayer () != player || UnityEngine.Time.time < nextChangeTime) {
 			return;
 		}
-		nextChangeTime = Time.time + 2f;
+		nextChangeTime = UnityEngine.Time.time + 2f;
 		if (RFManager.IsReserved (freq)) {
 			RFManager.ReserveErrorPrint (player);
 			return;
@@ -157,7 +140,7 @@ public class Detonator : HeldEntity, IRFObject
 		Item item = GetItem ();
 		if (item != null) {
 			if (item.instanceData == null) {
-				item.instanceData = new InstanceData ();
+				item.instanceData = new ProtoBuf.Item.InstanceData ();
 				item.instanceData.ShouldPool = false;
 			}
 			item.instanceData.dataInt = frequency;
@@ -170,7 +153,7 @@ public class Detonator : HeldEntity, IRFObject
 	{
 		base.Save (info);
 		if (info.msg.ioEntity == null) {
-			info.msg.ioEntity = Pool.Get<IOEntity> ();
+			info.msg.ioEntity = Facepunch.Pool.Get<ProtoBuf.IOEntity> ();
 		}
 		info.msg.ioEntity.genericInt1 = frequency;
 	}

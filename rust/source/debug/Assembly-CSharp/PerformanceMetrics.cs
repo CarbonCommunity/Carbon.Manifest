@@ -1,26 +1,10 @@
 using System;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using UnityEngine;
-using UnityEngine.Events;
 
 public static class PerformanceMetrics
 {
-	[Serializable]
-	[CompilerGenerated]
-	private sealed class <>c
-	{
-		public static readonly <>c <>9 = new <>c ();
-
-		public static UnityAction <>9__3_0;
-
-		internal void <Setup>b__3_0 ()
-		{
-			OnBeforeRender?.Invoke ();
-		}
-	}
-
 	private static PerformanceSamplePoint current;
 
 	private static Action OnBeforeRender;
@@ -38,18 +22,9 @@ public static class PerformanceMetrics
 
 	public static void Setup ()
 	{
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Expected O, but got Unknown
-		object obj = <>c.<>9__3_0;
-		if (obj == null) {
-			UnityAction val = delegate {
-				OnBeforeRender?.Invoke ();
-			};
-			<>c.<>9__3_0 = val;
-			obj = (object)val;
-		}
-		Application.onBeforeRender += (UnityAction)obj;
+		Application.onBeforeRender += delegate {
+			OnBeforeRender?.Invoke ();
+		};
 		_mainThreadId = Thread.CurrentThread.ManagedThreadId;
 		AddStopwatch (PerformanceSample.PreCull, ref OnBeforeRender, ref CameraUpdateHook.RustCamera_PreRender);
 		AddStopwatch (PerformanceSample.Update, ref PreUpdateHook.OnUpdate, ref PostUpdateHook.OnUpdate);

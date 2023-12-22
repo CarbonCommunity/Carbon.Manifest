@@ -54,9 +54,9 @@ public class CinematicEntity : BaseEntity
 	private void ToggleObjects (bool state)
 	{
 		GameObject[] disableObjects = DisableObjects;
-		foreach (GameObject val in disableObjects) {
-			if ((Object)(object)val != (Object)null) {
-				val.SetActive (state);
+		foreach (GameObject gameObject in disableObjects) {
+			if (gameObject != null) {
+				gameObject.SetActive (state);
 			}
 		}
 	}

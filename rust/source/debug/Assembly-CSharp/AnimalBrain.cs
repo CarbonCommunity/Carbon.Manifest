@@ -1,3 +1,4 @@
+#define ENABLE_PROFILER
 using UnityEngine;
 using UnityEngine.Profiling;
 
@@ -15,24 +16,20 @@ public class AnimalBrain : BaseAIBrain
 
 		public override void StateEnter (BaseAIBrain brain, BaseEntity entity)
 		{
-			//IL_008f: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0094: Unknown result type (might be due to invalid IL or missing references)
-			//IL_009c: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00cc: Unknown result type (might be due to invalid IL or missing references)
 			base.StateEnter (brain, entity);
 			attack = entity as IAIAttack;
 			BaseEntity baseEntity = brain.Events.Memory.Entity.Get (brain.Events.CurrentInputMemorySlot);
 			BasePlayer basePlayer = baseEntity as BasePlayer;
-			if ((Object)(object)basePlayer != (Object)null && basePlayer.IsDead ()) {
+			if (basePlayer != null && basePlayer.IsDead ()) {
 				StopAttacking ();
-			} else if ((Object)(object)baseEntity != (Object)null && baseEntity.Health () > 0f) {
+			} else if (baseEntity != null && baseEntity.Health () > 0f) {
 				BaseCombatEntity target = baseEntity as BaseCombatEntity;
 				Vector3 aimDirection = GetAimDirection (entity as BaseCombatEntity, target);
 				brain.Navigator.SetFacingDirectionOverride (aimDirection);
 				if (attack.CanAttack (baseEntity)) {
 					StartAttacking (baseEntity);
 				}
-				brain.Navigator.SetDestination (((Component)baseEntity).transform.position, BaseNavigator.NavigationSpeed.Fast);
+				brain.Navigator.SetDestination (baseEntity.transform.position, BaseNavigator.NavigationSpeed.Fast);
 			}
 		}
 
@@ -51,10 +48,6 @@ public class AnimalBrain : BaseAIBrain
 
 		public override StateStatus StateThink (float delta, BaseAIBrain brain, BaseEntity entity)
 		{
-			//IL_0157: Unknown result type (might be due to invalid IL or missing references)
-			//IL_01a6: Unknown result type (might be due to invalid IL or missing references)
-			//IL_01ab: Unknown result type (might be due to invalid IL or missing references)
-			//IL_01b3: Unknown result type (might be due to invalid IL or missing references)
 			base.StateThink (delta, brain, entity);
 			Profiler.BeginSample ("AnimalBrain.States.Attack.StateThink");
 			BaseEntity baseEntity = brain.Events.Memory.Entity.Get (brain.Events.CurrentInputMemorySlot);
@@ -62,7 +55,7 @@ public class AnimalBrain : BaseAIBrain
 				Profiler.EndSample ();
 				return StateStatus.Error;
 			}
-			if ((Object)(object)baseEntity == (Object)null) {
+			if (baseEntity == null) {
 				brain.Navigator.ClearFacingDirectionOverride ();
 				StopAttacking ();
 				Profiler.EndSample ();
@@ -73,19 +66,19 @@ public class AnimalBrain : BaseAIBrain
 				return StateStatus.Finished;
 			}
 			BasePlayer basePlayer = baseEntity as BasePlayer;
-			if ((Object)(object)basePlayer != (Object)null && basePlayer.IsDead ()) {
+			if (basePlayer != null && basePlayer.IsDead ()) {
 				StopAttacking ();
 				return StateStatus.Finished;
 			}
-			BaseVehicle baseVehicle = (((Object)(object)basePlayer != (Object)null) ? basePlayer.GetMountedVehicle () : null);
-			if ((Object)(object)baseVehicle != (Object)null && baseVehicle is BaseModularVehicle) {
+			BaseVehicle baseVehicle = ((basePlayer != null) ? basePlayer.GetMountedVehicle () : null);
+			if (baseVehicle != null && baseVehicle is BaseModularVehicle) {
 				StopAttacking ();
 				return StateStatus.Error;
 			}
-			if (brain.Senses.ignoreSafeZonePlayers && (Object)(object)basePlayer != (Object)null && basePlayer.InSafeZone ()) {
+			if (brain.Senses.ignoreSafeZonePlayers && basePlayer != null && basePlayer.InSafeZone ()) {
 				return StateStatus.Error;
 			}
-			if (!brain.Navigator.SetDestination (((Component)baseEntity).transform.position, BaseNavigator.NavigationSpeed.Fast, 0.25f, (baseEntity is BasePlayer && attack != null) ? attack.EngagementRange () : 0f)) {
+			if (!brain.Navigator.SetDestination (baseEntity.transform.position, BaseNavigator.NavigationSpeed.Fast, 0.25f, (baseEntity is BasePlayer && attack != null) ? attack.EngagementRange () : 0f)) {
 				return StateStatus.Error;
 			}
 			BaseCombatEntity target = baseEntity as BaseCombatEntity;
@@ -102,18 +95,10 @@ public class AnimalBrain : BaseAIBrain
 
 		private static Vector3 GetAimDirection (BaseCombatEntity from, BaseCombatEntity target)
 		{
-			//IL_003d: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0048: Unknown result type (might be due to invalid IL or missing references)
-			//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-			//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-			if ((Object)(object)from == (Object)null || (Object)(object)target == (Object)null) {
-				return ((Object)(object)from != (Object)null) ? ((Component)from).transform.forward : Vector3.forward;
+			if (from == null || target == null) {
+				return (from != null) ? from.transform.forward : Vector3.forward;
 			}
-			return Vector3Ex.Direction2D (((Component)target).transform.position, ((Component)from).transform.position);
+			return Vector3Ex.Direction2D (target.transform.position, from.transform.position);
 		}
 
 		private void StartAttacking (BaseEntity entity)
@@ -134,12 +119,11 @@ public class AnimalBrain : BaseAIBrain
 
 		public override void StateEnter (BaseAIBrain brain, BaseEntity entity)
 		{
-			//IL_004f: Unknown result type (might be due to invalid IL or missing references)
 			base.StateEnter (brain, entity);
 			attack = entity as IAIAttack;
 			BaseEntity baseEntity = brain.Events.Memory.Entity.Get (brain.Events.CurrentInputMemorySlot);
-			if ((Object)(object)baseEntity != (Object)null) {
-				brain.Navigator.SetDestination (((Component)baseEntity).transform.position, BaseNavigator.NavigationSpeed.Fast);
+			if (baseEntity != null) {
+				brain.Navigator.SetDestination (baseEntity.transform.position, BaseNavigator.NavigationSpeed.Fast);
 			}
 		}
 
@@ -156,14 +140,13 @@ public class AnimalBrain : BaseAIBrain
 
 		public override StateStatus StateThink (float delta, BaseAIBrain brain, BaseEntity entity)
 		{
-			//IL_004f: Unknown result type (might be due to invalid IL or missing references)
 			base.StateThink (delta, brain, entity);
 			BaseEntity baseEntity = brain.Events.Memory.Entity.Get (brain.Events.CurrentInputMemorySlot);
-			if ((Object)(object)baseEntity == (Object)null) {
+			if (baseEntity == null) {
 				Stop ();
 				return StateStatus.Error;
 			}
-			if (!brain.Navigator.SetDestination (((Component)baseEntity).transform.position, BaseNavigator.NavigationSpeed.Fast, 0.25f, (baseEntity is BasePlayer && attack != null) ? attack.EngagementRange () : 0f)) {
+			if (!brain.Navigator.SetDestination (baseEntity.transform.position, BaseNavigator.NavigationSpeed.Fast, 0.25f, (baseEntity is BasePlayer && attack != null) ? attack.EngagementRange () : 0f)) {
 				return StateStatus.Error;
 			}
 			return (!brain.Navigator.Moving) ? StateStatus.Finished : StateStatus.Running;
@@ -183,12 +166,10 @@ public class AnimalBrain : BaseAIBrain
 
 		public override void StateEnter (BaseAIBrain brain, BaseEntity entity)
 		{
-			//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-			//IL_005d: Unknown result type (might be due to invalid IL or missing references)
 			base.StateEnter (brain, entity);
 			BaseEntity baseEntity = brain.Events.Memory.Entity.Get (brain.Events.CurrentInputMemorySlot);
-			if ((Object)(object)baseEntity != (Object)null) {
-				stopFleeDistance = Random.Range (80f, 100f) + Mathf.Clamp (Vector3Ex.Distance2D (((Component)brain.Navigator).transform.position, ((Component)baseEntity).transform.position), 0f, 50f);
+			if (baseEntity != null) {
+				stopFleeDistance = Random.Range (80f, 100f) + Mathf.Clamp (Vector3Ex.Distance2D (brain.Navigator.transform.position, baseEntity.transform.position), 0f, 50f);
 			}
 			FleeFrom (brain.Events.Memory.Entity.Get (brain.Events.CurrentInputMemorySlot), entity);
 		}
@@ -206,15 +187,13 @@ public class AnimalBrain : BaseAIBrain
 
 		public override StateStatus StateThink (float delta, BaseAIBrain brain, BaseEntity entity)
 		{
-			//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-			//IL_005f: Unknown result type (might be due to invalid IL or missing references)
 			base.StateThink (delta, brain, entity);
 			Profiler.BeginSample ("AnimalBrain.States.Flee.StateThink");
 			BaseEntity baseEntity = brain.Events.Memory.Entity.Get (brain.Events.CurrentInputMemorySlot);
-			if ((Object)(object)baseEntity == (Object)null) {
+			if (baseEntity == null) {
 				return StateStatus.Finished;
 			}
-			if (Vector3Ex.Distance2D (((Component)brain.Navigator).transform.position, ((Component)baseEntity).transform.position) >= stopFleeDistance) {
+			if (Vector3Ex.Distance2D (brain.Navigator.transform.position, baseEntity.transform.position) >= stopFleeDistance) {
 				return StateStatus.Finished;
 			}
 			if ((brain.Navigator.UpdateIntervalElapsed (nextInterval) || !brain.Navigator.Moving) && !FleeFrom (baseEntity, entity)) {
@@ -227,9 +206,7 @@ public class AnimalBrain : BaseAIBrain
 
 		private bool FleeFrom (BaseEntity fleeFromEntity, BaseEntity thisEntity)
 		{
-			//IL_0083: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00c1: Unknown result type (might be due to invalid IL or missing references)
-			if ((Object)(object)thisEntity == (Object)null || (Object)(object)fleeFromEntity == (Object)null) {
+			if (thisEntity == null || fleeFromEntity == null) {
 				return false;
 			}
 			Profiler.BeginSample ("AnimalBrain.States.Flee.StateThink");
@@ -275,23 +252,10 @@ public class AnimalBrain : BaseAIBrain
 
 		private void FaceNewDirection (BaseEntity entity)
 		{
-			//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-			//IL_003a: Unknown result type (might be due to invalid IL or missing references)
-			//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-			//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0050: Unknown result type (might be due to invalid IL or missing references)
-			//IL_005c: Unknown result type (might be due to invalid IL or missing references)
 			if (Random.Range (0, 100) <= turnChance) {
-				Vector3 position = ((Component)entity).transform.position;
+				Vector3 position = entity.transform.position;
 				Vector3 pointOnCircle = BasePathFinder.GetPointOnCircle (position, 1f, Random.Range (0f, 594f));
-				Vector3 val = pointOnCircle - position;
-				Vector3 normalized = ((Vector3)(ref val)).normalized;
+				Vector3 normalized = (pointOnCircle - position).normalized;
 				brain.Navigator.SetFacingDirectionOverride (normalized);
 			}
 			nextTurnTime = Time.realtimeSinceStartup + Random.Range (minTurnTime, maxTurnTime);
@@ -339,9 +303,6 @@ public class AnimalBrain : BaseAIBrain
 
 		public override StateStatus StateThink (float delta, BaseAIBrain brain, BaseEntity entity)
 		{
-			//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0028: Unknown result type (might be due to invalid IL or missing references)
 			base.StateThink (delta, brain, entity);
 			Vector3 pos = brain.Events.Memory.Position.Get (6);
 			if (!brain.Navigator.SetDestination (pos, ControlTestAnimalSpeed)) {
@@ -372,16 +333,6 @@ public class AnimalBrain : BaseAIBrain
 
 		public override void StateEnter (BaseAIBrain brain, BaseEntity entity)
 		{
-			//IL_009b: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00aa: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00af: Unknown result type (might be due to invalid IL or missing references)
-			//IL_004f: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0074: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0079: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00b7: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00e8: Unknown result type (might be due to invalid IL or missing references)
 			base.StateEnter (brain, entity);
 			status = StateStatus.Error;
 			if (brain.PathFinder == null) {

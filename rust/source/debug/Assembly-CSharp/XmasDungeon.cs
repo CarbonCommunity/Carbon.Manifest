@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class XmasDungeon : HalloweenDungeon
@@ -24,38 +23,26 @@ public class XmasDungeon : HalloweenDungeon
 	public override void ServerInit ()
 	{
 		base.ServerInit ();
-		((FacepunchBehaviour)this).InvokeRepeating ((Action)PlayerChecks, 1f, 1f);
+		InvokeRepeating (PlayerChecks, 1f, 1f);
 	}
 
 	public void PlayerChecks ()
 	{
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0060: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0071: Unknown result type (might be due to invalid IL or missing references)
 		ProceduralDynamicDungeon proceduralDynamicDungeon = dungeonInstance.Get (serverside: true);
-		if ((Object)(object)proceduralDynamicDungeon == (Object)null) {
+		if (proceduralDynamicDungeon == null) {
 			return;
 		}
 		bool b = false;
 		bool b2 = false;
-		Enumerator<BasePlayer> enumerator = BasePlayer.activePlayerList.GetEnumerator ();
-		try {
-			while (enumerator.MoveNext ()) {
-				BasePlayer current = enumerator.Current;
-				float num = Vector3.Distance (((Component)current).transform.position, ((Component)this).transform.position);
-				float num2 = Vector3.Distance (((Component)current).transform.position, ((Component)proceduralDynamicDungeon.GetExitPortal (serverSide: true)).transform.position);
-				if (num < playerdetectrange) {
-					b = true;
-				}
-				if (num2 < playerdetectrange * 2f) {
-					b2 = true;
-				}
+		foreach (BasePlayer activePlayer in BasePlayer.activePlayerList) {
+			float num = Vector3.Distance (activePlayer.transform.position, base.transform.position);
+			float num2 = Vector3.Distance (activePlayer.transform.position, proceduralDynamicDungeon.GetExitPortal (serverSide: true).transform.position);
+			if (num < playerdetectrange) {
+				b = true;
 			}
-		} finally {
-			((IDisposable)enumerator).Dispose ();
+			if (num2 < playerdetectrange * 2f) {
+				b2 = true;
+			}
 		}
 		SetFlag (Flags.Reserved8, b2);
 		SetFlag (Flags.Reserved7, b);

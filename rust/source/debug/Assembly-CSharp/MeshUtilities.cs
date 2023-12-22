@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,24 +17,22 @@ internal static class MeshUtilities
 		s_ColliderPrimitives = new Dictionary<Type, PrimitiveType> {
 			{
 				typeof(BoxCollider),
-				(PrimitiveType)3
+				PrimitiveType.Cube
 			},
 			{
 				typeof(SphereCollider),
-				(PrimitiveType)0
+				PrimitiveType.Sphere
 			},
 			{
 				typeof(CapsuleCollider),
-				(PrimitiveType)1
+				PrimitiveType.Capsule
 			}
 		};
 	}
 
 	internal static Mesh GetColliderMesh (Collider collider)
 	{
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		Type type = ((object)collider).GetType ();
+		Type type = collider.GetType ();
 		if (type == typeof(MeshCollider)) {
 			return ((MeshCollider)collider).sharedMesh;
 		}
@@ -43,9 +42,6 @@ internal static class MeshUtilities
 
 	internal static Mesh GetPrimitive (PrimitiveType primitiveType)
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
 		if (!s_Primitives.TryGetValue (primitiveType, out var value)) {
 			value = GetBuiltinMesh (primitiveType);
 			s_Primitives.Add (primitiveType, value);
@@ -55,10 +51,9 @@ internal static class MeshUtilities
 
 	private static Mesh GetBuiltinMesh (PrimitiveType primitiveType)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		GameObject val = GameObject.CreatePrimitive (primitiveType);
-		Mesh sharedMesh = val.GetComponent<MeshFilter> ().sharedMesh;
-		RuntimeUtilities.Destroy ((Object)(object)val);
+		GameObject gameObject = GameObject.CreatePrimitive (primitiveType);
+		Mesh sharedMesh = gameObject.GetComponent<MeshFilter> ().sharedMesh;
+		RuntimeUtilities.Destroy (gameObject);
 		return sharedMesh;
 	}
 }

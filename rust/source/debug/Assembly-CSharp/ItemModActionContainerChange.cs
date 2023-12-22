@@ -21,7 +21,7 @@ public class ItemModActionContainerChange : ItemMod
 	private void OnValidate ()
 	{
 		if (actions == null) {
-			Debug.LogWarning ((object)"ItemModMenuOption: actions is null!", (Object)(object)((Component)this).gameObject);
+			Debug.LogWarning ("ItemModMenuOption: actions is null!", base.gameObject);
 		}
 	}
 }

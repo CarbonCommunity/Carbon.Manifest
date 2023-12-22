@@ -19,26 +19,26 @@ public class RealmedRemove : MonoBehaviour, IPrefabPreProcess
 	{
 		if (clientside) {
 			GameObject[] array = removedFromClient;
-			foreach (GameObject val in array) {
-				Object.DestroyImmediate ((Object)(object)val, true);
+			foreach (GameObject obj in array) {
+				Object.DestroyImmediate (obj, allowDestroyingAssets: true);
 			}
 			Component[] array2 = removedComponentFromClient;
-			foreach (Component val2 in array2) {
-				Object.DestroyImmediate ((Object)(object)val2, true);
+			foreach (Component obj2 in array2) {
+				Object.DestroyImmediate (obj2, allowDestroyingAssets: true);
 			}
 		}
 		if (serverside) {
 			GameObject[] array3 = removedFromServer;
-			foreach (GameObject val3 in array3) {
-				Object.DestroyImmediate ((Object)(object)val3, true);
+			foreach (GameObject obj3 in array3) {
+				Object.DestroyImmediate (obj3, allowDestroyingAssets: true);
 			}
 			Component[] array4 = removedComponentFromServer;
-			foreach (Component val4 in array4) {
-				Object.DestroyImmediate ((Object)(object)val4, true);
+			foreach (Component obj4 in array4) {
+				Object.DestroyImmediate (obj4, allowDestroyingAssets: true);
 			}
 		}
 		if (!bundling) {
-			process.RemoveComponent ((Component)(object)this);
+			process.RemoveComponent (this);
 		}
 	}
 

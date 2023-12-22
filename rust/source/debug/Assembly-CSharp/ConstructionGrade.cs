@@ -13,7 +13,7 @@ public class ConstructionGrade : PrefabAttribute
 
 	internal List<ItemAmount> _costToBuild = null;
 
-	public float maxHealth => (Object.op_Implicit ((Object)(object)gradeBase) && (bool)construction) ? (gradeBase.baseHealth * construction.healthMultiplier) : 0f;
+	public float maxHealth => ((bool)gradeBase && (bool)construction) ? (gradeBase.baseHealth * construction.healthMultiplier) : 0f;
 
 	public List<ItemAmount> CostToBuild (BuildingGrade.Enum fromGrade = BuildingGrade.Enum.None)
 	{

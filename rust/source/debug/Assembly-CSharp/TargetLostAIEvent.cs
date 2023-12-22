@@ -12,22 +12,20 @@ public class TargetLostAIEvent : BaseAIEvent
 
 	public override void Execute (AIMemory memory, AIBrainSenses senses, StateStatus stateStatus)
 	{
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
 		base.Result = base.Inverted;
 		BaseEntity baseEntity = memory.Entity.Get (base.InputEntityMemorySlot);
-		if ((Object)(object)baseEntity == (Object)null) {
+		if (baseEntity == null) {
 			base.Result = !base.Inverted;
 			return;
 		}
-		if (Vector3.Distance (((Component)baseEntity).transform.position, ((Component)base.Owner).transform.position) > senses.TargetLostRange) {
+		if (Vector3.Distance (baseEntity.transform.position, base.Owner.transform.position) > senses.TargetLostRange) {
 			base.Result = !base.Inverted;
 			return;
 		}
 		BasePlayer basePlayer = baseEntity as BasePlayer;
-		if (baseEntity.Health () <= 0f || ((Object)(object)basePlayer != (Object)null && basePlayer.IsDead ())) {
+		if (baseEntity.Health () <= 0f || (basePlayer != null && basePlayer.IsDead ())) {
 			base.Result = !base.Inverted;
-		} else if (senses.ignoreSafeZonePlayers && (Object)(object)basePlayer != (Object)null && basePlayer.InSafeZone ()) {
+		} else if (senses.ignoreSafeZonePlayers && basePlayer != null && basePlayer.InSafeZone ()) {
 			base.Result = !base.Inverted;
 		}
 	}

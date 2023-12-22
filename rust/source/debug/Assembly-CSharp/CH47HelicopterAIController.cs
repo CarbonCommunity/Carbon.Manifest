@@ -1,4 +1,3 @@
-using System;
 using Rust;
 using UnityEngine;
 
@@ -48,21 +47,12 @@ public class CH47HelicopterAIController : CH47Helicopter
 
 	public void DropCrate ()
 	{
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0066: Unknown result type (might be due to invalid IL or missing references)
 		if (numCrates > 0) {
-			Vector3 pos = ((Component)this).transform.position + Vector3.down * 5f;
+			Vector3 pos = base.transform.position + Vector3.down * 5f;
 			Quaternion rot = Quaternion.Euler (0f, Random.Range (0f, 360f), 0f);
 			BaseEntity baseEntity = GameManager.server.CreateEntity (lockedCratePrefab.resourcePath, pos, rot);
-			if (Object.op_Implicit ((Object)(object)baseEntity)) {
-				((Component)baseEntity).SendMessage ("SetWasDropped");
+			if ((bool)baseEntity) {
+				baseEntity.SendMessage ("SetWasDropped");
 				baseEntity.Spawn ();
 			}
 			numCrates--;
@@ -96,8 +86,6 @@ public class CH47HelicopterAIController : CH47Helicopter
 
 	public void SetLandingTarget (Vector3 target)
 	{
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000a: Unknown result type (might be due to invalid IL or missing references)
 		shouldLand = true;
 		landingTarget = target;
 		numCrates = 0;
@@ -110,21 +98,14 @@ public class CH47HelicopterAIController : CH47Helicopter
 
 	public void TriggeredEventSpawn ()
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
 		float x = TerrainMeta.Size.x;
 		float y = 30f;
-		Vector3 val = Vector3Ex.Range (-1f, 1f);
-		val.y = 0f;
-		((Vector3)(ref val)).Normalize ();
-		val *= x * 1f;
-		val.y = y;
-		((Component)this).transform.position = val;
+		Vector3 position = Vector3Ex.Range (-1f, 1f);
+		position.y = 0f;
+		position.Normalize ();
+		position *= x * 1f;
+		position.y = y;
+		base.transform.position = position;
 	}
 
 	public override void AttemptMount (BasePlayer player, bool doMountChecks = true)
@@ -136,44 +117,31 @@ public class CH47HelicopterAIController : CH47Helicopter
 
 	public override void ServerInit ()
 	{
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
 		base.ServerInit ();
-		((FacepunchBehaviour)this).Invoke ((Action)SpawnScientists, 0.25f);
-		SetMoveTarget (((Component)this).transform.position);
+		Invoke (SpawnScientists, 0.25f);
+		SetMoveTarget (base.transform.position);
 	}
 
 	public void SpawnPassenger (Vector3 spawnPos, string prefabPath)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
 		Quaternion identity = Quaternion.identity;
-		HumanNPC component = ((Component)GameManager.server.CreateEntity (prefabPath, spawnPos, identity)).GetComponent<HumanNPC> ();
+		HumanNPC component = GameManager.server.CreateEntity (prefabPath, spawnPos, identity).GetComponent<HumanNPC> ();
 		component.Spawn ();
 		AttemptMount (component);
 	}
 
 	public void SpawnPassenger (Vector3 spawnPos)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
 		Quaternion identity = Quaternion.identity;
-		HumanNPC component = ((Component)GameManager.server.CreateEntity (dismountablePrefab.resourcePath, spawnPos, identity)).GetComponent<HumanNPC> ();
+		HumanNPC component = GameManager.server.CreateEntity (dismountablePrefab.resourcePath, spawnPos, identity).GetComponent<HumanNPC> ();
 		component.Spawn ();
 		AttemptMount (component);
 	}
 
 	public void SpawnScientist (Vector3 spawnPos)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
 		Quaternion identity = Quaternion.identity;
-		HumanNPC component = ((Component)GameManager.server.CreateEntity (scientistPrefab.resourcePath, spawnPos, identity)).GetComponent<HumanNPC> ();
+		HumanNPC component = GameManager.server.CreateEntity (scientistPrefab.resourcePath, spawnPos, identity).GetComponent<HumanNPC> ();
 		component.Spawn ();
 		AttemptMount (component);
 		component.Brain.SetEnabled (flag: false);
@@ -181,51 +149,26 @@ public class CH47HelicopterAIController : CH47Helicopter
 
 	public void SpawnScientists ()
 	{
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ea: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ff: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0104: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0109: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0061: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0066: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0069: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0132: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0147: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0151: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0154: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ba: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bd: Unknown result type (might be due to invalid IL or missing references)
 		if (shouldLand) {
 			CH47LandingZone closest = CH47LandingZone.GetClosest (landingTarget);
 			float dropoffScale = closest.dropoffScale;
 			int num = mountPoints.Count - 2;
 			int num2 = Mathf.FloorToInt ((float)num * dropoffScale);
 			for (int i = 0; i < num2; i++) {
-				Vector3 spawnPos = ((Component)this).transform.position + ((Component)this).transform.forward * 10f;
+				Vector3 spawnPos = base.transform.position + base.transform.forward * 10f;
 				SpawnPassenger (spawnPos, dismountablePrefab.resourcePath);
 			}
 			for (int j = 0; j < 1; j++) {
-				Vector3 spawnPos2 = ((Component)this).transform.position - ((Component)this).transform.forward * 15f;
+				Vector3 spawnPos2 = base.transform.position - base.transform.forward * 15f;
 				SpawnPassenger (spawnPos2);
 			}
 		} else {
 			for (int k = 0; k < 4; k++) {
-				Vector3 spawnPos3 = ((Component)this).transform.position + ((Component)this).transform.forward * 10f;
+				Vector3 spawnPos3 = base.transform.position + base.transform.forward * 10f;
 				SpawnScientist (spawnPos3);
 			}
 			for (int l = 0; l < 1; l++) {
-				Vector3 spawnPos4 = ((Component)this).transform.position - ((Component)this).transform.forward * 15f;
+				Vector3 spawnPos4 = base.transform.position - base.transform.forward * 15f;
 				SpawnScientist (spawnPos4);
 			}
 		}
@@ -238,40 +181,27 @@ public class CH47HelicopterAIController : CH47Helicopter
 
 	public void SetMoveTarget (Vector3 position)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
 		_moveTarget = position;
 	}
 
 	public Vector3 GetMoveTarget ()
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000a: Unknown result type (might be due to invalid IL or missing references)
 		return _moveTarget;
 	}
 
 	public void SetAimDirection (Vector3 dir)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
 		_aimDirection = dir;
 	}
 
 	public Vector3 GetAimDirectionOverride ()
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000a: Unknown result type (might be due to invalid IL or missing references)
 		return _aimDirection;
 	}
 
 	public Vector3 GetPosition ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		return ((Component)this).transform.position;
+		return base.transform.position;
 	}
 
 	public override void MounteeTookDamage (BasePlayer mountee, HitInfo info)
@@ -283,22 +213,22 @@ public class CH47HelicopterAIController : CH47Helicopter
 	{
 		if (base.SecondsSinceAttacked > 120f) {
 			UnHostile ();
-			((FacepunchBehaviour)this).CancelInvoke ((Action)UnHostile);
+			CancelInvoke (UnHostile);
 		}
 	}
 
 	public void InitiateAnger ()
 	{
-		((FacepunchBehaviour)this).CancelInvoke ((Action)UnHostile);
-		((FacepunchBehaviour)this).Invoke ((Action)UnHostile, 120f);
+		CancelInvoke (UnHostile);
+		Invoke (UnHostile, 120f);
 		foreach (MountPointInfo mountPoint in mountPoints) {
-			if (!((Object)(object)mountPoint.mountable != (Object)null)) {
+			if (!(mountPoint.mountable != null)) {
 				continue;
 			}
 			BasePlayer mounted = mountPoint.mountable.GetMounted ();
-			if (Object.op_Implicit ((Object)(object)mounted)) {
+			if ((bool)mounted) {
 				ScientistNPC scientistNPC = mounted as ScientistNPC;
-				if ((Object)(object)scientistNPC != (Object)null) {
+				if (scientistNPC != null) {
 					scientistNPC.Brain.SetEnabled (flag: true);
 				}
 			}
@@ -308,13 +238,13 @@ public class CH47HelicopterAIController : CH47Helicopter
 	public void UnHostile ()
 	{
 		foreach (MountPointInfo mountPoint in mountPoints) {
-			if (!((Object)(object)mountPoint.mountable != (Object)null)) {
+			if (!(mountPoint.mountable != null)) {
 				continue;
 			}
 			BasePlayer mounted = mountPoint.mountable.GetMounted ();
-			if (Object.op_Implicit ((Object)(object)mounted)) {
+			if ((bool)mounted) {
 				ScientistNPC scientistNPC = mounted as ScientistNPC;
-				if ((Object)(object)scientistNPC != (Object)null) {
+				if (scientistNPC != null) {
 					scientistNPC.Brain.SetEnabled (flag: false);
 				}
 			}
@@ -340,9 +270,9 @@ public class CH47HelicopterAIController : CH47Helicopter
 	public void DelayedKill ()
 	{
 		foreach (MountPointInfo mountPoint in mountPoints) {
-			if ((Object)(object)mountPoint.mountable != (Object)null) {
+			if (mountPoint.mountable != null) {
 				BasePlayer mounted = mountPoint.mountable.GetMounted ();
-				if (Object.op_Implicit ((Object)(object)mounted) && (Object)(object)((Component)mounted).transform != (Object)null && !mounted.IsDestroyed && !mounted.IsDead () && mounted.IsNpc) {
+				if ((bool)mounted && mounted.transform != null && !mounted.IsDestroyed && !mounted.IsDead () && mounted.IsNpc) {
 					mounted.Kill ();
 				}
 			}
@@ -353,9 +283,9 @@ public class CH47HelicopterAIController : CH47Helicopter
 	public override void DismountAllPlayers ()
 	{
 		foreach (MountPointInfo mountPoint in mountPoints) {
-			if ((Object)(object)mountPoint.mountable != (Object)null) {
+			if (mountPoint.mountable != null) {
 				BasePlayer mounted = mountPoint.mountable.GetMounted ();
-				if (Object.op_Implicit ((Object)(object)mounted)) {
+				if ((bool)mounted) {
 					mounted.Hurt (10000f, DamageType.Explosion, this, useProtection: false);
 				}
 			}
@@ -384,42 +314,6 @@ public class CH47HelicopterAIController : CH47Helicopter
 
 	public float CalculateOverrideAltitude ()
 	{
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0081: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0086: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00db: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00dd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ec: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0102: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0107: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0113: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0139: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0148: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0157: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0176: Unknown result type (might be due to invalid IL or missing references)
 		if (Time.frameCount == lastAltitudeCheckFrame) {
 			return altOverride;
 		}
@@ -428,23 +322,12 @@ public class CH47HelicopterAIController : CH47Helicopter
 		float num = Mathf.Max (TerrainMeta.WaterMap.GetHeight (GetMoveTarget ()), TerrainMeta.HeightMap.GetHeight (GetMoveTarget ()));
 		float num2 = Mathf.Max (y, num + hoverHeight);
 		if (altitudeProtection) {
-			Vector3 val = rigidBody.velocity;
-			Vector3 val2;
-			if (!(((Vector3)(ref val)).magnitude < 0.1f)) {
-				val = rigidBody.velocity;
-				val2 = ((Vector3)(ref val)).normalized;
-			} else {
-				val2 = ((Component)this).transform.forward;
-			}
-			Vector3 val3 = val2;
-			Vector3 val4 = Vector3.Cross (((Component)this).transform.up, val3);
-			Vector3 val5 = Vector3.Cross (val4, Vector3.up);
-			val = val5 + Vector3.down * 0.3f;
-			Vector3 normalized = ((Vector3)(ref val)).normalized;
-			RaycastHit val6 = default(RaycastHit);
-			RaycastHit val7 = default(RaycastHit);
-			if (Physics.SphereCast (((Component)this).transform.position - normalized * 20f, 20f, normalized, ref val6, 75f, 1218511105) && Physics.SphereCast (((RaycastHit)(ref val6)).point + Vector3.up * 200f, 20f, Vector3.down, ref val7, 200f, 1218511105)) {
-				num2 = ((RaycastHit)(ref val7)).point.y + hoverHeight;
+			Vector3 rhs = ((rigidBody.velocity.magnitude < 0.1f) ? base.transform.forward : rigidBody.velocity.normalized);
+			Vector3 lhs = Vector3.Cross (base.transform.up, rhs);
+			Vector3 vector = Vector3.Cross (lhs, Vector3.up);
+			Vector3 normalized = (vector + Vector3.down * 0.3f).normalized;
+			if (Physics.SphereCast (base.transform.position - normalized * 20f, 20f, normalized, out var hitInfo, 75f, 1218511105) && Physics.SphereCast (hitInfo.point + Vector3.up * 200f, 20f, Vector3.down, out var hitInfo2, 200f, 1218511105)) {
+				num2 = hitInfo2.point.y + hoverHeight;
 			}
 		}
 		altOverride = num2;
@@ -453,64 +336,20 @@ public class CH47HelicopterAIController : CH47Helicopter
 
 	public override void SetDefaultInputState ()
 	{
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0097: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ac: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00df: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0346: Unknown result type (might be due to invalid IL or missing references)
-		//IL_032e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0339: Unknown result type (might be due to invalid IL or missing references)
-		//IL_033e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_034b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_036e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0356: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0361: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0366: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0373: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0375: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0376: Unknown result type (might be due to invalid IL or missing references)
-		//IL_037f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0380: Unknown result type (might be due to invalid IL or missing references)
 		currentInputState.Reset ();
 		Vector3 moveTarget = GetMoveTarget ();
-		Vector3 val = Vector3.Cross (((Component)this).transform.right, Vector3.up);
-		Vector3 val2 = Vector3.Cross (Vector3.up, val);
-		float num = 0f - Vector3.Dot (Vector3.up, ((Component)this).transform.right);
-		float num2 = Vector3.Dot (Vector3.up, ((Component)this).transform.forward);
-		float num3 = Vector3Ex.Distance2D (((Component)this).transform.position, moveTarget);
-		float y = ((Component)this).transform.position.y;
+		Vector3 vector = Vector3.Cross (base.transform.right, Vector3.up);
+		Vector3 vector2 = Vector3.Cross (Vector3.up, vector);
+		float num = 0f - Vector3.Dot (Vector3.up, base.transform.right);
+		float num2 = Vector3.Dot (Vector3.up, base.transform.forward);
+		float num3 = Vector3Ex.Distance2D (base.transform.position, moveTarget);
+		float y = base.transform.position.y;
 		float num4 = currentDesiredAltitude;
-		Vector3 val3 = ((Component)this).transform.position + ((Component)this).transform.forward * 10f;
-		val3.y = num4;
-		Vector3 val4 = Vector3Ex.Direction2D (moveTarget, ((Component)this).transform.position);
-		float num5 = 0f - Vector3.Dot (val4, val2);
-		float num6 = Vector3.Dot (val4, val);
+		Vector3 vector3 = base.transform.position + base.transform.forward * 10f;
+		vector3.y = num4;
+		Vector3 lhs = Vector3Ex.Direction2D (moveTarget, base.transform.position);
+		float num5 = 0f - Vector3.Dot (lhs, vector2);
+		float num6 = Vector3.Dot (lhs, vector);
 		float num7 = Mathf.InverseLerp (0f, 25f, num3);
 		if (num6 > 0f) {
 			float num8 = Mathf.InverseLerp (0f - maxTiltAngle, 0f, num2);
@@ -526,24 +365,24 @@ public class CH47HelicopterAIController : CH47Helicopter
 			float num11 = 1f - Mathf.InverseLerp (0f, maxTiltAngle, num);
 			currentInputState.roll = 1f * num5 * num11 * num7;
 		}
-		float num12 = Mathf.Abs (num4 - y);
-		float num13 = 1f - Mathf.InverseLerp (10f, 30f, num12);
-		currentInputState.pitch *= num13;
-		currentInputState.roll *= num13;
-		float num14 = maxTiltAngle;
-		float num15 = Mathf.InverseLerp (0f + Mathf.Abs (currentInputState.pitch) * num14, num14 + Mathf.Abs (currentInputState.pitch) * num14, Mathf.Abs (num2));
-		currentInputState.pitch += num15 * ((num2 < 0f) ? (-1f) : 1f);
-		float num16 = Mathf.InverseLerp (0f + Mathf.Abs (currentInputState.roll) * num14, num14 + Mathf.Abs (currentInputState.roll) * num14, Mathf.Abs (num));
-		currentInputState.roll += num16 * ((num < 0f) ? (-1f) : 1f);
+		float value = Mathf.Abs (num4 - y);
+		float num12 = 1f - Mathf.InverseLerp (10f, 30f, value);
+		currentInputState.pitch *= num12;
+		currentInputState.roll *= num12;
+		float num13 = maxTiltAngle;
+		float num14 = Mathf.InverseLerp (0f + Mathf.Abs (currentInputState.pitch) * num13, num13 + Mathf.Abs (currentInputState.pitch) * num13, Mathf.Abs (num2));
+		currentInputState.pitch += num14 * ((num2 < 0f) ? (-1f) : 1f);
+		float num15 = Mathf.InverseLerp (0f + Mathf.Abs (currentInputState.roll) * num13, num13 + Mathf.Abs (currentInputState.roll) * num13, Mathf.Abs (num));
+		currentInputState.roll += num15 * ((num < 0f) ? (-1f) : 1f);
 		if (aimDirOverride || num3 > 30f) {
-			Vector3 val5 = (aimDirOverride ? GetAimDirectionOverride () : Vector3Ex.Direction2D (GetMoveTarget (), ((Component)this).transform.position));
-			Vector3 val6 = (aimDirOverride ? GetAimDirectionOverride () : Vector3Ex.Direction2D (GetMoveTarget (), ((Component)this).transform.position));
-			float num17 = Vector3.Dot (val2, val5);
-			float num18 = Vector3.Angle (val, val6);
-			float num19 = Mathf.InverseLerp (0f, 70f, Mathf.Abs (num18));
-			currentInputState.yaw = ((num17 > 0f) ? 1f : 0f);
-			currentInputState.yaw -= ((num17 < 0f) ? 1f : 0f);
-			currentInputState.yaw *= num19;
+			Vector3 rhs = (aimDirOverride ? GetAimDirectionOverride () : Vector3Ex.Direction2D (GetMoveTarget (), base.transform.position));
+			Vector3 to = (aimDirOverride ? GetAimDirectionOverride () : Vector3Ex.Direction2D (GetMoveTarget (), base.transform.position));
+			float num16 = Vector3.Dot (vector2, rhs);
+			float f = Vector3.Angle (vector, to);
+			float num17 = Mathf.InverseLerp (0f, 70f, Mathf.Abs (f));
+			currentInputState.yaw = ((num16 > 0f) ? 1f : 0f);
+			currentInputState.yaw -= ((num16 < 0f) ? 1f : 0f);
+			currentInputState.yaw *= num17;
 		}
 		float throttle = Mathf.InverseLerp (5f, 30f, num3);
 		currentInputState.throttle = throttle;
@@ -551,20 +390,13 @@ public class CH47HelicopterAIController : CH47Helicopter
 
 	public void MaintainAIAltutide ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0071: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 val = ((Component)this).transform.position + rigidBody.velocity;
+		Vector3 vector = base.transform.position + rigidBody.velocity;
 		float num = currentDesiredAltitude;
-		float y = val.y;
-		float num2 = Mathf.Abs (num - y);
+		float y = vector.y;
+		float value = Mathf.Abs (num - y);
 		bool flag = num > y;
-		float num3 = Mathf.InverseLerp (0f, 10f, num2) * AiAltitudeForce * (flag ? 1f : (-1f));
-		rigidBody.AddForce (Vector3.up * num3, (ForceMode)0);
+		float num2 = Mathf.InverseLerp (0f, 10f, value) * AiAltitudeForce * (flag ? 1f : (-1f));
+		rigidBody.AddForce (Vector3.up * num2, ForceMode.Force);
 	}
 
 	public override void VehicleFixedUpdate ()
@@ -580,9 +412,9 @@ public class CH47HelicopterAIController : CH47Helicopter
 	{
 		if (base.isServer) {
 			foreach (MountPointInfo mountPoint in mountPoints) {
-				if ((Object)(object)mountPoint.mountable != (Object)null) {
+				if (mountPoint.mountable != null) {
 					BasePlayer mounted = mountPoint.mountable.GetMounted ();
-					if (Object.op_Implicit ((Object)(object)mounted) && (Object)(object)((Component)mounted).transform != (Object)null && !mounted.IsDestroyed && !mounted.IsDead () && mounted.IsNpc) {
+					if ((bool)mounted && mounted.transform != null && !mounted.IsDestroyed && !mounted.IsDead () && mounted.IsNpc) {
 						mounted.Kill ();
 					}
 				}

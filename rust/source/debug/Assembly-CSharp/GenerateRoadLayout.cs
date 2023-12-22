@@ -82,13 +82,6 @@ public class GenerateRoadLayout : ProceduralComponent
 
 	public override void Process (uint seed)
 	{
-		//IL_0916: Unknown result type (might be due to invalid IL or missing references)
-		//IL_093a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0755: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0772: Unknown result type (might be due to invalid IL or missing references)
-		//IL_081a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_07b7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_07d4: Unknown result type (might be due to invalid IL or missing references)
 		if (World.Networked) {
 			TerrainMeta.Path.Roads.Clear ();
 			TerrainMeta.Path.Roads.AddRange (World.GetPaths ("Road"));
@@ -121,7 +114,7 @@ public class GenerateRoadLayout : ProceduralComponent
 			if (monument.Type == MonumentType.Roadside) {
 				continue;
 			}
-			TerrainPathConnect[] componentsInChildren = ((Component)monument).GetComponentsInChildren<TerrainPathConnect> (true);
+			TerrainPathConnect[] componentsInChildren = monument.GetComponentsInChildren<TerrainPathConnect> (includeInactive: true);
 			foreach (TerrainPathConnect terrainPathConnect in componentsInChildren) {
 				if (terrainPathConnect.Type == RoadType) {
 					PathFinder.Point pathFinderPoint = terrainPathConnect.GetPathFinderPoint (length);
@@ -139,8 +132,8 @@ public class GenerateRoadLayout : ProceduralComponent
 		while (list4.Count != 0 || list5.Count != 0) {
 			if (list4.Count == 0) {
 				PathNode node3 = list5 [0];
-				list4.AddRange (list5.Where ((PathNode x) => (Object)(object)x.monument == (Object)(object)node3.monument));
-				list5.RemoveAll ((PathNode x) => (Object)(object)x.monument == (Object)(object)node3.monument);
+				list4.AddRange (list5.Where ((PathNode x) => x.monument == node3.monument));
+				list5.RemoveAll ((PathNode x) => x.monument == node3.monument);
 				pathFinder.PushPoint = node3.monument.GetPathFinderPoint (length);
 				pathFinder.PushRadius = node3.monument.GetPathFinderRadius (length);
 				pathFinder.PushDistance = 40;
@@ -155,8 +148,8 @@ public class GenerateRoadLayout : ProceduralComponent
 			PathFinder.Node node6 = pathFinder.FindPathUndirected (list7, list8, 100000);
 			if (node6 == null) {
 				PathNode node2 = list4 [0];
-				list5.AddRange (list4.Where ((PathNode x) => (Object)(object)x.monument == (Object)(object)node2.monument));
-				list4.RemoveAll ((PathNode x) => (Object)(object)x.monument == (Object)(object)node2.monument);
+				list5.AddRange (list4.Where ((PathNode x) => x.monument == node2.monument));
+				list4.RemoveAll ((PathNode x) => x.monument == node2.monument);
 				list5.Remove (node2);
 				list3.Add (node2);
 				continue;
@@ -172,8 +165,8 @@ public class GenerateRoadLayout : ProceduralComponent
 			}
 			list2.Add (segment);
 			PathNode node = list4.Find ((PathNode x) => x.node.point == segment.start.point || x.node.point == segment.end.point);
-			list5.AddRange (list4.Where ((PathNode x) => (Object)(object)x.monument == (Object)(object)node.monument));
-			list4.RemoveAll ((PathNode x) => (Object)(object)x.monument == (Object)(object)node.monument);
+			list5.AddRange (list4.Where ((PathNode x) => x.monument == node.monument));
+			list4.RemoveAll ((PathNode x) => x.monument == node.monument);
 			list5.Remove (node);
 			list3.Add (node);
 			PathNode pathNode2 = list5.Find ((PathNode x) => x.node.point == segment.start.point || x.node.point == segment.end.point);
@@ -212,19 +205,19 @@ public class GenerateRoadLayout : ProceduralComponent
 			for (PathFinder.Node node10 = item.start; node10 != null; node10 = node10.next) {
 				float normX = ((float)node10.point.x + 0.5f) / (float)length;
 				float normZ = ((float)node10.point.y + 0.5f) / (float)length;
-				if (item.start == node10 && (Object)(object)item.origin != (Object)null) {
+				if (item.start == node10 && item.origin != null) {
 					start2 = true;
-					normX = TerrainMeta.NormalizeX (((Component)item.origin).transform.position.x);
-					normZ = TerrainMeta.NormalizeZ (((Component)item.origin).transform.position.z);
-				} else if (item.end == node10 && (Object)(object)item.target != (Object)null) {
+					normX = TerrainMeta.NormalizeX (item.origin.transform.position.x);
+					normZ = TerrainMeta.NormalizeZ (item.origin.transform.position.z);
+				} else if (item.end == node10 && item.target != null) {
 					end = true;
-					normX = TerrainMeta.NormalizeX (((Component)item.target).transform.position.x);
-					normZ = TerrainMeta.NormalizeZ (((Component)item.target).transform.position.z);
+					normX = TerrainMeta.NormalizeX (item.target.transform.position.x);
+					normZ = TerrainMeta.NormalizeZ (item.target.transform.position.z);
 				}
-				float num3 = TerrainMeta.DenormalizeX (normX);
-				float num4 = TerrainMeta.DenormalizeZ (normZ);
-				float num5 = Mathf.Max (TerrainMeta.HeightMap.GetHeight (normX, normZ), 1f);
-				list9.Add (new Vector3 (num3, num5, num4));
+				float x2 = TerrainMeta.DenormalizeX (normX);
+				float z = TerrainMeta.DenormalizeZ (normZ);
+				float y = Mathf.Max (TerrainMeta.HeightMap.GetHeight (normX, normZ), 1f);
+				list9.Add (new Vector3 (x2, y, z));
 			}
 			if (list9.Count != 0) {
 				if (list9.Count >= 2) {

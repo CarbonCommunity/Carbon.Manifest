@@ -1,4 +1,3 @@
-using System;
 using Rust;
 using UnityEngine;
 
@@ -13,10 +12,10 @@ public class TriggerPlayerTimer : TriggerBase
 	internal override GameObject InterestedInObject (GameObject obj)
 	{
 		obj = base.InterestedInObject (obj);
-		if ((Object)(object)obj != (Object)null) {
+		if (obj != null) {
 			BaseEntity baseEntity = obj.ToBaseEntity ();
 			if (baseEntity is BasePlayer basePlayer && baseEntity.isServer && !basePlayer.isMounted) {
-				return ((Component)baseEntity).gameObject;
+				return baseEntity.gameObject;
 			}
 		}
 		return obj;
@@ -25,13 +24,13 @@ public class TriggerPlayerTimer : TriggerBase
 	internal override void OnObjects ()
 	{
 		base.OnObjects ();
-		((FacepunchBehaviour)this).Invoke ((Action)DamageTarget, TimeToDamage);
+		Invoke (DamageTarget, TimeToDamage);
 	}
 
 	internal override void OnEmpty ()
 	{
 		base.OnEmpty ();
-		((FacepunchBehaviour)this).CancelInvoke ((Action)DamageTarget);
+		CancelInvoke (DamageTarget);
 	}
 
 	private void DamageTarget ()
@@ -42,9 +41,9 @@ public class TriggerPlayerTimer : TriggerBase
 				flag = true;
 			}
 		}
-		if (flag && (Object)(object)TargetEntity != (Object)null) {
+		if (flag && TargetEntity != null) {
 			TargetEntity.OnAttacked (new HitInfo (null, TargetEntity, DamageType.Generic, DamageAmount));
 		}
-		((FacepunchBehaviour)this).Invoke ((Action)DamageTarget, TimeToDamage);
+		Invoke (DamageTarget, TimeToDamage);
 	}
 }

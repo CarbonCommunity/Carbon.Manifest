@@ -12,13 +12,9 @@ public class EnvironmentVolumeTrigger : MonoBehaviour
 
 	protected void Awake ()
 	{
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		volume = ((Component)this).gameObject.GetComponent<EnvironmentVolume> ();
-		if ((Object)(object)volume == (Object)null) {
-			volume = ((Component)this).gameObject.AddComponent<EnvironmentVolume> ();
+		volume = base.gameObject.GetComponent<EnvironmentVolume> ();
+		if (volume == null) {
+			volume = base.gameObject.AddComponent<EnvironmentVolume> ();
 			volume.Center = Center;
 			volume.Size = Size;
 			volume.UpdateTrigger ();

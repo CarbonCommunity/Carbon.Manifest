@@ -1,3 +1,4 @@
+#define ENABLE_PROFILER
 using System;
 using Facepunch;
 using ProtoBuf;
@@ -13,7 +14,7 @@ public class EnvSync : PointEntity
 	public override void ServerInit ()
 	{
 		base.ServerInit ();
-		((FacepunchBehaviour)this).InvokeRepeating ((Action)UpdateNetwork, 5f, 5f);
+		InvokeRepeating (UpdateNetwork, 5f, 5f);
 	}
 
 	private void UpdateNetwork ()
@@ -25,8 +26,8 @@ public class EnvSync : PointEntity
 	{
 		base.Save (info);
 		Profiler.BeginSample ("EnvSync.Save");
-		info.msg.environment = Pool.Get<Environment> ();
-		if (Object.op_Implicit ((Object)(object)TOD_Sky.Instance)) {
+		info.msg.environment = Pool.Get<ProtoBuf.Environment> ();
+		if ((bool)TOD_Sky.Instance) {
 			info.msg.environment.dateTime = TOD_Sky.Instance.Cycle.DateTime.ToBinary ();
 		}
 		info.msg.environment.engineTime = Time.realtimeSinceStartup;
@@ -36,7 +37,7 @@ public class EnvSync : PointEntity
 	public override void Load (LoadInfo info)
 	{
 		base.Load (info);
-		if (info.msg.environment != null && Object.op_Implicit ((Object)(object)TOD_Sky.Instance) && base.isServer) {
+		if (info.msg.environment != null && (bool)TOD_Sky.Instance && base.isServer) {
 			TOD_Sky.Instance.Cycle.DateTime = DateTime.FromBinary (info.msg.environment.dateTime);
 		}
 	}

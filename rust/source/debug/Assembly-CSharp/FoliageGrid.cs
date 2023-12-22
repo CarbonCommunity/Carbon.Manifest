@@ -10,5 +10,5 @@ public class FoliageGrid : SingletonComponent<FoliageGrid>, IClientComponent
 
 	public LayerSelect FoliageLayer = 0;
 
-	public ShadowCastingMode FoliageShadows = (ShadowCastingMode)0;
+	public ShadowCastingMode FoliageShadows = ShadowCastingMode.Off;
 }

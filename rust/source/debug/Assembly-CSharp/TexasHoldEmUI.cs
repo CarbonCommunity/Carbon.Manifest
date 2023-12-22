@@ -25,52 +25,52 @@ public class TexasHoldEmUI : MonoBehaviour
 	private CardGamePlayerWidget[] playerWidgets;
 
 	[SerializeField]
-	private Phrase phraseWinningHand;
+	private Translate.Phrase phraseWinningHand;
 
 	[SerializeField]
-	private Phrase foldPhrase;
+	private Translate.Phrase foldPhrase;
 
 	[SerializeField]
-	private Phrase raisePhrase;
+	private Translate.Phrase raisePhrase;
 
 	[SerializeField]
-	private Phrase checkPhrase;
+	private Translate.Phrase checkPhrase;
 
 	[SerializeField]
-	private Phrase callPhrase;
+	private Translate.Phrase callPhrase;
 
 	[SerializeField]
-	private Phrase phraseRoyalFlush;
+	private Translate.Phrase phraseRoyalFlush;
 
 	[SerializeField]
-	private Phrase phraseStraightFlush;
+	private Translate.Phrase phraseStraightFlush;
 
 	[SerializeField]
-	private Phrase phraseFourOfAKind;
+	private Translate.Phrase phraseFourOfAKind;
 
 	[SerializeField]
-	private Phrase phraseFullHouse;
+	private Translate.Phrase phraseFullHouse;
 
 	[SerializeField]
-	private Phrase phraseFlush;
+	private Translate.Phrase phraseFlush;
 
 	[SerializeField]
-	private Phrase phraseStraight;
+	private Translate.Phrase phraseStraight;
 
 	[SerializeField]
-	private Phrase phraseThreeOfAKind;
+	private Translate.Phrase phraseThreeOfAKind;
 
 	[SerializeField]
-	private Phrase phraseTwoPair;
+	private Translate.Phrase phraseTwoPair;
 
 	[SerializeField]
-	private Phrase phrasePair;
+	private Translate.Phrase phrasePair;
 
 	[SerializeField]
-	private Phrase phraseHighCard;
+	private Translate.Phrase phraseHighCard;
 
 	[SerializeField]
-	private Phrase phraseRaiseAmount;
+	private Translate.Phrase phraseRaiseAmount;
 
 	[SerializeField]
 	private Sprite dealerChip;

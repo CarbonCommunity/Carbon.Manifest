@@ -8,21 +8,21 @@ public class DemoShotButton : RustButton, IPointerClickHandler, IEventSystemHand
 	public override void OnPointerDown (PointerEventData eventData)
 	{
 		if (!FireEventOnClicked) {
-			((RustButton)this).OnPointerDown (eventData);
+			base.OnPointerDown (eventData);
 		}
 	}
 
 	public override void OnPointerUp (PointerEventData eventData)
 	{
 		if (!FireEventOnClicked) {
-			((RustButton)this).OnPointerUp (eventData);
+			base.OnPointerUp (eventData);
 		}
 	}
 
 	public void OnPointerClick (PointerEventData eventData)
 	{
 		if (FireEventOnClicked) {
-			((RustButton)this).Press ();
+			Press ();
 		}
 	}
 }

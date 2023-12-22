@@ -155,7 +155,7 @@ public class Climate : SingletonComponent<Climate>
 
 	protected override void Awake ()
 	{
-		((SingletonComponent)this).Awake ();
+		base.Awake ();
 		WeatherState = ScriptableObject.CreateInstance (typeof(WeatherPreset)) as WeatherPreset;
 		WeatherClampsMin = ScriptableObject.CreateInstance (typeof(WeatherPreset)) as WeatherPreset;
 		WeatherClampsMax = ScriptableObject.CreateInstance (typeof(WeatherPreset)) as WeatherPreset;
@@ -169,32 +169,32 @@ public class Climate : SingletonComponent<Climate>
 
 	protected override void OnDestroy ()
 	{
-		if (!Application.isQuitting) {
-			((SingletonComponent)this).OnDestroy ();
-			if ((Object)(object)WeatherState != (Object)null) {
-				Object.Destroy ((Object)(object)WeatherState);
+		if (!Rust.Application.isQuitting) {
+			base.OnDestroy ();
+			if (WeatherState != null) {
+				UnityEngine.Object.Destroy (WeatherState);
 			}
-			if ((Object)(object)WeatherClampsMin != (Object)null) {
-				Object.Destroy ((Object)(object)WeatherClampsMin);
+			if (WeatherClampsMin != null) {
+				UnityEngine.Object.Destroy (WeatherClampsMin);
 			}
-			if ((Object)(object)WeatherClampsMax != (Object)null) {
-				Object.Destroy ((Object)(object)WeatherClampsMax);
+			if (WeatherClampsMax != null) {
+				UnityEngine.Object.Destroy (WeatherClampsMax);
 			}
-			if ((Object)(object)WeatherOverrides != (Object)null) {
-				Object.Destroy ((Object)(object)WeatherOverrides);
+			if (WeatherOverrides != null) {
+				UnityEngine.Object.Destroy (WeatherOverrides);
 			}
 		}
 	}
 
 	protected void Update ()
 	{
-		if (!Application.isReceiving && !Application.isLoading && Object.op_Implicit ((Object)(object)TOD_Sky.Instance)) {
+		if (!Rust.Application.isReceiving && !Rust.Application.isLoading && (bool)TOD_Sky.Instance) {
 			TOD_Sky instance = TOD_Sky.Instance;
 			long num = World.Seed + instance.Cycle.Ticks;
 			long num2 = 648000000000L;
 			long num3 = 216000000000L;
 			long num4 = num / num2;
-			WeatherStateBlend = Mathf.InverseLerp (0f, (float)num3, (float)(num % num2));
+			WeatherStateBlend = Mathf.InverseLerp (0f, num3, num % num2);
 			uint seed = (WeatherSeedPrevious = GetSeedFromLong (num4));
 			WeatherStatePrevious = GetWeatherPreset (seed);
 			seed = (WeatherSeedTarget = GetSeedFromLong (num4 + 1));
@@ -208,25 +208,25 @@ public class Climate : SingletonComponent<Climate>
 
 	private static bool Initialized ()
 	{
-		if (!Object.op_Implicit ((Object)(object)SingletonComponent<Climate>.Instance)) {
+		if (!SingletonComponent<Climate>.Instance) {
 			return false;
 		}
-		if (!Object.op_Implicit ((Object)(object)SingletonComponent<Climate>.Instance.WeatherStatePrevious)) {
+		if (!SingletonComponent<Climate>.Instance.WeatherStatePrevious) {
 			return false;
 		}
-		if (!Object.op_Implicit ((Object)(object)SingletonComponent<Climate>.Instance.WeatherStateTarget)) {
+		if (!SingletonComponent<Climate>.Instance.WeatherStateTarget) {
 			return false;
 		}
-		if (!Object.op_Implicit ((Object)(object)SingletonComponent<Climate>.Instance.WeatherStateNext)) {
+		if (!SingletonComponent<Climate>.Instance.WeatherStateNext) {
 			return false;
 		}
-		if (!Object.op_Implicit ((Object)(object)SingletonComponent<Climate>.Instance.WeatherState)) {
+		if (!SingletonComponent<Climate>.Instance.WeatherState) {
 			return false;
 		}
-		if (!Object.op_Implicit ((Object)(object)SingletonComponent<Climate>.Instance.WeatherClampsMin)) {
+		if (!SingletonComponent<Climate>.Instance.WeatherClampsMin) {
 			return false;
 		}
-		if (!Object.op_Implicit ((Object)(object)SingletonComponent<Climate>.Instance.WeatherOverrides)) {
+		if (!SingletonComponent<Climate>.Instance.WeatherOverrides) {
 			return false;
 		}
 		return true;
@@ -279,19 +279,17 @@ public class Climate : SingletonComponent<Climate>
 
 	public static float GetRainbow (Vector3 position)
 	{
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008a: Unknown result type (might be due to invalid IL or missing references)
 		if (!Initialized ()) {
 			return 0f;
 		}
 		TOD_Sky instance = TOD_Sky.Instance;
-		if (!Object.op_Implicit ((Object)(object)instance) || !instance.IsDay || instance.LerpValue < 1f) {
+		if (!instance || !instance.IsDay || instance.LerpValue < 1f) {
 			return 0f;
 		}
 		if (GetFog (position) > 0.25f) {
 			return 0f;
 		}
-		float num = (Object.op_Implicit ((Object)(object)TerrainMeta.BiomeMap) ? TerrainMeta.BiomeMap.GetBiome (position, 3) : 0f);
+		float num = (TerrainMeta.BiomeMap ? TerrainMeta.BiomeMap.GetBiome (position, 3) : 0f);
 		if (num <= 0f) {
 			return 0f;
 		}
@@ -317,14 +315,11 @@ public class Climate : SingletonComponent<Climate>
 
 	public static float GetAurora (Vector3 position)
 	{
-		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0098: Unknown result type (might be due to invalid IL or missing references)
 		if (!Initialized ()) {
 			return 0f;
 		}
 		TOD_Sky instance = TOD_Sky.Instance;
-		if (!Object.op_Implicit ((Object)(object)instance) || !instance.IsNight || instance.LerpValue > 0f) {
+		if (!instance || !instance.IsNight || instance.LerpValue > 0f) {
 			return 0f;
 		}
 		if (GetClouds (position) > 0.1f) {
@@ -333,79 +328,75 @@ public class Climate : SingletonComponent<Climate>
 		if (GetFog (position) > 0.1f) {
 			return 0f;
 		}
-		return Object.op_Implicit ((Object)(object)TerrainMeta.BiomeMap) ? TerrainMeta.BiomeMap.GetBiome (position, 8) : 0f;
+		return TerrainMeta.BiomeMap ? TerrainMeta.BiomeMap.GetBiome (position, 8) : 0f;
 	}
 
 	public static float GetRain (Vector3 position)
 	{
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
 		if (!Initialized ()) {
 			return 0f;
 		}
-		float num = (Object.op_Implicit ((Object)(object)TerrainMeta.BiomeMap) ? TerrainMeta.BiomeMap.GetBiome (position, 1) : 0f);
-		float num2 = (Object.op_Implicit ((Object)(object)TerrainMeta.BiomeMap) ? TerrainMeta.BiomeMap.GetBiome (position, 8) : 0f);
-		return SingletonComponent<Climate>.Instance.WeatherState.Rain * Mathf.Lerp (1f, 0.5f, num) * (1f - num2);
+		float t = (TerrainMeta.BiomeMap ? TerrainMeta.BiomeMap.GetBiome (position, 1) : 0f);
+		float num = (TerrainMeta.BiomeMap ? TerrainMeta.BiomeMap.GetBiome (position, 8) : 0f);
+		return SingletonComponent<Climate>.Instance.WeatherState.Rain * Mathf.Lerp (1f, 0.5f, t) * (1f - num);
 	}
 
 	public static float GetSnow (Vector3 position)
 	{
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
 		if (!Initialized ()) {
 			return 0f;
 		}
-		float num = (Object.op_Implicit ((Object)(object)TerrainMeta.BiomeMap) ? TerrainMeta.BiomeMap.GetBiome (position, 8) : 0f);
+		float num = (TerrainMeta.BiomeMap ? TerrainMeta.BiomeMap.GetBiome (position, 8) : 0f);
 		return SingletonComponent<Climate>.Instance.WeatherState.Rain * num;
 	}
 
 	public static float GetTemperature (Vector3 position)
 	{
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
 		if (!Initialized ()) {
 			return 15f;
 		}
 		TOD_Sky instance = TOD_Sky.Instance;
-		if (!Object.op_Implicit ((Object)(object)instance)) {
+		if (!instance) {
 			return 15f;
 		}
 		ClimateParameters src;
 		ClimateParameters dst;
-		float num = SingletonComponent<Climate>.Instance.FindBlendParameters (position, out src, out dst);
+		float t = SingletonComponent<Climate>.Instance.FindBlendParameters (position, out src, out dst);
 		if (src == null || dst == null) {
 			return 15f;
 		}
 		float hour = instance.Cycle.Hour;
-		float num2 = src.Temperature.Evaluate (hour);
-		float num3 = dst.Temperature.Evaluate (hour);
-		return Mathf.Lerp (num2, num3, num);
+		float a = src.Temperature.Evaluate (hour);
+		float b = dst.Temperature.Evaluate (hour);
+		return Mathf.Lerp (a, b, t);
 	}
 
 	private uint GetSeedFromLong (long val)
 	{
-		uint result = (uint)((val % uint.MaxValue + uint.MaxValue) % uint.MaxValue);
-		SeedRandom.Wanghash (ref result);
-		SeedRandom.Wanghash (ref result);
-		SeedRandom.Wanghash (ref result);
-		return result;
+		uint x = (uint)((val % uint.MaxValue + uint.MaxValue) % uint.MaxValue);
+		SeedRandom.Wanghash (ref x);
+		SeedRandom.Wanghash (ref x);
+		SeedRandom.Wanghash (ref x);
+		return x;
 	}
 
 	private WeatherPreset GetWeatherPreset (uint seed)
 	{
-		float num = Weather.ClearChance + Weather.DustChance + Weather.FogChance + Weather.OvercastChance + Weather.StormChance + Weather.RainChance;
-		float num2 = SeedRandom.Range (ref seed, 0f, num);
-		if (num2 < Weather.RainChance) {
+		float max = Weather.ClearChance + Weather.DustChance + Weather.FogChance + Weather.OvercastChance + Weather.StormChance + Weather.RainChance;
+		float num = SeedRandom.Range (ref seed, 0f, max);
+		if (num < Weather.RainChance) {
 			return GetWeatherPreset (seed, WeatherPresetType.Rain);
 		}
-		if (num2 < Weather.RainChance + Weather.StormChance) {
+		if (num < Weather.RainChance + Weather.StormChance) {
 			return GetWeatherPreset (seed, WeatherPresetType.Storm);
 		}
-		if (num2 < Weather.RainChance + Weather.StormChance + Weather.OvercastChance) {
+		if (num < Weather.RainChance + Weather.StormChance + Weather.OvercastChance) {
 			return GetWeatherPreset (seed, WeatherPresetType.Overcast);
 		}
-		if (num2 < Weather.RainChance + Weather.StormChance + Weather.OvercastChance + Weather.FogChance) {
+		if (num < Weather.RainChance + Weather.StormChance + Weather.OvercastChance + Weather.FogChance) {
 			return GetWeatherPreset (seed, WeatherPresetType.Fog);
 		}
-		if (num2 < Weather.RainChance + Weather.StormChance + Weather.OvercastChance + Weather.FogChance + Weather.DustChance) {
+		if (num < Weather.RainChance + Weather.StormChance + Weather.OvercastChance + Weather.FogChance + Weather.DustChance) {
 			return GetWeatherPreset (seed, WeatherPresetType.Dust);
 		}
 		return GetWeatherPreset (seed, WeatherPresetType.Clear);
@@ -429,13 +420,10 @@ public class Climate : SingletonComponent<Climate>
 
 	private float FindBlendParameters (Vector3 pos, out ClimateParameters src, out ClimateParameters dst)
 	{
-		//IL_006e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a7: Unknown result type (might be due to invalid IL or missing references)
 		if (climateLookup == null) {
 			climateLookup = new ClimateParameters[4] { Arid, Temperate, Tundra, Arctic };
 		}
-		if ((Object)(object)TerrainMeta.BiomeMap == (Object)null) {
+		if (TerrainMeta.BiomeMap == null) {
 			src = Temperate;
 			dst = Temperate;
 			return 0.5f;

@@ -44,28 +44,6 @@ public class TreeMarkerData : PrefabAttribute, IServerComponent
 
 	public Vector3 GetNearbyPoint (Vector3 point, ref int ignoreIndex, out Vector3 normal)
 	{
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0060: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ac: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_018d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0192: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0163: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0177: Unknown result type (might be due to invalid IL or missing references)
-		//IL_017c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e9: Unknown result type (might be due to invalid IL or missing references)
 		int num = Markers.Length;
 		if (ignoreIndex != -1 && ProcessAngleChecks) {
 			ignoreIndex++;
@@ -75,7 +53,7 @@ public class TreeMarkerData : PrefabAttribute, IServerComponent
 			normal = Markers [ignoreIndex].LocalNormal;
 			return Markers [ignoreIndex].LocalPosition;
 		}
-		int num2 = Random.Range (0, num);
+		int num2 = UnityEngine.Random.Range (0, num);
 		float num3 = float.MaxValue;
 		int num4 = -1;
 		for (int i = 0; i < num; i++) {
@@ -84,11 +62,10 @@ public class TreeMarkerData : PrefabAttribute, IServerComponent
 			}
 			MarkerLocation markerLocation = Markers [num2];
 			if (!(markerLocation.LocalPosition.y < MinY)) {
-				Vector3 val = markerLocation.LocalPosition;
-				val.y = Mathf.Lerp (val.y, point.y, 0.5f);
-				Vector3 val2 = val - point;
-				float sqrMagnitude = ((Vector3)(ref val2)).sqrMagnitude;
-				sqrMagnitude *= Random.Range (0.95f, 1.05f);
+				Vector3 vector = markerLocation.LocalPosition;
+				vector.y = Mathf.Lerp (vector.y, point.y, 0.5f);
+				float sqrMagnitude = (vector - point).sqrMagnitude;
+				sqrMagnitude *= UnityEngine.Random.Range (0.95f, 1.05f);
 				if (sqrMagnitude < num3) {
 					num3 = sqrMagnitude;
 					num4 = num2;

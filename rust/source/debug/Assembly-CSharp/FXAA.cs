@@ -1,3 +1,4 @@
+#define ENABLE_PROFILER
 using UnityEngine;
 using UnityEngine.Profiling;
 
@@ -10,7 +11,7 @@ public class FXAA : FXAAPostEffectsBase, IImageEffect
 
 	private void CreateMaterials ()
 	{
-		if ((Object)(object)mat == (Object)null) {
+		if (mat == null) {
 			mat = CheckShaderAndCreateMaterial (shader, mat);
 		}
 	}
@@ -23,20 +24,18 @@ public class FXAA : FXAAPostEffectsBase, IImageEffect
 
 	public bool IsActive ()
 	{
-		return ((Behaviour)this).enabled;
+		return base.enabled;
 	}
 
 	public void OnRenderImage (RenderTexture source, RenderTexture destination)
 	{
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0076: Unknown result type (might be due to invalid IL or missing references)
 		Profiler.BeginSample ("FXAA");
 		CreateMaterials ();
 		float num = 1f / (float)Screen.width;
 		float num2 = 1f / (float)Screen.height;
 		mat.SetVector ("_rcpFrame", new Vector4 (num, num2, 0f, 0f));
 		mat.SetVector ("_rcpFrameOpt", new Vector4 (num * 2f, num2 * 2f, num * 0.5f, num2 * 0.5f));
-		Graphics.Blit ((Texture)(object)source, destination, mat);
+		Graphics.Blit (source, destination, mat);
 		Profiler.EndSample ();
 	}
 }

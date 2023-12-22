@@ -17,35 +17,32 @@ public class TriggerComfort : TriggerBase
 
 	private void OnValidate ()
 	{
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		triggerSize = ((Component)this).GetComponent<SphereCollider> ().radius * ((Component)this).transform.localScale.y;
+		triggerSize = GetComponent<SphereCollider> ().radius * base.transform.localScale.y;
 	}
 
 	internal override GameObject InterestedInObject (GameObject obj)
 	{
 		obj = base.InterestedInObject (obj);
-		if ((Object)(object)obj == (Object)null) {
+		if (obj == null) {
 			return null;
 		}
 		BaseEntity baseEntity = obj.ToBaseEntity ();
-		if ((Object)(object)baseEntity == (Object)null) {
+		if (baseEntity == null) {
 			return null;
 		}
 		if (baseEntity.isClient) {
 			return null;
 		}
-		return ((Component)baseEntity).gameObject;
+		return baseEntity.gameObject;
 	}
 
 	public float CalculateComfort (Vector3 position, BasePlayer forPlayer = null)
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		float num = Vector3.Distance (((Component)this).gameObject.transform.position, position);
+		float num = Vector3.Distance (base.gameObject.transform.position, position);
 		float num2 = 1f - Mathf.Clamp (num - minComfortRange, 0f, num / (triggerSize - minComfortRange));
 		float num3 = 0f;
 		foreach (BasePlayer player in _players) {
-			if (!((Object)(object)player == (Object)(object)forPlayer)) {
+			if (!(player == forPlayer)) {
 				num3 += 0.25f * (player.IsSleeping () ? 0.5f : 1f) * (player.IsAlive () ? 1f : 0f);
 			}
 		}
@@ -56,7 +53,7 @@ public class TriggerComfort : TriggerBase
 	internal override void OnEntityEnter (BaseEntity ent)
 	{
 		BasePlayer basePlayer = ent as BasePlayer;
-		if (Object.op_Implicit ((Object)(object)basePlayer)) {
+		if ((bool)basePlayer) {
 			_players.Add (basePlayer);
 		}
 	}
@@ -64,7 +61,7 @@ public class TriggerComfort : TriggerBase
 	internal override void OnEntityLeave (BaseEntity ent)
 	{
 		BasePlayer basePlayer = ent as BasePlayer;
-		if (Object.op_Implicit ((Object)(object)basePlayer)) {
+		if ((bool)basePlayer) {
 			_players.Remove (basePlayer);
 		}
 	}

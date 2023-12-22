@@ -34,9 +34,6 @@ public class FrankensteinBrain : PetBrain
 
 		public override StateStatus StateThink (float delta, BaseAIBrain brain, BaseEntity entity)
 		{
-			//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0028: Unknown result type (might be due to invalid IL or missing references)
 			base.StateThink (delta, brain, entity);
 			Vector3 pos = brain.Events.Memory.Position.Get (6);
 			if (!brain.Navigator.SetDestination (pos, BaseNavigator.NavigationSpeed.Normal, MoveTowardsRate)) {
@@ -69,14 +66,13 @@ public class FrankensteinBrain : PetBrain
 
 		public override StateStatus StateThink (float delta, BaseAIBrain brain, BaseEntity entity)
 		{
-			//IL_004f: Unknown result type (might be due to invalid IL or missing references)
 			base.StateThink (delta, brain, entity);
 			BaseEntity baseEntity = brain.Events.Memory.Entity.Get (brain.Events.CurrentInputMemorySlot);
-			if ((Object)(object)baseEntity == (Object)null) {
+			if (baseEntity == null) {
 				Stop ();
 				return StateStatus.Error;
 			}
-			if (!brain.Navigator.SetDestination (((Component)baseEntity).transform.position, BaseNavigator.NavigationSpeed.Normal, MoveTowardsRate)) {
+			if (!brain.Navigator.SetDestination (baseEntity.transform.position, BaseNavigator.NavigationSpeed.Normal, MoveTowardsRate)) {
 				return StateStatus.Error;
 			}
 			return (!brain.Navigator.Moving) ? StateStatus.Finished : StateStatus.Running;

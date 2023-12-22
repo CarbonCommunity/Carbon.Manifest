@@ -31,34 +31,16 @@ public class Construction : PrefabAttribute
 
 		public Quaternion GetWorldRotation (bool female)
 		{
-			//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-			//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0060: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0065: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0066: Unknown result type (might be due to invalid IL or missing references)
-			//IL_006b: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0035: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0049: Unknown result type (might be due to invalid IL or missing references)
-			//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-			//IL_006e: Unknown result type (might be due to invalid IL or missing references)
-			Quaternion val = socket.rotation;
+			Quaternion quaternion = socket.rotation;
 			if (socket.male && socket.female && female) {
-				val = socket.rotation * Quaternion.Euler (180f, 0f, 180f);
+				quaternion = socket.rotation * Quaternion.Euler (180f, 0f, 180f);
 			}
-			return ((Component)entity).transform.rotation * val;
+			return entity.transform.rotation * quaternion;
 		}
 
 		public Vector3 GetWorldPosition ()
 		{
-			//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-			//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-			//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-			Matrix4x4 localToWorldMatrix = ((Component)entity).transform.localToWorldMatrix;
-			return ((Matrix4x4)(ref localToWorldMatrix)).MultiplyPoint3x4 (socket.position);
+			return entity.transform.localToWorldMatrix.MultiplyPoint3x4 (socket.position);
 		}
 	}
 
@@ -151,38 +133,6 @@ public class Construction : PrefabAttribute
 
 	public bool UpdatePlacement (Transform transform, Construction common, ref Target target)
 	{
-		//IL_0101: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0148: Unknown result type (might be due to invalid IL or missing references)
-		//IL_017e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_018c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01eb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01fb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01c1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01cf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0259: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0260: Unknown result type (might be due to invalid IL or missing references)
-		//IL_021d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_022b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02a8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02af: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0277: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0285: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02c3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02d1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_034b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0352: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0358: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02f6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02fd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0303: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03b1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03b8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_031a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0328: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0380: Unknown result type (might be due to invalid IL or missing references)
-		//IL_038e: Unknown result type (might be due to invalid IL or missing references)
 		if (!target.valid) {
 			return false;
 		}
@@ -190,11 +140,11 @@ public class Construction : PrefabAttribute
 			lastPlacementError = "You don't have permission to build here";
 			return false;
 		}
-		List<Socket_Base> list = Pool.GetList<Socket_Base> ();
-		common.FindMaleSockets (target, list);
-		foreach (Socket_Base item in list) {
+		List<Socket_Base> obj = Pool.GetList<Socket_Base> ();
+		common.FindMaleSockets (target, obj);
+		foreach (Socket_Base item in obj) {
 			Placement placement = null;
-			if ((Object)(object)target.entity != (Object)null && target.socket != null && target.entity.IsOccupied (target.socket)) {
+			if (target.entity != null && target.socket != null && target.entity.IsOccupied (target.socket)) {
 				continue;
 			}
 			if (placement == null) {
@@ -259,42 +209,24 @@ public class Construction : PrefabAttribute
 			}
 			target.inBuildingPrivilege = flag;
 			transform.SetPositionAndRotation (placement.position, placement.rotation);
-			Pool.FreeList<Socket_Base> (ref list);
+			Pool.FreeList (ref obj);
 			return true;
 		}
-		Pool.FreeList<Socket_Base> (ref list);
+		Pool.FreeList (ref obj);
 		return false;
 	}
 
 	private bool TestPlacingThroughRock (ref Placement placement, Target target)
 	{
-		//IL_0005: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0056: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0075: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007d: Unknown result type (might be due to invalid IL or missing references)
-		OBB val = default(OBB);
-		((OBB)(ref val))..ctor (placement.position, Vector3.one, placement.rotation, bounds);
+		OBB oBB = new OBB (placement.position, Vector3.one, placement.rotation, bounds);
 		Vector3 center = target.player.GetCenter (ducked: true);
-		Vector3 origin = ((Ray)(ref target.ray)).origin;
-		if (Physics.Linecast (center, origin, 65536, (QueryTriggerInteraction)1)) {
+		Vector3 origin = target.ray.origin;
+		if (Physics.Linecast (center, origin, 65536, QueryTriggerInteraction.Ignore)) {
 			return false;
 		}
-		RaycastHit val2 = default(RaycastHit);
-		Vector3 val3 = (((OBB)(ref val)).Trace (target.ray, ref val2, float.PositiveInfinity) ? ((RaycastHit)(ref val2)).point : ((OBB)(ref val)).ClosestPoint (origin));
-		if (Physics.Linecast (origin, val3, 65536, (QueryTriggerInteraction)1)) {
+		RaycastHit hit;
+		Vector3 end = (oBB.Trace (target.ray, out hit) ? hit.point : oBB.ClosestPoint (origin));
+		if (Physics.Linecast (origin, end, 65536, QueryTriggerInteraction.Ignore)) {
 			return false;
 		}
 		return true;
@@ -302,91 +234,48 @@ public class Construction : PrefabAttribute
 
 	private static bool TestPlacingThroughWall (ref Placement placement, Transform transform, Construction common, Target target)
 	{
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0083: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f0: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 val = placement.position;
-		if ((Object)(object)common.deployOffset != (Object)null) {
-			val += placement.rotation * common.deployOffset.localPosition;
+		Vector3 position = placement.position;
+		if (common.deployOffset != null) {
+			position += placement.rotation * common.deployOffset.localPosition;
 		}
-		Vector3 val2 = val - ((Ray)(ref target.ray)).origin;
-		RaycastHit hit = default(RaycastHit);
-		if (!Physics.Raycast (((Ray)(ref target.ray)).origin, ((Vector3)(ref val2)).normalized, ref hit, ((Vector3)(ref val2)).magnitude, 2097152)) {
+		Vector3 vector = position - target.ray.origin;
+		if (!Physics.Raycast (target.ray.origin, vector.normalized, out var hitInfo, vector.magnitude, 2097152)) {
 			return true;
 		}
-		StabilityEntity stabilityEntity = hit.GetEntity () as StabilityEntity;
-		if ((Object)(object)stabilityEntity != (Object)null && (Object)(object)target.entity == (Object)(object)stabilityEntity) {
+		StabilityEntity stabilityEntity = hitInfo.GetEntity () as StabilityEntity;
+		if (stabilityEntity != null && target.entity == stabilityEntity) {
 			return true;
 		}
-		float num = ((Vector3)(ref val2)).magnitude - ((RaycastHit)(ref hit)).distance;
+		float num = vector.magnitude - hitInfo.distance;
 		if (num < 0.2f) {
 			return true;
 		}
 		lastPlacementError = "object in placement path";
-		transform.SetPositionAndRotation (((RaycastHit)(ref hit)).point, placement.rotation);
+		transform.SetPositionAndRotation (hitInfo.point, placement.rotation);
 		return false;
 	}
 
 	private bool TestPlacingCloseToRoad (ref Placement placement, Target target)
 	{
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0059: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0063: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0064: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ec: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0104: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0109: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0118: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0124: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0130: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013c: Unknown result type (might be due to invalid IL or missing references)
 		TerrainHeightMap heightMap = TerrainMeta.HeightMap;
 		TerrainTopologyMap topologyMap = TerrainMeta.TopologyMap;
-		if ((Object)(object)heightMap == (Object)null) {
+		if (heightMap == null) {
 			return true;
 		}
-		if ((Object)(object)topologyMap == (Object)null) {
+		if (topologyMap == null) {
 			return true;
 		}
-		OBB val = default(OBB);
-		((OBB)(ref val))..ctor (placement.position, Vector3.one, placement.rotation, bounds);
-		float num = Mathf.Abs (heightMap.GetHeight (val.position) - val.position.y);
+		OBB oBB = new OBB (placement.position, Vector3.one, placement.rotation, bounds);
+		float num = Mathf.Abs (heightMap.GetHeight (oBB.position) - oBB.position.y);
 		if (num > 9f) {
 			return true;
 		}
 		float radius = Mathf.Lerp (3f, 0f, num / 9f);
-		Vector3 position = val.position;
-		Vector3 point = ((OBB)(ref val)).GetPoint (-1f, 0f, -1f);
-		Vector3 point2 = ((OBB)(ref val)).GetPoint (-1f, 0f, 1f);
-		Vector3 point3 = ((OBB)(ref val)).GetPoint (1f, 0f, -1f);
-		Vector3 point4 = ((OBB)(ref val)).GetPoint (1f, 0f, 1f);
+		Vector3 position = oBB.position;
+		Vector3 point = oBB.GetPoint (-1f, 0f, -1f);
+		Vector3 point2 = oBB.GetPoint (-1f, 0f, 1f);
+		Vector3 point3 = oBB.GetPoint (1f, 0f, -1f);
+		Vector3 point4 = oBB.GetPoint (1f, 0f, 1f);
 		int topology = topologyMap.GetTopology (position, radius);
 		int topology2 = topologyMap.GetTopology (point, radius);
 		int topology3 = topologyMap.GetTopology (point2, radius);
@@ -406,21 +295,19 @@ public class Construction : PrefabAttribute
 
 	public BaseEntity CreateConstruction (Target target, bool bNeedsValidPlacement = false)
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		GameObject val = GameManager.server.CreatePrefab (fullName, Vector3.zero, Quaternion.identity, active: false);
-		bool flag = UpdatePlacement (val.transform, this, ref target);
-		BaseEntity baseEntity = val.ToBaseEntity ();
+		GameObject gameObject = GameManager.server.CreatePrefab (fullName, Vector3.zero, Quaternion.identity, active: false);
+		bool flag = UpdatePlacement (gameObject.transform, this, ref target);
+		BaseEntity baseEntity = gameObject.ToBaseEntity ();
 		if (bNeedsValidPlacement && !flag) {
 			if (baseEntity.IsValid ()) {
 				baseEntity.Kill ();
 			} else {
-				GameManager.Destroy (val);
+				GameManager.Destroy (gameObject);
 			}
 			return null;
 		}
 		DecayEntity decayEntity = baseEntity as DecayEntity;
-		if (Object.op_Implicit ((Object)(object)decayEntity)) {
+		if ((bool)decayEntity) {
 			decayEntity.AttachToBuilding (target.entity as DecayEntity);
 		}
 		return baseEntity;
@@ -460,17 +347,15 @@ public class Construction : PrefabAttribute
 
 	protected override void AttributeSetup (GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
 	{
-		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
 		base.AttributeSetup (rootObj, name, serverside, clientside, bundling);
-		isBuildingPrivilege = Object.op_Implicit ((Object)(object)rootObj.GetComponent<BuildingPrivlidge> ());
-		isSleepingBag = Object.op_Implicit ((Object)(object)rootObj.GetComponent<SleepingBag> ());
+		isBuildingPrivilege = rootObj.GetComponent<BuildingPrivlidge> ();
+		isSleepingBag = rootObj.GetComponent<SleepingBag> ();
 		bounds = rootObj.GetComponent<BaseEntity> ().bounds;
-		deployable = ((Component)this).GetComponent<Deployable> ();
-		placeholder = ((Component)this).GetComponentInChildren<ConstructionPlaceholder> ();
-		allSockets = ((Component)this).GetComponentsInChildren<Socket_Base> (true);
-		allProximities = ((Component)this).GetComponentsInChildren<BuildingProximity> (true);
-		socketHandle = ((Component)this).GetComponentsInChildren<SocketHandle> (true).FirstOrDefault ();
+		deployable = GetComponent<Deployable> ();
+		placeholder = GetComponentInChildren<ConstructionPlaceholder> ();
+		allSockets = GetComponentsInChildren<Socket_Base> (includeInactive: true);
+		allProximities = GetComponentsInChildren<BuildingProximity> (includeInactive: true);
+		socketHandle = GetComponentsInChildren<SocketHandle> (includeInactive: true).FirstOrDefault ();
 		grades = rootObj.GetComponents<ConstructionGrade> ();
 		ConstructionGrade[] array = grades;
 		foreach (ConstructionGrade constructionGrade in array) {

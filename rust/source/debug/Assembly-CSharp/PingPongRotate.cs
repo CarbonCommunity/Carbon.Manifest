@@ -10,46 +10,27 @@ public class PingPongRotate : MonoBehaviour
 
 	private void Update ()
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		Quaternion val = Quaternion.identity;
+		Quaternion identity = Quaternion.identity;
 		for (int i = 0; i < 3; i++) {
-			val *= GetRotation (i);
+			identity *= GetRotation (i);
 		}
-		((Component)this).transform.rotation = val;
+		base.transform.rotation = identity;
 	}
 
 	public Quaternion GetRotation (int index)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0066: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0067: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0070: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 val = Vector3.zero;
+		Vector3 axis = Vector3.zero;
 		switch (index) {
 		case 0:
-			val = Vector3.right;
+			axis = Vector3.right;
 			break;
 		case 1:
-			val = Vector3.up;
+			axis = Vector3.up;
 			break;
 		case 2:
-			val = Vector3.forward;
+			axis = Vector3.forward;
 			break;
 		}
-		return Quaternion.AngleAxis (Mathf.Sin ((((Vector3)(ref offset)) [index] + Time.time) * ((Vector3)(ref rotationSpeed)) [index]) * ((Vector3)(ref rotationAmount)) [index], val);
+		return Quaternion.AngleAxis (Mathf.Sin ((offset [index] + Time.time) * rotationSpeed [index]) * rotationAmount [index], axis);
 	}
 }

@@ -49,8 +49,8 @@ public class EngineStorage : StorageContainer
 	public VehicleModuleEngine GetEngineModule ()
 	{
 		BaseEntity baseEntity = GetParentEntity ();
-		if ((Object)(object)baseEntity != (Object)null) {
-			return ((Component)baseEntity).GetComponent<VehicleModuleEngine> ();
+		if (baseEntity != null) {
+			return baseEntity.GetComponent<VehicleModuleEngine> ();
 		}
 		return null;
 	}
@@ -75,7 +75,7 @@ public class EngineStorage : StorageContainer
 	public override bool CanBeLooted (BasePlayer player)
 	{
 		VehicleModuleEngine engineModule = GetEngineModule ();
-		if ((Object)(object)engineModule != (Object)null) {
+		if (engineModule != null) {
 			return engineModule.CanBeLooted (player);
 		}
 		return false;
@@ -88,8 +88,8 @@ public class EngineStorage : StorageContainer
 
 	private int GetValidSlot (Item item)
 	{
-		ItemModEngineItem component = ((Component)item.info).GetComponent<ItemModEngineItem> ();
-		if ((Object)(object)component == (Object)null) {
+		ItemModEngineItem component = item.info.GetComponent<ItemModEngineItem> ();
+		if (component == null) {
 			return -1;
 		}
 		EngineItemTypes engineItemType = component.engineItemType;
@@ -123,8 +123,8 @@ public class EngineStorage : StorageContainer
 		if (targetSlot < 0 || targetSlot >= slotTypes.Length) {
 			return false;
 		}
-		ItemModEngineItem component = ((Component)item.info).GetComponent<ItemModEngineItem> ();
-		if ((Object)(object)component != (Object)null && component.engineItemType == slotTypes [targetSlot]) {
+		ItemModEngineItem component = item.info.GetComponent<ItemModEngineItem> ();
+		if (component != null && component.engineItemType == slotTypes [targetSlot]) {
 			return true;
 		}
 		return false;
@@ -143,7 +143,7 @@ public class EngineStorage : StorageContainer
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.engineStorage = Pool.Get<EngineStorage> ();
+		info.msg.engineStorage = Pool.Get<ProtoBuf.EngineStorage> ();
 		info.msg.engineStorage.isUsable = isUsable;
 		info.msg.engineStorage.accelerationBoost = accelerationBoostPercent;
 		info.msg.engineStorage.topSpeedBoost = topSpeedBoostPercent;
@@ -159,7 +159,7 @@ public class EngineStorage : StorageContainer
 		float[] array = new float[base.inventory.capacity];
 		float num = 0f;
 		for (int i = 0; i < array.Length; i++) {
-			array [i] = Random.value;
+			array [i] = UnityEngine.Random.value;
 			num += array [i];
 		}
 		float num2 = damageTaken / num;
@@ -175,7 +175,7 @@ public class EngineStorage : StorageContainer
 	public void AdminAddParts (int tier)
 	{
 		if (base.inventory == null) {
-			Debug.LogWarning ((object)(((object)this).GetType ().Name + ": Null inventory on " + ((Object)this).name));
+			Debug.LogWarning (GetType ().Name + ": Null inventory on " + base.name);
 			return;
 		}
 		for (int i = 0; i < base.inventory.capacity; i++) {
@@ -188,13 +188,13 @@ public class EngineStorage : StorageContainer
 		for (int j = 0; j < base.inventory.capacity; j++) {
 			Item slot2 = base.inventory.GetSlot (j);
 			if (slot2 == null && allEngineItems.TryGetItem (tier, slotTypes [j], out var output)) {
-				ItemDefinition component = ((Component)output).GetComponent<ItemDefinition> ();
+				ItemDefinition component = output.GetComponent<ItemDefinition> ();
 				Item item = ItemManager.Create (component, 1, 0uL);
 				if (item != null) {
 					item.condition = component.condition.max;
 					item.MoveToContainer (base.inventory, j, allowStack: false);
 				} else {
-					Debug.LogError ((object)(((object)this).GetType ().Name + ": Failed to create engine storage item."));
+					Debug.LogError (GetType ().Name + ": Failed to create engine storage item.");
 				}
 			}
 		}
@@ -204,8 +204,8 @@ public class EngineStorage : StorageContainer
 	{
 		float num = 0f;
 		foreach (Item item in base.inventory.itemList) {
-			ItemModEngineItem component = ((Component)item.info).GetComponent<ItemModEngineItem> ();
-			if ((Object)(object)component != (Object)null && boostConditional (component.engineItemType) && !item.isBroken) {
+			ItemModEngineItem component = item.info.GetComponent<ItemModEngineItem> ();
+			if (component != null && boostConditional (component.engineItemType) && !item.isBroken) {
 				num += (float)item.amount * GetTierValue (component.tier);
 			}
 		}
@@ -222,7 +222,7 @@ public class EngineStorage : StorageContainer
 		case 3:
 			return 1f;
 		default:
-			Debug.LogError ((object)(((object)this).GetType ().Name + ": Unrecognised item tier: " + tier));
+			Debug.LogError (GetType ().Name + ": Unrecognised item tier: " + tier);
 			return 0f;
 		}
 	}

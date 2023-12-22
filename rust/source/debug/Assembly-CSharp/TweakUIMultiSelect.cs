@@ -1,5 +1,4 @@
 using System.Linq;
-using UnityEngine;
 using UnityEngine.UI;
 
 public class TweakUIMultiSelect : TweakUIBase
@@ -26,9 +25,9 @@ public class TweakUIMultiSelect : TweakUIBase
 	{
 		if (conVar != null) {
 			string @string = conVar.String;
-			Toggle[] componentsInChildren = ((Component)toggleGroup).GetComponentsInChildren<Toggle> ();
-			foreach (Toggle val in componentsInChildren) {
-				val.isOn = ((Object)val).name == @string;
+			Toggle[] componentsInChildren = toggleGroup.GetComponentsInChildren<Toggle> ();
+			foreach (Toggle toggle in componentsInChildren) {
+				toggle.isOn = toggle.name == @string;
 			}
 		}
 	}
@@ -36,11 +35,11 @@ public class TweakUIMultiSelect : TweakUIBase
 	private void UpdateConVar ()
 	{
 		if (conVar != null) {
-			Toggle val = (from x in ((Component)toggleGroup).GetComponentsInChildren<Toggle> ()
+			Toggle toggle = (from x in toggleGroup.GetComponentsInChildren<Toggle> ()
 				where x.isOn
 				select x).FirstOrDefault ();
-			if (!((Object)(object)val == (Object)null) && !(conVar.String == ((Object)val).name)) {
-				conVar.Set (((Object)val).name);
+			if (!(toggle == null) && !(conVar.String == toggle.name)) {
+				conVar.Set (toggle.name);
 			}
 		}
 	}

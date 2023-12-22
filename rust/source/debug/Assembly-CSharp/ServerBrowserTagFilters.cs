@@ -13,21 +13,16 @@ public class ServerBrowserTagFilters : MonoBehaviour
 
 	public void Start ()
 	{
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Expected O, but got Unknown
-		_groups = ((Component)this).gameObject.GetComponentsInChildren<ServerBrowserTagGroup> ();
-		UnityAction val = (UnityAction)delegate {
-			UnityEvent tagFiltersChanged = TagFiltersChanged;
-			if (tagFiltersChanged != null) {
-				tagFiltersChanged.Invoke ();
-			}
+		_groups = base.gameObject.GetComponentsInChildren<ServerBrowserTagGroup> ();
+		UnityAction call = delegate {
+			TagFiltersChanged?.Invoke ();
 		};
 		ServerBrowserTagGroup[] groups = _groups;
 		foreach (ServerBrowserTagGroup serverBrowserTagGroup in groups) {
 			ServerBrowserTag[] tags = serverBrowserTagGroup.tags;
 			foreach (ServerBrowserTag serverBrowserTag in tags) {
-				serverBrowserTag.button.OnPressed.AddListener (val);
-				serverBrowserTag.button.OnReleased.AddListener (val);
+				serverBrowserTag.button.OnPressed.AddListener (call);
+				serverBrowserTag.button.OnReleased.AddListener (call);
 			}
 		}
 	}

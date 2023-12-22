@@ -1,3 +1,4 @@
+#define ENABLE_PROFILER
 using System.Collections.Generic;
 using System.Diagnostics;
 using Rust;
@@ -28,12 +29,12 @@ public class LoadBalancer : SingletonComponent<LoadBalancer>
 
 	protected void LateUpdate ()
 	{
-		if (Application.isReceiving || Application.isLoading || Paused) {
+		if (Rust.Application.isReceiving || Rust.Application.isLoading || Paused) {
 			return;
 		}
 		int num = Count ();
-		float num2 = Mathf.InverseLerp (1000f, 100000f, (float)num);
-		float num3 = Mathf.SmoothStep (1f, 100f, num2);
+		float t = Mathf.InverseLerp (1000f, 100000f, num);
+		float num2 = Mathf.SmoothStep (1f, 100f, t);
 		watch.Reset ();
 		watch.Start ();
 		for (int i = 0; i < queues.Length; i++) {
@@ -43,7 +44,7 @@ public class LoadBalancer : SingletonComponent<LoadBalancer>
 				Profiler.BeginSample ("LoadBalancer.Tick");
 				deferredAction.Action ();
 				Profiler.EndSample ();
-				if (watch.Elapsed.TotalMilliseconds > (double)num3) {
+				if (watch.Elapsed.TotalMilliseconds > (double)num2) {
 					return;
 				}
 			}
@@ -52,7 +53,7 @@ public class LoadBalancer : SingletonComponent<LoadBalancer>
 
 	public static int Count ()
 	{
-		if (!Object.op_Implicit ((Object)(object)SingletonComponent<LoadBalancer>.Instance)) {
+		if (!SingletonComponent<LoadBalancer>.Instance) {
 			return 0;
 		}
 		Queue<DeferredAction>[] array = SingletonComponent<LoadBalancer>.Instance.queues;
@@ -65,7 +66,7 @@ public class LoadBalancer : SingletonComponent<LoadBalancer>
 
 	public static void ProcessAll ()
 	{
-		if (!Object.op_Implicit ((Object)(object)SingletonComponent<LoadBalancer>.Instance)) {
+		if (!SingletonComponent<LoadBalancer>.Instance) {
 			CreateInstance ();
 		}
 		Queue<DeferredAction>[] array = SingletonComponent<LoadBalancer>.Instance.queues;
@@ -80,7 +81,7 @@ public class LoadBalancer : SingletonComponent<LoadBalancer>
 	public static void Enqueue (DeferredAction action)
 	{
 		Profiler.BeginSample ("LoadBalancer.Enqueue");
-		if (!Object.op_Implicit ((Object)(object)SingletonComponent<LoadBalancer>.Instance)) {
+		if (!SingletonComponent<LoadBalancer>.Instance) {
 			CreateInstance ();
 		}
 		Queue<DeferredAction>[] array = SingletonComponent<LoadBalancer>.Instance.queues;
@@ -91,13 +92,11 @@ public class LoadBalancer : SingletonComponent<LoadBalancer>
 
 	private static void CreateInstance ()
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Expected O, but got Unknown
 		Profiler.BeginSample ("LoadBalancer.CreateInstance");
-		GameObject val = new GameObject ();
-		((Object)val).name = "LoadBalancer";
-		val.AddComponent<LoadBalancer> ();
-		Object.DontDestroyOnLoad ((Object)(object)val);
+		GameObject gameObject = new GameObject ();
+		gameObject.name = "LoadBalancer";
+		gameObject.AddComponent<LoadBalancer> ();
+		Object.DontDestroyOnLoad (gameObject);
 		Profiler.EndSample ();
 	}
 }

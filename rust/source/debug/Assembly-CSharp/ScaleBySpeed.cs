@@ -22,41 +22,27 @@ public class ScaleBySpeed : MonoBehaviour
 
 	private void Start ()
 	{
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		prevPosition = ((Component)this).transform.position;
+		prevPosition = base.transform.position;
 	}
 
 	private void Update ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0101: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010e: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 position = ((Component)this).transform.position;
-		Vector3 val = position - prevPosition;
-		float sqrMagnitude = ((Vector3)(ref val)).sqrMagnitude;
+		Vector3 position = base.transform.position;
+		float sqrMagnitude = (position - prevPosition).sqrMagnitude;
 		float num = minScale;
 		float height = WaterSystem.GetHeight (position);
-		bool enabled = height > position.y - submergedThickness;
+		bool flag = height > position.y - submergedThickness;
 		if (sqrMagnitude > 0.0001f) {
 			sqrMagnitude = Mathf.Sqrt (sqrMagnitude) / Time.deltaTime;
-			float num2 = Mathf.Clamp (sqrMagnitude, minSpeed, maxSpeed) / (maxSpeed - minSpeed);
-			num = Mathf.Lerp (minScale, maxScale, Mathf.Clamp01 (num2));
-			if ((Object)(object)component != (Object)null && toggleComponent) {
-				((Behaviour)component).enabled = enabled;
+			float value = Mathf.Clamp (sqrMagnitude, minSpeed, maxSpeed) / (maxSpeed - minSpeed);
+			num = Mathf.Lerp (minScale, maxScale, Mathf.Clamp01 (value));
+			if (component != null && toggleComponent) {
+				component.enabled = flag;
 			}
-		} else if ((Object)(object)component != (Object)null && toggleComponent) {
-			((Behaviour)component).enabled = false;
+		} else if (component != null && toggleComponent) {
+			component.enabled = false;
 		}
-		((Component)this).transform.localScale = new Vector3 (num, num, num);
+		base.transform.localScale = new Vector3 (num, num, num);
 		prevPosition = position;
 	}
 }

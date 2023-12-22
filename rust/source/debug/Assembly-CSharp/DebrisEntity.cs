@@ -1,4 +1,3 @@
-using System;
 using ConVar;
 
 public class DebrisEntity : BaseCombatEntity
@@ -18,14 +17,11 @@ public class DebrisEntity : BaseCombatEntity
 
 	public void ResetRemovalTime (float dur)
 	{
-		TimeWarning val = TimeWarning.New ("ResetRemovalTime", 0);
-		try {
-			if (((FacepunchBehaviour)this).IsInvoking ((Action)RemoveCorpse)) {
-				((FacepunchBehaviour)this).CancelInvoke ((Action)RemoveCorpse);
+		using (TimeWarning.New ("ResetRemovalTime")) {
+			if (IsInvoking (RemoveCorpse)) {
+				CancelInvoke (RemoveCorpse);
 			}
-			((FacepunchBehaviour)this).Invoke ((Action)RemoveCorpse, dur);
-		} finally {
-			((IDisposable)val)?.Dispose ();
+			Invoke (RemoveCorpse, dur);
 		}
 	}
 

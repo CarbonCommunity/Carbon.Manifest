@@ -40,7 +40,7 @@ public static class Auth_Steam
 				ConnectionAuth.Reject (connection, "Steam Auth Failed", "Steam Auth Error: " + connection.authStatus);
 				PlatformService.Instance.EndPlayerSession (connection.userid);
 			} else {
-				string playerListName = (Server.censorplayerlist ? RandomUsernames.Get (connection.userid + (ulong)Random.Range (0, 100000)) : connection.username);
+				string playerListName = (ConVar.Server.censorplayerlist ? RandomUsernames.Get (connection.userid + (ulong)Random.Range (0, 100000)) : connection.username);
 				PlatformService.Instance.UpdatePlayerSession (connection.userid, playerListName);
 			}
 		}
@@ -48,40 +48,31 @@ public static class Auth_Steam
 
 	public static bool ValidateConnecting (ulong steamid, ulong ownerSteamID, AuthResponse response)
 	{
-		//IL_0069: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006b: Invalid comparison between Unknown and I4
-		//IL_0083: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0085: Invalid comparison between Unknown and I4
-		//IL_009d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009f: Invalid comparison between Unknown and I4
-		//IL_00b7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b9: Invalid comparison between Unknown and I4
-		Connection val = waitingList.Find ((Connection x) => x.userid == steamid);
-		if (val == null) {
+		Connection connection = waitingList.Find ((Connection x) => x.userid == steamid);
+		if (connection == null) {
 			return false;
 		}
-		val.ownerid = ownerSteamID;
+		connection.ownerid = ownerSteamID;
 		if (ServerUsers.Is (ownerSteamID, ServerUsers.UserGroup.Banned) || ServerUsers.Is (steamid, ServerUsers.UserGroup.Banned)) {
-			val.authStatus = "banned";
+			connection.authStatus = "banned";
 			return true;
 		}
-		if ((int)response == 2) {
-			val.authStatus = "ok";
+		switch (response) {
+		case AuthResponse.OK:
+			connection.authStatus = "ok";
+			return true;
+		case AuthResponse.VACBanned:
+			connection.authStatus = "vacbanned";
+			return true;
+		case AuthResponse.PublisherBanned:
+			connection.authStatus = "gamebanned";
+			return true;
+		case AuthResponse.TimedOut:
+			connection.authStatus = "ok";
+			return true;
+		default:
+			connection.authStatus = response.ToString ();
 			return true;
 		}
-		if ((int)response == 3) {
-			val.authStatus = "vacbanned";
-			return true;
-		}
-		if ((int)response == 4) {
-			val.authStatus = "gamebanned";
-			return true;
-		}
-		if ((int)response == 1) {
-			val.authStatus = "ok";
-			return true;
-		}
-		val.authStatus = ((object)(AuthResponse)(ref response)).ToString ();
-		return true;
 	}
 }

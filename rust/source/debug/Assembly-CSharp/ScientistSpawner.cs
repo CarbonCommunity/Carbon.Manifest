@@ -47,9 +47,9 @@ public class ScientistSpawner : SpawnGroup
 			return;
 		}
 		if (_lastSpawnCallHadMaxAliveMembers) {
-			_nextForcedRespawn = Time.time + 2200f;
+			_nextForcedRespawn = UnityEngine.Time.time + 2200f;
 		}
-		if (Time.time < _nextForcedRespawn) {
+		if (UnityEngine.Time.time < _nextForcedRespawn) {
 			if (base.currentPopulation == 0 && _lastSpawnCallHadAliveMembers) {
 				_lastSpawnCallHadMaxAliveMembers = false;
 				_lastSpawnCallHadAliveMembers = false;
@@ -72,22 +72,16 @@ public class ScientistSpawner : SpawnGroup
 
 	protected override void OnDrawGizmos ()
 	{
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0081: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0087: Unknown result type (might be due to invalid IL or missing references)
 		base.OnDrawGizmos ();
 		if (LookAtInterestPointsStationary == null || LookAtInterestPointsStationary.Length == 0) {
 			return;
 		}
 		Gizmos.color = Color.magenta - new Color (0f, 0f, 0f, 0.5f);
 		Transform[] lookAtInterestPointsStationary = LookAtInterestPointsStationary;
-		foreach (Transform val in lookAtInterestPointsStationary) {
-			if ((Object)(object)val != (Object)null) {
-				Gizmos.DrawSphere (val.position, 0.1f);
-				Gizmos.DrawLine (((Component)this).transform.position, val.position);
+		foreach (Transform transform in lookAtInterestPointsStationary) {
+			if (transform != null) {
+				Gizmos.DrawSphere (transform.position, 0.1f);
+				Gizmos.DrawLine (base.transform.position, transform.position);
 			}
 		}
 	}

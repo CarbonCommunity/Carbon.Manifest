@@ -4,6 +4,6 @@ public class DetachMonumentChildren : MonoBehaviour
 {
 	private void Awake ()
 	{
-		((Component)this).transform.DetachChildren ();
+		base.transform.DetachChildren ();
 	}
 }
