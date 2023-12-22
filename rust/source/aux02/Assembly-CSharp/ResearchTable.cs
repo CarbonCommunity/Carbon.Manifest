@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -37,46 +38,34 @@ public class ResearchTable : StorageContainer
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("ResearchTable.OnRpcMessage", 0);
-		try {
-			if (rpc == 3177710095u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("ResearchTable.OnRpcMessage")) {
+			if (rpc == 3177710095u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - DoResearch "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - DoResearch ");
 				}
-				TimeWarning val2 = TimeWarning.New ("DoResearch", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("DoResearch")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (3177710095u, "DoResearch", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							DoResearch (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in DoResearch");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -108,27 +97,16 @@ public class ResearchTable : StorageContainer
 
 	public int RarityMultiplier (Rarity rarity)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0002: Invalid comparison between Unknown and I4
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0009: Invalid comparison between Unknown and I4
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0010: Invalid comparison between Unknown and I4
-		if ((int)rarity == 1) {
-			return 20;
-		}
-		if ((int)rarity == 2) {
-			return 15;
-		}
-		if ((int)rarity == 3) {
-			return 10;
-		}
-		return 5;
+		return rarity switch {
+			Rarity.Common => 20, 
+			Rarity.Uncommon => 15, 
+			Rarity.Rare => 10, 
+			_ => 5, 
+		};
 	}
 
 	public int GetBlueprintStacksize (Item sourceItem)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
 		int result = RarityMultiplier (sourceItem.info.rarity);
 		if (sourceItem.info.category == ItemCategory.Ammunition) {
 			result = Mathf.FloorToInt ((float)sourceItem.MaxStackable () / (float)sourceItem.info.Blueprint.amountToCreate) * 2;
@@ -143,33 +121,24 @@ public class ResearchTable : StorageContainer
 
 	public static int ScrapForResearch (ItemDefinition info)
 	{
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Invalid comparison between Unknown and I4
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Invalid comparison between Unknown and I4
-		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Invalid comparison between Unknown and I4
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Invalid comparison between Unknown and I4
-		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)info.isRedirectOf != (Object)null) {
+		if (info.isRedirectOf != null) {
 			return ScrapForResearch (info.isRedirectOf);
 		}
 		int result = 0;
-		if ((int)info.rarity == 1) {
+		if (info.rarity == Rarity.Common) {
 			result = 20;
 		}
-		if ((int)info.rarity == 2) {
+		if (info.rarity == Rarity.Uncommon) {
 			result = 75;
 		}
-		if ((int)info.rarity == 3) {
+		if (info.rarity == Rarity.Rare) {
 			result = 125;
 		}
-		if ((int)info.rarity == 4 || (int)info.rarity == 0) {
+		if (info.rarity == Rarity.VeryRare || info.rarity == Rarity.None) {
 			result = 500;
 		}
 		ItemBlueprint itemBlueprint = ItemManager.FindBlueprint (info);
-		if ((Object)(object)itemBlueprint != (Object)null && itemBlueprint.defaultBlueprint) {
+		if (itemBlueprint != null && itemBlueprint.defaultBlueprint) {
 			return ConVar.Server.defaultBlueprintResearchCost;
 		}
 		return result;
@@ -177,30 +146,21 @@ public class ResearchTable : StorageContainer
 
 	public static int ScrapForResearch (ItemDefinition info, ResearchType type)
 	{
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0009: Invalid comparison between Unknown and I4
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0015: Invalid comparison between Unknown and I4
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Invalid comparison between Unknown and I4
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Invalid comparison between Unknown and I4
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
 		int num = 0;
-		if ((int)info.rarity == 1) {
+		if (info.rarity == Rarity.Common) {
 			num = 20;
 		}
-		if ((int)info.rarity == 2) {
+		if (info.rarity == Rarity.Uncommon) {
 			num = 75;
 		}
-		if ((int)info.rarity == 3) {
+		if (info.rarity == Rarity.Rare) {
 			num = 125;
 		}
-		if ((int)info.rarity == 4 || (int)info.rarity == 0) {
+		if (info.rarity == Rarity.VeryRare || info.rarity == Rarity.None) {
 			num = 500;
 		}
 		BaseGameMode activeGameMode = BaseGameMode.GetActiveGameMode (serverside: true);
-		if ((Object)(object)activeGameMode != (Object)null) {
+		if (activeGameMode != null) {
 			BaseGameMode.ResearchCostResult scrapCostForResearch = activeGameMode.GetScrapCostForResearch (info, type);
 			if (scrapCostForResearch.Scale.HasValue) {
 				num = Mathf.RoundToInt ((float)num * scrapCostForResearch.Scale.Value);
@@ -213,11 +173,11 @@ public class ResearchTable : StorageContainer
 
 	public bool IsItemResearchable (Item item)
 	{
-		ItemBlueprint itemBlueprint = ItemManager.FindBlueprint (((Object)(object)item.info.isRedirectOf != (Object)null) ? item.info.isRedirectOf : item.info);
-		if ((Object)(object)itemBlueprint != (Object)null && itemBlueprint.defaultBlueprint) {
+		ItemBlueprint itemBlueprint = ItemManager.FindBlueprint ((item.info.isRedirectOf != null) ? item.info.isRedirectOf : item.info);
+		if (itemBlueprint != null && itemBlueprint.defaultBlueprint) {
 			return true;
 		}
-		if ((Object)(object)itemBlueprint == (Object)null || !itemBlueprint.isResearchable) {
+		if (itemBlueprint == null || !itemBlueprint.isResearchable) {
 			return false;
 		}
 		return true;
@@ -231,7 +191,7 @@ public class ResearchTable : StorageContainer
 
 	public override bool ItemFilter (Item item, int targetSlot)
 	{
-		if (targetSlot == 1 && (Object)(object)item.info != (Object)(object)researchResource) {
+		if (targetSlot == 1 && item.info != researchResource) {
 			return false;
 		}
 		return base.ItemFilter (item, targetSlot);
@@ -245,7 +205,7 @@ public class ResearchTable : StorageContainer
 	public Item GetScrapItem ()
 	{
 		Item slot = base.inventory.GetSlot (1);
-		if (slot == null || (Object)(object)slot.info != (Object)(object)researchResource) {
+		if (slot == null || slot.info != researchResource) {
 			return null;
 		}
 		return slot;
@@ -255,7 +215,7 @@ public class ResearchTable : StorageContainer
 	{
 		base.PostServerLoad ();
 		if (HasFlag (Flags.On)) {
-			((FacepunchBehaviour)this).Invoke ((Action)ResearchAttemptFinished, researchDuration);
+			Invoke (ResearchAttemptFinished, researchDuration);
 		}
 		base.inventory.SetLocked (isLocked: false);
 	}
@@ -276,8 +236,6 @@ public class ResearchTable : StorageContainer
 	[RPC_Server.IsVisible (3f)]
 	public void DoResearch (RPCMessage msg)
 	{
-		//IL_00b7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bc: Unknown result type (might be due to invalid IL or missing references)
 		if (IsResearching ()) {
 			return;
 		}
@@ -285,8 +243,8 @@ public class ResearchTable : StorageContainer
 		Item targetItem = GetTargetItem ();
 		if (targetItem != null && targetItem.amount <= 1 && IsItemResearchable (targetItem)) {
 			targetItem.CollectedForCrafting (player);
-			researchFinishedTime = Time.realtimeSinceStartup + researchDuration;
-			((FacepunchBehaviour)this).Invoke ((Action)ResearchAttemptFinished, researchDuration);
+			researchFinishedTime = UnityEngine.Time.realtimeSinceStartup + researchDuration;
+			Invoke (ResearchAttemptFinished, researchDuration);
 			base.inventory.SetLocked (isLocked: true);
 			int scrapCost = ScrapForResearch (targetItem);
 			Analytics.Azure.OnResearchStarted (player, this, targetItem, scrapCost);
@@ -302,14 +260,6 @@ public class ResearchTable : StorageContainer
 
 	public void ResearchAttemptFinished ()
 	{
-		//IL_00ce: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00db: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00eb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0112: Unknown result type (might be due to invalid IL or missing references)
 		Item targetItem = GetTargetItem ();
 		Item scrapItem = GetScrapItem ();
 		if (targetItem != null && scrapItem != null) {
@@ -325,7 +275,7 @@ public class ResearchTable : StorageContainer
 				base.inventory.Remove (targetItem);
 				targetItem.Remove ();
 				Item item = ItemManager.Create (ItemManager.blueprintBaseDef, 1, 0uL);
-				item.blueprintTarget = (((Object)(object)targetItem.info.isRedirectOf != (Object)null) ? targetItem.info.isRedirectOf.itemid : targetItem.info.itemid);
+				item.blueprintTarget = ((targetItem.info.isRedirectOf != null) ? targetItem.info.isRedirectOf.itemid : targetItem.info.itemid);
 				if (!item.MoveToContainer (base.inventory, 0)) {
 					item.Drop (GetDropPosition (), GetDropVelocity ());
 				}
@@ -335,7 +285,7 @@ public class ResearchTable : StorageContainer
 			}
 		}
 		SendNetworkUpdateImmediate ();
-		if ((Object)(object)user != (Object)null) {
+		if (user != null) {
 			user.inventory.loot.SendImmediate ();
 		}
 		EndResearch ();
@@ -351,7 +301,7 @@ public class ResearchTable : StorageContainer
 		SetFlag (Flags.On, b: false);
 		researchFinishedTime = 0f;
 		SendNetworkUpdate ();
-		if ((Object)(object)user != (Object)null) {
+		if (user != null) {
 			user.inventory.loot.SendImmediate ();
 		}
 	}
@@ -359,15 +309,15 @@ public class ResearchTable : StorageContainer
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.researchTable = Pool.Get<ResearchTable> ();
-		info.msg.researchTable.researchTimeLeft = researchFinishedTime - Time.realtimeSinceStartup;
+		info.msg.researchTable = Facepunch.Pool.Get<ProtoBuf.ResearchTable> ();
+		info.msg.researchTable.researchTimeLeft = researchFinishedTime - UnityEngine.Time.realtimeSinceStartup;
 	}
 
 	public override void Load (LoadInfo info)
 	{
 		base.Load (info);
 		if (info.msg.researchTable != null) {
-			researchFinishedTime = Time.realtimeSinceStartup + info.msg.researchTable.researchTimeLeft;
+			researchFinishedTime = UnityEngine.Time.realtimeSinceStartup + info.msg.researchTable.researchTimeLeft;
 		}
 	}
 }

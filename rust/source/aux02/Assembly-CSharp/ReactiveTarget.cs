@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Network;
@@ -23,73 +24,57 @@ public class ReactiveTarget : IOEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("ReactiveTarget.OnRpcMessage", 0);
-		try {
-			if (rpc == 1798082523 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("ReactiveTarget.OnRpcMessage")) {
+			if (rpc == 1798082523 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - RPC_Lower "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - RPC_Lower ");
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_Lower", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Call", 0);
+				using (TimeWarning.New ("RPC_Lower")) {
 					try {
-						RPCMessage rPCMessage = default(RPCMessage);
-						rPCMessage.connection = msg.connection;
-						rPCMessage.player = player;
-						rPCMessage.read = msg.read;
-						RPCMessage msg2 = rPCMessage;
-						RPC_Lower (msg2);
-					} finally {
-						((IDisposable)val3)?.Dispose ();
+						using (TimeWarning.New ("Call")) {
+							RPCMessage rPCMessage = default(RPCMessage);
+							rPCMessage.connection = msg.connection;
+							rPCMessage.player = player;
+							rPCMessage.read = msg.read;
+							RPCMessage msg2 = rPCMessage;
+							RPC_Lower (msg2);
+						}
+					} catch (Exception exception) {
+						Debug.LogException (exception);
+						player.Kick ("RPC Error in RPC_Lower");
 					}
-				} catch (Exception ex) {
-					Debug.LogException (ex);
-					player.Kick ("RPC Error in RPC_Lower");
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 2169477377u && (Object)(object)player != (Object)null) {
+			if (rpc == 2169477377u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - RPC_Reset "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - RPC_Reset ");
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_Reset", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Call", 0);
+				using (TimeWarning.New ("RPC_Reset")) {
 					try {
-						RPCMessage rPCMessage = default(RPCMessage);
-						rPCMessage.connection = msg.connection;
-						rPCMessage.player = player;
-						rPCMessage.read = msg.read;
-						RPCMessage msg3 = rPCMessage;
-						RPC_Reset (msg3);
-					} finally {
-						((IDisposable)val3)?.Dispose ();
+						using (TimeWarning.New ("Call")) {
+							RPCMessage rPCMessage = default(RPCMessage);
+							rPCMessage.connection = msg.connection;
+							rPCMessage.player = player;
+							rPCMessage.read = msg.read;
+							RPCMessage msg3 = rPCMessage;
+							RPC_Reset (msg3);
+						}
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
+						player.Kick ("RPC Error in RPC_Reset");
 					}
-				} catch (Exception ex2) {
-					Debug.LogException (ex2);
-					player.Kick ("RPC Error in RPC_Reset");
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
 
 	public void OnHitShared (HitInfo info)
 	{
-		//IL_006c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0071: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b8: Unknown result type (might be due to invalid IL or missing references)
 		if (IsKnockedDown ()) {
 			return;
 		}
@@ -109,7 +94,7 @@ public class ReactiveTarget : IOEntity
 				SendPowerBurst ();
 				SendNetworkUpdate ();
 			} else {
-				ClientRPC<NetworkableId> (null, "HitEffect", info.Initiator.net.ID);
+				ClientRPC (null, "HitEffect", info.Initiator.net.ID);
 			}
 			Hurt (1f, DamageType.Suicide, info.Initiator, useProtection: false);
 		}
@@ -136,18 +121,18 @@ public class ReactiveTarget : IOEntity
 
 	public bool CanToggle ()
 	{
-		return Time.time > lastToggleTime + 1f;
+		return UnityEngine.Time.time > lastToggleTime + 1f;
 	}
 
 	public void QueueReset ()
 	{
-		((FacepunchBehaviour)this).Invoke ((Action)ResetTarget, 6f);
+		Invoke (ResetTarget, 6f);
 	}
 
 	public void ResetTarget ()
 	{
 		if (IsKnockedDown () && CanToggle ()) {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)ResetTarget);
+			CancelInvoke (ResetTarget);
 			SetFlag (Flags.On, b: true);
 			knockdownHealth = 100f;
 			SendPowerBurst ();
@@ -164,9 +149,9 @@ public class ReactiveTarget : IOEntity
 
 	private void SendPowerBurst ()
 	{
-		lastToggleTime = Time.time;
+		lastToggleTime = UnityEngine.Time.time;
 		MarkDirtyForceUpdateOutputs ();
-		((FacepunchBehaviour)this).Invoke ((Action)base.MarkDirtyForceUpdateOutputs, activationPowerTime * 1.01f);
+		Invoke (base.MarkDirtyForceUpdateOutputs, activationPowerTime * 1.01f);
 	}
 
 	public override int ConsumptionAmount ()
@@ -201,7 +186,7 @@ public class ReactiveTarget : IOEntity
 			if (IsPowered ()) {
 				return base.GetPassthroughAmount ();
 			}
-			if (Time.time < lastToggleTime + activationPowerTime) {
+			if (UnityEngine.Time.time < lastToggleTime + activationPowerTime) {
 				return activationPowerAmount;
 			}
 		}

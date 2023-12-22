@@ -27,7 +27,7 @@ public sealed class AutoExposure : PostProcessEffectSettings
 		value = 0f
 	};
 
-	[Min (0f)]
+	[UnityEngine.Rendering.PostProcessing.Min (0f)]
 	[DisplayName ("Exposure Compensation")]
 	[Tooltip ("Use this to scale the global exposure of the scene.")]
 	public FloatParameter keyValue = new FloatParameter {
@@ -40,13 +40,13 @@ public sealed class AutoExposure : PostProcessEffectSettings
 		value = EyeAdaptation.Progressive
 	};
 
-	[Min (0f)]
+	[UnityEngine.Rendering.PostProcessing.Min (0f)]
 	[Tooltip ("Adaptation speed from a dark to a light environment.")]
 	public FloatParameter speedUp = new FloatParameter {
 		value = 2f
 	};
 
-	[Min (0f)]
+	[UnityEngine.Rendering.PostProcessing.Min (0f)]
 	[Tooltip ("Adaptation speed from a light to a dark environment.")]
 	public FloatParameter speedDown = new FloatParameter {
 		value = 1f
@@ -54,8 +54,8 @@ public sealed class AutoExposure : PostProcessEffectSettings
 
 	public override bool IsEnabledAndSupported (PostProcessRenderContext context)
 	{
-		if (enabled.value && SystemInfo.supportsComputeShaders && !RuntimeUtilities.isAndroidOpenGL && ((RenderTextureFormat)14).IsSupported () && Object.op_Implicit ((Object)(object)context.resources.computeShaders.autoExposure)) {
-			return Object.op_Implicit ((Object)(object)context.resources.computeShaders.exposureHistogram);
+		if (enabled.value && SystemInfo.supportsComputeShaders && !RuntimeUtilities.isAndroidOpenGL && RenderTextureFormat.RFloat.IsSupported () && (bool)context.resources.computeShaders.autoExposure) {
+			return context.resources.computeShaders.exposureHistogram;
 		}
 		return false;
 	}

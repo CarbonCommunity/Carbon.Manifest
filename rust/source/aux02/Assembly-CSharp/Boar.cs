@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public class Boar : BaseAnimalNPC
 {
 	[ServerVar (Help = "Population active on the server, per square km", ShowInAdminUI = true)]
@@ -18,7 +16,7 @@ public class Boar : BaseAnimalNPC
 			return false;
 		}
 		CollectibleEntity collectibleEntity = best as CollectibleEntity;
-		if ((Object)(object)collectibleEntity != (Object)null) {
+		if (collectibleEntity != null) {
 			ItemAmount[] itemList = collectibleEntity.itemList;
 			for (int i = 0; i < itemList.Length; i++) {
 				if (itemList [i].itemDef.category == ItemCategory.Food) {

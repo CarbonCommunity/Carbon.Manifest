@@ -50,16 +50,6 @@ public class TrainCouplingController
 
 	public bool TryCouple (TrainCar them, TriggerTrainCollisions.Location ourLocation)
 	{
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00dd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ed: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0109: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0114: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0119: Unknown result type (might be due to invalid IL or missing references)
 		TrainCoupling trainCoupling = ((ourLocation == TriggerTrainCollisions.Location.Front) ? frontCoupling : rearCoupling);
 		if (!trainCoupling.isValid) {
 			return false;
@@ -67,10 +57,10 @@ public class TrainCouplingController
 		if (trainCoupling.IsCoupled) {
 			return false;
 		}
-		if (TimeSince.op_Implicit (trainCoupling.timeSinceCouplingBlock) < 1.5f) {
+		if ((float)trainCoupling.timeSinceCouplingBlock < 1.5f) {
 			return false;
 		}
-		float num = Vector3.Angle (((Component)owner).transform.forward, ((Component)them).transform.forward);
+		float num = Vector3.Angle (owner.transform.forward, them.transform.forward);
 		if (num > 25f && num < 155f) {
 			return false;
 		}
@@ -81,8 +71,8 @@ public class TrainCouplingController
 			num3 = 0f - num3;
 		}
 		if (Mathf.Abs (num3 - owner.GetTrackSpeed ()) > max_couple_speed) {
-			trainCoupling.timeSinceCouplingBlock = TimeSince.op_Implicit (0f);
-			trainCoupling2.timeSinceCouplingBlock = TimeSince.op_Implicit (0f);
+			trainCoupling.timeSinceCouplingBlock = 0f;
+			trainCoupling2.timeSinceCouplingBlock = 0f;
 			return false;
 		}
 		if (!trainCoupling2.isValid) {
@@ -93,7 +83,7 @@ public class TrainCouplingController
 		}
 		TrainTrackSpline frontTrackSection = owner.FrontTrackSection;
 		TrainTrackSpline frontTrackSection2 = them.FrontTrackSection;
-		if ((Object)(object)frontTrackSection2 != (Object)(object)frontTrackSection && !frontTrackSection.HasConnectedTrack (frontTrackSection2)) {
+		if (frontTrackSection2 != frontTrackSection && !frontTrackSection.HasConnectedTrack (frontTrackSection2)) {
 			return false;
 		}
 		return trainCoupling.TryCouple (trainCoupling2, reflect: true);

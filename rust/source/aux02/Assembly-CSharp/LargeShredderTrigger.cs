@@ -7,11 +7,11 @@ public class LargeShredderTrigger : TriggerBase
 	internal override GameObject InterestedInObject (GameObject obj)
 	{
 		obj = base.InterestedInObject (obj);
-		if ((Object)(object)obj == (Object)null) {
+		if (obj == null) {
 			return null;
 		}
 		BaseEntity baseEntity = obj.ToBaseEntity ();
-		if ((Object)(object)baseEntity == (Object)null) {
+		if (baseEntity == null) {
 			return null;
 		}
 		if (baseEntity.isClient) {
@@ -20,10 +20,10 @@ public class LargeShredderTrigger : TriggerBase
 		if (!baseEntity.syncPosition) {
 			return null;
 		}
-		if (!Object.op_Implicit ((Object)(object)((Component)baseEntity).GetComponent<MagnetLiftable> ())) {
+		if (!baseEntity.GetComponent<MagnetLiftable> ()) {
 			return null;
 		}
-		return ((Component)baseEntity).gameObject;
+		return baseEntity.gameObject;
 	}
 
 	internal override void OnEntityEnter (BaseEntity ent)

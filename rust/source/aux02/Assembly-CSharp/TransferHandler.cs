@@ -12,7 +12,7 @@ public class TransferHandler : BaseNexusRequestHandler<TransferRequest>
 {
 	private static readonly Dictionary<ulong, ulong> UidMapping = new Dictionary<ulong, ulong> ();
 
-	private static readonly Dictionary<BaseEntity, Entity> EntityToSpawn = new Dictionary<BaseEntity, Entity> ();
+	private static readonly Dictionary<BaseEntity, ProtoBuf.Entity> EntityToSpawn = new Dictionary<BaseEntity, ProtoBuf.Entity> ();
 
 	private static readonly Dictionary<ulong, BasePlayer> SpawnedPlayers = new Dictionary<ulong, BasePlayer> ();
 
@@ -24,21 +24,17 @@ public class TransferHandler : BaseNexusRequestHandler<TransferRequest>
 
 	protected override void Handle ()
 	{
-		//IL_0164: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ba: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01c1: Unknown result type (might be due to invalid IL or missing references)
 		UidMapping.Clear ();
-		base.Request.InspectUids ((UidInspector<ulong>)UpdateWithNewUid);
+		base.Request.InspectUids (UpdateWithNewUid);
 		PlayerIds.Clear ();
 		EntitiesToProtect.Clear ();
-		foreach (Entity entity in base.Request.entities) {
+		foreach (ProtoBuf.Entity entity in base.Request.entities) {
 			if (entity.basePlayer != null) {
 				ulong userid = entity.basePlayer.userid;
-				Debug.Log ((object)$"Found player {userid} in transfer");
+				Debug.Log ($"Found player {userid} in transfer");
 				PlayerIds.Add (userid.ToString ("G"));
 				BasePlayer basePlayer = BasePlayer.FindByID (userid) ?? BasePlayer.FindSleeping (userid);
-				if ((Object)(object)basePlayer != (Object)null) {
+				if (basePlayer != null) {
 					if (basePlayer.IsConnected) {
 						basePlayer.Kick ("Player transfer is overwriting you - contact developers!");
 					}
@@ -47,8 +43,7 @@ public class TransferHandler : BaseNexusRequestHandler<TransferRequest>
 				entity.basePlayer.currentTeam = 0uL;
 				RelationshipManager.ServerInstance.FindPlayersTeam (userid)?.RemovePlayer (userid);
 				if ((entity.basePlayer.playerFlags & 0x10) == 0) {
-					BasePlayer basePlayer2 = entity.basePlayer;
-					basePlayer2.playerFlags |= 0x2000000;
+					entity.basePlayer.playerFlags |= 33554432;
 				}
 				if (entity.basePlayer.loadingTimeout <= 0f || entity.basePlayer.loadingTimeout > Nexus.loadingTimeout) {
 					entity.basePlayer.loadingTimeout = Nexus.loadingTimeout;
@@ -69,7 +64,7 @@ public class TransferHandler : BaseNexusRequestHandler<TransferRequest>
 		TeamMapping.Clear ();
 		foreach (PlayerSecondaryData secondaryDatum in base.Request.secondaryData) {
 			if (!SpawnedPlayers.TryGetValue (secondaryDatum.userId, out var value)) {
-				Debug.LogError ((object)$"Got secondary data for {secondaryDatum.userId} but they were not spawned in the transfer");
+				Debug.LogError ($"Got secondary data for {secondaryDatum.userId} but they were not spawned in the transfer");
 				continue;
 			}
 			value.LoadSecondaryData (secondaryDatum);
@@ -93,18 +88,16 @@ public class TransferHandler : BaseNexusRequestHandler<TransferRequest>
 			}
 		}
 		if (PlayerIds.Count > 0) {
-			Debug.Log ((object)("Completing transfers for players: " + string.Join (", ", PlayerIds)));
+			Debug.Log ("Completing transfers for players: " + string.Join (", ", PlayerIds));
 			CompleteTransfers ();
 		}
 		static void UpdateWithNewUid (UidType type, ref ulong prevUid)
 		{
-			//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0002: Invalid comparison between Unknown and I4
-			if ((int)type == 3) {
+			if (type == UidType.Clear) {
 				prevUid = 0uL;
 			} else if (prevUid != 0L) {
 				if (!UidMapping.TryGetValue (prevUid, out var value4)) {
-					value4 = Net.sv.TakeUID ();
+					value4 = Network.Net.sv.TakeUID ();
 					UidMapping.Add (prevUid, value4);
 				}
 				prevUid = value4;
@@ -115,86 +108,47 @@ public class TransferHandler : BaseNexusRequestHandler<TransferRequest>
 	private static async void CompleteTransfers ()
 	{
 		try {
-			await NexusServer.ZoneClient.CompleteTransfers ((IEnumerable<string>)PlayerIds);
-		} catch (Exception ex) {
-			Debug.LogException (ex);
+			await NexusServer.ZoneClient.CompleteTransfers (PlayerIds);
+		} catch (Exception exception) {
+			Debug.LogException (exception);
 		}
 	}
 
 	private void RepositionEntitiesFromTransfer ()
 	{
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0066: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0072: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0087: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0088: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0089: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0090: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0091: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0092: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0097: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ed: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ef: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0107: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0111: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0113: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0118: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0121: Unknown result type (might be due to invalid IL or missing references)
-		Entity obj = base.Request.entities [0];
-		Vector3 pos = obj.baseEntity.pos;
-		Quaternion val = Quaternion.Euler (obj.baseEntity.rot);
-		(Vector3 Position, Quaternion Rotation, bool PreserveY) tuple = ZoneController.Instance.ChooseTransferDestination (base.FromZone.Key, base.Request.method, base.Request.from, base.Request.to, pos, val);
-		var (val2, val3, _) = tuple;
+		ProtoBuf.Entity entity = base.Request.entities [0];
+		Vector3 pos = entity.baseEntity.pos;
+		Quaternion rotation = Quaternion.Euler (entity.baseEntity.rot);
+		(Vector3 Position, Quaternion Rotation, bool PreserveY) tuple = ZoneController.Instance.ChooseTransferDestination (base.FromZone.Key, base.Request.method, base.Request.from, base.Request.to, pos, rotation);
+		var (vector, quaternion, _) = tuple;
 		if (tuple.PreserveY) {
-			val2.y = pos.y;
+			vector.y = pos.y;
 		}
-		Vector3 val4 = val2 - pos;
-		Quaternion val5 = val3 * Quaternion.Inverse (val);
-		foreach (Entity entity in base.Request.entities) {
-			if (entity.baseEntity != null && (entity.parent == null || !((NetworkableId)(ref entity.parent.uid)).IsValid)) {
-				BaseEntity baseEntity = entity.baseEntity;
-				baseEntity.pos += val4;
-				BaseEntity baseEntity2 = entity.baseEntity;
-				Quaternion val6 = Quaternion.Euler (entity.baseEntity.rot) * val5;
-				baseEntity2.rot = ((Quaternion)(ref val6)).eulerAngles;
+		Vector3 vector2 = vector - pos;
+		Quaternion quaternion2 = quaternion * Quaternion.Inverse (rotation);
+		foreach (ProtoBuf.Entity entity2 in base.Request.entities) {
+			if (entity2.baseEntity != null && (entity2.parent == null || !entity2.parent.uid.IsValid)) {
+				entity2.baseEntity.pos += vector2;
+				entity2.baseEntity.rot = (Quaternion.Euler (entity2.baseEntity.rot) * quaternion2).eulerAngles;
 			}
 		}
 	}
 
 	private void SpawnEntities (Dictionary<ulong, BasePlayer> players)
 	{
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0056: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0072: Unknown result type (might be due to invalid IL or missing references)
-		Application.isLoadingSave = true;
+		Rust.Application.isLoadingSave = true;
 		try {
 			EntityToSpawn.Clear ();
-			foreach (Entity entity in base.Request.entities) {
+			foreach (ProtoBuf.Entity entity in base.Request.entities) {
 				BaseEntity baseEntity = GameManager.server.CreateEntity (StringPool.Get (entity.baseNetworkable.prefabID), entity.baseEntity.pos, Quaternion.Euler (entity.baseEntity.rot));
-				if ((Object)(object)baseEntity != (Object)null) {
+				if (baseEntity != null) {
 					baseEntity.InitLoad (entity.baseNetworkable.uid);
 					EntityToSpawn.Add (baseEntity, entity);
 				}
 			}
-			foreach (KeyValuePair<BaseEntity, Entity> item in EntityToSpawn) {
+			foreach (KeyValuePair<BaseEntity, ProtoBuf.Entity> item in EntityToSpawn) {
 				BaseEntity key = item.Key;
-				if (!((Object)(object)key == (Object)null)) {
+				if (!(key == null)) {
 					key.Spawn ();
 					key.Load (new BaseNetworkable.LoadInfo {
 						fromDisk = true,
@@ -203,9 +157,9 @@ public class TransferHandler : BaseNexusRequestHandler<TransferRequest>
 					});
 				}
 			}
-			foreach (KeyValuePair<BaseEntity, Entity> item2 in EntityToSpawn) {
+			foreach (KeyValuePair<BaseEntity, ProtoBuf.Entity> item2 in EntityToSpawn) {
 				BaseEntity key2 = item2.Key;
-				if (!((Object)(object)key2 == (Object)null)) {
+				if (!(key2 == null)) {
 					key2.UpdateNetworkGroup ();
 					key2.PostServerLoad ();
 					if (key2 is BasePlayer basePlayer) {
@@ -214,7 +168,7 @@ public class TransferHandler : BaseNexusRequestHandler<TransferRequest>
 				}
 			}
 		} finally {
-			Application.isLoadingSave = false;
+			Rust.Application.isLoadingSave = false;
 		}
 	}
 }

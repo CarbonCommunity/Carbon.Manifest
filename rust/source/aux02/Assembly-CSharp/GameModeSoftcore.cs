@@ -9,7 +9,7 @@ public class GameModeSoftcore : GameModeVanilla
 
 	public GameObjectRef reclaimBackpackPrefab;
 
-	public static readonly Phrase ReclaimToast = new Phrase ("softcore.reclaim", "You can reclaim some of your lost items by visiting the Outpost or Bandit Town.");
+	public static readonly Translate.Phrase ReclaimToast = new Translate.Phrase ("softcore.reclaim", "You can reclaim some of your lost items by visiting the Outpost or Bandit Town.");
 
 	public ItemAmount[] startingGear;
 
@@ -39,41 +39,41 @@ public class GameModeSoftcore : GameModeVanilla
 		if (count == 1 && num == 1f && !takeLastItem) {
 			return;
 		}
-		List<int> list = Pool.GetList<int> ();
+		List<int> obj = Facepunch.Pool.GetList<int> ();
 		for (int i = 0; i < from.capacity; i++) {
 			if (from.GetSlot (i) != null) {
-				list.Add (i);
+				obj.Add (i);
 			}
 		}
-		if (list.Count == 0) {
-			Pool.FreeList<int> (ref list);
+		if (obj.Count == 0) {
+			Facepunch.Pool.FreeList (ref obj);
 			return;
 		}
 		for (int j = 0; (float)j < num; j++) {
-			int index = Random.Range (0, list.Count);
-			Item item = from.GetSlot (list [index]);
+			int index = Random.Range (0, obj.Count);
+			Item item = from.GetSlot (obj [index]);
 			if (item.MaxStackable () > 1) {
 				foreach (Item item2 in from.itemList) {
-					if (!((Object)(object)item2.info == (Object)(object)item.info) || item2.amount >= item.amount || to.Contains (item2)) {
+					if (!(item2.info == item.info) || item2.amount >= item.amount || to.Contains (item2)) {
 						continue;
 					}
 					item = item2;
-					for (int k = 0; k < list.Count; k++) {
-						if (list [k] == item2.position) {
+					for (int k = 0; k < obj.Count; k++) {
+						if (obj [k] == item2.position) {
 							index = k;
 						}
 					}
 				}
 			}
 			to.Add (item);
-			list.RemoveAt (index);
+			obj.RemoveAt (index);
 		}
-		Pool.FreeList<int> (ref list);
+		Facepunch.Pool.FreeList (ref obj);
 	}
 
 	public List<Item> RemoveItemsFrom (ItemContainer itemContainer, ItemAmount[] types)
 	{
-		List<Item> list = Pool.GetList<Item> ();
+		List<Item> list = Facepunch.Pool.GetList<Item> ();
 		foreach (ItemAmount itemAmount in types) {
 			for (int j = 0; (float)j < itemAmount.amount; j++) {
 				Item item = itemContainer.FindItemByItemID (itemAmount.itemDef.itemid);
@@ -91,45 +91,35 @@ public class GameModeSoftcore : GameModeVanilla
 		foreach (Item item in source) {
 			item.MoveToContainer (itemContainer);
 		}
-		Pool.FreeList<Item> (ref source);
+		Facepunch.Pool.FreeList (ref source);
 	}
 
 	public override void OnPlayerDeath (BasePlayer instigator, BasePlayer victim, HitInfo deathInfo = null)
 	{
-		//IL_0109: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0118: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0122: Unknown result type (might be due to invalid IL or missing references)
-		//IL_012e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0142: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0154: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0155: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)victim != (Object)null && !victim.IsNpc) {
+		if (victim != null && !victim.IsNpc) {
 			SetInventoryLocked (victim, wantsLocked: false);
 			int newID = 0;
-			if ((Object)(object)ReclaimManager.instance == (Object)null) {
-				Debug.LogError ((object)"No reclaim manage for softcore");
+			if (ReclaimManager.instance == null) {
+				Debug.LogError ("No reclaim manage for softcore");
 				return;
 			}
-			List<Item> to = Pool.GetList<Item> ();
+			List<Item> to = Facepunch.Pool.GetList<Item> ();
 			List<Item> source = RemoveItemsFrom (victim.inventory.containerBelt, startingGear);
 			AddFractionOfContainer (victim.inventory.containerBelt, ref to, reclaim_fraction_belt);
 			AddFractionOfContainer (victim.inventory.containerWear, ref to, reclaim_fraction_wear);
 			AddFractionOfContainer (victim.inventory.containerMain, ref to, reclaim_fraction_main);
 			if (to.Count > 0) {
-				newID = ReclaimManager.instance.AddPlayerReclaim (victim.userID, to, ((Object)(object)instigator == (Object)null) ? 0 : instigator.userID, ((Object)(object)instigator == (Object)null) ? "" : instigator.displayName);
+				newID = ReclaimManager.instance.AddPlayerReclaim (victim.userID, to, (instigator == null) ? 0 : instigator.userID, (instigator == null) ? "" : instigator.displayName);
 			}
 			ReturnItemsTo (ref source, victim.inventory.containerBelt);
 			if (to.Count > 0) {
-				Vector3 pos = ((Component)victim).transform.position + Vector3.up * 0.25f;
-				Quaternion rot = Quaternion.Euler (0f, ((Component)victim).transform.eulerAngles.y, 0f);
-				ReclaimBackpack component = ((Component)GameManager.server.CreateEntity (reclaimBackpackPrefab.resourcePath, pos, rot)).GetComponent<ReclaimBackpack> ();
+				Vector3 pos = victim.transform.position + Vector3.up * 0.25f;
+				Quaternion rot = Quaternion.Euler (0f, victim.transform.eulerAngles.y, 0f);
+				ReclaimBackpack component = GameManager.server.CreateEntity (reclaimBackpackPrefab.resourcePath, pos, rot).GetComponent<ReclaimBackpack> ();
 				component.InitForPlayer (victim.userID, newID);
 				component.Spawn ();
 			}
-			Pool.FreeList<Item> (ref to);
+			Facepunch.Pool.FreeList (ref to);
 		}
 		base.OnPlayerDeath (instigator, victim, deathInfo);
 	}
@@ -147,9 +137,8 @@ public class GameModeSoftcore : GameModeVanilla
 
 	public override float CorpseRemovalTime (BaseCorpse corpse)
 	{
-		//IL_0037: Unknown result type (might be due to invalid IL or missing references)
 		foreach (MonumentInfo monument in TerrainMeta.Path.Monuments) {
-			if ((Object)(object)monument != (Object)null && monument.IsSafeZone && ((Bounds)(ref monument.Bounds)).Contains (((Component)corpse).transform.position)) {
+			if (monument != null && monument.IsSafeZone && monument.Bounds.Contains (corpse.transform.position)) {
 				return 30f;
 			}
 		}

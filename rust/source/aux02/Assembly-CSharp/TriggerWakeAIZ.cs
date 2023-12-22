@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,14 +11,14 @@ public class TriggerWakeAIZ : TriggerBase, IServerComponent
 
 	public void Init (AIInformationZone zone = null)
 	{
-		if ((Object)(object)zone != (Object)null) {
+		if (zone != null) {
 			aiz = zone;
 		} else if (zones == null || zones.Count == 0) {
-			Transform val = ((Component)this).transform.parent;
-			if ((Object)(object)val == (Object)null) {
-				val = ((Component)this).transform;
+			Transform parent = base.transform.parent;
+			if (parent == null) {
+				parent = base.transform;
 			}
-			aiz = ((Component)val).GetComponentInChildren<AIInformationZone> ();
+			aiz = parent.GetComponentInChildren<AIInformationZone> ();
 		}
 		SetZonesSleeping (flag: true);
 	}
@@ -31,7 +30,7 @@ public class TriggerWakeAIZ : TriggerBase, IServerComponent
 
 	private void SetZonesSleeping (bool flag)
 	{
-		if ((Object)(object)aiz != (Object)null) {
+		if (aiz != null) {
 			if (flag) {
 				aiz.SleepAI ();
 			} else {
@@ -42,7 +41,7 @@ public class TriggerWakeAIZ : TriggerBase, IServerComponent
 			return;
 		}
 		foreach (AIInformationZone zone in zones) {
-			if ((Object)(object)zone != (Object)null) {
+			if (zone != null) {
 				if (flag) {
 					zone.SleepAI ();
 				} else {
@@ -55,28 +54,28 @@ public class TriggerWakeAIZ : TriggerBase, IServerComponent
 	internal override GameObject InterestedInObject (GameObject obj)
 	{
 		obj = base.InterestedInObject (obj);
-		if ((Object)(object)obj == (Object)null) {
+		if (obj == null) {
 			return null;
 		}
 		BaseEntity baseEntity = obj.ToBaseEntity ();
-		if ((Object)(object)baseEntity == (Object)null) {
+		if (baseEntity == null) {
 			return null;
 		}
 		if (baseEntity.isClient) {
 			return null;
 		}
 		BasePlayer basePlayer = baseEntity as BasePlayer;
-		if ((Object)(object)basePlayer != (Object)null && basePlayer.IsNpc) {
+		if (basePlayer != null && basePlayer.IsNpc) {
 			return null;
 		}
-		return ((Component)baseEntity).gameObject;
+		return baseEntity.gameObject;
 	}
 
 	internal override void OnEntityEnter (BaseEntity ent)
 	{
 		base.OnEntityEnter (ent);
-		if (!((Object)(object)aiz == (Object)null) || (zones != null && zones.Count != 0)) {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)SleepAI);
+		if (!(aiz == null) || (zones != null && zones.Count != 0)) {
+			CancelInvoke (SleepAI);
 			SetZonesSleeping (flag: false);
 		}
 	}
@@ -84,15 +83,15 @@ public class TriggerWakeAIZ : TriggerBase, IServerComponent
 	internal override void OnEntityLeave (BaseEntity ent)
 	{
 		base.OnEntityLeave (ent);
-		if ((!((Object)(object)aiz == (Object)null) || (zones != null && zones.Count != 0)) && (entityContents == null || entityContents.Count == 0)) {
+		if ((!(aiz == null) || (zones != null && zones.Count != 0)) && (entityContents == null || entityContents.Count == 0)) {
 			DelayedSleepAI ();
 		}
 	}
 
 	private void DelayedSleepAI ()
 	{
-		((FacepunchBehaviour)this).CancelInvoke ((Action)SleepAI);
-		((FacepunchBehaviour)this).Invoke ((Action)SleepAI, SleepDelaySeconds);
+		CancelInvoke (SleepAI);
+		Invoke (SleepAI, SleepDelaySeconds);
 	}
 
 	private void SleepAI ()

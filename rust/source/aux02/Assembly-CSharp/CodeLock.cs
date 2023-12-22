@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -27,7 +28,7 @@ public class CodeLock : BaseLock
 
 	public const Flags Flag_CodeEntryBlocked = Flags.Reserved11;
 
-	public static readonly Phrase blockwarning = new Phrase ("codelock.blockwarning", "Further failed attempts will block code entry for some time");
+	public static readonly Translate.Phrase blockwarning = new Translate.Phrase ("codelock.blockwarning", "Further failed attempts will block code entry for some time");
 
 	[ServerVar]
 	public static float maxFailedAttempts = 8f;
@@ -51,154 +52,115 @@ public class CodeLock : BaseLock
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("CodeLock.OnRpcMessage", 0);
-		try {
-			if (rpc == 4013784361u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("CodeLock.OnRpcMessage")) {
+			if (rpc == 4013784361u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - RPC_ChangeCode "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - RPC_ChangeCode ");
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_ChangeCode", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_ChangeCode")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (4013784361u, "RPC_ChangeCode", this, player, 3f, checkParent: true)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage rpc2 = rPCMessage;
 							RPC_ChangeCode (rpc2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_ChangeCode");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 2626067433u && (Object)(object)player != (Object)null) {
+			if (rpc == 2626067433u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - TryLock "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - TryLock ");
 				}
-				TimeWarning val2 = TimeWarning.New ("TryLock", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("TryLock")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (2626067433u, "TryLock", this, player, 3f, checkParent: true)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage rpc3 = rPCMessage;
 							TryLock (rpc3);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in TryLock");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 1718262 && (Object)(object)player != (Object)null) {
+			if (rpc == 1718262 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - TryUnlock "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - TryUnlock ");
 				}
-				TimeWarning val2 = TimeWarning.New ("TryUnlock", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("TryUnlock")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (1718262u, "TryUnlock", this, player, 3f, checkParent: true)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage rpc4 = rPCMessage;
 							TryUnlock (rpc4);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex3) {
-						Debug.LogException (ex3);
+					} catch (Exception exception3) {
+						Debug.LogException (exception3);
 						player.Kick ("RPC Error in TryUnlock");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 418605506 && (Object)(object)player != (Object)null) {
+			if (rpc == 418605506 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - UnlockWithCode "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - UnlockWithCode ");
 				}
-				TimeWarning val2 = TimeWarning.New ("UnlockWithCode", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("UnlockWithCode")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (418605506u, "UnlockWithCode", this, player, 3f, checkParent: true)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage rpc5 = rPCMessage;
 							UnlockWithCode (rpc5);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex4) {
-						Debug.LogException (ex4);
+					} catch (Exception exception4) {
+						Debug.LogException (exception4);
 						player.Kick ("RPC Error in UnlockWithCode");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -225,8 +187,6 @@ public class CodeLock : BaseLock
 
 	internal void DoEffect (string effect)
 	{
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
 		Effect.server.Run (effect, this, 0u, Vector3.zero, Vector3.forward);
 	}
 
@@ -264,7 +224,7 @@ public class CodeLock : BaseLock
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.codeLock = Pool.Get<CodeLock> ();
+		info.msg.codeLock = Facepunch.Pool.Get<ProtoBuf.CodeLock> ();
 		info.msg.codeLock.hasGuestCode = guestCode.Length > 0;
 		info.msg.codeLock.hasCode = code.Length > 0;
 		if (!info.forDisk && info.forConnection != null) {
@@ -272,12 +232,12 @@ public class CodeLock : BaseLock
 			info.msg.codeLock.hasGuestAuth = guestPlayers.Contains (info.forConnection.userid);
 		}
 		if (info.forDisk) {
-			info.msg.codeLock.pv = Pool.Get<Private> ();
+			info.msg.codeLock.pv = Facepunch.Pool.Get<ProtoBuf.CodeLock.Private> ();
 			info.msg.codeLock.pv.code = code;
-			info.msg.codeLock.pv.users = Pool.Get<List<ulong>> ();
+			info.msg.codeLock.pv.users = Facepunch.Pool.Get<List<ulong>> ();
 			info.msg.codeLock.pv.users.AddRange (whitelistPlayers);
 			info.msg.codeLock.pv.guestCode = guestCode;
-			info.msg.codeLock.pv.guestUsers = Pool.Get<List<ulong>> ();
+			info.msg.codeLock.pv.guestUsers = Facepunch.Pool.Get<List<ulong>> ();
 			info.msg.codeLock.pv.guestUsers.AddRange (guestPlayers);
 		}
 	}
@@ -289,9 +249,9 @@ public class CodeLock : BaseLock
 		if (!rpc.player.CanInteract ()) {
 			return;
 		}
-		string text = rpc.read.String (256, false);
+		string text = rpc.read.String ();
 		bool flag = rpc.read.Bit ();
-		if (!IsLocked () && text.Length == 4 && StringEx.IsNumeric (text) && !(!hasCode && flag)) {
+		if (!IsLocked () && text.Length == 4 && text.IsNumeric () && !(!hasCode && flag)) {
 			if (!hasCode && !flag) {
 				SetFlag (Flags.Locked, b: true);
 			}
@@ -347,11 +307,11 @@ public class CodeLock : BaseLock
 		if (!rpc.player.CanInteract () || !IsLocked () || IsCodeEntryBlocked ()) {
 			return;
 		}
-		string text = rpc.read.String (256, false);
+		string text = rpc.read.String ();
 		bool flag = text == guestCode;
 		bool flag2 = text == code;
 		if (!(text == code) && (!hasGuestCode || !(text == guestCode))) {
-			if (Time.realtimeSinceStartup > lastWrongTime + 60f) {
+			if (UnityEngine.Time.realtimeSinceStartup > lastWrongTime + 60f) {
 				wrongCodes = 0;
 			}
 			DoEffect (effectDenied.resourcePath);
@@ -363,9 +323,9 @@ public class CodeLock : BaseLock
 			}
 			if ((float)wrongCodes >= maxFailedAttempts) {
 				SetFlag (Flags.Reserved11, b: true);
-				((FacepunchBehaviour)this).Invoke ((Action)ClearCodeEntryBlocked, lockoutCooldown);
+				Invoke (ClearCodeEntryBlocked, lockoutCooldown);
 			}
-			lastWrongTime = Time.realtimeSinceStartup;
+			lastWrongTime = UnityEngine.Time.realtimeSinceStartup;
 			return;
 		}
 		SendNetworkUpdate ();

@@ -26,8 +26,6 @@ public class MiningQuarry : BaseResourceExtractor
 
 		public void DoSpawn (MiningQuarry owner)
 		{
-			//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-			//IL_003a: Unknown result type (might be due to invalid IL or missing references)
 			if (prefabToSpawn.isValid) {
 				instance = GameManager.server.CreateEntity (prefabToSpawn.resourcePath, origin.transform.localPosition, origin.transform.localRotation);
 				instance.SetParent (owner);
@@ -84,9 +82,9 @@ public class MiningQuarry : BaseResourceExtractor
 		SendNetworkUpdate ();
 		engineSwitchPrefab.instance.SendNetworkUpdate ();
 		if (isOn) {
-			((FacepunchBehaviour)this).InvokeRepeating ((Action)ProcessResources, processRate, processRate);
+			InvokeRepeating (ProcessResources, processRate, processRate);
 		} else {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)ProcessResources);
+			CancelInvoke (ProcessResources);
 		}
 	}
 
@@ -101,18 +99,17 @@ public class MiningQuarry : BaseResourceExtractor
 
 	public override void ServerInit ()
 	{
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
 		base.ServerInit ();
 		if (isStatic) {
 			UpdateStaticDeposit ();
 		} else {
-			ResourceDepositManager.ResourceDeposit orCreate = ResourceDepositManager.GetOrCreate (((Component)this).transform.position);
+			ResourceDepositManager.ResourceDeposit orCreate = ResourceDepositManager.GetOrCreate (base.transform.position);
 			_linkedDeposit = orCreate;
 		}
 		SpawnChildEntities ();
 		engineSwitchPrefab.instance.SetFlag (Flags.On, HasFlag (Flags.On));
 		if (base.isServer) {
-			ItemContainer inventory = ((Component)fuelStoragePrefab.instance).GetComponent<StorageContainer> ().inventory;
+			ItemContainer inventory = fuelStoragePrefab.instance.GetComponent<StorageContainer> ().inventory;
 			inventory.canAcceptItem = (Func<Item, int, bool>)Delegate.Combine (inventory.canAcceptItem, new Func<Item, int, bool> (CanAcceptItem));
 		}
 	}
@@ -164,7 +161,7 @@ public class MiningQuarry : BaseResourceExtractor
 
 	public void ProcessResources ()
 	{
-		if (_linkedDeposit == null || (Object)(object)hopperPrefab.instance == (Object)null) {
+		if (_linkedDeposit == null || hopperPrefab.instance == null) {
 			return;
 		}
 		if (!FuelCheck ()) {
@@ -187,7 +184,7 @@ public class MiningQuarry : BaseResourceExtractor
 				int iAmount = num3 - num2;
 				Item item = ItemManager.Create (resource.type, iAmount, 0uL);
 				Analytics.Azure.OnQuarryItem (Analytics.Azure.ResourceMode.Produced, item.info.shortname, item.amount, this);
-				if (!item.MoveToContainer (((Component)hopperPrefab.instance).GetComponent<StorageContainer> ().inventory)) {
+				if (!item.MoveToContainer (hopperPrefab.instance.GetComponent<StorageContainer> ().inventory)) {
 					item.Remove ();
 					SetOn (isOn: false);
 				}
@@ -200,7 +197,7 @@ public class MiningQuarry : BaseResourceExtractor
 		if (pendingWork > 0f) {
 			return true;
 		}
-		Item item = ((Component)fuelStoragePrefab.instance).GetComponent<StorageContainer> ().inventory.FindItemByItemName ("diesel_barrel");
+		Item item = fuelStoragePrefab.instance.GetComponent<StorageContainer> ().inventory.FindItemByItemName ("diesel_barrel");
 		if (item != null && item.amount >= 1) {
 			pendingWork += workPerFuel;
 			Analytics.Azure.OnQuarryItem (Analytics.Azure.ResourceMode.Consumed, item.info.shortname, 1, this);
@@ -214,14 +211,14 @@ public class MiningQuarry : BaseResourceExtractor
 	{
 		base.Save (info);
 		if (info.forDisk) {
-			if ((Object)(object)fuelStoragePrefab.instance == (Object)null || (Object)(object)hopperPrefab.instance == (Object)null) {
-				Debug.Log ((object)"Cannot save mining quary because children were null");
+			if (fuelStoragePrefab.instance == null || hopperPrefab.instance == null) {
+				Debug.Log ("Cannot save mining quary because children were null");
 				return;
 			}
-			info.msg.miningQuarry = Pool.Get<MiningQuarry> ();
+			info.msg.miningQuarry = Pool.Get<ProtoBuf.MiningQuarry> ();
 			info.msg.miningQuarry.extractor = Pool.Get<ResourceExtractor> ();
-			info.msg.miningQuarry.extractor.fuelContents = ((Component)fuelStoragePrefab.instance).GetComponent<StorageContainer> ().inventory.Save ();
-			info.msg.miningQuarry.extractor.outputContents = ((Component)hopperPrefab.instance).GetComponent<StorageContainer> ().inventory.Save ();
+			info.msg.miningQuarry.extractor.fuelContents = fuelStoragePrefab.instance.GetComponent<StorageContainer> ().inventory.Save ();
+			info.msg.miningQuarry.extractor.outputContents = hopperPrefab.instance.GetComponent<StorageContainer> ().inventory.Save ();
 			info.msg.miningQuarry.staticType = (int)staticType;
 		}
 	}
@@ -230,12 +227,12 @@ public class MiningQuarry : BaseResourceExtractor
 	{
 		base.Load (info);
 		if (info.fromDisk && info.msg.miningQuarry != null) {
-			if ((Object)(object)fuelStoragePrefab.instance == (Object)null || (Object)(object)hopperPrefab.instance == (Object)null) {
-				Debug.Log ((object)"Cannot load mining quary because children were null");
+			if (fuelStoragePrefab.instance == null || hopperPrefab.instance == null) {
+				Debug.Log ("Cannot load mining quary because children were null");
 				return;
 			}
-			((Component)fuelStoragePrefab.instance).GetComponent<StorageContainer> ().inventory.Load (info.msg.miningQuarry.extractor.fuelContents);
-			((Component)hopperPrefab.instance).GetComponent<StorageContainer> ().inventory.Load (info.msg.miningQuarry.extractor.outputContents);
+			fuelStoragePrefab.instance.GetComponent<StorageContainer> ().inventory.Load (info.msg.miningQuarry.extractor.fuelContents);
+			hopperPrefab.instance.GetComponent<StorageContainer> ().inventory.Load (info.msg.miningQuarry.extractor.outputContents);
 			staticType = (QuarryType)info.msg.miningQuarry.staticType;
 		}
 	}

@@ -8,5 +8,5 @@ public abstract class BaseTip
 
 	protected bool PlayerIsInTutorial => false;
 
-	public abstract Phrase GetPhrase ();
+	public abstract Translate.Phrase GetPhrase ();
 }

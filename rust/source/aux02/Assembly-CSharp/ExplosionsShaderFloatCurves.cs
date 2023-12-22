@@ -22,13 +22,13 @@ public class ExplosionsShaderFloatCurves : MonoBehaviour
 
 	private void Start ()
 	{
-		Material[] materials = ((Component)this).GetComponent<Renderer> ().materials;
+		Material[] materials = GetComponent<Renderer> ().materials;
 		if (MaterialID >= materials.Length) {
-			Debug.Log ((object)"ShaderColorGradient: Material ID more than shader materials count.");
+			Debug.Log ("ShaderColorGradient: Material ID more than shader materials count.");
 		}
 		matInstance = materials [MaterialID];
 		if (!matInstance.HasProperty (ShaderProperty)) {
-			Debug.Log ((object)("ShaderColorGradient: Shader not have \"" + ShaderProperty + "\" property"));
+			Debug.Log ("ShaderColorGradient: Shader not have \"" + ShaderProperty + "\" property");
 		}
 		propertyID = Shader.PropertyToID (ShaderProperty);
 	}
@@ -43,8 +43,8 @@ public class ExplosionsShaderFloatCurves : MonoBehaviour
 	{
 		float num = Time.time - startTime;
 		if (canUpdate) {
-			float num2 = FloatPropertyCurve.Evaluate (num / GraphTimeMultiplier) * GraphScaleMultiplier;
-			matInstance.SetFloat (propertyID, num2);
+			float value = FloatPropertyCurve.Evaluate (num / GraphTimeMultiplier) * GraphScaleMultiplier;
+			matInstance.SetFloat (propertyID, value);
 		}
 		if (num >= GraphTimeMultiplier) {
 			canUpdate = false;

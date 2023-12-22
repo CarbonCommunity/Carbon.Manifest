@@ -1,4 +1,3 @@
-using System;
 using Network;
 using UnityEngine;
 
@@ -16,10 +15,7 @@ public class JunkPile : BaseEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("JunkPile.OnRpcMessage", 0);
-		try {
-		} finally {
-			((IDisposable)val)?.Dispose ();
+		using (TimeWarning.New ("JunkPile.OnRpcMessage")) {
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -27,21 +23,16 @@ public class JunkPile : BaseEntity
 	public override void ServerInit ()
 	{
 		base.ServerInit ();
-		((FacepunchBehaviour)this).Invoke ((Action)TimeOut, 1800f);
-		((FacepunchBehaviour)this).InvokeRepeating ((Action)CheckEmpty, 10f, 30f);
-		((FacepunchBehaviour)this).Invoke ((Action)SpawnInitial, 1f);
+		Invoke (TimeOut, 1800f);
+		InvokeRepeating (CheckEmpty, 10f, 30f);
+		Invoke (SpawnInitial, 1f);
 		isSinking = false;
 	}
 
 	internal override void DoServerDestroy ()
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
 		base.DoServerDestroy ();
-		StabilityEntity.UpdateSurroundingsQueue updateSurroundingsQueue = StabilityEntity.updateSurroundingsQueue;
-		OBB val = WorldSpaceBounds ();
-		((ObjectWorkQueue<Bounds>)updateSurroundingsQueue).Add (((OBB)(ref val)).ToBounds ());
+		StabilityEntity.updateSurroundingsQueue.Add (WorldSpaceBounds ().ToBounds ());
 	}
 
 	private void SpawnInitial ()
@@ -60,7 +51,7 @@ public class JunkPile : BaseEntity
 				return false;
 			}
 		}
-		if ((Object)(object)NPCSpawn != (Object)null && NPCSpawn.currentPopulation > 0) {
+		if (NPCSpawn != null && NPCSpawn.currentPopulation > 0) {
 			return false;
 		}
 		return true;
@@ -68,9 +59,8 @@ public class JunkPile : BaseEntity
 
 	public void CheckEmpty ()
 	{
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		if (SpawnGroupsEmpty () && !BaseNetworkable.HasCloseConnections (((Component)this).transform.position, TimeoutPlayerCheckRadius ())) {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)CheckEmpty);
+		if (SpawnGroupsEmpty () && !BaseNetworkable.HasCloseConnections (base.transform.position, TimeoutPlayerCheckRadius ())) {
+			CancelInvoke (CheckEmpty);
 			SinkAndDestroy ();
 		}
 	}
@@ -82,9 +72,8 @@ public class JunkPile : BaseEntity
 
 	public void TimeOut ()
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		if (BaseNetworkable.HasCloseConnections (((Component)this).transform.position, TimeoutPlayerCheckRadius ())) {
-			((FacepunchBehaviour)this).Invoke ((Action)TimeOut, 30f);
+		if (BaseNetworkable.HasCloseConnections (base.transform.position, TimeoutPlayerCheckRadius ())) {
+			Invoke (TimeOut, 30f);
 			return;
 		}
 		SpawnGroupsEmpty ();
@@ -93,23 +82,19 @@ public class JunkPile : BaseEntity
 
 	public void SinkAndDestroy ()
 	{
-		//IL_0069: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0082: Unknown result type (might be due to invalid IL or missing references)
-		((FacepunchBehaviour)this).CancelInvoke ((Action)SinkAndDestroy);
+		CancelInvoke (SinkAndDestroy);
 		SpawnGroup[] array = spawngroups;
 		for (int i = 0; i < array.Length; i++) {
 			array [i].Clear ();
 		}
 		SetFlag (Flags.Reserved8, b: true, recursive: true);
-		if ((Object)(object)NPCSpawn != (Object)null) {
+		if (NPCSpawn != null) {
 			NPCSpawn.Clear ();
 		}
 		ClientRPC (null, "CLIENT_StartSink");
-		Transform transform = ((Component)this).transform;
-		transform.position -= new Vector3 (0f, 5f, 0f);
+		base.transform.position -= new Vector3 (0f, 5f, 0f);
 		isSinking = true;
-		((FacepunchBehaviour)this).Invoke ((Action)KillMe, 22f);
+		Invoke (KillMe, 22f);
 	}
 
 	public void KillMe ()

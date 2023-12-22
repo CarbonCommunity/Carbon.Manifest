@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,7 +47,7 @@ public class Item
 
 	public bool isServer;
 
-	public InstanceData instanceData;
+	public ProtoBuf.Item.InstanceData instanceData;
 
 	public ulong skin;
 
@@ -73,9 +74,9 @@ public class Item
 			return _condition;
 		}
 		set {
-			float num = _condition;
+			float f = _condition;
 			_condition = Mathf.Clamp (value, 0f, maxCondition);
-			if (isServer && Mathf.Ceil (value) != Mathf.Ceil (num)) {
+			if (isServer && Mathf.Ceil (value) != Mathf.Ceil (f)) {
 				MarkDirty ();
 			}
 		}
@@ -111,7 +112,7 @@ public class Item
 
 	public bool hasCondition {
 		get {
-			if ((Object)(object)info != (Object)null && info.condition.enabled) {
+			if (info != null && info.condition.enabled) {
 				return info.condition.max > 0f;
 			}
 			return false;
@@ -131,23 +132,14 @@ public class Item
 
 	public int despawnMultiplier {
 		get {
-			//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-			//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-			//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-			//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-			//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-			//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-			//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0038: Expected I4, but got Unknown
-			Rarity val = info.despawnRarity;
-			if ((int)val == 0) {
-				val = info.rarity;
+			Rarity rarity = info.despawnRarity;
+			if (rarity == Rarity.None) {
+				rarity = info.rarity;
 			}
-			if (!((Object)(object)info != (Object)null)) {
+			if (!(info != null)) {
 				return 1;
 			}
-			return Mathf.Clamp ((val - 1) * 4, 1, 100);
+			return Mathf.Clamp ((int)(rarity - 1) * 4, 1, 100);
 		}
 	}
 
@@ -168,10 +160,8 @@ public class Item
 			return instanceData.blueprintTarget;
 		}
 		set {
-			//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0013: Expected O, but got Unknown
 			if (instanceData == null) {
-				instanceData = new InstanceData ();
+				instanceData = new ProtoBuf.Item.InstanceData ();
 			}
 			instanceData.ShouldPool = false;
 			instanceData.blueprintTarget = value;
@@ -216,8 +206,8 @@ public class Item
 		if (hasCondition && !Debugging.disablecondition) {
 			float num = condition;
 			condition -= amount;
-			if (Global.developer > 0) {
-				Debug.Log ((object)(info.shortname + " was damaged by: " + amount + "cond is: " + condition + "/" + maxCondition));
+			if (ConVar.Global.developer > 0) {
+				Debug.Log (info.shortname + " was damaged by: " + amount + "cond is: " + condition + "/" + maxCondition);
 			}
 			if (condition <= 0f && condition < num) {
 				OnBroken ();
@@ -243,11 +233,11 @@ public class Item
 			maxCondition *= 1f - maxLossFraction * num;
 			condition = maxCondition;
 			BaseEntity baseEntity = GetHeldEntity ();
-			if ((Object)(object)baseEntity != (Object)null) {
+			if (baseEntity != null) {
 				baseEntity.SetFlag (BaseEntity.Flags.Broken, b: false);
 			}
-			if (Global.developer > 0) {
-				Debug.Log ((object)(info.shortname + " was repaired! new cond is: " + condition + "/" + maxCondition));
+			if (ConVar.Global.developer > 0) {
+				Debug.Log (info.shortname + " was repaired! new cond is: " + condition + "/" + maxCondition);
 			}
 		}
 	}
@@ -261,49 +251,35 @@ public class Item
 			num++;
 		}
 		if (num == 8) {
-			Debug.LogWarning ((object)"GetRootContainer failed with 8 iterations");
+			Debug.LogWarning ("GetRootContainer failed with 8 iterations");
 		}
 		return itemContainer;
 	}
 
 	public virtual void OnBroken ()
 	{
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ab: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0180: Unknown result type (might be due to invalid IL or missing references)
-		//IL_018c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0196: Unknown result type (might be due to invalid IL or missing references)
-		//IL_019d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ad: Unknown result type (might be due to invalid IL or missing references)
 		if (!hasCondition) {
 			return;
 		}
 		BaseEntity baseEntity = GetHeldEntity ();
-		if ((Object)(object)baseEntity != (Object)null) {
+		if (baseEntity != null) {
 			baseEntity.SetFlag (BaseEntity.Flags.Broken, b: true);
 		}
 		BasePlayer ownerPlayer = GetOwnerPlayer ();
-		if (Object.op_Implicit ((Object)(object)ownerPlayer)) {
+		if ((bool)ownerPlayer) {
 			if (ownerPlayer.GetActiveItem () == this) {
 				Effect.server.Run ("assets/bundled/prefabs/fx/item_break.prefab", ownerPlayer, 0u, Vector3.zero, Vector3.zero);
 				ownerPlayer.ChatMessage ("Your active item was broken!");
 			}
-			ItemModWearable itemModWearable = default(ItemModWearable);
-			if (((Component)info).TryGetComponent<ItemModWearable> (ref itemModWearable) && ownerPlayer.inventory.containerWear.itemList.Contains (this)) {
-				if (itemModWearable.breakEffect.isValid) {
-					Effect.server.Run (itemModWearable.breakEffect.resourcePath, ownerPlayer, 0u, Vector3.zero, Vector3.zero);
+			if (info.TryGetComponent<ItemModWearable> (out var component) && ownerPlayer.inventory.containerWear.itemList.Contains (this)) {
+				if (component.breakEffect.isValid) {
+					Effect.server.Run (component.breakEffect.resourcePath, ownerPlayer, 0u, Vector3.zero, Vector3.zero);
 				} else {
 					Effect.server.Run ("assets/bundled/prefabs/fx/armor_break.prefab", ownerPlayer, 0u, Vector3.zero, Vector3.zero);
 				}
 			}
 		}
-		if ((!info.condition.repairable && !Object.op_Implicit ((Object)(object)((Component)info).GetComponent<ItemModRepair> ())) || maxCondition <= 5f) {
+		if ((!info.condition.repairable && !info.GetComponent<ItemModRepair> ()) || maxCondition <= 5f) {
 			Remove ();
 		} else if (parent != null && parent.HasFlag (ItemContainer.Flag.NoBrokenItems)) {
 			ItemContainer rootContainer = GetRootContainer ();
@@ -311,8 +287,8 @@ public class Item
 				Remove ();
 			} else {
 				BasePlayer playerOwner = rootContainer.playerOwner;
-				if ((Object)(object)playerOwner != (Object)null && !MoveToContainer (playerOwner.inventory.containerMain)) {
-					Drop (((Component)playerOwner).transform.position, playerOwner.eyes.BodyForward () * 1.5f);
+				if (playerOwner != null && !MoveToContainer (playerOwner.inventory.containerMain)) {
+					Drop (playerOwner.transform.position, playerOwner.eyes.BodyForward () * 1.5f);
 				}
 			}
 		}
@@ -416,9 +392,7 @@ public class Item
 
 	public void Initialize (ItemDefinition template)
 	{
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		uid = new ItemId (Net.sv.TakeUID ());
+		uid = new ItemId (Network.Net.sv.TakeUID ());
 		float num = (maxCondition = info.condition.max);
 		condition = num;
 		OnItemCreated ();
@@ -458,7 +432,7 @@ public class Item
 	protected void RemoveFromWorld ()
 	{
 		BaseEntity worldEntity = GetWorldEntity ();
-		if ((Object)(object)worldEntity == (Object)null) {
+		if (worldEntity == null) {
 			return;
 		}
 		SetWorldEntity (null);
@@ -509,7 +483,7 @@ public class Item
 			parent = target;
 			if (!parent.Insert (this)) {
 				Remove ();
-				Debug.LogError ((object)"Item.SetParent caused remove - this shouldn't ever happen");
+				Debug.LogError ("Item.SetParent caused remove - this shouldn't ever happen");
 			}
 		}
 		MarkDirty ();
@@ -567,14 +541,7 @@ public class Item
 
 	public bool MoveToContainer (ItemContainer newcontainer, int iTargetPos = -1, bool allowStack = true, bool ignoreStackLimit = false, BasePlayer sourcePlayer = null, bool allowSwap = true)
 	{
-		//IL_045c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0462: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0469: Unknown result type (might be due to invalid IL or missing references)
-		//IL_046f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0473: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0479: Unknown result type (might be due to invalid IL or missing references)
-		TimeWarning val = TimeWarning.New ("MoveToContainer", 0);
-		try {
+		using (TimeWarning.New ("MoveToContainer")) {
 			bool flag = iTargetPos == -1;
 			ItemContainer itemContainer = parent;
 			if (iTargetPos == -1) {
@@ -712,8 +679,6 @@ public class Item
 			position = iTargetPos;
 			SetParent (newcontainer);
 			return true;
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 	}
 
@@ -722,9 +687,9 @@ public class Item
 		if (!isServer || container.availableSlots == null || container.availableSlots.Count <= 0) {
 			return;
 		}
-		List<Item> list = Pool.GetList<Item> ();
-		list.AddRange (container.itemList);
-		foreach (Item item in list) {
+		List<Item> obj = Facepunch.Pool.GetList<Item> ();
+		obj.AddRange (container.itemList);
+		foreach (Item item in obj) {
 			if (item.DoItemSlotsConflict (this)) {
 				item.RemoveFromContainer ();
 				if (entityOwner is BasePlayer basePlayer) {
@@ -734,27 +699,25 @@ public class Item
 				}
 			}
 		}
-		Pool.FreeList<Item> (ref list);
+		Facepunch.Pool.FreeList (ref obj);
 	}
 
 	public BaseEntity CreateWorldObject (Vector3 pos, Quaternion rotation = default(Quaternion), BaseEntity parentEnt = null, uint parentBone = 0u)
 	{
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
 		BaseEntity worldEntity = GetWorldEntity ();
-		if ((Object)(object)worldEntity != (Object)null) {
+		if (worldEntity != null) {
 			return worldEntity;
 		}
 		worldEntity = GameManager.server.CreateEntity ("assets/prefabs/misc/burlap sack/generic_world.prefab", pos, rotation);
-		if ((Object)(object)worldEntity == (Object)null) {
-			Debug.LogWarning ((object)"Couldn't create world object for prefab: items/generic_world");
+		if (worldEntity == null) {
+			Debug.LogWarning ("Couldn't create world object for prefab: items/generic_world");
 			return null;
 		}
 		WorldItem worldItem = worldEntity as WorldItem;
-		if ((Object)(object)worldItem != (Object)null) {
+		if (worldItem != null) {
 			worldItem.InitializeItem (this);
 		}
-		if ((Object)(object)parentEnt != (Object)null) {
+		if (parentEnt != null) {
 			worldEntity.SetParent (parentEnt, parentBone);
 		}
 		worldEntity.Spawn ();
@@ -764,31 +727,15 @@ public class Item
 
 	public BaseEntity Drop (Vector3 vPos, Vector3 vVelocity, Quaternion rotation = default(Quaternion), Quaternion playerRotation = default(Quaternion))
 	{
-		//IL_005c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0078: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0079: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008b: Unknown result type (might be due to invalid IL or missing references)
 		RemoveFromWorld ();
 		if (info.AlignWorldModelOnDrop && playerRotation != default(Quaternion)) {
-			rotation = Quaternion.Euler (0f, ((Quaternion)(ref playerRotation)).eulerAngles.y, 0f);
+			rotation = Quaternion.Euler (0f, playerRotation.eulerAngles.y, 0f);
 			rotation = Quaternion.Euler (info.WorldModelDropOffset) * rotation;
 		}
 		BaseEntity baseEntity = null;
 		if (vPos != Vector3.zero && !info.HasFlag (ItemDefinition.Flag.NoDropping)) {
 			baseEntity = CreateWorldObject (vPos, rotation);
-			if (Object.op_Implicit ((Object)(object)baseEntity)) {
+			if ((bool)baseEntity) {
 				baseEntity.SetVelocity (vVelocity);
 			}
 		} else {
@@ -800,25 +747,13 @@ public class Item
 
 	public BaseEntity DropAndTossUpwards (Vector3 vPos, float force = 2f)
 	{
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
-		float num = Random.value * (float)Math.PI * 2f;
-		Vector3 val = default(Vector3);
-		((Vector3)(ref val))..ctor (Mathf.Sin (num), 1f, Mathf.Cos (num));
-		return Drop (vPos + Vector3.up * 0.1f, val * force);
+		float f = UnityEngine.Random.value * MathF.PI * 2f;
+		return Drop (vVelocity: new Vector3 (Mathf.Sin (f), 1f, Mathf.Cos (f)) * force, vPos: vPos + Vector3.up * 0.1f);
 	}
 
 	public bool IsBusy ()
 	{
-		if (busyTime > Time.time) {
+		if (busyTime > UnityEngine.Time.time) {
 			return true;
 		}
 		return false;
@@ -826,7 +761,7 @@ public class Item
 
 	public void BusyFor (float fTime)
 	{
-		busyTime = Time.time + fTime;
+		busyTime = UnityEngine.Time.time + fTime;
 	}
 
 	public void Remove (float fTime = 0f)
@@ -841,7 +776,7 @@ public class Item
 			}
 		}
 		this.onCycle = null;
-		removeTime = Time.time + fTime;
+		removeTime = UnityEngine.Time.time + fTime;
 		this.OnDirty = null;
 		position = -1;
 		if (isServer) {
@@ -851,11 +786,10 @@ public class Item
 
 	internal void DoRemove ()
 	{
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
 		this.OnDirty = null;
 		this.onCycle = null;
-		if (isServer && ((ItemId)(ref uid)).IsValid && Net.sv != null) {
-			Net.sv.ReturnUID (uid.Value);
+		if (isServer && uid.IsValid && Network.Net.sv != null) {
+			Network.Net.sv.ReturnUID (uid.Value);
 			uid = default(ItemId);
 		}
 		if (contents != null) {
@@ -868,7 +802,7 @@ public class Item
 		}
 		BaseEntity baseEntity = GetHeldEntity ();
 		if (baseEntity.IsValid ()) {
-			Debug.LogWarning ((object)("Item's Held Entity not removed!" + info.displayName.english + " -> " + (object)baseEntity), (Object)(object)baseEntity);
+			Debug.LogWarning ("Item's Held Entity not removed!" + info.displayName.english + " -> " + baseEntity, baseEntity);
 		}
 	}
 
@@ -898,7 +832,7 @@ public class Item
 
 	public bool IsBackpack ()
 	{
-		if ((Object)(object)info != (Object)null) {
+		if (info != null) {
 			return (info.flags & ItemDefinition.Flag.Backpack) != 0;
 		}
 		return false;
@@ -912,8 +846,8 @@ public class Item
 	public int GetItemVolume ()
 	{
 		if (IsBackpack () && (contents?.itemList?.Count).GetValueOrDefault () > 0) {
-			ItemModBackpack component = ((Component)info).GetComponent<ItemModBackpack> ();
-			if ((Object)(object)component != (Object)null) {
+			ItemModBackpack component = info.GetComponent<ItemModBackpack> ();
+			if (component != null) {
 				return component.containerVolumeWhenFilled;
 			}
 		}
@@ -922,10 +856,6 @@ public class Item
 
 	public Item SplitItem (int split_Amount)
 	{
-		//IL_008c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0096: Expected O, but got Unknown
-		//IL_0103: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010d: Expected O, but got Unknown
 		Assert.IsTrue (split_Amount > 0, "split_Amount <= 0");
 		if (split_Amount <= 0) {
 			return null;
@@ -941,12 +871,12 @@ public class Item
 			item.blueprintTarget = blueprintTarget;
 		}
 		if (info.amountType == ItemDefinition.AmountType.Genetics && instanceData != null && instanceData.dataInt != 0) {
-			item.instanceData = new InstanceData ();
+			item.instanceData = new ProtoBuf.Item.InstanceData ();
 			item.instanceData.dataInt = instanceData.dataInt;
 			item.instanceData.ShouldPool = false;
 		}
-		if (instanceData != null && instanceData.dataInt > 0 && (Object)(object)info != (Object)null && (Object)(object)info.Blueprint != (Object)null && info.Blueprint.workbenchLevelRequired == 3) {
-			item.instanceData = new InstanceData ();
+		if (instanceData != null && instanceData.dataInt > 0 && info != null && info.Blueprint != null && info.Blueprint.workbenchLevelRequired == 3) {
+			item.instanceData = new ProtoBuf.Item.InstanceData ();
 			item.instanceData.dataInt = instanceData.dataInt;
 			item.instanceData.ShouldPool = false;
 			item.SetFlag (Flag.IsOn, IsOn ());
@@ -999,13 +929,13 @@ public class Item
 				return false;
 			}
 		}
-		if (item.instanceData != null && instanceData != null && (item.IsOn () != IsOn () || (item.instanceData.dataInt != instanceData.dataInt && (Object)(object)item.info.Blueprint != (Object)null && item.info.Blueprint.workbenchLevelRequired == 3))) {
+		if (item.instanceData != null && instanceData != null && (item.IsOn () != IsOn () || (item.instanceData.dataInt != instanceData.dataInt && item.info.Blueprint != null && item.info.Blueprint.workbenchLevelRequired == 3))) {
 			return false;
 		}
-		if (instanceData != null && ((NetworkableId)(ref instanceData.subEntity)).IsValid && Object.op_Implicit ((Object)(object)((Component)info).GetComponent<ItemModSign> ())) {
+		if (instanceData != null && instanceData.subEntity.IsValid && (bool)info.GetComponent<ItemModSign> ()) {
 			return false;
 		}
-		if (item.instanceData != null && ((NetworkableId)(ref item.instanceData.subEntity)).IsValid && Object.op_Implicit ((Object)(object)((Component)item.info).GetComponent<ItemModSign> ())) {
+		if (item.instanceData != null && item.instanceData.subEntity.IsValid && (bool)item.info.GetComponent<ItemModSign> ()) {
 			return false;
 		}
 		return true;
@@ -1021,8 +951,6 @@ public class Item
 
 	public void SetWorldEntity (BaseEntity ent)
 	{
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
 		if (!ent.IsValid ()) {
 			worldEnt.Set (null);
 			MarkDirty ();
@@ -1051,8 +979,6 @@ public class Item
 
 	public void SetHeldEntity (BaseEntity ent)
 	{
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
 		if (!ent.IsValid ()) {
 			this.heldEntity.Set (null);
 			MarkDirty ();
@@ -1064,7 +990,7 @@ public class Item
 			MarkDirty ();
 			if (ent.IsValid ()) {
 				HeldEntity heldEntity = ent as HeldEntity;
-				if ((Object)(object)heldEntity != (Object)null) {
+				if (heldEntity != null) {
 					heldEntity.SetupHeldEntity (this);
 				}
 			}
@@ -1086,7 +1012,7 @@ public class Item
 	public void ServerCommand (string command, BasePlayer player)
 	{
 		HeldEntity heldEntity = GetHeldEntity () as HeldEntity;
-		if ((Object)(object)heldEntity != (Object)null) {
+		if (heldEntity != null) {
 			heldEntity.ServerCommand (this, command, player);
 		}
 		ItemMod[] itemMods = info.itemMods;
@@ -1110,15 +1036,11 @@ public class Item
 
 	public bool HasAmmo (AmmoTypes ammoType)
 	{
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004f: Unknown result type (might be due to invalid IL or missing references)
-		ItemModProjectile itemModProjectile = default(ItemModProjectile);
-		if (((Component)info).TryGetComponent<ItemModProjectile> (ref itemModProjectile) && itemModProjectile.IsAmmo (ammoType)) {
+		if (info.TryGetComponent<ItemModProjectile> (out var component) && component.IsAmmo (ammoType)) {
 			return true;
 		}
 		if (contents != null) {
-			ItemModContainer itemModContainer = default(ItemModContainer);
-			if ((Object)(object)info != (Object)null && ((Component)info).TryGetComponent<ItemModContainer> (ref itemModContainer) && itemModContainer.blockAmmoSource) {
+			if (info != null && info.TryGetComponent<ItemModContainer> (out var component2) && component2.blockAmmoSource) {
 				return false;
 			}
 			return contents.HasAmmo (ammoType);
@@ -1128,10 +1050,7 @@ public class Item
 
 	public void FindAmmo (List<Item> list, AmmoTypes ammoType)
 	{
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		ItemModProjectile itemModProjectile = default(ItemModProjectile);
-		if (((Component)info).TryGetComponent<ItemModProjectile> (ref itemModProjectile) && itemModProjectile.IsAmmo (ammoType)) {
+		if (info.TryGetComponent<ItemModProjectile> (out var component) && component.IsAmmo (ammoType)) {
 			list.Add (this);
 		} else if (contents != null) {
 			contents.FindAmmo (list, ammoType);
@@ -1140,11 +1059,8 @@ public class Item
 
 	public int GetAmmoAmount (AmmoTypes ammoType)
 	{
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
 		int num = 0;
-		ItemModProjectile itemModProjectile = default(ItemModProjectile);
-		if (((Component)info).TryGetComponent<ItemModProjectile> (ref itemModProjectile) && itemModProjectile.IsAmmo (ammoType)) {
+		if (info.TryGetComponent<ItemModProjectile> (out var component) && component.IsAmmo (ammoType)) {
 			num += amount;
 		}
 		if (contents != null) {
@@ -1155,8 +1071,6 @@ public class Item
 
 	public override string ToString ()
 	{
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
 		string[] obj = new string[6] {
 			"Item.",
 			info.shortname,
@@ -1165,16 +1079,13 @@ public class Item
 			".",
 			null
 		};
-		ItemId val = uid;
-		obj [5] = ((object)(ItemId)(ref val)).ToString ();
+		ItemId itemId = uid;
+		obj [5] = itemId.ToString ();
 		return string.Concat (obj);
 	}
 
 	public Item FindItem (ItemId iUID)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
 		if (uid == iUID) {
 			return this;
 		}
@@ -1198,59 +1109,46 @@ public class Item
 		return info.GetWorldModel (amount);
 	}
 
-	public virtual Item Save (bool bIncludeContainer = false, bool bIncludeOwners = true)
+	public virtual ProtoBuf.Item Save (bool bIncludeContainer = false, bool bIncludeOwners = true)
 	{
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0079: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00dd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e2: Unknown result type (might be due to invalid IL or missing references)
 		dirty = false;
-		Item val = Pool.Get<Item> ();
-		val.UID = uid;
-		val.itemid = info.itemid;
-		val.slot = position;
-		val.amount = amount;
-		val.flags = (int)flags;
-		val.removetime = removeTime;
-		val.locktime = busyTime;
-		val.instanceData = instanceData;
-		val.worldEntity = worldEnt.uid;
-		val.heldEntity = heldEntity.uid;
-		val.skinid = skin;
-		val.name = name;
-		val.streamerName = streamerName;
-		val.text = text;
-		val.cooktime = cookTimeLeft;
-		val.ammoCount = 0;
-		NetworkableId val2 = heldEntity.uid;
-		if (((NetworkableId)(ref val2)).IsValid) {
+		ProtoBuf.Item item = Facepunch.Pool.Get<ProtoBuf.Item> ();
+		item.UID = uid;
+		item.itemid = info.itemid;
+		item.slot = position;
+		item.amount = amount;
+		item.flags = (int)flags;
+		item.removetime = removeTime;
+		item.locktime = busyTime;
+		item.instanceData = instanceData;
+		item.worldEntity = worldEnt.uid;
+		item.heldEntity = heldEntity.uid;
+		item.skinid = skin;
+		item.name = name;
+		item.streamerName = streamerName;
+		item.text = text;
+		item.cooktime = cookTimeLeft;
+		item.ammoCount = 0;
+		if (heldEntity.uid.IsValid) {
 			BaseProjectile baseProjectile = GetHeldEntity () as BaseProjectile;
-			if ((Object)(object)baseProjectile != (Object)null) {
-				val.ammoCount = baseProjectile.primaryMagazine.contents + 1;
+			if (baseProjectile != null) {
+				item.ammoCount = baseProjectile.primaryMagazine.contents + 1;
 			}
 		}
 		if (hasCondition) {
-			val.conditionData = Pool.Get<ConditionData> ();
-			val.conditionData.maxCondition = _maxCondition;
-			val.conditionData.condition = _condition;
+			item.conditionData = Facepunch.Pool.Get<ProtoBuf.Item.ConditionData> ();
+			item.conditionData.maxCondition = _maxCondition;
+			item.conditionData.condition = _condition;
 		}
 		if (contents != null) {
-			val.contents = contents.Save (bIncludeContainer);
+			item.contents = contents.Save (bIncludeContainer);
 		}
-		return val;
+		return item;
 	}
 
-	public virtual void Load (Item load)
+	public virtual void Load (ProtoBuf.Item load)
 	{
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c2: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)info == (Object)null || info.itemid != load.itemid) {
+		if (info == null || info.itemid != load.itemid) {
 			info = ItemManager.FindItemDefinition (load.itemid);
 		}
 		uid = load.UID;
@@ -1271,7 +1169,7 @@ public class Item
 			ammoCount = load.ammoCount - 1;
 		}
 		if (isServer) {
-			Net.sv.RegisterUID (uid.Value);
+			Network.Net.sv.RegisterUID (uid.Value);
 		}
 		if (instanceData != null) {
 			instanceData.ShouldPool = true;
@@ -1283,10 +1181,10 @@ public class Item
 			instanceData.ShouldPool = false;
 		}
 		skin = load.skinid;
-		if ((Object)(object)info == (Object)null || info.itemid != load.itemid) {
+		if (info == null || info.itemid != load.itemid) {
 			info = ItemManager.FindItemDefinition (load.itemid);
 		}
-		if ((Object)(object)info == (Object)null) {
+		if (info == null) {
 			return;
 		}
 		_condition = 0f;

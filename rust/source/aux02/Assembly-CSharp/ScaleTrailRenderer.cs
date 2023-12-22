@@ -20,10 +20,10 @@ public class ScaleTrailRenderer : ScaleRenderer
 	public override void GatherInitialValues ()
 	{
 		base.GatherInitialValues ();
-		if (Object.op_Implicit ((Object)(object)myRenderer)) {
-			trailRenderer = ((Component)myRenderer).GetComponent<TrailRenderer> ();
+		if ((bool)myRenderer) {
+			trailRenderer = myRenderer.GetComponent<TrailRenderer> ();
 		} else {
-			trailRenderer = ((Component)this).GetComponentInChildren<TrailRenderer> ();
+			trailRenderer = GetComponentInChildren<TrailRenderer> ();
 		}
 		startWidth = trailRenderer.startWidth;
 		endWidth = trailRenderer.endWidth;
@@ -35,7 +35,7 @@ public class ScaleTrailRenderer : ScaleRenderer
 	{
 		if (scale == 0f) {
 			trailRenderer.emitting = false;
-			((Renderer)trailRenderer).enabled = false;
+			trailRenderer.enabled = false;
 			trailRenderer.time = 0f;
 			trailRenderer.Clear ();
 			return;
@@ -44,7 +44,7 @@ public class ScaleTrailRenderer : ScaleRenderer
 			trailRenderer.Clear ();
 		}
 		trailRenderer.emitting = true;
-		((Renderer)trailRenderer).enabled = true;
+		trailRenderer.enabled = true;
 		base.SetScale_Internal (scale);
 		trailRenderer.widthMultiplier = startMultiplier * scale;
 		trailRenderer.time = duration * scale;

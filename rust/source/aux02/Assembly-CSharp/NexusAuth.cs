@@ -3,6 +3,7 @@ using CompanionServer.Handlers;
 using ConVar;
 using Facepunch;
 using Facepunch.Nexus;
+using Facepunch.Nexus.Models;
 using ProtoBuf;
 
 public class NexusAuth : BaseHandler<AppGetNexusAuth>
@@ -21,17 +22,16 @@ public class NexusAuth : BaseHandler<AppGetNexusAuth>
 			SendError ("invalid_playerid");
 			return;
 		}
-		string text = base.Request.playerId.ToString ("G", CultureInfo.InvariantCulture);
-		NexusPlayer val = await NexusServer.ZoneClient.GetPlayer (text);
-		Variable val2 = default(Variable);
-		if (val == null || !val.TryGetVariable ("appKey", ref val2) || (int)val2.Type != 1 || base.Proto.appKey != val2.GetAsString ()) {
+		string playerId = base.Request.playerId.ToString ("G", CultureInfo.InvariantCulture);
+		NexusPlayer nexusPlayer = await NexusServer.ZoneClient.GetPlayer (playerId);
+		if (nexusPlayer == null || !nexusPlayer.TryGetVariable ("appKey", out var variable) || variable.Type != VariableType.String || base.Proto.appKey != variable.GetAsString ()) {
 			SendError ("access_denied");
 			return;
 		}
-		AppResponse val3 = Pool.Get<AppResponse> ();
-		val3.nexusAuth = Pool.Get<AppNexusAuth> ();
-		val3.nexusAuth.serverId = App.serverid;
-		val3.nexusAuth.playerToken = SingletonComponent<ServerMgr>.Instance.persistance.GetOrGenerateAppToken (base.Request.playerId, out var _);
-		Send (val3);
+		AppResponse appResponse = Facepunch.Pool.Get<AppResponse> ();
+		appResponse.nexusAuth = Facepunch.Pool.Get<AppNexusAuth> ();
+		appResponse.nexusAuth.serverId = App.serverid;
+		appResponse.nexusAuth.playerToken = SingletonComponent<ServerMgr>.Instance.persistance.GetOrGenerateAppToken (base.Request.playerId, out var _);
+		Send (appResponse);
 	}
 }

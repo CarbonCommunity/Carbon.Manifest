@@ -1,4 +1,3 @@
-using System;
 using Network;
 using UnityEngine;
 
@@ -40,10 +39,7 @@ public class TutorialNPC : NPCMissionProvider
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("TutorialNPC.OnRpcMessage", 0);
-		try {
-		} finally {
-			((IDisposable)val)?.Dispose ();
+		using (TimeWarning.New ("TutorialNPC.OnRpcMessage")) {
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -84,9 +80,6 @@ public class TutorialNPC : NPCMissionProvider
 
 	public override void OnConversationAction (BasePlayer player, string action)
 	{
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
 		base.OnConversationAction (player, action);
 		if (action == "openhelp") {
 			ClientRPCPlayer (null, player, "Client_OpenHelp");
@@ -98,7 +91,7 @@ public class TutorialNPC : NPCMissionProvider
 	public override void ServerInit ()
 	{
 		base.ServerInit ();
-		if ((Object)(object)LoopingGesture != (Object)null) {
+		if (LoopingGesture != null) {
 			Server_StartGesture (LoopingGesture);
 		}
 	}
@@ -107,7 +100,7 @@ public class TutorialNPC : NPCMissionProvider
 	{
 		base.PostServerLoad ();
 		EndSleeping ();
-		if ((Object)(object)LoopingGesture != (Object)null) {
+		if (LoopingGesture != null) {
 			Server_StartGesture (LoopingGesture);
 		}
 	}

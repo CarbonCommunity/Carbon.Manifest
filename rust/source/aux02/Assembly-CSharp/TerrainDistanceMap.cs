@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class TerrainDistanceMap : TerrainMap<byte>
@@ -7,14 +6,12 @@ public class TerrainDistanceMap : TerrainMap<byte>
 
 	public override void Setup ()
 	{
-		//IL_0092: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0097: Unknown result type (might be due to invalid IL or missing references)
 		res = terrain.terrainData.heightmapResolution;
 		src = (dst = new byte[4 * res * res]);
-		if (!((Object)(object)DistanceTexture != (Object)null)) {
+		if (!(DistanceTexture != null)) {
 			return;
 		}
-		if (((Texture)DistanceTexture).width == ((Texture)DistanceTexture).height && ((Texture)DistanceTexture).width == res) {
+		if (DistanceTexture.width == DistanceTexture.height && DistanceTexture.width == res) {
 			Color32[] pixels = DistanceTexture.GetPixels32 ();
 			int i = 0;
 			int num = 0;
@@ -27,22 +24,17 @@ public class TerrainDistanceMap : TerrainMap<byte>
 				}
 			}
 		} else {
-			Debug.LogError ((object)("Invalid distance texture: " + ((Object)DistanceTexture).name), (Object)(object)DistanceTexture);
+			Debug.LogError ("Invalid distance texture: " + DistanceTexture.name, DistanceTexture);
 		}
 	}
 
 	public void GenerateTextures ()
 	{
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Expected O, but got Unknown
-		DistanceTexture = new Texture2D (res, res, (TextureFormat)4, true, true);
-		((Object)DistanceTexture).name = "DistanceTexture";
-		((Texture)DistanceTexture).wrapMode = (TextureWrapMode)1;
-		Color32[] cols = (Color32[])(object)new Color32[res * res];
-		Parallel.For (0, res, (Action<int>)delegate(int z) {
-			//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-			//IL_002b: Unknown result type (might be due to invalid IL or missing references)
+		DistanceTexture = new Texture2D (res, res, TextureFormat.RGBA32, mipChain: true, linear: true);
+		DistanceTexture.name = "DistanceTexture";
+		DistanceTexture.wrapMode = TextureWrapMode.Clamp;
+		Color32[] cols = new Color32[res * res];
+		Parallel.For (0, res, delegate(int z) {
 			for (int i = 0; i < res; i++) {
 				cols [z * res + i] = BitUtility.EncodeVector2i (GetDistance (i, z));
 			}
@@ -52,14 +44,11 @@ public class TerrainDistanceMap : TerrainMap<byte>
 
 	public void ApplyTextures ()
 	{
-		DistanceTexture.Apply (true, true);
+		DistanceTexture.Apply (updateMipmaps: true, makeNoLongerReadable: true);
 	}
 
 	public Vector2i GetDistance (Vector3 worldPos)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
 		float normX = TerrainMeta.NormalizeX (worldPos.x);
 		float normZ = TerrainMeta.NormalizeZ (worldPos.z);
 		return GetDistance (normX, normZ);
@@ -67,7 +56,6 @@ public class TerrainDistanceMap : TerrainMap<byte>
 
 	public Vector2i GetDistance (float normX, float normZ)
 	{
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
 		int num = res - 1;
 		int x = Mathf.Clamp (Mathf.RoundToInt (normX * (float)num), 0, num);
 		int z = Mathf.Clamp (Mathf.RoundToInt (normZ * (float)num), 0, num);
@@ -76,8 +64,6 @@ public class TerrainDistanceMap : TerrainMap<byte>
 
 	public Vector2i GetDistance (int x, int z)
 	{
-		//IL_00a0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0094: Unknown result type (might be due to invalid IL or missing references)
 		byte[] array = src;
 		_ = res;
 		byte b = array [(0 + z) * res + x];
@@ -92,10 +78,6 @@ public class TerrainDistanceMap : TerrainMap<byte>
 
 	public void SetDistance (int x, int z, Vector2i v)
 	{
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0070: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009c: Unknown result type (might be due to invalid IL or missing references)
 		byte[] array = dst;
 		_ = res;
 		array [(0 + z) * res + x] = (byte)Mathf.Clamp (v.x, 0, 255);

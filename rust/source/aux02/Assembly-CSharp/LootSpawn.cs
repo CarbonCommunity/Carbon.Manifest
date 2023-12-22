@@ -29,12 +29,6 @@ public class LootSpawn : ScriptableObject
 
 	public void SpawnIntoContainer (ItemContainer container)
 	{
-		//IL_00be: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00da: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e0: Unknown result type (might be due to invalid IL or missing references)
 		if (subSpawn != null && subSpawn.Length != 0) {
 			SubCategoryIntoContainer (container);
 		} else {
@@ -49,7 +43,7 @@ public class LootSpawn : ScriptableObject
 				Item item = null;
 				if (itemAmountRanged.itemDef.spawnAsBlueprint) {
 					ItemDefinition blueprintBaseDef = GetBlueprintBaseDef ();
-					if ((Object)(object)blueprintBaseDef == (Object)null) {
+					if (blueprintBaseDef == null) {
 						continue;
 					}
 					Item item2 = ItemManager.Create (blueprintBaseDef, 1, 0uL);
@@ -63,7 +57,7 @@ public class LootSpawn : ScriptableObject
 				}
 				item.OnVirginSpawn ();
 				if (!item.MoveToContainer (container)) {
-					if (Object.op_Implicit ((Object)(object)container.playerOwner)) {
+					if ((bool)container.playerOwner) {
 						item.Drop (container.playerOwner.GetDropPosition (), container.playerOwner.GetDropVelocity ());
 					} else {
 						item.Remove ();
@@ -76,9 +70,9 @@ public class LootSpawn : ScriptableObject
 	private void SubCategoryIntoContainer (ItemContainer container)
 	{
 		int num = subSpawn.Sum ((Entry x) => x.weight);
-		int num2 = Random.Range (0, num);
+		int num2 = UnityEngine.Random.Range (0, num);
 		for (int i = 0; i < subSpawn.Length; i++) {
-			if ((Object)(object)subSpawn [i].category == (Object)null) {
+			if (subSpawn [i].category == null) {
 				continue;
 			}
 			num -= subSpawn [i].weight;
@@ -89,7 +83,7 @@ public class LootSpawn : ScriptableObject
 				return;
 			}
 		}
-		string text = (((Object)(object)container.entityOwner != (Object)null) ? ((Object)container.entityOwner).name : "Unknown");
-		Debug.LogWarning ((object)$"SubCategoryIntoContainer for loot '{((Object)this).name}' for entity '{text}' ended with randomWeight ({num2}) < totalWeight ({num}). This should never happen! ", (Object)(object)this);
+		string text = ((container.entityOwner != null) ? container.entityOwner.name : "Unknown");
+		Debug.LogWarning ($"SubCategoryIntoContainer for loot '{base.name}' for entity '{text}' ended with randomWeight ({num2}) < totalWeight ({num}). This should never happen! ", this);
 	}
 }

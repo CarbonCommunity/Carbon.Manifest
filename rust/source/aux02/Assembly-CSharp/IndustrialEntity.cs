@@ -1,12 +1,10 @@
-using UnityEngine;
-
 public class IndustrialEntity : IOEntity
 {
 	public class IndustrialProcessQueue : ObjectWorkQueue<IndustrialEntity>
 	{
 		protected override void RunJob (IndustrialEntity job)
 		{
-			if ((Object)(object)job != (Object)null) {
+			if (job != null) {
 				job.RunJob ();
 			}
 		}

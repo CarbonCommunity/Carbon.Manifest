@@ -69,11 +69,7 @@ public class ItemModProjectile : MonoBehaviour
 
 	public bool IsAmmo (AmmoTypes ammo)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0009: Invalid comparison between Unknown and I4
-		return (ammoType & ammo) > 0;
+		return (ammoType & ammo) != 0;
 	}
 
 	public virtual void ServerProjectileHit (HitInfo info)
@@ -83,7 +79,7 @@ public class ItemModProjectile : MonoBehaviour
 		}
 		ItemModProjectileMod[] array = mods;
 		foreach (ItemModProjectileMod itemModProjectileMod in array) {
-			if (!((Object)(object)itemModProjectileMod == (Object)null)) {
+			if (!(itemModProjectileMod == null)) {
 				itemModProjectileMod.ServerProjectileHit (info);
 			}
 		}

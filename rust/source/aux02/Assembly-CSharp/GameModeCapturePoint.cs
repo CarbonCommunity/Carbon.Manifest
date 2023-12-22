@@ -1,4 +1,3 @@
-using System;
 using Facepunch;
 using ProtoBuf;
 using Rust.UI;
@@ -49,7 +48,7 @@ public class GameModeCapturePoint : BaseEntity
 	public override void ServerInit ()
 	{
 		base.ServerInit ();
-		((FacepunchBehaviour)this).InvokeRepeating ((Action)AssignPoints, 0f, 1f);
+		InvokeRepeating (AssignPoints, 0f, 1f);
 	}
 
 	public void Update ()
@@ -62,7 +61,7 @@ public class GameModeCapturePoint : BaseEntity
 	public void AssignPoints ()
 	{
 		BaseGameMode activeGameMode = BaseGameMode.GetActiveGameMode (serverside: true);
-		if ((Object)(object)activeGameMode == (Object)null || !activeGameMode.IsMatchActive ()) {
+		if (activeGameMode == null || !activeGameMode.IsMatchActive ()) {
 			return;
 		}
 		if (activeGameMode.IsTeamGame ()) {
@@ -70,23 +69,17 @@ public class GameModeCapturePoint : BaseEntity
 				activeGameMode.ModifyTeamScore (captureTeam, scorePerSecond);
 			}
 		} else if (capturedPlayer.IsValid (serverside: true)) {
-			activeGameMode.ModifyPlayerGameScore (((Component)capturedPlayer.Get (serverside: true)).GetComponent<BasePlayer> (), "score", scorePerSecond);
+			activeGameMode.ModifyPlayerGameScore (capturedPlayer.Get (serverside: true).GetComponent<BasePlayer> (), "score", scorePerSecond);
 		}
 	}
 
 	public void DoCaptureEffect ()
 	{
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
 		Effect.server.Run (progressCompleteEffect.resourcePath, computerPoint.position);
 	}
 
 	public void DoProgressEffect ()
 	{
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
 		if (!(Time.time < nextBeepTime)) {
 			Effect.server.Run (progressBeepEffect.resourcePath, computerPoint.position);
 			nextBeepTime = Time.time + 0.5f;
@@ -100,7 +93,7 @@ public class GameModeCapturePoint : BaseEntity
 		}
 		float num = captureFraction;
 		BaseGameMode activeGameMode = BaseGameMode.GetActiveGameMode (serverside: true);
-		if ((Object)(object)activeGameMode == (Object)null) {
+		if (activeGameMode == null) {
 			return;
 		}
 		if (captureTrigger.entityContents == null) {
@@ -112,9 +105,9 @@ public class GameModeCapturePoint : BaseEntity
 			if (activeGameMode.IsTeamGame ()) {
 				int[] array = new int[activeGameMode.GetNumTeams ()];
 				foreach (BaseEntity entityContent in captureTrigger.entityContents) {
-					if (!((Object)(object)entityContent == (Object)null) && !entityContent.isClient) {
-						BasePlayer component = ((Component)entityContent).GetComponent<BasePlayer> ();
-						if (!((Object)(object)component == (Object)null) && component.IsAlive () && !component.IsNpc && component.gamemodeteam != -1) {
+					if (!(entityContent == null) && !entityContent.isClient) {
+						BasePlayer component = entityContent.GetComponent<BasePlayer> ();
+						if (!(component == null) && component.IsAlive () && !component.IsNpc && component.gamemodeteam != -1) {
 							array [component.gamemodeteam]++;
 						}
 					}
@@ -161,19 +154,19 @@ public class GameModeCapturePoint : BaseEntity
 				}
 				if (captureTrigger.entityContents.Count == 1) {
 					foreach (BaseEntity entityContent2 in captureTrigger.entityContents) {
-						BasePlayer component2 = ((Component)entityContent2).GetComponent<BasePlayer> ();
-						if ((Object)(object)component2 == (Object)null) {
+						BasePlayer component2 = entityContent2.GetComponent<BasePlayer> ();
+						if (component2 == null) {
 							continue;
 						}
 						if (!capturedPlayer.IsValid (serverside: true) && captureFraction == 0f) {
 							capturingPlayer.Set (component2);
 						}
-						if (captureFraction > 0f && (Object)(object)component2 != (Object)(object)capturedPlayer.Get (serverside: true) && (Object)(object)component2 != (Object)(object)capturingPlayer.Get (serverside: true)) {
+						if (captureFraction > 0f && component2 != capturedPlayer.Get (serverside: true) && component2 != capturingPlayer.Get (serverside: true)) {
 							captureFraction = Mathf.Clamp01 (captureFraction - Time.deltaTime / timeToCapture);
 							if (captureFraction == 0f) {
 								capturedPlayer.Set (null);
 							}
-						} else if (!Object.op_Implicit ((Object)(object)capturedPlayer.Get (serverside: true)) && captureFraction < 1f && (Object)(object)capturingPlayer.Get (serverside: true) == (Object)(object)component2) {
+						} else if (!capturedPlayer.Get (serverside: true) && captureFraction < 1f && capturingPlayer.Get (serverside: true) == component2) {
 							DoProgressEffect ();
 							captureFraction = Mathf.Clamp01 (captureFraction + Time.deltaTime / timeToCapture);
 							if (captureFraction == 1f) {
@@ -194,12 +187,8 @@ public class GameModeCapturePoint : BaseEntity
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_006a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0085: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008a: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
-		info.msg.ioEntity = Pool.Get<IOEntity> ();
+		info.msg.ioEntity = Pool.Get<ProtoBuf.IOEntity> ();
 		info.msg.ioEntity.genericFloat1 = captureFraction;
 		info.msg.ioEntity.genericInt1 = captureTeam;
 		info.msg.ioEntity.genericInt2 = capturingTeam;

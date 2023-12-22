@@ -24,7 +24,7 @@ public class BaseMission : BaseScriptableObject
 				if (!(targetMission != null)) {
 					return 0u;
 				}
-				return StringEx.ManifestHash (targetMission.shortname);
+				return targetMission.shortname.ManifestHash ();
 			}
 		}
 	}
@@ -64,7 +64,7 @@ public class BaseMission : BaseScriptableObject
 	[Serializable]
 	public class MissionObjectiveEntry
 	{
-		public Phrase description;
+		public Translate.Phrase description;
 
 		public int[] startAfterCompletedObjectives;
 
@@ -97,7 +97,7 @@ public class BaseMission : BaseScriptableObject
 		public Vector3 WorldPosition;
 	}
 
-	public class MissionInstance : IPooled
+	public class MissionInstance : Pool.IPooled
 	{
 		[Serializable]
 		public class ObjectiveStatus
@@ -149,8 +149,7 @@ public class BaseMission : BaseScriptableObject
 
 		public BaseEntity ProviderEntity ()
 		{
-			//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-			if ((Object)(object)_cachedProviderEntity == (Object)null) {
+			if (_cachedProviderEntity == null) {
 				_cachedProviderEntity = BaseNetworkable.serverEntities.Find (providerID) as BaseEntity;
 			}
 			return _cachedProviderEntity;
@@ -166,8 +165,6 @@ public class BaseMission : BaseScriptableObject
 
 		public bool ShouldShowOnMap ()
 		{
-			//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0018: Unknown result type (might be due to invalid IL or missing references)
 			if (status == MissionStatus.Active || status == MissionStatus.Accomplished) {
 				return missionLocation != Vector3.zero;
 			}
@@ -221,14 +218,6 @@ public class BaseMission : BaseScriptableObject
 
 		public Vector3 GetMissionPoint (string identifier, BasePlayer playerFor, int depth = 0)
 		{
-			//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00bb: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00c0: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00c8: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00ce: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00d4: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00b1: Unknown result type (might be due to invalid IL or missing references)
 			if (identifier == null) {
 				identifier = "";
 			}
@@ -236,13 +225,13 @@ public class BaseMission : BaseScriptableObject
 				return value;
 			}
 			BaseMission mission = GetMission ();
-			if ((Object)(object)playerFor == (Object)null) {
-				Debug.LogError ((object)("Massive mission failure to get point, correct mission definition of: " + mission.shortname + " (player is null)"));
+			if (playerFor == null) {
+				Debug.LogError ("Massive mission failure to get point, correct mission definition of: " + mission.shortname + " (player is null)");
 				return Vector3.zero;
 			}
-			PositionGenerator positionGenerator = List.FindWith<PositionGenerator, string> ((IReadOnlyCollection<PositionGenerator>)(object)mission.positionGenerators, (Func<PositionGenerator, string>)((PositionGenerator p) => p.identifier), identifier, (IEqualityComparer<string>)null);
+			PositionGenerator positionGenerator = ((IReadOnlyCollection<PositionGenerator>)(object)mission.positionGenerators).FindWith ((PositionGenerator p) => p.identifier, identifier);
 			if (positionGenerator == null) {
-				Debug.LogError ((object)("Massive mission failure to get point, correct mission definition of: " + mission.shortname + " (cannot find position '" + identifier + "')"));
+				Debug.LogError ("Massive mission failure to get point, correct mission definition of: " + mission.shortname + " (cannot find position '" + identifier + "')");
 				return Vector3.zero;
 			}
 			Vector3 position = positionGenerator.GetPosition (this, playerFor, depth);
@@ -253,34 +242,30 @@ public class BaseMission : BaseScriptableObject
 
 		public MissionEntity GetMissionEntity (string identifier, BasePlayer playerFor)
 		{
-			//IL_00a8: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00ad: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00be: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00bf: Unknown result type (might be due to invalid IL or missing references)
 			if (identifier == null) {
 				identifier = "";
 			}
 			if (missionEntities.TryGetValue (identifier, out var value)) {
 				return value;
 			}
-			MissionEntityEntry missionEntityEntry = List.FindWith<MissionEntityEntry, string> ((IReadOnlyCollection<MissionEntityEntry>)(object)GetMission ().missionEntities, (Func<MissionEntityEntry, string>)((MissionEntityEntry e) => e.identifier), identifier, (IEqualityComparer<string>)null);
+			MissionEntityEntry missionEntityEntry = ((IReadOnlyCollection<MissionEntityEntry>)(object)GetMission ().missionEntities).FindWith ((MissionEntityEntry e) => e.identifier, identifier);
 			if (missionEntityEntry == null) {
-				Debug.LogError ((object)$"Cannot spawn mission entity, identifier '{identifier}' not found in mission ID {missionID}");
+				Debug.LogError ($"Cannot spawn mission entity, identifier '{identifier}' not found in mission ID {missionID}");
 				value = null;
 			} else if (!missionEntityEntry.entityRef.isValid) {
-				Debug.LogError ((object)$"Cannot spawn mission entity, identifier '{identifier}' has no entity set in mission ID {missionID}");
+				Debug.LogError ($"Cannot spawn mission entity, identifier '{identifier}' has no entity set in mission ID {missionID}");
 				value = null;
 			} else {
 				Vector3 missionPoint = GetMissionPoint (missionEntityEntry.spawnPositionToUse, playerFor);
 				BaseEntity baseEntity = GameManager.server.CreateEntity (missionEntityEntry.entityRef.resourcePath, missionPoint, Quaternion.identity);
-				MissionEntity missionEntity = default(MissionEntity);
-				MissionEntity obj = (((Component)baseEntity).gameObject.TryGetComponent<MissionEntity> (ref missionEntity) ? missionEntity : ((Component)baseEntity).gameObject.AddComponent<MissionEntity> ());
+				MissionEntity component;
+				MissionEntity obj = (baseEntity.gameObject.TryGetComponent<MissionEntity> (out component) ? component : baseEntity.gameObject.AddComponent<MissionEntity> ());
 				obj.Setup (playerFor, this, identifier, missionEntityEntry.cleanupOnMissionSuccess, missionEntityEntry.cleanupOnMissionFailed);
 				baseEntity.Spawn ();
 				value = obj;
 			}
 			missionEntities.Add (identifier, value);
-			if ((Object)(object)value != (Object)null) {
+			if (value != null) {
 				value.MissionStarted (playerFor, this);
 			}
 			return value;
@@ -298,9 +283,6 @@ public class BaseMission : BaseScriptableObject
 
 		public void Reset ()
 		{
-			//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0031: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0036: Unknown result type (might be due to invalid IL or missing references)
 			providerID = default(NetworkableId);
 			missionID = 0u;
 			status = MissionStatus.Default;
@@ -368,19 +350,17 @@ public class BaseMission : BaseScriptableObject
 
 		public bool Validate (BasePlayer assignee, BaseMission missionDef)
 		{
-			//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0070: Unknown result type (might be due to invalid IL or missing references)
 			Vector3 position;
 			if (positionType == PositionType.MissionPoint) {
 				List<MissionPoint> points = Pool.GetList<MissionPoint> ();
-				bool missionPoints = MissionPoint.GetMissionPoints (ref points, ((Component)assignee).transform.position, minDistForMovePoint, maxDistForMovePoint, (int)Flags, (int)ExclusionFlags);
-				Pool.FreeList<MissionPoint> (ref points);
+				bool missionPoints = MissionPoint.GetMissionPoints (ref points, assignee.transform.position, minDistForMovePoint, maxDistForMovePoint, (int)Flags, (int)ExclusionFlags);
+				Pool.FreeList (ref points);
 				if (!missionPoints) {
-					Debug.Log ((object)"FAILED TO FIND MISSION POINTS");
+					Debug.Log ("FAILED TO FIND MISSION POINTS");
 					return false;
 				}
-			} else if (positionType == PositionType.WorldPositionGenerator && (Object)(object)worldPositionGenerator != (Object)null && !worldPositionGenerator.TrySample (((Component)assignee).transform.position, minDistForMovePoint, maxDistForMovePoint, out position, blockedPoints)) {
-				Debug.Log ((object)"FAILED TO GENERATE WORLD POSITION!!!!!");
+			} else if (positionType == PositionType.WorldPositionGenerator && worldPositionGenerator != null && !worldPositionGenerator.TrySample (assignee.transform.position, minDistForMovePoint, maxDistForMovePoint, out position, blockedPoints)) {
+				Debug.Log ("FAILED TO GENERATE WORLD POSITION!!!!!");
 				return false;
 			}
 			return true;
@@ -388,55 +368,22 @@ public class BaseMission : BaseScriptableObject
 
 		public Vector3 GetPosition (MissionInstance instance, BasePlayer assignee, int depth = 0)
 		{
-			//IL_0035: Unknown result type (might be due to invalid IL or missing references)
-			//IL_003a: Unknown result type (might be due to invalid IL or missing references)
-			//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-			//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-			//IL_008f: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0090: Unknown result type (might be due to invalid IL or missing references)
-			//IL_007d: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0082: Unknown result type (might be due to invalid IL or missing references)
-			//IL_010f: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0114: Unknown result type (might be due to invalid IL or missing references)
-			//IL_011d: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0122: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0137: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0138: Unknown result type (might be due to invalid IL or missing references)
-			//IL_014b: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0150: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0155: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0157: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0160: Unknown result type (might be due to invalid IL or missing references)
-			//IL_01de: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00bc: Unknown result type (might be due to invalid IL or missing references)
-			//IL_017b: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00d7: Unknown result type (might be due to invalid IL or missing references)
-			//IL_01af: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0196: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00f9: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00fa: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00e2: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00e4: Unknown result type (might be due to invalid IL or missing references)
-			//IL_01ba: Unknown result type (might be due to invalid IL or missing references)
-			//IL_01bc: Unknown result type (might be due to invalid IL or missing references)
-			//IL_01cf: Unknown result type (might be due to invalid IL or missing references)
-			//IL_01d0: Unknown result type (might be due to invalid IL or missing references)
 			if (depth > 10) {
-				Debug.LogError ((object)$"Exceeded max depth while calculating position! missionID={instance.missionID} identifier={identifier}");
-				return ((Component)assignee).transform.position;
+				Debug.LogError ($"Exceeded max depth while calculating position! missionID={instance.missionID} identifier={identifier}");
+				return assignee.transform.position;
 			}
 			Vector3 relativeToPosition = GetRelativeToPosition (instance, assignee, depth);
 			Vector3 result;
 			if (positionType == PositionType.MissionPoint) {
 				List<MissionPoint> points = Pool.GetList<MissionPoint> ();
 				if (MissionPoint.GetMissionPoints (ref points, relativeToPosition, minDistForMovePoint, maxDistForMovePoint, (int)Flags, (int)ExclusionFlags)) {
-					result = points [Random.Range (0, points.Count)].GetPosition ();
+					result = points [UnityEngine.Random.Range (0, points.Count)].GetPosition ();
 				} else {
-					Debug.LogError ((object)"UNABLE TO FIND MISSIONPOINT FOR MISSION!");
+					Debug.LogError ("UNABLE TO FIND MISSIONPOINT FOR MISSION!");
 					result = relativeToPosition;
 				}
-				Pool.FreeList<MissionPoint> (ref points);
-			} else if (positionType == PositionType.WorldPositionGenerator && (Object)(object)worldPositionGenerator != (Object)null) {
+				Pool.FreeList (ref points);
+			} else if (positionType == PositionType.WorldPositionGenerator && worldPositionGenerator != null) {
 				int num = 0;
 				while (true) {
 					if (worldPositionGenerator.TrySample (relativeToPosition, minDistForMovePoint, maxDistForMovePoint, out var position, blockedPoints) && TryAlignToGround (position, out var correctedPosition)) {
@@ -444,7 +391,7 @@ public class BaseMission : BaseScriptableObject
 						break;
 					}
 					if (num >= 10) {
-						Debug.LogError ((object)"UNABLE TO FIND WORLD POINT FOR MISSION!");
+						Debug.LogError ("UNABLE TO FIND WORLD POINT FOR MISSION!");
 						result = relativeToPosition;
 						break;
 					}
@@ -455,25 +402,25 @@ public class BaseMission : BaseScriptableObject
 			} else {
 				int num2 = 0;
 				while (true) {
-					Vector3 onUnitSphere = Random.onUnitSphere;
+					Vector3 onUnitSphere = UnityEngine.Random.onUnitSphere;
 					onUnitSphere.y = 0f;
-					((Vector3)(ref onUnitSphere)).Normalize ();
-					Vector3 val = relativeToPosition + onUnitSphere * Random.Range (minDistForMovePoint, maxDistForMovePoint);
-					float num3 = val.y;
-					float num4 = val.y;
-					if ((Object)(object)TerrainMeta.WaterMap != (Object)null) {
-						num4 = TerrainMeta.WaterMap.GetHeight (val);
+					onUnitSphere.Normalize ();
+					Vector3 vector = relativeToPosition + onUnitSphere * UnityEngine.Random.Range (minDistForMovePoint, maxDistForMovePoint);
+					float b = vector.y;
+					float a = vector.y;
+					if (TerrainMeta.WaterMap != null) {
+						a = TerrainMeta.WaterMap.GetHeight (vector);
 					}
-					if ((Object)(object)TerrainMeta.HeightMap != (Object)null) {
-						num3 = TerrainMeta.HeightMap.GetHeight (val);
+					if (TerrainMeta.HeightMap != null) {
+						b = TerrainMeta.HeightMap.GetHeight (vector);
 					}
-					val.y = Mathf.Max (num4, num3);
-					if (TryAlignToGround (val, out var correctedPosition2)) {
+					vector.y = Mathf.Max (a, b);
+					if (TryAlignToGround (vector, out var correctedPosition2)) {
 						result = correctedPosition2;
 						break;
 					}
 					if (num2 >= 10) {
-						Debug.LogError ((object)"UNABLE TO FIND WORLD POINT FOR MISSION!");
+						Debug.LogError ("UNABLE TO FIND WORLD POINT FOR MISSION!");
 						result = relativeToPosition;
 						break;
 					}
@@ -485,55 +432,36 @@ public class BaseMission : BaseScriptableObject
 
 		private Vector3 GetRelativeToPosition (MissionInstance instance, BasePlayer assignee, int depth)
 		{
-			//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0082: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0042: Unknown result type (might be due to invalid IL or missing references)
 			switch (relativeTo) {
 			case RelativeType.Position:
 				return instance.GetMissionPoint (centerOnPositionIdentifier, assignee, depth + 1);
 			case RelativeType.Provider: {
 				BaseEntity baseEntity = instance.ProviderEntity ();
-				if ((Object)(object)baseEntity != (Object)null) {
-					return ((Component)baseEntity).transform.position;
+				if (baseEntity != null) {
+					return baseEntity.transform.position;
 				}
 				break;
 			}
 			}
-			if ((Object)(object)assignee != (Object)null) {
-				return ((Component)assignee).transform.position;
+			if (assignee != null) {
+				return assignee.transform.position;
 			}
-			Debug.LogError ((object)$"Cannot get mission point origin - assigne playere is null! missionID={instance.missionID} relativeTo={relativeTo}");
+			Debug.LogError ($"Cannot get mission point origin - assigne playere is null! missionID={instance.missionID} relativeTo={relativeTo}");
 			return Vector3.zero;
 		}
 
 		private static bool TryAlignToGround (Vector3 wishPosition, out Vector3 correctedPosition)
 		{
-			//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-			//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-			//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0033: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-			//IL_005a: Unknown result type (might be due to invalid IL or missing references)
-			//IL_004a: Unknown result type (might be due to invalid IL or missing references)
-			//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-			Vector3 val = Vector3Ex.WithY (wishPosition, wishPosition.y + 50f);
-			RaycastHit hit = default(RaycastHit);
-			if (!Physics.Raycast (new Ray (val, Vector3.down), ref hit, 50f, 1218652417, (QueryTriggerInteraction)1)) {
+			Vector3 origin = wishPosition.WithY (wishPosition.y + 50f);
+			if (!Physics.Raycast (new Ray (origin, Vector3.down), out var hitInfo, 50f, 1218652417, QueryTriggerInteraction.Ignore)) {
 				correctedPosition = wishPosition;
 				return true;
 			}
-			if ((Object)(object)hit.GetEntity () != (Object)null) {
+			if (hitInfo.GetEntity () != null) {
 				correctedPosition = wishPosition;
 				return false;
 			}
-			correctedPosition = ((RaycastHit)(ref hit)).point;
+			correctedPosition = hitInfo.point;
 			return true;
 		}
 	}
@@ -569,9 +497,9 @@ public class BaseMission : BaseScriptableObject
 
 	public string shortname;
 
-	public Phrase missionName;
+	public Translate.Phrase missionName;
 
-	public Phrase missionDesc;
+	public Translate.Phrase missionDesc;
 
 	public bool canBeAbandoned = true;
 
@@ -615,7 +543,7 @@ public class BaseMission : BaseScriptableObject
 
 	public ItemAmount[] baseRewards;
 
-	public uint id => StringEx.ManifestHash (shortname);
+	public uint id => shortname.ManifestHash ();
 
 	public bool isRepeatable {
 		get {
@@ -652,10 +580,6 @@ public class BaseMission : BaseScriptableObject
 
 	public static void AddBlocker (Vector3 point)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
 		if (point != Vector3.zero && !blockedPoints.Contains (point)) {
 			blockedPoints.Add (point);
 		}
@@ -663,7 +587,6 @@ public class BaseMission : BaseScriptableObject
 
 	public static void RemoveBlockers (MissionInstance instance)
 	{
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
 		foreach (KeyValuePair<string, Vector3> missionPoint in instance.missionPoints) {
 			blockedPoints.Remove (missionPoint.Value);
 		}
@@ -671,8 +594,6 @@ public class BaseMission : BaseScriptableObject
 
 	public static void DoMissionEffect (string effectString, BasePlayer assignee)
 	{
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
 		Effect effect = new Effect ();
 		effect.Init (Effect.Type.Generic, assignee, StringPool.Get ("head"), Vector3.zero, Vector3.forward);
 		effect.pooledString = effectString;
@@ -765,14 +686,14 @@ public class BaseMission : BaseScriptableObject
 		}
 		if (assignee.IsInTutorial) {
 			TutorialIsland currentTutorialIsland = assignee.GetCurrentTutorialIsland ();
-			if ((Object)(object)currentTutorialIsland != (Object)null && currentTutorialIsland.FinalMission == this) {
+			if (currentTutorialIsland != null && currentTutorialIsland.FinalMission == this) {
 				currentTutorialIsland.StartEndingCinematic (assignee);
 			}
 		}
 		static void GiveReward (BasePlayer player, ItemAmount reward)
 		{
-			if ((Object)(object)reward.itemDef == (Object)null || reward.amount == 0f) {
-				Debug.LogError ((object)"BIG REWARD SCREWUP, NULL ITEM DEF");
+			if (reward.itemDef == null || reward.amount == 0f) {
+				Debug.LogError ("BIG REWARD SCREWUP, NULL ITEM DEF");
 			} else {
 				Item item = ItemManager.Create (reward.itemDef, Mathf.CeilToInt (reward.amount), 0uL);
 				if (item != null) {
@@ -804,16 +725,16 @@ public class BaseMission : BaseScriptableObject
 	public virtual void MissionEnded (MissionInstance instance, BasePlayer assignee)
 	{
 		if (instance.missionEntities != null) {
-			List<MissionEntity> list = Pool.GetList<MissionEntity> ();
+			List<MissionEntity> obj = Pool.GetList<MissionEntity> ();
 			foreach (MissionEntity value in instance.missionEntities.Values) {
-				list.Add (value);
+				obj.Add (value);
 			}
-			foreach (MissionEntity item in list) {
-				if (!((Object)(object)item == (Object)null)) {
+			foreach (MissionEntity item in obj) {
+				if (!(item == null)) {
 					item.MissionEnded (assignee, instance);
 				}
 			}
-			Pool.FreeList<MissionEntity> (ref list);
+			Pool.FreeList (ref obj);
 		}
 		RemoveBlockers (instance);
 		instance.endTime = Time.time;
@@ -843,15 +764,13 @@ public class BaseMission : BaseScriptableObject
 
 	public static bool AssignMission (BasePlayer assignee, IMissionProvider provider, BaseMission mission)
 	{
-		//IL_0099: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009e: Unknown result type (might be due to invalid IL or missing references)
 		if (!missionsenabled) {
 			return false;
 		}
 		if (!mission.IsEligableForMission (assignee, provider)) {
 			return false;
 		}
-		int num = List.FindIndexWith<MissionInstance, uint> ((IReadOnlyList<MissionInstance>)assignee.missions, (Func<MissionInstance, uint>)((MissionInstance i) => i.missionID), mission.id, (IEqualityComparer<uint>)null);
+		int num = assignee.missions.FindIndexWith ((MissionInstance i) => i.missionID, mission.id);
 		MissionInstance missionInstance;
 		int activeMission;
 		if (num >= 0) {

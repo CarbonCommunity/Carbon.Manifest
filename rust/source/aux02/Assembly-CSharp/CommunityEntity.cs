@@ -1,4 +1,3 @@
-using System;
 using Network;
 
 public class CommunityEntity : PointEntity
@@ -9,10 +8,7 @@ public class CommunityEntity : PointEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("CommunityEntity.OnRpcMessage", 0);
-		try {
-		} finally {
-			((IDisposable)val)?.Dispose ();
+		using (TimeWarning.New ("CommunityEntity.OnRpcMessage")) {
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}

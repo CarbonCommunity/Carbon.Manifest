@@ -31,7 +31,7 @@ public class Prefab : IComparable<Prefab>
 		Object = prefab;
 		Manager = manager;
 		Attribute = attribute;
-		Parameters = (Object.op_Implicit ((Object)(object)prefab) ? prefab.GetComponent<PrefabParameters> () : null);
+		Parameters = (prefab ? prefab.GetComponent<PrefabParameters> () : null);
 	}
 
 	public static implicit operator GameObject (Prefab prefab)
@@ -44,80 +44,57 @@ public class Prefab : IComparable<Prefab>
 		if (that == null) {
 			return 1;
 		}
-		PrefabPriority prefabPriority = (((Object)(object)Parameters != (Object)null) ? Parameters.Priority : PrefabPriority.Default);
-		return (((Object)(object)that.Parameters != (Object)null) ? that.Parameters.Priority : PrefabPriority.Default).CompareTo (prefabPriority);
+		PrefabPriority prefabPriority = ((Parameters != null) ? Parameters.Priority : PrefabPriority.Default);
+		return ((that.Parameters != null) ? that.Parameters.Priority : PrefabPriority.Default).CompareTo (prefabPriority);
 	}
 
 	public bool ApplyTerrainAnchors (ref Vector3 pos, Quaternion rot, Vector3 scale, TerrainAnchorMode mode, SpawnFilter filter = null)
 	{
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
 		TerrainAnchor[] anchors = Attribute.FindAll<TerrainAnchor> (ID);
 		return Object.transform.ApplyTerrainAnchors (anchors, ref pos, rot, scale, mode, filter);
 	}
 
 	public bool ApplyTerrainAnchors (ref Vector3 pos, Quaternion rot, Vector3 scale, SpawnFilter filter = null)
 	{
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
 		TerrainAnchor[] anchors = Attribute.FindAll<TerrainAnchor> (ID);
 		return Object.transform.ApplyTerrainAnchors (anchors, ref pos, rot, scale, filter);
 	}
 
 	public bool ApplyTerrainChecks (Vector3 pos, Quaternion rot, Vector3 scale, SpawnFilter filter = null)
 	{
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
 		TerrainCheck[] anchors = Attribute.FindAll<TerrainCheck> (ID);
 		return Object.transform.ApplyTerrainChecks (anchors, pos, rot, scale, filter);
 	}
 
 	public bool ApplyTerrainFilters (Vector3 pos, Quaternion rot, Vector3 scale, SpawnFilter filter = null)
 	{
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
 		TerrainFilter[] filters = Attribute.FindAll<TerrainFilter> (ID);
 		return Object.transform.ApplyTerrainFilters (filters, pos, rot, scale, filter);
 	}
 
 	public void ApplyTerrainModifiers (Vector3 pos, Quaternion rot, Vector3 scale)
 	{
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
 		TerrainModifier[] modifiers = Attribute.FindAll<TerrainModifier> (ID);
 		Object.transform.ApplyTerrainModifiers (modifiers, pos, rot, scale);
 	}
 
 	public void ApplyTerrainPlacements (Vector3 pos, Quaternion rot, Vector3 scale)
 	{
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
 		TerrainPlacement[] placements = Attribute.FindAll<TerrainPlacement> (ID);
 		Object.transform.ApplyTerrainPlacements (placements, pos, rot, scale);
 	}
 
 	public bool ApplyWaterChecks (Vector3 pos, Quaternion rot, Vector3 scale)
 	{
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
 		WaterCheck[] anchors = Attribute.FindAll<WaterCheck> (ID);
 		return Object.transform.ApplyWaterChecks (anchors, pos, rot, scale);
 	}
 
 	public bool ApplyBoundsChecks (Vector3 pos, Quaternion rot, Vector3 scale, LayerMask rejectOnLayer)
 	{
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
 		BoundsCheck[] bounds = Attribute.FindAll<BoundsCheck> (ID);
 		BaseEntity component = Object.GetComponent<BaseEntity> ();
-		if ((Object)(object)component != (Object)null) {
+		if (component != null) {
 			return component.ApplyBoundsChecks (bounds, pos, rot, scale, rejectOnLayer);
 		}
 		return true;
@@ -131,25 +108,16 @@ public class Prefab : IComparable<Prefab>
 
 	public bool CheckEnvironmentVolumes (Vector3 pos, Quaternion rot, Vector3 scale, EnvironmentType type)
 	{
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
 		return Object.transform.CheckEnvironmentVolumes (pos, rot, scale, type);
 	}
 
 	public bool CheckEnvironmentVolumesInsideTerrain (Vector3 pos, Quaternion rot, Vector3 scale, EnvironmentType type, float padding = 0f)
 	{
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
 		return Object.transform.CheckEnvironmentVolumesInsideTerrain (pos, rot, scale, type, padding);
 	}
 
 	public bool CheckEnvironmentVolumesOutsideTerrain (Vector3 pos, Quaternion rot, Vector3 scale, EnvironmentType type, float padding = 0f)
 	{
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
 		return Object.transform.CheckEnvironmentVolumesOutsideTerrain (pos, rot, scale, type, padding);
 	}
 
@@ -168,23 +136,16 @@ public class Prefab : IComparable<Prefab>
 
 	public GameObject Spawn (Vector3 pos, Quaternion rot, bool active = true)
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
 		return Manager.CreatePrefab (Name, pos, rot, active);
 	}
 
 	public GameObject Spawn (Vector3 pos, Quaternion rot, Vector3 scale, bool active = true)
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
 		return Manager.CreatePrefab (Name, pos, rot, scale, active);
 	}
 
 	public BaseEntity SpawnEntity (Vector3 pos, Quaternion rot, bool active = true)
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
 		return Manager.CreateEntity (Name, pos, rot, active);
 	}
 
@@ -198,12 +159,12 @@ public class Prefab : IComparable<Prefab>
 		}
 		string text = StringPool.Get (id);
 		if (string.IsNullOrWhiteSpace (text)) {
-			Debug.LogWarning ((object)$"Could not find path for prefab ID {id}");
+			Debug.LogWarning ($"Could not find path for prefab ID {id}");
 			return null;
 		}
-		GameObject val = manager.FindPrefab (text);
-		T component = val.GetComponent<T> ();
-		return new Prefab<T> (text, val, component, manager, attribute);
+		GameObject gameObject = manager.FindPrefab (text);
+		T component = gameObject.GetComponent<T> ();
+		return new Prefab<T> (text, gameObject, component, manager, attribute);
 	}
 
 	public static Prefab Load (uint id, GameManager manager = null, PrefabAttribute.Library attribute = null)
@@ -216,7 +177,7 @@ public class Prefab : IComparable<Prefab>
 		}
 		string text = StringPool.Get (id);
 		if (string.IsNullOrWhiteSpace (text)) {
-			Debug.LogWarning ((object)$"Could not find path for prefab ID {id}");
+			Debug.LogWarning ($"Could not find path for prefab ID {id}");
 			return null;
 		}
 		GameObject prefab = manager.FindPrefab (text);
@@ -263,9 +224,9 @@ public class Prefab : IComparable<Prefab>
 		Prefab<T>[] array = new Prefab<T>[names.Length];
 		for (int i = 0; i < array.Length; i++) {
 			string text = names [i];
-			GameObject val = manager.FindPrefab (text);
-			T component = val.GetComponent<T> ();
-			array [i] = new Prefab<T> (text, val, component, manager, attribute);
+			GameObject gameObject = manager.FindPrefab (text);
+			T component = gameObject.GetComponent<T> ();
+			array [i] = new Prefab<T> (text, gameObject, component, manager, attribute);
 		}
 		return array;
 	}
@@ -306,9 +267,9 @@ public class Prefab : IComparable<Prefab>
 			return null;
 		}
 		string text = array [SeedRandom.Range (ref seed, 0, array.Length)];
-		GameObject val = manager.FindPrefab (text);
-		T component = val.GetComponent<T> ();
-		return new Prefab<T> (text, val, component, manager, attribute);
+		GameObject gameObject = manager.FindPrefab (text);
+		T component = gameObject.GetComponent<T> ();
+		return new Prefab<T> (text, gameObject, component, manager, attribute);
 	}
 
 	private static string[] FindPrefabNames (string strPrefab, bool useProbabilities = false, bool useWorldConfig = false)
@@ -317,8 +278,8 @@ public class Prefab : IComparable<Prefab>
 		GameObject[] array = FileSystem.LoadPrefabs (strPrefab + "/");
 		List<string> list = new List<string> (array.Length);
 		GameObject[] array2 = array;
-		foreach (GameObject val in array2) {
-			string text = strPrefab + "/" + ((Object)val).name.ToLower () + ".prefab";
+		foreach (GameObject gameObject in array2) {
+			string text = strPrefab + "/" + gameObject.name.ToLower () + ".prefab";
 			if (useWorldConfig && !World.Config.IsPrefabAllowed (text)) {
 				continue;
 			}
@@ -326,8 +287,8 @@ public class Prefab : IComparable<Prefab>
 				list.Add (text);
 				continue;
 			}
-			PrefabParameters component = val.GetComponent<PrefabParameters> ();
-			int num = ((!Object.op_Implicit ((Object)(object)component)) ? 1 : component.Count);
+			PrefabParameters component = gameObject.GetComponent<PrefabParameters> ();
+			int num = ((!component) ? 1 : component.Count);
 			for (int j = 0; j < num; j++) {
 				list.Add (text);
 			}

@@ -17,6 +17,6 @@ public class BlendTexture : ProcessedTexture
 
 	public void CopyTo (BlendTexture target)
 	{
-		Graphics.Blit ((Texture)(object)result, target.result);
+		Graphics.Blit (result, target.result);
 	}
 }

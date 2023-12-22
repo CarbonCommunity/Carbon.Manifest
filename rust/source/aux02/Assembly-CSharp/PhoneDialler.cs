@@ -34,11 +34,11 @@ public class PhoneDialler : UIDialog
 
 	public NeedsKeyboard KeyboardController;
 
-	public Phrase WrongNumberPhrase;
+	public Translate.Phrase WrongNumberPhrase;
 
-	public Phrase NetworkBusy;
+	public Translate.Phrase NetworkBusy;
 
-	public Phrase Engaged;
+	public Translate.Phrase Engaged;
 
 	public GameObjectRef DirectoryEntryPrefab;
 
@@ -64,7 +64,7 @@ public class PhoneDialler : UIDialog
 
 	public Button[] NumberButtons;
 
-	public Phrase AnsweringMachine;
+	public Translate.Phrase AnsweringMachine;
 
 	public VoicemailDialog Voicemail;
 

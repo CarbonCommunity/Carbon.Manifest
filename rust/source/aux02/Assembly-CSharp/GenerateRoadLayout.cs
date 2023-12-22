@@ -82,19 +82,6 @@ public class GenerateRoadLayout : ProceduralComponent
 
 	public override void Process (uint seed)
 	{
-		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0076: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0090: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0092: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0815: Unknown result type (might be due to invalid IL or missing references)
-		//IL_075a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0777: Unknown result type (might be due to invalid IL or missing references)
-		//IL_08eb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_090d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_07b3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_07d0: Unknown result type (might be due to invalid IL or missing references)
 		if (World.Networked) {
 			TerrainMeta.Path.Roads.Clear ();
 			TerrainMeta.Path.Roads.AddRange (World.GetPaths ("Road"));
@@ -102,9 +89,9 @@ public class GenerateRoadLayout : ProceduralComponent
 				foreach (PathList road in TerrainMeta.Path.Roads) {
 					Vector3[] points = road.Path.Points;
 					for (int i = 1; i < points.Length - 1; i++) {
-						Vector3 val = points [i];
-						val.y = Mathf.Max (TerrainMeta.HeightMap.GetHeight (val), 1f);
-						points [i] = val;
+						Vector3 vector = points [i];
+						vector.y = Mathf.Max (TerrainMeta.HeightMap.GetHeight (vector), 1f);
+						points [i] = vector;
 					}
 					road.Path.Smoothen (16, new Vector3 (0f, 1f, 0f));
 					road.Path.RecalculateTangents ();
@@ -142,7 +129,7 @@ public class GenerateRoadLayout : ProceduralComponent
 			if (monument.Type == MonumentType.Roadside) {
 				continue;
 			}
-			TerrainPathConnect[] componentsInChildren = ((Component)monument).GetComponentsInChildren<TerrainPathConnect> (true);
+			TerrainPathConnect[] componentsInChildren = monument.GetComponentsInChildren<TerrainPathConnect> (includeInactive: true);
 			foreach (TerrainPathConnect terrainPathConnect in componentsInChildren) {
 				if (terrainPathConnect.Type == RoadType) {
 					PathFinder.Point pathFinderPoint = terrainPathConnect.GetPathFinderPoint (length);
@@ -160,8 +147,8 @@ public class GenerateRoadLayout : ProceduralComponent
 		while (list4.Count != 0 || list5.Count != 0) {
 			if (list4.Count == 0) {
 				PathNode node3 = list5 [0];
-				list4.AddRange (list5.Where ((PathNode x) => (Object)(object)x.monument == (Object)(object)node3.monument));
-				list5.RemoveAll ((PathNode x) => (Object)(object)x.monument == (Object)(object)node3.monument);
+				list4.AddRange (list5.Where ((PathNode x) => x.monument == node3.monument));
+				list5.RemoveAll ((PathNode x) => x.monument == node3.monument);
 				pathFinder.PushPoint = node3.monument.GetPathFinderPoint (length);
 				pathFinder.PushRadius = (pathFinder.PushDistance = node3.monument.GetPathFinderRadius (length));
 				pathFinder.PushMultiplier = 50000;
@@ -175,8 +162,8 @@ public class GenerateRoadLayout : ProceduralComponent
 			PathFinder.Node node6 = pathFinder.FindPathUndirected (list7, list8, 100000);
 			if (node6 == null) {
 				PathNode node2 = list4 [0];
-				list5.AddRange (list4.Where ((PathNode x) => (Object)(object)x.monument == (Object)(object)node2.monument));
-				list4.RemoveAll ((PathNode x) => (Object)(object)x.monument == (Object)(object)node2.monument);
+				list5.AddRange (list4.Where ((PathNode x) => x.monument == node2.monument));
+				list4.RemoveAll ((PathNode x) => x.monument == node2.monument);
 				list5.Remove (node2);
 				list3.Add (node2);
 				continue;
@@ -192,8 +179,8 @@ public class GenerateRoadLayout : ProceduralComponent
 			}
 			list2.Add (segment);
 			PathNode node = list4.Find ((PathNode x) => x.node.point == segment.start.point || x.node.point == segment.end.point);
-			list5.AddRange (list4.Where ((PathNode x) => (Object)(object)x.monument == (Object)(object)node.monument));
-			list4.RemoveAll ((PathNode x) => (Object)(object)x.monument == (Object)(object)node.monument);
+			list5.AddRange (list4.Where ((PathNode x) => x.monument == node.monument));
+			list4.RemoveAll ((PathNode x) => x.monument == node.monument);
 			list5.Remove (node);
 			list3.Add (node);
 			PathNode pathNode2 = list5.Find ((PathNode x) => x.node.point == segment.start.point || x.node.point == segment.end.point);
@@ -232,19 +219,19 @@ public class GenerateRoadLayout : ProceduralComponent
 			for (PathFinder.Node node10 = item.start; node10 != null; node10 = node10.next) {
 				float normX = ((float)node10.point.x + 0.5f) / (float)length;
 				float normZ = ((float)node10.point.y + 0.5f) / (float)length;
-				if (item.start == node10 && (Object)(object)item.origin != (Object)null) {
+				if (item.start == node10 && item.origin != null) {
 					start2 = true;
-					normX = TerrainMeta.NormalizeX (((Component)item.origin).transform.position.x);
-					normZ = TerrainMeta.NormalizeZ (((Component)item.origin).transform.position.z);
-				} else if (item.end == node10 && (Object)(object)item.target != (Object)null) {
+					normX = TerrainMeta.NormalizeX (item.origin.transform.position.x);
+					normZ = TerrainMeta.NormalizeZ (item.origin.transform.position.z);
+				} else if (item.end == node10 && item.target != null) {
 					end = true;
-					normX = TerrainMeta.NormalizeX (((Component)item.target).transform.position.x);
-					normZ = TerrainMeta.NormalizeZ (((Component)item.target).transform.position.z);
+					normX = TerrainMeta.NormalizeX (item.target.transform.position.x);
+					normZ = TerrainMeta.NormalizeZ (item.target.transform.position.z);
 				}
-				float num3 = TerrainMeta.DenormalizeX (normX);
-				float num4 = TerrainMeta.DenormalizeZ (normZ);
-				float num5 = Mathf.Max (TerrainMeta.HeightMap.GetHeight (normX, normZ), 1f);
-				list9.Add (new Vector3 (num3, num5, num4));
+				float x2 = TerrainMeta.DenormalizeX (normX);
+				float z = TerrainMeta.DenormalizeZ (normZ);
+				float y = Mathf.Max (TerrainMeta.HeightMap.GetHeight (normX, normZ), 1f);
+				list9.Add (new Vector3 (x2, y, z));
 			}
 			if (list9.Count != 0) {
 				if (list9.Count >= 2) {

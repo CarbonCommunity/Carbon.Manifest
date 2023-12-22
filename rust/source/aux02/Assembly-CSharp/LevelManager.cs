@@ -37,7 +37,7 @@ public static class LevelManager
 		}
 		CurrentLevelName = strName;
 		Net.sv.Reset ();
-		SceneManager.LoadScene (strName, (LoadSceneMode)0);
+		SceneManager.LoadScene (strName, LoadSceneMode.Single);
 	}
 
 	public static IEnumerator LoadLevelAsync (string strName, bool keepLoadingScreenOpen = true)
@@ -48,7 +48,7 @@ public static class LevelManager
 		CurrentLevelName = strName;
 		Net.sv.Reset ();
 		yield return null;
-		yield return SceneManager.LoadSceneAsync (strName, (LoadSceneMode)0);
+		yield return SceneManager.LoadSceneAsync (strName, LoadSceneMode.Single);
 		yield return null;
 		yield return null;
 	}

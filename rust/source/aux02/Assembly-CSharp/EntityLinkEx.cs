@@ -6,9 +6,9 @@ public static class EntityLinkEx
 	public static void FreeLinks (this List<EntityLink> links)
 	{
 		for (int i = 0; i < links.Count; i++) {
-			EntityLink entityLink = links [i];
-			entityLink.Clear ();
-			Pool.Free<EntityLink> (ref entityLink);
+			EntityLink obj = links [i];
+			obj.Clear ();
+			Pool.Free (ref obj);
 		}
 		links.Clear ();
 	}

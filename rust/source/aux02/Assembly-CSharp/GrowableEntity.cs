@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -15,7 +16,7 @@ public class GrowableEntity : BaseCombatEntity, IInstanceDataReceiver
 	{
 		protected override void RunJob (GrowableEntity entity)
 		{
-			if (((ObjectWorkQueue<GrowableEntity>)this).ShouldAdd (entity)) {
+			if (ShouldAdd (entity)) {
 				entity.CalculateQualities_Water ();
 			}
 		}
@@ -120,328 +121,252 @@ public class GrowableEntity : BaseCombatEntity, IInstanceDataReceiver
 
 	public float CurrentTemperature {
 		get {
-			//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-			if ((Object)(object)GetPlanter () != (Object)null) {
+			if (GetPlanter () != null) {
 				return GetPlanter ().GetPlantTemperature ();
 			}
-			return Climate.GetTemperature (((Component)this).transform.position) + (artificialTemperatureExposure?.Get (force: false) ?? 0f);
+			return Climate.GetTemperature (base.transform.position) + (artificialTemperatureExposure?.Get (force: false) ?? 0f);
 		}
 	}
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("GrowableEntity.OnRpcMessage", 0);
-		try {
-			if (rpc == 759768385 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("GrowableEntity.OnRpcMessage")) {
+			if (rpc == 759768385 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - RPC_EatFruit "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - RPC_EatFruit ");
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_EatFruit", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_EatFruit")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (759768385u, "RPC_EatFruit", this, player, 3f)) {
 							return true;
 						}
 						if (!RPC_Server.MaxDistance.Test (759768385u, "RPC_EatFruit", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							RPC_EatFruit (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_EatFruit");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 598660365 && (Object)(object)player != (Object)null) {
+			if (rpc == 598660365 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - RPC_PickFruit "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - RPC_PickFruit ");
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_PickFruit", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_PickFruit")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (598660365u, "RPC_PickFruit", this, player, 3f)) {
 							return true;
 						}
 						if (!RPC_Server.MaxDistance.Test (598660365u, "RPC_PickFruit", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg3 = rPCMessage;
 							RPC_PickFruit (msg3);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in RPC_PickFruit");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 3465633431u && (Object)(object)player != (Object)null) {
+			if (rpc == 3465633431u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - RPC_PickFruitAll "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - RPC_PickFruitAll ");
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_PickFruitAll", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_PickFruitAll")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (3465633431u, "RPC_PickFruitAll", this, player, 3f)) {
 							return true;
 						}
 						if (!RPC_Server.MaxDistance.Test (3465633431u, "RPC_PickFruitAll", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg4 = rPCMessage;
 							RPC_PickFruitAll (msg4);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex3) {
-						Debug.LogException (ex3);
+					} catch (Exception exception3) {
+						Debug.LogException (exception3);
 						player.Kick ("RPC Error in RPC_PickFruitAll");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 1959480148 && (Object)(object)player != (Object)null) {
+			if (rpc == 1959480148 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - RPC_RemoveDying "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - RPC_RemoveDying ");
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_RemoveDying", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_RemoveDying")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (1959480148u, "RPC_RemoveDying", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg5 = rPCMessage;
 							RPC_RemoveDying (msg5);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex4) {
-						Debug.LogException (ex4);
+					} catch (Exception exception4) {
+						Debug.LogException (exception4);
 						player.Kick ("RPC Error in RPC_RemoveDying");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 1771718099 && (Object)(object)player != (Object)null) {
+			if (rpc == 1771718099 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - RPC_RemoveDyingAll "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - RPC_RemoveDyingAll ");
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_RemoveDyingAll", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_RemoveDyingAll")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (1771718099u, "RPC_RemoveDyingAll", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg6 = rPCMessage;
 							RPC_RemoveDyingAll (msg6);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex5) {
-						Debug.LogException (ex5);
+					} catch (Exception exception5) {
+						Debug.LogException (exception5);
 						player.Kick ("RPC Error in RPC_RemoveDyingAll");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 232075937 && (Object)(object)player != (Object)null) {
+			if (rpc == 232075937 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - RPC_RequestQualityUpdate "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - RPC_RequestQualityUpdate ");
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_RequestQualityUpdate", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_RequestQualityUpdate")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (232075937u, "RPC_RequestQualityUpdate", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg7 = rPCMessage;
 							RPC_RequestQualityUpdate (msg7);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex6) {
-						Debug.LogException (ex6);
+					} catch (Exception exception6) {
+						Debug.LogException (exception6);
 						player.Kick ("RPC Error in RPC_RequestQualityUpdate");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 2222960834u && (Object)(object)player != (Object)null) {
+			if (rpc == 2222960834u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - RPC_TakeClone "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - RPC_TakeClone ");
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_TakeClone", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_TakeClone")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (2222960834u, "RPC_TakeClone", this, player, 3f)) {
 							return true;
 						}
 						if (!RPC_Server.MaxDistance.Test (2222960834u, "RPC_TakeClone", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg8 = rPCMessage;
 							RPC_TakeClone (msg8);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex7) {
-						Debug.LogException (ex7);
+					} catch (Exception exception7) {
+						Debug.LogException (exception7);
 						player.Kick ("RPC Error in RPC_TakeClone");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 95639240 && (Object)(object)player != (Object)null) {
+			if (rpc == 95639240 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - RPC_TakeCloneAll "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - RPC_TakeCloneAll ");
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_TakeCloneAll", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_TakeCloneAll")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (95639240u, "RPC_TakeCloneAll", this, player, 3f)) {
 							return true;
 						}
 						if (!RPC_Server.MaxDistance.Test (95639240u, "RPC_TakeCloneAll", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg9 = rPCMessage;
 							RPC_TakeCloneAll (msg9);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex8) {
-						Debug.LogException (ex8);
+					} catch (Exception exception8) {
+						Debug.LogException (exception8);
 						player.Kick ("RPC Error in RPC_TakeCloneAll");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
 
-	public void ReceiveInstanceData (InstanceData data)
+	public void ReceiveInstanceData (ProtoBuf.Item.InstanceData data)
 	{
 		GrowableGeneEncoding.DecodeIntToGenes (data.dataInt, Genes);
 		GrowableGeneEncoding.DecodeIntToPreviousGenes (data.dataInt, Genes);
@@ -461,7 +386,7 @@ public class GrowableEntity : BaseCombatEntity, IInstanceDataReceiver
 	public bool CanTakeSeeds ()
 	{
 		if (currentStage.resources > 0f) {
-			return (Object)(object)Properties.SeedItem != (Object)null;
+			return Properties.SeedItem != null;
 		}
 		return false;
 	}
@@ -469,7 +394,7 @@ public class GrowableEntity : BaseCombatEntity, IInstanceDataReceiver
 	public bool CanClone ()
 	{
 		if (currentStage.resources > 0f) {
-			return (Object)(object)Properties.CloneItem != (Object)null;
+			return Properties.CloneItem != null;
 		}
 		return false;
 	}
@@ -477,7 +402,7 @@ public class GrowableEntity : BaseCombatEntity, IInstanceDataReceiver
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.growableEntity = Pool.Get<GrowableEntity> ();
+		info.msg.growableEntity = Facepunch.Pool.Get<ProtoBuf.GrowableEntity> ();
 		info.msg.growableEntity.state = (int)State;
 		info.msg.growableEntity.totalAge = Age;
 		info.msg.growableEntity.stageAge = stageAge;
@@ -515,8 +440,6 @@ public class GrowableEntity : BaseCombatEntity, IInstanceDataReceiver
 
 	private void ChangeState (PlantProperties.State state, bool resetAge, bool loading = false)
 	{
-		//IL_0073: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0078: Unknown result type (might be due to invalid IL or missing references)
 		if (base.isServer && State == state) {
 			return;
 		}
@@ -530,7 +453,7 @@ public class GrowableEntity : BaseCombatEntity, IInstanceDataReceiver
 			}
 			if (state == PlantProperties.State.Crossbreed) {
 				if (Properties.CrossBreedEffect.isValid) {
-					Effect.server.Run (Properties.CrossBreedEffect.resourcePath, ((Component)this).transform.position, Vector3.up);
+					Effect.server.Run (Properties.CrossBreedEffect.resourcePath, base.transform.position, Vector3.up);
 				}
 				GrowableGenetics.CrossBreed (this);
 			}
@@ -544,14 +467,14 @@ public class GrowableEntity : BaseCombatEntity, IInstanceDataReceiver
 	public override void OnDeployed (BaseEntity parent, BasePlayer deployedBy, Item fromItem)
 	{
 		base.OnDeployed (parent, deployedBy, fromItem);
-		if ((Object)(object)parent != (Object)null && parent is PlanterBox planterBox) {
+		if (parent != null && parent is PlanterBox planterBox) {
 			planterBox.OnPlantInserted (this, deployedBy);
 		}
 	}
 
 	public void QueueForQualityUpdate ()
 	{
-		((ObjectWorkQueue<GrowableEntity>)growableEntityUpdateQueue).Add (this);
+		growableEntityUpdateQueue.Add (this);
 	}
 
 	public void CalculateQualities (bool firstTime, bool forceArtificialLightUpdates = false, bool forceArtificialTemperatureUpdates = false)
@@ -616,7 +539,7 @@ public class GrowableEntity : BaseCombatEntity, IInstanceDataReceiver
 		if (TOD_Sky.Instance.IsNight) {
 			return 0f;
 		}
-		if ((Object)(object)GetPlanter () != (Object)null) {
+		if (GetPlanter () != null) {
 			return GetPlanter ().GetSunExposure ();
 		}
 		return sunExposure?.Get (force) ?? 0f;
@@ -624,15 +547,12 @@ public class GrowableEntity : BaseCombatEntity, IInstanceDataReceiver
 
 	private float SunRaycast ()
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		return SunRaycast (((Component)this).transform.position + new Vector3 (0f, 1f, 0f));
+		return SunRaycast (base.transform.position + new Vector3 (0f, 1f, 0f));
 	}
 
 	private float GetArtificialLightExposure (bool force)
 	{
-		if ((Object)(object)GetPlanter () != (Object)null) {
+		if (GetPlanter () != null) {
 			return GetPlanter ().GetArtificialLightExposure ();
 		}
 		return artificialLightExposure?.Get (force) ?? 0f;
@@ -640,41 +560,28 @@ public class GrowableEntity : BaseCombatEntity, IInstanceDataReceiver
 
 	private float CalculateArtificialLightExposure ()
 	{
-		return CalculateArtificialLightExposure (((Component)this).transform);
+		return CalculateArtificialLightExposure (base.transform);
 	}
 
 	public static float CalculateArtificialLightExposure (Transform forTransform)
 	{
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
 		float result = 0f;
-		List<CeilingLight> list = Pool.GetList<CeilingLight> ();
-		Vis.Entities (forTransform.position + new Vector3 (0f, ConVar.Server.ceilingLightHeightOffset, 0f), ConVar.Server.ceilingLightGrowableRange, list, 256, (QueryTriggerInteraction)2);
-		foreach (CeilingLight item in list) {
+		List<CeilingLight> obj = Facepunch.Pool.GetList<CeilingLight> ();
+		Vis.Entities (forTransform.position + new Vector3 (0f, ConVar.Server.ceilingLightHeightOffset, 0f), ConVar.Server.ceilingLightGrowableRange, obj, 256);
+		foreach (CeilingLight item in obj) {
 			if (item.IsOn ()) {
 				result = 1f;
 				break;
 			}
 		}
-		Pool.FreeList<CeilingLight> (ref list);
+		Facepunch.Pool.FreeList (ref obj);
 		return result;
 	}
 
 	public static float SunRaycast (Vector3 checkPosition)
 	{
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 val = TOD_Sky.Instance.Components.Sun.transform.position - checkPosition;
-		Vector3 normalized = ((Vector3)(ref val)).normalized;
-		RaycastHit val2 = default(RaycastHit);
-		if (!Physics.Raycast (checkPosition, normalized, ref val2, 100f, 10551297)) {
+		Vector3 normalized = (TOD_Sky.Instance.Components.Sun.transform.position - checkPosition).normalized;
+		if (!UnityEngine.Physics.Raycast (checkPosition, normalized, out var _, 100f, 10551297)) {
 			return 1f;
 		}
 		return 0f;
@@ -682,16 +589,7 @@ public class GrowableEntity : BaseCombatEntity, IInstanceDataReceiver
 
 	public void CalculateWaterQuality ()
 	{
-		//IL_0071: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0081: Invalid comparison between Unknown and I4
-		//IL_0083: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0085: Invalid comparison between Unknown and I4
-		//IL_0087: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0089: Invalid comparison between Unknown and I4
-		if ((Object)(object)GetPlanter () != (Object)null) {
+		if (GetPlanter () != null) {
 			float soilSaturationFraction = planter.soilSaturationFraction;
 			if (soilSaturationFraction > ConVar.Server.optimalPlanterQualitySaturation) {
 				WaterQuality = RemapValue (soilSaturationFraction, ConVar.Server.optimalPlanterQualitySaturation, 1f, 1f, 0.6f);
@@ -699,15 +597,18 @@ public class GrowableEntity : BaseCombatEntity, IInstanceDataReceiver
 				WaterQuality = RemapValue (soilSaturationFraction, 0f, ConVar.Server.optimalPlanterQualitySaturation, 0f, 1f);
 			}
 		} else {
-			Enum val = (Enum)TerrainMeta.BiomeMap.GetBiomeMaxType (((Component)this).transform.position);
-			if (val - 1 > 1 && (int)val != 4) {
-				if ((int)val == 8) {
-					WaterQuality = 0.1f;
-				} else {
-					WaterQuality = 0f;
-				}
-			} else {
+			switch ((TerrainBiome.Enum)TerrainMeta.BiomeMap.GetBiomeMaxType (base.transform.position)) {
+			case TerrainBiome.Enum.Arctic:
+				WaterQuality = 0.1f;
+				break;
+			case TerrainBiome.Enum.Arid:
+			case TerrainBiome.Enum.Temperate:
+			case TerrainBiome.Enum.Tundra:
 				WaterQuality = 0.3f;
+				break;
+			default:
+				WaterQuality = 0f;
+				break;
 			}
 		}
 		WaterQuality = Mathf.Clamp01 (WaterQuality);
@@ -716,16 +617,12 @@ public class GrowableEntity : BaseCombatEntity, IInstanceDataReceiver
 
 	public void CalculateGroundQuality (bool firstCheck)
 	{
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
 		if (underWater && !firstCheck) {
 			GroundQuality = 0f;
 			return;
 		}
 		if (firstCheck) {
-			Vector3 position = ((Component)this).transform.position;
+			Vector3 position = base.transform.position;
 			if (WaterLevel.Test (position, waves: true, volumes: true, this)) {
 				underWater = true;
 				GroundQuality = 0f;
@@ -734,69 +631,31 @@ public class GrowableEntity : BaseCombatEntity, IInstanceDataReceiver
 			underWater = false;
 			terrainTypeValue = GetGroundTypeValue (position);
 		}
-		if ((Object)(object)GetPlanter () != (Object)null) {
+		if (GetPlanter () != null) {
 			GroundQuality = 0.6f;
 			GroundQuality += (Fertilized ? 0.4f : 0f);
 		} else {
 			GroundQuality = terrainTypeValue;
 			float num = (float)Genes.GetGeneTypeCount (GrowableGenetics.GeneType.Hardiness) * 0.2f;
-			float num2 = GroundQuality + num;
-			GroundQuality = Mathf.Min (0.6f, num2);
+			float b = GroundQuality + num;
+			GroundQuality = Mathf.Min (0.6f, b);
 		}
 		GroundQuality = RemapValue (GroundQuality, 0f, Properties.OptimalGroundQuality, 0f, 1f);
 	}
 
 	private float GetGroundTypeValue (Vector3 pos)
 	{
-		//IL_0005: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0010: Invalid comparison between Unknown and I4
-		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0038: Invalid comparison between Unknown and I4
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Expected I4, but got Unknown
-		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003d: Invalid comparison between Unknown and I4
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Invalid comparison between Unknown and I4
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0045: Invalid comparison between Unknown and I4
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0031: Invalid comparison between Unknown and I4
-		Enum val = (Enum)TerrainMeta.SplatMap.GetSplatMaxType (pos);
-		if ((int)val <= 16) {
-			switch (val - 1) {
-			default:
-				if ((int)val != 8) {
-					if ((int)val != 16) {
-						break;
-					}
-					return 0.3f;
-				}
-				return 0f;
-			case 1:
-				return 0f;
-			case 0:
-				return 0.3f;
-			case 3:
-				return 0f;
-			case 2:
-				break;
-			}
-		} else {
-			if ((int)val == 32) {
-				return 0.2f;
-			}
-			if ((int)val == 64) {
-				return 0f;
-			}
-			if ((int)val == 128) {
-				return 0f;
-			}
-		}
-		return 0.5f;
+		return (TerrainSplat.Enum)TerrainMeta.SplatMap.GetSplatMaxType (pos) switch {
+			TerrainSplat.Enum.Grass => 0.3f, 
+			TerrainSplat.Enum.Snow => 0f, 
+			TerrainSplat.Enum.Rock => 0f, 
+			TerrainSplat.Enum.Stones => 0f, 
+			TerrainSplat.Enum.Dirt => 0.3f, 
+			TerrainSplat.Enum.Forest => 0.2f, 
+			TerrainSplat.Enum.Sand => 0f, 
+			TerrainSplat.Enum.Gravel => 0f, 
+			_ => 0.5f, 
+		};
 	}
 
 	private void CalculateTemperatureQuality ()
@@ -809,16 +668,16 @@ public class GrowableEntity : BaseCombatEntity, IInstanceDataReceiver
 
 	public float CalculateOverallQuality ()
 	{
-		float num = 1f;
+		float a = 1f;
 		if (ConVar.Server.useMinimumPlantCondition) {
-			num = Mathf.Min (num, LightQuality);
-			num = Mathf.Min (num, WaterQuality);
-			num = Mathf.Min (num, GroundQuality);
-			num = Mathf.Min (num, TemperatureQuality);
+			a = Mathf.Min (a, LightQuality);
+			a = Mathf.Min (a, WaterQuality);
+			a = Mathf.Min (a, GroundQuality);
+			a = Mathf.Min (a, TemperatureQuality);
 		} else {
-			num = LightQuality * WaterQuality * GroundQuality * TemperatureQuality;
+			a = LightQuality * WaterQuality * GroundQuality * TemperatureQuality;
 		}
-		OverallQuality = num;
+		OverallQuality = a;
 		return OverallQuality;
 	}
 
@@ -831,23 +690,19 @@ public class GrowableEntity : BaseCombatEntity, IInstanceDataReceiver
 
 	private float CalculateArtificialTemperature ()
 	{
-		return CalculateArtificialTemperature (((Component)this).transform);
+		return CalculateArtificialTemperature (base.transform);
 	}
 
 	public static float CalculateArtificialTemperature (Transform forTransform)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
 		Vector3 position = forTransform.position;
-		List<GrowableHeatSource> list = Pool.GetList<GrowableHeatSource> ();
-		Vis.Components<GrowableHeatSource> (position, ConVar.Server.artificialTemperatureGrowableRange, list, 256, (QueryTriggerInteraction)2);
+		List<GrowableHeatSource> obj = Facepunch.Pool.GetList<GrowableHeatSource> ();
+		Vis.Components (position, ConVar.Server.artificialTemperatureGrowableRange, obj, 256);
 		float num = 0f;
-		foreach (GrowableHeatSource item in list) {
+		foreach (GrowableHeatSource item in obj) {
 			num = Mathf.Max (item.ApplyHeat (position), num);
 		}
-		Pool.FreeList<GrowableHeatSource> (ref list);
+		Facepunch.Pool.FreeList (ref obj);
 		return num;
 	}
 
@@ -866,14 +721,14 @@ public class GrowableEntity : BaseCombatEntity, IInstanceDataReceiver
 		if (inValue >= maxA) {
 			return maxB;
 		}
-		float num = Mathf.InverseLerp (minA, maxA, inValue);
-		return Mathf.Lerp (minB, maxB, num);
+		float t = Mathf.InverseLerp (minA, maxA, inValue);
+		return Mathf.Lerp (minB, maxB, t);
 	}
 
 	public bool IsFood ()
 	{
 		if (Properties.pickupItem.category == ItemCategory.Food) {
-			return (Object)(object)((Component)Properties.pickupItem).GetComponent<ItemModConsume> () != (Object)null;
+			return Properties.pickupItem.GetComponent<ItemModConsume> () != null;
 		}
 		return false;
 	}
@@ -881,20 +736,20 @@ public class GrowableEntity : BaseCombatEntity, IInstanceDataReceiver
 	public override void ServerInit ()
 	{
 		base.ServerInit ();
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)RunUpdate, ThinkDeltaTime, ThinkDeltaTime, ThinkDeltaTime * 0.1f);
+		InvokeRandomized (RunUpdate, ThinkDeltaTime, ThinkDeltaTime, ThinkDeltaTime * 0.1f);
 		base.health = 10f;
 		ResetSeason ();
 		Genes.GenerateRandom (this);
-		if (!Application.isLoadingSave) {
+		if (!Rust.Application.isLoadingSave) {
 			CalculateQualities (firstTime: true);
 		}
 	}
 
 	public PlanterBox GetPlanter ()
 	{
-		if ((Object)(object)planter == (Object)null) {
+		if (planter == null) {
 			BaseEntity baseEntity = GetParentEntity ();
-			if ((Object)(object)baseEntity != (Object)null) {
+			if (baseEntity != null) {
 				planter = baseEntity as PlanterBox;
 			}
 		}
@@ -905,7 +760,7 @@ public class GrowableEntity : BaseCombatEntity, IInstanceDataReceiver
 	{
 		base.OnParentChanging (oldParent, newParent);
 		planter = newParent as PlanterBox;
-		if (!Application.isLoadingSave && (Object)(object)planter != (Object)null) {
+		if (!Rust.Application.isLoadingSave && planter != null) {
 			planter.FertilizeGrowables ();
 		}
 		CalculateQualities (firstTime: true);
@@ -951,7 +806,7 @@ public class GrowableEntity : BaseCombatEntity, IInstanceDataReceiver
 
 	private void UpdateHealthAndYield (float overallQuality, float actualStageAgeIncrease)
 	{
-		if ((Object)(object)GetPlanter () == (Object)null && Random.Range (0f, 1f) <= ConVar.Server.nonPlanterDeathChancePerTick) {
+		if (GetPlanter () == null && UnityEngine.Random.Range (0f, 1f) <= ConVar.Server.nonPlanterDeathChancePerTick) {
 			base.health = 0f;
 			return;
 		}
@@ -1017,8 +872,8 @@ public class GrowableEntity : BaseCombatEntity, IInstanceDataReceiver
 
 	private void ConsumeWater ()
 	{
-		if (State != PlantProperties.State.Dying && !((Object)(object)GetPlanter () == (Object)null)) {
-			int num = Mathf.CeilToInt (Mathf.Min ((float)planter.soilSaturation, WaterConsumption));
+		if (State != PlantProperties.State.Dying && !(GetPlanter () == null)) {
+			int num = Mathf.CeilToInt (Mathf.Min (planter.soilSaturation, WaterConsumption));
 			if ((float)num > 0f) {
 				planter.ConsumeWater (num, this);
 			}
@@ -1047,26 +902,24 @@ public class GrowableEntity : BaseCombatEntity, IInstanceDataReceiver
 	[RPC_Server.IsVisible (3f)]
 	public void RPC_TakeCloneAll (RPCMessage msg)
 	{
-		if ((Object)(object)GetParentEntity () != (Object)null) {
-			List<GrowableEntity> list = Pool.GetList<GrowableEntity> ();
+		if (GetParentEntity () != null) {
+			List<GrowableEntity> obj = Facepunch.Pool.GetList<GrowableEntity> ();
 			foreach (BaseEntity child in GetParentEntity ().children) {
-				if ((Object)(object)child != (Object)(object)this && child is GrowableEntity item) {
-					list.Add (item);
+				if (child != this && child is GrowableEntity item) {
+					obj.Add (item);
 				}
 			}
-			foreach (GrowableEntity item2 in list) {
+			foreach (GrowableEntity item2 in obj) {
 				item2.TakeClones (msg.player);
 			}
-			Pool.FreeList<GrowableEntity> (ref list);
+			Facepunch.Pool.FreeList (ref obj);
 		}
 		TakeClones (msg.player);
 	}
 
 	private void TakeClones (BasePlayer player)
 	{
-		//IL_0097: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009c: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)player == (Object)null || !CanClone ()) {
+		if (player == null || !CanClone ()) {
 			return;
 		}
 		int num = Properties.BaseCloneCount + Genes.GetGeneTypeCount (GrowableGenetics.GeneType.Yield) / 2;
@@ -1076,7 +929,7 @@ public class GrowableEntity : BaseCombatEntity, IInstanceDataReceiver
 			Analytics.Azure.OnGatherItem (item.info.shortname, item.amount, this, player);
 			player.GiveItem (item, GiveItemReason.ResourceHarvested);
 			if (Properties.pickEffect.isValid) {
-				Effect.server.Run (Properties.pickEffect.resourcePath, ((Component)this).transform.position, Vector3.up);
+				Effect.server.Run (Properties.pickEffect.resourcePath, base.transform.position, Vector3.up);
 			}
 			Die ();
 		}
@@ -1084,9 +937,6 @@ public class GrowableEntity : BaseCombatEntity, IInstanceDataReceiver
 
 	public void PickFruit (BasePlayer player, bool eat = false)
 	{
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0084: Unknown result type (might be due to invalid IL or missing references)
 		if (!CanPick ()) {
 			return;
 		}
@@ -1094,11 +944,11 @@ public class GrowableEntity : BaseCombatEntity, IInstanceDataReceiver
 		GiveFruit (player, CurrentPickAmount, eat);
 		RandomItemDispenser randomItemDispenser = PrefabAttribute.server.Find<RandomItemDispenser> (prefabID);
 		if (randomItemDispenser != null) {
-			randomItemDispenser.DistributeItems (player, ((Component)this).transform.position);
+			randomItemDispenser.DistributeItems (player, base.transform.position);
 		}
 		ResetSeason ();
 		if (Properties.pickEffect.isValid) {
-			Effect.server.Run (Properties.pickEffect.resourcePath, ((Component)this).transform.position, Vector3.up);
+			Effect.server.Run (Properties.pickEffect.resourcePath, base.transform.position, Vector3.up);
 		}
 		if (harvests >= Properties.maxHarvests) {
 			if (Properties.disappearAfterHarvest) {
@@ -1116,44 +966,34 @@ public class GrowableEntity : BaseCombatEntity, IInstanceDataReceiver
 		if (amount <= 0) {
 			return;
 		}
-		bool enabled = Properties.pickupItem.condition.enabled;
-		if (enabled) {
+		bool flag = Properties.pickupItem.condition.enabled;
+		if (flag) {
 			for (int i = 0; i < amount; i++) {
-				GiveFruit (player, 1, enabled, eat);
+				GiveFruit (player, 1, flag, eat);
 			}
 		} else {
-			GiveFruit (player, amount, enabled, eat);
+			GiveFruit (player, amount, flag, eat);
 		}
 	}
 
 	private void GiveFruit (BasePlayer player, int amount, bool applyCondition, bool eat)
 	{
-		//IL_0098: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ac: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d1: Unknown result type (might be due to invalid IL or missing references)
 		Item item = ItemManager.Create (Properties.pickupItem, amount, 0uL);
 		if (applyCondition) {
 			item.conditionNormalized = Properties.fruitVisualScaleCurve.Evaluate (StageProgressFraction);
 		}
-		if (eat && (Object)(object)player != (Object)null && IsFood ()) {
-			ItemModConsume component = ((Component)item.info).GetComponent<ItemModConsume> ();
-			if ((Object)(object)component != (Object)null) {
+		if (eat && player != null && IsFood ()) {
+			ItemModConsume component = item.info.GetComponent<ItemModConsume> ();
+			if (component != null) {
 				component.DoAction (item, player);
 				return;
 			}
 		}
-		if ((Object)(object)player != (Object)null) {
+		if (player != null) {
 			Analytics.Azure.OnGatherItem (item.info.shortname, item.amount, this, player);
 			player.GiveItem (item, GiveItemReason.ResourceHarvested);
 		} else {
-			item.Drop (((Component)this).transform.position + Vector3.up * 0.5f, Vector3.up * 1f);
+			item.Drop (base.transform.position + Vector3.up * 0.5f, Vector3.up * 1f);
 		}
 	}
 
@@ -1178,17 +1018,17 @@ public class GrowableEntity : BaseCombatEntity, IInstanceDataReceiver
 	[RPC_Server.IsVisible (3f)]
 	public void RPC_PickFruitAll (RPCMessage msg)
 	{
-		if ((Object)(object)GetParentEntity () != (Object)null) {
-			List<GrowableEntity> list = Pool.GetList<GrowableEntity> ();
+		if (GetParentEntity () != null) {
+			List<GrowableEntity> obj = Facepunch.Pool.GetList<GrowableEntity> ();
 			foreach (BaseEntity child in GetParentEntity ().children) {
-				if ((Object)(object)child != (Object)(object)this && child is GrowableEntity item) {
-					list.Add (item);
+				if (child != this && child is GrowableEntity item) {
+					obj.Add (item);
 				}
 			}
-			foreach (GrowableEntity item2 in list) {
+			foreach (GrowableEntity item2 in obj) {
 				item2.PickFruit (msg.player);
 			}
-			Pool.FreeList<GrowableEntity> (ref list);
+			Facepunch.Pool.FreeList (ref obj);
 		}
 		PickFruit (msg.player);
 	}
@@ -1204,80 +1044,67 @@ public class GrowableEntity : BaseCombatEntity, IInstanceDataReceiver
 	[RPC_Server.MaxDistance (3f)]
 	public void RPC_RemoveDyingAll (RPCMessage msg)
 	{
-		if ((Object)(object)GetParentEntity () != (Object)null) {
-			List<GrowableEntity> list = Pool.GetList<GrowableEntity> ();
+		if (GetParentEntity () != null) {
+			List<GrowableEntity> obj = Facepunch.Pool.GetList<GrowableEntity> ();
 			foreach (BaseEntity child in GetParentEntity ().children) {
-				if ((Object)(object)child != (Object)(object)this && child is GrowableEntity item) {
-					list.Add (item);
+				if (child != this && child is GrowableEntity item) {
+					obj.Add (item);
 				}
 			}
-			foreach (GrowableEntity item2 in list) {
+			foreach (GrowableEntity item2 in obj) {
 				item2.RemoveDying (msg.player);
 			}
-			Pool.FreeList<GrowableEntity> (ref list);
+			Facepunch.Pool.FreeList (ref obj);
 		}
 		RemoveDying (msg.player);
 	}
 
 	public void RemoveDying (BasePlayer receiver)
 	{
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0085: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0094: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0099: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00af: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00be: Unknown result type (might be due to invalid IL or missing references)
-		if (State == PlantProperties.State.Dying && !((Object)(object)Properties.removeDyingItem == (Object)null)) {
+		if (State == PlantProperties.State.Dying && !(Properties.removeDyingItem == null)) {
 			if (Properties.removeDyingEffect.isValid) {
-				Effect.server.Run (Properties.removeDyingEffect.resourcePath, ((Component)this).transform.position, Vector3.up);
+				Effect.server.Run (Properties.removeDyingEffect.resourcePath, base.transform.position, Vector3.up);
 			}
 			Item item = ItemManager.Create (Properties.removeDyingItem, 1, 0uL);
-			if ((Object)(object)receiver != (Object)null) {
+			if (receiver != null) {
 				receiver.GiveItem (item, GiveItemReason.PickedUp);
 			} else {
-				item.Drop (((Component)this).transform.position + Vector3.up * 0.5f, Vector3.up * 1f);
+				item.Drop (base.transform.position + Vector3.up * 0.5f, Vector3.up * 1f);
 			}
 			Die ();
 		}
 	}
 
 	[ServerVar (ServerAdmin = true)]
-	public static void GrowAll (Arg arg)
+	public static void GrowAll (ConsoleSystem.Arg arg)
 	{
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer basePlayer = arg.Player ();
 		if (!basePlayer.IsAdmin) {
 			return;
 		}
-		List<GrowableEntity> list = Pool.GetList<GrowableEntity> ();
-		Vis.Entities (basePlayer.ServerPosition, 6f, list, -1, (QueryTriggerInteraction)2);
-		foreach (GrowableEntity item in list) {
+		List<GrowableEntity> obj = Facepunch.Pool.GetList<GrowableEntity> ();
+		Vis.Entities (basePlayer.ServerPosition, 6f, obj);
+		foreach (GrowableEntity item in obj) {
 			if (item.isServer) {
 				item.ChangeState (item.currentStage.nextState, resetAge: false);
 			}
 		}
-		Pool.FreeList<GrowableEntity> (ref list);
+		Facepunch.Pool.FreeList (ref obj);
 	}
 
 	[RPC_Server]
 	[RPC_Server.MaxDistance (3f)]
 	private void RPC_RequestQualityUpdate (RPCMessage msg)
 	{
-		if ((Object)(object)msg.player != (Object)null) {
-			GrowableEntity val = Pool.Get<GrowableEntity> ();
-			val.lightModifier = LightQuality;
-			val.groundModifier = GroundQuality;
-			val.waterModifier = WaterQuality;
-			val.happiness = OverallQuality;
-			val.temperatureModifier = TemperatureQuality;
-			val.waterConsumption = WaterConsumption;
-			ClientRPCPlayer<GrowableEntity> (null, msg.player, "RPC_ReceiveQualityUpdate", val);
+		if (msg.player != null) {
+			ProtoBuf.GrowableEntity growableEntity = Facepunch.Pool.Get<ProtoBuf.GrowableEntity> ();
+			growableEntity.lightModifier = LightQuality;
+			growableEntity.groundModifier = GroundQuality;
+			growableEntity.waterModifier = WaterQuality;
+			growableEntity.happiness = OverallQuality;
+			growableEntity.temperatureModifier = TemperatureQuality;
+			growableEntity.waterConsumption = WaterConsumption;
+			ClientRPCPlayer (null, msg.player, "RPC_ReceiveQualityUpdate", growableEntity);
 		}
 	}
 }

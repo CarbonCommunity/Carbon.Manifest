@@ -6,15 +6,14 @@ public class BaseEntityRef : ResourceRef<BaseEntity>
 {
 	public override BaseEntity Get ()
 	{
-		if ((Object)(object)_cachedObject != (Object)null) {
+		if (_cachedObject != null) {
 			return _cachedObject;
 		}
-		Object obj = GameManifest.GUIDToObject (guid);
-		GameObject val = (GameObject)(object)((obj is GameObject) ? obj : null);
-		BaseEntity baseEntity = null;
-		if ((Object)(object)val != (Object)null && val.TryGetComponent<BaseEntity> (ref baseEntity)) {
-			_cachedObject = baseEntity;
+		GameObject gameObject = GameManifest.GUIDToObject (guid) as GameObject;
+		BaseEntity component = null;
+		if (gameObject != null && gameObject.TryGetComponent<BaseEntity> (out component)) {
+			_cachedObject = component;
 		}
-		return baseEntity;
+		return component;
 	}
 }

@@ -20,25 +20,25 @@ public class RealmedRemove : MonoBehaviour, IPrefabPreProcess
 		if (clientside) {
 			GameObject[] array = removedFromClient;
 			for (int i = 0; i < array.Length; i++) {
-				Object.DestroyImmediate ((Object)(object)array [i], true);
+				Object.DestroyImmediate (array [i], allowDestroyingAssets: true);
 			}
 			Component[] array2 = removedComponentFromClient;
 			for (int i = 0; i < array2.Length; i++) {
-				Object.DestroyImmediate ((Object)(object)array2 [i], true);
+				Object.DestroyImmediate (array2 [i], allowDestroyingAssets: true);
 			}
 		}
 		if (serverside) {
 			GameObject[] array = removedFromServer;
 			for (int i = 0; i < array.Length; i++) {
-				Object.DestroyImmediate ((Object)(object)array [i], true);
+				Object.DestroyImmediate (array [i], allowDestroyingAssets: true);
 			}
 			Component[] array2 = removedComponentFromServer;
 			for (int i = 0; i < array2.Length; i++) {
-				Object.DestroyImmediate ((Object)(object)array2 [i], true);
+				Object.DestroyImmediate (array2 [i], allowDestroyingAssets: true);
 			}
 		}
 		if (!bundling) {
-			process.RemoveComponent ((Component)(object)this);
+			process.RemoveComponent (this);
 		}
 	}
 

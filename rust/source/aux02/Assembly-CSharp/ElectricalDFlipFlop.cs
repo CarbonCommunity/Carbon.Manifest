@@ -82,10 +82,10 @@ public class ElectricalDFlipFlop : IOEntity
 	{
 		if (ShouldUpdateOutputs () && ensureOutputsUpdated) {
 			int num = Mathf.Max (0, currentEnergy - 1);
-			if ((Object)(object)outputs [0].connectedTo.Get () != (Object)null) {
+			if (outputs [0].connectedTo.Get () != null) {
 				outputs [0].connectedTo.Get ().UpdateFromInput (IsOn () ? num : 0, outputs [0].connectedToSlot);
 			}
-			if ((Object)(object)outputs [1].connectedTo.Get () != (Object)null) {
+			if (outputs [1].connectedTo.Get () != null) {
 				outputs [1].connectedTo.Get ().UpdateFromInput ((!IsOn ()) ? num : 0, outputs [1].connectedToSlot);
 			}
 		}

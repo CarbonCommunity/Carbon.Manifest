@@ -38,16 +38,14 @@ public class PrefabPool
 
 	public GameObject Pop (Vector3 pos = default(Vector3), Quaternion rot = default(Quaternion))
 	{
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
 		while (stack.Count > 0) {
 			Poolable poolable = stack.Pop ();
 			Popped++;
-			if (Object.op_Implicit ((Object)(object)poolable)) {
-				((Component)poolable).transform.position = pos;
-				((Component)poolable).transform.rotation = rot;
+			if ((bool)poolable) {
+				poolable.transform.position = pos;
+				poolable.transform.rotation = rot;
 				poolable.LeavePool ();
-				return ((Component)poolable).gameObject;
+				return poolable.gameObject;
 			}
 		}
 		Missed++;
@@ -57,8 +55,8 @@ public class PrefabPool
 	public void Clear ()
 	{
 		foreach (Poolable item in stack) {
-			if (Object.op_Implicit ((Object)(object)item)) {
-				Object.Destroy ((Object)(object)((Component)item).gameObject);
+			if ((bool)item) {
+				Object.Destroy (item.gameObject);
 			}
 		}
 		stack.Clear ();

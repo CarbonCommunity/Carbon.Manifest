@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public class CableTunnel : IOEntity
 {
 	private const int numChannels = 4;
@@ -28,7 +26,7 @@ public class CableTunnel : IOEntity
 		}
 		for (int i = 0; i < 4; i++) {
 			IOSlot iOSlot = outputs [i];
-			if ((Object)(object)iOSlot.connectedTo.Get () != (Object)null) {
+			if (iOSlot.connectedTo.Get () != null) {
 				iOSlot.connectedTo.Get ().UpdateFromInput (inputAmounts [i], iOSlot.connectedToSlot);
 			}
 		}

@@ -43,7 +43,7 @@ public class AIEvents
 	private void Add (BaseAIEvent aiEvent)
 	{
 		if (events.Contains (aiEvent)) {
-			Debug.LogWarning ((object)("Attempting to add duplicate AI event: " + aiEvent.EventType));
+			Debug.LogWarning ("Attempting to add duplicate AI event: " + aiEvent.EventType);
 			return;
 		}
 		aiEvent.Reset ();

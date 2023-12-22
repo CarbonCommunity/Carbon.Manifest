@@ -35,7 +35,7 @@ public class AttackHelicopterRockets : StorageContainer
 	[NonSerialized]
 	public AttackHelicopter owner;
 
-	private const AmmoTypes ammoType = 32;
+	private const AmmoTypes ammoType = AmmoTypes.ROCKET;
 
 	private TimeSince timeSinceRocketFired;
 
@@ -45,8 +45,7 @@ public class AttackHelicopterRockets : StorageContainer
 
 	public bool CanFireNow {
 		get {
-			//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-			if (!IsReloading && TimeSince.op_Implicit (timeSinceRocketFired) >= timeBetweenRockets) {
+			if (!IsReloading && (float)timeSinceRocketFired >= timeBetweenRockets) {
 				return GetAmmoAmount () > 0;
 			}
 			return false;
@@ -55,22 +54,18 @@ public class AttackHelicopterRockets : StorageContainer
 
 	public bool IsReloading {
 		get {
-			//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-			if (rocketsSinceReload >= rocketsPerReload && TimeSince.op_Implicit (timeSinceRocketFired) < reloadTime) {
+			if (rocketsSinceReload >= rocketsPerReload && (float)timeSinceRocketFired < reloadTime) {
 				return GetAmmoAmount () > 0;
 			}
 			return false;
 		}
 	}
 
-	private bool HasOwner => (Object)(object)owner != (Object)null;
+	private bool HasOwner => owner != null;
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("AttackHelicopterRockets.OnRpcMessage", 0);
-		try {
-		} finally {
-			((IDisposable)val)?.Dispose ();
+		using (TimeWarning.New ("AttackHelicopterRockets.OnRpcMessage")) {
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -78,37 +73,33 @@ public class AttackHelicopterRockets : StorageContainer
 	public int GetAmmoAmount ()
 	{
 		if (base.isServer) {
-			return base.inventory.GetAmmoAmount ((AmmoTypes)32);
+			return base.inventory.GetAmmoAmount (AmmoTypes.ROCKET);
 		}
 		return 0;
 	}
 
 	public int GetAmmoBeforeReload ()
 	{
-		int num = ((rocketsSinceReload >= rocketsPerReload) ? rocketsSinceReload : (rocketsPerReload - rocketsSinceReload));
-		return Mathf.Min (GetAmmoAmount (), num);
+		int b = ((rocketsSinceReload >= rocketsPerReload) ? rocketsSinceReload : (rocketsPerReload - rocketsSinceReload));
+		return Mathf.Min (GetAmmoAmount (), b);
 	}
 
 	public bool TryGetAmmoDef (out ItemDefinition ammoDef)
 	{
 		ammoDef = null;
 		if (base.isServer) {
-			List<Item> list = Pool.GetList<Item> ();
-			base.inventory.FindAmmo (list, (AmmoTypes)32);
-			if (list.Count > 0) {
-				ammoDef = list [list.Count - 1].info;
+			List<Item> obj = Pool.GetList<Item> ();
+			base.inventory.FindAmmo (obj, AmmoTypes.ROCKET);
+			if (obj.Count > 0) {
+				ammoDef = obj [obj.Count - 1].info;
 			}
-			Pool.FreeList<Item> (ref list);
+			Pool.FreeList (ref obj);
 		}
-		return (Object)(object)ammoDef != (Object)null;
+		return ammoDef != null;
 	}
 
 	public Vector3 MuzzleMidPoint ()
 	{
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
 		return (rocketMuzzlePositions [1].position + rocketMuzzlePositions [0].position) * 0.5f;
 	}
 
@@ -119,48 +110,25 @@ public class AttackHelicopterRockets : StorageContainer
 
 	public bool TryGetProjectedHitPos (out Vector3 result)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0079: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0085: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ee: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c0: Unknown result type (might be due to invalid IL or missing references)
 		result = Vector3.zero;
 		if (!TryGetAmmoDef (out var ammoDef)) {
 			return false;
 		}
-		ItemModProjectile component = ((Component)ammoDef).GetComponent<ItemModProjectile> ();
+		ItemModProjectile component = ammoDef.GetComponent<ItemModProjectile> ();
 		ServerProjectile component2 = component.projectileObject.Get ().GetComponent<ServerProjectile> ();
-		if ((Object)(object)component != (Object)null && (Object)(object)component2 != (Object)null) {
+		if (component != null && component2 != null) {
 			Vector3 origin = MuzzleMidPoint ();
-			Vector3 forward = ((Component)owner).transform.forward;
+			Vector3 forward = owner.transform.forward;
 			float minRocketSpeed = GetMinRocketSpeed ();
 			float gravity = Physics.gravity.y * component2.gravityModifier;
-			Vector3 val = component2.initialVelocity + forward * component2.speed;
+			Vector3 lhs = component2.initialVelocity + forward * component2.speed;
 			if (minRocketSpeed > 0f) {
-				float num = Vector3.Dot (val, forward) - minRocketSpeed;
+				float num = Vector3.Dot (lhs, forward) - minRocketSpeed;
 				if (num < 0f) {
-					val += forward * (0f - num);
+					lhs += forward * (0f - num);
 				}
 			}
-			result = Ballistics.GetPhysicsProjectileHitPos (origin, ((Vector3)(ref val)).normalized, ((Vector3)(ref val)).magnitude, gravity, 1.5f, 0.5f, 32f, owner);
+			result = Ballistics.GetPhysicsProjectileHitPos (origin, lhs.normalized, lhs.magnitude, gravity, 1.5f, 0.5f, 32f, owner);
 			return true;
 		}
 		return false;
@@ -216,12 +184,12 @@ public class AttackHelicopterRockets : StorageContainer
 		return IsValidFlare ();
 		bool IsValidFlare ()
 		{
-			return (Object)(object)item.info == (Object)(object)flareItemDef;
+			return item.info == flareItemDef;
 		}
 		bool IsValidRocket ()
 		{
-			if (!((Object)(object)item.info == (Object)(object)incendiaryRocketDef)) {
-				return (Object)(object)item.info == (Object)(object)hvRocketDef;
+			if (!(item.info == incendiaryRocketDef)) {
+				return item.info == hvRocketDef;
 			}
 			return true;
 		}
@@ -249,20 +217,10 @@ public class AttackHelicopterRockets : StorageContainer
 
 	public bool TryFireRocket (BasePlayer shooter)
 	{
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0062: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0063: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0095: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d6: Unknown result type (might be due to invalid IL or missing references)
 		if (!CanFireNow) {
 			return false;
 		}
-		if ((Object)(object)owner == (Object)null) {
+		if (owner == null) {
 			return false;
 		}
 		if (owner.InSafeZone ()) {
@@ -272,12 +230,12 @@ public class AttackHelicopterRockets : StorageContainer
 		Vector3 position = rocketMuzzlePositions [num].position;
 		Vector3 forward = rocketMuzzlePositions [num].forward;
 		float minRocketSpeed = GetMinRocketSpeed ();
-		if (owner.TryFireProjectile (this, (AmmoTypes)32, position, forward, shooter, 1f, minRocketSpeed, out var _)) {
-			Effect.server.Run (rocketFireTubeFX.resourcePath, this, StringPool.Get (((Object)rocketMuzzlePositions [num]).name), Vector3.zero, Vector3.zero, null, broadcast: true);
+		if (owner.TryFireProjectile (this, AmmoTypes.ROCKET, position, forward, shooter, 1f, minRocketSpeed, out var _)) {
+			Effect.server.Run (rocketFireTubeFX.resourcePath, this, StringPool.Get (rocketMuzzlePositions [num].name), Vector3.zero, Vector3.zero, null, broadcast: true);
 			leftSide = !leftSide;
 			ItemDefinition ammoDef;
 			int arg = (TryGetAmmoDef (out ammoDef) ? ammoDef.itemid : 0);
-			timeSinceRocketFired = TimeSince.op_Implicit (0f);
+			timeSinceRocketFired = 0f;
 			if (rocketsSinceReload < rocketsPerReload) {
 				rocketsSinceReload++;
 			} else {

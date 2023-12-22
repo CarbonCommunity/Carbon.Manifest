@@ -10,7 +10,7 @@ public class SendClanChat : BaseClanHandler<AppSendMessage>
 	public override async void Execute ()
 	{
 		if (await GetClan () == null) {
-			((BaseHandler<AppSendMessage>)this).SendError ("no_clan");
+			SendError ("no_clan");
 			return;
 		}
 		string text = base.Proto.message?.Trim ();
@@ -18,12 +18,12 @@ public class SendClanChat : BaseClanHandler<AppSendMessage>
 			SendSuccess ();
 			return;
 		}
-		text = StringExtensions.Truncate (text, 256, "…");
+		text = text.Truncate (256, "…");
 		string username = base.Player?.displayName ?? SingletonComponent<ServerMgr>.Instance.persistance.GetPlayerName (base.UserId) ?? "[unknown]";
 		if (await Chat.sayAs (Chat.ChatChannel.Clan, base.UserId, username, text, base.Player)) {
 			SendSuccess ();
 		} else {
-			((BaseHandler<AppSendMessage>)this).SendError ("message_not_sent");
+			SendError ("message_not_sent");
 		}
 	}
 }

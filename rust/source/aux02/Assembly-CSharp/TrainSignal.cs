@@ -61,7 +61,7 @@ public class TrainSignal : BaseEntity
 
 	public float SplineDist => ourSplineDist;
 
-	public bool HasNextSignal => (Object)(object)nextSignal != (Object)null;
+	public bool HasNextSignal => nextSignal != null;
 
 	public override void OnFlagsChanged (Flags old, Flags next)
 	{
@@ -92,39 +92,32 @@ public class TrainSignal : BaseEntity
 
 	public override void ServerInit ()
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
 		base.ServerInit ();
-		if (TrainTrackSpline.TryFindTrackNear (((Component)this).transform.position, 10f, out ourSpline, out ourSplineDist)) {
+		if (TrainTrackSpline.TryFindTrackNear (base.transform.position, 10f, out ourSpline, out ourSplineDist)) {
 			ourSpline.RegisterSignal (this);
-			((FacepunchBehaviour)this).Invoke ((Action)SetUpSignal, 0f);
+			Invoke (SetUpSignal, 0f);
 		} else {
-			Debug.LogWarning ((object)"TrainSignal found no nearby track. Disabling lights.");
+			Debug.LogWarning ("TrainSignal found no nearby track. Disabling lights.");
 			SetLightState (LightState.None);
 		}
 	}
 
 	private void SetUpSignal ()
 	{
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0084: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0095: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a2: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)ourSpline != (Object)null) {
+		if (ourSpline != null) {
 			TrainTrackSpline trainTrackSpline = ourSpline;
 			float prevSplineDist = ourSplineDist;
-			Vector3 askerForward = -((Component)this).transform.forward;
+			Vector3 askerForward = -base.transform.forward;
 			TrainTrackSpline.MoveRequest.SplineAction onSpline = ProcessSplineSection;
 			TrainTrackSpline.MoveResult moveResult = trainTrackSpline.MoveAlongSpline (prevSplineDist, askerForward, 500f, default(TrainTrackSpline.TrackRequest), onSpline);
 			if (!testFX) {
 				RefreshLightState ();
-				((FacepunchBehaviour)this).InvokeRandomized ((Action)RefreshLightState, 1f, 1f, 0.1f);
+				InvokeRandomized (RefreshLightState, 1f, 1f, 0.1f);
 			}
-			Debug.DrawLine (((Component)this).transform.position, moveResult.spline.GetPosition (moveResult.distAlongSpline), IsForward () ? Color.blue : Color.cyan, 1000f);
+			Debug.DrawLine (base.transform.position, moveResult.spline.GetPosition (moveResult.distAlongSpline), IsForward () ? Color.blue : Color.cyan, 1000f);
 		}
 		if (testFX) {
-			((FacepunchBehaviour)this).InvokeRepeating ((Action)TestLights, 1f, 1f);
+			InvokeRepeating (TestLights, 1f, 1f);
 		}
 	}
 
@@ -164,14 +157,12 @@ public class TrainSignal : BaseEntity
 
 	public bool IsForward ()
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		return ourSpline.IsForward (-((Component)this).transform.forward, ourSplineDist);
+		return ourSpline.IsForward (-base.transform.forward, ourSplineDist);
 	}
 
 	private void TestLights ()
 	{
-		SetLightState ((LightState)Random.Range (1, 4));
+		SetLightState ((LightState)UnityEngine.Random.Range (1, 4));
 	}
 
 	private TrainTrackSpline.MoveResult ProcessSplineSection (TrainTrackSpline.MoveResult result, TrainTrackSpline.MoveRequest request, TrainTrackSpline spline, float splineLength)
@@ -188,7 +179,7 @@ public class TrainSignal : BaseEntity
 		TrainSignal trainSignal = null;
 		float num4 = float.MaxValue;
 		foreach (TrainSignal signal in spline.signals) {
-			if (!((Object)(object)signal == (Object)(object)this) && signal.IsValid () && signal.IsForward () == flag && signal.SplineDist >= num && signal.SplineDist <= num2) {
+			if (!(signal == this) && signal.IsValid () && signal.IsForward () == flag && signal.SplineDist >= num && signal.SplineDist <= num2) {
 				float num5 = Mathf.Abs (signal.SplineDist - num3);
 				if (result.totalDistMoved + num5 >= 5f && num5 < num4) {
 					trainSignal = signal;
@@ -196,9 +187,9 @@ public class TrainSignal : BaseEntity
 				}
 			}
 		}
-		if ((Object)(object)trainSignal != (Object)null) {
+		if (trainSignal != null) {
 			result.distAlongSpline = trainSignal.SplineDist;
-			if ((Object)(object)trainSignal != (Object)null) {
+			if (trainSignal != null) {
 				nextSignal = trainSignal;
 			}
 		}

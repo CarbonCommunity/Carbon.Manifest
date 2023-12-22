@@ -22,30 +22,20 @@ public class TutorialBuildTarget : MonoBehaviour
 
 	public bool IsValid (Construction toConstruct, Construction.Target target, Construction.Placement placement)
 	{
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ca: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0081: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0087: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0091: Unknown result type (might be due to invalid IL or missing references)
 		UpdateActive (target.player);
-		if (!((Component)this).gameObject.activeInHierarchy) {
+		if (!base.gameObject.activeInHierarchy) {
 			return false;
 		}
 		if (!TargetPrefab.isValid || toConstruct.prefabID != TargetPrefab.Get ().prefabID) {
 			return false;
 		}
-		if (Vector3.Distance (placement.position, ((Component)this).transform.position) < MaxDistance) {
-			if (target.socket != null && MaxValidAngle < 180f && Vector3.Angle (((Component)this).transform.forward, placement.rotation * Vector3.forward) > MaxValidAngle) {
+		if (Vector3.Distance (placement.position, base.transform.position) < MaxDistance) {
+			if (target.socket != null && MaxValidAngle < 180f && Vector3.Angle (base.transform.forward, placement.rotation * Vector3.forward) > MaxValidAngle) {
 				return false;
 			}
 			if (Snap) {
-				placement.position = ((Component)this).transform.position;
-				placement.rotation = ((Component)this).transform.rotation;
+				placement.position = base.transform.position;
+				placement.rotation = base.transform.rotation;
 			}
 			return true;
 		}
@@ -54,8 +44,8 @@ public class TutorialBuildTarget : MonoBehaviour
 
 	public void UpdateActive (BasePlayer p)
 	{
-		if ((Object)(object)p == (Object)null || !p.HasActiveMission ()) {
-			((Component)this).gameObject.SetActive (false);
+		if (p == null || !p.HasActiveMission ()) {
+			base.gameObject.SetActive (value: false);
 			return;
 		}
 		BaseMission.MissionInstance activeMissionInstance = p.GetActiveMissionInstance ();
@@ -63,22 +53,19 @@ public class TutorialBuildTarget : MonoBehaviour
 		if (flag && RequiredMissionStage >= 0 && !activeMissionInstance.objectiveStatuses [RequiredMissionStage].started) {
 			flag = false;
 		}
-		((Component)this).gameObject.SetActive (flag && !HasTargetBeenBuilt ());
+		base.gameObject.SetActive (flag && !HasTargetBeenBuilt ());
 	}
 
 	private bool HasTargetBeenBuilt ()
 	{
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
 		if (!TargetPrefab.isValid) {
 			return false;
 		}
-		List<BaseEntity> list = Pool.GetList<BaseEntity> ();
-		Vis.Entities (((Component)this).transform.position + PhysCheckOffset, 0.5f + MaxDistance, list, 1218652417, (QueryTriggerInteraction)2);
+		List<BaseEntity> obj = Pool.GetList<BaseEntity> ();
+		Vis.Entities (base.transform.position + PhysCheckOffset, 0.5f + MaxDistance, obj, 1218652417);
 		bool flag = false;
 		uint prefabID = TargetPrefab.Get ().prefabID;
-		foreach (BaseEntity item in list) {
+		foreach (BaseEntity item in obj) {
 			if (item.prefabID == prefabID) {
 				flag = true;
 				break;
@@ -95,7 +82,7 @@ public class TutorialBuildTarget : MonoBehaviour
 				break;
 			}
 		}
-		Pool.FreeList<BaseEntity> (ref list);
+		Pool.FreeList (ref obj);
 		return flag;
 	}
 }

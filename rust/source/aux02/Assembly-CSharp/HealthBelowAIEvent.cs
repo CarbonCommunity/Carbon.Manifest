@@ -1,5 +1,4 @@
 using ProtoBuf;
-using UnityEngine;
 
 public class HealthBelowAIEvent : BaseAIEvent
 {
@@ -22,19 +21,17 @@ public class HealthBelowAIEvent : BaseAIEvent
 
 	public override AIEventData ToProto ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Expected O, but got Unknown
-		AIEventData obj = base.ToProto ();
-		obj.healthBelowData = new HealthBelowAIEventData ();
-		obj.healthBelowData.healthFraction = HealthFraction;
-		return obj;
+		AIEventData aIEventData = base.ToProto ();
+		aIEventData.healthBelowData = new HealthBelowAIEventData ();
+		aIEventData.healthBelowData.healthFraction = HealthFraction;
+		return aIEventData;
 	}
 
 	public override void Execute (AIMemory memory, AIBrainSenses senses, StateStatus stateStatus)
 	{
 		base.Result = base.Inverted;
 		combatEntity = memory.Entity.Get (base.InputEntityMemorySlot) as BaseCombatEntity;
-		if (!((Object)(object)combatEntity == (Object)null)) {
+		if (!(combatEntity == null)) {
 			bool flag = combatEntity.healthFraction < HealthFraction;
 			if (base.Inverted) {
 				base.Result = !flag;

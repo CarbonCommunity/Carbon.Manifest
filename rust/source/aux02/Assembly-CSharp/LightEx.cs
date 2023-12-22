@@ -33,7 +33,7 @@ public class LightEx : UpdateBehaviour, IClientComponent
 
 	protected void OnValidate ()
 	{
-		CheckConflict (((Component)this).gameObject);
+		CheckConflict (base.gameObject);
 	}
 
 	public static bool CheckConflict (GameObject go)

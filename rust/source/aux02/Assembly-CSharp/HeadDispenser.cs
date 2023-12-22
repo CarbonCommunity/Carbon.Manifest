@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public class HeadDispenser : EntityComponent<BaseEntity>
 {
 	public ItemDefinition HeadDef;
@@ -12,16 +10,15 @@ public class HeadDispenser : EntityComponent<BaseEntity>
 
 	public void DispenseHead (HitInfo info, BaseCorpse corpse)
 	{
-		//IL_012e: Unknown result type (might be due to invalid IL or missing references)
 		if (hasDispensed || !(info.Weapon is BaseMelee baseMelee) || !baseMelee.gathering.ProduceHeadItem) {
 			return;
 		}
-		if ((Object)(object)info.InitiatorPlayer != (Object)null) {
+		if (info.InitiatorPlayer != null) {
 			Item item = ItemManager.CreateByItemID (HeadDef.itemid, 1, 0uL);
 			HeadEntity associatedEntity = ItemModAssociatedEntity<HeadEntity>.GetAssociatedEntity (item);
-			BaseEntity baseEntity = (((Object)(object)overrideEntity != (Object)null) ? overrideEntity : SourceEntity.GetEntity ());
+			BaseEntity baseEntity = ((overrideEntity != null) ? overrideEntity : SourceEntity.GetEntity ());
 			overrideEntity = null;
-			if ((Object)(object)associatedEntity != (Object)null && (Object)(object)baseEntity != (Object)null) {
+			if (associatedEntity != null && baseEntity != null) {
 				associatedEntity.SetupSourceId (baseEntity.prefabID);
 				if (corpse is PlayerCorpse playerCorpse) {
 					associatedEntity.SetupPlayerId (playerCorpse.playerName, playerCorpse.playerSteamID);

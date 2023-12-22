@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -34,54 +35,42 @@ public class LootableCorpse : BaseCorpse, LootPanel.IHasLootPanel
 
 	public virtual string streamerName { get; set; }
 
-	public Phrase LootPanelTitle => Phrase.op_Implicit (playerName);
+	public Translate.Phrase LootPanelTitle => playerName;
 
-	public Phrase LootPanelName => Phrase.op_Implicit ("N/A");
+	public Translate.Phrase LootPanelName => "N/A";
 
 	public bool blockBagDrop { get; set; }
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("LootableCorpse.OnRpcMessage", 0);
-		try {
-			if (rpc == 2278459738u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("LootableCorpse.OnRpcMessage")) {
+			if (rpc == 2278459738u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - RPC_LootCorpse "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - RPC_LootCorpse ");
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_LootCorpse", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_LootCorpse")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (2278459738u, "RPC_LootCorpse", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage rpc2 = rPCMessage;
 							RPC_LootCorpse (rpc2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_LootCorpse");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -116,10 +105,8 @@ public class LootableCorpse : BaseCorpse, LootPanel.IHasLootPanel
 
 	public void TakeFrom (BaseEntity fromEntity, params ItemContainer[] source)
 	{
-		//IL_00a9: Unknown result type (might be due to invalid IL or missing references)
 		Assert.IsTrue (containers == null, "Initializing Twice");
-		TimeWarning val = TimeWarning.New ("Corpse.TakeFrom", 0);
-		try {
+		using (TimeWarning.New ("Corpse.TakeFrom")) {
 			containers = new ItemContainer[source.Length];
 			for (int i = 0; i < source.Length; i++) {
 				containers [i] = new ItemContainer ();
@@ -129,20 +116,16 @@ public class LootableCorpse : BaseCorpse, LootPanel.IHasLootPanel
 				Item[] array = source [i].itemList.ToArray ();
 				foreach (Item item in array) {
 					if (!item.MoveToContainer (containers [i])) {
-						item.DropAndTossUpwards (((Component)this).transform.position);
+						item.DropAndTossUpwards (base.transform.position);
 					}
 				}
 			}
 			ResetRemovalTime ();
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
-		HeadDispenser headDispenser = default(HeadDispenser);
-		if (((Component)this).gameObject.TryGetComponent<HeadDispenser> (ref headDispenser)) {
-			GameObject val2 = GameManager.server.FindPrefab (fromEntity.prefabID);
-			BasePlayer overrideEntity = default(BasePlayer);
-			if ((Object)(object)val2 != (Object)null && val2.TryGetComponent<BasePlayer> (ref overrideEntity)) {
-				headDispenser.overrideEntity = overrideEntity;
+		if (base.gameObject.TryGetComponent<HeadDispenser> (out var component)) {
+			GameObject gameObject = GameManager.server.FindPrefab (fromEntity.prefabID);
+			if (gameObject != null && gameObject.TryGetComponent<BasePlayer> (out var component2)) {
+				component.overrideEntity = component2;
 			}
 		}
 	}
@@ -178,7 +161,7 @@ public class LootableCorpse : BaseCorpse, LootPanel.IHasLootPanel
 	private void RPC_LootCorpse (RPCMessage rpc)
 	{
 		BasePlayer player = rpc.player;
-		if (!Object.op_Implicit ((Object)(object)player) || !player.CanInteract () || !CanLoot () || containers == null || !player.inventory.loot.StartLootingEntity (this)) {
+		if (!player || !player.CanInteract () || !CanLoot () || containers == null || !player.inventory.loot.StartLootingEntity (this)) {
 			return;
 		}
 		SetFlag (Flags.Open, b: true);
@@ -206,11 +189,9 @@ public class LootableCorpse : BaseCorpse, LootPanel.IHasLootPanel
 
 	public void DropItems ()
 	{
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
 		if (!Global.disableBagDropping && containers != null) {
-			DroppedItemContainer droppedItemContainer = ItemContainer.Drop ("assets/prefabs/misc/item drop/item_drop_backpack.prefab", ((Component)this).transform.position, Quaternion.identity, containers);
-			if ((Object)(object)droppedItemContainer != (Object)null) {
+			DroppedItemContainer droppedItemContainer = ItemContainer.Drop ("assets/prefabs/misc/item drop/item_drop_backpack.prefab", base.transform.position, Quaternion.identity, containers);
+			if (droppedItemContainer != null) {
 				droppedItemContainer.playerName = playerName;
 				droppedItemContainer.playerSteamID = playerSteamID;
 			}
@@ -220,21 +201,21 @@ public class LootableCorpse : BaseCorpse, LootPanel.IHasLootPanel
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.lootableCorpse = Pool.Get<LootableCorpse> ();
+		info.msg.lootableCorpse = Facepunch.Pool.Get<ProtoBuf.LootableCorpse> ();
 		info.msg.lootableCorpse.playerName = playerName;
 		info.msg.lootableCorpse.playerID = playerSteamID;
 		info.msg.lootableCorpse.streamerName = streamerName;
 		if (!info.forDisk || containers == null) {
 			return;
 		}
-		info.msg.lootableCorpse.privateData = Pool.Get<Private> ();
-		info.msg.lootableCorpse.privateData.container = Pool.GetList<ItemContainer> ();
+		info.msg.lootableCorpse.privateData = Facepunch.Pool.Get<ProtoBuf.LootableCorpse.Private> ();
+		info.msg.lootableCorpse.privateData.container = Facepunch.Pool.GetList<ProtoBuf.ItemContainer> ();
 		ItemContainer[] array = containers;
 		foreach (ItemContainer itemContainer in array) {
 			if (itemContainer != null) {
-				ItemContainer val = itemContainer.Save ();
-				if (val != null) {
-					info.msg.lootableCorpse.privateData.container.Add (val);
+				ProtoBuf.ItemContainer itemContainer2 = itemContainer.Save ();
+				if (itemContainer2 != null) {
+					info.msg.lootableCorpse.privateData.container.Add (itemContainer2);
 				}
 			}
 		}

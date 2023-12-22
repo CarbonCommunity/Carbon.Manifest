@@ -20,7 +20,7 @@ public class MissionObjective_HaveItem : MissionObjective
 	public override void Think (int index, BaseMission.MissionInstance instance, BasePlayer assignee, float delta)
 	{
 		base.Think (index, instance, assignee, delta);
-		if (!IsStarted (index, instance) || (Object)(object)targetItem == (Object)null) {
+		if (!IsStarted (index, instance) || targetItem == null) {
 			return;
 		}
 		int amount = assignee.inventory.GetAmount (targetItem.itemid);

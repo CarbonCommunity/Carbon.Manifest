@@ -1,11 +1,10 @@
-using System;
 using Rust.UI;
 using UnityEngine;
 using UnityEngine.Serialization;
 
 public class MissionsHUDToDo : BaseMonoBehaviour
 {
-	private static readonly Memoized<string, (float Current, float Target)> FormatProgres = new Memoized<string, (float, float)> ((Func<(float, float), string>)delegate((float Current, float Target) d) {
+	private static readonly Memoized<string, (float Current, float Target)> FormatProgres = new Memoized<string, (float, float)> (delegate((float Current, float Target) d) {
 		float num = Mathf.Min (d.Current, d.Target);
 		return $" ({num:0.#}/{d.Target:0.#})";
 	});
@@ -16,7 +15,7 @@ public class MissionsHUDToDo : BaseMonoBehaviour
 
 	public RectTransform checkBox;
 
-	public Phrase optionalPrefix;
+	public Translate.Phrase optionalPrefix;
 
 	public CanvasGroup group;
 

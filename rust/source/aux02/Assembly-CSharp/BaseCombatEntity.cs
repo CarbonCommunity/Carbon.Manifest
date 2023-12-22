@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -136,9 +137,9 @@ public class BaseCombatEntity : BaseEntity
 
 	public Vector3 LastAttackedDir { get; set; }
 
-	public float SecondsSinceAttacked => Time.time - lastAttackedTime;
+	public float SecondsSinceAttacked => UnityEngine.Time.time - lastAttackedTime;
 
-	public float SecondsSinceDealtDamage => Time.time - lastDealtDamageTime;
+	public float SecondsSinceDealtDamage => UnityEngine.Time.time - lastDealtDamageTime;
 
 	public float healthFraction => Health () / MaxHealth ();
 
@@ -155,7 +156,7 @@ public class BaseCombatEntity : BaseEntity
 		}
 	}
 
-	public float TimeSinceLastNoise => Time.time - lastNoiseTime;
+	public float TimeSinceLastNoise => UnityEngine.Time.time - lastNoiseTime;
 
 	public ActionVolume LastNoiseVolume { get; private set; }
 
@@ -163,46 +164,34 @@ public class BaseCombatEntity : BaseEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("BaseCombatEntity.OnRpcMessage", 0);
-		try {
-			if (rpc == 1191093595 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("BaseCombatEntity.OnRpcMessage")) {
+			if (rpc == 1191093595 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - RPC_PickupStart "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - RPC_PickupStart ");
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_PickupStart", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_PickupStart")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (1191093595u, "RPC_PickupStart", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage rpc2 = rPCMessage;
 							RPC_PickupStart (rpc2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_PickupStart");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -252,7 +241,7 @@ public class BaseCombatEntity : BaseEntity
 
 	public override float PenetrationResistance (HitInfo info)
 	{
-		if (!Object.op_Implicit ((Object)(object)baseProtection)) {
+		if (!baseProtection) {
 			return 100f;
 		}
 		return baseProtection.density;
@@ -260,14 +249,14 @@ public class BaseCombatEntity : BaseEntity
 
 	public virtual void ScaleDamage (HitInfo info)
 	{
-		if (info.UseProtection && (Object)(object)baseProtection != (Object)null) {
+		if (info.UseProtection && baseProtection != null) {
 			baseProtection.Scale (info.damageTypes);
 		}
 	}
 
 	public HitArea SkeletonLookup (uint boneID)
 	{
-		if ((Object)(object)skeletonProperties == (Object)null) {
+		if (skeletonProperties == null) {
 			return (HitArea)(-1);
 		}
 		return skeletonProperties.FindBone (boneID)?.area ?? ((HitArea)(-1));
@@ -276,7 +265,7 @@ public class BaseCombatEntity : BaseEntity
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.baseCombat = Pool.Get<BaseCombat> ();
+		info.msg.baseCombat = Facepunch.Pool.Get<BaseCombat> ();
 		info.msg.baseCombat.state = (int)lifestate;
 		info.msg.baseCombat.health = Health ();
 	}
@@ -332,33 +321,27 @@ public class BaseCombatEntity : BaseEntity
 
 	public void DoHitNotify (HitInfo info)
 	{
-		TimeWarning val = TimeWarning.New ("DoHitNotify", 0);
-		try {
-			if (sendsHitNotification && !((Object)(object)info.Initiator == (Object)null) && info.Initiator is BasePlayer && !((Object)(object)this == (Object)(object)info.Initiator) && (!info.isHeadshot || !(info.HitEntity is BasePlayer)) && Time.frameCount != lastNotifyFrame) {
-				lastNotifyFrame = Time.frameCount;
+		using (TimeWarning.New ("DoHitNotify")) {
+			if (sendsHitNotification && !(info.Initiator == null) && info.Initiator is BasePlayer && !(this == info.Initiator) && (!info.isHeadshot || !(info.HitEntity is BasePlayer)) && UnityEngine.Time.frameCount != lastNotifyFrame) {
+				lastNotifyFrame = UnityEngine.Time.frameCount;
 				bool flag = info.Weapon is BaseMelee;
 				if (base.isServer && (!flag || sendsMeleeHitNotification)) {
 					bool arg = info.Initiator.net.connection == info.Predicted;
 					ClientRPCPlayerAndSpectators (null, info.Initiator as BasePlayer, "HitNotify", arg);
 				}
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 	}
 
 	public override void OnAttacked (HitInfo info)
 	{
-		TimeWarning val = TimeWarning.New ("BaseCombatEntity.OnAttacked", 0);
-		try {
+		using (TimeWarning.New ("BaseCombatEntity.OnAttacked")) {
 			if (!IsDead ()) {
 				DoHitNotify (info);
 			}
 			if (base.isServer) {
 				Hurt (info);
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		base.OnAttacked (info);
 	}
@@ -409,11 +392,11 @@ public class BaseCombatEntity : BaseEntity
 
 	public virtual List<ItemAmount> BuildCost ()
 	{
-		if ((Object)(object)repair.itemTarget == (Object)null) {
+		if (repair.itemTarget == null) {
 			return null;
 		}
 		ItemBlueprint itemBlueprint = ItemManager.FindBlueprint (repair.itemTarget);
-		if ((Object)(object)itemBlueprint == (Object)null) {
+		if (itemBlueprint == null) {
 			return null;
 		}
 		return itemBlueprint.ingredients;
@@ -440,39 +423,28 @@ public class BaseCombatEntity : BaseEntity
 
 	public virtual void OnRepair ()
 	{
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
 		Effect.server.Run (repair.repairEffect.isValid ? repair.repairEffect.resourcePath : "assets/bundled/prefabs/fx/build/repair.prefab", this, 0u, Vector3.zero, Vector3.zero);
 	}
 
 	public virtual void OnRepairFinished ()
 	{
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
 		Effect.server.Run (repair.repairFullEffect.isValid ? repair.repairFullEffect.resourcePath : "assets/bundled/prefabs/fx/build/repair_full.prefab", this, 0u, Vector3.zero, Vector3.zero);
 	}
 
 	public virtual void OnRepairFailed (BasePlayer player, string reason)
 	{
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
 		Effect.server.Run (repair.repairFailedEffect.isValid ? repair.repairFailedEffect.resourcePath : "assets/bundled/prefabs/fx/build/repair_failed.prefab", this, 0u, Vector3.zero, Vector3.zero);
-		if ((Object)(object)player != (Object)null && !string.IsNullOrEmpty (reason)) {
+		if (player != null && !string.IsNullOrEmpty (reason)) {
 			player.ChatMessage (reason);
 		}
 	}
 
 	public virtual void OnRepairFailedResources (BasePlayer player, List<ItemAmount> requirements)
 	{
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
 		Effect.server.Run (repair.repairFailedEffect.isValid ? repair.repairFailedEffect.resourcePath : "assets/bundled/prefabs/fx/build/repair_failed.prefab", this, 0u, Vector3.zero, Vector3.zero);
-		if ((Object)(object)player != (Object)null) {
-			ItemAmountList val = ItemAmount.SerialiseList (requirements);
-			try {
-				player.ClientRPCPlayer<ItemAmountList> (null, player, "Client_OnRepairFailedResources", val);
-			} finally {
-				((IDisposable)val)?.Dispose ();
+		if (player != null) {
+			using (ItemAmountList arg = ItemAmount.SerialiseList (requirements)) {
+				player.ClientRPCPlayer (null, player, "Client_OnRepairFailedResources", arg);
 			}
 		}
 	}
@@ -562,38 +534,25 @@ public class BaseCombatEntity : BaseEntity
 
 	public void Hurt (float amount, DamageType type, BaseEntity attacker = null, bool useProtection = true)
 	{
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		TimeWarning val = TimeWarning.New ("Hurt", 0);
-		try {
-			HitInfo hitInfo = new HitInfo (attacker, this, type, amount, ((Component)this).transform.position);
+		using (TimeWarning.New ("Hurt")) {
+			HitInfo hitInfo = new HitInfo (attacker, this, type, amount, base.transform.position);
 			hitInfo.UseProtection = useProtection;
 			Hurt (hitInfo);
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 	}
 
 	public virtual void Hurt (HitInfo info)
 	{
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02d6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02e1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02e6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02eb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02ef: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0268: Unknown result type (might be due to invalid IL or missing references)
 		Assert.IsTrue (base.isServer, "This should be called serverside only");
 		if (IsDead () || IsTransferProtected ()) {
 			return;
 		}
-		TimeWarning val = TimeWarning.New ("Hurt( HitInfo )", 50);
-		try {
+		using (TimeWarning.New ("Hurt( HitInfo )", 50)) {
 			float num = health;
 			ScaleDamage (info);
 			if (info.PointStart != Vector3.zero) {
 				for (int i = 0; i < propDirection.Length; i++) {
-					if (!((Object)(object)propDirection [i].extraProtection == (Object)null) && !propDirection [i].IsWeakspot (((Component)this).transform, info)) {
+					if (!(propDirection [i].extraProtection == null) && !propDirection [i].IsWeakspot (base.transform, info)) {
 						propDirection [i].extraProtection.Scale (info.damageTypes);
 					}
 				}
@@ -611,15 +570,15 @@ public class BaseCombatEntity : BaseEntity
 			float num2 = info.damageTypes.Total ();
 			health = num - num2;
 			SendNetworkUpdate ();
-			if (Global.developer > 1) {
-				Debug.Log ((object)("[Combat]".PadRight (10) + ((Object)((Component)this).gameObject).name + " hurt " + info.damageTypes.GetMajorityDamageType ().ToString () + "/" + num2 + " - " + health.ToString ("0") + " health left"));
+			if (ConVar.Global.developer > 1) {
+				Debug.Log ("[Combat]".PadRight (10) + base.gameObject.name + " hurt " + info.damageTypes.GetMajorityDamageType ().ToString () + "/" + num2 + " - " + health.ToString ("0") + " health left");
 			}
 			lastDamage = info.damageTypes.GetMajorityDamageType ();
 			lastAttacker = info.Initiator;
-			if ((Object)(object)lastAttacker != (Object)null) {
+			if (lastAttacker != null) {
 				BaseCombatEntity baseCombatEntity = lastAttacker as BaseCombatEntity;
-				if ((Object)(object)baseCombatEntity != (Object)null) {
-					baseCombatEntity.lastDealtDamageTime = Time.time;
+				if (baseCombatEntity != null) {
+					baseCombatEntity.lastDealtDamageTime = UnityEngine.Time.time;
 					baseCombatEntity.lastDealtDamageTo = this;
 				}
 				if (this.IsValid () && lastAttacker is BasePlayer basePlayer) {
@@ -627,14 +586,13 @@ public class BaseCombatEntity : BaseEntity
 				}
 			}
 			BaseCombatEntity baseCombatEntity2 = lastAttacker as BaseCombatEntity;
-			if (markAttackerHostile && (Object)(object)baseCombatEntity2 != (Object)null && (Object)(object)baseCombatEntity2 != (Object)(object)this) {
+			if (markAttackerHostile && baseCombatEntity2 != null && baseCombatEntity2 != this) {
 				baseCombatEntity2.MarkHostileFor ();
 			}
 			if (lastDamage.IsConsideredAnAttack ()) {
-				lastAttackedTime = Time.time;
-				if ((Object)(object)lastAttacker != (Object)null) {
-					Vector3 val2 = ((Component)lastAttacker).transform.position - ((Component)this).transform.position;
-					LastAttackedDir = ((Vector3)(ref val2)).normalized;
+				lastAttackedTime = UnityEngine.Time.time;
+				if (lastAttacker != null) {
+					LastAttackedDir = (lastAttacker.transform.position - base.transform.position).normalized;
 				}
 			}
 			bool flag = Health () <= 0f;
@@ -643,40 +601,29 @@ public class BaseCombatEntity : BaseEntity
 				Die (info);
 			}
 			BasePlayer initiatorPlayer = info.InitiatorPlayer;
-			if (Object.op_Implicit ((Object)(object)initiatorPlayer)) {
+			if ((bool)initiatorPlayer) {
 				if (IsDead ()) {
 					initiatorPlayer.stats.combat.LogAttack (info, "killed", num);
 				} else {
 					initiatorPlayer.stats.combat.LogAttack (info, "", num);
 				}
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 	}
 
 	public virtual bool IsHostile ()
 	{
-		return unHostileTime > Time.realtimeSinceStartup;
+		return unHostileTime > UnityEngine.Time.realtimeSinceStartup;
 	}
 
 	public virtual void MarkHostileFor (float duration = 60f)
 	{
-		float num = Time.realtimeSinceStartup + duration;
-		unHostileTime = Mathf.Max (unHostileTime, num);
+		float b = UnityEngine.Time.realtimeSinceStartup + duration;
+		unHostileTime = Mathf.Max (unHostileTime, b);
 	}
 
 	private void DebugHurt (HitInfo info)
 	{
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0085: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0093: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0291: Unknown result type (might be due to invalid IL or missing references)
-		//IL_029f: Unknown result type (might be due to invalid IL or missing references)
 		if (!ConVar.Vis.damage) {
 			return;
 		}
@@ -696,7 +643,7 @@ public class BaseCombatEntity : BaseEntity
 				text = string.Concat (obj);
 			}
 		}
-		string text2 = "<color=lightblue>Damage:</color>".PadRight (10) + info.damageTypes.Total ().ToString ("0.00") + "\n<color=lightblue>Health:</color>".PadRight (10) + health.ToString ("0.00") + " / " + ((health - info.damageTypes.Total () <= 0f) ? "<color=red>" : "<color=green>") + (health - info.damageTypes.Total ()).ToString ("0.00") + "</color>" + "\n<color=lightblue>HitEnt:</color>".PadRight (10) + ((object)this)?.ToString () + "\n<color=lightblue>HitBone:</color>".PadRight (10) + info.boneName + "\n<color=lightblue>Attacker:</color>".PadRight (10) + ((object)info.Initiator)?.ToString () + "\n<color=lightblue>WeaponPrefab:</color>".PadRight (10) + ((object)info.WeaponPrefab)?.ToString () + "\n<color=lightblue>Damages:</color>\n" + text;
+		string text2 = "<color=lightblue>Damage:</color>".PadRight (10) + info.damageTypes.Total ().ToString ("0.00") + "\n<color=lightblue>Health:</color>".PadRight (10) + health.ToString ("0.00") + " / " + ((health - info.damageTypes.Total () <= 0f) ? "<color=red>" : "<color=green>") + (health - info.damageTypes.Total ()).ToString ("0.00") + "</color>" + "\n<color=lightblue>HitEnt:</color>".PadRight (10) + this?.ToString () + "\n<color=lightblue>HitBone:</color>".PadRight (10) + info.boneName + "\n<color=lightblue>Attacker:</color>".PadRight (10) + info.Initiator?.ToString () + "\n<color=lightblue>WeaponPrefab:</color>".PadRight (10) + info.WeaponPrefab?.ToString () + "\n<color=lightblue>Damages:</color>\n" + text;
 		ConsoleNetwork.BroadcastToAllClients ("ddraw.text", 60, Color.white, info.HitPositionWorld, text2);
 	}
 
@@ -710,8 +657,8 @@ public class BaseCombatEntity : BaseEntity
 
 	public virtual void Heal (float amount)
 	{
-		if (Global.developer > 1) {
-			Debug.Log ((object)("[Combat]".PadRight (10) + ((Object)((Component)this).gameObject).name + " healed"));
+		if (ConVar.Global.developer > 1) {
+			Debug.Log ("[Combat]".PadRight (10) + base.gameObject.name + " healed");
 		}
 		health = _health + amount;
 		SendNetworkUpdate ();
@@ -727,30 +674,27 @@ public class BaseCombatEntity : BaseEntity
 		if (IsDead ()) {
 			return;
 		}
-		if (Global.developer > 1) {
-			Debug.Log ((object)("[Combat]".PadRight (10) + ((Object)((Component)this).gameObject).name + " died"));
+		if (ConVar.Global.developer > 1) {
+			Debug.Log ("[Combat]".PadRight (10) + base.gameObject.name + " died");
 		}
 		health = 0f;
 		lifestate = LifeState.Dead;
-		if (info != null && Object.op_Implicit ((Object)(object)info.InitiatorPlayer)) {
+		if (info != null && (bool)info.InitiatorPlayer) {
 			BasePlayer initiatorPlayer = info.InitiatorPlayer;
-			if ((Object)(object)initiatorPlayer != (Object)null && initiatorPlayer.GetActiveMission () != -1 && !initiatorPlayer.IsNpc) {
+			if (initiatorPlayer != null && initiatorPlayer.GetActiveMission () != -1 && !initiatorPlayer.IsNpc) {
 				initiatorPlayer.ProcessMissionEvent (BaseMission.MissionEventType.KILL_ENTITY, prefabID, 1f);
 			}
 		}
-		TimeWarning val = TimeWarning.New ("OnKilled", 0);
-		try {
+		using (TimeWarning.New ("OnKilled")) {
 			OnKilled (info);
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 	}
 
 	public void DieInstantly ()
 	{
 		if (!IsDead ()) {
-			if (Global.developer > 1) {
-				Debug.Log ((object)("[Combat]".PadRight (10) + ((Object)((Component)this).gameObject).name + " died"));
+			if (ConVar.Global.developer > 1) {
+				Debug.Log ("[Combat]".PadRight (10) + base.gameObject.name + " died");
 			}
 			health = 0f;
 			lifestate = LifeState.Dead;
@@ -760,41 +704,23 @@ public class BaseCombatEntity : BaseEntity
 
 	public void UpdateSurroundings ()
 	{
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
 		BaseEntity baseEntity = GetParentEntity ();
-		OBB val;
-		if ((Object)(object)baseEntity != (Object)null) {
-			Vector3 worldVelocity = baseEntity.GetWorldVelocity ();
-			if (((Vector3)(ref worldVelocity)).sqrMagnitude > 5f) {
-				val = WorldSpaceBounds ();
-				StabilityEntity.UpdateSurroundingsQueue.NotifyNeighbours (((OBB)(ref val)).ToBounds ());
-				return;
-			}
+		if (baseEntity != null && baseEntity.GetWorldVelocity ().sqrMagnitude > 5f) {
+			StabilityEntity.UpdateSurroundingsQueue.NotifyNeighbours (WorldSpaceBounds ().ToBounds ());
+		} else {
+			StabilityEntity.updateSurroundingsQueue.Add (WorldSpaceBounds ().ToBounds ());
 		}
-		StabilityEntity.UpdateSurroundingsQueue updateSurroundingsQueue = StabilityEntity.updateSurroundingsQueue;
-		val = WorldSpaceBounds ();
-		((ObjectWorkQueue<Bounds>)updateSurroundingsQueue).Add (((OBB)(ref val)).ToBounds ());
 	}
 
 	public void MakeNoise (Vector3 position, ActionVolume loudness)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
 		LastNoisePosition = position;
 		LastNoiseVolume = loudness;
-		lastNoiseTime = Time.time;
+		lastNoiseTime = UnityEngine.Time.time;
 	}
 
 	public bool CanLastNoiseBeHeard (Vector3 listenPosition, float listenRange)
 	{
-		//IL_000a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
 		if (listenRange <= 0f) {
 			return false;
 		}

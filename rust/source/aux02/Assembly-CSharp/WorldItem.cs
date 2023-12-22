@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -32,82 +33,61 @@ public class WorldItem : BaseEntity, PlayerInventory.ICanMoveFrom
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("WorldItem.OnRpcMessage", 0);
-		try {
-			if (rpc == 2778075470u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("WorldItem.OnRpcMessage")) {
+			if (rpc == 2778075470u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - Pickup "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - Pickup ");
 				}
-				TimeWarning val2 = TimeWarning.New ("Pickup", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Pickup")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (2778075470u, "Pickup", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							Pickup (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in Pickup");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 331989034 && (Object)(object)player != (Object)null) {
+			if (rpc == 331989034 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - RPC_OpenLoot "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - RPC_OpenLoot ");
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_OpenLoot", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_OpenLoot")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (331989034u, "RPC_OpenLoot", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage rpc2 = rPCMessage;
 							RPC_OpenLoot (rpc2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in RPC_OpenLoot");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -125,7 +105,7 @@ public class WorldItem : BaseEntity, PlayerInventory.ICanMoveFrom
 		item = in_item;
 		if (item != null) {
 			item.OnDirty += OnItemDirty;
-			((Object)this).name = item.info.shortname + " (world)";
+			base.name = item.info.shortname + " (world)";
 			item.SetWorldEntity (this);
 			OnItemDirty (item);
 		}
@@ -152,7 +132,7 @@ public class WorldItem : BaseEntity, PlayerInventory.ICanMoveFrom
 	{
 		Assert.IsTrue (item == in_item, "WorldItem:OnItemDirty - dirty item isn't ours!");
 		if (item != null) {
-			((Component)this).BroadcastMessage ("OnItemChanged", (object)item, (SendMessageOptions)1);
+			BroadcastMessage ("OnItemChanged", item, SendMessageOptions.DontRequireReceiver);
 		}
 		DoItemNetworking ();
 	}
@@ -170,12 +150,9 @@ public class WorldItem : BaseEntity, PlayerInventory.ICanMoveFrom
 
 	public override string ToString ()
 	{
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
 		if (_name == null) {
 			if (base.isServer) {
-				_name = string.Format ("{1}[{0}] {2}", (object)(NetworkableId)(((??)net?.ID) ?? default(NetworkableId)), base.ShortPrefabName, this.IsUnityNull () ? "NULL" : ((Object)this).name);
+				_name = string.Format ("{1}[{0}] {2}", net?.ID ?? default(NetworkableId), base.ShortPrefabName, this.IsUnityNull () ? "NULL" : base.name);
 			} else {
 				_name = base.ShortPrefabName;
 			}
@@ -185,7 +162,7 @@ public class WorldItem : BaseEntity, PlayerInventory.ICanMoveFrom
 
 	public bool CanMoveFrom (BasePlayer player, Item item)
 	{
-		if ((Object)(object)((item != null) ? ((Component)item.info).GetComponent<ItemModBackpack> () : null) == (Object)null) {
+		if (item?.info.GetComponent<ItemModBackpack> () == null) {
 			return true;
 		}
 		return item.parentItem?.parent == player.inventory.containerWear;
@@ -195,7 +172,7 @@ public class WorldItem : BaseEntity, PlayerInventory.ICanMoveFrom
 	{
 		base.ServerInit ();
 		if (item != null) {
-			((Component)this).BroadcastMessage ("OnItemChanged", (object)item, (SendMessageOptions)1);
+			BroadcastMessage ("OnItemChanged", item, SendMessageOptions.DontRequireReceiver);
 		}
 	}
 
@@ -203,7 +180,7 @@ public class WorldItem : BaseEntity, PlayerInventory.ICanMoveFrom
 	{
 		if (!_isInvokingSendItemUpdate) {
 			_isInvokingSendItemUpdate = true;
-			((FacepunchBehaviour)this).Invoke ((Action)SendItemUpdate, 0.1f);
+			Invoke (SendItemUpdate, 0.1f);
 		}
 	}
 
@@ -213,13 +190,9 @@ public class WorldItem : BaseEntity, PlayerInventory.ICanMoveFrom
 		if (item == null) {
 			return;
 		}
-		UpdateItem val = Pool.Get<UpdateItem> ();
-		try {
-			val.item = item.Save (bIncludeContainer: false, bIncludeOwners: false);
-			ClientRPC<UpdateItem> (null, "UpdateItem", val);
-		} finally {
-			((IDisposable)val)?.Dispose ();
-		}
+		using UpdateItem updateItem = Facepunch.Pool.Get<UpdateItem> ();
+		updateItem.item = item.Save (bIncludeContainer: false, bIncludeOwners: false);
+		ClientRPC (null, "UpdateItem", updateItem);
 	}
 
 	[RPC_Server]
@@ -241,7 +214,7 @@ public class WorldItem : BaseEntity, PlayerInventory.ICanMoveFrom
 		base.Save (info);
 		if (item != null) {
 			bool forDisk = info.forDisk;
-			info.msg.worldItem = Pool.Get<WorldItem> ();
+			info.msg.worldItem = Facepunch.Pool.Get<ProtoBuf.WorldItem> ();
 			info.msg.worldItem.item = item.Save (forDisk, bIncludeOwners: false);
 		}
 	}
@@ -276,10 +249,10 @@ public class WorldItem : BaseEntity, PlayerInventory.ICanMoveFrom
 		if (item == null || item.contents == null) {
 			return;
 		}
-		ItemModContainer component = ((Component)item.info).GetComponent<ItemModContainer> ();
-		if (!((Object)(object)component == (Object)null) && component.canLootInWorld) {
+		ItemModContainer component = item.info.GetComponent<ItemModContainer> ();
+		if (!(component == null) && component.canLootInWorld) {
 			BasePlayer player = rpc.player;
-			if (Object.op_Implicit ((Object)(object)player) && player.CanInteract () && player.inventory.loot.StartLootingEntity (this)) {
+			if ((bool)player && player.CanInteract () && player.inventory.loot.StartLootingEntity (this)) {
 				SetFlag (Flags.Open, b: true);
 				player.inventory.loot.AddContainer (item.contents);
 				player.inventory.loot.SendImmediate ();

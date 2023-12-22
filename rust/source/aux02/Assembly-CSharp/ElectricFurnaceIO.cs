@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public class ElectricFurnaceIO : IOEntity, IIndustrialStorage
 {
 	public int PowerConsumption = 3;
@@ -15,7 +13,7 @@ public class ElectricFurnaceIO : IOEntity, IIndustrialStorage
 
 	public override int DesiredPower ()
 	{
-		if ((Object)(object)GetParentEntity () == (Object)null) {
+		if (GetParentEntity () == null) {
 			return 0;
 		}
 		if (!GetParentEntity ().IsOn ()) {
@@ -29,7 +27,7 @@ public class ElectricFurnaceIO : IOEntity, IIndustrialStorage
 		base.OnFlagsChanged (old, next);
 		if (base.isServer) {
 			ElectricOven parentOven = GetParentOven ();
-			if ((Object)(object)parentOven != (Object)null) {
+			if (parentOven != null) {
 				parentOven.OnIOEntityFlagsChanged (old, next);
 			}
 		}
@@ -42,13 +40,13 @@ public class ElectricFurnaceIO : IOEntity, IIndustrialStorage
 		}
 		if (inputSlot == 1 && inputAmount > 0) {
 			ElectricOven parentOven = GetParentOven ();
-			if ((Object)(object)parentOven != (Object)null) {
+			if (parentOven != null) {
 				parentOven.StartCooking ();
 			}
 		}
 		if (inputSlot == 2 && inputAmount > 0) {
 			ElectricOven parentOven2 = GetParentOven ();
-			if ((Object)(object)parentOven2 != (Object)null) {
+			if (parentOven2 != null) {
 				parentOven2.StopCooking ();
 			}
 		}
@@ -61,13 +59,11 @@ public class ElectricFurnaceIO : IOEntity, IIndustrialStorage
 
 	public Vector2i InputSlotRange (int slotIndex)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
 		return new Vector2i (1, 2);
 	}
 
 	public Vector2i OutputSlotRange (int slotIndex)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
 		return new Vector2i (3, 5);
 	}
 

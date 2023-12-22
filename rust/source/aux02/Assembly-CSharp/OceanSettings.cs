@@ -35,15 +35,15 @@ public class OceanSettings : ScriptableObject
 	public unsafe OceanDisplacementShort3[,,] LoadSimData ()
 	{
 		OceanDisplacementShort3[,,] array = new OceanDisplacementShort3[spectrumSettings.Length, 72, 65536];
-		string path = Application.streamingAssetsPath + "/" + ((Object)this).name + ".physicsdata.dat";
+		string path = Application.streamingAssetsPath + "/" + base.name + ".physicsdata.dat";
 		if (!File.Exists (path)) {
-			Debug.Log ((object)"Simulation Data not found");
+			Debug.Log ("Simulation Data not found");
 			return array;
 		}
 		byte[] array2 = File.ReadAllBytes (path);
-		fixed (byte* ptr2 = array2) {
-			fixed (OceanDisplacementShort3* ptr = array) {
-				UnsafeUtility.MemCpy ((void*)ptr, (void*)ptr2, (long)array2.Length);
+		fixed (byte* source = array2) {
+			fixed (OceanDisplacementShort3* destination = array) {
+				UnsafeUtility.MemCpy (destination, source, array2.Length);
 			}
 		}
 		return array;

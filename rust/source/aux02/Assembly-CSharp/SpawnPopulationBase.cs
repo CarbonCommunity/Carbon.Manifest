@@ -29,11 +29,11 @@ public abstract class SpawnPopulationBase : BaseScriptableObject
 			return;
 		}
 		if (!Initialize ()) {
-			Debug.LogError ((object)("[Spawn] No prefabs to spawn: " + ((Object)this).name), (Object)(object)this);
+			Debug.LogError ("[Spawn] No prefabs to spawn: " + base.name, this);
 			return;
 		}
 		if (Global.developer > 1) {
-			Debug.Log ((object)("[Spawn] Population " + ((Object)this).name + " needs to spawn " + numToFill));
+			Debug.Log ("[Spawn] Population " + base.name + " needs to spawn " + numToFill);
 		}
 		SubFill (spawnHandler, distribution, numToFill, initialSpawn);
 	}

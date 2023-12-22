@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using ConVar;
 using Facepunch;
@@ -86,20 +85,13 @@ public class Ragdoll : EntityComponent<BaseEntity>, IPrefabPreProcess
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("Ragdoll.OnRpcMessage", 0);
-		try {
-		} finally {
-			((IDisposable)val)?.Dispose ();
+		using (TimeWarning.New ("Ragdoll.OnRpcMessage")) {
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
 
 	private void SetUpPhysics (bool isServer)
 	{
-		//IL_0167: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0171: Unknown result type (might be due to invalid IL or missing references)
-		//IL_017d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0187: Unknown result type (might be due to invalid IL or missing references)
 		if (isSetUp) {
 			return;
 		}
@@ -114,9 +106,9 @@ public class Ragdoll : EntityComponent<BaseEntity>, IPrefabPreProcess
 			characterJoint.enableProjection = true;
 		}
 		foreach (ConfigurableJoint configurableJoint in configurableJoints) {
-			configurableJoint.projectionMode = (JointProjectionMode)1;
+			configurableJoint.projectionMode = JointProjectionMode.PositionAndRotation;
 		}
-		SetInterpolationMode (((Component)this).transform.parent, isServer);
+		SetInterpolationMode (base.transform.parent, isServer);
 		foreach (Rigidbody rigidbody in rigidbodies) {
 			SetCollisionMode (rigidbody);
 			rigidbody.angularDrag = 1f;
@@ -129,7 +121,7 @@ public class Ragdoll : EntityComponent<BaseEntity>, IPrefabPreProcess
 			}
 			rigidbody.solverVelocityIterations = 10;
 			rigidbody.maxDepenetrationVelocity = 2f;
-			rigidbody.sleepThreshold = Mathf.Max (0.05f, Physics.sleepThreshold);
+			rigidbody.sleepThreshold = Mathf.Max (0.05f, UnityEngine.Physics.sleepThreshold);
 			if (rigidbody.mass < 1f) {
 				rigidbody.mass = 1f;
 			}
@@ -145,15 +137,10 @@ public class Ragdoll : EntityComponent<BaseEntity>, IPrefabPreProcess
 
 	private void SetInterpolationMode (Transform parent, bool isServer)
 	{
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0031: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
 		if (isServer != simOnServer) {
 			return;
 		}
-		RigidbodyInterpolation interpolation = (simOnServer ? ((RigidbodyInterpolation)0) : (((Object)(object)parent == (Object)null) ? ((RigidbodyInterpolation)1) : ((!AnyParentMoves (parent)) ? ((RigidbodyInterpolation)1) : ((RigidbodyInterpolation)0))));
+		RigidbodyInterpolation interpolation = ((!simOnServer && (parent == null || !AnyParentMoves (parent))) ? RigidbodyInterpolation.Interpolate : RigidbodyInterpolation.None);
 		foreach (Rigidbody rigidbody in rigidbodies) {
 			rigidbody.interpolation = interpolation;
 		}
@@ -161,9 +148,9 @@ public class Ragdoll : EntityComponent<BaseEntity>, IPrefabPreProcess
 
 	private bool AnyParentMoves (Transform parent)
 	{
-		while ((Object)(object)parent != (Object)null) {
-			BaseEntity component = ((Component)parent).GetComponent<BaseEntity> ();
-			if ((Object)(object)component != (Object)null && component.syncPosition) {
+		while (parent != null) {
+			BaseEntity component = parent.GetComponent<BaseEntity> ();
+			if (component != null && component.syncPosition) {
 				return true;
 			}
 			parent = parent.parent;
@@ -173,32 +160,30 @@ public class Ragdoll : EntityComponent<BaseEntity>, IPrefabPreProcess
 
 	private static void SetCollisionMode (Rigidbody rigidBody)
 	{
-		int ragdollmode = Physics.ragdollmode;
+		int ragdollmode = ConVar.Physics.ragdollmode;
 		if (ragdollmode <= 0) {
-			rigidBody.collisionDetectionMode = (CollisionDetectionMode)0;
+			rigidBody.collisionDetectionMode = CollisionDetectionMode.Discrete;
 		}
 		if (ragdollmode == 1) {
-			rigidBody.collisionDetectionMode = (CollisionDetectionMode)1;
+			rigidBody.collisionDetectionMode = CollisionDetectionMode.Continuous;
 		}
 		if (ragdollmode == 2) {
-			rigidBody.collisionDetectionMode = (CollisionDetectionMode)2;
+			rigidBody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
 		}
 		if (ragdollmode >= 3) {
-			rigidBody.collisionDetectionMode = (CollisionDetectionMode)3;
+			rigidBody.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
 		}
 	}
 
 	public void MoveRigidbodiesToRoot ()
 	{
 		foreach (Transform rbTransform in rbTransforms) {
-			rbTransform.SetParent (((Component)this).transform, true);
+			rbTransform.SetParent (base.transform, worldPositionStays: true);
 		}
 	}
 
 	public override void LoadComponent (BaseNetworkable.LoadInfo info)
 	{
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008a: Unknown result type (might be due to invalid IL or missing references)
 		if (simOnServer && info.msg.ragdoll != null && isServer) {
 			for (int i = 0; i < rbTransforms.Count; i++) {
 				rbTransforms [i].localPosition = Compression.UnpackVector3FromInt (info.msg.ragdoll.positions [i], -2f, 2f);
@@ -209,15 +194,11 @@ public class Ragdoll : EntityComponent<BaseEntity>, IPrefabPreProcess
 
 	public void GetCurrentBoneState (GameObject[] bones, ref Vector3[] bonePos, ref Quaternion[] boneRot)
 	{
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
 		int num = bones.Length;
-		bonePos = (Vector3[])(object)new Vector3[num];
-		boneRot = (Quaternion[])(object)new Quaternion[num];
+		bonePos = new Vector3[num];
+		boneRot = new Quaternion[num];
 		for (int i = 0; i < num; i++) {
-			if ((Object)(object)bones [i] != (Object)null) {
+			if (bones [i] != null) {
 				Transform transform = bones [i].transform;
 				bonePos [i] = transform.localPosition;
 				boneRot [i] = transform.localRotation;
@@ -233,26 +214,26 @@ public class Ragdoll : EntityComponent<BaseEntity>, IPrefabPreProcess
 		configurableJoints.Clear ();
 		rigidbodies.Clear ();
 		colliders.Clear ();
-		((Component)this).GetComponentsInChildren<Rigidbody> (true, rigidbodies);
+		GetComponentsInChildren (includeInactive: true, rigidbodies);
 		for (int i = 0; i < rigidbodies.Count; i++) {
-			if (!((Object)(object)((Component)rigidbodies [i]).transform == (Object)(object)((Component)this).transform)) {
-				rbTransforms.Add (((Component)rigidbodies [i]).transform);
+			if (!(rigidbodies [i].transform == base.transform)) {
+				rbTransforms.Add (rigidbodies [i].transform);
 			}
 		}
-		((Component)this).GetComponentsInChildren<Joint> (true, joints);
-		((Component)this).GetComponentsInChildren<CharacterJoint> (true, characterJoints);
-		((Component)this).GetComponentsInChildren<ConfigurableJoint> (true, configurableJoints);
-		((Component)this).GetComponentsInChildren<Collider> (true, colliders);
-		rbTransforms.Sort ((Transform t1, Transform t2) => TransformEx.GetDepth (t1).CompareTo (TransformEx.GetDepth (t2)));
+		GetComponentsInChildren (includeInactive: true, joints);
+		GetComponentsInChildren (includeInactive: true, characterJoints);
+		GetComponentsInChildren (includeInactive: true, configurableJoints);
+		GetComponentsInChildren (includeInactive: true, colliders);
+		rbTransforms.Sort ((Transform t1, Transform t2) => t1.GetDepth ().CompareTo (t2.GetDepth ()));
 		if (skeleton.Bones != null && skeleton.Bones.Length != 0) {
 			GetCurrentBoneState (skeleton.Bones, ref genericBonePos, ref genericBoneRot);
 			int num = skeleton.Bones.Length;
 			boneIndex = new int[num];
 			for (int j = 0; j < num; j++) {
 				boneIndex [j] = -1;
-				GameObject val = skeleton.Bones [j];
+				GameObject gameObject = skeleton.Bones [j];
 				for (int k = 0; k < rbTransforms.Count; k++) {
-					if ((Object)(object)((Component)rbTransforms [k]).gameObject == (Object)(object)val) {
+					if (rbTransforms [k].gameObject == gameObject) {
 						boneIndex [j] = k;
 						break;
 					}
@@ -263,24 +244,20 @@ public class Ragdoll : EntityComponent<BaseEntity>, IPrefabPreProcess
 			return;
 		}
 		foreach (Joint joint in joints) {
-			Object.DestroyImmediate ((Object)(object)joint, true);
+			Object.DestroyImmediate (joint, allowDestroyingAssets: true);
 		}
 		foreach (Rigidbody rigidbody in rigidbodies) {
-			Object.DestroyImmediate ((Object)(object)rigidbody, true);
+			Object.DestroyImmediate (rigidbody, allowDestroyingAssets: true);
 		}
 	}
 
 	private void RemoveRootBoneOffset ()
 	{
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
 		if (simOnServer) {
 			Transform rootBone = model.rootBone;
-			if ((Object)(object)rootBone != (Object)null && !((Component)(object)rootBone).HasComponent<Rigidbody> ()) {
-				((Component)this).transform.position = rootBone.position;
-				((Component)this).transform.rotation = rootBone.rotation;
+			if (rootBone != null && !rootBone.HasComponent<Rigidbody> ()) {
+				base.transform.position = rootBone.position;
+				base.transform.rotation = rootBone.rotation;
 				rootBone.localPosition = Vector3.zero;
 				rootBone.localRotation = Quaternion.identity;
 			}
@@ -291,7 +268,7 @@ public class Ragdoll : EntityComponent<BaseEntity>, IPrefabPreProcess
 	{
 		if (simOnServer) {
 			RemoveRootBoneOffset ();
-			((FacepunchBehaviour)this).InvokeRepeating ((Action)SyncJointsToClients, 0f, 0.1f);
+			InvokeRepeating (SyncJointsToClients, 0f, 0.1f);
 		} else {
 			MoveRigidbodiesToRoot ();
 		}
@@ -301,7 +278,7 @@ public class Ragdoll : EntityComponent<BaseEntity>, IPrefabPreProcess
 	public override void SaveComponent (BaseNetworkable.SaveInfo info)
 	{
 		if (simOnServer) {
-			info.msg.ragdoll = Pool.Get<Ragdoll> ();
+			info.msg.ragdoll = Facepunch.Pool.Get<ProtoBuf.Ragdoll> ();
 			SetRagdollMessageVals (info.msg.ragdoll);
 		}
 	}
@@ -321,13 +298,9 @@ public class Ragdoll : EntityComponent<BaseEntity>, IPrefabPreProcess
 		if (!ShouldSyncJoints ()) {
 			return;
 		}
-		Ragdoll val = Pool.Get<Ragdoll> ();
-		try {
-			SetRagdollMessageVals (val);
-			base.baseEntity.ClientRPC<Ragdoll> (null, "RPCSyncJoints", val);
-		} finally {
-			((IDisposable)val)?.Dispose ();
-		}
+		using ProtoBuf.Ragdoll ragdoll = Facepunch.Pool.Get<ProtoBuf.Ragdoll> ();
+		SetRagdollMessageVals (ragdoll);
+		base.baseEntity.ClientRPC (null, "RPCSyncJoints", ragdoll);
 	}
 
 	private bool ShouldSyncJoints ()
@@ -344,12 +317,10 @@ public class Ragdoll : EntityComponent<BaseEntity>, IPrefabPreProcess
 		return result;
 	}
 
-	private void SetRagdollMessageVals (Ragdoll ragdollMsg)
+	private void SetRagdollMessageVals (ProtoBuf.Ragdoll ragdollMsg)
 	{
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0037: Unknown result type (might be due to invalid IL or missing references)
-		List<int> list = Pool.GetList<int> ();
-		List<int> list2 = Pool.GetList<int> ();
+		List<int> list = Facepunch.Pool.GetList<int> ();
+		List<int> list2 = Facepunch.Pool.GetList<int> ();
 		foreach (Transform rbTransform in rbTransforms) {
 			int item = Compression.PackVector3ToInt (rbTransform.localPosition, -2f, 2f);
 			int item2 = Compression.PackVector3ToInt (rbTransform.localEulerAngles, -360f, 360f);
@@ -363,21 +334,19 @@ public class Ragdoll : EntityComponent<BaseEntity>, IPrefabPreProcess
 
 	public void BecomeActive ()
 	{
-		//IL_0063: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006f: Unknown result type (might be due to invalid IL or missing references)
 		foreach (Rigidbody rigidbody in rigidbodies) {
 			rigidbody.isKinematic = false;
 			SetCollisionMode (rigidbody);
 			rigidbody.WakeUp ();
-			if ((Object)(object)base.baseEntity != (Object)null && base.baseEntity.HasParent ()) {
-				Rigidbody component = ((Component)base.baseEntity.GetParentEntity ()).GetComponent<Rigidbody> ();
-				if ((Object)(object)component != (Object)null) {
+			if (base.baseEntity != null && base.baseEntity.HasParent ()) {
+				Rigidbody component = base.baseEntity.GetParentEntity ().GetComponent<Rigidbody> ();
+				if (component != null) {
 					rigidbody.velocity = component.velocity;
 					rigidbody.angularVelocity = component.angularVelocity;
 				}
 			}
 			foreach (Collider collider in colliders) {
-				((Component)collider).gameObject.layer = 9;
+				collider.gameObject.layer = 9;
 			}
 		}
 	}
@@ -385,11 +354,11 @@ public class Ragdoll : EntityComponent<BaseEntity>, IPrefabPreProcess
 	public void BecomeInactive ()
 	{
 		foreach (Rigidbody rigidbody in rigidbodies) {
-			rigidbody.collisionDetectionMode = (CollisionDetectionMode)0;
+			rigidbody.collisionDetectionMode = CollisionDetectionMode.Discrete;
 			rigidbody.isKinematic = true;
 		}
 		foreach (Collider collider in colliders) {
-			((Component)collider).gameObject.layer = 19;
+			collider.gameObject.layer = 19;
 		}
 	}
 }

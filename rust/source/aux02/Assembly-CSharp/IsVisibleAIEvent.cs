@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public class IsVisibleAIEvent : BaseAIEvent
 {
 	public IsVisibleAIEvent ()
@@ -12,7 +10,7 @@ public class IsVisibleAIEvent : BaseAIEvent
 	{
 		base.Result = false;
 		BaseEntity baseEntity = memory.Entity.Get (base.InputEntityMemorySlot);
-		if (!((Object)(object)baseEntity == (Object)null) && base.Owner is IAIAttack) {
+		if (!(baseEntity == null) && base.Owner is IAIAttack) {
 			bool flag = senses.Memory.IsLOS (baseEntity);
 			base.Result = (base.Inverted ? (!flag) : flag);
 		}

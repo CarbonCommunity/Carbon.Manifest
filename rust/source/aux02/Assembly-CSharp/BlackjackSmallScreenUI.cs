@@ -47,38 +47,38 @@ public class BlackjackSmallScreenUI : FacepunchBehaviour
 	private BlackjackScreenInputUI[] inputs;
 
 	[SerializeField]
-	private Phrase phraseBust;
+	private Translate.Phrase phraseBust;
 
 	[SerializeField]
-	private Phrase phraseBet;
+	private Translate.Phrase phraseBet;
 
 	[SerializeField]
-	private Phrase phrasePlaceYourBet;
+	private Translate.Phrase phrasePlaceYourBet;
 
 	[SerializeField]
-	private Phrase phraseStandoff;
+	private Translate.Phrase phraseStandoff;
 
 	[SerializeField]
-	private Phrase phraseYouWin;
+	private Translate.Phrase phraseYouWin;
 
 	[SerializeField]
-	private Phrase phraseYouLose;
+	private Translate.Phrase phraseYouLose;
 
 	[SerializeField]
-	private Phrase phraseWaitingForOtherPlayers;
+	private Translate.Phrase phraseWaitingForOtherPlayers;
 
 	[SerializeField]
-	private Phrase phraseAddFunds;
+	private Translate.Phrase phraseAddFunds;
 
 	[SerializeField]
-	private Phrase phraseWaitingForPlayer;
+	private Translate.Phrase phraseWaitingForPlayer;
 
 	[SerializeField]
-	private Phrase phraseSplitStored;
+	private Translate.Phrase phraseSplitStored;
 
 	[SerializeField]
-	private Phrase phraseSplitActive;
+	private Translate.Phrase phraseSplitActive;
 
 	[SerializeField]
-	private Phrase phraseHand;
+	private Translate.Phrase phraseHand;
 }

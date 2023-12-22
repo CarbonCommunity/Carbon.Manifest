@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class CinematicScenePlaybackEntity : BaseEntity
@@ -17,9 +16,9 @@ public class CinematicScenePlaybackEntity : BaseEntity
 
 	public void SignalKillPlayer ()
 	{
-		if (base.isServer && (Object)(object)currentPlayer != (Object)null) {
+		if (base.isServer && currentPlayer != null) {
 			TutorialIsland currentTutorialIsland = currentPlayer.GetCurrentTutorialIsland ();
-			if ((Object)(object)currentTutorialIsland != (Object)null) {
+			if (currentTutorialIsland != null) {
 				currentTutorialIsland.OnPlayerCompletedTutorial (currentPlayer);
 			}
 		}
@@ -33,7 +32,7 @@ public class CinematicScenePlaybackEntity : BaseEntity
 	public override void ServerInit ()
 	{
 		base.ServerInit ();
-		((FacepunchBehaviour)this).Invoke ((Action)Timeout, Duration);
+		Invoke (Timeout, Duration);
 	}
 
 	private void Timeout ()

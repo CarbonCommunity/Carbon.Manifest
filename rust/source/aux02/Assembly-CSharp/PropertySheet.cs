@@ -9,8 +9,6 @@ public sealed class PropertySheet
 
 	internal PropertySheet (Material material)
 	{
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Expected O, but got Unknown
 		this.material = material;
 		properties = new MaterialPropertyBlock ();
 	}
@@ -32,7 +30,7 @@ public sealed class PropertySheet
 
 	internal void Release ()
 	{
-		RuntimeUtilities.Destroy ((Object)(object)material);
+		RuntimeUtilities.Destroy (material);
 		material = null;
 	}
 }

@@ -1,7 +1,7 @@
 using Facepunch;
 using ProtoBuf.Nexus;
 
-public interface INexusRequestHandler : IPooled
+public interface INexusRequestHandler : Pool.IPooled
 {
 	Response Response { get; }
 

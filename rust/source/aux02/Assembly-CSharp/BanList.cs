@@ -40,17 +40,17 @@ public class BanList<TKey>
 	public void Cleanup ()
 	{
 		double realtimeSinceStartup = TimeEx.realtimeSinceStartup;
-		List<TKey> list = Pool.GetList<TKey> ();
+		List<TKey> obj = Pool.GetList<TKey> ();
 		lock (_bans) {
 			foreach (KeyValuePair<TKey, double> ban in _bans) {
 				if (realtimeSinceStartup >= ban.Value) {
-					list.Add (ban.Key);
+					obj.Add (ban.Key);
 				}
 			}
-			foreach (TKey item in list) {
+			foreach (TKey item in obj) {
 				_bans.Remove (item);
 			}
 		}
-		Pool.FreeList<TKey> (ref list);
+		Pool.FreeList (ref obj);
 	}
 }

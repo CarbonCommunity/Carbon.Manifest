@@ -1,4 +1,3 @@
-using System;
 using ConVar;
 using Facepunch;
 using Rust;
@@ -41,7 +40,7 @@ public class GameManager
 
 	public GameObject FindPrefab (BaseEntity ent)
 	{
-		if ((Object)(object)ent == (Object)null) {
+		if (ent == null) {
 			return null;
 		}
 		return FindPrefab (ent.PrefabName);
@@ -49,94 +48,83 @@ public class GameManager
 
 	public GameObject FindPrefab (string strPrefab)
 	{
-		GameObject val = preProcessed.Find (strPrefab);
-		if ((Object)(object)val != (Object)null) {
-			return val;
+		GameObject gameObject = preProcessed.Find (strPrefab);
+		if (gameObject != null) {
+			return gameObject;
 		}
-		val = FileSystem.LoadPrefab (strPrefab);
-		if ((Object)(object)val == (Object)null) {
+		gameObject = FileSystem.LoadPrefab (strPrefab);
+		if (gameObject == null) {
 			return null;
 		}
-		preProcessed.Process (strPrefab, val);
-		GameObject val2 = preProcessed.Find (strPrefab);
-		if (!((Object)(object)val2 != (Object)null)) {
-			return val;
+		preProcessed.Process (strPrefab, gameObject);
+		GameObject gameObject2 = preProcessed.Find (strPrefab);
+		if (!(gameObject2 != null)) {
+			return gameObject;
 		}
-		return val2;
+		return gameObject2;
 	}
 
 	public GameObject CreatePrefab (string strPrefab, Vector3 pos, Quaternion rot, Vector3 scale, bool active = true)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		GameObject val = Instantiate (strPrefab, pos, rot);
-		if (Object.op_Implicit ((Object)(object)val)) {
-			val.transform.localScale = scale;
+		GameObject gameObject = Instantiate (strPrefab, pos, rot);
+		if ((bool)gameObject) {
+			gameObject.transform.localScale = scale;
 			if (active) {
-				val.AwakeFromInstantiate ();
+				gameObject.AwakeFromInstantiate ();
 			}
 		}
-		return val;
+		return gameObject;
 	}
 
 	public GameObject CreatePrefab (string strPrefab, Vector3 pos, Quaternion rot, bool active = true)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
-		GameObject val = Instantiate (strPrefab, pos, rot);
-		if (Object.op_Implicit ((Object)(object)val) && active) {
-			val.AwakeFromInstantiate ();
+		GameObject gameObject = Instantiate (strPrefab, pos, rot);
+		if ((bool)gameObject && active) {
+			gameObject.AwakeFromInstantiate ();
 		}
-		return val;
+		return gameObject;
 	}
 
 	public GameObject CreatePrefab (string strPrefab, bool active = true)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		GameObject val = Instantiate (strPrefab, Vector3.zero, Quaternion.identity);
-		if (Object.op_Implicit ((Object)(object)val) && active) {
-			val.AwakeFromInstantiate ();
+		GameObject gameObject = Instantiate (strPrefab, Vector3.zero, Quaternion.identity);
+		if ((bool)gameObject && active) {
+			gameObject.AwakeFromInstantiate ();
 		}
-		return val;
+		return gameObject;
 	}
 
 	public GameObject CreatePrefab (string strPrefab, Transform parent, bool active = true)
 	{
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		GameObject val = Instantiate (strPrefab, parent.position, parent.rotation);
-		if (Object.op_Implicit ((Object)(object)val)) {
-			val.transform.SetParent (parent, false);
-			val.Identity ();
+		GameObject gameObject = Instantiate (strPrefab, parent.position, parent.rotation);
+		if ((bool)gameObject) {
+			gameObject.transform.SetParent (parent, worldPositionStays: false);
+			gameObject.Identity ();
 			if (active) {
-				val.AwakeFromInstantiate ();
+				gameObject.AwakeFromInstantiate ();
 			}
 		}
-		return val;
+		return gameObject;
 	}
 
 	public BaseEntity CreateEntity (string strPrefab, Vector3 pos = default(Vector3), Quaternion rot = default(Quaternion), bool startActive = true)
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
 		if (string.IsNullOrEmpty (strPrefab)) {
 			return null;
 		}
-		GameObject val = CreatePrefab (strPrefab, pos, rot, startActive);
-		if ((Object)(object)val == (Object)null) {
+		GameObject gameObject = CreatePrefab (strPrefab, pos, rot, startActive);
+		if (gameObject == null) {
 			return null;
 		}
-		BaseEntity component = val.GetComponent<BaseEntity> ();
-		if ((Object)(object)component == (Object)null) {
-			Debug.LogError ((object)("CreateEntity called on a prefab that isn't an entity! " + strPrefab));
-			Object.Destroy ((Object)(object)val);
+		BaseEntity component = gameObject.GetComponent<BaseEntity> ();
+		if (component == null) {
+			Debug.LogError ("CreateEntity called on a prefab that isn't an entity! " + strPrefab);
+			Object.Destroy (gameObject);
 			return null;
 		}
-		if (((Component)component).CompareTag ("CannotBeCreated")) {
-			Debug.LogWarning ((object)("CreateEntity called on a prefab that has the CannotBeCreated tag set. " + strPrefab));
-			Object.Destroy ((Object)(object)val);
+		if (component.CompareTag ("CannotBeCreated")) {
+			Debug.LogWarning ("CreateEntity called on a prefab that has the CannotBeCreated tag set. " + strPrefab);
+			Object.Destroy (gameObject);
 			return null;
 		}
 		return component;
@@ -144,85 +132,76 @@ public class GameManager
 
 	private GameObject Instantiate (string strPrefab, Vector3 pos, Quaternion rot)
 	{
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0082: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0066: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b7: Unknown result type (might be due to invalid IL or missing references)
-		if (!StringEx.IsLower (strPrefab)) {
-			Debug.LogWarning ((object)("Converting prefab name to lowercase: " + strPrefab));
+		if (!strPrefab.IsLower ()) {
+			Debug.LogWarning ("Converting prefab name to lowercase: " + strPrefab);
 			strPrefab = strPrefab.ToLower ();
 		}
-		GameObject val = FindPrefab (strPrefab);
-		if (!Object.op_Implicit ((Object)(object)val)) {
-			Debug.LogError ((object)("Couldn't find prefab \"" + strPrefab + "\""));
+		GameObject gameObject = FindPrefab (strPrefab);
+		if (!gameObject) {
+			Debug.LogError ("Couldn't find prefab \"" + strPrefab + "\"");
 			return null;
 		}
-		GameObject val2 = pool.Pop (StringPool.Get (strPrefab), pos, rot);
-		if ((Object)(object)val2 == (Object)null) {
-			val2 = Instantiate.GameObject (val, pos, rot);
-			((Object)val2).name = strPrefab;
+		GameObject gameObject2 = pool.Pop (StringPool.Get (strPrefab), pos, rot);
+		if (gameObject2 == null) {
+			gameObject2 = Facepunch.Instantiate.GameObject (gameObject, pos, rot);
+			gameObject2.name = strPrefab;
 		} else {
-			val2.transform.localScale = val.transform.localScale;
+			gameObject2.transform.localScale = gameObject.transform.localScale;
 		}
-		if (!Clientside && Serverside && (Object)(object)val2.transform.parent == (Object)null && Application.isPlaying) {
-			SceneManager.MoveGameObjectToScene (val2, Rust.Server.EntityScene);
+		if (!Clientside && Serverside && gameObject2.transform.parent == null && UnityEngine.Application.isPlaying) {
+			SceneManager.MoveGameObjectToScene (gameObject2, Rust.Server.EntityScene);
 		}
-		return val2;
+		return gameObject2;
 	}
 
 	public static void Destroy (Component component, float delay = 0f)
 	{
 		if ((component as BaseEntity).IsValid ()) {
-			Debug.LogError ((object)("Trying to destroy an entity without killing it first: " + ((Object)component).name));
+			Debug.LogError ("Trying to destroy an entity without killing it first: " + component.name);
 		}
-		Object.Destroy ((Object)(object)component, delay);
+		Object.Destroy (component, delay);
 	}
 
 	public static void Destroy (GameObject instance, float delay = 0f)
 	{
-		if (Object.op_Implicit ((Object)(object)instance)) {
+		if ((bool)instance) {
 			if (instance.GetComponent<BaseEntity> ().IsValid ()) {
-				Debug.LogError ((object)("Trying to destroy an entity without killing it first: " + ((Object)instance).name));
+				Debug.LogError ("Trying to destroy an entity without killing it first: " + instance.name);
 			}
-			Object.Destroy ((Object)(object)instance, delay);
+			Object.Destroy (instance, delay);
 		}
 	}
 
 	public static void DestroyImmediate (Component component, bool allowDestroyingAssets = false)
 	{
 		if ((component as BaseEntity).IsValid ()) {
-			Debug.LogError ((object)("Trying to destroy an entity without killing it first: " + ((Object)component).name));
+			Debug.LogError ("Trying to destroy an entity without killing it first: " + component.name);
 		}
-		Object.DestroyImmediate ((Object)(object)component, allowDestroyingAssets);
+		Object.DestroyImmediate (component, allowDestroyingAssets);
 	}
 
 	public static void DestroyImmediate (GameObject instance, bool allowDestroyingAssets = false)
 	{
 		if (instance.GetComponent<BaseEntity> ().IsValid ()) {
-			Debug.LogError ((object)("Trying to destroy an entity without killing it first: " + ((Object)instance).name));
+			Debug.LogError ("Trying to destroy an entity without killing it first: " + instance.name);
 		}
-		Object.DestroyImmediate ((Object)(object)instance, allowDestroyingAssets);
+		Object.DestroyImmediate (instance, allowDestroyingAssets);
 	}
 
 	public void Retire (GameObject instance)
 	{
-		if (!Object.op_Implicit ((Object)(object)instance)) {
+		if (!instance) {
 			return;
 		}
-		TimeWarning val = TimeWarning.New ("GameManager.Retire", 0);
-		try {
+		using (TimeWarning.New ("GameManager.Retire")) {
 			if (instance.GetComponent<BaseEntity> ().IsValid ()) {
-				Debug.LogError ((object)("Trying to retire an entity without killing it first: " + ((Object)instance).name));
+				Debug.LogError ("Trying to retire an entity without killing it first: " + instance.name);
 			}
-			if (!Application.isQuitting && Pool.enabled && instance.SupportsPooling ()) {
+			if (!Rust.Application.isQuitting && ConVar.Pool.enabled && instance.SupportsPooling ()) {
 				pool.Push (instance);
 			} else {
-				Object.Destroy ((Object)(object)instance);
+				Object.Destroy (instance);
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 	}
 }

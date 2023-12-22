@@ -12,32 +12,32 @@ public class Data : ConsoleSystem
 		string text = Path.Combine (Application.persistentDataPath, @string + ".raw");
 		switch (@string) {
 		case "splatmap":
-			if (Object.op_Implicit ((Object)(object)TerrainMeta.SplatMap)) {
+			if ((bool)TerrainMeta.SplatMap) {
 				RawWriter.Write (TerrainMeta.SplatMap.ToEnumerable (), text);
 			}
 			break;
 		case "heightmap":
-			if (Object.op_Implicit ((Object)(object)TerrainMeta.HeightMap)) {
+			if ((bool)TerrainMeta.HeightMap) {
 				RawWriter.Write (TerrainMeta.HeightMap.ToEnumerable (), text);
 			}
 			break;
 		case "biomemap":
-			if (Object.op_Implicit ((Object)(object)TerrainMeta.BiomeMap)) {
+			if ((bool)TerrainMeta.BiomeMap) {
 				RawWriter.Write (TerrainMeta.BiomeMap.ToEnumerable (), text);
 			}
 			break;
 		case "topologymap":
-			if (Object.op_Implicit ((Object)(object)TerrainMeta.TopologyMap)) {
+			if ((bool)TerrainMeta.TopologyMap) {
 				RawWriter.Write (TerrainMeta.TopologyMap.ToEnumerable (), text);
 			}
 			break;
 		case "alphamap":
-			if (Object.op_Implicit ((Object)(object)TerrainMeta.AlphaMap)) {
+			if ((bool)TerrainMeta.AlphaMap) {
 				RawWriter.Write (TerrainMeta.AlphaMap.ToEnumerable (), text);
 			}
 			break;
 		case "watermap":
-			if (Object.op_Implicit ((Object)(object)TerrainMeta.WaterMap)) {
+			if ((bool)TerrainMeta.WaterMap) {
 				RawWriter.Write (TerrainMeta.WaterMap.ToEnumerable (), text);
 			}
 			break;

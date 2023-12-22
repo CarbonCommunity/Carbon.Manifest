@@ -13,7 +13,7 @@ public class StartOfFrameHook : MonoBehaviour
 
 	private void Update ()
 	{
-		((Component)this).gameObject.SetActive (false);
-		((Component)this).gameObject.SetActive (true);
+		base.gameObject.SetActive (value: false);
+		base.gameObject.SetActive (value: true);
 	}
 }

@@ -24,11 +24,11 @@ public class AttackedAIEvent : BaseAIEvent
 		combatEntity = memory.Entity.Get (base.InputEntityMemorySlot) as BaseCombatEntity;
 		float num = lastExecuteTime;
 		lastExecuteTime = Time.time;
-		if ((Object)(object)combatEntity == (Object)null || !(combatEntity.lastAttackedTime >= num) || (Object)(object)combatEntity.lastAttacker == (Object)null || (Object)(object)combatEntity.lastAttacker == (Object)(object)combatEntity) {
+		if (combatEntity == null || !(combatEntity.lastAttackedTime >= num) || combatEntity.lastAttacker == null || combatEntity.lastAttacker == combatEntity) {
 			return;
 		}
 		BasePlayer basePlayer = combatEntity.lastAttacker as BasePlayer;
-		if (!((Object)(object)basePlayer != (Object)null) || !((Object)(object)basePlayer == (Object)(object)memory.Entity.Get (5)) || !((Object)(object)basePlayer.lastDealtDamageTo == (Object)(object)base.Owner)) {
+		if (!(basePlayer != null) || !(basePlayer == memory.Entity.Get (5)) || !(basePlayer.lastDealtDamageTo == base.Owner)) {
 			if (base.ShouldSetOutputEntityMemory) {
 				memory.Entity.Set (combatEntity.lastAttacker, base.OutputEntityMemorySlot);
 			}

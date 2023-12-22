@@ -1,5 +1,3 @@
-using System;
-
 public class NPCPlayerCorpse : PlayerCorpse
 {
 	private bool lootEnabled;
@@ -16,7 +14,7 @@ public class NPCPlayerCorpse : PlayerCorpse
 
 	public void SetLootableIn (float when)
 	{
-		((FacepunchBehaviour)this).Invoke ((Action)EnableLooting, when);
+		Invoke (EnableLooting, when);
 	}
 
 	public void EnableLooting ()

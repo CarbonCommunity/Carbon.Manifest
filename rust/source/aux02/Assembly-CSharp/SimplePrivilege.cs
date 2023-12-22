@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Facepunch;
 using ProtoBuf;
-using UnityEngine;
 
 public class SimplePrivilege : BaseEntity
 {
@@ -61,7 +60,7 @@ public class SimplePrivilege : BaseEntity
 	protected void UpdateMaxAuthCapacity ()
 	{
 		BaseGameMode activeGameMode = BaseGameMode.GetActiveGameMode (serverside: true);
-		if (Object.op_Implicit ((Object)(object)activeGameMode) && activeGameMode.limitTeamAuths) {
+		if ((bool)activeGameMode && activeGameMode.limitTeamAuths) {
 			SetFlag (Flags.Reserved5, authorizedPlayers.Count >= activeGameMode.GetMaxRelationshipTeamSize ());
 		}
 	}

@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public class GameModeSpawnGroup : SpawnGroup
 {
 	public string[] gameModeTags;
@@ -13,7 +11,7 @@ public class GameModeSpawnGroup : SpawnGroup
 	public bool ShouldSpawn ()
 	{
 		BaseGameMode activeGameMode = BaseGameMode.GetActiveGameMode (serverside: true);
-		if ((Object)(object)activeGameMode == (Object)null) {
+		if (activeGameMode == null) {
 			return false;
 		}
 		if (gameModeTags.Length == 0) {

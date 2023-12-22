@@ -19,7 +19,7 @@ public class MissionObjective_FillTutorialToolCupboard : MissionObjective
 			return;
 		}
 		BuildingPrivlidge buildingPrivilege = assignee.GetBuildingPrivilege ();
-		if (!((Object)(object)buildingPrivilege != (Object)null)) {
+		if (!(buildingPrivilege != null)) {
 			return;
 		}
 		int num = Mathf.RoundToInt (buildingPrivilege.GetProtectedMinutes () / 60f);

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,16 +11,12 @@ public class TriggerMount : TriggerBase, IServerComponent
 
 		public EntryInfo (float entryTime, Vector3 entryPos)
 		{
-			//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-			//IL_000f: Unknown result type (might be due to invalid IL or missing references)
 			this.entryTime = entryTime;
 			this.entryPos = entryPos;
 		}
 
 		public void Set (float entryTime, Vector3 entryPos)
 		{
-			//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0009: Unknown result type (might be due to invalid IL or missing references)
 			this.entryTime = entryTime;
 			this.entryPos = entryPos;
 		}
@@ -36,30 +31,29 @@ public class TriggerMount : TriggerBase, IServerComponent
 	internal override GameObject InterestedInObject (GameObject obj)
 	{
 		BaseEntity baseEntity = obj.ToBaseEntity ();
-		if ((Object)(object)baseEntity == (Object)null) {
+		if (baseEntity == null) {
 			return null;
 		}
 		BasePlayer basePlayer = baseEntity.ToPlayer ();
-		if ((Object)(object)basePlayer == (Object)null || basePlayer.IsNpc) {
+		if (basePlayer == null || basePlayer.IsNpc) {
 			return null;
 		}
-		return ((Component)baseEntity).gameObject;
+		return baseEntity.gameObject;
 	}
 
 	internal override void OnEntityEnter (BaseEntity ent)
 	{
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
 		base.OnEntityEnter (ent);
 		if (entryInfo == null) {
 			entryInfo = new Dictionary<BaseEntity, EntryInfo> ();
 		}
-		entryInfo.Add (ent, new EntryInfo (Time.time, ((Component)ent).transform.position));
-		((FacepunchBehaviour)this).Invoke ((Action)CheckForMount, 3.6f);
+		entryInfo.Add (ent, new EntryInfo (Time.time, ent.transform.position));
+		Invoke (CheckForMount, 3.6f);
 	}
 
 	internal override void OnEntityLeave (BaseEntity ent)
 	{
-		if ((Object)(object)ent != (Object)null && entryInfo != null) {
+		if (ent != null && entryInfo != null) {
 			entryInfo.Remove (ent);
 		}
 		base.OnEntityLeave (ent);
@@ -67,9 +61,6 @@ public class TriggerMount : TriggerBase, IServerComponent
 
 	private void CheckForMount ()
 	{
-		//IL_0108: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bf: Unknown result type (might be due to invalid IL or missing references)
 		if (entityContents == null || entryInfo == null) {
 			return;
 		}
@@ -81,20 +72,20 @@ public class TriggerMount : TriggerBase, IServerComponent
 			EntryInfo value = item.Value;
 			BasePlayer basePlayer = key.ToPlayer ();
 			bool flag = (basePlayer.IsAdmin || basePlayer.IsDeveloper) && basePlayer.IsFlying;
-			if (!((Object)(object)basePlayer != (Object)null) || !basePlayer.IsAlive () || flag) {
+			if (!(basePlayer != null) || !basePlayer.IsAlive () || flag) {
 				continue;
 			}
 			bool flag2 = false;
-			if (!basePlayer.isMounted && !basePlayer.IsSleeping () && value.entryTime + 3.5f < Time.time && Vector3.Distance (((Component)key).transform.position, value.entryPos) < 0.5f) {
-				BaseVehicle componentInParent = ((Component)this).GetComponentInParent<BaseVehicle> ();
-				if ((Object)(object)componentInParent != (Object)null && !componentInParent.IsDead ()) {
+			if (!basePlayer.isMounted && !basePlayer.IsSleeping () && value.entryTime + 3.5f < Time.time && Vector3.Distance (key.transform.position, value.entryPos) < 0.5f) {
+				BaseVehicle componentInParent = GetComponentInParent<BaseVehicle> ();
+				if (componentInParent != null && !componentInParent.IsDead ()) {
 					componentInParent.AttemptMount (basePlayer);
 					flag2 = true;
 				}
 			}
 			if (!flag2) {
-				value.Set (Time.time, ((Component)key).transform.position);
-				((FacepunchBehaviour)this).Invoke ((Action)CheckForMount, 3.6f);
+				value.Set (Time.time, key.transform.position);
+				Invoke (CheckForMount, 3.6f);
 			}
 		}
 	}

@@ -1,5 +1,4 @@
 using Rust.Ai;
-using UnityEngine;
 
 public static class Sense
 {
@@ -7,16 +6,10 @@ public static class Sense
 
 	public static void Stimulate (Sensation sensation)
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0056: Unknown result type (might be due to invalid IL or missing references)
 		int inSphere = BaseEntity.Query.Server.GetInSphere (sensation.Position, sensation.Radius, query, IsAbleToBeStimulated);
 		float num = sensation.Radius * sensation.Radius;
 		for (int i = 0; i < inSphere; i++) {
-			Vector3 val = ((Component)query [i]).transform.position - sensation.Position;
-			if (((Vector3)(ref val)).sqrMagnitude <= num) {
+			if ((query [i].transform.position - sensation.Position).sqrMagnitude <= num) {
 				query [i].OnSensation (sensation);
 			}
 		}

@@ -1,4 +1,3 @@
-using System;
 using ConVar;
 using Rust;
 using UnityEngine;
@@ -24,7 +23,7 @@ public abstract class BaseMetabolism<T> : EntityComponent<T> where T : BaseComba
 
 	protected virtual void OnDisable ()
 	{
-		if (!Application.isQuitting) {
+		if (!Rust.Application.isQuitting) {
 			owner = null;
 		}
 	}
@@ -39,7 +38,7 @@ public abstract class BaseMetabolism<T> : EntityComponent<T> where T : BaseComba
 	{
 		timeSinceLastMetabolism += delta;
 		if (!(timeSinceLastMetabolism <= ConVar.Server.metabolismtick)) {
-			if (Object.op_Implicit ((Object)(object)owner) && !owner.IsDead ()) {
+			if ((bool)owner && !owner.IsDead ()) {
 				RunMetabolism (ownerEntity, timeSinceLastMetabolism);
 				DoMetabolismDamage (ownerEntity, timeSinceLastMetabolism);
 			}
@@ -50,19 +49,13 @@ public abstract class BaseMetabolism<T> : EntityComponent<T> where T : BaseComba
 	protected virtual void DoMetabolismDamage (BaseCombatEntity ownerEntity, float delta)
 	{
 		if (calories.value <= 20f) {
-			TimeWarning val = TimeWarning.New ("Calories Hurt", 0);
-			try {
+			using (TimeWarning.New ("Calories Hurt")) {
 				ownerEntity.Hurt (Mathf.InverseLerp (20f, 0f, calories.value) * delta * (1f / 12f), DamageType.Hunger);
-			} finally {
-				((IDisposable)val)?.Dispose ();
 			}
 		}
 		if (hydration.value <= 20f) {
-			TimeWarning val = TimeWarning.New ("Hyration Hurt", 0);
-			try {
+			using (TimeWarning.New ("Hyration Hurt")) {
 				ownerEntity.Hurt (Mathf.InverseLerp (20f, 0f, hydration.value) * delta * (2f / 15f), DamageType.Thirst);
-			} finally {
-				((IDisposable)val)?.Dispose ();
 			}
 		}
 	}
@@ -87,7 +80,7 @@ public abstract class BaseMetabolism<T> : EntityComponent<T> where T : BaseComba
 
 	public bool ShouldDie ()
 	{
-		if (Object.op_Implicit ((Object)(object)owner)) {
+		if ((bool)owner) {
 			return owner.Health () <= 0f;
 		}
 		return false;

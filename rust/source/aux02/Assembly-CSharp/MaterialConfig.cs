@@ -20,10 +20,7 @@ public class MaterialConfig : ScriptableObject
 
 		public float FindBlendParameters (Vector3 pos, out T src, out T dst)
 		{
-			//IL_0081: Unknown result type (might be due to invalid IL or missing references)
-			//IL_008e: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00ca: Unknown result type (might be due to invalid IL or missing references)
-			if ((Object)(object)TerrainMeta.BiomeMap == (Object)null) {
+			if (TerrainMeta.BiomeMap == null) {
 				src = Temperate;
 				dst = Tundra;
 				return 0f;
@@ -40,8 +37,7 @@ public class MaterialConfig : ScriptableObject
 
 		public T FindBlendParameters (Vector3 pos)
 		{
-			//IL_006a: Unknown result type (might be due to invalid IL or missing references)
-			if ((Object)(object)TerrainMeta.BiomeMap == (Object)null) {
+			if (TerrainMeta.BiomeMap == null) {
 				return Temperate;
 			}
 			if (climates == null || climates.Length == 0) {
@@ -82,23 +78,6 @@ public class MaterialConfig : ScriptableObject
 
 	public MaterialPropertyBlock GetMaterialPropertyBlock (Material mat, Vector3 pos, Vector3 scale)
 	{
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Expected O, but got Unknown
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0073: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0092: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0106: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0116: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0124: Unknown result type (might be due to invalid IL or missing references)
-		//IL_012b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0132: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014d: Unknown result type (might be due to invalid IL or missing references)
 		if (properties == null) {
 			properties = new MaterialPropertyBlock ();
 		}
@@ -107,26 +86,26 @@ public class MaterialConfig : ScriptableObject
 			ShaderParametersFloat shaderParametersFloat = Floats [i];
 			float src;
 			float dst;
-			float num = shaderParametersFloat.FindBlendParameters (pos, out src, out dst);
-			properties.SetFloat (shaderParametersFloat.Name, Mathf.Lerp (src, dst, num));
+			float t = shaderParametersFloat.FindBlendParameters (pos, out src, out dst);
+			properties.SetFloat (shaderParametersFloat.Name, Mathf.Lerp (src, dst, t));
 		}
 		for (int j = 0; j < Colors.Length; j++) {
 			ShaderParametersColor shaderParametersColor = Colors [j];
 			Color src2;
 			Color dst2;
-			float num2 = shaderParametersColor.FindBlendParameters (pos, out src2, out dst2);
-			properties.SetColor (shaderParametersColor.Name, Color.Lerp (src2, dst2, num2));
+			float t2 = shaderParametersColor.FindBlendParameters (pos, out src2, out dst2);
+			properties.SetColor (shaderParametersColor.Name, Color.Lerp (src2, dst2, t2));
 		}
 		for (int k = 0; k < Textures.Length; k++) {
 			ShaderParametersTexture shaderParametersTexture = Textures [k];
-			Texture val = shaderParametersTexture.FindBlendParameters (pos);
-			if (Object.op_Implicit ((Object)(object)val)) {
-				properties.SetTexture (shaderParametersTexture.Name, val);
+			Texture texture = shaderParametersTexture.FindBlendParameters (pos);
+			if ((bool)texture) {
+				properties.SetTexture (shaderParametersTexture.Name, texture);
 			}
 		}
 		for (int l = 0; l < ScaleUV.Length; l++) {
 			Vector4 vector = mat.GetVector (ScaleUV [l]);
-			((Vector4)(ref vector))..ctor (vector.x * scale.y, vector.y * scale.y, vector.z, vector.w);
+			vector = new Vector4 (vector.x * scale.y, vector.y * scale.y, vector.z, vector.w);
 			properties.SetVector (ScaleUV [l], vector);
 		}
 		return properties;

@@ -24,15 +24,15 @@ public class TutorialFullScreenHelpInfo : ScriptableObject
 		public VideoClip VideoClip;
 	}
 
-	public static Phrase MovementPhrase = new Phrase ("help_cat_movement", "MOVEMENT");
+	public static Translate.Phrase MovementPhrase = new Translate.Phrase ("help_cat_movement", "MOVEMENT");
 
-	public static Phrase CraftingPhrase = new Phrase ("help_cat_crafting", "CRAFTING");
+	public static Translate.Phrase CraftingPhrase = new Translate.Phrase ("help_cat_crafting", "CRAFTING");
 
-	public static Phrase CombatPhrase = new Phrase ("help_cat_combat", "COMBAT");
+	public static Translate.Phrase CombatPhrase = new Translate.Phrase ("help_cat_combat", "COMBAT");
 
-	public static Phrase BuildingPhrase = new Phrase ("help_cat_building", "BUILDING");
+	public static Translate.Phrase BuildingPhrase = new Translate.Phrase ("help_cat_building", "BUILDING");
 
-	public static Dictionary<MenuCategory, Phrase> CategoryPhraseLookup = new Dictionary<MenuCategory, Phrase> {
+	public static Dictionary<MenuCategory, Translate.Phrase> CategoryPhraseLookup = new Dictionary<MenuCategory, Translate.Phrase> {
 		{
 			MenuCategory.Movement,
 			MovementPhrase

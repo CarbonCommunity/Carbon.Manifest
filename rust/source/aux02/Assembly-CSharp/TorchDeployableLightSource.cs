@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Network;
@@ -24,46 +25,34 @@ public class TorchDeployableLightSource : StorageContainer, ISplashable, IIgnite
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("TorchDeployableLightSource.OnRpcMessage", 0);
-		try {
-			if (rpc == 3305620958u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("TorchDeployableLightSource.OnRpcMessage")) {
+			if (rpc == 3305620958u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - RequestTurnOnOff "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - RequestTurnOnOff ");
 				}
-				TimeWarning val2 = TimeWarning.New ("RequestTurnOnOff", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RequestTurnOnOff")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (3305620958u, "RequestTurnOnOff", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							RequestTurnOnOff (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RequestTurnOnOff");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -72,7 +61,7 @@ public class TorchDeployableLightSource : StorageContainer, ISplashable, IIgnite
 	{
 		ItemDefinition[] allowedTorches = AllowedTorches;
 		for (int i = 0; i < allowedTorches.Length; i++) {
-			if ((Object)(object)allowedTorches [i] == (Object)(object)item.info) {
+			if (allowedTorches [i] == item.info) {
 				return true;
 			}
 		}
@@ -81,12 +70,12 @@ public class TorchDeployableLightSource : StorageContainer, ISplashable, IIgnite
 
 	private bool ShouldUseBuiltInFx (ItemDefinition def)
 	{
-		if ((Object)(object)def == (Object)null) {
+		if (def == null) {
 			return false;
 		}
 		ItemDefinition[] builtInFxItems = BuiltInFxItems;
 		for (int i = 0; i < builtInFxItems.Length; i++) {
-			if ((Object)(object)builtInFxItems [i] == (Object)(object)def) {
+			if (builtInFxItems [i] == def) {
 				return true;
 			}
 		}
@@ -95,23 +84,21 @@ public class TorchDeployableLightSource : StorageContainer, ISplashable, IIgnite
 
 	private void UpdateTorch ()
 	{
-		//IL_009a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a5: Unknown result type (might be due to invalid IL or missing references)
 		Item item = CurrentTorch;
 		if (item != null && item.isBroken) {
 			item = null;
 		}
 		ItemDefinition itemDefinition = item?.info;
-		if ((Object)(object)itemDefinition != (Object)(object)spawnedTorchDef) {
+		if (itemDefinition != spawnedTorchDef) {
 			spawnedTorchDef = itemDefinition;
 			SetFlag (Flags.Reserved2, ShouldUseBuiltInFx (itemDefinition), recursive: false, networkupdate: false);
 			TorchWeapon torchWeapon = spawnedTorch.Get (serverside: true);
-			if ((Object)(object)torchWeapon != (Object)null) {
+			if (torchWeapon != null) {
 				torchWeapon.Kill ();
 			}
 			spawnedTorch.Set (null);
-			if ((Object)(object)itemDefinition != (Object)null) {
-				TorchWeapon component = ((Component)GameManager.server.CreateEntity (((Component)itemDefinition).GetComponent<ItemModEntity> ().entityPrefab.resourcePath, TorchRoot.position, TorchRoot.rotation)).GetComponent<TorchWeapon> ();
+			if (itemDefinition != null) {
+				TorchWeapon component = GameManager.server.CreateEntity (itemDefinition.GetComponent<ItemModEntity> ().entityPrefab.resourcePath, TorchRoot.position, TorchRoot.rotation).GetComponent<TorchWeapon> ();
 				component.SetParent (this, worldPositionStays: true);
 				component.SetFlag (Flags.Reserved1, b: true);
 				component.Spawn ();
@@ -120,9 +107,9 @@ public class TorchDeployableLightSource : StorageContainer, ISplashable, IIgnite
 				SetFlag (Flags.On, b: false);
 			}
 		}
-		SetFlag (Flags.Reserved1, (Object)(object)spawnedTorch.Get (serverside: true) != (Object)null);
-		if (!HasFlag (Flags.Reserved1) && ((FacepunchBehaviour)this).IsInvoking ((Action)TickTorchDurability)) {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)TickTorchDurability);
+		SetFlag (Flags.Reserved1, spawnedTorch.Get (serverside: true) != null);
+		if (!HasFlag (Flags.Reserved1) && IsInvoking (TickTorchDurability)) {
+			CancelInvoke (TickTorchDurability);
 		}
 	}
 
@@ -142,7 +129,7 @@ public class TorchDeployableLightSource : StorageContainer, ISplashable, IIgnite
 			}
 		}
 		if (HasFlag (Flags.Reserved1) && IsOn ()) {
-			((FacepunchBehaviour)this).InvokeRepeating ((Action)TickTorchDurability, 1f, 1f);
+			InvokeRepeating (TickTorchDurability, 1f, 1f);
 		}
 	}
 
@@ -166,13 +153,13 @@ public class TorchDeployableLightSource : StorageContainer, ISplashable, IIgnite
 			return;
 		}
 		TorchWeapon torchWeapon = spawnedTorch.Get (serverside: true);
-		if (!((Object)(object)torchWeapon == (Object)null)) {
+		if (!(torchWeapon == null)) {
 			torchWeapon.SetFlag (Flags.On, wantsOn);
 			SetFlag (Flags.On, wantsOn);
 			if (HasFlag (Flags.Reserved1) && wantsOn) {
-				((FacepunchBehaviour)this).InvokeRepeating ((Action)TickTorchDurability, 1f, 1f);
+				InvokeRepeating (TickTorchDurability, 1f, 1f);
 			} else {
-				((FacepunchBehaviour)this).CancelInvoke ((Action)TickTorchDurability);
+				CancelInvoke (TickTorchDurability);
 			}
 		}
 	}

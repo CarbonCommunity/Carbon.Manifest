@@ -12,18 +12,18 @@ public class NexusEx : Nexus
 
 	public NexusEx (string endpoint, Nexus nexus)
 	{
-		((Nexus)this).NexusId = nexus.NexusId;
-		((Nexus)this).Name = nexus.Name;
-		((Nexus)this).LastReset = nexus.LastReset;
-		((Nexus)this).ZoneCount = nexus.ZoneCount;
-		((Nexus)this).MaxPlayers = nexus.MaxPlayers;
-		((Nexus)this).OnlinePlayers = nexus.OnlinePlayers;
-		((Nexus)this).QueuedPlayers = nexus.QueuedPlayers;
-		((Nexus)this).Build = nexus.Build;
-		((Nexus)this).Protocol = nexus.Protocol;
-		((Nexus)this).Tags = nexus.Tags;
+		base.NexusId = nexus.NexusId;
+		base.Name = nexus.Name;
+		base.LastReset = nexus.LastReset;
+		base.ZoneCount = nexus.ZoneCount;
+		base.MaxPlayers = nexus.MaxPlayers;
+		base.OnlinePlayers = nexus.OnlinePlayers;
+		base.QueuedPlayers = nexus.QueuedPlayers;
+		base.Build = nexus.Build;
+		base.Protocol = nexus.Protocol;
+		base.Tags = nexus.Tags;
 		Key = $"{endpoint}#{nexus.NexusId}";
-		string[] collection = ((Nexus)this).Tags?.Split (SplitComma, StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string> ();
+		string[] collection = base.Tags?.Split (SplitComma, StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string> ();
 		TagsSet = new HashSet<string> (collection, StringComparer.OrdinalIgnoreCase);
 	}
 }

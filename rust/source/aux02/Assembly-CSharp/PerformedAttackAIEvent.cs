@@ -24,15 +24,15 @@ public class PerformedAttackAIEvent : BaseAIEvent
 		combatEntity = memory.Entity.Get (base.InputEntityMemorySlot) as BaseCombatEntity;
 		float num = lastExecuteTime;
 		lastExecuteTime = Time.time;
-		if ((Object)(object)combatEntity == (Object)null) {
+		if (combatEntity == null) {
 			return;
 		}
 		if (combatEntity.lastDealtDamageTime >= num) {
-			if ((Object)(object)combatEntity.lastDealtDamageTo == (Object)null || (Object)(object)combatEntity.lastDealtDamageTo == (Object)(object)combatEntity) {
+			if (combatEntity.lastDealtDamageTo == null || combatEntity.lastDealtDamageTo == combatEntity) {
 				return;
 			}
 			BasePlayer basePlayer = combatEntity as BasePlayer;
-			if (!((Object)(object)basePlayer != (Object)null) || ((!((Object)(object)basePlayer == (Object)(object)memory.Entity.Get (5)) || !((Object)(object)basePlayer.lastDealtDamageTo == (Object)(object)base.Owner)) && (!((Object)(object)basePlayer == (Object)(object)memory.Entity.Get (5)) || (((Component)basePlayer.lastDealtDamageTo).gameObject.layer != 21 && ((Component)basePlayer.lastDealtDamageTo).gameObject.layer != 8)))) {
+			if (!(basePlayer != null) || ((!(basePlayer == memory.Entity.Get (5)) || !(basePlayer.lastDealtDamageTo == base.Owner)) && (!(basePlayer == memory.Entity.Get (5)) || (basePlayer.lastDealtDamageTo.gameObject.layer != 21 && basePlayer.lastDealtDamageTo.gameObject.layer != 8)))) {
 				if (base.ShouldSetOutputEntityMemory) {
 					memory.Entity.Set (combatEntity.lastDealtDamageTo, base.OutputEntityMemorySlot);
 				}

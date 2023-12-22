@@ -4,7 +4,7 @@ public static class AssetStorage
 {
 	public static void Save<T> (ref T asset, string path) where T : Object
 	{
-		Object.op_Implicit ((Object)(object)asset);
+		_ = (bool)asset;
 	}
 
 	public static void Save (ref Texture2D asset)
@@ -13,7 +13,7 @@ public static class AssetStorage
 
 	public static void Save (ref Texture2D asset, string path, bool linear, bool compress)
 	{
-		Object.op_Implicit ((Object)(object)asset);
+		_ = (bool)asset;
 	}
 
 	public static void Load<T> (ref T asset, string path) where T : Object
@@ -22,9 +22,9 @@ public static class AssetStorage
 
 	public static void Delete<T> (ref T asset) where T : Object
 	{
-		if (Object.op_Implicit ((Object)(object)asset)) {
-			Object.Destroy ((Object)(object)asset);
-			asset = default(T);
+		if ((bool)asset) {
+			Object.Destroy (asset);
+			asset = null;
 		}
 	}
 }

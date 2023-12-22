@@ -9,21 +9,21 @@ public class ToggleTerrainTrees : MonoBehaviour
 
 	protected void OnEnable ()
 	{
-		if (Object.op_Implicit ((Object)(object)Terrain.activeTerrain)) {
+		if ((bool)Terrain.activeTerrain) {
 			toggleControl.isOn = Terrain.activeTerrain.drawTreesAndFoliage;
 		}
 	}
 
 	public void OnToggleChanged ()
 	{
-		if (Object.op_Implicit ((Object)(object)Terrain.activeTerrain)) {
+		if ((bool)Terrain.activeTerrain) {
 			Terrain.activeTerrain.drawTreesAndFoliage = toggleControl.isOn;
 		}
 	}
 
 	protected void OnValidate ()
 	{
-		if (Object.op_Implicit ((Object)(object)textControl)) {
+		if ((bool)textControl) {
 			textControl.text = "Terrain Trees";
 		}
 	}

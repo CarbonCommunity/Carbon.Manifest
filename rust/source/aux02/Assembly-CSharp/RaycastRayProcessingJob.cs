@@ -11,13 +11,13 @@ public struct RaycastRayProcessingJob : IJobParallelFor
 
 	public float farPlane;
 
-	[ReadOnly]
+	[Unity.Collections.ReadOnly]
 	public NativeArray<RaycastHit> raycastHits;
 
-	[ReadOnly]
+	[Unity.Collections.ReadOnly]
 	public NativeArray<int> colliderIds;
 
-	[ReadOnly]
+	[Unity.Collections.ReadOnly]
 	public NativeArray<byte> colliderMaterials;
 
 	[WriteOnly]
@@ -36,16 +36,7 @@ public struct RaycastRayProcessingJob : IJobParallelFor
 
 	public void Execute (int index)
 	{
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0093: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0098: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ca: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00de: Unknown result type (might be due to invalid IL or missing references)
-		ref readonly RaycastHit @readonly = ref raycastHits.GetReadonly<RaycastHit> (index);
+		ref readonly RaycastHit @readonly = ref BurstUtil.GetReadonly (in raycastHits, index);
 		int colliderId = @readonly.GetColliderId ();
 		bool num = colliderId != 0;
 		byte b = 0;
@@ -60,23 +51,13 @@ public struct RaycastRayProcessingJob : IJobParallelFor
 				Interlocked.Increment (ref BurstUtil.Get (in colliderHits, num3));
 			}
 		}
-		float distance;
-		RaycastHit val;
-		if (!num) {
-			distance = farPlane;
-		} else {
-			val = @readonly;
-			distance = ((RaycastHit)(ref val)).distance;
-		}
-		float num4 = distance;
+		float num4 = (num ? @readonly.distance : farPlane);
 		if (b == 7) {
 			b = 0;
 			num4 *= 1.1f;
 		}
 		float num5 = math.clamp (num4 / farPlane, 0f, 1f);
-		float3 val2 = cameraForward;
-		val = @readonly;
-		float num6 = math.max (math.dot (val2, float3.op_Implicit (((RaycastHit)(ref val)).normal)), 0f);
+		float num6 = math.max (math.dot (cameraForward, @readonly.normal), 0f);
 		ushort num7 = (ushort)(num5 * 1023f);
 		byte b2 = (byte)(num6 * 63f);
 		outputs [index] = (num7 >> 8 << 24) | ((num7 & 0xFF) << 16) | (b2 << 8) | b;

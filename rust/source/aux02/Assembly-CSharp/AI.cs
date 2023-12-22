@@ -209,7 +209,7 @@ public class AI : ConsoleSystem
 		int num2 = 0;
 		int num3 = 0;
 		foreach (AIInformationZone zone in AIInformationZone.zones) {
-			if (!((Object)(object)zone == (Object)null) && zone.ShouldSleepAI) {
+			if (!(zone == null) && zone.ShouldSleepAI) {
 				num++;
 				if (zone.Sleeping) {
 					num2++;
@@ -226,7 +226,7 @@ public class AI : ConsoleSystem
 		int num = 0;
 		int num2 = 0;
 		foreach (AIInformationZone zone in AIInformationZone.zones) {
-			if (!((Object)(object)zone == (Object)null) && zone.ShouldSleepAI && zone.Sleeping) {
+			if (!(zone == null) && zone.ShouldSleepAI && zone.Sleeping) {
 				num++;
 				num2 += zone.SleepingCount;
 				zone.WakeAI ();
@@ -267,8 +267,8 @@ public class AI : ConsoleSystem
 	public static void addignoreplayer (Arg args)
 	{
 		BasePlayer basePlayer = null;
-		basePlayer = (args.HasArgs (1) ? args.GetPlayerOrSleeper (0) : args.Player ());
-		if ((Object)(object)basePlayer == (Object)null || basePlayer.net == null || basePlayer.net.connection == null) {
+		basePlayer = (args.HasArgs () ? args.GetPlayerOrSleeper (0) : args.Player ());
+		if (basePlayer == null || basePlayer.net == null || basePlayer.net.connection == null) {
 			args.ReplyWith ("Player not found.");
 		} else {
 			SimpleAIMemory.AddIgnorePlayer (basePlayer);
@@ -279,8 +279,8 @@ public class AI : ConsoleSystem
 	public static void removeignoreplayer (Arg args)
 	{
 		BasePlayer basePlayer = null;
-		basePlayer = (args.HasArgs (1) ? args.GetPlayerOrSleeper (0) : args.Player ());
-		if ((Object)(object)basePlayer == (Object)null || basePlayer.net == null || basePlayer.net.connection == null) {
+		basePlayer = (args.HasArgs () ? args.GetPlayerOrSleeper (0) : args.Player ());
+		if (basePlayer == null || basePlayer.net == null || basePlayer.net.connection == null) {
 			args.ReplyWith ("Player not found.");
 		} else {
 			SimpleAIMemory.RemoveIgnorePlayer (basePlayer);

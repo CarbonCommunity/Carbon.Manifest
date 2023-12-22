@@ -6,14 +6,12 @@ public class NPCMissionProvider : NPCTalking, IMissionProvider
 
 	public NetworkableId ProviderID ()
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
 		return net.ID;
 	}
 
 	public Vector3 ProviderPosition ()
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		return ((Component)this).transform.position;
+		return base.transform.position;
 	}
 
 	public BaseEntity Entity ()
@@ -23,14 +21,12 @@ public class NPCMissionProvider : NPCTalking, IMissionProvider
 
 	public override void OnConversationEnded (BasePlayer player)
 	{
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
 		player.ProcessMissionEvent (BaseMission.MissionEventType.CONVERSATION, ProviderID (), 0f);
 		base.OnConversationEnded (player);
 	}
 
 	public override void OnConversationStarted (BasePlayer speakingTo)
 	{
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
 		speakingTo.ProcessMissionEvent (BaseMission.MissionEventType.CONVERSATION, ProviderID (), 1f);
 		base.OnConversationStarted (speakingTo);
 	}
@@ -59,8 +55,6 @@ public class NPCMissionProvider : NPCTalking, IMissionProvider
 
 	public override string GetConversationStartSpeech (BasePlayer player)
 	{
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
 		string text = "";
 		foreach (BaseMission.MissionInstance mission in player.missions) {
 			if (mission.status == BaseMission.MissionStatus.Active) {
@@ -81,7 +75,7 @@ public class NPCMissionProvider : NPCTalking, IMissionProvider
 		if (action.StartsWith ("assignmission ")) {
 			int num = action.IndexOf (" ");
 			BaseMission fromShortName = MissionManifest.GetFromShortName (action.Substring (num + 1));
-			if (Object.op_Implicit ((Object)(object)fromShortName)) {
+			if ((bool)fromShortName) {
 				BaseMission.AssignMission (player, this, fromShortName);
 			}
 		}

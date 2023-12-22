@@ -32,8 +32,6 @@ public class TweakUISlider : TweakUIBase
 
 	protected override void SetConvarValue ()
 	{
-		//IL_005c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0061: Unknown result type (might be due to invalid IL or missing references)
 		base.SetConvarValue ();
 		if (conVar != null) {
 			float value = sliderControl.value;
@@ -41,7 +39,7 @@ public class TweakUISlider : TweakUIBase
 				conVar.Set (value);
 				RefreshSliderDisplay (conVar.AsFloat);
 				lastConVarChanged = conVar.FullName;
-				timeSinceLastConVarChange = TimeSince.op_Implicit (0f);
+				timeSinceLastConVarChange = 0f;
 			}
 		}
 	}
@@ -58,9 +56,9 @@ public class TweakUISlider : TweakUIBase
 	{
 		sliderControl.value = value;
 		if (sliderControl.wholeNumbers) {
-			((TMP_Text)textControl).text = sliderControl.value.ToString ("N0");
+			textControl.text = sliderControl.value.ToString ("N0");
 		} else {
-			((TMP_Text)textControl).text = sliderControl.value.ToString ("0.0");
+			textControl.text = sliderControl.value.ToString ("0.0");
 		}
 	}
 }

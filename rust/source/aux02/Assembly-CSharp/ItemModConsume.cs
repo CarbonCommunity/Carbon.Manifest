@@ -16,10 +16,10 @@ public class ItemModConsume : ItemMod
 
 	public virtual ItemModConsumable GetConsumable ()
 	{
-		if (Object.op_Implicit ((Object)(object)primaryConsumable)) {
+		if ((bool)primaryConsumable) {
 			return primaryConsumable;
 		}
-		return ((Component)this).GetComponent<ItemModConsumable> ();
+		return GetComponent<ItemModConsumable> ();
 	}
 
 	public virtual GameObjectRef GetConsumeEffect ()
@@ -29,15 +29,6 @@ public class ItemModConsume : ItemMod
 
 	public override void DoAction (Item item, BasePlayer player)
 	{
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0147: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0152: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0161: Unknown result type (might be due to invalid IL or missing references)
 		if (item.amount < 1) {
 			return;
 		}
@@ -53,7 +44,7 @@ public class ItemModConsume : ItemMod
 		}
 		Analytics.Azure.OnConsumableUsed (player, item);
 		float num = Mathf.Max (consumable.amountToConsume, 1);
-		float num2 = Mathf.Min ((float)item.amount, num);
+		float num2 = Mathf.Min (item.amount, num);
 		float num3 = num2 / num;
 		float num4 = item.conditionNormalized;
 		if (consumable.conditionFractionToLose > 0f) {
@@ -65,7 +56,7 @@ public class ItemModConsume : ItemMod
 			}
 			if (effect.type == MetabolismAttribute.Type.Health) {
 				if (effect.amount < 0f) {
-					player.OnAttacked (new HitInfo (player, player, DamageType.Generic, (0f - effect.amount) * num3 * num4, ((Component)player).transform.position + ((Component)player).transform.forward * 1f));
+					player.OnAttacked (new HitInfo (player, player, DamageType.Generic, (0f - effect.amount) * num3 * num4, player.transform.position + player.transform.forward * 1f));
 				} else {
 					player.health += effect.amount * num3 * num4;
 				}
@@ -74,7 +65,7 @@ public class ItemModConsume : ItemMod
 			}
 		}
 		player.ProcessMissionEvent (BaseMission.MissionEventType.CONSUME, item.info.itemid, 1f);
-		if ((Object)(object)player.modifiers != (Object)null) {
+		if (player.modifiers != null) {
 			player.modifiers.Add (consumable.modifiers);
 		}
 		if (product != null) {
@@ -90,7 +81,7 @@ public class ItemModConsume : ItemMod
 		if (string.IsNullOrEmpty (eatGesture)) {
 			player.SignalBroadcast (BaseEntity.Signal.Gesture, eatGesture);
 		}
-		Analytics.Server.Consume (((Object)((Component)this).gameObject).name);
+		Analytics.Server.Consume (base.gameObject.name);
 		if (consumable.conditionFractionToLose > 0f) {
 			item.LoseCondition (consumable.conditionFractionToLose * item.maxCondition);
 		} else {

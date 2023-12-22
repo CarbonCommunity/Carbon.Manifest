@@ -8,11 +8,10 @@ public class DecorScale : DecorComponent
 
 	public override void Apply (ref Vector3 pos, ref Quaternion rot, ref Vector3 scale)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		uint num = SeedEx.Seed (pos, World.Seed) + 3;
-		float num2 = SeedRandom.Value (ref num);
-		scale.x *= Mathf.Lerp (MinScale.x, MaxScale.x, num2);
-		scale.y *= Mathf.Lerp (MinScale.y, MaxScale.y, num2);
-		scale.z *= Mathf.Lerp (MinScale.z, MaxScale.z, num2);
+		uint seed = pos.Seed (World.Seed) + 3;
+		float t = SeedRandom.Value (ref seed);
+		scale.x *= Mathf.Lerp (MinScale.x, MaxScale.x, t);
+		scale.y *= Mathf.Lerp (MinScale.y, MaxScale.y, t);
+		scale.z *= Mathf.Lerp (MinScale.z, MaxScale.z, t);
 	}
 }

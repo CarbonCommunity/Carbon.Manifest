@@ -55,27 +55,23 @@ public class MissionObjective_DeployItem : MissionObjective
 
 	private void UpdatePings (BasePlayer playerFor)
 	{
-		//IL_0098: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0073: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0083: Unknown result type (might be due to invalid IL or missing references)
 		TutorialIsland currentTutorialIsland = playerFor.GetCurrentTutorialIsland ();
-		if (!((Object)(object)currentTutorialIsland != (Object)null)) {
+		if (!(currentTutorialIsland != null)) {
 			return;
 		}
-		List<TutorialBuildTarget> list = Pool.GetList<TutorialBuildTarget> ();
+		List<TutorialBuildTarget> obj = Pool.GetList<TutorialBuildTarget> ();
 		BaseEntity[] possibleOptions = PossibleOptions;
 		foreach (BaseEntity baseEntity in possibleOptions) {
-			currentTutorialIsland.GetBuildTargets (list, baseEntity.prefabID);
+			currentTutorialIsland.GetBuildTargets (obj, baseEntity.prefabID);
 		}
-		foreach (TutorialBuildTarget item in list) {
+		foreach (TutorialBuildTarget item in obj) {
 			item.UpdateActive (playerFor);
-			if (((Component)item).gameObject.activeSelf) {
-				playerFor.AddPingAtLocation (BasePlayer.PingType.Build, ((Component)item).transform.position, 86400f, currentTutorialIsland.net.ID);
+			if (item.gameObject.activeSelf) {
+				playerFor.AddPingAtLocation (BasePlayer.PingType.Build, item.transform.position, 86400f, currentTutorialIsland.net.ID);
 			} else {
-				playerFor.RemovePingAtLocation (BasePlayer.PingType.Build, ((Component)item).transform.position, 0.5f, currentTutorialIsland.net.ID);
+				playerFor.RemovePingAtLocation (BasePlayer.PingType.Build, item.transform.position, 0.5f, currentTutorialIsland.net.ID);
 			}
 		}
-		Pool.FreeList<TutorialBuildTarget> (ref list);
+		Pool.FreeList (ref obj);
 	}
 }

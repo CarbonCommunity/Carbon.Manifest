@@ -168,7 +168,7 @@ public class Wearable : MonoBehaviour, IItemSetup, IPrefabPreProcess
 
 	public Renderer[] SkipInFirstPersonLegs;
 
-	private static LOD[] emptyLOD = (LOD[])(object)new LOD[1];
+	private static LOD[] emptyLOD = new LOD[1];
 
 	public PartRandomizer[] randomParts;
 
@@ -178,34 +178,34 @@ public class Wearable : MonoBehaviour, IItemSetup, IPrefabPreProcess
 
 	public virtual void PreProcess (IPrefabProcessor preProcess, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
 	{
-		LODGroup[] componentsInChildren = ((Component)this).GetComponentsInChildren<LODGroup> (true);
-		foreach (LODGroup val in componentsInChildren) {
-			val.SetLODs (emptyLOD);
-			preProcess.RemoveComponent ((Component)(object)val);
+		LODGroup[] componentsInChildren = GetComponentsInChildren<LODGroup> (includeInactive: true);
+		foreach (LODGroup lODGroup in componentsInChildren) {
+			lODGroup.SetLODs (emptyLOD);
+			preProcess.RemoveComponent (lODGroup);
 		}
 	}
 
 	public void CacheComponents ()
 	{
-		playerModelHairCap = ((Component)this).GetComponent<PlayerModelHairCap> ();
-		playerModelHair = ((Component)this).GetComponent<PlayerModelHair> ();
-		wearableReplacementByRace = ((Component)this).GetComponent<WearableReplacementByRace> ();
-		wearableShadowLod = ((Component)this).GetComponent<WearableShadowLod> ();
-		((Component)this).GetComponentsInChildren<Renderer> (true, renderers);
-		((Component)this).GetComponentsInChildren<PlayerModelSkin> (true, playerModelSkins);
-		((Component)this).GetComponentsInChildren<BoneRetarget> (true, boneRetargets);
-		((Component)this).GetComponentsInChildren<SkinnedMeshRenderer> (true, skinnedRenderers);
-		((Component)this).GetComponentsInChildren<SkeletonSkin> (true, skeletonSkins);
-		((Component)this).GetComponentsInChildren<ComponentInfo> (true, componentInfos);
-		((Component)this).GetComponentsInChildren<WearableNotify> (true, notifies);
-		RenderersLod0 = renderers.Where ((Renderer x) => ((Object)((Component)x).gameObject).name.EndsWith ("0")).ToArray ();
-		RenderersLod1 = renderers.Where ((Renderer x) => ((Object)((Component)x).gameObject).name.EndsWith ("1")).ToArray ();
-		RenderersLod2 = renderers.Where ((Renderer x) => ((Object)((Component)x).gameObject).name.EndsWith ("2")).ToArray ();
-		RenderersLod3 = renderers.Where ((Renderer x) => ((Object)((Component)x).gameObject).name.EndsWith ("3")).ToArray ();
-		RenderersLod4 = renderers.Where ((Renderer x) => ((Object)((Component)x).gameObject).name.EndsWith ("4")).ToArray ();
+		playerModelHairCap = GetComponent<PlayerModelHairCap> ();
+		playerModelHair = GetComponent<PlayerModelHair> ();
+		wearableReplacementByRace = GetComponent<WearableReplacementByRace> ();
+		wearableShadowLod = GetComponent<WearableShadowLod> ();
+		GetComponentsInChildren (includeInactive: true, renderers);
+		GetComponentsInChildren (includeInactive: true, playerModelSkins);
+		GetComponentsInChildren (includeInactive: true, boneRetargets);
+		GetComponentsInChildren (includeInactive: true, skinnedRenderers);
+		GetComponentsInChildren (includeInactive: true, skeletonSkins);
+		GetComponentsInChildren (includeInactive: true, componentInfos);
+		GetComponentsInChildren (includeInactive: true, notifies);
+		RenderersLod0 = renderers.Where ((Renderer x) => x.gameObject.name.EndsWith ("0")).ToArray ();
+		RenderersLod1 = renderers.Where ((Renderer x) => x.gameObject.name.EndsWith ("1")).ToArray ();
+		RenderersLod2 = renderers.Where ((Renderer x) => x.gameObject.name.EndsWith ("2")).ToArray ();
+		RenderersLod3 = renderers.Where ((Renderer x) => x.gameObject.name.EndsWith ("3")).ToArray ();
+		RenderersLod4 = renderers.Where ((Renderer x) => x.gameObject.name.EndsWith ("4")).ToArray ();
 		foreach (Renderer renderer in renderers) {
-			((Component)renderer).gameObject.AddComponent<ObjectMotionVectorFix> ();
-			renderer.motionVectorGenerationMode = (MotionVectorGenerationMode)2;
+			renderer.gameObject.AddComponent<ObjectMotionVectorFix> ();
+			renderer.motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
 		}
 	}
 
@@ -214,20 +214,20 @@ public class Wearable : MonoBehaviour, IItemSetup, IPrefabPreProcess
 		if (disableRigStripping) {
 			return;
 		}
-		Transform val = skinnedMeshRenderer.FindRig ();
-		if (!((Object)(object)val != (Object)null)) {
+		Transform transform = skinnedMeshRenderer.FindRig ();
+		if (!(transform != null)) {
 			return;
 		}
-		List<Transform> list = Pool.GetList<Transform> ();
-		((Component)val).GetComponentsInChildren<Transform> (list);
-		for (int num = list.Count - 1; num >= 0; num--) {
+		List<Transform> obj = Pool.GetList<Transform> ();
+		transform.GetComponentsInChildren (obj);
+		for (int num = obj.Count - 1; num >= 0; num--) {
 			if (preProcess != null) {
-				preProcess.NominateForDeletion (((Component)list [num]).gameObject);
+				preProcess.NominateForDeletion (obj [num].gameObject);
 			} else {
-				Object.DestroyImmediate ((Object)(object)((Component)list [num]).gameObject);
+				UnityEngine.Object.DestroyImmediate (obj [num].gameObject);
 			}
 		}
-		Pool.FreeList<Transform> (ref list);
+		Pool.FreeList (ref obj);
 	}
 
 	public void SetupRendererCache (IPrefabProcessor preProcess)

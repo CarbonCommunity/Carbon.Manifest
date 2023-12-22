@@ -17,20 +17,20 @@ public class EventSchedule : BaseMonoBehaviour
 
 	private void OnEnable ()
 	{
-		hoursRemaining = Random.Range (minimumHoursBetween, maxmumHoursBetween);
-		((FacepunchBehaviour)this).InvokeRepeating ((Action)RunSchedule, 1f, 1f);
+		hoursRemaining = UnityEngine.Random.Range (minimumHoursBetween, maxmumHoursBetween);
+		InvokeRepeating (RunSchedule, 1f, 1f);
 	}
 
 	private void OnDisable ()
 	{
-		if (!Application.isQuitting) {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)RunSchedule);
+		if (!Rust.Application.isQuitting) {
+			CancelInvoke (RunSchedule);
 		}
 	}
 
 	public virtual void RunSchedule ()
 	{
-		if (!Application.isLoading && ConVar.Server.events) {
+		if (!Rust.Application.isLoading && ConVar.Server.events) {
 			CountHours ();
 			if (!(hoursRemaining > 0f)) {
 				Trigger ();
@@ -40,19 +40,19 @@ public class EventSchedule : BaseMonoBehaviour
 
 	private void Trigger ()
 	{
-		hoursRemaining = Random.Range (minimumHoursBetween, maxmumHoursBetween);
-		TriggeredEvent[] components = ((Component)this).GetComponents<TriggeredEvent> ();
+		hoursRemaining = UnityEngine.Random.Range (minimumHoursBetween, maxmumHoursBetween);
+		TriggeredEvent[] components = GetComponents<TriggeredEvent> ();
 		if (components.Length != 0) {
-			TriggeredEvent triggeredEvent = components [Random.Range (0, components.Length)];
-			if (!((Object)(object)triggeredEvent == (Object)null)) {
-				((Component)triggeredEvent).SendMessage ("RunEvent", (SendMessageOptions)1);
+			TriggeredEvent triggeredEvent = components [UnityEngine.Random.Range (0, components.Length)];
+			if (!(triggeredEvent == null)) {
+				triggeredEvent.SendMessage ("RunEvent", SendMessageOptions.DontRequireReceiver);
 			}
 		}
 	}
 
 	private void CountHours ()
 	{
-		if (Object.op_Implicit ((Object)(object)TOD_Sky.Instance)) {
+		if ((bool)TOD_Sky.Instance) {
 			if (lastRun != 0L) {
 				hoursRemaining -= (float)TOD_Sky.Instance.Cycle.DateTime.Subtract (DateTime.FromBinary (lastRun)).TotalSeconds / 60f / 60f;
 			}

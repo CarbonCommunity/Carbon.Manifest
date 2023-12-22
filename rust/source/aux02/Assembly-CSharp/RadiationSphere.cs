@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using ConVar;
 using UnityEngine;
@@ -28,8 +27,8 @@ public class RadiationSphere : BaseEntity
 	public override void ServerInit ()
 	{
 		base.ServerInit ();
-		radiationTriggers = ((Component)this).GetComponentsInChildren<TriggerRadiation> ();
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)UpdateRadiation, InvokeDelay, InvokeDelay, InvokeDelay / 10f);
+		radiationTriggers = GetComponentsInChildren<TriggerRadiation> ();
+		InvokeRandomized (UpdateRadiation, InvokeDelay, InvokeDelay, InvokeDelay / 10f);
 		All.Add (this);
 	}
 
@@ -41,7 +40,7 @@ public class RadiationSphere : BaseEntity
 
 	public void RestartRadiation ()
 	{
-		timeStarted = Time.time;
+		timeStarted = UnityEngine.Time.time;
 	}
 
 	public void StopRadation ()
@@ -51,7 +50,7 @@ public class RadiationSphere : BaseEntity
 
 	public void UpdateRadiation ()
 	{
-		float num = RadiationCurve.Evaluate ((Time.time - timeStarted) / 60f * Server.oilrig_radiation_time_scale) * Server.oilrig_radiation_amount_scale;
+		float num = RadiationCurve.Evaluate ((UnityEngine.Time.time - timeStarted) / 60f * Server.oilrig_radiation_time_scale) * Server.oilrig_radiation_amount_scale;
 		if (timeStarted == 0f) {
 			num = 0f;
 		}
@@ -65,7 +64,7 @@ public class RadiationSphere : BaseEntity
 	private void SetLights (bool state)
 	{
 		foreach (IOEntity radiationLight in RadiationLights) {
-			if (!((Object)(object)radiationLight == (Object)null)) {
+			if (!(radiationLight == null)) {
 				radiationLight.SetFlag (Flags.Reserved8, state);
 			}
 		}

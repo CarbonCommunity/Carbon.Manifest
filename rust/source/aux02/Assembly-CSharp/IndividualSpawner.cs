@@ -24,43 +24,39 @@ public class IndividualSpawner : BaseMonoBehaviour, IServerComponent, ISpawnPoin
 
 	public int currentPopulation {
 		get {
-			if (!((Object)(object)spawnInstance == (Object)null)) {
+			if (!(spawnInstance == null)) {
 				return 1;
 			}
 			return 0;
 		}
 	}
 
-	private bool IsSpawned => (Object)(object)spawnInstance != (Object)null;
+	private bool IsSpawned => spawnInstance != null;
 
 	protected void Awake ()
 	{
-		if (Object.op_Implicit ((Object)(object)SingletonComponent<SpawnHandler>.Instance)) {
-			SingletonComponent<SpawnHandler>.Instance.SpawnGroups.Add ((ISpawnGroup)this);
+		if ((bool)SingletonComponent<SpawnHandler>.Instance) {
+			SingletonComponent<SpawnHandler>.Instance.SpawnGroups.Add (this);
 		} else {
-			Debug.LogWarning ((object)(((object)this).GetType ().Name + ": SpawnHandler instance not found."));
+			Debug.LogWarning (GetType ().Name + ": SpawnHandler instance not found.");
 		}
 	}
 
 	protected void OnDestroy ()
 	{
-		if (Object.op_Implicit ((Object)(object)SingletonComponent<SpawnHandler>.Instance)) {
-			SingletonComponent<SpawnHandler>.Instance.SpawnGroups.Remove ((ISpawnGroup)this);
+		if ((bool)SingletonComponent<SpawnHandler>.Instance) {
+			SingletonComponent<SpawnHandler>.Instance.SpawnGroups.Remove (this);
 		} else {
-			Debug.LogWarning ((object)(((object)this).GetType ().Name + ": SpawnHandler instance not found."));
+			Debug.LogWarning (GetType ().Name + ": SpawnHandler instance not found.");
 		}
 	}
 
 	protected void OnDrawGizmosSelected ()
 	{
-		//IL_000a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
 		if (TryGetEntityBounds (out var result)) {
 			Gizmos.color = Color.yellow;
-			Gizmos.matrix = ((Component)this).transform.localToWorldMatrix;
-			Gizmos.DrawCube (((Bounds)(ref result)).center, ((Bounds)(ref result)).size);
+			Gizmos.matrix = base.transform.localToWorldMatrix;
+			Gizmos.DrawCube (result.center, result.size);
 		}
 	}
 
@@ -90,8 +86,8 @@ public class IndividualSpawner : BaseMonoBehaviour, IServerComponent, ISpawnPoin
 	public void Clear ()
 	{
 		if (IsSpawned) {
-			BaseEntity baseEntity = ((Component)spawnInstance).gameObject.ToBaseEntity ();
-			if ((Object)(object)baseEntity != (Object)null) {
+			BaseEntity baseEntity = spawnInstance.gameObject.ToBaseEntity ();
+			if (baseEntity != null) {
 				baseEntity.Kill ();
 			}
 		}
@@ -106,23 +102,14 @@ public class IndividualSpawner : BaseMonoBehaviour, IServerComponent, ISpawnPoin
 
 	public bool HasSpaceToSpawn ()
 	{
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0060: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
 		if (useCustomBoundsCheckMask) {
-			return SpawnHandler.CheckBounds (entityPrefab.Get (), ((Component)this).transform.position, ((Component)this).transform.rotation, Vector3.one, customBoundsCheckMask);
+			return SpawnHandler.CheckBounds (entityPrefab.Get (), base.transform.position, base.transform.rotation, Vector3.one, customBoundsCheckMask);
 		}
-		return SingletonComponent<SpawnHandler>.Instance.CheckBounds (entityPrefab.Get (), ((Component)this).transform.position, ((Component)this).transform.rotation, Vector3.one);
+		return SingletonComponent<SpawnHandler>.Instance.CheckBounds (entityPrefab.Get (), base.transform.position, base.transform.rotation, Vector3.one);
 	}
 
 	protected virtual void TrySpawnEntity ()
 	{
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0059: Unknown result type (might be due to invalid IL or missing references)
 		if (!isSpawnerActive || IsSpawned) {
 			return;
 		}
@@ -130,31 +117,28 @@ public class IndividualSpawner : BaseMonoBehaviour, IServerComponent, ISpawnPoin
 			nextSpawnTime = Time.time + Random.Range (respawnDelayMin, respawnDelayMax);
 			return;
 		}
-		BaseEntity baseEntity = GameManager.server.CreateEntity (entityPrefab.resourcePath, ((Component)this).transform.position, ((Component)this).transform.rotation, startActive: false);
-		if ((Object)(object)baseEntity != (Object)null) {
+		BaseEntity baseEntity = GameManager.server.CreateEntity (entityPrefab.resourcePath, base.transform.position, base.transform.rotation, startActive: false);
+		if (baseEntity != null) {
 			if (!oneTimeSpawner) {
 				baseEntity.enableSaving = false;
 			}
-			((Component)baseEntity).gameObject.AwakeFromInstantiate ();
+			baseEntity.gameObject.AwakeFromInstantiate ();
 			baseEntity.Spawn ();
-			SpawnPointInstance spawnPointInstance = ((Component)baseEntity).gameObject.AddComponent<SpawnPointInstance> ();
+			SpawnPointInstance spawnPointInstance = baseEntity.gameObject.AddComponent<SpawnPointInstance> ();
 			spawnPointInstance.parentSpawnPointUser = this;
 			spawnPointInstance.Notify ();
 		} else {
-			Debug.LogError ((object)"IndividualSpawner failed to spawn entity.", (Object)(object)((Component)this).gameObject);
+			Debug.LogError ("IndividualSpawner failed to spawn entity.", base.gameObject);
 		}
 	}
 
 	private bool TryGetEntityBounds (out Bounds result)
 	{
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
 		if (entityPrefab != null) {
-			GameObject val = entityPrefab.Get ();
-			if ((Object)(object)val != (Object)null) {
-				BaseEntity component = val.GetComponent<BaseEntity> ();
-				if ((Object)(object)component != (Object)null) {
+			GameObject gameObject = entityPrefab.Get ();
+			if (gameObject != null) {
+				BaseEntity component = gameObject.GetComponent<BaseEntity> ();
+				if (component != null) {
 					result = component.bounds;
 					return true;
 				}

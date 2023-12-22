@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Network;
@@ -20,46 +21,34 @@ public class GestureDoor : Door
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("GestureDoor.OnRpcMessage", 0);
-		try {
-			if (rpc == 872065295 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("GestureDoor.OnRpcMessage")) {
+			if (rpc == 872065295 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - ServerKick "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - ServerKick ");
 				}
-				TimeWarning val2 = TimeWarning.New ("ServerKick", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("ServerKick")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (872065295u, "ServerKick", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							ServerKick (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in ServerKick");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -81,7 +70,7 @@ public class GestureDoor : Door
 		if (wasKick) {
 			delay = KickAnimationDelay;
 		}
-		if ((Object)(object)player.GetHeldEntity () != (Object)null) {
+		if (player.GetHeldEntity () != null) {
 			delay += WeaponAdditiveDelay;
 		}
 		return delay > 0f;

@@ -42,7 +42,7 @@ public class PrefabPreProcess : IPrefabProcessor
 		typeof(TOD_ImageEffect),
 		typeof(TOD_Scattering),
 		typeof(TOD_Rays),
-		typeof(Tree),
+		typeof(UnityEngine.Tree),
 		typeof(Projector),
 		typeof(HttpImage),
 		typeof(EventTrigger),
@@ -81,7 +81,7 @@ public class PrefabPreProcess : IPrefabProcessor
 	public GameObject Find (string strPrefab)
 	{
 		if (prefabList.TryGetValue (strPrefab, out var value)) {
-			if ((Object)(object)value == (Object)null) {
+			if (value == null) {
 				prefabList.Remove (strPrefab);
 				return null;
 			}
@@ -125,16 +125,6 @@ public class PrefabPreProcess : IPrefabProcessor
 
 	public void ProcessObject (string name, GameObject go, bool resetLocalTransform = true)
 	{
-		//IL_0165: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0168: Unknown result type (might be due to invalid IL or missing references)
-		//IL_016a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0136: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0146: Unknown result type (might be due to invalid IL or missing references)
-		//IL_018c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0191: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0196: Unknown result type (might be due to invalid IL or missing references)
-		//IL_019b: Unknown result type (might be due to invalid IL or missing references)
 		StringPool.Get (name);
 		bool flag = go.GetComponent<StripEmptyChildren> () != null && Render.IsInstancingEnabled;
 		if (!isClientside) {
@@ -143,7 +133,7 @@ public class PrefabPreProcess : IPrefabProcessor
 				DestroyComponents (t, go, isClientside, isServerside);
 			}
 			foreach (IClientComponentEx item in FindComponents<IClientComponentEx> (go.transform)) {
-				item.PreClientComponentCull ((IPrefabProcessor)(object)this);
+				item.PreClientComponentCull (this);
 			}
 		}
 		if (!isServerside) {
@@ -152,7 +142,7 @@ public class PrefabPreProcess : IPrefabProcessor
 				DestroyComponents (t2, go, isClientside, isServerside);
 			}
 			foreach (IServerComponentEx item2 in FindComponents<IServerComponentEx> (go.transform)) {
-				item2.PreServerComponentCull ((IPrefabProcessor)(object)this);
+				item2.PreServerComponentCull (this);
 			}
 		}
 		DestroyComponents (typeof(IEditorComponent), go, isClientside, isServerside);
@@ -162,49 +152,49 @@ public class PrefabPreProcess : IPrefabProcessor
 		}
 		List<Transform> list = FindComponents<Transform> (go.transform);
 		list.Reverse ();
-		MeshColliderCookingOptions val = (MeshColliderCookingOptions)14;
-		MeshColliderCookingOptions cookingOptions = (MeshColliderCookingOptions)30;
-		MeshColliderCookingOptions val2 = (MeshColliderCookingOptions)(-1);
+		MeshColliderCookingOptions meshColliderCookingOptions = MeshColliderCookingOptions.CookForFasterSimulation | MeshColliderCookingOptions.EnableMeshCleaning | MeshColliderCookingOptions.WeldColocatedVertices;
+		MeshColliderCookingOptions cookingOptions = MeshColliderCookingOptions.CookForFasterSimulation | MeshColliderCookingOptions.EnableMeshCleaning | MeshColliderCookingOptions.WeldColocatedVertices | MeshColliderCookingOptions.UseFastMidphase;
+		MeshColliderCookingOptions meshColliderCookingOptions2 = (MeshColliderCookingOptions)(-1);
 		foreach (MeshCollider item3 in FindComponents<MeshCollider> (go.transform)) {
-			if (item3.cookingOptions == val || item3.cookingOptions == val2) {
+			if (item3.cookingOptions == meshColliderCookingOptions || item3.cookingOptions == meshColliderCookingOptions2) {
 				item3.cookingOptions = cookingOptions;
 			}
 		}
 		foreach (IPrefabPreProcess item4 in FindComponents<IPrefabPreProcess> (go.transform)) {
-			item4.PreProcess ((IPrefabProcessor)(object)this, go, name, isServerside, isClientside, isBundling);
+			item4.PreProcess (this, go, name, isServerside, isClientside, isBundling);
 		}
 		foreach (Transform item5 in list) {
-			if (!Object.op_Implicit ((Object)(object)item5) || !Object.op_Implicit ((Object)(object)((Component)item5).gameObject)) {
+			if (!item5 || !item5.gameObject) {
 				continue;
 			}
-			if (isServerside && ((Component)item5).gameObject.CompareTag ("Server Cull")) {
-				RemoveComponents (((Component)item5).gameObject);
-				NominateForDeletion (((Component)item5).gameObject);
+			if (isServerside && item5.gameObject.CompareTag ("Server Cull")) {
+				RemoveComponents (item5.gameObject);
+				NominateForDeletion (item5.gameObject);
 			}
 			if (isClientside) {
-				bool num = ((Component)item5).gameObject.CompareTag ("Client Cull");
-				bool flag2 = (Object)(object)item5 != (Object)(object)go.transform && (Object)(object)((Component)item5).gameObject.GetComponent<BaseEntity> () != (Object)null;
+				bool num = item5.gameObject.CompareTag ("Client Cull");
+				bool flag2 = item5 != go.transform && item5.gameObject.GetComponent<BaseEntity> () != null;
 				if (num || flag2) {
-					RemoveComponents (((Component)item5).gameObject);
-					NominateForDeletion (((Component)item5).gameObject);
+					RemoveComponents (item5.gameObject);
+					NominateForDeletion (item5.gameObject);
 				} else if (flag) {
-					NominateForDeletion (((Component)item5).gameObject);
+					NominateForDeletion (item5.gameObject);
 				}
 			}
 		}
 		RunCleanupQueue ();
 		foreach (IPrefabPostProcess item6 in FindComponents<IPrefabPostProcess> (go.transform)) {
-			item6.PostProcess ((IPrefabProcessor)(object)this, go, name, isServerside, isClientside, isBundling);
+			item6.PostProcess (this, go, name, isServerside, isClientside, isBundling);
 		}
 	}
 
 	public void Process (string name, GameObject go)
 	{
-		if (Application.isPlaying && !go.CompareTag ("NoPreProcessing")) {
+		if (UnityEngine.Application.isPlaying && !go.CompareTag ("NoPreProcessing")) {
 			GameObject hierarchyGroup = GetHierarchyGroup ();
-			GameObject val = go;
-			go = Instantiate.GameObject (val, hierarchyGroup.transform);
-			((Object)go).name = ((Object)val).name;
+			GameObject gameObject = go;
+			go = Instantiate.GameObject (gameObject, hierarchyGroup.transform);
+			go.name = gameObject.name;
 			if (NeedsProcessing (go)) {
 				ProcessObject (name, go);
 			}
@@ -216,8 +206,8 @@ public class PrefabPreProcess : IPrefabProcessor
 	{
 		if (prefabList.TryGetValue (name, out var value)) {
 			prefabList.Remove (name);
-			if ((Object)(object)value != (Object)null) {
-				Object.DestroyImmediate ((Object)(object)value, true);
+			if (value != null) {
+				UnityEngine.Object.DestroyImmediate (value, allowDestroyingAssets: true);
 			}
 		}
 	}
@@ -235,7 +225,7 @@ public class PrefabPreProcess : IPrefabProcessor
 
 	public void AddPrefab (string name, GameObject go)
 	{
-		go.SetActive (false);
+		go.SetActive (value: false);
 		prefabList.Add (name, go);
 	}
 
@@ -246,18 +236,18 @@ public class PrefabPreProcess : IPrefabProcessor
 		list.Reverse ();
 		foreach (Component item in list) {
 			RealmedRemove component = item.GetComponent<RealmedRemove> ();
-			if (!((Object)(object)component != (Object)null) || component.ShouldDelete (item, client, server)) {
+			if (!(component != null) || component.ShouldDelete (item, client, server)) {
 				if (!item.gameObject.CompareTag ("persist")) {
 					NominateForDeletion (item.gameObject);
 				}
-				Object.DestroyImmediate ((Object)(object)item, true);
+				UnityEngine.Object.DestroyImmediate (item, allowDestroyingAssets: true);
 			}
 		}
 	}
 
 	private bool ShouldExclude (Transform transform)
 	{
-		if ((Object)(object)((Component)transform).GetComponent<BaseEntity> () != (Object)null) {
+		if (transform.GetComponent<BaseEntity> () != null) {
 			return true;
 		}
 		return false;
@@ -265,14 +255,11 @@ public class PrefabPreProcess : IPrefabProcessor
 
 	private bool HasComponents<T> (Transform transform)
 	{
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Expected O, but got Unknown
-		if (((Component)transform).GetComponent<T> () != null) {
+		if (transform.GetComponent<T> () != null) {
 			return true;
 		}
 		foreach (Transform item in transform) {
-			Transform transform2 = item;
-			if (!ShouldExclude (transform2) && HasComponents<T> (transform2)) {
+			if (!ShouldExclude (item) && HasComponents<T> (item)) {
 				return true;
 			}
 		}
@@ -281,14 +268,11 @@ public class PrefabPreProcess : IPrefabProcessor
 
 	private bool HasComponents (Transform transform, Type t)
 	{
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0026: Expected O, but got Unknown
-		if ((Object)(object)((Component)transform).GetComponent (t) != (Object)null) {
+		if (transform.GetComponent (t) != null) {
 			return true;
 		}
 		foreach (Transform item in transform) {
-			Transform transform2 = item;
-			if (!ShouldExclude (transform2) && HasComponents (transform2, t)) {
+			if (!ShouldExclude (item) && HasComponents (item, t)) {
 				return true;
 			}
 		}
@@ -304,13 +288,10 @@ public class PrefabPreProcess : IPrefabProcessor
 
 	public void FindComponents<T> (Transform transform, List<T> list)
 	{
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Expected O, but got Unknown
-		list.AddRange (((Component)transform).GetComponents<T> ());
+		list.AddRange (transform.GetComponents<T> ());
 		foreach (Transform item in transform) {
-			Transform transform2 = item;
-			if (!ShouldExclude (transform2)) {
-				FindComponents (transform2, list);
+			if (!ShouldExclude (item)) {
+				FindComponents (item, list);
 			}
 		}
 	}
@@ -324,20 +305,17 @@ public class PrefabPreProcess : IPrefabProcessor
 
 	public void FindComponents (Transform transform, List<Component> list, Type t)
 	{
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Expected O, but got Unknown
-		list.AddRange (((Component)transform).GetComponents (t));
+		list.AddRange (transform.GetComponents (t));
 		foreach (Transform item in transform) {
-			Transform transform2 = item;
-			if (!ShouldExclude (transform2)) {
-				FindComponents (transform2, list, t);
+			if (!ShouldExclude (item)) {
+				FindComponents (item, list, t);
 			}
 		}
 	}
 
 	public void RemoveComponent (Component c)
 	{
-		if (!((Object)(object)c == (Object)null)) {
+		if (!(c == null)) {
 			destroyList.Add (c);
 		}
 	}
@@ -345,9 +323,9 @@ public class PrefabPreProcess : IPrefabProcessor
 	public void RemoveComponents (GameObject gameObj)
 	{
 		Component[] components = gameObj.GetComponents<Component> ();
-		foreach (Component val in components) {
-			if (!(val is Transform)) {
-				destroyList.Add (val);
+		foreach (Component component in components) {
+			if (!(component is Transform)) {
+				destroyList.Add (component);
 			}
 		}
 	}
@@ -360,7 +338,7 @@ public class PrefabPreProcess : IPrefabProcessor
 	private void RunCleanupQueue ()
 	{
 		foreach (Component destroy in destroyList) {
-			Object.DestroyImmediate ((Object)(object)destroy, true);
+			UnityEngine.Object.DestroyImmediate (destroy, allowDestroyingAssets: true);
 		}
 		destroyList.Clear ();
 		foreach (GameObject cleanup in cleanupList) {
@@ -371,10 +349,10 @@ public class PrefabPreProcess : IPrefabProcessor
 
 	private void DoCleanup (GameObject go)
 	{
-		if (!((Object)(object)go == (Object)null) && go.GetComponentsInChildren<Component> (true).Length <= 1) {
+		if (!(go == null) && go.GetComponentsInChildren<Component> (includeInactive: true).Length <= 1) {
 			Transform parent = go.transform.parent;
-			if (!((Object)(object)parent == (Object)null) && !((Object)parent).name.StartsWith ("PrefabPreProcess - ")) {
-				Object.DestroyImmediate ((Object)(object)go, true);
+			if (!(parent == null) && !parent.name.StartsWith ("PrefabPreProcess - ")) {
+				UnityEngine.Object.DestroyImmediate (go, allowDestroyingAssets: true);
 			}
 		}
 	}

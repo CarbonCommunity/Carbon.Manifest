@@ -22,7 +22,7 @@ public class TriggerNotifyEntity : TriggerBase, IPrefabPreProcess
 	internal override void OnEntityEnter (BaseEntity ent)
 	{
 		base.OnEntityEnter (ent);
-		if (toNotify != null || ((Object)(object)notifyTarget != (Object)null && notifyTarget.TryGetComponent<INotifyEntityTrigger> (ref toNotify))) {
+		if (toNotify != null || (notifyTarget != null && notifyTarget.TryGetComponent<INotifyEntityTrigger> (out toNotify))) {
 			toNotify.OnEntityEnter (ent);
 		}
 	}
@@ -30,7 +30,7 @@ public class TriggerNotifyEntity : TriggerBase, IPrefabPreProcess
 	internal override void OnEntityLeave (BaseEntity ent)
 	{
 		base.OnEntityLeave (ent);
-		if (toNotify != null || ((Object)(object)notifyTarget != (Object)null && notifyTarget.TryGetComponent<INotifyEntityTrigger> (ref toNotify))) {
+		if (toNotify != null || (notifyTarget != null && notifyTarget.TryGetComponent<INotifyEntityTrigger> (out toNotify))) {
 			toNotify.OnEntityLeave (ent);
 		}
 	}
@@ -38,7 +38,7 @@ public class TriggerNotifyEntity : TriggerBase, IPrefabPreProcess
 	public void PreProcess (IPrefabProcessor preProcess, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
 	{
 		if ((!clientside || !runClientside) && (!serverside || !runServerside)) {
-			preProcess.RemoveComponent ((Component)(object)this);
+			preProcess.RemoveComponent (this);
 		}
 	}
 }

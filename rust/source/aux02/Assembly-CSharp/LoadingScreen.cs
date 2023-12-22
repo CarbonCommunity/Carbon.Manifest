@@ -66,8 +66,8 @@ public class LoadingScreen : SingletonComponent<LoadingScreen>
 
 	public static bool isOpen {
 		get {
-			if (Object.op_Implicit ((Object)(object)SingletonComponent<LoadingScreen>.Instance) && Object.op_Implicit ((Object)(object)SingletonComponent<LoadingScreen>.Instance.panel)) {
-				return ((Component)SingletonComponent<LoadingScreen>.Instance.panel).gameObject.activeSelf;
+			if ((bool)SingletonComponent<LoadingScreen>.Instance && (bool)SingletonComponent<LoadingScreen>.Instance.panel) {
+				return SingletonComponent<LoadingScreen>.Instance.panel.gameObject.activeSelf;
 			}
 			return false;
 		}

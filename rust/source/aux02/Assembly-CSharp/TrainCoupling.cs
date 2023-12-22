@@ -37,13 +37,13 @@ public class TrainCoupling
 		this.couplingPoint = couplingPoint;
 		this.couplingPivot = couplingPivot;
 		this.flag = flag;
-		isValid = (Object)(object)couplingPoint != (Object)null;
+		isValid = couplingPoint != null;
 	}
 
 	public bool IsCoupledTo (TrainCar them)
 	{
 		if (CoupledTo != null) {
-			return (Object)(object)CoupledTo.owner == (Object)(object)them;
+			return CoupledTo.owner == them;
 		}
 		return false;
 	}
@@ -79,8 +79,6 @@ public class TrainCoupling
 
 	public void Uncouple (bool reflect)
 	{
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005d: Unknown result type (might be due to invalid IL or missing references)
 		if (!IsUncoupled) {
 			if (reflect && CoupledTo != null) {
 				CoupledTo.Uncouple (reflect: false);
@@ -89,7 +87,7 @@ public class TrainCoupling
 			CoupledTo = null;
 			owner.SetFlag (flag, b: false, recursive: false, networkupdate: false);
 			owner.SendNetworkUpdate ();
-			timeSinceCouplingBlock = TimeSince.op_Implicit (0f);
+			timeSinceCouplingBlock = 0f;
 		}
 	}
 
@@ -103,10 +101,7 @@ public class TrainCoupling
 
 	public bool TryGetCoupledToID (out NetworkableId id)
 	{
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		if (CoupledTo != null && (Object)(object)CoupledTo.owner != (Object)null && CoupledTo.owner.IsValid ()) {
+		if (CoupledTo != null && CoupledTo.owner != null && CoupledTo.owner.IsValid ()) {
 			id = CoupledTo.owner.net.ID;
 			return true;
 		}

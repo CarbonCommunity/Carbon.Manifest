@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -9,9 +10,9 @@ using UnityEngine.Assertions;
 public class StorageContainer : DecayEntity, IItemContainerEntity, IIdealSlotEntity, ILootableEntity, LootPanel.IHasLootPanel, IContainerSounds, PlayerInventory.ICanMoveFrom
 {
 	[Header ("Storage Container")]
-	public static readonly Phrase LockedMessage = new Phrase ("storage.locked", "Can't loot right now");
+	public static readonly Translate.Phrase LockedMessage = new Translate.Phrase ("storage.locked", "Can't loot right now");
 
-	public static readonly Phrase InUseMessage = new Phrase ("storage.in_use", "Already in use");
+	public static readonly Translate.Phrase InUseMessage = new Translate.Phrase ("storage.in_use", "Already in use");
 
 	public int inventorySlots = 6;
 
@@ -29,7 +30,7 @@ public class StorageContainer : DecayEntity, IItemContainerEntity, IIdealSlotEnt
 
 	public string panelName = "generic";
 
-	public Phrase panelTitle = new Phrase ("loot", "Loot");
+	public Translate.Phrase panelTitle = new Translate.Phrase ("loot", "Loot");
 
 	public ItemContainer.ContentsType allowedContents;
 
@@ -56,11 +57,11 @@ public class StorageContainer : DecayEntity, IItemContainerEntity, IIdealSlotEnt
 
 	public bool onlyOneUser;
 
-	public Phrase LootPanelTitle => panelTitle;
+	public Translate.Phrase LootPanelTitle => panelTitle;
 
 	public ItemContainer inventory { get; private set; }
 
-	public Transform Transform => ((Component)this).transform;
+	public Transform Transform => base.transform;
 
 	public bool DropsLoot => dropsLoot;
 
@@ -72,46 +73,34 @@ public class StorageContainer : DecayEntity, IItemContainerEntity, IIdealSlotEnt
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("StorageContainer.OnRpcMessage", 0);
-		try {
-			if (rpc == 331989034 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("StorageContainer.OnRpcMessage")) {
+			if (rpc == 331989034 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - RPC_OpenLoot "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - RPC_OpenLoot ");
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_OpenLoot", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_OpenLoot")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (331989034u, "RPC_OpenLoot", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage rpc2 = rPCMessage;
 							RPC_OpenLoot (rpc2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_OpenLoot");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -127,15 +116,7 @@ public class StorageContainer : DecayEntity, IItemContainerEntity, IIdealSlotEnt
 
 	public virtual void OnDrawGizmos ()
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-		Gizmos.matrix = ((Component)this).transform.localToWorldMatrix;
+		Gizmos.matrix = base.transform.localToWorldMatrix;
 		Gizmos.color = Color.yellow;
 		Gizmos.DrawCube (dropPosition, Vector3.one * 0.1f);
 		Gizmos.color = Color.white;
@@ -171,7 +152,7 @@ public class StorageContainer : DecayEntity, IItemContainerEntity, IIdealSlotEnt
 
 	public override bool CanPickup (BasePlayer player)
 	{
-		bool flag = (Object)(object)GetSlot (Slot.Lock) != (Object)null;
+		bool flag = GetSlot (Slot.Lock) != null;
 		if (base.isClient) {
 			if (base.CanPickup (player)) {
 				return !flag;
@@ -255,7 +236,7 @@ public class StorageContainer : DecayEntity, IItemContainerEntity, IIdealSlotEnt
 	public override void PostServerLoad ()
 	{
 		base.PostServerLoad ();
-		if (inventory != null && !((ItemContainerId)(ref inventory.uid)).IsValid) {
+		if (inventory != null && !inventory.uid.IsValid) {
 			inventory.GiveUID ();
 		}
 		SetFlag (Flags.Open, b: false);
@@ -276,7 +257,7 @@ public class StorageContainer : DecayEntity, IItemContainerEntity, IIdealSlotEnt
 	{
 		if (isLootable) {
 			BasePlayer player = rpc.player;
-			if (Object.op_Implicit ((Object)(object)player) && player.CanInteract ()) {
+			if ((bool)player && player.CanInteract ()) {
 				PlayerOpenLoot (player);
 			}
 		}
@@ -298,7 +279,7 @@ public class StorageContainer : DecayEntity, IItemContainerEntity, IIdealSlotEnt
 			return false;
 		}
 		BaseLock baseLock = GetSlot (Slot.Lock) as BaseLock;
-		if ((Object)(object)baseLock != (Object)null && !baseLock.OnTryToOpen (player)) {
+		if (baseLock != null && !baseLock.OnTryToOpen (player)) {
 			player.ChatMessage ("It is locked...");
 			return false;
 		}
@@ -359,10 +340,10 @@ public class StorageContainer : DecayEntity, IItemContainerEntity, IIdealSlotEnt
 		base.Save (info);
 		if (info.forDisk) {
 			if (inventory != null) {
-				info.msg.storageBox = Pool.Get<StorageBox> ();
+				info.msg.storageBox = Facepunch.Pool.Get<StorageBox> ();
 				info.msg.storageBox.contents = inventory.Save ();
 			} else {
-				Debug.LogWarning ((object)("Storage container without inventory: " + ((object)this).ToString ()));
+				Debug.LogWarning ("Storage container without inventory: " + ToString ());
 			}
 		}
 	}
@@ -380,21 +361,18 @@ public class StorageContainer : DecayEntity, IItemContainerEntity, IIdealSlotEnt
 
 	public static void DropItems (IItemContainerEntity containerEntity, BaseEntity initiator = null)
 	{
-		//IL_005a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0088: Unknown result type (might be due to invalid IL or missing references)
 		ItemContainer itemContainer = containerEntity.inventory;
 		if (itemContainer == null || itemContainer.itemList == null || itemContainer.itemList.Count == 0 || !containerEntity.DropsLoot) {
 			return;
 		}
 		if (containerEntity.ShouldDropItemsIndividually () || (itemContainer.itemList.Count == 1 && !containerEntity.DropFloats)) {
-			if ((Object)(object)initiator != (Object)null) {
+			if (initiator != null) {
 				containerEntity.DropBonusItems (initiator, itemContainer);
 			}
 			DropUtil.DropItems (itemContainer, containerEntity.GetDropPosition ());
 		} else {
 			string prefab = (containerEntity.DropFloats ? "assets/prefabs/misc/item drop/item_drop_buoyant.prefab" : "assets/prefabs/misc/item drop/item_drop.prefab");
-			_ = (Object)(object)itemContainer.Drop (prefab, containerEntity.GetDropPosition (), containerEntity.Transform.rotation, containerEntity.DestroyLootPercent) != (Object)null;
+			_ = itemContainer.Drop (prefab, containerEntity.GetDropPosition (), containerEntity.Transform.rotation, containerEntity.DestroyLootPercent) != null;
 		}
 	}
 
@@ -404,25 +382,12 @@ public class StorageContainer : DecayEntity, IItemContainerEntity, IIdealSlotEnt
 
 	public override Vector3 GetDropPosition ()
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		Matrix4x4 localToWorldMatrix = ((Component)this).transform.localToWorldMatrix;
-		return ((Matrix4x4)(ref localToWorldMatrix)).MultiplyPoint (dropPosition);
+		return base.transform.localToWorldMatrix.MultiplyPoint (dropPosition);
 	}
 
 	public override Vector3 GetDropVelocity ()
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 inheritedDropVelocity = GetInheritedDropVelocity ();
-		Matrix4x4 localToWorldMatrix = ((Component)this).transform.localToWorldMatrix;
-		return inheritedDropVelocity + ((Matrix4x4)(ref localToWorldMatrix)).MultiplyVector (dropPosition);
+		return GetInheritedDropVelocity () + base.transform.localToWorldMatrix.MultiplyVector (dropPosition);
 	}
 
 	public virtual bool ShouldDropItemsIndividually ()
@@ -438,7 +403,7 @@ public class StorageContainer : DecayEntity, IItemContainerEntity, IIdealSlotEnt
 				inventory.Load (info.msg.storageBox.contents);
 				inventory.capacity = inventorySlots;
 			} else {
-				Debug.LogWarning ((object)("Storage container without inventory: " + ((object)this).ToString ()));
+				Debug.LogWarning ("Storage container without inventory: " + ToString ());
 			}
 		}
 	}
@@ -450,8 +415,6 @@ public class StorageContainer : DecayEntity, IItemContainerEntity, IIdealSlotEnt
 
 	public virtual ItemContainerId GetIdealContainer (BasePlayer player, Item item, ItemMoveModifier modifier)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
 		return default(ItemContainerId);
 	}
 
@@ -468,7 +431,7 @@ public class StorageContainer : DecayEntity, IItemContainerEntity, IIdealSlotEnt
 
 	public bool OccupiedCheck (BasePlayer player = null)
 	{
-		if ((Object)(object)player != (Object)null && (Object)(object)player.inventory.loot.entitySource == (Object)(object)this) {
+		if (player != null && player.inventory.loot.entitySource == this) {
 			return true;
 		}
 		if (onlyOneUser) {

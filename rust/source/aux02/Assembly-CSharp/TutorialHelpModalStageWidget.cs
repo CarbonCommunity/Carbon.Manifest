@@ -23,5 +23,5 @@ public class TutorialHelpModalStageWidget : MonoBehaviour
 
 	public Color SelectedColour = Color.white;
 
-	public Color DeselectedColour = ColorEx.WithAlpha (Color.white, 0.5f);
+	public Color DeselectedColour = Color.white.WithAlpha (0.5f);
 }

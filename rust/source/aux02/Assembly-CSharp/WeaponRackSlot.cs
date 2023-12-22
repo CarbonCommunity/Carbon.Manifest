@@ -1,6 +1,5 @@
 using ProtoBuf;
 using Rust;
-using UnityEngine;
 
 public class WeaponRackSlot
 {
@@ -40,8 +39,6 @@ public class WeaponRackSlot
 
 	public WeaponRackItem SaveToProto (Item item, WeaponRackItem proto)
 	{
-		//IL_0080: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008a: Expected I4, but got Unknown
 		proto.itemID = item?.info.itemid ?? 0;
 		proto.skinid = item?.skin ?? 0;
 		proto.inventorySlot = InventoryIndex;
@@ -58,7 +55,6 @@ public class WeaponRackSlot
 
 	public void InitFromProto (WeaponRackItem item)
 	{
-		//IL_00a0: Unknown result type (might be due to invalid IL or missing references)
 		ClientItemID = item.itemID;
 		ClientItemSkinID = item.skinid;
 		ItemDef = ItemManager.FindItemDefinition (ClientItemID);
@@ -86,15 +82,13 @@ public class WeaponRackSlot
 
 	public void SetAmmoDetails (Item item)
 	{
-		//IL_0089: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008e: Unknown result type (might be due to invalid IL or missing references)
 		ClearAmmoDetails ();
 		BaseEntity heldEntity = item.GetHeldEntity ();
-		if (!((Object)(object)heldEntity == (Object)null)) {
-			BaseProjectile component = ((Component)heldEntity).GetComponent<BaseProjectile> ();
-			if (!((Object)(object)component == (Object)null)) {
+		if (!(heldEntity == null)) {
+			BaseProjectile component = heldEntity.GetComponent<BaseProjectile> ();
+			if (!(component == null)) {
 				AmmoItemDef = component.primaryMagazine.ammoType;
-				AmmoItemID = (((Object)(object)AmmoItemDef != (Object)null) ? AmmoItemDef.itemid : 0);
+				AmmoItemID = ((AmmoItemDef != null) ? AmmoItemDef.itemid : 0);
 				AmmoCount = component.primaryMagazine.contents;
 				AmmoMax = component.primaryMagazine.capacity;
 				AmmoTypes = component.primaryMagazine.definition.ammoTypes;
@@ -105,7 +99,6 @@ public class WeaponRackSlot
 
 	private void ClearAmmoDetails ()
 	{
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
 		AmmoItemDef = null;
 		AmmoTypes = (AmmoTypes)0;
 		AmmoItemID = 0;

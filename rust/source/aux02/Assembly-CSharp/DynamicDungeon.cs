@@ -39,16 +39,8 @@ public class DynamicDungeon : BaseEntity, IMissionEntityListener
 
 	public static void AddDungeon (DynamicDungeon newDungeon)
 	{
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
 		_dungeons.Add (newDungeon);
-		Vector3 position = ((Component)newDungeon).transform.position;
+		Vector3 position = newDungeon.transform.position;
 		if (position.y >= nextDungeonPos.y) {
 			nextDungeonPos = position + Vector3.up * dungeonSpacing;
 		}
@@ -56,9 +48,7 @@ public class DynamicDungeon : BaseEntity, IMissionEntityListener
 
 	public static void RemoveDungeon (DynamicDungeon dungeon)
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 position = ((Component)dungeon).transform.position;
+		Vector3 position = dungeon.transform.position;
 		if (_dungeons.Contains (dungeon)) {
 			_dungeons.Remove (dungeon);
 		}
@@ -67,12 +57,6 @@ public class DynamicDungeon : BaseEntity, IMissionEntityListener
 
 	public static Vector3 GetNextDungeonPoint ()
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0005: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
 		if (nextDungeonPos == Vector3.zero) {
 			nextDungeonPos = Vector3.one * 700f;
 		}
@@ -81,9 +65,9 @@ public class DynamicDungeon : BaseEntity, IMissionEntityListener
 
 	public IEnumerator UpdateNavMesh ()
 	{
-		Debug.Log ((object)"Dungeon Building navmesh");
-		yield return ((MonoBehaviour)this).StartCoroutine (monumentNavMesh.UpdateNavMeshAndWait ());
-		Debug.Log ((object)"Dunngeon done!");
+		Debug.Log ("Dungeon Building navmesh");
+		yield return StartCoroutine (monumentNavMesh.UpdateNavMeshAndWait ());
+		Debug.Log ("Dunngeon done!");
 	}
 
 	public override void DestroyShared ()
@@ -93,7 +77,7 @@ public class DynamicDungeon : BaseEntity, IMissionEntityListener
 			for (int i = 0; i < array.Length; i++) {
 				array [i].Clear ();
 			}
-			if ((Object)(object)exitPortal != (Object)null) {
+			if (exitPortal != null) {
 				exitPortal.Kill ();
 			}
 			RemoveDungeon (this);
@@ -103,54 +87,47 @@ public class DynamicDungeon : BaseEntity, IMissionEntityListener
 
 	public override void ServerInit ()
 	{
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0098: Unknown result type (might be due to invalid IL or missing references)
 		base.ServerInit ();
 		AddDungeon (this);
 		if (portalPrefab.isValid) {
-			exitPortal = ((Component)GameManager.server.CreateEntity (portalPrefab.resourcePath, portalSpawnPoint.position, portalSpawnPoint.rotation)).GetComponent<BasePortal> ();
+			exitPortal = GameManager.server.CreateEntity (portalPrefab.resourcePath, portalSpawnPoint.position, portalSpawnPoint.rotation).GetComponent<BasePortal> ();
 			exitPortal.SetParent (this, worldPositionStays: true);
 			exitPortal.Spawn ();
 		}
 		if (doorPrefab.isValid) {
-			doorInstance = ((Component)GameManager.server.CreateEntity (doorPrefab.resourcePath, doorSpawnPoint.position, doorSpawnPoint.rotation)).GetComponent<Door> ();
+			doorInstance = GameManager.server.CreateEntity (doorPrefab.resourcePath, doorSpawnPoint.position, doorSpawnPoint.rotation).GetComponent<Door> ();
 			doorInstance.SetParent (this, worldPositionStays: true);
 			doorInstance.Spawn ();
 		}
 		MergeAIZones ();
-		((MonoBehaviour)this).StartCoroutine (UpdateNavMesh ());
+		StartCoroutine (UpdateNavMesh ());
 	}
 
 	private void MergeAIZones ()
 	{
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Expected O, but got Unknown
-		//IL_005a: Unknown result type (might be due to invalid IL or missing references)
 		if (!AutoMergeAIZones) {
 			return;
 		}
-		List<AIInformationZone> list = ((Component)this).GetComponentsInChildren<AIInformationZone> ().ToList ();
+		List<AIInformationZone> list = GetComponentsInChildren<AIInformationZone> ().ToList ();
 		foreach (AIInformationZone item in list) {
 			item.AddInitialPoints ();
 		}
-		GameObject val = new GameObject ("AIZ");
-		val.transform.position = ((Component)this).transform.position;
-		AIInformationZone.Merge (list, val).ShouldSleepAI = false;
-		val.transform.SetParent (((Component)this).transform);
+		GameObject gameObject = new GameObject ("AIZ");
+		gameObject.transform.position = base.transform.position;
+		AIInformationZone.Merge (list, gameObject).ShouldSleepAI = false;
+		gameObject.transform.SetParent (base.transform);
 	}
 
 	public void MissionStarted (BasePlayer assignee, BaseMission.MissionInstance instance)
 	{
 		foreach (MissionEntity value in instance.missionEntities.Values) {
-			BunkerEntrance component = ((Component)value).GetComponent<BunkerEntrance> ();
-			if ((Object)(object)component != (Object)null) {
+			BunkerEntrance component = value.GetComponent<BunkerEntrance> ();
+			if (component != null) {
 				BasePortal portalInstance = component.portalInstance;
-				if (Object.op_Implicit ((Object)(object)portalInstance)) {
+				if ((bool)portalInstance) {
 					portalInstance.targetPortal = exitPortal;
 					exitPortal.targetPortal = portalInstance;
-					Debug.Log ((object)"Dungeon portal linked...");
+					Debug.Log ("Dungeon portal linked...");
 				}
 			}
 		}

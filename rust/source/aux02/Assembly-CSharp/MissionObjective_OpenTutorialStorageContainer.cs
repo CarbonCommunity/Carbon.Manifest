@@ -11,7 +11,7 @@ public class MissionObjective_OpenTutorialStorageContainer : MissionObjective
 	{
 		base.ObjectiveStarted (playerFor, index, instance);
 		TutorialIsland currentTutorialIsland = playerFor.GetCurrentTutorialIsland ();
-		if ((Object)(object)currentTutorialIsland != (Object)null && (Object)(object)currentTutorialIsland.TutorialContainer != (Object)null) {
+		if (currentTutorialIsland != null && currentTutorialIsland.TutorialContainer != null) {
 			currentTutorialIsland.TutorialContainer.LoadStorage (Items);
 		}
 		playerFor.RegisterPingedEntity (currentTutorialIsland.TutorialContainer, BasePlayer.PingType.Loot);
@@ -25,9 +25,8 @@ public class MissionObjective_OpenTutorialStorageContainer : MissionObjective
 
 	private void DeregisterPing (BasePlayer playerFor)
 	{
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
 		TutorialIsland currentTutorialIsland = playerFor.GetCurrentTutorialIsland ();
-		if ((Object)(object)currentTutorialIsland != (Object)null && (Object)(object)currentTutorialIsland.TutorialContainer != (Object)null) {
+		if (currentTutorialIsland != null && currentTutorialIsland.TutorialContainer != null) {
 			currentTutorialIsland.TutorialContainer.LoadStorage (Items);
 			playerFor.DeregisterPingedEntity (currentTutorialIsland.TutorialContainer.net.ID, BasePlayer.PingType.Loot);
 		}

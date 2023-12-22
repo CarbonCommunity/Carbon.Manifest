@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -45,7 +46,7 @@ public class ExcavatorArm : BaseEntity
 
 	private ItemAmount[] pendingResources;
 
-	public Phrase excavatorPhrase;
+	public Translate.Phrase excavatorPhrase;
 
 	private float movedAmount;
 
@@ -63,82 +64,61 @@ public class ExcavatorArm : BaseEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("ExcavatorArm.OnRpcMessage", 0);
-		try {
-			if (rpc == 2059417170 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("ExcavatorArm.OnRpcMessage")) {
+			if (rpc == 2059417170 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - RPC_SetResourceTarget "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - RPC_SetResourceTarget ");
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_SetResourceTarget", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_SetResourceTarget")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (2059417170u, "RPC_SetResourceTarget", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							RPC_SetResourceTarget (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_SetResourceTarget");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 2882020740u && (Object)(object)player != (Object)null) {
+			if (rpc == 2882020740u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - RPC_StopMining "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - RPC_StopMining ");
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_StopMining", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_StopMining")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (2882020740u, "RPC_StopMining", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg3 = rPCMessage;
 							RPC_StopMining (msg3);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in RPC_StopMining");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -155,52 +135,43 @@ public class ExcavatorArm : BaseEntity
 
 	public override float GetNetworkTime ()
 	{
-		return Time.fixedTime;
+		return UnityEngine.Time.fixedTime;
 	}
 
 	public void FixedUpdate ()
 	{
-		//IL_00d9: Unknown result type (might be due to invalid IL or missing references)
 		if (!base.isClient) {
 			bool flag = IsMining () && IsPowered ();
 			float num = (flag ? 1f : 0f);
-			currentTurnThrottle = Mathf.Lerp (currentTurnThrottle, num, Time.fixedDeltaTime * (flag ? 0.333f : 1f));
+			currentTurnThrottle = Mathf.Lerp (currentTurnThrottle, num, UnityEngine.Time.fixedDeltaTime * (flag ? 0.333f : 1f));
 			if (Mathf.Abs (num - currentTurnThrottle) < 0.025f) {
 				currentTurnThrottle = num;
 			}
-			movedAmount += Time.fixedDeltaTime * turnSpeed * currentTurnThrottle;
-			float num2 = (Mathf.Sin (movedAmount) + 1f) / 2f;
-			float num3 = Mathf.Lerp (yaw1, yaw2, num2);
-			if (num3 != lastMoveYaw) {
-				lastMoveYaw = num3;
-				((Component)this).transform.rotation = Quaternion.Euler (0f, num3, 0f);
-				((Component)this).transform.hasChanged = true;
+			movedAmount += UnityEngine.Time.fixedDeltaTime * turnSpeed * currentTurnThrottle;
+			float t = (Mathf.Sin (movedAmount) + 1f) / 2f;
+			float num2 = Mathf.Lerp (yaw1, yaw2, t);
+			if (num2 != lastMoveYaw) {
+				lastMoveYaw = num2;
+				base.transform.rotation = Quaternion.Euler (0f, num2, 0f);
+				base.transform.hasChanged = true;
 			}
 		}
 	}
 
 	public void BeginMining ()
 	{
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
 		if (!IsPowered ()) {
 			return;
 		}
 		SetFlag (Flags.On, b: true);
-		((FacepunchBehaviour)this).InvokeRepeating ((Action)ProduceResources, resourceProductionTickRate, resourceProductionTickRate);
-		if (Time.time > nextNotificationTime) {
-			Enumerator<BasePlayer> enumerator = BasePlayer.activePlayerList.GetEnumerator ();
-			try {
-				while (enumerator.MoveNext ()) {
-					BasePlayer current = enumerator.Current;
-					if (!current.IsNpc && current.IsConnected) {
-						current.ShowToast (GameTip.Styles.Server_Event, excavatorPhrase);
-					}
+		InvokeRepeating (ProduceResources, resourceProductionTickRate, resourceProductionTickRate);
+		if (UnityEngine.Time.time > nextNotificationTime) {
+			foreach (BasePlayer activePlayer in BasePlayer.activePlayerList) {
+				if (!activePlayer.IsNpc && activePlayer.IsConnected) {
+					activePlayer.ShowToast (GameTip.Styles.Server_Event, excavatorPhrase);
 				}
-			} finally {
-				((IDisposable)enumerator).Dispose ();
 			}
-			nextNotificationTime = Time.time + 60f;
+			nextNotificationTime = UnityEngine.Time.time + 60f;
 		}
 		ExcavatorServerEffects.SetMining (isMining: true);
 		Analytics.Server.ExcavatorStarted ();
@@ -210,7 +181,7 @@ public class ExcavatorArm : BaseEntity
 	public void StopMining ()
 	{
 		ExcavatorServerEffects.SetMining (isMining: false);
-		((FacepunchBehaviour)this).CancelInvoke ((Action)ProduceResources);
+		CancelInvoke (ProduceResources);
 		if (HasFlag (Flags.On)) {
 			Analytics.Server.ExcavatorStopped (GetNetworkTime () - excavatorStartTime);
 		}
@@ -219,12 +190,6 @@ public class ExcavatorArm : BaseEntity
 
 	public void ProduceResources ()
 	{
-		//IL_00ec: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0100: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0104: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010a: Unknown result type (might be due to invalid IL or missing references)
 		float num = resourceProductionTickRate / timeForFullResources;
 		float num2 = resourcesToMine [resourceMiningIndex].amount * num;
 		pendingResources [resourceMiningIndex].amount += num2;
@@ -260,7 +225,7 @@ public class ExcavatorArm : BaseEntity
 	[RPC_Server.MaxDistance (3f)]
 	public void RPC_SetResourceTarget (RPCMessage msg)
 	{
-		switch (msg.read.String (256, false)) {
+		switch (msg.read.String ()) {
 		case "HQM":
 			resourceMiningIndex = 0;
 			break;
@@ -304,7 +269,7 @@ public class ExcavatorArm : BaseEntity
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.ioEntity = Pool.Get<IOEntity> ();
+		info.msg.ioEntity = Facepunch.Pool.Get<ProtoBuf.IOEntity> ();
 		info.msg.ioEntity.genericFloat1 = movedAmount;
 		info.msg.ioEntity.genericInt1 = resourceMiningIndex;
 	}
@@ -326,19 +291,18 @@ public class ExcavatorArm : BaseEntity
 
 	public void Init ()
 	{
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
 		pendingResources = new ItemAmount[resourcesToMine.Length];
 		for (int i = 0; i < resourcesToMine.Length; i++) {
 			pendingResources [i] = new ItemAmount (resourcesToMine [i].itemDef);
 		}
-		List<ExcavatorOutputPile> list = Pool.GetList<ExcavatorOutputPile> ();
-		Vis.Entities (((Component)this).transform.position, 200f, list, 512, (QueryTriggerInteraction)2);
+		List<ExcavatorOutputPile> obj = Facepunch.Pool.GetList<ExcavatorOutputPile> ();
+		Vis.Entities (base.transform.position, 200f, obj, 512);
 		outputPiles = new List<ExcavatorOutputPile> ();
-		foreach (ExcavatorOutputPile item in list) {
+		foreach (ExcavatorOutputPile item in obj) {
 			if (!item.isClient) {
 				outputPiles.Add (item);
 			}
 		}
-		Pool.FreeList<ExcavatorOutputPile> (ref list);
+		Facepunch.Pool.FreeList (ref obj);
 	}
 }

@@ -79,7 +79,7 @@ public abstract class MeshBatch : MonoBehaviour
 
 	protected void OnDisable ()
 	{
-		if (!Application.isQuitting) {
+		if (!Rust.Application.isQuitting) {
 			NeedsRefresh = false;
 			Count = 0;
 			BatchedCount = 0;

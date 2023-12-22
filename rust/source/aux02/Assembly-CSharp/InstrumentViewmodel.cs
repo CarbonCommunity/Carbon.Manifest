@@ -44,7 +44,7 @@ public class InstrumentViewmodel : MonoBehaviour
 
 	public void UpdateSlots (InstrumentKeyController.AnimationSlot currentSlot, bool recentlyPlayed, bool playedNoteThisFrame)
 	{
-		if (!((Object)(object)ViewAnimator == (Object)null)) {
+		if (!(ViewAnimator == null)) {
 			if (UpdateA) {
 				UpdateState (note_a, currentSlot == InstrumentKeyController.AnimationSlot.One);
 			}

@@ -14,13 +14,13 @@ public class ChatEntry : MonoBehaviour
 
 	public ulong steamid;
 
-	public Phrase LocalPhrase = new Phrase ("local", "local");
+	public Translate.Phrase LocalPhrase = new Translate.Phrase ("local", "local");
 
-	public Phrase CardsPhrase = new Phrase ("cards", "cards");
+	public Translate.Phrase CardsPhrase = new Translate.Phrase ("cards", "cards");
 
-	public Phrase TeamPhrase = new Phrase ("team", "team");
+	public Translate.Phrase TeamPhrase = new Translate.Phrase ("team", "team");
 
 	public TmProEmojiRedirector EmojiRedirector;
 
-	public Phrase ClanPhrase = new Phrase ("clan", "clan");
+	public Translate.Phrase ClanPhrase = new Translate.Phrase ("clan", "clan");
 }

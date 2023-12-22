@@ -69,7 +69,7 @@ public class ConversationData : ScriptableObject
 			AssignMission
 		}
 
-		public Phrase responseTextLocalized;
+		public Translate.Phrase responseTextLocalized;
 
 		public ConversationCondition[] conditions;
 
@@ -118,7 +118,7 @@ public class ConversationData : ScriptableObject
 				}
 				return "assignmission " + actionMission.shortname;
 			default:
-				Debug.LogWarning ((object)$"Cannot get conversation action string! Unhandled action type: {actionType}");
+				Debug.LogWarning ($"Cannot get conversation action string! Unhandled action type: {actionType}");
 				return "";
 			}
 		}
@@ -129,7 +129,7 @@ public class ConversationData : ScriptableObject
 	{
 		public string shortname;
 
-		public Phrase statementLocalized;
+		public Translate.Phrase statementLocalized;
 
 		public ResponseNode[] responses;
 
@@ -140,7 +140,7 @@ public class ConversationData : ScriptableObject
 
 	public string shortname;
 
-	public Phrase providerNameTranslated;
+	public Translate.Phrase providerNameTranslated;
 
 	public bool canBeCancelled = true;
 

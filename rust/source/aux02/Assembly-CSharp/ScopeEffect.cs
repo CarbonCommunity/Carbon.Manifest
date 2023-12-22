@@ -14,17 +14,15 @@ public class ScopeEffect : PostEffectsBase, IImageEffect
 
 	public bool IsActive ()
 	{
-		if (((Behaviour)this).enabled) {
-			return ((PostEffectsBase)this).CheckResources ();
+		if (base.enabled) {
+			return CheckResources ();
 		}
 		return false;
 	}
 
 	public void OnRenderImage (RenderTexture source, RenderTexture destination)
 	{
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		overlayMaterial.SetVector ("_Screen", Vector4.op_Implicit (new Vector2 ((float)Screen.width, (float)Screen.height)));
-		Graphics.Blit ((Texture)(object)source, destination, overlayMaterial);
+		overlayMaterial.SetVector ("_Screen", new Vector2 (Screen.width, Screen.height));
+		Graphics.Blit (source, destination, overlayMaterial);
 	}
 }

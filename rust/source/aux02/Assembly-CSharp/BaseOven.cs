@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -101,46 +102,34 @@ public class BaseOven : StorageContainer, ISplashable, IIndustrialStorage
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("BaseOven.OnRpcMessage", 0);
-		try {
-			if (rpc == 4167839872u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("BaseOven.OnRpcMessage")) {
+			if (rpc == 4167839872u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - SVSwitch "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - SVSwitch ");
 				}
-				TimeWarning val2 = TimeWarning.New ("SVSwitch", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("SVSwitch")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (4167839872u, "SVSwitch", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							SVSwitch (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in SVSwitch");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -171,7 +160,7 @@ public class BaseOven : StorageContainer, ISplashable, IIndustrialStorage
 	{
 		base.Save (info);
 		if (!info.forDisk) {
-			info.msg.baseOven = Pool.Get<BaseOven> ();
+			info.msg.baseOven = Facepunch.Pool.Get<ProtoBuf.BaseOven> ();
 			info.msg.baseOven.cookSpeed = GetSmeltingSpeed ();
 		}
 	}
@@ -191,8 +180,8 @@ public class BaseOven : StorageContainer, ISplashable, IIndustrialStorage
 	{
 		base.OnItemAddedOrRemoved (item, bAdded);
 		if (item != null) {
-			ItemModCookable component = ((Component)item.info).GetComponent<ItemModCookable> ();
-			if ((Object)(object)component != (Object)null) {
+			ItemModCookable component = item.info.GetComponent<ItemModCookable> ();
+			if (component != null) {
 				item.cookTimeLeft = component.cookTime;
 			}
 			if (item.HasFlag (Item.Flag.OnFire)) {
@@ -214,9 +203,9 @@ public class BaseOven : StorageContainer, ISplashable, IIndustrialStorage
 		if (targetSlot == -1) {
 			return false;
 		}
-		if (IsOutputItem (item) && (Object)(object)item.GetEntityOwner () != (Object)(object)this) {
+		if (IsOutputItem (item) && item.GetEntityOwner () != this) {
 			BaseEntity entityOwner = item.GetEntityOwner ();
-			if ((Object)(object)entityOwner != (Object)(object)this && (Object)(object)entityOwner != (Object)null) {
+			if (entityOwner != this && entityOwner != null) {
 				return false;
 			}
 		}
@@ -299,11 +288,11 @@ public class BaseOven : StorageContainer, ISplashable, IIndustrialStorage
 		}
 		IncreaseCookTime (0.5f * GetSmeltingSpeed ());
 		BaseEntity slot = GetSlot (Slot.FireMod);
-		if (Object.op_Implicit ((Object)(object)slot)) {
-			((Component)slot).SendMessage ("Cook", (object)0.5f, (SendMessageOptions)1);
+		if ((bool)slot) {
+			slot.SendMessage ("Cook", 0.5f, SendMessageOptions.DontRequireReceiver);
 		}
 		if (item != null) {
-			ItemModBurnable component = ((Component)item.info).GetComponent<ItemModBurnable> ();
+			ItemModBurnable component = item.info.GetComponent<ItemModBurnable> ();
 			item.fuel -= 0.5f * (cookingTemperature / 200f);
 			if (!item.HasFlag (Item.Flag.OnFire)) {
 				item.SetFlag (Item.Flag.OnFire, b: true);
@@ -322,13 +311,7 @@ public class BaseOven : StorageContainer, ISplashable, IIndustrialStorage
 
 	private void ConsumeFuel (Item fuel, ItemModBurnable burnable)
 	{
-		//IL_006b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0076: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0083: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0086: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008c: Unknown result type (might be due to invalid IL or missing references)
-		if (allowByproductCreation && (Object)(object)burnable.byproductItem != (Object)null && Random.Range (0f, 1f) > burnable.byproductChance) {
+		if (allowByproductCreation && burnable.byproductItem != null && UnityEngine.Random.Range (0f, 1f) > burnable.byproductChance) {
 			Item item = ItemManager.Create (burnable.byproductItem, burnable.byproductAmount * GetCharcoalRate (), 0uL);
 			if (!item.MoveToContainer (base.inventory)) {
 				OvenFull ();
@@ -350,15 +333,13 @@ public class BaseOven : StorageContainer, ISplashable, IIndustrialStorage
 	[RPC_Server.MaxDistance (3f)]
 	protected virtual void SVSwitch (RPCMessage msg)
 	{
-		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006d: Unknown result type (might be due to invalid IL or missing references)
 		bool flag = msg.read.Bit ();
 		if (flag == IsOn () || (needsBuildingPrivilegeToUse && !msg.player.CanBuild ())) {
 			return;
 		}
 		if (flag) {
 			StartCooking ();
-			if ((Object)(object)msg.player != (Object)null) {
+			if (msg.player != null) {
 				msg.player.ProcessMissionEvent (BaseMission.MissionEventType.STARTOVEN, new BaseMission.MissionEventPayload {
 					UintIdentifier = prefabID,
 					NetworkIdentifier = net.ID
@@ -380,8 +361,8 @@ public class BaseOven : StorageContainer, ISplashable, IIndustrialStorage
 	public void UpdateAttachmentTemperature ()
 	{
 		BaseEntity slot = GetSlot (Slot.FireMod);
-		if (Object.op_Implicit ((Object)(object)slot)) {
-			((Component)slot).SendMessage ("ParentTemperatureUpdate", (object)base.inventory.temperature, (SendMessageOptions)1);
+		if ((bool)slot) {
+			slot.SendMessage ("ParentTemperatureUpdate", base.inventory.temperature, SendMessageOptions.DontRequireReceiver);
 		}
 	}
 
@@ -390,7 +371,7 @@ public class BaseOven : StorageContainer, ISplashable, IIndustrialStorage
 		if (FindBurnable () != null || CanRunWithNoFuel) {
 			base.inventory.temperature = cookingTemperature;
 			UpdateAttachmentTemperature ();
-			((FacepunchBehaviour)this).InvokeRepeating ((Action)Cook, 0.5f, 0.5f);
+			InvokeRepeating (Cook, 0.5f, 0.5f);
 			SetFlag (Flags.On, b: true);
 		}
 	}
@@ -410,7 +391,7 @@ public class BaseOven : StorageContainer, ISplashable, IIndustrialStorage
 				}
 			}
 		}
-		((FacepunchBehaviour)this).CancelInvoke ((Action)Cook);
+		CancelInvoke (Cook);
 		SetFlag (Flags.On, b: false);
 	}
 
@@ -443,25 +424,21 @@ public class BaseOven : StorageContainer, ISplashable, IIndustrialStorage
 
 	private void IncreaseCookTime (float amount)
 	{
-		List<Item> list = Pool.GetList<Item> ();
+		List<Item> obj = Facepunch.Pool.GetList<Item> ();
 		foreach (Item item in base.inventory.itemList) {
 			if (item.HasFlag (Item.Flag.Cooking)) {
-				list.Add (item);
+				obj.Add (item);
 			}
 		}
-		float delta = amount / (float)list.Count;
-		foreach (Item item2 in list) {
+		float delta = amount / (float)obj.Count;
+		foreach (Item item2 in obj) {
 			item2.OnCycle (delta);
 		}
-		Pool.FreeList<Item> (ref list);
+		Facepunch.Pool.FreeList (ref obj);
 	}
 
 	public Vector2i InputSlotRange (int slotIndex)
 	{
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
 		if (IndustrialMode == IndustrialSlotMode.LargeFurnace) {
 			return new Vector2i (0, 6);
 		}
@@ -476,10 +453,6 @@ public class BaseOven : StorageContainer, ISplashable, IIndustrialStorage
 
 	public Vector2i OutputSlotRange (int slotIndex)
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
 		if (IndustrialMode == IndustrialSlotMode.LargeFurnace) {
 			return new Vector2i (7, 16);
 		}
@@ -510,7 +483,7 @@ public class BaseOven : StorageContainer, ISplashable, IIndustrialStorage
 
 	private bool IsBurnableItem (Item item)
 	{
-		if (Object.op_Implicit ((Object)(object)((Component)item.info).GetComponent<ItemModBurnable> ()) && ((Object)(object)fuelType == (Object)null || (Object)(object)item.info == (Object)(object)fuelType)) {
+		if ((bool)item.info.GetComponent<ItemModBurnable> () && (fuelType == null || item.info == fuelType)) {
 			return true;
 		}
 		return false;
@@ -518,18 +491,17 @@ public class BaseOven : StorageContainer, ISplashable, IIndustrialStorage
 
 	private bool IsBurnableByproduct (Item item)
 	{
-		ItemDefinition itemDefinition = fuelType;
-		ItemModBurnable itemModBurnable = ((itemDefinition != null) ? ((Component)itemDefinition).GetComponent<ItemModBurnable> () : null);
-		if ((Object)(object)itemModBurnable == (Object)null) {
+		ItemModBurnable itemModBurnable = fuelType?.GetComponent<ItemModBurnable> ();
+		if (itemModBurnable == null) {
 			return false;
 		}
-		return (Object)(object)item.info == (Object)(object)itemModBurnable.byproductItem;
+		return item.info == itemModBurnable.byproductItem;
 	}
 
 	private bool IsMaterialInput (Item item)
 	{
-		ItemModCookable component = ((Component)item.info).GetComponent<ItemModCookable> ();
-		if ((Object)(object)component == (Object)null || (float)component.lowTemp > cookingTemperature || (float)component.highTemp < cookingTemperature) {
+		ItemModCookable component = item.info.GetComponent<ItemModCookable> ();
+		if (component == null || (float)component.lowTemp > cookingTemperature || (float)component.highTemp < cookingTemperature) {
 			return false;
 		}
 		return true;
@@ -541,7 +513,7 @@ public class BaseOven : StorageContainer, ISplashable, IIndustrialStorage
 			BuildMaterialOutputCache ();
 		}
 		if (!_materialOutputCache.TryGetValue (cookingTemperature, out var value)) {
-			Debug.LogError ((object)"Can't find smeltable item list for oven");
+			Debug.LogError ("Can't find smeltable item list for oven");
 			return true;
 		}
 		return value.Contains (item.info);
@@ -560,14 +532,14 @@ public class BaseOven : StorageContainer, ISplashable, IIndustrialStorage
 		_materialOutputCache = new Dictionary<float, HashSet<ItemDefinition>> ();
 		float[] array = (from x in GameManager.server.preProcessed.prefabList.Values
 			select x.GetComponent<BaseOven> () into x
-			where (Object)(object)x != (Object)null
+			where x != null
 			select x.cookingTemperature).Distinct ().ToArray ();
 		foreach (float key in array) {
 			HashSet<ItemDefinition> hashSet = new HashSet<ItemDefinition> ();
 			_materialOutputCache [key] = hashSet;
 			foreach (ItemDefinition item in ItemManager.itemList) {
-				ItemModCookable component = ((Component)item).GetComponent<ItemModCookable> ();
-				if (!((Object)(object)component == (Object)null) && component.CanBeCookedByAtTemperature (key)) {
+				ItemModCookable component = item.GetComponent<ItemModCookable> ();
+				if (!(component == null) && component.CanBeCookedByAtTemperature (key)) {
 					hashSet.Add (component.becomeOnCooked);
 				}
 			}

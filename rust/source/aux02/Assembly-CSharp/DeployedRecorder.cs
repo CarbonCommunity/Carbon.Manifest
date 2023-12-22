@@ -1,5 +1,5 @@
+#define UNITY_ASSERTIONS
 using System;
-using System.IO;
 using ConVar;
 using Network;
 using UnityEngine;
@@ -23,46 +23,34 @@ public class DeployedRecorder : StorageContainer, ICassettePlayer
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("DeployedRecorder.OnRpcMessage", 0);
-		try {
-			if (rpc == 1785864031 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("DeployedRecorder.OnRpcMessage")) {
+			if (rpc == 1785864031 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - ServerTogglePlay "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - ServerTogglePlay ");
 				}
-				TimeWarning val2 = TimeWarning.New ("ServerTogglePlay", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("ServerTogglePlay")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (1785864031u, "ServerTogglePlay", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							ServerTogglePlay (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in ServerTogglePlay");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -71,7 +59,7 @@ public class DeployedRecorder : StorageContainer, ICassettePlayer
 	[RPC_Server.IsVisible (3f)]
 	public void ServerTogglePlay (RPCMessage msg)
 	{
-		bool play = ((Stream)(object)msg.read).ReadByte () == 1;
+		bool play = msg.read.ReadByte () == 1;
 		ServerTogglePlay (play);
 	}
 
@@ -82,8 +70,7 @@ public class DeployedRecorder : StorageContainer, ICassettePlayer
 
 	public void OnCassetteInserted (Cassette c)
 	{
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		ClientRPC<NetworkableId> (null, "Client_OnCassetteInserted", c.net.ID);
+		ClientRPC (null, "Client_OnCassetteInserted", c.net.ID);
 		SendNetworkUpdate ();
 	}
 
@@ -97,7 +84,7 @@ public class DeployedRecorder : StorageContainer, ICassettePlayer
 	{
 		ItemDefinition[] validCassettes = ValidCassettes;
 		for (int i = 0; i < validCassettes.Length; i++) {
-			if ((Object)(object)validCassettes [i] == (Object)(object)item.info) {
+			if (validCassettes [i] == item.info) {
 				return true;
 			}
 		}
@@ -113,26 +100,20 @@ public class DeployedRecorder : StorageContainer, ICassettePlayer
 
 	private void DoCollisionStick (Collision collision, BaseEntity ent)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
 		ContactPoint contact = collision.GetContact (0);
-		DoStick (((ContactPoint)(ref contact)).point, ((ContactPoint)(ref contact)).normal, ent, collision.collider);
+		DoStick (contact.point, contact.normal, ent, collision.collider);
 	}
 
 	public virtual void SetMotionEnabled (bool wantsMotion)
 	{
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-		Rigidbody component = ((Component)this).GetComponent<Rigidbody> ();
-		if (Object.op_Implicit ((Object)(object)component)) {
+		Rigidbody component = GetComponent<Rigidbody> ();
+		if ((bool)component) {
 			if (!initialCollisionDetectionMode.HasValue) {
 				initialCollisionDetectionMode = component.collisionDetectionMode;
 			}
 			component.useGravity = wantsMotion;
 			if (!wantsMotion) {
-				component.collisionDetectionMode = (CollisionDetectionMode)0;
+				component.collisionDetectionMode = CollisionDetectionMode.Discrete;
 			}
 			component.isKinematic = !wantsMotion;
 			if (wantsMotion) {
@@ -143,26 +124,20 @@ public class DeployedRecorder : StorageContainer, ICassettePlayer
 
 	public void DoStick (Vector3 position, Vector3 normal, BaseEntity ent, Collider hitCollider)
 	{
-		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0071: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0076: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)ent != (Object)null && ent is TimedExplosive) {
+		if (ent != null && ent is TimedExplosive) {
 			if (!ent.HasParent ()) {
 				return;
 			}
-			position = ((Component)ent).transform.position;
+			position = ent.transform.position;
 			ent = ent.parentEntity.Get (serverside: true);
 		}
 		SetMotionEnabled (wantsMotion: false);
 		SetCollisionEnabled (wantsCollision: false);
-		if (!((Object)(object)ent != (Object)null) || !HasChild (ent)) {
-			((Component)this).transform.position = position;
-			((Component)this).transform.rotation = Quaternion.LookRotation (normal, ((Component)this).transform.up);
-			if ((Object)(object)hitCollider != (Object)null && (Object)(object)ent != (Object)null) {
-				SetParent (ent, ent.FindBoneID (((Component)hitCollider).transform), worldPositionStays: true);
+		if (!(ent != null) || !HasChild (ent)) {
+			base.transform.position = position;
+			base.transform.rotation = Quaternion.LookRotation (normal, base.transform.up);
+			if (hitCollider != null && ent != null) {
+				SetParent (ent, ent.FindBoneID (hitCollider.transform), worldPositionStays: true);
 			} else {
 				SetParent (ent, StringPool.closest, worldPositionStays: true);
 			}
@@ -172,7 +147,7 @@ public class DeployedRecorder : StorageContainer, ICassettePlayer
 
 	private void UnStick ()
 	{
-		if (Object.op_Implicit ((Object)(object)GetParentEntity ())) {
+		if ((bool)GetParentEntity ()) {
 			SetParent (null, worldPositionStays: true, sendImmediate: true);
 			SetMotionEnabled (wantsMotion: true);
 			SetCollisionEnabled (wantsCollision: true);
@@ -187,8 +162,8 @@ public class DeployedRecorder : StorageContainer, ICassettePlayer
 
 	public virtual void SetCollisionEnabled (bool wantsCollision)
 	{
-		Collider component = ((Component)this).GetComponent<Collider> ();
-		if (Object.op_Implicit ((Object)(object)component) && component.enabled != wantsCollision) {
+		Collider component = GetComponent<Collider> ();
+		if ((bool)component && component.enabled != wantsCollision) {
 			component.enabled = wantsCollision;
 		}
 	}

@@ -10,17 +10,17 @@ public class AIThinkManager : BaseMonoBehaviour, IServerComponent
 		Pets
 	}
 
-	public static ListHashSet<IThinker> _processQueue = new ListHashSet<IThinker> (8);
+	public static ListHashSet<IThinker> _processQueue = new ListHashSet<IThinker> ();
 
-	public static ListHashSet<IThinker> _removalQueue = new ListHashSet<IThinker> (8);
+	public static ListHashSet<IThinker> _removalQueue = new ListHashSet<IThinker> ();
 
-	public static ListHashSet<IThinker> _animalProcessQueue = new ListHashSet<IThinker> (8);
+	public static ListHashSet<IThinker> _animalProcessQueue = new ListHashSet<IThinker> ();
 
-	public static ListHashSet<IThinker> _animalremovalQueue = new ListHashSet<IThinker> (8);
+	public static ListHashSet<IThinker> _animalremovalQueue = new ListHashSet<IThinker> ();
 
-	public static ListHashSet<IThinker> _petProcessQueue = new ListHashSet<IThinker> (8);
+	public static ListHashSet<IThinker> _petProcessQueue = new ListHashSet<IThinker> ();
 
-	public static ListHashSet<IThinker> _petRemovalQueue = new ListHashSet<IThinker> (8);
+	public static ListHashSet<IThinker> _petRemovalQueue = new ListHashSet<IThinker> ();
 
 	[ServerVar]
 	[Help ("How many miliseconds to budget for processing AI entities per server frame")]
@@ -72,19 +72,11 @@ public class AIThinkManager : BaseMonoBehaviour, IServerComponent
 
 	private static void DoRemoval (ListHashSet<IThinker> removal, ListHashSet<IThinker> process)
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
 		if (removal.Count <= 0) {
 			return;
 		}
-		Enumerator<IThinker> enumerator = removal.GetEnumerator ();
-		try {
-			while (enumerator.MoveNext ()) {
-				IThinker current = enumerator.Current;
-				process.Remove (current);
-			}
-		} finally {
-			((IDisposable)enumerator).Dispose ();
+		foreach (IThinker item in removal) {
+			process.Remove (item);
 		}
 		removal.Clear ();
 	}
@@ -97,8 +89,8 @@ public class AIThinkManager : BaseMonoBehaviour, IServerComponent
 			if (thinker != null) {
 				try {
 					thinker.TryThink ();
-				} catch (Exception ex) {
-					Debug.LogWarning ((object)ex);
+				} catch (Exception message) {
+					Debug.LogWarning (message);
 				}
 			}
 			last++;

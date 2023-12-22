@@ -109,17 +109,14 @@ public abstract class MissionObjective : ScriptableObject
 
 	protected bool TryFindNearby<T> (Vector3 origin, Func<T, bool> filter, out T entity, float radius = 20f) where T : BaseEntity
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
-		List<T> list = Pool.GetList<T> ();
-		Vis.Entities (origin, radius, list, -1, (QueryTriggerInteraction)2);
+		List<T> obj = Pool.GetList<T> ();
+		Vis.Entities (origin, radius, obj);
 		int num = -1;
 		float num2 = float.PositiveInfinity;
-		for (int i = 0; i < list.Count; i++) {
-			T val = list [i];
+		for (int i = 0; i < obj.Count; i++) {
+			T val = obj [i];
 			if (filter == null || filter (val)) {
-				float num3 = Vector3.Distance (((Component)val).transform.position, origin);
+				float num3 = Vector3.Distance (val.transform.position, origin);
 				if (num3 < num2) {
 					num = i;
 					num2 = num3;
@@ -127,8 +124,8 @@ public abstract class MissionObjective : ScriptableObject
 			}
 		}
 		bool flag = num != -1;
-		entity = (flag ? list [num] : null);
-		Pool.FreeList<T> (ref list);
+		entity = (flag ? obj [num] : null);
+		Pool.FreeList (ref obj);
 		return flag;
 	}
 

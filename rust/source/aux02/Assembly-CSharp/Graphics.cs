@@ -1,5 +1,6 @@
 using Rust.Workshop;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 [Factory ("graphics")]
 public class Graphics : ConsoleSystem
@@ -94,7 +95,7 @@ public class Graphics : ConsoleSystem
 		}
 		set {
 			int num = shadowcascades;
-			QualitySettings.SetQualityLevel (value, true);
+			QualitySettings.SetQualityLevel (value, applyExpensiveChanges: true);
 			shadowcascades = num;
 		}
 	}
@@ -127,11 +128,9 @@ public class Graphics : ConsoleSystem
 			return _shadowquality;
 		}
 		set {
-			//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0020: Invalid comparison between Unknown and I4
 			_shadowquality = Mathf.Clamp (value, 0, 3);
 			shadowmode = _shadowquality + 1;
-			bool flag = (int)SystemInfo.graphicsDeviceType == 17;
+			bool flag = SystemInfo.graphicsDeviceType == GraphicsDeviceType.OpenGLCore;
 			KeywordUtil.EnsureKeywordState ("SHADOW_QUALITY_HIGH", !flag && _shadowquality == 2);
 			KeywordUtil.EnsureKeywordState ("SHADOW_QUALITY_VERYHIGH", !flag && _shadowquality == 3);
 			KeywordUtil.EnsureKeywordState ("FORWARD_SHADOWS_MEDIUM", _shadowquality == 1);
@@ -188,10 +187,10 @@ public class Graphics : ConsoleSystem
 			value = Mathf.Clamp (value, 1, 16);
 			Texture.SetGlobalAnisotropicFilteringLimits (1, value);
 			if (value <= 1) {
-				Texture.anisotropicFiltering = (AnisotropicFiltering)0;
+				Texture.anisotropicFiltering = AnisotropicFiltering.Disable;
 			}
 			if (value > 1) {
-				Texture.anisotropicFiltering = (AnisotropicFiltering)1;
+				Texture.anisotropicFiltering = AnisotropicFiltering.Enable;
 			}
 			_anisotropic = value;
 		}
@@ -224,30 +223,30 @@ public class Graphics : ConsoleSystem
 	[ClientVar (ClientAdmin = true)]
 	public static bool itemskins {
 		get {
-			return WorkshopSkin.AllowApply;
+			return Rust.Workshop.WorkshopSkin.AllowApply;
 		}
 		set {
-			WorkshopSkin.AllowApply = value;
+			Rust.Workshop.WorkshopSkin.AllowApply = value;
 		}
 	}
 
 	[ClientVar]
 	public static bool itemskinunload {
 		get {
-			return WorkshopSkin.AllowUnload;
+			return Rust.Workshop.WorkshopSkin.AllowUnload;
 		}
 		set {
-			WorkshopSkin.AllowUnload = value;
+			Rust.Workshop.WorkshopSkin.AllowUnload = value;
 		}
 	}
 
 	[ClientVar (ClientAdmin = true)]
 	public static float itemskintimeout {
 		get {
-			return WorkshopSkin.DownloadTimeout;
+			return Rust.Workshop.WorkshopSkin.DownloadTimeout;
 		}
 		set {
-			WorkshopSkin.DownloadTimeout = value;
+			Rust.Workshop.WorkshopSkin.DownloadTimeout = value;
 		}
 	}
 
@@ -265,7 +264,7 @@ public class Graphics : ConsoleSystem
 	[ClientVar]
 	public static void dof_nudge (Arg arg)
 	{
-		float @float = arg.GetFloat (0, 0f);
+		float @float = arg.GetFloat (0);
 		dof_focus_dist += @float;
 		if (dof_focus_dist < 0f) {
 			dof_focus_dist = 0f;

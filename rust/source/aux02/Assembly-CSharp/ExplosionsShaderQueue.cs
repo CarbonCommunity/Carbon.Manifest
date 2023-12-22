@@ -8,24 +8,22 @@ public class ExplosionsShaderQueue : MonoBehaviour
 
 	private void Start ()
 	{
-		rend = ((Component)this).GetComponent<Renderer> ();
-		if ((Object)(object)rend != (Object)null) {
-			Material sharedMaterial = rend.sharedMaterial;
-			sharedMaterial.renderQueue += AddQueue;
+		rend = GetComponent<Renderer> ();
+		if (rend != null) {
+			rend.sharedMaterial.renderQueue += AddQueue;
 		} else {
-			((MonoBehaviour)this).Invoke ("SetProjectorQueue", 0.1f);
+			Invoke ("SetProjectorQueue", 0.1f);
 		}
 	}
 
 	private void SetProjectorQueue ()
 	{
-		Material material = ((Component)this).GetComponent<Projector> ().material;
-		material.renderQueue += AddQueue;
+		GetComponent<Projector> ().material.renderQueue += AddQueue;
 	}
 
 	private void OnDisable ()
 	{
-		if ((Object)(object)rend != (Object)null) {
+		if (rend != null) {
 			rend.sharedMaterial.renderQueue = -1;
 		}
 	}

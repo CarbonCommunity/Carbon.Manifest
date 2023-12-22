@@ -9,8 +9,8 @@ public class ServerBrowserTag : MonoBehaviour
 
 	public bool IsActive {
 		get {
-			if ((Object)(object)button != (Object)null) {
-				return ((RustControl)button).IsPressed;
+			if (button != null) {
+				return button.IsPressed;
 			}
 			return false;
 		}

@@ -6,27 +6,21 @@ public static class ClanInvitationExtensions
 {
 	public static ClanInvitations ToProto (this List<ClanInvitation> invitations)
 	{
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		List<Invitation> list = Pool.GetList<Invitation> ();
+		List<ClanInvitations.Invitation> list = Pool.GetList<ClanInvitations.Invitation> ();
 		foreach (ClanInvitation invitation in invitations) {
 			list.Add (invitation.ToProto ());
 		}
-		ClanInvitations obj = Pool.Get<ClanInvitations> ();
-		obj.invitations = list;
-		return obj;
+		ClanInvitations clanInvitations = Pool.Get<ClanInvitations> ();
+		clanInvitations.invitations = list;
+		return clanInvitations;
 	}
 
-	public static Invitation ToProto (this ClanInvitation invitation)
+	public static ClanInvitations.Invitation ToProto (this ClanInvitation invitation)
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		Invitation obj = Pool.Get<Invitation> ();
-		obj.clanId = invitation.ClanId;
-		obj.recruiter = invitation.Recruiter;
-		obj.timestamp = invitation.Timestamp;
-		return obj;
+		ClanInvitations.Invitation invitation2 = Pool.Get<ClanInvitations.Invitation> ();
+		invitation2.clanId = invitation.ClanId;
+		invitation2.recruiter = invitation.Recruiter;
+		invitation2.timestamp = invitation.Timestamp;
+		return invitation2;
 	}
 }

@@ -67,7 +67,7 @@ public class AIBrainSenses
 
 	private Func<BaseEntity, bool> aiCaresAbout;
 
-	public float TimeSinceThreat => Time.realtimeSinceStartup - LastThreatTimestamp;
+	public float TimeSinceThreat => UnityEngine.Time.realtimeSinceStartup - LastThreatTimestamp;
 
 	public SimpleAIMemory Memory { get; private set; } = new SimpleAIMemory ();
 
@@ -97,7 +97,7 @@ public class AIBrainSenses
 		this.senseFriendlies = senseFriendlies;
 		this.ignoreSafeZonePlayers = ignoreSafeZonePlayers;
 		this.senseTypes = senseTypes;
-		LastThreatTimestamp = Time.realtimeSinceStartup;
+		LastThreatTimestamp = UnityEngine.Time.realtimeSinceStartup;
 		this.refreshKnownLOS = refreshKnownLOS;
 		ownerSenses = owner as IAISenses;
 		knownPlayersLOSUpdateInterval = ((owner is HumanNPC) ? HumanKnownPlayersLOSUpdateInterval : KnownPlayersLOSUpdateInterval);
@@ -105,12 +105,12 @@ public class AIBrainSenses
 
 	public void DelaySenseUpdate (float delay)
 	{
-		nextUpdateTime = Time.time + delay;
+		nextUpdateTime = UnityEngine.Time.time + delay;
 	}
 
 	public void Update ()
 	{
-		if (!((Object)(object)owner == (Object)null)) {
+		if (!(owner == null)) {
 			UpdateSenses ();
 			UpdateKnownPlayersLOS ();
 		}
@@ -118,10 +118,10 @@ public class AIBrainSenses
 
 	private void UpdateSenses ()
 	{
-		if (Time.time < nextUpdateTime) {
+		if (UnityEngine.Time.time < nextUpdateTime) {
 			return;
 		}
-		nextUpdateTime = Time.time + UpdateInterval;
+		nextUpdateTime = UnityEngine.Time.time + UpdateInterval;
 		if (senseTypes != 0) {
 			if (senseTypes == EntityType.Player) {
 				SensePlayers ();
@@ -137,17 +137,15 @@ public class AIBrainSenses
 
 	public void UpdateKnownPlayersLOS ()
 	{
-		//IL_0088: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0098: Unknown result type (might be due to invalid IL or missing references)
-		if (Time.time < nextKnownPlayersLOSUpdateTime) {
+		if (UnityEngine.Time.time < nextKnownPlayersLOSUpdateTime) {
 			return;
 		}
-		nextKnownPlayersLOSUpdateTime = Time.time + knownPlayersLOSUpdateInterval;
+		nextKnownPlayersLOSUpdateTime = UnityEngine.Time.time + knownPlayersLOSUpdateInterval;
 		foreach (BaseEntity player in Memory.Players) {
-			if (!((Object)(object)player == (Object)null) && !player.IsNpc) {
+			if (!(player == null) && !player.IsNpc) {
 				bool flag = ownerAttack.CanSeeTarget (player);
 				Memory.SetLOS (player, flag);
-				if (refreshKnownLOS && (Object)(object)owner != (Object)null && flag && Vector3.Distance (((Component)player).transform.position, ((Component)owner).transform.position) <= TargetLostRange) {
+				if (refreshKnownLOS && owner != null && flag && Vector3.Distance (player.transform.position, owner.transform.position) <= TargetLostRange) {
 					Memory.SetKnown (player, owner, this);
 				}
 			}
@@ -156,8 +154,7 @@ public class AIBrainSenses
 
 	private void SensePlayers ()
 	{
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		int playersInSphere = BaseEntity.Query.Server.GetPlayersInSphere (((Component)owner).transform.position, maxRange, playerQueryResults, aiCaresAbout);
+		int playersInSphere = BaseEntity.Query.Server.GetPlayersInSphere (owner.transform.position, maxRange, playerQueryResults, aiCaresAbout);
 		for (int i = 0; i < playersInSphere; i++) {
 			BasePlayer ent = playerQueryResults [i];
 			Memory.SetKnown (ent, owner, this);
@@ -166,8 +163,7 @@ public class AIBrainSenses
 
 	private void SenseBrains ()
 	{
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		int brainsInSphere = BaseEntity.Query.Server.GetBrainsInSphere (((Component)owner).transform.position, maxRange, queryResults, aiCaresAbout);
+		int brainsInSphere = BaseEntity.Query.Server.GetBrainsInSphere (owner.transform.position, maxRange, queryResults, aiCaresAbout);
 		for (int i = 0; i < brainsInSphere; i++) {
 			BaseEntity ent = queryResults [i];
 			Memory.SetKnown (ent, owner, this);
@@ -176,18 +172,13 @@ public class AIBrainSenses
 
 	private bool AiCaresAbout (BaseEntity entity)
 	{
-		//IL_00c6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0126: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0178: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0183: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)entity == (Object)null) {
+		if (entity == null) {
 			return false;
 		}
 		if (!entity.isServer) {
 			return false;
 		}
-		if (entity.EqualNetID ((BaseNetworkable)owner)) {
+		if (entity.EqualNetID (owner)) {
 			return false;
 		}
 		if (entity.Health () <= 0f) {
@@ -201,7 +192,7 @@ public class AIBrainSenses
 		}
 		BaseCombatEntity baseCombatEntity = entity as BaseCombatEntity;
 		BasePlayer basePlayer = entity as BasePlayer;
-		if ((Object)(object)basePlayer != (Object)null) {
+		if (basePlayer != null) {
 			if (basePlayer.IsDead ()) {
 				return false;
 			}
@@ -209,18 +200,18 @@ public class AIBrainSenses
 				return false;
 			}
 		}
-		if (ignoreSafeZonePlayers && (Object)(object)basePlayer != (Object)null && basePlayer.InSafeZone ()) {
+		if (ignoreSafeZonePlayers && basePlayer != null && basePlayer.InSafeZone ()) {
 			return false;
 		}
-		if (listenRange > 0f && (Object)(object)baseCombatEntity != (Object)null && baseCombatEntity.TimeSinceLastNoise <= 1f && baseCombatEntity.CanLastNoiseBeHeard (((Component)owner).transform.position, listenRange)) {
+		if (listenRange > 0f && baseCombatEntity != null && baseCombatEntity.TimeSinceLastNoise <= 1f && baseCombatEntity.CanLastNoiseBeHeard (owner.transform.position, listenRange)) {
 			return true;
 		}
 		if (senseFriendlies && ownerSenses != null && ownerSenses.IsFriendly (entity)) {
 			return true;
 		}
 		float num = float.PositiveInfinity;
-		if ((Object)(object)baseCombatEntity != (Object)null && AI.accuratevisiondistance) {
-			num = Vector3.Distance (((Component)owner).transform.position, ((Component)baseCombatEntity).transform.position);
+		if (baseCombatEntity != null && AI.accuratevisiondistance) {
+			num = Vector3.Distance (owner.transform.position, baseCombatEntity.transform.position);
 			if (num > maxRange) {
 				return false;
 			}
@@ -229,16 +220,16 @@ public class AIBrainSenses
 			if (!ignoreNonVisionSneakers) {
 				return false;
 			}
-			if ((Object)(object)basePlayer != (Object)null && !basePlayer.IsNpc) {
+			if (basePlayer != null && !basePlayer.IsNpc) {
 				if (!AI.accuratevisiondistance) {
-					num = Vector3.Distance (((Component)owner).transform.position, ((Component)basePlayer).transform.position);
+					num = Vector3.Distance (owner.transform.position, basePlayer.transform.position);
 				}
 				if ((basePlayer.IsDucked () && num >= brain.IgnoreSneakersMaxDistance) || num >= brain.IgnoreNonVisionMaxDistance) {
 					return false;
 				}
 			}
 		}
-		if (hostileTargetsOnly && (Object)(object)baseCombatEntity != (Object)null && !baseCombatEntity.IsHostile () && !(baseCombatEntity is ScarecrowNPC)) {
+		if (hostileTargetsOnly && baseCombatEntity != null && !baseCombatEntity.IsHostile () && !(baseCombatEntity is ScarecrowNPC)) {
 			return false;
 		}
 		if (checkLOS && ownerAttack != null) {
@@ -254,7 +245,7 @@ public class AIBrainSenses
 	private bool IsValidSenseType (BaseEntity ent)
 	{
 		BasePlayer basePlayer = ent as BasePlayer;
-		if ((Object)(object)basePlayer != (Object)null) {
+		if (basePlayer != null) {
 			if (basePlayer.IsNpc) {
 				if (ent is BasePet) {
 					return true;
@@ -289,15 +280,8 @@ public class AIBrainSenses
 
 	private bool IsTargetInVision (BaseEntity target)
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 val = Vector3Ex.Direction (((Component)target).transform.position, ((Component)owner).transform.position);
-		return Vector3.Dot (((Object)(object)playerOwner != (Object)null) ? playerOwner.eyes.BodyForward () : ((Component)owner).transform.forward, val) >= visionCone;
+		Vector3 rhs = Vector3Ex.Direction (target.transform.position, owner.transform.position);
+		return Vector3.Dot ((playerOwner != null) ? playerOwner.eyes.BodyForward () : owner.transform.forward, rhs) >= visionCone;
 	}
 
 	public BaseEntity GetNearestPlayer (float rangeFraction)
@@ -317,16 +301,14 @@ public class AIBrainSenses
 
 	private BaseEntity GetNearest (List<BaseEntity> entities, float rangeFraction)
 	{
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
 		if (entities == null || entities.Count == 0) {
 			return null;
 		}
 		float num = float.PositiveInfinity;
 		BaseEntity result = null;
 		foreach (BaseEntity entity in entities) {
-			if (!((Object)(object)entity == (Object)null) && !(entity.Health () <= 0f)) {
-				float num2 = Vector3.Distance (((Component)entity).transform.position, ((Component)owner).transform.position);
+			if (!(entity == null) && !(entity.Health () <= 0f)) {
+				float num2 = Vector3.Distance (entity.transform.position, owner.transform.position);
 				if (num2 <= rangeFraction * maxRange && num2 < num) {
 					result = entity;
 				}

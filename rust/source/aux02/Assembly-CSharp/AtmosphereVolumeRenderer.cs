@@ -4,7 +4,7 @@ using UnityEngine;
 [RequireComponent (typeof(Camera))]
 public class AtmosphereVolumeRenderer : MonoBehaviour
 {
-	public FogMode Mode = (FogMode)3;
+	public FogMode Mode = FogMode.ExponentialSquared;
 
 	public bool DistanceFog = true;
 
@@ -14,11 +14,8 @@ public class AtmosphereVolumeRenderer : MonoBehaviour
 
 	private static bool isSupported {
 		get {
-			//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-			//IL_000d: Invalid comparison between Unknown and I4
-			if ((int)Application.platform != 0) {
-				return (int)Application.platform != 1;
+			if (Application.platform != 0) {
+				return Application.platform != RuntimePlatform.OSXPlayer;
 			}
 			return false;
 		}

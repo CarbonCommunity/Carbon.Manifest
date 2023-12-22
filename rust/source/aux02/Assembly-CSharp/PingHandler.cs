@@ -7,11 +7,11 @@ public class PingHandler : BaseNexusRequestHandler<PingRequest>
 {
 	protected override void Handle ()
 	{
-		Response val = BaseNexusRequestHandler<PingRequest>.NewResponse ();
-		val.ping = Pool.Get<PingResponse> ();
-		val.ping.players = BasePlayer.activePlayerList.Count;
-		val.ping.maxPlayers = Server.maxplayers;
-		val.ping.queuedPlayers = SingletonComponent<ServerMgr>.Instance.connectionQueue.Queued;
-		SendSuccess (val);
+		Response response = BaseNexusRequestHandler<PingRequest>.NewResponse ();
+		response.ping = Facepunch.Pool.Get<PingResponse> ();
+		response.ping.players = BasePlayer.activePlayerList.Count;
+		response.ping.maxPlayers = Server.maxplayers;
+		response.ping.queuedPlayers = SingletonComponent<ServerMgr>.Instance.connectionQueue.Queued;
+		SendSuccess (response);
 	}
 }

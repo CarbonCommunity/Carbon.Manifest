@@ -17,7 +17,7 @@ public class MissionUIPanel : MonoBehaviour
 
 	public VirtualItemIcon[] bonusIcons;
 
-	public Phrase noMissionText;
+	public Translate.Phrase noMissionText;
 
 	public GameObject abandonButton;
 }

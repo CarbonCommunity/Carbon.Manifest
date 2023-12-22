@@ -10,22 +10,22 @@ public class Craft : ConsoleSystem
 	public static void add (Arg args)
 	{
 		BasePlayer basePlayer = args.Player ();
-		if (!Object.op_Implicit ((Object)(object)basePlayer) || basePlayer.IsDead ()) {
+		if (!basePlayer || basePlayer.IsDead ()) {
 			return;
 		}
-		int @int = args.GetInt (0, 0);
+		int @int = args.GetInt (0);
 		int int2 = args.GetInt (1, 1);
 		int num = (int)args.GetUInt64 (2, 0uL);
 		if (int2 < 1) {
 			return;
 		}
 		ItemDefinition itemDefinition = ItemManager.FindItemDefinition (@int);
-		if ((Object)(object)itemDefinition == (Object)null) {
+		if (itemDefinition == null) {
 			args.ReplyWith ("Item not found");
 			return;
 		}
 		ItemBlueprint itemBlueprint = ItemManager.FindBlueprint (itemDefinition);
-		if (!Object.op_Implicit ((Object)(object)itemBlueprint)) {
+		if (!itemBlueprint) {
 			args.ReplyWith ("Blueprint not found");
 			return;
 		}
@@ -50,8 +50,8 @@ public class Craft : ConsoleSystem
 	public static void canceltask (Arg args)
 	{
 		BasePlayer basePlayer = args.Player ();
-		if (Object.op_Implicit ((Object)(object)basePlayer) && !basePlayer.IsDead ()) {
-			int @int = args.GetInt (0, 0);
+		if ((bool)basePlayer && !basePlayer.IsDead ()) {
+			int @int = args.GetInt (0);
 			if (!basePlayer.inventory.crafting.CancelTask (@int, ReturnItems: true)) {
 				args.ReplyWith ("Couldn't cancel task!");
 			}
@@ -62,8 +62,8 @@ public class Craft : ConsoleSystem
 	public static void cancel (Arg args)
 	{
 		BasePlayer basePlayer = args.Player ();
-		if (Object.op_Implicit ((Object)(object)basePlayer) && !basePlayer.IsDead ()) {
-			int @int = args.GetInt (0, 0);
+		if ((bool)basePlayer && !basePlayer.IsDead ()) {
+			int @int = args.GetInt (0);
 			basePlayer.inventory.crafting.CancelBlueprint (@int);
 		}
 	}
@@ -72,8 +72,8 @@ public class Craft : ConsoleSystem
 	public static void fasttracktask (Arg args)
 	{
 		BasePlayer basePlayer = args.Player ();
-		if (Object.op_Implicit ((Object)(object)basePlayer) && !basePlayer.IsDead ()) {
-			int @int = args.GetInt (0, 0);
+		if ((bool)basePlayer && !basePlayer.IsDead ()) {
+			int @int = args.GetInt (0);
 			if (!basePlayer.inventory.crafting.FastTrackTask (@int)) {
 				args.ReplyWith ("Couldn't fast track task!");
 			}

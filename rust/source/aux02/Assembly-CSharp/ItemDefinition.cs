@@ -76,9 +76,9 @@ public class ItemDefinition : MonoBehaviour
 	public string shortname;
 
 	[Header ("Appearance")]
-	public Phrase displayName;
+	public Translate.Phrase displayName;
 
-	public Phrase displayDescription;
+	public Translate.Phrase displayDescription;
 
 	public Sprite iconSprite;
 
@@ -176,18 +176,18 @@ public class ItemDefinition : MonoBehaviour
 				return _skins2;
 			}
 			if (PlatformService.Instance.IsValid && PlatformService.Instance.ItemDefinitions != null) {
-				string prefabname = ((Object)this).name;
+				string prefabname = base.name;
 				_skins2 = PlatformService.Instance.ItemDefinitions.Where ((IPlayerItemDefinition x) => (x.ItemShortName == shortname || x.ItemShortName == prefabname) && x.WorkshopId != 0).ToArray ();
 			}
 			return _skins2;
 		}
 	}
 
-	public ItemBlueprint Blueprint => ((Component)this).GetComponent<ItemBlueprint> ();
+	public ItemBlueprint Blueprint => GetComponent<ItemBlueprint> ();
 
 	public int craftingStackable => Mathf.Max (10, stackable);
 
-	public bool isWearable => (Object)(object)ItemModWearable != (Object)null;
+	public bool isWearable => ItemModWearable != null;
 
 	public ItemModWearable ItemModWearable { get; private set; }
 
@@ -217,7 +217,7 @@ public class ItemDefinition : MonoBehaviour
 	public static ulong FindSkin (int itemID, int skinID)
 	{
 		ItemDefinition itemDefinition = ItemManager.FindItemDefinition (itemID);
-		if ((Object)(object)itemDefinition == (Object)null) {
+		if (itemDefinition == null) {
 			return 0uL;
 		}
 		IPlayerItemDefinition itemDefinition2 = PlatformService.Instance.GetItemDefinition (skinID);
@@ -225,7 +225,7 @@ public class ItemDefinition : MonoBehaviour
 			ulong workshopDownload = itemDefinition2.WorkshopDownload;
 			if (workshopDownload != 0L) {
 				string itemShortName = itemDefinition2.ItemShortName;
-				if (itemShortName == itemDefinition.shortname || itemShortName == ((Object)itemDefinition).name) {
+				if (itemShortName == itemDefinition.shortname || itemShortName == itemDefinition.name) {
 					return workshopDownload;
 				}
 			}
@@ -246,18 +246,18 @@ public class ItemDefinition : MonoBehaviour
 	public void Initialize (List<ItemDefinition> itemList)
 	{
 		if (itemMods != null) {
-			Debug.LogError ((object)("Item Definition Initializing twice: " + ((Object)this).name));
+			Debug.LogError ("Item Definition Initializing twice: " + base.name);
 		}
 		skins = ItemSkinDirectory.ForItem (this);
-		itemMods = ((Component)this).GetComponentsInChildren<ItemMod> (true);
+		itemMods = GetComponentsInChildren<ItemMod> (includeInactive: true);
 		ItemMod[] array = itemMods;
 		for (int i = 0; i < array.Length; i++) {
 			array [i].ModInit ();
 		}
-		Children = itemList.Where ((ItemDefinition x) => (Object)(object)x.Parent == (Object)(object)this).ToArray ();
-		ItemModWearable = ((Component)this).GetComponent<ItemModWearable> ();
-		isHoldable = (Object)(object)((Component)this).GetComponent<ItemModEntity> () != (Object)null;
-		isUsable = (Object)(object)((Component)this).GetComponent<ItemModEntity> () != (Object)null || (Object)(object)((Component)this).GetComponent<ItemModConsume> () != (Object)null;
+		Children = itemList.Where ((ItemDefinition x) => x.Parent == this).ToArray ();
+		ItemModWearable = GetComponent<ItemModWearable> ();
+		isHoldable = GetComponent<ItemModEntity> () != null;
+		isUsable = GetComponent<ItemModEntity> () != null || GetComponent<ItemModConsume> () != null;
 	}
 
 	public GameObjectRef GetWorldModel (int amount)

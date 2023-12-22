@@ -11,34 +11,28 @@ public class MissionObjective_SpeakWith : MissionObjective
 
 	public override void ObjectiveStarted (BasePlayer playerFor, int index, BaseMission.MissionInstance instance)
 	{
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
 		BaseEntity baseEntity = instance.ProviderEntity ();
-		if (Object.op_Implicit ((Object)(object)baseEntity) && !showPing) {
-			instance.missionLocation = ((Component)baseEntity).transform.position;
+		if ((bool)baseEntity && !showPing) {
+			instance.missionLocation = baseEntity.transform.position;
 			playerFor.MissionDirty ();
 		}
 		base.ObjectiveStarted (playerFor, index, instance);
-		if ((Object)(object)baseEntity != (Object)null && showPing) {
+		if (baseEntity != null && showPing) {
 			playerFor.RegisterPingedEntity (baseEntity, BasePlayer.PingType.GoTo);
 		}
 	}
 
 	public override void ProcessMissionEvent (BasePlayer playerFor, BaseMission.MissionInstance instance, int index, BaseMission.MissionEventType type, BaseMission.MissionEventPayload payload, float amount)
 	{
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0070: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0077: Unknown result type (might be due to invalid IL or missing references)
 		base.ProcessMissionEvent (playerFor, instance, index, type, payload, amount);
 		if (type != BaseMission.MissionEventType.CONVERSATION || IsCompleted (index, instance) || !CanProgress (index, instance)) {
 			return;
 		}
 		BaseEntity baseEntity = instance.ProviderEntity ();
-		if (!Object.op_Implicit ((Object)(object)baseEntity)) {
+		if (!baseEntity) {
 			return;
 		}
-		IMissionProvider component = ((Component)baseEntity).GetComponent<IMissionProvider> ();
+		IMissionProvider component = baseEntity.GetComponent<IMissionProvider> ();
 		if (component == null || !(component.ProviderID () == payload.NetworkIdentifier) || amount != 1f) {
 			return;
 		}
@@ -73,9 +67,8 @@ public class MissionObjective_SpeakWith : MissionObjective
 
 	private static void DeregisterPing (BasePlayer playerFor, BaseMission.MissionInstance instance)
 	{
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
 		BaseEntity baseEntity = instance.ProviderEntity ();
-		if ((Object)(object)baseEntity != (Object)null) {
+		if (baseEntity != null) {
 			playerFor.DeregisterPingedEntity (baseEntity.net.ID, BasePlayer.PingType.GoTo);
 		}
 	}

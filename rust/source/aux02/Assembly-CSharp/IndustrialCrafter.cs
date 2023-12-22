@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -52,7 +53,7 @@ public class IndustrialCrafter : IndustrialEntity, IItemContainerEntity, IIdealS
 
 	public ItemContainer inventory { get; set; }
 
-	public Transform Transform => ((Component)this).transform;
+	public Transform Transform => base.transform;
 
 	public bool DropsLoot => true;
 
@@ -66,7 +67,7 @@ public class IndustrialCrafter : IndustrialEntity, IItemContainerEntity, IIdealS
 
 	public BaseEntity IndustrialEntity => this;
 
-	public Phrase LootPanelTitle => new Phrase ("industrial.crafter.loot", "Industrial Crafter");
+	public Translate.Phrase LootPanelTitle => new Translate.Phrase ("industrial.crafter.loot", "Industrial Crafter");
 
 	public SoundDefinition OpenSound => ContainerOpenSound;
 
@@ -74,85 +75,64 @@ public class IndustrialCrafter : IndustrialEntity, IItemContainerEntity, IIdealS
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("IndustrialCrafter.OnRpcMessage", 0);
-		try {
-			if (rpc == 331989034 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("IndustrialCrafter.OnRpcMessage")) {
+			if (rpc == 331989034 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - RPC_OpenLoot "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - RPC_OpenLoot ");
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_OpenLoot", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_OpenLoot")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (331989034u, "RPC_OpenLoot", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage rpc2 = rPCMessage;
 							RPC_OpenLoot (rpc2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_OpenLoot");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 4167839872u && (Object)(object)player != (Object)null) {
+			if (rpc == 4167839872u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - SvSwitch "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - SvSwitch ");
 				}
-				TimeWarning val2 = TimeWarning.New ("SvSwitch", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("SvSwitch")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (4167839872u, "SvSwitch", this, player, 2uL)) {
 							return true;
 						}
 						if (!RPC_Server.IsVisible.Test (4167839872u, "SvSwitch", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							SvSwitch (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in SvSwitch");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -162,11 +142,11 @@ public class IndustrialCrafter : IndustrialEntity, IItemContainerEntity, IIdealS
 		base.OnFlagsChanged (old, next);
 		bool flag = next.HasFlag (Flags.On);
 		if (old.HasFlag (Flags.On) != flag && base.isServer) {
-			float industrialCrafterFrequency = Server.industrialCrafterFrequency;
+			float industrialCrafterFrequency = ConVar.Server.industrialCrafterFrequency;
 			if (flag && industrialCrafterFrequency > 0f) {
-				((FacepunchBehaviour)this).InvokeRandomized ((Action)CheckCraft, industrialCrafterFrequency, industrialCrafterFrequency, industrialCrafterFrequency * 0.5f);
+				InvokeRandomized (CheckCraft, industrialCrafterFrequency, industrialCrafterFrequency, industrialCrafterFrequency * 0.5f);
 			} else {
-				((FacepunchBehaviour)this).CancelInvoke ((Action)CheckCraft);
+				CancelInvoke (CheckCraft);
 			}
 		}
 	}
@@ -197,7 +177,7 @@ public class IndustrialCrafter : IndustrialEntity, IItemContainerEntity, IIdealS
 	{
 		if (inventory != null) {
 			BasePlayer player = rpc.player;
-			if (Object.op_Implicit ((Object)(object)player) && player.CanInteract ()) {
+			if ((bool)player && player.CanInteract ()) {
 				PlayerOpenLoot (player);
 			}
 		}
@@ -258,7 +238,7 @@ public class IndustrialCrafter : IndustrialEntity, IItemContainerEntity, IIdealS
 
 	private void CheckCraft ()
 	{
-		((ObjectWorkQueue<IndustrialEntity>)global::IndustrialEntity.Queue).Add ((IndustrialEntity)this);
+		global::IndustrialEntity.Queue.Add (this);
 	}
 
 	private Item GetTargetBlueprint (int index)
@@ -278,16 +258,13 @@ public class IndustrialCrafter : IndustrialEntity, IItemContainerEntity, IIdealS
 
 	protected override void RunJob ()
 	{
-		//IL_01bf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01df: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01eb: Unknown result type (might be due to invalid IL or missing references)
 		base.RunJob ();
-		if (Server.industrialCrafterFrequency <= 0f || HasFlag (Flags.Reserved1) || (Object)(object)currentlyCrafting != (Object)null) {
+		if (ConVar.Server.industrialCrafterFrequency <= 0f || HasFlag (Flags.Reserved1) || currentlyCrafting != null) {
 			return;
 		}
 		for (int i = 0; i <= 3; i++) {
 			Item targetBlueprint = GetTargetBlueprint (i);
-			if (targetBlueprint == null || (Object)(object)GetWorkbench () == (Object)null || GetWorkbench ().Workbenchlevel < targetBlueprint.blueprintTargetDef.Blueprint.workbenchLevelRequired) {
+			if (targetBlueprint == null || GetWorkbench () == null || GetWorkbench ().Workbenchlevel < targetBlueprint.blueprintTargetDef.Blueprint.workbenchLevelRequired) {
 				continue;
 			}
 			ItemBlueprint blueprint = targetBlueprint.blueprintTargetDef.Blueprint;
@@ -304,7 +281,7 @@ public class IndustrialCrafter : IndustrialEntity, IItemContainerEntity, IIdealS
 			flag = false;
 			for (int j = 8; j <= 11; j++) {
 				Item slot = inventory.GetSlot (j);
-				if (slot == null || ((Object)(object)slot.info == (Object)(object)targetBlueprint.blueprintTargetDef && slot.amount + blueprint.amountToCreate <= slot.MaxStackable ())) {
+				if (slot == null || (slot.info == targetBlueprint.blueprintTargetDef && slot.amount + blueprint.amountToCreate <= slot.MaxStackable ())) {
 					flag = true;
 					break;
 				}
@@ -320,25 +297,16 @@ public class IndustrialCrafter : IndustrialEntity, IItemContainerEntity, IIdealS
 			currentlyCrafting = targetBlueprint.blueprintTargetDef;
 			currentlyCraftingAmount = blueprint.amountToCreate;
 			float time = blueprint.time;
-			((FacepunchBehaviour)this).Invoke ((Action)CompleteCraft, time);
-			jobFinishes = TimeUntilWithDuration.op_Implicit (time);
+			Invoke (CompleteCraft, time);
+			jobFinishes = time;
 			SetFlag (Flags.Reserved1, b: true);
-			ClientRPC (null, "ClientUpdateCraftTimeRemaining", TimeUntilWithDuration.op_Implicit (jobFinishes), jobFinishes.Duration);
+			ClientRPC ((Connection)null, "ClientUpdateCraftTimeRemaining", (float)jobFinishes, jobFinishes.Duration);
 			break;
 		}
 	}
 
 	private void CompleteCraft ()
 	{
-		//IL_00b2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00de: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e8: Unknown result type (might be due to invalid IL or missing references)
 		bool flag = false;
 		for (int i = 8; i <= 11; i++) {
 			Item slot = inventory.GetSlot (i);
@@ -349,7 +317,7 @@ public class IndustrialCrafter : IndustrialEntity, IItemContainerEntity, IIdealS
 				flag = true;
 				break;
 			}
-			if ((Object)(object)slot.info == (Object)(object)currentlyCrafting && slot.amount + currentlyCraftingAmount <= slot.MaxStackable ()) {
+			if (slot.info == currentlyCrafting && slot.amount + currentlyCraftingAmount <= slot.MaxStackable ()) {
 				slot.amount += currentlyCraftingAmount;
 				slot.MarkDirty ();
 				flag = true;
@@ -357,7 +325,7 @@ public class IndustrialCrafter : IndustrialEntity, IItemContainerEntity, IIdealS
 			}
 		}
 		if (!flag) {
-			ItemManager.Create (currentlyCrafting, currentlyCraftingAmount, 0uL).Drop (((Component)this).transform.position + ((Component)this).transform.forward * 0.5f, Vector3.zero);
+			ItemManager.Create (currentlyCrafting, currentlyCraftingAmount, 0uL).Drop (base.transform.position + base.transform.forward * 0.5f, Vector3.zero);
 		}
 		currentlyCrafting = null;
 		currentlyCraftingAmount = 0;
@@ -366,13 +334,13 @@ public class IndustrialCrafter : IndustrialEntity, IItemContainerEntity, IIdealS
 
 	private int GetInputAmount (ItemDefinition def)
 	{
-		if ((Object)(object)def == (Object)null) {
+		if (def == null) {
 			return 0;
 		}
 		int num = 0;
 		for (int i = 4; i <= 7; i++) {
 			Item slot = inventory.GetSlot (i);
-			if (slot != null && (Object)(object)def == (Object)(object)slot.info) {
+			if (slot != null && def == slot.info) {
 				num += slot.amount;
 			}
 		}
@@ -381,14 +349,14 @@ public class IndustrialCrafter : IndustrialEntity, IItemContainerEntity, IIdealS
 
 	private bool ConsumeInputIngredient (ItemAmount am)
 	{
-		if ((Object)(object)am.itemDef == (Object)null) {
+		if (am.itemDef == null) {
 			return false;
 		}
 		float num = am.amount;
 		for (int i = 4; i <= 7; i++) {
 			Item slot = inventory.GetSlot (i);
-			if (slot != null && (Object)(object)am.itemDef == (Object)(object)slot.info) {
-				float num2 = Mathf.Min (num, (float)slot.amount);
+			if (slot != null && am.itemDef == slot.info) {
+				float num2 = Mathf.Min (num, slot.amount);
 				slot.UseItem ((int)num2);
 				num -= num2;
 				if (num2 <= 0f) {
@@ -403,13 +371,13 @@ public class IndustrialCrafter : IndustrialEntity, IItemContainerEntity, IIdealS
 	{
 		base.Save (info);
 		if (info.forDisk) {
-			if ((Object)(object)currentlyCrafting != (Object)null) {
-				info.msg.industrialCrafter = Pool.Get<IndustrialCrafter> ();
+			if (currentlyCrafting != null) {
+				info.msg.industrialCrafter = Facepunch.Pool.Get<ProtoBuf.IndustrialCrafter> ();
 				info.msg.industrialCrafter.currentlyCrafting = currentlyCrafting.itemid;
 				info.msg.industrialCrafter.currentlyCraftingAmount = currentlyCraftingAmount;
 			}
 			if (inventory != null) {
-				info.msg.storageBox = Pool.Get<StorageBox> ();
+				info.msg.storageBox = Facepunch.Pool.Get<StorageBox> ();
 				info.msg.storageBox.contents = inventory.Save ();
 			}
 		}
@@ -431,8 +399,6 @@ public class IndustrialCrafter : IndustrialEntity, IItemContainerEntity, IIdealS
 
 	public Vector2i InputSlotRange (int slotIndex)
 	{
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
 		if (slotIndex == 3) {
 			return new Vector2i (0, 3);
 		}
@@ -441,8 +407,6 @@ public class IndustrialCrafter : IndustrialEntity, IItemContainerEntity, IIdealS
 
 	public Vector2i OutputSlotRange (int slotIndex)
 	{
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
 		if (slotIndex == 1) {
 			return new Vector2i (0, 3);
 		}
@@ -496,7 +460,7 @@ public class IndustrialCrafter : IndustrialEntity, IItemContainerEntity, IIdealS
 			if (!wantsOn) {
 				SetFlag (Flags.Reserved2, b: false, recursive: false, networkupdate: false);
 			}
-			((FacepunchBehaviour)this).Invoke ((Action)Unbusy, 0.5f);
+			Invoke (Unbusy, 0.5f);
 			SendNetworkUpdateImmediate ();
 			MarkDirty ();
 		}
@@ -533,8 +497,6 @@ public class IndustrialCrafter : IndustrialEntity, IItemContainerEntity, IIdealS
 
 	public ItemContainerId GetIdealContainer (BasePlayer player, Item item, ItemMoveModifier modifier)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
 		return default(ItemContainerId);
 	}
 

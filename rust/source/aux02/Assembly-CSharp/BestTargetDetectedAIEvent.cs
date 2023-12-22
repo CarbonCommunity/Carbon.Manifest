@@ -1,5 +1,4 @@
 using ProtoBuf;
-using UnityEngine;
 
 public class BestTargetDetectedAIEvent : BaseAIEvent
 {
@@ -22,15 +21,15 @@ public class BestTargetDetectedAIEvent : BaseAIEvent
 		}
 		BaseEntity bestTarget = iAIAttack.GetBestTarget ();
 		if (base.Inverted) {
-			if ((Object)(object)bestTarget == (Object)null && base.ShouldSetOutputEntityMemory) {
+			if (bestTarget == null && base.ShouldSetOutputEntityMemory) {
 				memory.Entity.Remove (base.OutputEntityMemorySlot);
 			}
-			base.Result = (Object)(object)bestTarget == (Object)null;
+			base.Result = bestTarget == null;
 		} else {
-			if ((Object)(object)bestTarget != (Object)null && base.ShouldSetOutputEntityMemory) {
+			if (bestTarget != null && base.ShouldSetOutputEntityMemory) {
 				memory.Entity.Set (bestTarget, base.OutputEntityMemorySlot);
 			}
-			base.Result = (Object)(object)bestTarget != (Object)null;
+			base.Result = bestTarget != null;
 		}
 	}
 }

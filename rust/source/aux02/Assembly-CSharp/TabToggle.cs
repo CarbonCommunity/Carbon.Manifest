@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class TabToggle : MonoBehaviour
@@ -15,15 +14,13 @@ public class TabToggle : MonoBehaviour
 
 	public void Awake ()
 	{
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005e: Expected O, but got Unknown
-		if (!Object.op_Implicit ((Object)(object)TabHolder)) {
+		if (!TabHolder) {
 			return;
 		}
 		for (int i = 0; i < TabHolder.childCount; i++) {
-			Button c = ((Component)TabHolder.GetChild (i)).GetComponent<Button> ();
-			if (Object.op_Implicit ((Object)(object)c)) {
-				((UnityEvent)c.onClick).AddListener ((UnityAction)delegate {
+			Button c = TabHolder.GetChild (i).GetComponent<Button> ();
+			if ((bool)c) {
+				c.onClick.AddListener (delegate {
 					SwitchTo (c);
 				});
 			}
@@ -32,24 +29,24 @@ public class TabToggle : MonoBehaviour
 
 	public void SwitchTo (Button sourceTab)
 	{
-		string name = ((Object)((Component)sourceTab).transform).name;
-		if (Object.op_Implicit ((Object)(object)TabHolder)) {
+		string text = sourceTab.transform.name;
+		if ((bool)TabHolder) {
 			for (int i = 0; i < TabHolder.childCount; i++) {
-				Button component = ((Component)TabHolder.GetChild (i)).GetComponent<Button> ();
-				if (Object.op_Implicit ((Object)(object)component)) {
-					((Selectable)component).interactable = ((Object)component).name != name;
+				Button component = TabHolder.GetChild (i).GetComponent<Button> ();
+				if ((bool)component) {
+					component.interactable = component.name != text;
 				}
 			}
 		}
-		if (!Object.op_Implicit ((Object)(object)ContentHolder)) {
+		if (!ContentHolder) {
 			return;
 		}
 		for (int j = 0; j < ContentHolder.childCount; j++) {
 			Transform child = ContentHolder.GetChild (j);
-			if (((Object)child).name == name) {
-				Show (((Component)child).gameObject);
+			if (child.name == text) {
+				Show (child.gameObject);
 			} else {
-				Hide (((Component)child).gameObject);
+				Hide (child.gameObject);
 			}
 		}
 	}
@@ -59,25 +56,23 @@ public class TabToggle : MonoBehaviour
 		if (!go.activeSelf) {
 			return;
 		}
-		CanvasGroup val = default(CanvasGroup);
-		if (FadeOut && go.TryGetComponent<CanvasGroup> (ref val)) {
-			LeanTween.alphaCanvas (val, 0f, 0.1f).setOnComplete ((Action)delegate {
-				go.SetActive (false);
+		if (FadeOut && go.TryGetComponent<CanvasGroup> (out var component)) {
+			LeanTween.alphaCanvas (component, 0f, 0.1f).setOnComplete ((Action)delegate {
+				go.SetActive (value: false);
 			});
 		} else {
-			go.SetActive (false);
+			go.SetActive (value: false);
 		}
 	}
 
 	private void Show (GameObject go)
 	{
 		if (!go.activeSelf) {
-			CanvasGroup val = default(CanvasGroup);
-			if (FadeIn && go.TryGetComponent<CanvasGroup> (ref val)) {
-				val.alpha = 0f;
-				LeanTween.alphaCanvas (val, 1f, 0.1f);
+			if (FadeIn && go.TryGetComponent<CanvasGroup> (out var component)) {
+				component.alpha = 0f;
+				LeanTween.alphaCanvas (component, 1f, 0.1f);
 			}
-			go.SetActive (true);
+			go.SetActive (value: true);
 		}
 	}
 }

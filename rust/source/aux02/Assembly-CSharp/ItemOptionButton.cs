@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class ItemOptionButton : MonoBehaviour
 {
-	public TextMeshProUGUI name;
+	public new TextMeshProUGUI name;
 
 	public Image icon;
 }

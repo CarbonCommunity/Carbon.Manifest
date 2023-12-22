@@ -48,12 +48,12 @@ public class EggHuntEvent : BaseHuntEvent
 	public override void ServerInit ()
 	{
 		base.ServerInit ();
-		if (Object.op_Implicit ((Object)(object)serverEvent) && base.isServer) {
+		if ((bool)serverEvent && base.isServer) {
 			serverEvent.Kill ();
 			serverEvent = null;
 		}
 		serverEvent = this;
-		((FacepunchBehaviour)this).Invoke ((Action)StartEvent, warmupTime);
+		Invoke (StartEvent, warmupTime);
 	}
 
 	public void StartEvent ()
@@ -63,35 +63,12 @@ public class EggHuntEvent : BaseHuntEvent
 
 	public void SpawnEggsAtPoint (int numEggs, Vector3 pos, Vector3 aimDir, float minDist = 1f, float maxDist = 2f)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0060: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0093: Unknown result type (might be due to invalid IL or missing references)
 		for (int i = 0; i < numEggs; i++) {
-			Vector3 val = pos;
-			aimDir = ((!(aimDir == Vector3.zero)) ? AimConeUtil.GetModifiedAimConeDirection (90f, aimDir) : Random.onUnitSphere);
-			val = pos + Vector3Ex.Direction2D (pos + aimDir * 10f, pos) * Random.Range (minDist, maxDist);
-			val.y = TerrainMeta.HeightMap.GetHeight (val);
-			CollectableEasterEgg collectableEasterEgg = GameManager.server.CreateEntity (HuntablePrefab [Random.Range (0, HuntablePrefab.Length)].resourcePath, val) as CollectableEasterEgg;
+			Vector3 vector = pos;
+			aimDir = ((!(aimDir == Vector3.zero)) ? AimConeUtil.GetModifiedAimConeDirection (90f, aimDir) : UnityEngine.Random.onUnitSphere);
+			vector = pos + Vector3Ex.Direction2D (pos + aimDir * 10f, pos) * UnityEngine.Random.Range (minDist, maxDist);
+			vector.y = TerrainMeta.HeightMap.GetHeight (vector);
+			CollectableEasterEgg collectableEasterEgg = GameManager.server.CreateEntity (HuntablePrefab [UnityEngine.Random.Range (0, HuntablePrefab.Length)].resourcePath, vector) as CollectableEasterEgg;
 			collectableEasterEgg.Spawn ();
 			_spawnedEggs.Add (collectableEasterEgg);
 		}
@@ -100,39 +77,20 @@ public class EggHuntEvent : BaseHuntEvent
 	[ContextMenu ("SpawnDebug")]
 	public void SpawnEggs ()
 	{
-		//IL_0005: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
-		Enumerator<BasePlayer> enumerator = BasePlayer.activePlayerList.GetEnumerator ();
-		try {
-			while (enumerator.MoveNext ()) {
-				BasePlayer current = enumerator.Current;
-				SpawnEggsAtPoint (Random.Range (4, 6) + Mathf.RoundToInt (current.eggVision), ((Component)current).transform.position, current.eyes.BodyForward (), 15f, 25f);
-			}
-		} finally {
-			((IDisposable)enumerator).Dispose ();
+		foreach (BasePlayer activePlayer in BasePlayer.activePlayerList) {
+			SpawnEggsAtPoint (UnityEngine.Random.Range (4, 6) + Mathf.RoundToInt (activePlayer.eggVision), activePlayer.transform.position, activePlayer.eyes.BodyForward (), 15f, 25f);
 		}
 	}
 
 	public void RandPickup ()
 	{
-		//IL_0005: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000a: Unknown result type (might be due to invalid IL or missing references)
-		Enumerator<BasePlayer> enumerator = BasePlayer.activePlayerList.GetEnumerator ();
-		try {
-			while (enumerator.MoveNext ()) {
-				_ = enumerator.Current;
-			}
-		} finally {
-			((IDisposable)enumerator).Dispose ();
+		foreach (BasePlayer activePlayer in BasePlayer.activePlayerList) {
+			_ = activePlayer;
 		}
 	}
 
 	public void EggCollected (BasePlayer player)
 	{
-		//IL_00b1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bc: Unknown result type (might be due to invalid IL or missing references)
 		EggHunter eggHunter = null;
 		if (_eggHunters.ContainsKey (player.userID)) {
 			eggHunter = _eggHunters [player.userID];
@@ -143,19 +101,19 @@ public class EggHuntEvent : BaseHuntEvent
 			_eggHunters.Add (player.userID, eggHunter);
 		}
 		if (eggHunter == null) {
-			Debug.LogWarning ((object)"Easter error");
+			Debug.LogWarning ("Easter error");
 			return;
 		}
 		eggHunter.numEggs++;
 		QueueUpdate ();
-		int num = ((!((float)Mathf.RoundToInt (player.eggVision) * 0.5f < 1f)) ? 1 : Random.Range (0, 2));
-		SpawnEggsAtPoint (Random.Range (1 + num, 2 + num), ((Component)player).transform.position, player.eyes.BodyForward (), 15f, 25f);
+		int num = ((!((float)Mathf.RoundToInt (player.eggVision) * 0.5f < 1f)) ? 1 : UnityEngine.Random.Range (0, 2));
+		SpawnEggsAtPoint (UnityEngine.Random.Range (1 + num, 2 + num), player.transform.position, player.eyes.BodyForward (), 15f, 25f);
 	}
 
 	public void QueueUpdate ()
 	{
-		if (!((FacepunchBehaviour)this).IsInvoking ((Action)DoNetworkUpdate)) {
-			((FacepunchBehaviour)this).Invoke ((Action)DoNetworkUpdate, 2f);
+		if (!IsInvoking (DoNetworkUpdate)) {
+			Invoke (DoNetworkUpdate, 2f);
 		}
 	}
 
@@ -171,7 +129,7 @@ public class EggHuntEvent : BaseHuntEvent
 
 	public List<EggHunter> GetTopHunters ()
 	{
-		List<EggHunter> list = Pool.GetList<EggHunter> ();
+		List<EggHunter> list = Facepunch.Pool.GetList<EggHunter> ();
 		foreach (KeyValuePair<ulong, EggHunter> eggHunter in _eggHunters) {
 			list.Add (eggHunter.Value);
 		}
@@ -182,22 +140,22 @@ public class EggHuntEvent : BaseHuntEvent
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.eggHunt = Pool.Get<EggHunt> ();
+		info.msg.eggHunt = Facepunch.Pool.Get<EggHunt> ();
 		List<EggHunter> topHunters = GetTopHunters ();
-		info.msg.eggHunt.hunters = Pool.GetList<EggHunter> ();
+		info.msg.eggHunt.hunters = Facepunch.Pool.GetList<EggHunt.EggHunter> ();
 		for (int i = 0; i < Mathf.Min (10, topHunters.Count); i++) {
-			EggHunter val = Pool.Get<EggHunter> ();
-			val.displayName = topHunters [i].displayName;
-			val.numEggs = topHunters [i].numEggs;
-			val.playerID = topHunters [i].userid;
-			info.msg.eggHunt.hunters.Add (val);
+			EggHunt.EggHunter eggHunter = Facepunch.Pool.Get<EggHunt.EggHunter> ();
+			eggHunter.displayName = topHunters [i].displayName;
+			eggHunter.numEggs = topHunters [i].numEggs;
+			eggHunter.playerID = topHunters [i].userid;
+			info.msg.eggHunt.hunters.Add (eggHunter);
 		}
 	}
 
 	public void CleanupEggs ()
 	{
 		foreach (CollectableEasterEgg spawnedEgg in _spawnedEggs) {
-			if ((Object)(object)spawnedEgg != (Object)null) {
+			if (spawnedEgg != null) {
 				spawnedEgg.Kill ();
 			}
 		}
@@ -205,7 +163,7 @@ public class EggHuntEvent : BaseHuntEvent
 
 	public void Cooldown ()
 	{
-		((FacepunchBehaviour)this).CancelInvoke ((Action)Cooldown);
+		CancelInvoke (Cooldown);
 		Kill ();
 	}
 
@@ -218,15 +176,15 @@ public class EggHuntEvent : BaseHuntEvent
 			for (int i = 0; i < topHunters.Count; i++) {
 				EggHunter eggHunter2 = topHunters [i];
 				BasePlayer basePlayer = BasePlayer.FindByID (eggHunter2.userid);
-				if (Object.op_Implicit ((Object)(object)basePlayer)) {
+				if ((bool)basePlayer) {
 					basePlayer.ChatMessage ("You placed " + (i + 1) + " of " + topHunters.Count + " with " + topHunters [i].numEggs + " eggs collected.");
 				} else {
-					Debug.LogWarning ((object)("EggHuntEvent Printwinners could not find player with id :" + eggHunter2.userid));
+					Debug.LogWarning ("EggHuntEvent Printwinners could not find player with id :" + eggHunter2.userid);
 				}
 			}
 			for (int j = 0; j < placementAwards.Length && j < topHunters.Count; j++) {
 				BasePlayer basePlayer2 = BasePlayer.FindByID (topHunters [j].userid);
-				if (Object.op_Implicit ((Object)(object)basePlayer2)) {
+				if ((bool)basePlayer2) {
 					basePlayer2.inventory.GiveItem (ItemManager.Create (placementAwards [j].itemDef, (int)placementAwards [j].amount, 0uL), basePlayer2.inventory.containerMain);
 					basePlayer2.ChatMessage ("You received " + (int)placementAwards [j].amount + "x " + placementAwards [j].itemDef.displayName.english + " as an award!");
 				}
@@ -248,16 +206,16 @@ public class EggHuntEvent : BaseHuntEvent
 
 	public void Update ()
 	{
-		timeAlive += Time.deltaTime;
+		timeAlive += UnityEngine.Time.deltaTime;
 		if (base.isServer && !base.IsDestroyed) {
 			if (timeAlive - warmupTime > durationSeconds - warnTime) {
 				SetFlag (Flags.Reserved1, b: true);
 			}
-			if (timeAlive - warmupTime > durationSeconds && !((FacepunchBehaviour)this).IsInvoking ((Action)Cooldown)) {
+			if (timeAlive - warmupTime > durationSeconds && !IsInvoking (Cooldown)) {
 				SetFlag (Flags.Reserved2, b: true);
 				CleanupEggs ();
 				PrintWinnersAndAward ();
-				((FacepunchBehaviour)this).Invoke ((Action)Cooldown, 10f);
+				Invoke (Cooldown, 10f);
 			}
 		}
 	}

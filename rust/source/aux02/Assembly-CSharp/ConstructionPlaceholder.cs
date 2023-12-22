@@ -25,25 +25,25 @@ public class ConstructionPlaceholder : PrefabAttribute, IPrefabPreProcess
 	protected override void AttributeSetup (GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
 	{
 		base.AttributeSetup (rootObj, name, serverside, clientside, bundling);
-		if (!clientside || !((Behaviour)this).enabled) {
+		if (!clientside || !base.enabled) {
 			return;
 		}
 		if (renderer) {
 			MeshFilter = rootObj.GetComponent<MeshFilter> ();
 			MeshRenderer = rootObj.GetComponent<MeshRenderer> ();
-			if (!Object.op_Implicit ((Object)(object)MeshFilter)) {
+			if (!MeshFilter) {
 				MeshFilter = rootObj.AddComponent<MeshFilter> ();
 				MeshFilter.sharedMesh = mesh;
 			}
-			if (!Object.op_Implicit ((Object)(object)MeshRenderer)) {
+			if (!MeshRenderer) {
 				MeshRenderer = rootObj.AddComponent<MeshRenderer> ();
-				((Renderer)MeshRenderer).sharedMaterial = material;
-				((Renderer)MeshRenderer).shadowCastingMode = (ShadowCastingMode)0;
+				MeshRenderer.sharedMaterial = material;
+				MeshRenderer.shadowCastingMode = ShadowCastingMode.Off;
 			}
 		}
 		if (collider) {
 			MeshCollider = rootObj.GetComponent<MeshCollider> ();
-			if (!Object.op_Implicit ((Object)(object)MeshCollider)) {
+			if (!MeshCollider) {
 				MeshCollider = rootObj.AddComponent<MeshCollider> ();
 				MeshCollider.sharedMesh = mesh;
 			}

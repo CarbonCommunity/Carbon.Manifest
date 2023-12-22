@@ -22,16 +22,12 @@ public class UIRootScaled : UIRoot
 
 	protected override void Refresh ()
 	{
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0059: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0067: Unknown result type (might be due to invalid IL or missing references)
-		Vector2 val = default(Vector2);
-		((Vector2)(ref val))..ctor (1280f / Graphics.uiscale, 720f / Graphics.uiscale);
+		Vector2 vector = new Vector2 (1280f / ConVar.Graphics.uiscale, 720f / ConVar.Graphics.uiscale);
 		if (OverrideReference) {
-			((Vector2)(ref val))..ctor (TargetReference.x / Graphics.uiscale, TargetReference.y / Graphics.uiscale);
+			vector = new Vector2 (TargetReference.x / ConVar.Graphics.uiscale, TargetReference.y / ConVar.Graphics.uiscale);
 		}
-		if (scaler.referenceResolution != val) {
-			scaler.referenceResolution = val;
+		if (scaler.referenceResolution != vector) {
+			scaler.referenceResolution = vector;
 		}
 	}
 }

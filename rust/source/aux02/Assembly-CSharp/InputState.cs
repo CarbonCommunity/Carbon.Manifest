@@ -64,9 +64,6 @@ public class InputState
 
 	public Quaternion AimAngle ()
 	{
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
 		if (current == null) {
 			return Quaternion.identity;
 		}
@@ -75,8 +72,6 @@ public class InputState
 
 	public Vector3 MouseDelta ()
 	{
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
 		if (current == null) {
 			return Vector3.zero;
 		}
@@ -85,14 +80,6 @@ public class InputState
 
 	public void Flip (InputMessage newcurrent)
 	{
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0072: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0077: Unknown result type (might be due to invalid IL or missing references)
 		SwallowedButtons = 0;
 		previous.aimAngles = current.aimAngles;
 		previous.buttons = current.buttons;
@@ -104,8 +91,6 @@ public class InputState
 
 	public void Clear ()
 	{
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
 		current.buttons = 0;
 		previous.buttons = 0;
 		current.mouseDelta = Vector3.zero;

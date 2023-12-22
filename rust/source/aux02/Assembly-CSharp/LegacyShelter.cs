@@ -44,7 +44,7 @@ public class LegacyShelter : DecayEntity
 	protected override void OnChildAdded (BaseEntity child)
 	{
 		base.OnChildAdded (child);
-		if (base.isServer && child.prefabID == includedDoorPrefab.GetEntity ().prefabID && !Application.isLoadingSave) {
+		if (base.isServer && child.prefabID == includedDoorPrefab.GetEntity ().prefabID && !Rust.Application.isLoadingSave) {
 			Setup (child);
 		}
 		if (child.prefabID == smallPrivilegePrefab.GetEntity ().prefabID) {
@@ -56,8 +56,8 @@ public class LegacyShelter : DecayEntity
 	public override void DecayTick ()
 	{
 		base.DecayTick ();
-		float num = Time.time - lastShelterDecayTick;
-		lastShelterDecayTick = Time.time;
+		float num = UnityEngine.Time.time - lastShelterDecayTick;
+		lastShelterDecayTick = UnityEngine.Time.time;
 		float num2 = num * ConVar.Decay.scale;
 		lastInteractedWithDoor += num2;
 		UpdateDoorHp ();
@@ -98,7 +98,6 @@ public class LegacyShelter : DecayEntity
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (info.msg.legacyShelter != null) {
 			childDoorInstance = new EntityRef<LegacyShelterDoor> (info.msg.legacyShelter.doorID);
@@ -108,10 +107,8 @@ public class LegacyShelter : DecayEntity
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
-		info.msg.legacyShelter = Pool.Get<LegacyShelter> ();
+		info.msg.legacyShelter = Facepunch.Pool.Get<ProtoBuf.LegacyShelter> ();
 		info.msg.legacyShelter.doorID = childDoorInstance.uid;
 		info.msg.legacyShelter.timeSinceInteracted = lastInteractedWithDoor;
 	}
@@ -125,7 +122,7 @@ public class LegacyShelter : DecayEntity
 	{
 		base.Hurt (info);
 		LegacyShelterDoor childDoor = GetChildDoor ();
-		if ((Object)(object)childDoor != (Object)null) {
+		if (childDoor != null) {
 			childDoor.ProtectedHurt (info);
 		}
 	}
@@ -134,7 +131,7 @@ public class LegacyShelter : DecayEntity
 	{
 		base.OnKilled (info);
 		LegacyShelterDoor childDoor = GetChildDoor ();
-		if ((Object)(object)childDoor != (Object)null && !childDoor.IsDead ()) {
+		if (childDoor != null && !childDoor.IsDead ()) {
 			childDoor.Die ();
 		}
 	}
@@ -161,7 +158,7 @@ public class LegacyShelter : DecayEntity
 	{
 		base.PostServerLoad ();
 		LegacyShelterDoor childDoor = GetChildDoor ();
-		if (Object.op_Implicit ((Object)(object)childDoor)) {
+		if ((bool)childDoor) {
 			childDoor.SetupDoor (this);
 			childDoor.SetMaxHealth (MaxHealth ());
 			UpdateDoorHp ();
@@ -171,13 +168,9 @@ public class LegacyShelter : DecayEntity
 
 	private void Setup (BaseEntity child)
 	{
-		//IL_004f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
 		LegacyShelterDoor legacyShelterDoor = (LegacyShelterDoor)child;
 		childDoorInstance.Set (legacyShelterDoor);
-		((Component)this).GetComponentInChildren<EntityPrivilege> ().AddPlayer (owner);
+		GetComponentInChildren<EntityPrivilege> ().AddPlayer (owner);
 		legacyShelterDoor.SetupDoor (this);
 		legacyShelterDoor.SetMaxHealth (MaxHealth ());
 		UpdateDoorHp ();
@@ -187,7 +180,7 @@ public class LegacyShelter : DecayEntity
 		baseEntity.OnDeployed (legacyShelterDoor, owner, null);
 		baseEntity.Spawn ();
 		BaseLock baseLock = (BaseLock)baseEntity;
-		if ((Object)(object)baseLock != (Object)null) {
+		if (baseLock != null) {
 			baseLock.CanRemove = false;
 		}
 		legacyShelterDoor.SetSlot (Slot.Lock, baseEntity);
@@ -196,7 +189,7 @@ public class LegacyShelter : DecayEntity
 	private void UpdateDoorHp ()
 	{
 		LegacyShelterDoor childDoor = GetChildDoor ();
-		if ((Object)(object)childDoor != (Object)null) {
+		if (childDoor != null) {
 			childDoor.SetHealth (base.health);
 		}
 	}

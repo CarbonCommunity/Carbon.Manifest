@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 using Network;
 using Network.Visibility;
 using UnityEngine;
@@ -8,61 +6,53 @@ public static class EffectNetwork
 {
 	public static void Send (Effect effect)
 	{
-		//IL_0090: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0119: Unknown result type (might be due to invalid IL or missing references)
-		if (Net.sv == null || !((BaseNetwork)Net.sv).IsConnected ()) {
+		if (Net.sv == null || !Net.sv.IsConnected ()) {
 			return;
 		}
-		TimeWarning val = TimeWarning.New ("EffectNetwork.Send", 0);
-		try {
-			Group val2 = null;
+		using (TimeWarning.New ("EffectNetwork.Send")) {
+			Group group = null;
 			if (!string.IsNullOrEmpty (effect.pooledString)) {
-				((EffectData)effect).pooledstringid = StringPool.Get (effect.pooledString);
+				effect.pooledstringid = StringPool.Get (effect.pooledString);
 			}
-			if (((EffectData)effect).pooledstringid == 0) {
-				Debug.Log ((object)("String ID is 0 - unknown effect " + effect.pooledString));
+			if (effect.pooledstringid == 0) {
+				Debug.Log ("String ID is 0 - unknown effect " + effect.pooledString);
 				return;
 			}
 			if (effect.broadcast) {
-				NetWrite val3 = ((BaseNetwork)Net.sv).StartWrite ();
-				val3.PacketID ((Type)13);
-				((EffectData)effect).WriteToStream ((Stream)(object)val3);
-				val3.Send (new SendInfo (BaseNetworkable.GlobalNetworkGroup.subscribers));
+				NetWrite netWrite = Net.sv.StartWrite ();
+				netWrite.PacketID (Message.Type.Effect);
+				effect.WriteToStream (netWrite);
+				netWrite.Send (new SendInfo (BaseNetworkable.GlobalNetworkGroup.subscribers));
 				return;
 			}
-			if (((NetworkableId)(ref ((EffectData)effect).entity)).IsValid) {
-				BaseEntity baseEntity = BaseNetworkable.serverEntities.Find (((EffectData)effect).entity) as BaseEntity;
+			if (effect.entity.IsValid) {
+				BaseEntity baseEntity = BaseNetworkable.serverEntities.Find (effect.entity) as BaseEntity;
 				if (!baseEntity.IsValid ()) {
 					return;
 				}
-				val2 = baseEntity.net.group;
+				group = baseEntity.net.group;
 			} else {
-				val2 = Net.sv.visibility.GetGroup (effect.worldPos);
+				group = Net.sv.visibility.GetGroup (effect.worldPos);
 			}
-			if (val2 != null) {
-				NetWrite val4 = ((BaseNetwork)Net.sv).StartWrite ();
-				val4.PacketID ((Type)13);
-				((EffectData)effect).WriteToStream ((Stream)(object)val4);
-				val4.Send (new SendInfo (val2.subscribers));
+			if (group != null) {
+				NetWrite netWrite2 = Net.sv.StartWrite ();
+				netWrite2.PacketID (Message.Type.Effect);
+				effect.WriteToStream (netWrite2);
+				netWrite2.Send (new SendInfo (group.subscribers));
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 	}
 
 	public static void Send (Effect effect, Connection target)
 	{
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		((EffectData)effect).pooledstringid = StringPool.Get (effect.pooledString);
-		if (((EffectData)effect).pooledstringid == 0) {
-			Debug.LogWarning ((object)("EffectNetwork.Send - unpooled effect name: " + effect.pooledString));
+		effect.pooledstringid = StringPool.Get (effect.pooledString);
+		if (effect.pooledstringid == 0) {
+			Debug.LogWarning ("EffectNetwork.Send - unpooled effect name: " + effect.pooledString);
 			return;
 		}
-		NetWrite val = ((BaseNetwork)Net.sv).StartWrite ();
-		val.PacketID ((Type)13);
-		((EffectData)effect).WriteToStream ((Stream)(object)val);
-		val.Send (new SendInfo (target));
+		NetWrite netWrite = Net.sv.StartWrite ();
+		netWrite.PacketID (Message.Type.Effect);
+		effect.WriteToStream (netWrite);
+		netWrite.Send (new SendInfo (target));
 	}
 }

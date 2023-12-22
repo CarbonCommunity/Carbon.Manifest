@@ -1,14 +1,12 @@
 using ProtoBuf.Nexus;
 using Rust.Nexus.Handlers;
-using UnityEngine;
 
 public class RespawnAtBagHandler : BaseNexusRequestHandler<SleepingBagRespawnRequest>
 {
 	protected override void Handle ()
 	{
-		//IL_009a: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer basePlayer = BasePlayer.FindByID (base.Request.userId) ?? BasePlayer.FindSleeping (base.Request.userId);
-		if ((Object)(object)basePlayer != (Object)null) {
+		if (basePlayer != null) {
 			if (basePlayer.IsConnected) {
 				basePlayer.Kick ("You're apparently respawning from a another zone - contact developers!");
 			}

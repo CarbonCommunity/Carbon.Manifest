@@ -26,7 +26,7 @@ public class AiLocationManager : FacepunchBehaviour, IServerComponent
 
 	public AiLocationSpawner.SquadSpawnerLocation LocationType {
 		get {
-			if ((Object)(object)MainSpawner != (Object)null) {
+			if (MainSpawner != null) {
 				return MainSpawner.Location;
 			}
 			return LocationWhenMainSpawnerIsNull;
@@ -35,17 +35,14 @@ public class AiLocationManager : FacepunchBehaviour, IServerComponent
 
 	private void Awake ()
 	{
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
 		Managers.Add (this);
 		if (!SnapCoverPointsToGround) {
 			return;
 		}
-		AICoverPoint[] componentsInChildren = ((Component)CoverPointGroup).GetComponentsInChildren<AICoverPoint> ();
-		NavMeshHit val = default(NavMeshHit);
+		AICoverPoint[] componentsInChildren = CoverPointGroup.GetComponentsInChildren<AICoverPoint> ();
 		foreach (AICoverPoint aICoverPoint in componentsInChildren) {
-			if (NavMesh.SamplePosition (((Component)aICoverPoint).transform.position, ref val, 4f, -1)) {
-				((Component)aICoverPoint).transform.position = ((NavMeshHit)(ref val)).position;
+			if (NavMesh.SamplePosition (aICoverPoint.transform.position, out var hit, 4f, -1)) {
+				aICoverPoint.transform.position = hit.position;
 			}
 		}
 	}
@@ -57,15 +54,11 @@ public class AiLocationManager : FacepunchBehaviour, IServerComponent
 
 	public PathInterestNode GetFirstPatrolPointInRange (Vector3 from, float minRange = 10f, float maxRange = 100f)
 	{
-		//IL_0061: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0066: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0067: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006c: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)PatrolPointGroup == (Object)null) {
+		if (PatrolPointGroup == null) {
 			return null;
 		}
 		if (patrolPoints == null) {
-			patrolPoints = new List<PathInterestNode> (((Component)PatrolPointGroup).GetComponentsInChildren<PathInterestNode> ());
+			patrolPoints = new List<PathInterestNode> (PatrolPointGroup.GetComponentsInChildren<PathInterestNode> ());
 		}
 		if (patrolPoints.Count == 0) {
 			return null;
@@ -73,8 +66,7 @@ public class AiLocationManager : FacepunchBehaviour, IServerComponent
 		float num = minRange * minRange;
 		float num2 = maxRange * maxRange;
 		foreach (PathInterestNode patrolPoint in patrolPoints) {
-			Vector3 val = ((Component)patrolPoint).transform.position - from;
-			float sqrMagnitude = ((Vector3)(ref val)).sqrMagnitude;
+			float sqrMagnitude = (patrolPoint.transform.position - from).sqrMagnitude;
 			if (sqrMagnitude >= num && sqrMagnitude <= num2) {
 				return patrolPoint;
 			}
@@ -84,15 +76,11 @@ public class AiLocationManager : FacepunchBehaviour, IServerComponent
 
 	public PathInterestNode GetRandomPatrolPointInRange (Vector3 from, float minRange = 10f, float maxRange = 100f, PathInterestNode currentPatrolPoint = null)
 	{
-		//IL_0085: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0090: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)PatrolPointGroup == (Object)null) {
+		if (PatrolPointGroup == null) {
 			return null;
 		}
 		if (patrolPoints == null) {
-			patrolPoints = new List<PathInterestNode> (((Component)PatrolPointGroup).GetComponentsInChildren<PathInterestNode> ());
+			patrolPoints = new List<PathInterestNode> (PatrolPointGroup.GetComponentsInChildren<PathInterestNode> ());
 		}
 		if (patrolPoints.Count == 0) {
 			return null;
@@ -101,16 +89,15 @@ public class AiLocationManager : FacepunchBehaviour, IServerComponent
 		float num2 = maxRange * maxRange;
 		for (int i = 0; i < 20; i++) {
 			PathInterestNode pathInterestNode = patrolPoints [Random.Range (0, patrolPoints.Count)];
-			if (Time.time < pathInterestNode.NextVisitTime) {
-				if ((Object)(object)pathInterestNode == (Object)(object)currentPatrolPoint) {
+			if (UnityEngine.Time.time < pathInterestNode.NextVisitTime) {
+				if (pathInterestNode == currentPatrolPoint) {
 					return null;
 				}
 				continue;
 			}
-			Vector3 val = ((Component)pathInterestNode).transform.position - from;
-			float sqrMagnitude = ((Vector3)(ref val)).sqrMagnitude;
+			float sqrMagnitude = (pathInterestNode.transform.position - from).sqrMagnitude;
 			if (sqrMagnitude >= num && sqrMagnitude <= num2) {
-				pathInterestNode.NextVisitTime = Time.time + AI.npc_patrol_point_cooldown;
+				pathInterestNode.NextVisitTime = UnityEngine.Time.time + AI.npc_patrol_point_cooldown;
 				return pathInterestNode;
 			}
 		}

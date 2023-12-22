@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -19,7 +20,7 @@ public class HuntingTrophy : StorageContainer
 		public uint GetSourcePrefabId ()
 		{
 			BaseEntity entity = SourceEntity.GetEntity ();
-			if ((Object)(object)entity != (Object)null) {
+			if (entity != null) {
 				return entity.prefabID;
 			}
 			return 0u;
@@ -28,11 +29,10 @@ public class HuntingTrophy : StorageContainer
 		public bool Matches (HeadEntity headEnt)
 		{
 			BaseEntity entity = SourceEntity.GetEntity ();
-			bool flag = (Object)(object)entity != (Object)null && headEnt.CurrentTrophyData != null && entity.prefabID == headEnt.CurrentTrophyData.entitySource;
+			bool flag = entity != null && headEnt.CurrentTrophyData != null && entity.prefabID == headEnt.CurrentTrophyData.entitySource;
 			if (!flag) {
 				GameObject headSource = headEnt.GetHeadSource ();
-				BasePlayer basePlayer = default(BasePlayer);
-				if ((Object)(object)headSource != (Object)null && headSource.TryGetComponent<BasePlayer> (ref basePlayer) && ((Component)entity).TryGetComponent<BasePlayer> (ref basePlayer)) {
+				if (headSource != null && headSource.TryGetComponent<BasePlayer> (out var component) && entity.TryGetComponent<BasePlayer> (out component)) {
 					flag = true;
 				}
 			}
@@ -45,12 +45,11 @@ public class HuntingTrophy : StorageContainer
 				return false;
 			}
 			BaseEntity entity = SourceEntity.GetEntity ();
-			bool flag = (Object)(object)entity != (Object)null && entity.prefabID == data.entitySource;
+			bool flag = entity != null && entity.prefabID == data.entitySource;
 			if (!flag) {
-				GameObject val = null;
-				val = GameManager.server.FindPrefab (data.entitySource);
-				BasePlayer basePlayer = default(BasePlayer);
-				if ((Object)(object)val != (Object)null && val.TryGetComponent<BasePlayer> (ref basePlayer) && ((Component)entity).TryGetComponent<BasePlayer> (ref basePlayer)) {
+				GameObject gameObject = null;
+				gameObject = GameManager.server.FindPrefab (data.entitySource);
+				if (gameObject != null && gameObject.TryGetComponent<BasePlayer> (out var component) && entity.TryGetComponent<BasePlayer> (out component)) {
 					flag = true;
 				}
 			}
@@ -82,79 +81,58 @@ public class HuntingTrophy : StorageContainer
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("HuntingTrophy.OnRpcMessage", 0);
-		try {
-			if (rpc == 1170506026 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("HuntingTrophy.OnRpcMessage")) {
+			if (rpc == 1170506026 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - ServerRequestClear "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - ServerRequestClear ");
 				}
-				TimeWarning val2 = TimeWarning.New ("ServerRequestClear", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("ServerRequestClear")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (1170506026u, "ServerRequestClear", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							ServerRequestClear ();
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in ServerRequestClear");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 3878554182u && (Object)(object)player != (Object)null) {
+			if (rpc == 3878554182u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)("SV_RPCMessage: " + ((object)player)?.ToString () + " - ServerRequestSubmit "));
+					Debug.Log ("SV_RPCMessage: " + player?.ToString () + " - ServerRequestSubmit ");
 				}
-				TimeWarning val2 = TimeWarning.New ("ServerRequestSubmit", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("ServerRequestSubmit")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (3878554182u, "ServerRequestSubmit", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							ServerRequestSubmit ();
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in ServerRequestSubmit");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
 
 	public override bool ItemFilter (Item item, int targetSlot)
 	{
-		if ((Object)(object)ItemModAssociatedEntity<HeadEntity>.GetAssociatedEntity (item) == (Object)null) {
+		if (ItemModAssociatedEntity<HeadEntity>.GetAssociatedEntity (item) == null) {
 			return false;
 		}
 		return base.ItemFilter (item, targetSlot);
@@ -169,17 +147,16 @@ public class HuntingTrophy : StorageContainer
 			return;
 		}
 		HeadEntity associatedEntity = ItemModAssociatedEntity<HeadEntity>.GetAssociatedEntity (slot);
-		if ((Object)(object)associatedEntity != (Object)null && !CanSubmitHead (associatedEntity)) {
+		if (associatedEntity != null && !CanSubmitHead (associatedEntity)) {
 			return;
 		}
-		if ((Object)(object)associatedEntity != (Object)null) {
+		if (associatedEntity != null) {
 			if (CurrentTrophyData == null) {
-				CurrentTrophyData = Pool.Get<HeadData> ();
+				CurrentTrophyData = Facepunch.Pool.Get<HeadData> ();
 				associatedEntity.CurrentTrophyData.CopyTo (CurrentTrophyData);
 				CurrentTrophyData.count = 1u;
 			} else {
-				HeadData currentTrophyData = CurrentTrophyData;
-				currentTrophyData.count++;
+				CurrentTrophyData.count++;
 			}
 		}
 		slot.Remove ();
@@ -191,7 +168,7 @@ public class HuntingTrophy : StorageContainer
 	private void ServerRequestClear ()
 	{
 		if (CurrentTrophyData != null) {
-			Pool.Free<HeadData> (ref CurrentTrophyData);
+			Facepunch.Pool.Free (ref CurrentTrophyData);
 			SendNetworkUpdate ();
 		}
 	}
@@ -200,7 +177,7 @@ public class HuntingTrophy : StorageContainer
 	{
 		base.Save (info);
 		if (CurrentTrophyData != null) {
-			info.msg.headData = Pool.Get<HeadData> ();
+			info.msg.headData = Facepunch.Pool.Get<HeadData> ();
 			CurrentTrophyData.CopyTo (info.msg.headData);
 		}
 	}
@@ -208,7 +185,7 @@ public class HuntingTrophy : StorageContainer
 	public bool CanSubmitHead (HeadEntity headEnt)
 	{
 		bool flag = false;
-		if ((Object)(object)headEnt == (Object)null || headEnt.CurrentTrophyData == null) {
+		if (headEnt == null || headEnt.CurrentTrophyData == null) {
 			return false;
 		}
 		bool flag2 = CurrentTrophyData != null;
@@ -217,8 +194,7 @@ public class HuntingTrophy : StorageContainer
 		}
 		if (!flag && flag2) {
 			GameObject headSource = headEnt.GetHeadSource ();
-			BasePlayer basePlayer = default(BasePlayer);
-			if ((Object)(object)headSource != (Object)null && headSource.TryGetComponent<BasePlayer> (ref basePlayer) && (Object)(object)GetCurrentTrophyDataSource () == (Object)(object)headSource) {
+			if (headSource != null && headSource.TryGetComponent<BasePlayer> (out var _) && GetCurrentTrophyDataSource () == headSource) {
 				flag = true;
 			}
 		}
@@ -243,11 +219,11 @@ public class HuntingTrophy : StorageContainer
 		base.Load (info);
 		if (info.msg.headData != null) {
 			if (CurrentTrophyData == null) {
-				CurrentTrophyData = Pool.Get<HeadData> ();
+				CurrentTrophyData = Facepunch.Pool.Get<HeadData> ();
 			}
 			info.msg.headData.CopyTo (CurrentTrophyData);
 		} else if (CurrentTrophyData != null) {
-			Pool.Free<HeadData> (ref CurrentTrophyData);
+			Facepunch.Pool.Free (ref CurrentTrophyData);
 		}
 	}
 
@@ -255,23 +231,23 @@ public class HuntingTrophy : StorageContainer
 	{
 		base.ResetState ();
 		if (CurrentTrophyData != null) {
-			Pool.Free<HeadData> (ref CurrentTrophyData);
+			Facepunch.Pool.Free (ref CurrentTrophyData);
 		}
 		TrophyRoot[] trophies = Trophies;
 		for (int i = 0; i < trophies.Length; i++) {
 			TrophyRoot trophyRoot = trophies [i];
-			if ((Object)(object)trophyRoot.Root != (Object)null) {
-				trophyRoot.Root.SetActive (false);
+			if (trophyRoot.Root != null) {
+				trophyRoot.Root.SetActive (value: false);
 			}
 		}
-		if ((Object)(object)NameRoot != (Object)null) {
-			NameRoot.SetActive (false);
+		if (NameRoot != null) {
+			NameRoot.SetActive (value: false);
 		}
-		if ((Object)(object)MaleRope != (Object)null) {
-			MaleRope.SetActive (false);
+		if (MaleRope != null) {
+			MaleRope.SetActive (value: false);
 		}
-		if ((Object)(object)FemaleRope != (Object)null) {
-			FemaleRope.SetActive (false);
+		if (FemaleRope != null) {
+			FemaleRope.SetActive (value: false);
 		}
 	}
 }

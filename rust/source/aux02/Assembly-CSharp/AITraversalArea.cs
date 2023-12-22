@@ -16,18 +16,17 @@ public class AITraversalArea : TriggerBase
 
 	public void OnValidate ()
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		((Bounds)(ref movementArea)).center = ((Component)this).transform.position;
+		movementArea.center = base.transform.position;
 	}
 
 	internal override GameObject InterestedInObject (GameObject obj)
 	{
 		obj = base.InterestedInObject (obj);
-		if ((Object)(object)obj == (Object)null) {
+		if (obj == null) {
 			return null;
 		}
 		BaseEntity baseEntity = obj.ToBaseEntity ();
-		if ((Object)(object)baseEntity == (Object)null) {
+		if (baseEntity == null) {
 			return null;
 		}
 		if (baseEntity.isClient) {
@@ -36,7 +35,7 @@ public class AITraversalArea : TriggerBase
 		if (!baseEntity.IsNpc) {
 			return null;
 		}
-		return ((Component)baseEntity).gameObject;
+		return baseEntity.gameObject;
 	}
 
 	public bool CanTraverse (BaseEntity ent)
@@ -46,10 +45,6 @@ public class AITraversalArea : TriggerBase
 
 	public Transform GetClosestEntry (Vector3 position)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
 		float num = Vector3.Distance (position, entryPoint1.position);
 		float num2 = Vector3.Distance (position, entryPoint2.position);
 		if (num < num2) {
@@ -60,10 +55,6 @@ public class AITraversalArea : TriggerBase
 
 	public Transform GetFarthestEntry (Vector3 position)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
 		float num = Vector3.Distance (position, entryPoint1.position);
 		float num2 = Vector3.Distance (position, entryPoint2.position);
 		if (num > num2) {
@@ -89,20 +80,6 @@ public class AITraversalArea : TriggerBase
 
 	public AITraversalWaitPoint GetEntryPointNear (Vector3 pos)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006c: Unknown result type (might be due to invalid IL or missing references)
 		Vector3 position = GetClosestEntry (pos).position;
 		Vector3 position2 = GetFarthestEntry (pos).position;
 		_ = new BaseEntity[1];
@@ -113,13 +90,13 @@ public class AITraversalArea : TriggerBase
 			if (aITraversalWaitPoint.Occupied ()) {
 				continue;
 			}
-			Vector3 position3 = ((Component)aITraversalWaitPoint).transform.position;
+			Vector3 position3 = aITraversalWaitPoint.transform.position;
 			float num2 = Vector3.Distance (position, position3);
 			if (!(Vector3.Distance (position2, position3) < num2)) {
-				float num3 = Vector3.Distance (position3, pos);
-				float num4 = (1f - Mathf.InverseLerp (0f, 20f, num3)) * 100f;
-				if (num4 > num) {
-					num = num4;
+				float value = Vector3.Distance (position3, pos);
+				float num3 = (1f - Mathf.InverseLerp (0f, 20f, value)) * 100f;
+				if (num3 > num) {
+					num = num3;
 					result = aITraversalWaitPoint;
 				}
 			}
@@ -142,31 +119,15 @@ public class AITraversalArea : TriggerBase
 
 	public void OnDrawGizmos ()
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0070: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d0: Unknown result type (might be due to invalid IL or missing references)
 		Gizmos.color = Color.magenta;
 		Gizmos.DrawCube (entryPoint1.position + Vector3.up * 0.125f, new Vector3 (0.5f, 0.25f, 0.5f));
 		Gizmos.DrawCube (entryPoint2.position + Vector3.up * 0.125f, new Vector3 (0.5f, 0.25f, 0.5f));
 		Gizmos.color = new Color (0.2f, 1f, 0.2f, 0.5f);
-		Gizmos.DrawCube (((Bounds)(ref movementArea)).center, ((Bounds)(ref movementArea)).size);
+		Gizmos.DrawCube (movementArea.center, movementArea.size);
 		Gizmos.color = Color.magenta;
 		AITraversalWaitPoint[] array = waitPoints;
 		for (int i = 0; i < array.Length; i++) {
-			GizmosUtil.DrawCircleY (((Component)array [i]).transform.position, 0.5f);
+			GizmosUtil.DrawCircleY (array [i].transform.position, 0.5f);
 		}
 	}
 }

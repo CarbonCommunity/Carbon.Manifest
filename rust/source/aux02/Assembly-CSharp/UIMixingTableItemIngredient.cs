@@ -13,16 +13,16 @@ public class UIMixingTableItemIngredient : MonoBehaviour
 	{
 		ItemIcon.sprite = ingredient.Ingredient.iconSprite;
 		ItemCount.text = ingredient.Count.ToString ();
-		((Behaviour)ItemIcon).enabled = true;
-		((Behaviour)ItemCount).enabled = true;
+		ItemIcon.enabled = true;
+		ItemCount.enabled = true;
 		ToolTip.Text = ingredient.Count + " x " + ingredient.Ingredient.displayName.translated;
-		((Behaviour)ToolTip).enabled = true;
+		ToolTip.enabled = true;
 	}
 
 	public void InitBlank ()
 	{
-		((Behaviour)ItemIcon).enabled = false;
-		((Behaviour)ItemCount).enabled = false;
-		((Behaviour)ToolTip).enabled = false;
+		ItemIcon.enabled = false;
+		ItemCount.enabled = false;
+		ToolTip.enabled = false;
 	}
 }

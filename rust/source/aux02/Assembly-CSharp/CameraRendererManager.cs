@@ -5,7 +5,6 @@ using CompanionServer;
 using CompanionServer.Cameras;
 using Facepunch;
 using Facepunch.Extend;
-using UnityEngine;
 
 public class CameraRendererManager : SingletonComponent<CameraRendererManager>
 {
@@ -27,7 +26,7 @@ public class CameraRendererManager : SingletonComponent<CameraRendererManager>
 
 	protected override void OnDestroy ()
 	{
-		((SingletonComponent)this).OnDestroy ();
+		base.OnDestroy ();
 		foreach (CameraRenderer renderer in _renderers) {
 			renderer.Reset ();
 		}
@@ -43,7 +42,7 @@ public class CameraRendererManager : SingletonComponent<CameraRendererManager>
 		if (rc == null || rc.IsUnityNull ()) {
 			throw new ArgumentNullException ("rc");
 		}
-		if (List.FindWith<CameraRenderer, IRemoteControllable> ((IReadOnlyCollection<CameraRenderer>)_renderers, (Func<CameraRenderer, IRemoteControllable>)((CameraRenderer r) => r.rc), rc, (IEqualityComparer<IRemoteControllable>)null) == null) {
+		if (_renderers.FindWith ((CameraRenderer r) => r.rc, rc) == null) {
 			CameraRenderer cameraRenderer = Pool.Get<CameraRenderer> ();
 			_renderers.Add (cameraRenderer);
 			cameraRenderer.Init (rc);
@@ -80,10 +79,10 @@ public class CameraRendererManager : SingletonComponent<CameraRendererManager>
 	}
 
 	[ServerVar]
-	public static void pool_stats (Arg arg)
+	public static void pool_stats (ConsoleSystem.Arg arg)
 	{
 		CameraRendererManager instance = SingletonComponent<CameraRendererManager>.Instance;
-		if ((Object)(object)instance == (Object)null) {
+		if (instance == null) {
 			arg.ReplyWith ("Camera renderer manager is null!");
 			return;
 		}
@@ -92,7 +91,7 @@ public class CameraRendererManager : SingletonComponent<CameraRendererManager>
 
 	private void DispatchRenderers ()
 	{
-		List<CameraRenderer> list = Pool.GetList<CameraRenderer> ();
+		List<CameraRenderer> obj = Pool.GetList<CameraRenderer> ();
 		int count = _renderers.Count;
 		for (int i = 0; i < count; i++) {
 			if (_renderIndex >= count) {
@@ -100,19 +99,19 @@ public class CameraRendererManager : SingletonComponent<CameraRendererManager>
 			}
 			CameraRenderer cameraRenderer = _renderers [_renderIndex++];
 			if (cameraRenderer.CanRender ()) {
-				list.Add (cameraRenderer);
-				if (list.Count >= CameraRenderer.maxRendersPerFrame) {
+				obj.Add (cameraRenderer);
+				if (obj.Count >= CameraRenderer.maxRendersPerFrame) {
 					break;
 				}
 			}
 		}
-		if (list.Count > 0) {
-			int maxSampleCount = CameraRenderer.maxRaysPerFrame / list.Count;
-			foreach (CameraRenderer item in list) {
+		if (obj.Count > 0) {
+			int maxSampleCount = CameraRenderer.maxRaysPerFrame / obj.Count;
+			foreach (CameraRenderer item in obj) {
 				item.Render (maxSampleCount);
 			}
 		}
-		Pool.FreeList<CameraRenderer> (ref list);
+		Pool.FreeList (ref obj);
 	}
 
 	private void CompleteRenderers ()
@@ -135,17 +134,17 @@ public class CameraRendererManager : SingletonComponent<CameraRendererManager>
 
 	private void CleanupRenderers ()
 	{
-		List<CameraRenderer> list = Pool.GetList<CameraRenderer> ();
+		List<CameraRenderer> obj = Pool.GetList<CameraRenderer> ();
 		foreach (CameraRenderer renderer in _renderers) {
 			if (renderer.state == CameraRendererState.Invalid) {
-				list.Add (renderer);
+				obj.Add (renderer);
 			}
 		}
 		_renderers.RemoveAll ((CameraRenderer r) => r.state == CameraRendererState.Invalid);
-		foreach (CameraRenderer item in list) {
-			CameraRenderer current2 = item;
-			Pool.Free<CameraRenderer> (ref current2);
+		foreach (CameraRenderer item in obj) {
+			CameraRenderer obj2 = item;
+			Pool.Free (ref obj2);
 		}
-		Pool.FreeList<CameraRenderer> (ref list);
+		Pool.FreeList (ref obj);
 	}
 }

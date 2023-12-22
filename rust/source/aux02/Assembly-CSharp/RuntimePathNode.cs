@@ -13,7 +13,6 @@ public class RuntimePathNode : IAIPathNode
 
 	public RuntimePathNode (Vector3 position)
 	{
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
 		Position = position;
 	}
 

@@ -12,7 +12,7 @@ public class SpawnPointInstance : MonoBehaviour
 		if (!parentSpawnPointUser.IsUnityNull ()) {
 			parentSpawnPointUser.ObjectSpawned (this);
 		}
-		if (Object.op_Implicit ((Object)(object)parentSpawnPoint)) {
+		if ((bool)parentSpawnPoint) {
 			parentSpawnPoint.ObjectSpawned (this);
 		}
 	}
@@ -22,14 +22,14 @@ public class SpawnPointInstance : MonoBehaviour
 		if (!parentSpawnPointUser.IsUnityNull ()) {
 			parentSpawnPointUser.ObjectRetired (this);
 		}
-		if (Object.op_Implicit ((Object)(object)parentSpawnPoint)) {
+		if ((bool)parentSpawnPoint) {
 			parentSpawnPoint.ObjectRetired (this);
 		}
 	}
 
 	protected void OnDestroy ()
 	{
-		if (!Application.isQuitting) {
+		if (!Rust.Application.isQuitting) {
 			Retire ();
 		}
 	}
