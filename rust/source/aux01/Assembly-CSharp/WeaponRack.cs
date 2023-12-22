@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -52,231 +53,179 @@ public class WeaponRack : StorageContainer
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("WeaponRack.OnRpcMessage", 0);
-		try {
-			if (rpc == 1682065633 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("WeaponRack.OnRpcMessage")) {
+			if (rpc == 1682065633 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - LoadWeaponAmmo "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - LoadWeaponAmmo "));
 				}
-				TimeWarning val2 = TimeWarning.New ("LoadWeaponAmmo", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Call", 0);
+				using (TimeWarning.New ("LoadWeaponAmmo")) {
 					try {
-						RPCMessage rPCMessage = default(RPCMessage);
-						rPCMessage.connection = msg.connection;
-						rPCMessage.player = player;
-						rPCMessage.read = msg.read;
-						RPCMessage msg2 = rPCMessage;
-						LoadWeaponAmmo (msg2);
-					} finally {
-						((IDisposable)val3)?.Dispose ();
+						using (TimeWarning.New ("Call")) {
+							RPCMessage rPCMessage = default(RPCMessage);
+							rPCMessage.connection = msg.connection;
+							rPCMessage.player = player;
+							rPCMessage.read = msg.read;
+							RPCMessage msg2 = rPCMessage;
+							LoadWeaponAmmo (msg2);
+						}
+					} catch (Exception exception) {
+						Debug.LogException (exception);
+						player.Kick ("RPC Error in LoadWeaponAmmo");
 					}
-				} catch (Exception ex) {
-					Debug.LogException (ex);
-					player.Kick ("RPC Error in LoadWeaponAmmo");
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 2640584497u && (Object)(object)player != (Object)null) {
+			if (rpc == 2640584497u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - ReqMountWeapon "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - ReqMountWeapon "));
 				}
-				TimeWarning val2 = TimeWarning.New ("ReqMountWeapon", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("ReqMountWeapon")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (2640584497u, "ReqMountWeapon", this, player, 3f)) {
 							return true;
 						}
 						if (!RPC_Server.MaxDistance.Test (2640584497u, "ReqMountWeapon", this, player, 2f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg3 = rPCMessage;
 							ReqMountWeapon (msg3);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in ReqMountWeapon");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 2753286621u && (Object)(object)player != (Object)null) {
+			if (rpc == 2753286621u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - ReqSwapWeapon "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - ReqSwapWeapon "));
 				}
-				TimeWarning val2 = TimeWarning.New ("ReqSwapWeapon", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("ReqSwapWeapon")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (2753286621u, "ReqSwapWeapon", this, player, 3f)) {
 							return true;
 						}
 						if (!RPC_Server.MaxDistance.Test (2753286621u, "ReqSwapWeapon", this, player, 2f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg4 = rPCMessage;
 							ReqSwapWeapon (msg4);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex3) {
-						Debug.LogException (ex3);
+					} catch (Exception exception3) {
+						Debug.LogException (exception3);
 						player.Kick ("RPC Error in ReqSwapWeapon");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 3761066327u && (Object)(object)player != (Object)null) {
+			if (rpc == 3761066327u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - ReqTakeAll "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - ReqTakeAll "));
 				}
-				TimeWarning val2 = TimeWarning.New ("ReqTakeAll", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("ReqTakeAll")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (3761066327u, "ReqTakeAll", this, player, 3f)) {
 							return true;
 						}
 						if (!RPC_Server.MaxDistance.Test (3761066327u, "ReqTakeAll", this, player, 2f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg5 = rPCMessage;
 							ReqTakeAll (msg5);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex4) {
-						Debug.LogException (ex4);
+					} catch (Exception exception4) {
+						Debug.LogException (exception4);
 						player.Kick ("RPC Error in ReqTakeAll");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 1987971716 && (Object)(object)player != (Object)null) {
+			if (rpc == 1987971716 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - ReqTakeWeapon "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - ReqTakeWeapon "));
 				}
-				TimeWarning val2 = TimeWarning.New ("ReqTakeWeapon", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("ReqTakeWeapon")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (1987971716u, "ReqTakeWeapon", this, player, 3f)) {
 							return true;
 						}
 						if (!RPC_Server.MaxDistance.Test (1987971716u, "ReqTakeWeapon", this, player, 2f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg6 = rPCMessage;
 							ReqTakeWeapon (msg6);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex5) {
-						Debug.LogException (ex5);
+					} catch (Exception exception5) {
+						Debug.LogException (exception5);
 						player.Kick ("RPC Error in ReqTakeWeapon");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 3314206579u && (Object)(object)player != (Object)null) {
+			if (rpc == 3314206579u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - ReqUnloadWeapon "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - ReqUnloadWeapon "));
 				}
-				TimeWarning val2 = TimeWarning.New ("ReqUnloadWeapon", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("ReqUnloadWeapon")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (3314206579u, "ReqUnloadWeapon", this, player, 3f)) {
 							return true;
 						}
 						if (!RPC_Server.MaxDistance.Test (3314206579u, "ReqUnloadWeapon", this, player, 2f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg7 = rPCMessage;
 							ReqUnloadWeapon (msg7);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex6) {
-						Debug.LogException (ex6);
+					} catch (Exception exception6) {
+						Debug.LogException (exception6);
 						player.Kick ("RPC Error in ReqUnloadWeapon");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -292,15 +241,13 @@ public class WeaponRack : StorageContainer
 
 	private void SpawnLightSubEntities ()
 	{
-		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		if (Application.isLoadingSave || LightPrefab == null || LightPoints == null) {
+		if (Rust.Application.isLoadingSave || LightPrefab == null || LightPoints == null) {
 			return;
 		}
 		Transform[] lightPoints = LightPoints;
-		foreach (Transform val in lightPoints) {
-			SimpleLight simpleLight = GameManager.server.CreateEntity (LightPrefab.resourcePath, val.position, val.rotation) as SimpleLight;
-			if (Object.op_Implicit ((Object)(object)simpleLight)) {
+		foreach (Transform transform in lightPoints) {
+			SimpleLight simpleLight = GameManager.server.CreateEntity (LightPrefab.resourcePath, transform.position, transform.rotation) as SimpleLight;
+			if ((bool)simpleLight) {
 				simpleLight.enableSaving = true;
 				simpleLight.SetParent (this, worldPositionStays: true);
 				simpleLight.Spawn ();
@@ -319,13 +266,13 @@ public class WeaponRack : StorageContainer
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.weaponRack = Pool.Get<WeaponRack> ();
-		info.msg.weaponRack.items = Pool.GetList<WeaponRackItem> ();
+		info.msg.weaponRack = Facepunch.Pool.Get<ProtoBuf.WeaponRack> ();
+		info.msg.weaponRack.items = Facepunch.Pool.GetList<WeaponRackItem> ();
 		WeaponRackSlot[] array = gridSlots;
 		foreach (WeaponRackSlot weaponRackSlot in array) {
 			if (weaponRackSlot.Used) {
 				Item slot = base.inventory.GetSlot (weaponRackSlot.InventoryIndex);
-				WeaponRackItem proto = Pool.Get<WeaponRackItem> ();
+				WeaponRackItem proto = Facepunch.Pool.Get<WeaponRackItem> ();
 				info.msg.weaponRack.items.Add (weaponRackSlot.SaveToProto (slot, proto));
 			}
 		}
@@ -348,10 +295,9 @@ public class WeaponRack : StorageContainer
 
 	private void SwapPlayerWeapon (BasePlayer player, int gridCellIndex, int takeFromBeltIndex, int rotation)
 	{
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
 		Item item = player.GetHeldEntity ().GetItem ();
 		WorldModelRackMountConfig forItemDef = WorldModelRackMountConfig.GetForItemDef (item.info);
-		if (!((Object)(object)forItemDef == (Object)null) && GetWeaponAtIndex (gridCellIndex) != null) {
+		if (!(forItemDef == null) && GetWeaponAtIndex (gridCellIndex) != null) {
 			int bestPlacementCellIndex = GetBestPlacementCellIndex (GetXYForIndex (gridCellIndex), forItemDef, rotation, gridCellIndex);
 			if (bestPlacementCellIndex != -1) {
 				item.RemoveFromContainer ();
@@ -376,11 +322,6 @@ public class WeaponRack : StorageContainer
 
 	private void GivePlayerWeapon (BasePlayer player, int mountSlotIndex, int playerBeltIndex = -1, bool tryHold = true, bool sendUpdate = true)
 	{
-		//IL_00a9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0066: Unknown result type (might be due to invalid IL or missing references)
 		WeaponRackSlot weaponAtIndex = GetWeaponAtIndex (mountSlotIndex);
 		if (weaponAtIndex == null) {
 			return;
@@ -391,8 +332,8 @@ public class WeaponRack : StorageContainer
 		}
 		ClearSlot (weaponAtIndex);
 		if (slot.MoveToContainer (player.inventory.containerBelt, playerBeltIndex)) {
-			if ((tryHold && (Object)(object)player.GetHeldEntity () == (Object)null) || playerBeltIndex != -1) {
-				ClientRPCPlayer<int, ItemId> (null, player, "SetActiveBeltSlot", slot.position, slot.uid);
+			if ((tryHold && player.GetHeldEntity () == null) || playerBeltIndex != -1) {
+				ClientRPCPlayer (null, player, "SetActiveBeltSlot", slot.position, slot.uid);
 			}
 			ClientRPCPlayer (null, player, "PlayGrabSound", slot.info.itemid);
 		} else if (!slot.MoveToContainer (player.inventory.containerMain)) {
@@ -453,9 +394,9 @@ public class WeaponRack : StorageContainer
 			return;
 		}
 		BaseEntity heldEntity = slot.GetHeldEntity ();
-		if (!((Object)(object)heldEntity == (Object)null)) {
-			BaseProjectile component = ((Component)heldEntity).GetComponent<BaseProjectile> ();
-			if (!((Object)(object)component == (Object)null)) {
+		if (!(heldEntity == null)) {
+			BaseProjectile component = heldEntity.GetComponent<BaseProjectile> ();
+			if (!(component == null)) {
 				ItemDefinition ammoType = component.primaryMagazine.ammoType;
 				component.UnloadAmmo (slot, player);
 				SetSlotAmmoDetails (weaponAtIndex, slot);
@@ -482,7 +423,7 @@ public class WeaponRack : StorageContainer
 	private void MountWeapon (BasePlayer player, int gridCellIndex, int rotation)
 	{
 		HeldEntity heldEntity = player.GetHeldEntity ();
-		if (!((Object)(object)heldEntity == (Object)null)) {
+		if (!(heldEntity == null)) {
 			Item item = heldEntity.GetItem ();
 			if (item != null) {
 				MountWeapon (item, player, gridCellIndex, rotation);
@@ -504,8 +445,8 @@ public class WeaponRack : StorageContainer
 	{
 		int itemid = item.info.itemid;
 		WorldModelRackMountConfig forItemDef = WorldModelRackMountConfig.GetForItemDef (item.info);
-		if ((Object)(object)forItemDef == (Object)null) {
-			Debug.LogWarning ((object)"no rackmount config");
+		if (forItemDef == null) {
+			Debug.LogWarning ("no rackmount config");
 			return false;
 		}
 		if (!CanAcceptWeaponType (forItemDef)) {
@@ -518,7 +459,7 @@ public class WeaponRack : StorageContainer
 			WeaponRackSlot slot = gridSlots [item.position];
 			SetSlotItem (slot, item, gridCellIndex, rotation);
 			SetupSlot (slot);
-			if ((Object)(object)player != (Object)null) {
+			if (player != null) {
 				ClientRPCPlayer (null, player, "PlayMountSound", itemid);
 			}
 		}
@@ -537,9 +478,8 @@ public class WeaponRack : StorageContainer
 	[RPC_Server]
 	private void LoadWeaponAmmo (RPCMessage msg)
 	{
-		//IL_00a8: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer player = msg.player;
-		if (!Object.op_Implicit ((Object)(object)player)) {
+		if (!player) {
 			return;
 		}
 		int gridIndex = msg.read.Int32 ();
@@ -553,19 +493,19 @@ public class WeaponRack : StorageContainer
 			return;
 		}
 		BaseEntity heldEntity = slot.GetHeldEntity ();
-		if ((Object)(object)heldEntity == (Object)null) {
+		if (heldEntity == null) {
 			return;
 		}
-		BaseProjectile component = ((Component)heldEntity).GetComponent<BaseProjectile> ();
-		if ((Object)(object)component == (Object)null) {
+		BaseProjectile component = heldEntity.GetComponent<BaseProjectile> ();
+		if (component == null) {
 			return;
 		}
 		ItemDefinition itemDefinition = ItemManager.FindItemDefinition (num);
-		if ((Object)(object)itemDefinition == (Object)null) {
+		if (itemDefinition == null) {
 			return;
 		}
-		ItemModProjectile component2 = ((Component)itemDefinition).GetComponent<ItemModProjectile> ();
-		if (!((Object)(object)component2 == (Object)null) && component2.IsAmmo (component.primaryMagazine.definition.ammoTypes)) {
+		ItemModProjectile component2 = itemDefinition.GetComponent<ItemModProjectile> ();
+		if (!(component2 == null) && component2.IsAmmo (component.primaryMagazine.definition.ammoTypes)) {
 			if (num != component.primaryMagazine.ammoType.itemid && component.primaryMagazine.contents > 0) {
 				player.GiveItem (ItemManager.CreateByItemID (component.primaryMagazine.ammoType.itemid, component.primaryMagazine.contents, 0uL));
 				component.primaryMagazine.contents = 0;
@@ -582,7 +522,6 @@ public class WeaponRack : StorageContainer
 
 	public override void InitShared ()
 	{
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
 		base.InitShared ();
 		GridCellSize = Collision.size.x / (float)GridCellCountX;
 		gridSlots = new WeaponRackSlot[Capacity];
@@ -602,7 +541,7 @@ public class WeaponRack : StorageContainer
 
 	private void SetupSlot (WeaponRackSlot slot)
 	{
-		if (slot != null && !((Object)(object)slot.ItemDef == (Object)null)) {
+		if (slot != null && !(slot.ItemDef == null)) {
 			SetGridCellContents (slot, slot.GridSlotIndex);
 		}
 	}
@@ -616,30 +555,22 @@ public class WeaponRack : StorageContainer
 
 	private void SetGridCellContents (WeaponRackSlot slot, int value)
 	{
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
 		if (slot == null) {
 			return;
 		}
 		slot.Used = value != -1;
 		WorldModelRackMountConfig forItemDef = WorldModelRackMountConfig.GetForItemDef (slot.ItemDef);
-		if ((Object)(object)forItemDef == (Object)null) {
+		if (forItemDef == null) {
 			return;
 		}
 		Vector2Int xYForIndex = GetXYForIndex (slot.GridSlotIndex);
 		Vector2Int weaponSize = GetWeaponSize (forItemDef, slot.Rotation);
 		Vector2Int weaponStart = GetWeaponStart (xYForIndex, weaponSize, clamp: false);
-		if (((Vector2Int)(ref weaponStart)).x < 0 || ((Vector2Int)(ref weaponStart)).y < 0) {
+		if (weaponStart.x < 0 || weaponStart.y < 0) {
 			return;
 		}
-		for (int i = ((Vector2Int)(ref weaponStart)).y; i < ((Vector2Int)(ref weaponStart)).y + ((Vector2Int)(ref weaponSize)).y; i++) {
-			for (int j = ((Vector2Int)(ref weaponStart)).x; j < ((Vector2Int)(ref weaponStart)).x + ((Vector2Int)(ref weaponSize)).x; j++) {
+		for (int i = weaponStart.y; i < weaponStart.y + weaponSize.y; i++) {
+			for (int j = weaponStart.x; j < weaponStart.x + weaponSize.x; j++) {
 				gridCellContents [GetGridCellIndex (j, i)] = value;
 			}
 		}
@@ -697,14 +628,11 @@ public class WeaponRack : StorageContainer
 
 	public Vector2Int GetXYForIndex (int index)
 	{
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
 		return new Vector2Int (index % GridCellCountX, index / GridCellCountX);
 	}
 
 	private Vector2Int GetWeaponSize (WorldModelRackMountConfig config, int rotation)
 	{
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
 		int num = ((Type == RackType.Board) ? config.XSize : config.ZSize);
 		int num2 = ((Type == RackType.Board) ? config.YSize : config.XSize);
 		if (rotation != 0 && Type == RackType.Board) {
@@ -715,21 +643,20 @@ public class WeaponRack : StorageContainer
 
 	private Vector2Int GetWeaponStart (Vector2Int targetXY, Vector2Int size, bool clamp)
 	{
-		//IL_0061: Unknown result type (might be due to invalid IL or missing references)
 		if (Type == RackType.Board) {
-			((Vector2Int)(ref targetXY)).x = ((Vector2Int)(ref targetXY)).x - ((Vector2Int)(ref size)).x / 2;
-			((Vector2Int)(ref targetXY)).y = ((Vector2Int)(ref targetXY)).y - ((Vector2Int)(ref size)).y / 2;
+			targetXY.x -= size.x / 2;
+			targetXY.y -= size.y / 2;
 		}
 		if (clamp) {
-			((Vector2Int)(ref targetXY)).x = Mathf.Max (((Vector2Int)(ref targetXY)).x, 0);
-			((Vector2Int)(ref targetXY)).y = Mathf.Max (((Vector2Int)(ref targetXY)).y, 0);
+			targetXY.x = Mathf.Max (targetXY.x, 0);
+			targetXY.y = Mathf.Max (targetXY.y, 0);
 		}
 		return targetXY;
 	}
 
 	public bool CanAcceptWeaponType (WorldModelRackMountConfig weaponConfig)
 	{
-		if ((Object)(object)weaponConfig == (Object)null) {
+		if (weaponConfig == null) {
 			return false;
 		}
 		if (weaponConfig.ExcludedRackTypes.Contains (Type)) {
@@ -740,18 +667,10 @@ public class WeaponRack : StorageContainer
 
 	public int GetBestPlacementCellIndex (Vector2Int targetXY, WorldModelRackMountConfig config, int rotation, int ignoreGridSlotWeapon)
 	{
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0091: Unknown result type (might be due to invalid IL or missing references)
 		if (Type == RackType.Stand) {
-			((Vector2Int)(ref targetXY)).y = 0;
+			targetXY.y = 0;
 		}
-		int gridCellIndex = GetGridCellIndex (((Vector2Int)(ref targetXY)).x, ((Vector2Int)(ref targetXY)).y);
+		int gridCellIndex = GetGridCellIndex (targetXY.x, targetXY.y);
 		if (GridCellsFree (config, gridCellIndex, rotation, ignoreGridSlotWeapon)) {
 			return gridCellIndex;
 		}
@@ -759,11 +678,11 @@ public class WeaponRack : StorageContainer
 		int result = -1;
 		Vector2Int weaponSize = GetWeaponSize (config, rotation);
 		Vector2Int weaponStart = GetWeaponStart (targetXY, weaponSize, clamp: true);
-		for (int i = ((Vector2Int)(ref weaponStart)).y; i < ((Vector2Int)(ref weaponStart)).y + ((Vector2Int)(ref weaponSize)).y + 1; i++) {
+		for (int i = weaponStart.y; i < weaponStart.y + weaponSize.y + 1; i++) {
 			if (Type == RackType.Stand && i != 0) {
 				continue;
 			}
-			for (int j = ((Vector2Int)(ref weaponStart)).x; j < ((Vector2Int)(ref weaponStart)).x + ((Vector2Int)(ref weaponSize)).x + 1; j++) {
+			for (int j = weaponStart.x; j < weaponStart.x + weaponSize.x + 1; j++) {
 				gridCellIndex = GetGridCellIndex (j, i);
 				if (GridCellsFree (config, gridCellIndex, rotation, ignoreGridSlotWeapon)) {
 					float num2 = Vector2Int.Distance (targetXY, new Vector2Int (j, i));
@@ -779,11 +698,6 @@ public class WeaponRack : StorageContainer
 
 	public int GetGridIndexAtPosition (Vector3 pos)
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
 		float num = Collision.size.x - (pos.x + Collision.size.x / 2f);
 		float num2 = pos.y + Collision.size.y / 2f;
 		int num3 = (int)(num / GridCellSize);
@@ -792,25 +706,17 @@ public class WeaponRack : StorageContainer
 
 	private bool GridCellsFree (WorldModelRackMountConfig config, int gridIndex, int rotation, int ignoreGridSlotWeapon)
 	{
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
 		if (gridIndex == -1) {
 			return false;
 		}
 		Vector2Int xYForIndex = GetXYForIndex (gridIndex);
 		Vector2Int weaponSize = GetWeaponSize (config, rotation);
 		Vector2Int weaponStart = GetWeaponStart (xYForIndex, weaponSize, clamp: false);
-		if (((Vector2Int)(ref weaponStart)).x < 0 || ((Vector2Int)(ref weaponStart)).y < 0) {
+		if (weaponStart.x < 0 || weaponStart.y < 0) {
 			return false;
 		}
-		for (int i = ((Vector2Int)(ref weaponStart)).y; i < ((Vector2Int)(ref weaponStart)).y + ((Vector2Int)(ref weaponSize)).y; i++) {
-			for (int j = ((Vector2Int)(ref weaponStart)).x; j < ((Vector2Int)(ref weaponStart)).x + ((Vector2Int)(ref weaponSize)).x; j++) {
+		for (int i = weaponStart.y; i < weaponStart.y + weaponSize.y; i++) {
+			for (int j = weaponStart.x; j < weaponStart.x + weaponSize.x; j++) {
 				int gridCellIndex = GetGridCellIndex (j, i);
 				if (gridCellIndex == -1 || !GridCellFree (gridCellIndex, ignoreGridSlotWeapon)) {
 					return false;
@@ -841,6 +747,6 @@ public class WeaponRack : StorageContainer
 
 	private static bool ItemIsRackMountable (Item item)
 	{
-		return (Object)(object)WorldModelRackMountConfig.GetForItemDef (item.info) != (Object)null;
+		return WorldModelRackMountConfig.GetForItemDef (item.info) != null;
 	}
 }

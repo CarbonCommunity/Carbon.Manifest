@@ -120,7 +120,6 @@ public class RCon
 
 		internal bool HandleMessage (int type, string msg)
 		{
-			//IL_004c: Unknown result type (might be due to invalid IL or missing references)
 			if (!isAuthorised) {
 				return HandleMessage_UnAuthed (type, msg);
 			}
@@ -129,9 +128,9 @@ public class RCon
 				return true;
 			}
 			if (type == SERVERDATA_EXECCOMMAND) {
-				Debug.Log ((object)("[RCON][" + connectionName + "] " + msg));
+				Debug.Log ("[RCON][" + connectionName + "] " + msg);
 				runningConsoleCommand = true;
-				ConsoleSystem.Run (Option.Server, msg, Array.Empty<object> ());
+				ConsoleSystem.Run (ConsoleSystem.Option.Server, msg);
 				runningConsoleCommand = false;
 				Reply (-1, SERVERDATA_RESPONSE_VALUE, "");
 				return true;
@@ -140,7 +139,7 @@ public class RCon
 				Reply (lastMessageID, SERVERDATA_RESPONSE_VALUE, "");
 				return true;
 			}
-			Debug.Log ((object)("[RCON][" + connectionName + "] Unhandled: " + lastMessageID + " -> " + type + " -> " + msg));
+			Debug.Log ("[RCON][" + connectionName + "] Unhandled: " + lastMessageID + " -> " + type + " -> " + msg);
 			return false;
 		}
 
@@ -160,12 +159,12 @@ public class RCon
 				return true;
 			}
 			Reply (lastMessageID, SERVERDATA_AUTH_RESPONSE, "");
-			Debug.Log ((object)("[RCON] Auth: " + connectionName));
+			Debug.Log ("[RCON] Auth: " + connectionName);
 			Output.OnMessage += Output_OnMessage;
 			return true;
 		}
 
-		private void Output_OnMessage (string message, string stacktrace, LogType type)
+		private void Output_OnMessage (string message, string stacktrace, UnityEngine.LogType type)
 		{
 			if (isAuthorised && IsValid ()) {
 				if (lastMessageID != -1 && runningConsoleCommand) {
@@ -201,7 +200,7 @@ public class RCon
 			try {
 				socket.Send (memoryStream.GetBuffer (), (int)memoryStream.Position, SocketFlags.None);
 			} catch (Exception ex) {
-				Debug.LogWarning ((object)("Error sending rcon reply: " + ex));
+				Debug.LogWarning ("Error sending rcon reply: " + ex);
 				Close ("Exception");
 			}
 		}
@@ -210,7 +209,7 @@ public class RCon
 		{
 			Output.OnMessage -= Output_OnMessage;
 			if (socket != null) {
-				Debug.Log ((object)("[RCON][" + connectionName + "] Disconnected: " + strReasn));
+				Debug.Log ("[RCON][" + connectionName + "] Disconnected: " + strReasn);
 				socket.Close ();
 				socket = null;
 			}
@@ -249,7 +248,7 @@ public class RCon
 			try {
 				server.Start ();
 			} catch (Exception ex) {
-				Debug.LogWarning ((object)("Couldn't start RCON Listener: " + ex.Message));
+				Debug.LogWarning ("Couldn't start RCON Listener: " + ex.Message);
 				server = null;
 			}
 		}
@@ -280,7 +279,7 @@ public class RCon
 			if (socket != null) {
 				IPEndPoint iPEndPoint = socket.RemoteEndPoint as IPEndPoint;
 				if (IsBanned (iPEndPoint.Address)) {
-					Debug.Log ((object)("[RCON] Ignoring connection - banned. " + iPEndPoint.Address.ToString ()));
+					Debug.Log ("[RCON] Ignoring connection - banned. " + iPEndPoint.Address.ToString ());
 					socket.Close ();
 				} else {
 					clients.Add (new RConClient (socket));
@@ -345,8 +344,6 @@ public class RCon
 
 	public static void Initialize ()
 	{
-		//IL_006e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0078: Expected O, but got Unknown
 		if (Port == 0) {
 			Port = Server.port;
 		}
@@ -362,8 +359,8 @@ public class RCon
 			}
 			listenerNew.Password = Password;
 			listenerNew.Port = Port;
-			listenerNew.SslCertificate = CommandLine.GetSwitch ("-rcon.ssl", (string)null);
-			listenerNew.SslCertificatePassword = CommandLine.GetSwitch ("-rcon.sslpwd", (string)null);
+			listenerNew.SslCertificate = CommandLine.GetSwitch ("-rcon.ssl", null);
+			listenerNew.SslCertificatePassword = CommandLine.GetSwitch ("-rcon.sslpwd", null);
 			listenerNew.OnMessage = delegate(IPAddress ip, int id, string msg) {
 				lock (Commands) {
 					Command item = JsonConvert.DeserializeObject<Command> (msg);
@@ -373,11 +370,11 @@ public class RCon
 				}
 			};
 			listenerNew.Start ();
-			Debug.Log ((object)("WebSocket RCon Started on " + Port));
+			Debug.Log ("WebSocket RCon Started on " + Port);
 		} else {
 			listener = new RConListener ();
-			Debug.Log ((object)("RCon Started on " + Port));
-			Debug.Log ((object)"Source style TCP Rcon is deprecated. Please switch to Websocket Rcon before it goes away.");
+			Debug.Log ("RCon Started on " + Port);
+			Debug.Log ("Source style TCP Rcon is deprecated. Please switch to Websocket Rcon before it goes away.");
 		}
 	}
 
@@ -396,7 +393,7 @@ public class RCon
 	public static void Broadcast (LogType type, object obj)
 	{
 		if (listenerNew != null) {
-			string message = JsonConvert.SerializeObject (obj, (Formatting)1);
+			string message = JsonConvert.SerializeObject (obj, Formatting.Indented);
 			Broadcast (type, message);
 		}
 	}
@@ -409,9 +406,9 @@ public class RCon
 			response.Message = message;
 			response.Type = type;
 			if (responseConnection < 0) {
-				listenerNew.BroadcastMessage (JsonConvert.SerializeObject ((object)response, (Formatting)1));
+				listenerNew.BroadcastMessage (JsonConvert.SerializeObject (response, Formatting.Indented));
 			} else {
-				listenerNew.SendMessage (responseConnection, JsonConvert.SerializeObject ((object)response, (Formatting)1));
+				listenerNew.SendMessage (responseConnection, JsonConvert.SerializeObject (response, Formatting.Indented));
 			}
 		}
 	}
@@ -423,16 +420,16 @@ public class RCon
 				OnCommand (Commands.Dequeue ());
 			}
 		}
-		if (listener == null || lastRunTime + 0.02f >= Time.realtimeSinceStartup) {
+		if (listener == null || lastRunTime + 0.02f >= UnityEngine.Time.realtimeSinceStartup) {
 			return;
 		}
-		lastRunTime = Time.realtimeSinceStartup;
+		lastRunTime = UnityEngine.Time.realtimeSinceStartup;
 		try {
-			bannedAddresses.RemoveAll ((BannedAddresses x) => x.banTime < Time.realtimeSinceStartup);
+			bannedAddresses.RemoveAll ((BannedAddresses x) => x.banTime < UnityEngine.Time.realtimeSinceStartup);
 			listener.Cycle ();
-		} catch (Exception ex) {
-			Debug.LogWarning ((object)"Rcon Exception");
-			Debug.LogException (ex);
+		} catch (Exception exception) {
+			Debug.LogWarning ("Rcon Exception");
+			Debug.LogException (exception);
 		}
 	}
 
@@ -441,31 +438,27 @@ public class RCon
 		RCon.bannedAddresses.RemoveAll ((BannedAddresses x) => x.addr == addr);
 		BannedAddresses bannedAddresses = default(BannedAddresses);
 		bannedAddresses.addr = addr;
-		bannedAddresses.banTime = Time.realtimeSinceStartup + seconds;
+		bannedAddresses.banTime = UnityEngine.Time.realtimeSinceStartup + seconds;
 	}
 
 	public static bool IsBanned (IPAddress addr)
 	{
-		return bannedAddresses.Count ((BannedAddresses x) => x.addr == addr && x.banTime > Time.realtimeSinceStartup) > 0;
+		return bannedAddresses.Count ((BannedAddresses x) => x.addr == addr && x.banTime > UnityEngine.Time.realtimeSinceStartup) > 0;
 	}
 
 	private static void OnCommand (Command cmd)
 	{
-		//IL_005b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0060: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0063: Unknown result type (might be due to invalid IL or missing references)
 		try {
 			responseIdentifier = cmd.Identifier;
 			responseConnection = cmd.ConnectionId;
 			isInput = true;
 			if (Print) {
-				Debug.Log ((object)string.Concat ("[rcon] ", cmd.Ip, ": ", cmd.Message));
+				Debug.Log (string.Concat ("[rcon] ", cmd.Ip, ": ", cmd.Message));
 			}
 			isInput = false;
-			Option server = Option.Server;
-			string text = ConsoleSystem.Run (((Option)(ref server)).Quiet (), cmd.Message, Array.Empty<object> ());
+			string text = ConsoleSystem.Run (ConsoleSystem.Option.Server.Quiet (), cmd.Message);
 			if (text != null) {
-				OnMessage (text, string.Empty, (LogType)3);
+				OnMessage (text, string.Empty, UnityEngine.LogType.Log);
 			}
 		} finally {
 			responseIdentifier = 0;
@@ -473,31 +466,24 @@ public class RCon
 		}
 	}
 
-	private static void OnMessage (string message, string stacktrace, LogType type)
+	private static void OnMessage (string message, string stacktrace, UnityEngine.LogType type)
 	{
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Invalid comparison between Unknown and I4
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004f: Invalid comparison between Unknown and I4
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Invalid comparison between Unknown and I4
 		if (!isInput && listenerNew != null) {
 			Response response = default(Response);
 			response.Identifier = responseIdentifier;
 			response.Message = message;
 			response.Stacktrace = stacktrace;
 			response.Type = LogType.Generic;
-			if ((int)type == 0 || (int)type == 4) {
+			if (type == UnityEngine.LogType.Error || type == UnityEngine.LogType.Exception) {
 				response.Type = LogType.Error;
 			}
-			if ((int)type == 1 || (int)type == 2) {
+			if (type == UnityEngine.LogType.Assert || type == UnityEngine.LogType.Warning) {
 				response.Type = LogType.Warning;
 			}
 			if (responseConnection < 0) {
-				listenerNew.BroadcastMessage (JsonConvert.SerializeObject ((object)response, (Formatting)1));
+				listenerNew.BroadcastMessage (JsonConvert.SerializeObject (response, Formatting.Indented));
 			} else {
-				listenerNew.SendMessage (responseConnection, JsonConvert.SerializeObject ((object)response, (Formatting)1));
+				listenerNew.SendMessage (responseConnection, JsonConvert.SerializeObject (response, Formatting.Indented));
 			}
 		}
 	}

@@ -15,7 +15,7 @@ public class UICompass : MonoBehaviour
 
 	public List<CompassMissionMarker> MissionMarkers;
 
-	public static readonly Phrase IslandInfoPhrase = new Phrase ("nexus.compass.island_info", "Continue for {distance} to travel to {zone}");
+	public static readonly Translate.Phrase IslandInfoPhrase = new Translate.Phrase ("nexus.compass.island_info", "Continue for {distance} to travel to {zone}");
 
 	public RectTransform IslandInfoContainer;
 

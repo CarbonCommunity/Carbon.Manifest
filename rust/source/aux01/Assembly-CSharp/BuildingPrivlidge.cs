@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,154 +49,115 @@ public class BuildingPrivlidge : StorageContainer
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("BuildingPrivlidge.OnRpcMessage", 0);
-		try {
-			if (rpc == 1092560690 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("BuildingPrivlidge.OnRpcMessage")) {
+			if (rpc == 1092560690 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - AddSelfAuthorize "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - AddSelfAuthorize "));
 				}
-				TimeWarning val2 = TimeWarning.New ("AddSelfAuthorize", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("AddSelfAuthorize")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (1092560690u, "AddSelfAuthorize", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage rpc2 = rPCMessage;
 							AddSelfAuthorize (rpc2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in AddSelfAuthorize");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 253307592 && (Object)(object)player != (Object)null) {
+			if (rpc == 253307592 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - ClearList "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - ClearList "));
 				}
-				TimeWarning val2 = TimeWarning.New ("ClearList", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("ClearList")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (253307592u, "ClearList", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage rpc3 = rPCMessage;
 							ClearList (rpc3);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in ClearList");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 3617985969u && (Object)(object)player != (Object)null) {
+			if (rpc == 3617985969u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RemoveSelfAuthorize "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RemoveSelfAuthorize "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RemoveSelfAuthorize", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RemoveSelfAuthorize")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (3617985969u, "RemoveSelfAuthorize", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage rpc4 = rPCMessage;
 							RemoveSelfAuthorize (rpc4);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex3) {
-						Debug.LogException (ex3);
+					} catch (Exception exception3) {
+						Debug.LogException (exception3);
 						player.Kick ("RPC Error in RemoveSelfAuthorize");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 2051750736 && (Object)(object)player != (Object)null) {
+			if (rpc == 2051750736 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_Rotate "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_Rotate "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_Rotate", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_Rotate")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (2051750736u, "RPC_Rotate", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							RPC_Rotate (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex4) {
-						Debug.LogException (ex4);
+					} catch (Exception exception4) {
+						Debug.LogException (exception4);
 						player.Kick ("RPC Error in RPC_Rotate");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -218,36 +180,29 @@ public class BuildingPrivlidge : StorageContainer
 
 	public void CalculateUpkeepCostAmounts (List<ItemAmount> itemAmounts)
 	{
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
 		BuildingManager.Building building = GetBuilding ();
 		if (building == null || !building.HasDecayEntities ()) {
 			return;
 		}
 		float multiplier = CalculateUpkeepCostFraction ();
-		Enumerator<DecayEntity> enumerator = building.decayEntities.GetEnumerator ();
-		try {
-			while (enumerator.MoveNext ()) {
-				enumerator.Current.CalculateUpkeepCostAmounts (itemAmounts, multiplier);
-			}
-		} finally {
-			((IDisposable)enumerator).Dispose ();
+		foreach (DecayEntity decayEntity in building.decayEntities) {
+			decayEntity.CalculateUpkeepCostAmounts (itemAmounts, multiplier);
 		}
 	}
 
 	public float GetProtectedMinutes (bool force = false)
 	{
 		if (base.isServer) {
-			if (!force && Time.realtimeSinceStartup < nextProtectedCalcTime) {
+			if (!force && UnityEngine.Time.realtimeSinceStartup < nextProtectedCalcTime) {
 				return cachedProtectedMinutes;
 			}
-			nextProtectedCalcTime = Time.realtimeSinceStartup + 60f;
-			List<ItemAmount> list = Pool.GetList<ItemAmount> ();
-			CalculateUpkeepCostAmounts (list);
+			nextProtectedCalcTime = UnityEngine.Time.realtimeSinceStartup + 60f;
+			List<ItemAmount> obj = Facepunch.Pool.GetList<ItemAmount> ();
+			CalculateUpkeepCostAmounts (obj);
 			float num = CalculateUpkeepPeriodMinutes ();
 			float num2 = -1f;
 			if (base.inventory != null) {
-				foreach (ItemAmount item in list) {
+				foreach (ItemAmount item in obj) {
 					int num3 = base.inventory.FindItemsByItemID (item.itemid).Sum ((Item x) => x.amount);
 					if (num3 > 0 && item.amount > 0f) {
 						float num4 = (float)num3 / item.amount * num;
@@ -262,7 +217,7 @@ public class BuildingPrivlidge : StorageContainer
 					num2 = 0f;
 				}
 			}
-			Pool.FreeList<ItemAmount> (ref list);
+			Facepunch.Pool.FreeList (ref obj);
 			cachedProtectedMinutes = num2;
 			return cachedProtectedMinutes;
 		}
@@ -289,7 +244,7 @@ public class BuildingPrivlidge : StorageContainer
 		BuildingManager.Building building = GetBuilding ();
 		if (building != null) {
 			BuildingPrivlidge dominatingBuildingPrivilege = building.GetDominatingBuildingPrivilege ();
-			if ((Object)(object)dominatingBuildingPrivilege != (Object)null && (Object)(object)dominatingBuildingPrivilege != (Object)(object)this) {
+			if (dominatingBuildingPrivilege != null && dominatingBuildingPrivilege != this) {
 				Kill (DestroyMode.Gib);
 				return false;
 			}
@@ -299,7 +254,7 @@ public class BuildingPrivlidge : StorageContainer
 
 	public void MarkProtectedMinutesDirty (float delay = 0f)
 	{
-		nextProtectedCalcTime = Time.realtimeSinceStartup + delay;
+		nextProtectedCalcTime = UnityEngine.Time.realtimeSinceStartup + delay;
 	}
 
 	private float CalculateBuildingTaxRate ()
@@ -336,26 +291,26 @@ public class BuildingPrivlidge : StorageContainer
 
 	private void ApplyUpkeepPayment ()
 	{
-		List<Item> list = Pool.GetList<Item> ();
+		List<Item> obj = Facepunch.Pool.GetList<Item> ();
 		for (int i = 0; i < upkeepBuffer.Count; i++) {
 			ItemAmount itemAmount = upkeepBuffer [i];
 			int num = (int)itemAmount.amount;
 			if (num < 1) {
 				continue;
 			}
-			base.inventory.Take (list, itemAmount.itemid, num);
+			base.inventory.Take (obj, itemAmount.itemid, num);
 			Analytics.Azure.AddPendingItems (this, itemAmount.itemDef.shortname, num, "upkeep", consumed: true, perEntity: true);
-			foreach (Item item in list) {
+			foreach (Item item in obj) {
 				if (IsDebugging ()) {
-					Debug.Log ((object)(((object)this).ToString () + ": Using " + item.amount + " of " + item.info.shortname));
+					Debug.Log (ToString () + ": Using " + item.amount + " of " + item.info.shortname);
 				}
 				item.UseItem (item.amount);
 			}
-			list.Clear ();
+			obj.Clear ();
 			itemAmount.amount -= num;
 			upkeepBuffer [i] = itemAmount;
 		}
-		Pool.FreeList<Item> (ref list);
+		Facepunch.Pool.FreeList (ref obj);
 	}
 
 	private void QueueUpkeepPayment (List<ItemAmount> itemAmounts)
@@ -364,10 +319,10 @@ public class BuildingPrivlidge : StorageContainer
 			ItemAmount itemAmount = itemAmounts [i];
 			bool flag = false;
 			foreach (ItemAmount item in upkeepBuffer) {
-				if ((Object)(object)item.itemDef == (Object)(object)itemAmount.itemDef) {
+				if (item.itemDef == itemAmount.itemDef) {
 					item.amount += itemAmount.amount;
 					if (IsDebugging ()) {
-						Debug.Log ((object)(((object)this).ToString () + ": Adding " + itemAmount.amount + " of " + itemAmount.itemDef.shortname + " to " + item.amount));
+						Debug.Log (ToString () + ": Adding " + itemAmount.amount + " of " + itemAmount.itemDef.shortname + " to " + item.amount);
 					}
 					flag = true;
 					break;
@@ -375,7 +330,7 @@ public class BuildingPrivlidge : StorageContainer
 			}
 			if (!flag) {
 				if (IsDebugging ()) {
-					Debug.Log ((object)(((object)this).ToString () + ": Adding " + itemAmount.amount + " of " + itemAmount.itemDef.shortname));
+					Debug.Log (ToString () + ": Adding " + itemAmount.amount + " of " + itemAmount.itemDef.shortname);
 				}
 				upkeepBuffer.Add (new ItemAmount (itemAmount.itemDef, itemAmount.amount));
 			}
@@ -388,7 +343,7 @@ public class BuildingPrivlidge : StorageContainer
 			ItemAmount itemAmount = itemAmounts [i];
 			if ((float)base.inventory.GetAmount (itemAmount.itemid, onlyUsableAmounts: true) < itemAmount.amount) {
 				if (IsDebugging ()) {
-					Debug.Log ((object)(((object)this).ToString () + ": Can't afford " + itemAmount.amount + " of " + itemAmount.itemDef.shortname));
+					Debug.Log (ToString () + ": Can't afford " + itemAmount.amount + " of " + itemAmount.itemDef.shortname);
 				}
 				return false;
 			}
@@ -401,11 +356,11 @@ public class BuildingPrivlidge : StorageContainer
 		float num = CalculateUpkeepCostFraction ();
 		float num2 = CalculateUpkeepPeriodMinutes () * 60f;
 		float multiplier = num * deltaTime / num2;
-		List<ItemAmount> list = Pool.GetList<ItemAmount> ();
-		entity.CalculateUpkeepCostAmounts (list, multiplier);
-		bool num3 = CanAffordUpkeepPayment (list);
-		QueueUpkeepPayment (list);
-		Pool.FreeList<ItemAmount> (ref list);
+		List<ItemAmount> obj = Facepunch.Pool.GetList<ItemAmount> ();
+		entity.CalculateUpkeepCostAmounts (obj, multiplier);
+		bool num3 = CanAffordUpkeepPayment (obj);
+		QueueUpkeepPayment (obj);
+		Facepunch.Pool.FreeList (ref obj);
 		ApplyUpkeepPayment ();
 		if (!num3) {
 			return 0f;
@@ -415,8 +370,6 @@ public class BuildingPrivlidge : StorageContainer
 
 	public void PurchaseUpkeepTime (float deltaTime)
 	{
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
 		BuildingManager.Building building = GetBuilding ();
 		if (building == null || !building.HasDecayEntities ()) {
 			return;
@@ -425,21 +378,15 @@ public class BuildingPrivlidge : StorageContainer
 		if (!(num > 0f)) {
 			return;
 		}
-		Enumerator<DecayEntity> enumerator = building.decayEntities.GetEnumerator ();
-		try {
-			while (enumerator.MoveNext ()) {
-				DecayEntity current = enumerator.Current;
-				float protectedSeconds = current.GetProtectedSeconds ();
-				if (num > protectedSeconds) {
-					float num2 = PurchaseUpkeepTime (current, num - protectedSeconds);
-					current.AddUpkeepTime (num2);
-					if (IsDebugging ()) {
-						Debug.Log ((object)(((object)this).ToString () + " purchased upkeep time for " + ((object)current).ToString () + ": " + protectedSeconds + " + " + num2 + " = " + current.GetProtectedSeconds ()));
-					}
+		foreach (DecayEntity decayEntity in building.decayEntities) {
+			float protectedSeconds = decayEntity.GetProtectedSeconds ();
+			if (num > protectedSeconds) {
+				float num2 = PurchaseUpkeepTime (decayEntity, num - protectedSeconds);
+				decayEntity.AddUpkeepTime (num2);
+				if (IsDebugging ()) {
+					Debug.Log (ToString () + " purchased upkeep time for " + decayEntity.ToString () + ": " + protectedSeconds + " + " + num2 + " = " + decayEntity.GetProtectedSeconds ());
 				}
 			}
-		} finally {
-			((IDisposable)enumerator).Dispose ();
 		}
 	}
 
@@ -470,7 +417,7 @@ public class BuildingPrivlidge : StorageContainer
 		if (!flag && targetSlot == -1) {
 			int num = 0;
 			foreach (Item item2 in base.inventory.itemList) {
-				if (!allowedConstructionItems.Contains (item2.info) && ((Object)(object)item2.info != (Object)(object)item.info || item2.amount == item2.MaxStackable ())) {
+				if (!allowedConstructionItems.Contains (item2.info) && (item2.info != item.info || item2.amount == item2.MaxStackable ())) {
 					num++;
 				}
 			}
@@ -487,7 +434,7 @@ public class BuildingPrivlidge : StorageContainer
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.buildingPrivilege = Pool.Get<BuildingPrivilege> ();
+		info.msg.buildingPrivilege = Facepunch.Pool.Get<BuildingPrivilege> ();
 		info.msg.buildingPrivilege.users = authorizedPlayers;
 		if (!info.forDisk) {
 			info.msg.buildingPrivilege.upkeepPeriodMinutes = CalculateUpkeepPeriodMinutes ();
@@ -529,7 +476,7 @@ public class BuildingPrivlidge : StorageContainer
 	public void UpdateMaxAuthCapacity ()
 	{
 		BaseGameMode activeGameMode = BaseGameMode.GetActiveGameMode (serverside: true);
-		if (Object.op_Implicit ((Object)(object)activeGameMode) && activeGameMode.limitTeamAuths) {
+		if ((bool)activeGameMode && activeGameMode.limitTeamAuths) {
 			SetFlag (Flags.Reserved5, authorizedPlayers.Count >= activeGameMode.GetMaxRelationshipTeamSize ());
 		}
 	}
@@ -548,10 +495,10 @@ public class BuildingPrivlidge : StorageContainer
 
 	public void AddDelayedUpdate ()
 	{
-		if (((FacepunchBehaviour)this).IsInvoking ((Action)DelayedUpdate)) {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)DelayedUpdate);
+		if (IsInvoking (DelayedUpdate)) {
+			CancelInvoke (DelayedUpdate);
 		}
-		((FacepunchBehaviour)this).Invoke ((Action)DelayedUpdate, 1f);
+		Invoke (DelayedUpdate, 1f);
 	}
 
 	public void DelayedUpdate ()
@@ -563,7 +510,7 @@ public class BuildingPrivlidge : StorageContainer
 	public bool CanAdministrate (BasePlayer player)
 	{
 		BaseLock baseLock = GetSlot (Slot.Lock) as BaseLock;
-		if ((Object)(object)baseLock == (Object)null) {
+		if (baseLock == null) {
 			return true;
 		}
 		return baseLock.OnTryToOpen (player);
@@ -581,14 +528,12 @@ public class BuildingPrivlidge : StorageContainer
 
 	public void AddPlayer (BasePlayer player)
 	{
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0034: Expected O, but got Unknown
 		if (!AtMaxAuthCapacity ()) {
 			authorizedPlayers.RemoveAll ((PlayerNameID x) => x.userid == player.userID);
-			PlayerNameID val = new PlayerNameID ();
-			val.userid = player.userID;
-			val.username = player.displayName;
-			authorizedPlayers.Add (val);
+			PlayerNameID playerNameID = new PlayerNameID ();
+			playerNameID.userid = player.userID;
+			playerNameID.username = player.displayName;
+			authorizedPlayers.Add (playerNameID);
 			Analytics.Azure.OnEntityAuthChanged (this, player, authorizedPlayers.Select ((PlayerNameID x) => x.userid), "added", player.userID);
 			UpdateMaxAuthCapacity ();
 		}
@@ -621,30 +566,24 @@ public class BuildingPrivlidge : StorageContainer
 	[RPC_Server.IsVisible (3f)]
 	public void RPC_Rotate (RPCMessage msg)
 	{
-		//IL_0069: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0079: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c2: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer player = msg.player;
-		if (player.CanBuild () && Object.op_Implicit ((Object)(object)player.GetHeldEntity ()) && (Object)(object)((Component)player.GetHeldEntity ()).GetComponent<Hammer> () != (Object)null && ((Object)(object)GetSlot (Slot.Lock) == (Object)null || !GetSlot (Slot.Lock).IsLocked ()) && !HasAttachedStorageAdaptor ()) {
-			((Component)this).transform.rotation = Quaternion.LookRotation (-((Component)this).transform.forward, ((Component)this).transform.up);
+		if (player.CanBuild () && (bool)player.GetHeldEntity () && player.GetHeldEntity ().GetComponent<Hammer> () != null && (GetSlot (Slot.Lock) == null || !GetSlot (Slot.Lock).IsLocked ()) && !HasAttachedStorageAdaptor ()) {
+			base.transform.rotation = Quaternion.LookRotation (-base.transform.forward, base.transform.up);
 			SendNetworkUpdate ();
-			Deployable component = ((Component)this).GetComponent<Deployable> ();
+			Deployable component = GetComponent<Deployable> ();
 			if (component != null && component.placeEffect.isValid) {
-				Effect.server.Run (component.placeEffect.resourcePath, ((Component)this).transform.position, Vector3.up);
+				Effect.server.Run (component.placeEffect.resourcePath, base.transform.position, Vector3.up);
 			}
 		}
 		BaseEntity slot = GetSlot (Slot.Lock);
-		if ((Object)(object)slot != (Object)null) {
+		if (slot != null) {
 			slot.SendNetworkUpdate ();
 		}
 	}
 
 	public override int GetIdealSlot (BasePlayer player, Item item)
 	{
-		if (item != null && (Object)(object)item.info != (Object)null && allowedConstructionItems.Contains (item.info)) {
+		if (item != null && item.info != null && allowedConstructionItems.Contains (item.info)) {
 			for (int i = 24; i <= 27; i++) {
 				if (base.inventory.GetSlot (i) == null) {
 					return i;

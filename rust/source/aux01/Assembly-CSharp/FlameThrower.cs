@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -59,135 +60,105 @@ public class FlameThrower : AttackEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("FlameThrower.OnRpcMessage", 0);
-		try {
-			if (rpc == 3381353917u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("FlameThrower.OnRpcMessage")) {
+			if (rpc == 3381353917u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - DoReload "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - DoReload "));
 				}
-				TimeWarning val2 = TimeWarning.New ("DoReload", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("DoReload")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsActiveItem.Test (3381353917u, "DoReload", this, player)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							DoReload (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in DoReload");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 3749570935u && (Object)(object)player != (Object)null) {
+			if (rpc == 3749570935u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - SetFiring "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - SetFiring "));
 				}
-				TimeWarning val2 = TimeWarning.New ("SetFiring", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("SetFiring")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsActiveItem.Test (3749570935u, "SetFiring", this, player)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage firing = rPCMessage;
 							SetFiring (firing);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in SetFiring");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 1057268396 && (Object)(object)player != (Object)null) {
+			if (rpc == 1057268396 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - TogglePilotLight "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - TogglePilotLight "));
 				}
-				TimeWarning val2 = TimeWarning.New ("TogglePilotLight", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("TogglePilotLight")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsActiveItem.Test (1057268396u, "TogglePilotLight", this, player)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg3 = rPCMessage;
 							TogglePilotLight (msg3);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex3) {
-						Debug.LogException (ex3);
+					} catch (Exception exception3) {
+						Debug.LogException (exception3);
 						player.Kick ("RPC Error in TogglePilotLight");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
 
 	private bool IsWeaponBusy ()
 	{
-		return Time.realtimeSinceStartup < nextReadyTime;
+		return UnityEngine.Time.realtimeSinceStartup < nextReadyTime;
 	}
 
 	private void SetBusyFor (float dur)
 	{
-		nextReadyTime = Time.realtimeSinceStartup + dur;
+		nextReadyTime = UnityEngine.Time.realtimeSinceStartup + dur;
 	}
 
 	private void ClearBusy ()
 	{
-		nextReadyTime = Time.realtimeSinceStartup - 1f;
+		nextReadyTime = UnityEngine.Time.realtimeSinceStartup - 1f;
 	}
 
 	public void ReduceAmmo (float firingTime)
@@ -236,7 +207,7 @@ public class FlameThrower : AttackEntity
 	public Item GetAmmo ()
 	{
 		BasePlayer ownerPlayer = GetOwnerPlayer ();
-		if (!Object.op_Implicit ((Object)(object)ownerPlayer)) {
+		if (!ownerPlayer) {
 			return null;
 		}
 		Item item = ownerPlayer.inventory.containerMain.FindItemsByItemName (fuelType.shortname);
@@ -262,8 +233,8 @@ public class FlameThrower : AttackEntity
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.baseProjectile = Pool.Get<BaseProjectile> ();
-		info.msg.baseProjectile.primaryMagazine = Pool.Get<Magazine> ();
+		info.msg.baseProjectile = Facepunch.Pool.Get<ProtoBuf.BaseProjectile> ();
+		info.msg.baseProjectile.primaryMagazine = Facepunch.Pool.Get<Magazine> ();
 		info.msg.baseProjectile.primaryMagazine.contents = ammo;
 	}
 
@@ -279,7 +250,7 @@ public class FlameThrower : AttackEntity
 	{
 		if (!IsOnFire ()) {
 			SetFlameState (wantsOn: true);
-			((FacepunchBehaviour)this).Invoke ((Action)StopFlameState, 0.2f);
+			Invoke (StopFlameState, 0.2f);
 			base.ServerUse ();
 		}
 	}
@@ -296,7 +267,7 @@ public class FlameThrower : AttackEntity
 
 	public override bool ServerIsReloading ()
 	{
-		return Time.time < lastReloadTime + reloadDuration;
+		return UnityEngine.Time.time < lastReloadTime + reloadDuration;
 	}
 
 	public override bool CanReload ()
@@ -307,7 +278,7 @@ public class FlameThrower : AttackEntity
 	public override void ServerReload ()
 	{
 		if (!ServerIsReloading ()) {
-			lastReloadTime = Time.time;
+			lastReloadTime = UnityEngine.Time.time;
 			StartAttackCooldown (reloadDuration);
 			GetOwnerPlayer ().SignalBroadcast (Signal.Reload);
 			ammo = maxAmmo;
@@ -324,7 +295,7 @@ public class FlameThrower : AttackEntity
 	public void DoReload (RPCMessage msg)
 	{
 		BasePlayer ownerPlayer = GetOwnerPlayer ();
-		if (!((Object)(object)ownerPlayer == (Object)null)) {
+		if (!(ownerPlayer == null)) {
 			Item item = null;
 			while (ammo < maxAmmo && (item = GetAmmo ()) != null && item.amount > 0) {
 				int num = Mathf.Min (maxAmmo - ammo, item.amount);
@@ -352,11 +323,11 @@ public class FlameThrower : AttackEntity
 		}
 		SetFlag (Flags.OnFire, wantsOn);
 		if (IsFlameOn ()) {
-			nextFlameTime = Time.realtimeSinceStartup + 1f;
-			lastFlameTick = Time.realtimeSinceStartup;
-			((FacepunchBehaviour)this).InvokeRepeating ((Action)FlameTick, tickRate, tickRate);
+			nextFlameTime = UnityEngine.Time.realtimeSinceStartup + 1f;
+			lastFlameTick = UnityEngine.Time.realtimeSinceStartup;
+			InvokeRepeating (FlameTick, tickRate, tickRate);
 		} else {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)FlameTick);
+			CancelInvoke (FlameTick);
 		}
 	}
 
@@ -375,52 +346,31 @@ public class FlameThrower : AttackEntity
 
 	public void FlameTick ()
 	{
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0077: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0155: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_016c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0170: Unknown result type (might be due to invalid IL or missing references)
-		//IL_017a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_017f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0186: Unknown result type (might be due to invalid IL or missing references)
-		//IL_018c: Unknown result type (might be due to invalid IL or missing references)
-		float num = Time.realtimeSinceStartup - lastFlameTick;
-		lastFlameTick = Time.realtimeSinceStartup;
+		float num = UnityEngine.Time.realtimeSinceStartup - lastFlameTick;
+		lastFlameTick = UnityEngine.Time.realtimeSinceStartup;
 		BasePlayer ownerPlayer = GetOwnerPlayer ();
-		if (!Object.op_Implicit ((Object)(object)ownerPlayer)) {
+		if (!ownerPlayer) {
 			return;
 		}
 		ReduceAmmo (num);
 		SendNetworkUpdate ();
-		Ray val = ownerPlayer.eyes.BodyRay ();
-		Vector3 origin = ((Ray)(ref val)).origin;
-		RaycastHit val2 = default(RaycastHit);
-		bool num2 = Physics.SphereCast (val, 0.3f, ref val2, flameRange, 1218652417);
+		Ray ray = ownerPlayer.eyes.BodyRay ();
+		Vector3 origin = ray.origin;
+		RaycastHit hitInfo;
+		bool num2 = UnityEngine.Physics.SphereCast (ray, 0.3f, out hitInfo, flameRange, 1218652417);
 		if (!num2) {
-			((RaycastHit)(ref val2)).point = origin + ((Ray)(ref val)).direction * flameRange;
+			hitInfo.point = origin + ray.direction * flameRange;
 		}
 		float num3 = (ownerPlayer.IsNpc ? npcDamageScale : 1f);
 		float amount = damagePerSec [0].amount;
 		damagePerSec [0].amount = amount * num * num3;
-		DamageUtil.RadiusDamage (ownerPlayer, LookupPrefab (), ((RaycastHit)(ref val2)).point - ((Ray)(ref val)).direction * 0.1f, flameRadius * 0.5f, flameRadius, damagePerSec, 2279681, useLineOfSight: true);
+		DamageUtil.RadiusDamage (ownerPlayer, LookupPrefab (), hitInfo.point - ray.direction * 0.1f, flameRadius * 0.5f, flameRadius, damagePerSec, 2279681, useLineOfSight: true);
 		damagePerSec [0].amount = amount;
-		if (num2 && Time.realtimeSinceStartup >= nextFlameTime && ((RaycastHit)(ref val2)).distance > 1.1f) {
-			nextFlameTime = Time.realtimeSinceStartup + 0.45f;
-			Vector3 point = ((RaycastHit)(ref val2)).point;
-			BaseEntity baseEntity = GameManager.server.CreateEntity (fireballPrefab.resourcePath, point - ((Ray)(ref val)).direction * 0.25f);
-			if (Object.op_Implicit ((Object)(object)baseEntity)) {
+		if (num2 && UnityEngine.Time.realtimeSinceStartup >= nextFlameTime && hitInfo.distance > 1.1f) {
+			nextFlameTime = UnityEngine.Time.realtimeSinceStartup + 0.45f;
+			Vector3 point = hitInfo.point;
+			BaseEntity baseEntity = GameManager.server.CreateEntity (fireballPrefab.resourcePath, point - ray.direction * 0.25f);
+			if ((bool)baseEntity) {
 				baseEntity.creatorEntity = ownerPlayer;
 				baseEntity.Spawn ();
 			}
@@ -436,11 +386,6 @@ public class FlameThrower : AttackEntity
 
 	public override void ServerCommand (Item item, string command, BasePlayer player)
 	{
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0063: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0074: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007a: Unknown result type (might be due to invalid IL or missing references)
 		if (item == null || !(command == "unload_ammo")) {
 			return;
 		}

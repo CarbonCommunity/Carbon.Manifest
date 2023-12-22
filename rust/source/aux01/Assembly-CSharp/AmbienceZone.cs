@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public class AmbienceZone : TriggerBase, IClientComponentEx
 {
 	public AmbienceDefinitionList baseAmbience;
@@ -16,7 +14,7 @@ public class AmbienceZone : TriggerBase, IClientComponentEx
 
 	public virtual void PreClientComponentCull (IPrefabProcessor p)
 	{
-		p.RemoveComponent ((Component)(object)this);
-		p.NominateForDeletion (((Component)this).gameObject);
+		p.RemoveComponent (this);
+		p.NominateForDeletion (base.gameObject);
 	}
 }

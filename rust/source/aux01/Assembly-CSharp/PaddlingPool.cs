@@ -49,9 +49,9 @@ public class PaddlingPool : LiquidContainer, ISplashable
 		if (base.IsDestroyed) {
 			return false;
 		}
-		if (!HasFlag (Flags.Reserved4) && (Object)(object)splashType != (Object)null) {
+		if (!HasFlag (Flags.Reserved4) && splashType != null) {
 			for (int i = 0; i < ValidItems.Length; i++) {
-				if ((Object)(object)ValidItems [i] != (Object)null && ValidItems [i].itemid == splashType.itemid) {
+				if (ValidItems [i] != null && ValidItems [i].itemid == splashType.itemid) {
 					return true;
 				}
 			}
@@ -83,10 +83,6 @@ public class PaddlingPool : LiquidContainer, ISplashable
 
 	private void UpdatePoolFillAmount (float normalisedAmount)
 	{
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006c: Unknown result type (might be due to invalid IL or missing references)
 		poolWaterVisual.gameObject.SetActive (normalisedAmount > 0f);
 		waterVolume.waterEnabled = normalisedAmount > 0f;
 		float y = Mathf.Lerp (minimumWaterHeight, maximumWaterHeight, normalisedAmount);
@@ -117,17 +113,17 @@ public class PaddlingPool : LiquidContainer, ISplashable
 		if (!base.isServer) {
 			return;
 		}
-		List<IPoolVehicle> list = Pool.GetList<IPoolVehicle> ();
+		List<IPoolVehicle> obj = Pool.GetList<IPoolVehicle> ();
 		if (waterVolume.entityContents != null) {
 			foreach (BaseEntity entityContent in waterVolume.entityContents) {
 				if (entityContent is IPoolVehicle item) {
-					list.Add (item);
+					obj.Add (item);
 				}
 			}
 		}
-		foreach (IPoolVehicle item2 in list) {
+		foreach (IPoolVehicle item2 in obj) {
 			item2.OnPoolDestroyed ();
 		}
-		Pool.FreeList<IPoolVehicle> (ref list);
+		Pool.FreeList (ref obj);
 	}
 }

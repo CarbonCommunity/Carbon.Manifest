@@ -12,14 +12,11 @@ public class ToolgunBeam : MonoBehaviour
 
 	public void Update ()
 	{
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
 		if (fadeColor.a <= 0f) {
-			Object.Destroy ((Object)(object)((Component)this).gameObject);
+			Object.Destroy (base.gameObject);
 			return;
 		}
-		((Renderer)electricalBeam).sharedMaterial.SetTextureOffset ("_MainTex", new Vector2 (Time.time * scrollSpeed, 0f));
+		electricalBeam.sharedMaterial.SetTextureOffset ("_MainTex", new Vector2 (Time.time * scrollSpeed, 0f));
 		fadeColor.a -= Time.deltaTime * fadeSpeed;
 		electricalBeam.startColor = fadeColor;
 		electricalBeam.endColor = fadeColor;

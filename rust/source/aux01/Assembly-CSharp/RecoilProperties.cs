@@ -21,15 +21,9 @@ public class RecoilProperties : ScriptableObject
 
 	public float clampPitch = float.NegativeInfinity;
 
-	public AnimationCurve pitchCurve = new AnimationCurve ((Keyframe[])(object)new Keyframe[2] {
-		new Keyframe (0f, 1f),
-		new Keyframe (1f, 1f)
-	});
+	public AnimationCurve pitchCurve = new AnimationCurve (new Keyframe (0f, 1f), new Keyframe (1f, 1f));
 
-	public AnimationCurve yawCurve = new AnimationCurve ((Keyframe[])(object)new Keyframe[2] {
-		new Keyframe (0f, 1f),
-		new Keyframe (1f, 1f)
-	});
+	public AnimationCurve yawCurve = new AnimationCurve (new Keyframe (0f, 1f), new Keyframe (1f, 1f));
 
 	public bool useCurves;
 
@@ -45,23 +39,16 @@ public class RecoilProperties : ScriptableObject
 	public float aimconeCurveScale = 1f;
 
 	[Tooltip ("How much to scale aimcone by based on how far into the shot sequence we are (shots v shotsUntilMax)")]
-	public AnimationCurve aimconeCurve = new AnimationCurve ((Keyframe[])(object)new Keyframe[2] {
-		new Keyframe (0f, 1f),
-		new Keyframe (1f, 1f)
-	});
+	public AnimationCurve aimconeCurve = new AnimationCurve (new Keyframe (0f, 1f), new Keyframe (1f, 1f));
 
 	[Tooltip ("Randomly select how much to scale final aimcone by per shot, you can use this to weigh a fraction of shots closer to the center")]
-	public AnimationCurve aimconeProbabilityCurve = new AnimationCurve ((Keyframe[])(object)new Keyframe[3] {
-		new Keyframe (0f, 1f),
-		new Keyframe (0.5f, 0f),
-		new Keyframe (1f, 1f)
-	});
+	public AnimationCurve aimconeProbabilityCurve = new AnimationCurve (new Keyframe (0f, 1f), new Keyframe (0.5f, 0f), new Keyframe (1f, 1f));
 
 	public RecoilProperties newRecoilOverride;
 
 	public RecoilProperties GetRecoil ()
 	{
-		if (!((Object)(object)newRecoilOverride != (Object)null)) {
+		if (!(newRecoilOverride != null)) {
 			return this;
 		}
 		return newRecoilOverride;

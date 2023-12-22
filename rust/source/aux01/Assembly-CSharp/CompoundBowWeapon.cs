@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Network;
@@ -40,36 +41,29 @@ public class CompoundBowWeapon : BowWeapon
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("CompoundBowWeapon.OnRpcMessage", 0);
-		try {
-			if (rpc == 618693016 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("CompoundBowWeapon.OnRpcMessage")) {
+			if (rpc == 618693016 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_StringHoldStatus "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_StringHoldStatus "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_StringHoldStatus", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Call", 0);
+				using (TimeWarning.New ("RPC_StringHoldStatus")) {
 					try {
-						RPCMessage rPCMessage = default(RPCMessage);
-						rPCMessage.connection = msg.connection;
-						rPCMessage.player = player;
-						rPCMessage.read = msg.read;
-						RPCMessage msg2 = rPCMessage;
-						RPC_StringHoldStatus (msg2);
-					} finally {
-						((IDisposable)val3)?.Dispose ();
+						using (TimeWarning.New ("Call")) {
+							RPCMessage rPCMessage = default(RPCMessage);
+							rPCMessage.connection = msg.connection;
+							rPCMessage.player = player;
+							rPCMessage.read = msg.read;
+							RPCMessage msg2 = rPCMessage;
+							RPC_StringHoldStatus (msg2);
+						}
+					} catch (Exception exception) {
+						Debug.LogException (exception);
+						player.Kick ("RPC Error in RPC_StringHoldStatus");
 					}
-				} catch (Exception ex) {
-					Debug.LogException (ex);
-					player.Kick ("RPC Error in RPC_StringHoldStatus");
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -79,7 +73,7 @@ public class CompoundBowWeapon : BowWeapon
 		BasePlayer ownerPlayer = GetOwnerPlayer ();
 		bool flag = false;
 		if (base.isServer) {
-			if ((Object)(object)ownerPlayer == (Object)null) {
+			if (ownerPlayer == null) {
 				return;
 			}
 			flag = ownerPlayer.estimatedSpeed > 0.1f;
@@ -94,7 +88,7 @@ public class CompoundBowWeapon : BowWeapon
 
 	public void UpdateConditionLoss ()
 	{
-		if (stringHoldTimeStart != 0f && Time.time - stringHoldTimeStart > conditionLossHeldDelay && GetStringBonusScale () > 0f) {
+		if (stringHoldTimeStart != 0f && UnityEngine.Time.time - stringHoldTimeStart > conditionLossHeldDelay && GetStringBonusScale () > 0f) {
 			GetOwnerItem ()?.LoseCondition (conditionLossCheckTickRate * conditionLossPerSecondHeld);
 		}
 	}
@@ -108,11 +102,11 @@ public class CompoundBowWeapon : BowWeapon
 	{
 		base.OnHeldChanged ();
 		if (IsDisabled ()) {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)ServerMovementCheck);
-			((FacepunchBehaviour)this).CancelInvoke ((Action)UpdateConditionLoss);
+			CancelInvoke (ServerMovementCheck);
+			CancelInvoke (UpdateConditionLoss);
 		} else {
-			((FacepunchBehaviour)this).InvokeRepeating ((Action)ServerMovementCheck, 0f, serverMovementCheckTickRate);
-			((FacepunchBehaviour)this).InvokeRepeating ((Action)UpdateConditionLoss, 0f, conditionLossCheckTickRate);
+			InvokeRepeating (ServerMovementCheck, 0f, serverMovementCheckTickRate);
+			InvokeRepeating (UpdateConditionLoss, 0f, conditionLossCheckTickRate);
 		}
 	}
 
@@ -120,7 +114,7 @@ public class CompoundBowWeapon : BowWeapon
 	public void RPC_StringHoldStatus (RPCMessage msg)
 	{
 		if (msg.read.Bit ()) {
-			stringHoldTimeStart = Time.time;
+			stringHoldTimeStart = UnityEngine.Time.time;
 		} else {
 			stringHoldTimeStart = 0f;
 		}
@@ -143,7 +137,7 @@ public class CompoundBowWeapon : BowWeapon
 		if (stringHoldTimeStart == 0f) {
 			return 0f;
 		}
-		return Mathf.Clamp01 (Mathf.Clamp01 ((Time.time - stringHoldTimeStart) / stringHoldDurationMax) - movementPenalty);
+		return Mathf.Clamp01 (Mathf.Clamp01 ((UnityEngine.Time.time - stringHoldTimeStart) / stringHoldDurationMax) - movementPenalty);
 	}
 
 	public override float GetDamageScale (bool getMax = false)

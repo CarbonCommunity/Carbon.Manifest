@@ -4,6 +4,6 @@ public class VitalRadial : MonoBehaviour
 {
 	private void Awake ()
 	{
-		Debug.LogWarning ((object)("VitalRadial is obsolete " + ((Component)this).transform.GetRecursiveName ()), (Object)(object)((Component)this).gameObject);
+		Debug.LogWarning ("VitalRadial is obsolete " + base.transform.GetRecursiveName (), base.gameObject);
 	}
 }

@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -22,7 +23,7 @@ public class BuildingBlock : StabilityEntity
 	{
 		protected override void RunJob (BuildingBlock entity)
 		{
-			if (((ObjectWorkQueue<BuildingBlock>)this).ShouldAdd (entity)) {
+			if (ShouldAdd (entity)) {
 				entity.UpdateSkin (force: true);
 			}
 		}
@@ -66,7 +67,13 @@ public class BuildingBlock : StabilityEntity
 	[NonSerialized]
 	public Construction blockDefinition;
 
-	private static Vector3[] outsideLookupOffsets;
+	private static Vector3[] outsideLookupOffsets = new Vector3[5] {
+		new Vector3 (0f, 1f, 0f).normalized,
+		new Vector3 (1f, 1f, 0f).normalized,
+		new Vector3 (-1f, 1f, 0f).normalized,
+		new Vector3 (0f, 1f, 1f).normalized,
+		new Vector3 (0f, 1f, -1f).normalized
+	};
 
 	public uint customColour { get; private set; }
 
@@ -74,190 +81,142 @@ public class BuildingBlock : StabilityEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("BuildingBlock.OnRpcMessage", 0);
-		try {
-			if (rpc == 2858062413u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("BuildingBlock.OnRpcMessage")) {
+			if (rpc == 2858062413u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - DoDemolish "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - DoDemolish "));
 				}
-				TimeWarning val2 = TimeWarning.New ("DoDemolish", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("DoDemolish")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (2858062413u, "DoDemolish", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							DoDemolish (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in DoDemolish");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 216608990 && (Object)(object)player != (Object)null) {
+			if (rpc == 216608990 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - DoImmediateDemolish "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - DoImmediateDemolish "));
 				}
-				TimeWarning val2 = TimeWarning.New ("DoImmediateDemolish", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("DoImmediateDemolish")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (216608990u, "DoImmediateDemolish", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg3 = rPCMessage;
 							DoImmediateDemolish (msg3);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in DoImmediateDemolish");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 1956645865 && (Object)(object)player != (Object)null) {
+			if (rpc == 1956645865 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - DoRotation "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - DoRotation "));
 				}
-				TimeWarning val2 = TimeWarning.New ("DoRotation", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("DoRotation")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (1956645865u, "DoRotation", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg4 = rPCMessage;
 							DoRotation (msg4);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex3) {
-						Debug.LogException (ex3);
+					} catch (Exception exception3) {
+						Debug.LogException (exception3);
 						player.Kick ("RPC Error in DoRotation");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 3746288057u && (Object)(object)player != (Object)null) {
+			if (rpc == 3746288057u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - DoUpgradeToGrade "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - DoUpgradeToGrade "));
 				}
-				TimeWarning val2 = TimeWarning.New ("DoUpgradeToGrade", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("DoUpgradeToGrade")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (3746288057u, "DoUpgradeToGrade", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg5 = rPCMessage;
 							DoUpgradeToGrade (msg5);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex4) {
-						Debug.LogException (ex4);
+					} catch (Exception exception4) {
+						Debug.LogException (exception4);
 						player.Kick ("RPC Error in DoUpgradeToGrade");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 4081052216u && (Object)(object)player != (Object)null) {
+			if (rpc == 4081052216u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - DoUpgradeToGrade_Delayed "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - DoUpgradeToGrade_Delayed "));
 				}
-				TimeWarning val2 = TimeWarning.New ("DoUpgradeToGrade_Delayed", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("DoUpgradeToGrade_Delayed")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (4081052216u, "DoUpgradeToGrade_Delayed", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg6 = rPCMessage;
 							DoUpgradeToGrade_Delayed (msg6);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex5) {
-						Debug.LogException (ex5);
+					} catch (Exception exception5) {
+						Debug.LogException (exception5);
 						player.Kick ("RPC Error in DoUpgradeToGrade_Delayed");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -280,10 +239,7 @@ public class BuildingBlock : StabilityEntity
 
 	private bool HasDemolishPrivilege (BasePlayer player)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		return player.IsBuildingAuthed (((Component)this).transform.position, ((Component)this).transform.rotation, bounds);
+		return player.IsBuildingAuthed (base.transform.position, base.transform.rotation, bounds);
 	}
 
 	[RPC_Server]
@@ -315,7 +271,7 @@ public class BuildingBlock : StabilityEntity
 	private void StartBeingDemolishable ()
 	{
 		SetFlag (Flags.Reserved2, b: true);
-		((FacepunchBehaviour)this).Invoke ((Action)StopBeingDemolishable, 600f);
+		Invoke (StopBeingDemolishable, 600f);
 	}
 
 	public void SetConditionalModel (int state)
@@ -338,9 +294,6 @@ public class BuildingBlock : StabilityEntity
 
 	private bool HasUpgradePrivilege (BuildingGrade.Enum iGrade, ulong iSkin, BasePlayer player)
 	{
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
 		if (iGrade < grade) {
 			return false;
 		}
@@ -353,18 +306,16 @@ public class BuildingBlock : StabilityEntity
 		if (iGrade >= BuildingGrade.Enum.Count) {
 			return false;
 		}
-		return !player.IsBuildingBlocked (((Component)this).transform.position, ((Component)this).transform.rotation, bounds);
+		return !player.IsBuildingBlocked (base.transform.position, base.transform.rotation, bounds);
 	}
 
 	private bool IsUpgradeBlocked ()
 	{
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0031: Unknown result type (might be due to invalid IL or missing references)
 		if (!blockDefinition.checkVolumeOnUpgrade) {
 			return false;
 		}
 		DeployVolume[] volumes = PrefabAttribute.server.FindAll<DeployVolume> (prefabID);
-		return DeployVolume.Check (((Component)this).transform.position, ((Component)this).transform.rotation, volumes, ~(1 << ((Component)this).gameObject.layer));
+		return DeployVolume.Check (base.transform.position, base.transform.rotation, volumes, ~(1 << base.gameObject.layer));
 	}
 
 	private bool CanAffordUpgrade (BuildingGrade.Enum iGrade, ulong iSkin, BasePlayer player)
@@ -380,7 +331,7 @@ public class BuildingBlock : StabilityEntity
 	public void SetGrade (BuildingGrade.Enum iGrade)
 	{
 		if (blockDefinition.grades == null || iGrade <= BuildingGrade.Enum.None || iGrade >= BuildingGrade.Enum.Count) {
-			Debug.LogError ((object)("Tried to set to undefined grade! " + blockDefinition.fullName), (Object)(object)((Component)this).gameObject);
+			Debug.LogError ("Tried to set to undefined grade! " + blockDefinition.fullName, base.gameObject);
 			return;
 		}
 		grade = iGrade;
@@ -421,7 +372,7 @@ public class BuildingBlock : StabilityEntity
 		ConstructionGrade constructionGrade = blockDefinition.GetGrade (@enum, num);
 		if (!(constructionGrade == null) && CanChangeToGrade (@enum, num, msg.player) && CanAffordUpgrade (@enum, num, msg.player) && !(base.SecondsSinceAttacked < 30f) && (num == 0L || msg.player.blueprints.steamInventory.HasItem ((int)num))) {
 			PayForUpgrade (constructionGrade, msg.player);
-			if ((Object)(object)msg.player != (Object)null) {
+			if (msg.player != null) {
 				playerCustomColourToApply = msg.player.LastBlockColourChangeId;
 			}
 			ClientRPC (null, "DoUpgradeEffect", (int)@enum, num);
@@ -443,7 +394,7 @@ public class BuildingBlock : StabilityEntity
 		ConstructionGrade constructionGrade = blockDefinition.GetGrade (@enum, num);
 		if (!(constructionGrade == null) && CanChangeToGrade (@enum, num, msg.player) && CanAffordUpgrade (@enum, num, msg.player) && !(base.SecondsSinceAttacked < 30f) && (num == 0L || msg.player.blueprints.steamInventory.HasItem ((int)num))) {
 			PayForUpgrade (constructionGrade, msg.player);
-			if ((Object)(object)msg.player != (Object)null) {
+			if (msg.player != null) {
 				playerCustomColourToApply = msg.player.LastBlockColourChangeId;
 			}
 			ClientRPC (null, "DoUpgradeEffect", (int)@enum, num);
@@ -500,7 +451,7 @@ public class BuildingBlock : StabilityEntity
 
 	private bool NeedsSkinChange ()
 	{
-		if (!((Object)(object)currentSkin == (Object)null) && !forceSkinRefresh && lastGrade == grade && lastModelState == modelState) {
+		if (!(currentSkin == null) && !forceSkinRefresh && lastGrade == grade && lastModelState == modelState) {
 			return lastSkinID != skinID;
 		}
 		return true;
@@ -519,7 +470,7 @@ public class BuildingBlock : StabilityEntity
 			return;
 		}
 		if (!skinChange) {
-			skinChange = new DeferredAction ((Object)(object)this, ChangeSkin);
+			skinChange = new DeferredAction (this, ChangeSkin);
 		}
 		if (skinChange.Idle) {
 			skinChange.Invoke ();
@@ -528,7 +479,7 @@ public class BuildingBlock : StabilityEntity
 
 	private void DestroySkin ()
 	{
-		if ((Object)(object)currentSkin != (Object)null) {
+		if (currentSkin != null) {
 			currentSkin.Destroy (this);
 			currentSkin = null;
 		}
@@ -541,11 +492,11 @@ public class BuildingBlock : StabilityEntity
 			EntityLink entityLink = entityLinks [i];
 			for (int j = 0; j < entityLink.connections.Count; j++) {
 				BuildingBlock buildingBlock = entityLink.connections [j].owner as BuildingBlock;
-				if (!((Object)(object)buildingBlock == (Object)null)) {
-					if (Application.isLoading) {
+				if (!(buildingBlock == null)) {
+					if (Rust.Application.isLoading) {
 						buildingBlock.UpdateSkin (force: true);
 					} else {
-						((ObjectWorkQueue<BuildingBlock>)updateSkinQueueServer).Add (buildingBlock);
+						updateSkinQueueServer.Add (buildingBlock);
 					}
 				}
 			}
@@ -554,11 +505,11 @@ public class BuildingBlock : StabilityEntity
 
 	private void UpdatePlaceholder (bool state)
 	{
-		if (Object.op_Implicit ((Object)(object)placeholderRenderer)) {
-			((Renderer)placeholderRenderer).enabled = state;
+		if ((bool)placeholderRenderer) {
+			placeholderRenderer.enabled = state;
 		}
-		if (Object.op_Implicit ((Object)(object)placeholderCollider)) {
-			((Collider)placeholderCollider).enabled = state;
+		if ((bool)placeholderCollider) {
+			placeholderCollider.enabled = state;
 		}
 	}
 
@@ -576,7 +527,7 @@ public class BuildingBlock : StabilityEntity
 		if (defaultGrade.skinObject.isValid) {
 			ChangeSkin (defaultGrade.skinObject);
 		} else {
-			Debug.LogWarning ((object)("No skins found for " + ((Component)this).gameObject));
+			Debug.LogWarning ("No skins found for " + base.gameObject);
 		}
 	}
 
@@ -586,19 +537,19 @@ public class BuildingBlock : StabilityEntity
 		lastGrade = grade;
 		lastSkinID = skinID;
 		if (flag) {
-			if ((Object)(object)currentSkin == (Object)null) {
+			if (currentSkin == null) {
 				UpdatePlaceholder (state: false);
 			} else {
 				DestroySkin ();
 			}
-			GameObject val = base.gameManager.CreatePrefab (prefab.resourcePath, ((Component)this).transform);
-			currentSkin = val.GetComponent<ConstructionSkin> ();
-			if ((Object)(object)currentSkin != (Object)null && base.isServer && !Application.isLoading) {
+			GameObject gameObject = base.gameManager.CreatePrefab (prefab.resourcePath, base.transform);
+			currentSkin = gameObject.GetComponent<ConstructionSkin> ();
+			if (currentSkin != null && base.isServer && !Rust.Application.isLoading) {
 				customColour = currentSkin.GetStartingDetailColour (playerCustomColourToApply);
 			}
-			Model component = ((Component)currentSkin).GetComponent<Model> ();
+			Model component = currentSkin.GetComponent<Model> ();
 			SetModel (component);
-			Assert.IsTrue ((Object)(object)model == (Object)(object)component, "Didn't manage to set model successfully!");
+			Assert.IsTrue (model == component, "Didn't manage to set model successfully!");
 		}
 		if (base.isServer) {
 			modelState = currentSkin.DetermineConditionalModelState (this);
@@ -631,19 +582,17 @@ public class BuildingBlock : StabilityEntity
 
 	public void CheckForPipes ()
 	{
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
-		if (!CheckForPipesOnModelChange || !ConVar.Server.enforcePipeChecksOnBuildingBlockChanges || Application.isLoading) {
+		if (!CheckForPipesOnModelChange || !ConVar.Server.enforcePipeChecksOnBuildingBlockChanges || Rust.Application.isLoading) {
 			return;
 		}
-		List<ColliderInfo_Pipe> list = Pool.GetList<ColliderInfo_Pipe> ();
-		Vis.Components<ColliderInfo_Pipe> (new OBB (((Component)this).transform, bounds), list, 536870912, (QueryTriggerInteraction)2);
-		foreach (ColliderInfo_Pipe item in list) {
-			if (!((Object)(object)item == (Object)null) && ((Component)item).gameObject.activeInHierarchy && item.HasFlag (ColliderInfo.Flags.OnlyBlockBuildingBlock) && (Object)(object)item.ParentEntity != (Object)null && item.ParentEntity.isServer) {
+		List<ColliderInfo_Pipe> obj = Facepunch.Pool.GetList<ColliderInfo_Pipe> ();
+		Vis.Components (new OBB (base.transform, bounds), obj, 536870912);
+		foreach (ColliderInfo_Pipe item in obj) {
+			if (!(item == null) && item.gameObject.activeInHierarchy && item.HasFlag (ColliderInfo.Flags.OnlyBlockBuildingBlock) && item.ParentEntity != null && item.ParentEntity.isServer) {
 				WireTool.AttemptClearSlot (item.ParentEntity, null, item.OutputSlotIndex, isInput: false);
 			}
 		}
-		Pool.FreeList<ColliderInfo_Pipe> (ref list);
+		Facepunch.Pool.FreeList (ref obj);
 	}
 
 	private void OnHammered ()
@@ -697,34 +646,24 @@ public class BuildingBlock : StabilityEntity
 
 	private bool IsRotationBlocked ()
 	{
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0031: Unknown result type (might be due to invalid IL or missing references)
 		if (!blockDefinition.checkVolumeOnRotate) {
 			return false;
 		}
 		DeployVolume[] volumes = PrefabAttribute.server.FindAll<DeployVolume> (prefabID);
-		return DeployVolume.Check (((Component)this).transform.position, ((Component)this).transform.rotation, volumes, ~(1 << ((Component)this).gameObject.layer));
+		return DeployVolume.Check (base.transform.position, base.transform.rotation, volumes, ~(1 << base.gameObject.layer));
 	}
 
 	private bool HasRotationPrivilege (BasePlayer player)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		return !player.IsBuildingBlocked (((Component)this).transform.position, ((Component)this).transform.rotation, bounds);
+		return !player.IsBuildingBlocked (base.transform.position, base.transform.rotation, bounds);
 	}
 
 	[RPC_Server]
 	[RPC_Server.MaxDistance (3f)]
 	private void DoRotation (RPCMessage msg)
 	{
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
 		if (msg.player.CanInteract () && CanRotate (msg.player) && blockDefinition.canRotateAfterPlacement) {
-			Transform transform = ((Component)this).transform;
-			transform.localRotation *= Quaternion.Euler (blockDefinition.rotationAmount);
+			base.transform.localRotation *= Quaternion.Euler (blockDefinition.rotationAmount);
 			RefreshEntityLinks ();
 			UpdateSurroundingEntities ();
 			UpdateSkin (force: true);
@@ -744,18 +683,18 @@ public class BuildingBlock : StabilityEntity
 	{
 		if (blockDefinition.grades != null && blockDefinition.canRotateAfterPlacement) {
 			SetFlag (Flags.Reserved1, b: true);
-			((FacepunchBehaviour)this).Invoke ((Action)StopBeingRotatable, 600f);
+			Invoke (StopBeingRotatable, 600f);
 		}
 	}
 
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.buildingBlock = Pool.Get<BuildingBlock> ();
+		info.msg.buildingBlock = Facepunch.Pool.Get<ProtoBuf.BuildingBlock> ();
 		info.msg.buildingBlock.model = modelState;
 		info.msg.buildingBlock.grade = (int)grade;
 		if (customColour != 0) {
-			info.msg.simpleUint = Pool.Get<SimpleUInt> ();
+			info.msg.simpleUint = Facepunch.Pool.Get<SimpleUInt> ();
 			info.msg.simpleUint.value = customColour;
 		}
 	}
@@ -780,7 +719,7 @@ public class BuildingBlock : StabilityEntity
 
 	public override void AttachToBuilding (DecayEntity other)
 	{
-		if ((Object)(object)other != (Object)null && other is BuildingBlock) {
+		if (other != null && other is BuildingBlock) {
 			AttachToBuilding (other.buildingID);
 			BuildingManager.server.CheckMerge (this);
 		} else {
@@ -790,35 +729,34 @@ public class BuildingBlock : StabilityEntity
 
 	public override void ServerInit ()
 	{
-		//IL_0095: Unknown result type (might be due to invalid IL or missing references)
 		blockDefinition = PrefabAttribute.server.Find<Construction> (prefabID);
 		if (blockDefinition == null) {
-			Debug.LogError ((object)("Couldn't find Construction for prefab " + prefabID));
+			Debug.LogError ("Couldn't find Construction for prefab " + prefabID);
 		}
 		base.ServerInit ();
 		UpdateSkin ();
-		if (HasFlag (Flags.Reserved1) || !Application.isLoadingSave) {
+		if (HasFlag (Flags.Reserved1) || !Rust.Application.isLoadingSave) {
 			StartBeingRotatable ();
 		}
-		if (HasFlag (Flags.Reserved2) || !Application.isLoadingSave) {
+		if (HasFlag (Flags.Reserved2) || !Rust.Application.isLoadingSave) {
 			StartBeingDemolishable ();
 		}
-		if (!CullBushes || Application.isLoadingSave) {
+		if (!CullBushes || Rust.Application.isLoadingSave) {
 			return;
 		}
-		List<BushEntity> list = Pool.GetList<BushEntity> ();
-		Vis.Entities (WorldSpaceBounds (), list, 67108864, (QueryTriggerInteraction)2);
-		foreach (BushEntity item in list) {
+		List<BushEntity> obj = Facepunch.Pool.GetList<BushEntity> ();
+		Vis.Entities (WorldSpaceBounds (), obj, 67108864);
+		foreach (BushEntity item in obj) {
 			if (item.isServer) {
 				item.Kill ();
 			}
 		}
-		Pool.FreeList<BushEntity> (ref list);
+		Facepunch.Pool.FreeList (ref obj);
 	}
 
 	public override void Hurt (HitInfo info)
 	{
-		if (ConVar.Server.pve && Object.op_Implicit ((Object)(object)info.Initiator) && info.Initiator is BasePlayer) {
+		if (ConVar.Server.pve && (bool)info.Initiator && info.Initiator is BasePlayer) {
 			(info.Initiator as BasePlayer).Hurt (info.damageTypes.Total (), DamageType.Generic);
 		} else {
 			base.Hurt (info);
@@ -841,8 +779,8 @@ public class BuildingBlock : StabilityEntity
 	public override void InitShared ()
 	{
 		base.InitShared ();
-		placeholderRenderer = ((Component)this).GetComponent<MeshRenderer> ();
-		placeholderCollider = ((Component)this).GetComponent<MeshCollider> ();
+		placeholderRenderer = GetComponent<MeshRenderer> ();
+		placeholderCollider = GetComponent<MeshCollider> ();
 	}
 
 	public override void PostInitShared ()
@@ -872,25 +810,12 @@ public class BuildingBlock : StabilityEntity
 
 	public override bool IsOutside ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
 		float outside_test_range = ConVar.Decay.outside_test_range;
-		Vector3 val = PivotPoint ();
+		Vector3 vector = PivotPoint ();
 		for (int i = 0; i < outsideLookupOffsets.Length; i++) {
-			Vector3 val2 = outsideLookupOffsets [i];
-			Vector3 val3 = val + val2 * outside_test_range;
-			if (!Physics.Raycast (new Ray (val3, -val2), outside_test_range - 0.5f, 2097152)) {
+			Vector3 vector2 = outsideLookupOffsets [i];
+			Vector3 origin = vector + vector2 * outside_test_range;
+			if (!UnityEngine.Physics.Raycast (new Ray (origin, -vector2), outside_test_range - 0.5f, 2097152)) {
 				return true;
 			}
 		}
@@ -900,41 +825,5 @@ public class BuildingBlock : StabilityEntity
 	public override bool SupportsChildDeployables ()
 	{
 		return true;
-	}
-
-	static BuildingBlock ()
-	{
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0067: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0074: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0092: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0097: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ad: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ba: Unknown result type (might be due to invalid IL or missing references)
-		Vector3[] array = new Vector3[5];
-		Vector3 val = new Vector3 (0f, 1f, 0f);
-		array [0] = ((Vector3)(ref val)).normalized;
-		val = new Vector3 (1f, 1f, 0f);
-		array [1] = ((Vector3)(ref val)).normalized;
-		val = new Vector3 (-1f, 1f, 0f);
-		array [2] = ((Vector3)(ref val)).normalized;
-		val = new Vector3 (0f, 1f, 1f);
-		array [3] = ((Vector3)(ref val)).normalized;
-		val = new Vector3 (0f, 1f, -1f);
-		array [4] = ((Vector3)(ref val)).normalized;
-		outsideLookupOffsets = (Vector3[])(object)array;
 	}
 }

@@ -1,4 +1,3 @@
-using System;
 using ConVar;
 using Rust;
 using UnityEngine;
@@ -25,7 +24,7 @@ public class TrainBarricade : BaseCombatEntity, ITrainCollidable, TrainTrackSpli
 
 	private TrainTrackSpline track;
 
-	public Vector3 Position => ((Component)this).transform.position;
+	public Vector3 Position => base.transform.position;
 
 	public float FrontWheelSplineDist { get; private set; }
 
@@ -38,10 +37,10 @@ public class TrainBarricade : BaseCombatEntity, ITrainCollidable, TrainTrackSpli
 			float num = Mathf.Abs (train.GetTrackSpeed ());
 			SetHitTrain (train, trainTrigger);
 			if (num < minVelToDestroy && !vehicle.cinematictrains) {
-				((FacepunchBehaviour)this).InvokeRandomized ((Action)PushForceTick, 0f, 0.25f, 0.025f);
+				InvokeRandomized (PushForceTick, 0f, 0.25f, 0.025f);
 			} else {
 				result = true;
-				((FacepunchBehaviour)this).Invoke ((Action)DestroyThisBarrier, 0f);
+				Invoke (DestroyThisBarrier, 0f);
 			}
 		}
 		return result;
@@ -49,9 +48,8 @@ public class TrainBarricade : BaseCombatEntity, ITrainCollidable, TrainTrackSpli
 
 	public override void ServerInit ()
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
 		base.ServerInit ();
-		if (TrainTrackSpline.TryFindTrackNear (((Component)this).transform.position, 3f, out var splineResult, out var distResult)) {
+		if (TrainTrackSpline.TryFindTrackNear (base.transform.position, 3f, out var splineResult, out var distResult)) {
 			track = splineResult;
 			FrontWheelSplineDist = distResult;
 			track.RegisterTrackUser (this);
@@ -60,7 +58,7 @@ public class TrainBarricade : BaseCombatEntity, ITrainCollidable, TrainTrackSpli
 
 	internal override void DoServerDestroy ()
 	{
-		if ((Object)(object)track != (Object)null) {
+		if (track != null) {
 			track.DeregisterTrackUser (this);
 		}
 		base.DoServerDestroy ();
@@ -82,7 +80,7 @@ public class TrainBarricade : BaseCombatEntity, ITrainCollidable, TrainTrackSpli
 		if (IsDead () || base.IsDestroyed) {
 			return;
 		}
-		if ((Object)(object)hitTrain != (Object)null) {
+		if (hitTrain != null) {
 			hitTrain.completeTrain.ReduceSpeedBy (velReduction);
 			if (vehicle.cinematictrains) {
 				hitTrain.Hurt (9999f, DamageType.Collision, this, useProtection: false);
@@ -97,36 +95,17 @@ public class TrainBarricade : BaseCombatEntity, ITrainCollidable, TrainTrackSpli
 
 	private void PushForceTick ()
 	{
-		//IL_0064: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0069: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ac: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0094: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0099: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00be: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ca: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00da: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00df: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ee: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ef: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)hitTrain == (Object)null || (Object)(object)hitTrainTrigger == (Object)null || hitTrain.IsDead () || hitTrain.IsDestroyed || IsDead ()) {
+		if (hitTrain == null || hitTrainTrigger == null || hitTrain.IsDead () || hitTrain.IsDestroyed || IsDead ()) {
 			ClearHitTrain ();
-			((FacepunchBehaviour)this).CancelInvoke ((Action)PushForceTick);
+			CancelInvoke (PushForceTick);
 			return;
 		}
 		bool flag = true;
-		Bounds val = hitTrainTrigger.triggerCollider.bounds;
-		if (!((Bounds)(ref val)).Intersects (bounds)) {
-			Vector3 val2 = ((hitTrainTrigger.location != 0) ? hitTrainTrigger.owner.GetRearOfTrainPos () : hitTrainTrigger.owner.GetFrontOfTrainPos ());
-			Vector3 val3 = ((Component)this).transform.position + ((Bounds)(ref bounds)).ClosestPoint (val2 - ((Component)this).transform.position);
-			Debug.DrawRay (val3, Vector3.up, Color.red, 10f);
-			flag = Vector3.SqrMagnitude (val3 - val2) < 1f;
+		if (!hitTrainTrigger.triggerCollider.bounds.Intersects (bounds)) {
+			Vector3 vector = ((hitTrainTrigger.location != 0) ? hitTrainTrigger.owner.GetRearOfTrainPos () : hitTrainTrigger.owner.GetFrontOfTrainPos ());
+			Vector3 vector2 = base.transform.position + bounds.ClosestPoint (vector - base.transform.position);
+			Debug.DrawRay (vector2, Vector3.up, Color.red, 10f);
+			flag = Vector3.SqrMagnitude (vector2 - vector) < 1f;
 		}
 		if (flag) {
 			float num = hitTrainTrigger.owner.completeTrain.TotalForces;
@@ -140,7 +119,7 @@ public class TrainBarricade : BaseCombatEntity, ITrainCollidable, TrainTrackSpli
 			}
 		} else {
 			ClearHitTrain ();
-			((FacepunchBehaviour)this).CancelInvoke ((Action)PushForceTick);
+			CancelInvoke (PushForceTick);
 		}
 	}
 }

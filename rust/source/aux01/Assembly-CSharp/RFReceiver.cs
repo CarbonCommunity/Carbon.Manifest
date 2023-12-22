@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Network;
@@ -12,46 +13,34 @@ public class RFReceiver : IOEntity, IRFObject
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("RFReceiver.OnRpcMessage", 0);
-		try {
-			if (rpc == 2778616053u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("RFReceiver.OnRpcMessage")) {
+			if (rpc == 2778616053u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - ServerSetFrequency "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - ServerSetFrequency "));
 				}
-				TimeWarning val2 = TimeWarning.New ("ServerSetFrequency", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("ServerSetFrequency")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (2778616053u, "ServerSetFrequency", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							ServerSetFrequency (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in ServerSetFrequency");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -81,8 +70,7 @@ public class RFReceiver : IOEntity, IRFObject
 
 	public Vector3 GetPosition ()
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		return ((Component)this).transform.position;
+		return base.transform.position;
 	}
 
 	public float GetMaxRange ()
@@ -115,7 +103,7 @@ public class RFReceiver : IOEntity, IRFObject
 	[RPC_Server.IsVisible (3f)]
 	public void ServerSetFrequency (RPCMessage msg)
 	{
-		if (!((Object)(object)msg.player == (Object)null) && msg.player.CanBuild ()) {
+		if (!(msg.player == null) && msg.player.CanBuild ()) {
 			int newFrequency = msg.read.Int32 ();
 			RFManager.ChangeFrequency (frequency, newFrequency, this, isListener: true);
 			frequency = newFrequency;
@@ -147,7 +135,7 @@ public class RFReceiver : IOEntity, IRFObject
 
 	private bool CanChangeFrequency (BasePlayer player)
 	{
-		if ((Object)(object)player != (Object)null) {
+		if (player != null) {
 			return player.CanBuild ();
 		}
 		return false;

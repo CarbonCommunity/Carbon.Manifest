@@ -37,11 +37,11 @@ public class ParticleSystemContainer : MonoBehaviour, IPrefabPreProcess
 	{
 		if (precached && clientside) {
 			List<ParticleSystemGroup> list = new List<ParticleSystemGroup> ();
-			ParticleSystem[] componentsInChildren = ((Component)this).GetComponentsInChildren<ParticleSystem> ();
-			foreach (ParticleSystem val in componentsInChildren) {
-				LODComponentParticleSystem[] components = ((Component)val).GetComponents<LODComponentParticleSystem> ();
+			ParticleSystem[] componentsInChildren = GetComponentsInChildren<ParticleSystem> ();
+			foreach (ParticleSystem particleSystem in componentsInChildren) {
+				LODComponentParticleSystem[] components = particleSystem.GetComponents<LODComponentParticleSystem> ();
 				ParticleSystemGroup particleSystemGroup = default(ParticleSystemGroup);
-				particleSystemGroup.system = val;
+				particleSystemGroup.system = particleSystem;
 				particleSystemGroup.lodComponents = components;
 				ParticleSystemGroup item = particleSystemGroup;
 				list.Add (item);

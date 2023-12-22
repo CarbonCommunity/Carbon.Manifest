@@ -16,39 +16,30 @@ public class MonumentMarker : MonoBehaviour
 
 	public void Setup (LandmarkInfo info)
 	{
-		text.text = (info.displayPhrase.IsValid () ? info.displayPhrase.translated : ((Object)((Component)info).transform.root).name);
-		if ((Object)(object)info.mapIcon != (Object)null) {
+		text.text = (info.displayPhrase.IsValid () ? info.displayPhrase.translated : info.transform.root.name);
+		if (info.mapIcon != null) {
 			image.sprite = info.mapIcon;
-			ComponentExtensions.SetActive<Text> (text, false);
-			ComponentExtensions.SetActive<Image> (imageBackground, true);
+			text.SetActive (active: false);
+			imageBackground.SetActive (active: true);
 		} else {
-			ComponentExtensions.SetActive<Text> (text, true);
-			ComponentExtensions.SetActive<Image> (imageBackground, false);
+			text.SetActive (active: true);
+			imageBackground.SetActive (active: false);
 		}
 		SetNightMode (nightMode: false);
 	}
 
 	public void SetNightMode (bool nightMode)
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0004: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006c: Unknown result type (might be due to invalid IL or missing references)
 		Color color = (nightMode ? nightColor : dayColor);
 		Color color2 = (nightMode ? dayColor : nightColor);
-		if ((Object)(object)text != (Object)null) {
-			((Graphic)text).color = color;
+		if (text != null) {
+			text.color = color;
 		}
-		if ((Object)(object)image != (Object)null) {
-			((Graphic)image).color = color;
+		if (image != null) {
+			image.color = color;
 		}
-		if ((Object)(object)imageBackground != (Object)null) {
-			((Graphic)imageBackground).color = color2;
+		if (imageBackground != null) {
+			imageBackground.color = color2;
 		}
 	}
 }

@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -38,82 +39,61 @@ public class VehicleModuleCamper : VehicleModuleSeating
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("VehicleModuleCamper.OnRpcMessage", 0);
-		try {
-			if (rpc == 2501069650u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("VehicleModuleCamper.OnRpcMessage")) {
+			if (rpc == 2501069650u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_OpenLocker "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_OpenLocker "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_OpenLocker", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_OpenLocker")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (2501069650u, "RPC_OpenLocker", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							RPC_OpenLocker (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_OpenLocker");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 4185921214u && (Object)(object)player != (Object)null) {
+			if (rpc == 4185921214u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_OpenStorage "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_OpenStorage "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_OpenStorage", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_OpenStorage")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (4185921214u, "RPC_OpenStorage", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg3 = rPCMessage;
 							RPC_OpenStorage (msg3);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in RPC_OpenStorage");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -129,16 +109,14 @@ public class VehicleModuleCamper : VehicleModuleSeating
 
 	public override void ModuleAdded (BaseModularVehicle vehicle, int firstSocketIndex)
 	{
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
 		base.ModuleAdded (vehicle, firstSocketIndex);
 		if (!base.isServer) {
 			return;
 		}
-		if (!Application.isLoadingSave && !wasLoaded) {
+		if (!Rust.Application.isLoadingSave && !wasLoaded) {
 			for (int i = 0; i < SleepingBagPoints.Length; i++) {
 				SleepingBagCamper sleepingBagCamper = base.gameManager.CreateEntity (SleepingBagEntity.resourcePath, SleepingBagPoints [i].localPosition, SleepingBagPoints [i].localRotation) as SleepingBagCamper;
-				if ((Object)(object)sleepingBagCamper != (Object)null) {
+				if (sleepingBagCamper != null) {
 					sleepingBagCamper.SetParent (this);
 					sleepingBagCamper.SetSeat (GetSeatAtIndex (i));
 					sleepingBagCamper.Spawn ();
@@ -160,11 +138,8 @@ public class VehicleModuleCamper : VehicleModuleSeating
 
 	protected override Vector3 ModifySeatPositionLocalSpace (int index, Vector3 desiredPos)
 	{
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
 		CamperSeatConfig seatConfig = GetSeatConfig ();
-		if ((Object)(object)seatConfig != (Object)null && seatConfig.SeatPositions.Length > index) {
+		if (seatConfig != null && seatConfig.SeatPositions.Length > index) {
 			return seatConfig.SeatPositions [index].localPosition;
 		}
 		return base.ModifySeatPositionLocalSpace (index, desiredPos);
@@ -178,14 +153,8 @@ public class VehicleModuleCamper : VehicleModuleSeating
 
 	public override void Spawn ()
 	{
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0111: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011c: Unknown result type (might be due to invalid IL or missing references)
 		base.Spawn ();
-		if (!Application.isLoadingSave) {
+		if (!Rust.Application.isLoadingSave) {
 			Locker locker = base.gameManager.CreateEntity (LockerEntity.resourcePath, LockerPoint.localPosition, LockerPoint.localRotation) as Locker;
 			locker.SetParent (this);
 			locker.Spawn ();
@@ -225,34 +194,29 @@ public class VehicleModuleCamper : VehicleModuleSeating
 
 	protected override void PostConditionalRefresh ()
 	{
-		//IL_00c9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00df: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0128: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0062: Unknown result type (might be due to invalid IL or missing references)
 		base.PostConditionalRefresh ();
 		if (base.isClient) {
 			return;
 		}
 		CamperSeatConfig seatConfig = GetSeatConfig ();
-		if ((Object)(object)seatConfig != (Object)null && mountPoints != null) {
+		if (seatConfig != null && mountPoints != null) {
 			for (int i = 0; i < mountPoints.Count; i++) {
-				if ((Object)(object)mountPoints [i].mountable != (Object)null) {
-					((Component)mountPoints [i].mountable).transform.position = seatConfig.SeatPositions [i].position;
+				if (mountPoints [i].mountable != null) {
+					mountPoints [i].mountable.transform.position = seatConfig.SeatPositions [i].position;
 					mountPoints [i].mountable.SendNetworkUpdate ();
 				}
 			}
 		}
-		if (activeBbq.IsValid (base.isServer) && (Object)(object)seatConfig != (Object)null) {
+		if (activeBbq.IsValid (base.isServer) && seatConfig != null) {
 			BaseOven baseOven = activeBbq.Get (serverside: true);
-			((Component)baseOven).transform.position = seatConfig.StovePosition.position;
-			((Component)baseOven).transform.rotation = seatConfig.StovePosition.rotation;
+			baseOven.transform.position = seatConfig.StovePosition.position;
+			baseOven.transform.rotation = seatConfig.StovePosition.rotation;
 			baseOven.SendNetworkUpdate ();
 		}
-		if (activeStorage.IsValid (base.isServer) && (Object)(object)seatConfig != (Object)null) {
+		if (activeStorage.IsValid (base.isServer) && seatConfig != null) {
 			StorageContainer storageContainer = activeStorage.Get (base.isServer);
-			((Component)storageContainer).transform.position = seatConfig.StoragePosition.position;
-			((Component)storageContainer).transform.rotation = seatConfig.StoragePosition.rotation;
+			storageContainer.transform.position = seatConfig.StoragePosition.position;
+			storageContainer.transform.rotation = seatConfig.StoragePosition.rotation;
 			storageContainer.SendNetworkUpdate ();
 		}
 	}
@@ -261,10 +225,9 @@ public class VehicleModuleCamper : VehicleModuleSeating
 	{
 		List<ConditionalObject> list = GetConditionals ();
 		CamperSeatConfig result = null;
-		CamperSeatConfig camperSeatConfig = default(CamperSeatConfig);
 		foreach (ConditionalObject item in list) {
-			if (item.gameObject.activeSelf && item.gameObject.TryGetComponent<CamperSeatConfig> (ref camperSeatConfig)) {
-				result = camperSeatConfig;
+			if (item.gameObject.activeSelf && item.gameObject.TryGetComponent<CamperSeatConfig> (out var component)) {
+				result = component;
 			}
 		}
 		return result;
@@ -272,15 +235,9 @@ public class VehicleModuleCamper : VehicleModuleSeating
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0070: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
 		if (info.msg.camperModule == null) {
-			info.msg.camperModule = Pool.Get<CamperModule> ();
+			info.msg.camperModule = Facepunch.Pool.Get<CamperModule> ();
 		}
 		info.msg.camperModule.bbqId = activeBbq.uid;
 		info.msg.camperModule.lockerId = activeLocker.uid;
@@ -292,12 +249,12 @@ public class VehicleModuleCamper : VehicleModuleSeating
 	public void RPC_OpenLocker (RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
-		if (!((Object)(object)player == (Object)null) && CanBeLooted (player)) {
+		if (!(player == null) && CanBeLooted (player)) {
 			IItemContainerEntity itemContainerEntity = activeLocker.Get (base.isServer);
 			if (!itemContainerEntity.IsUnityNull ()) {
 				itemContainerEntity.PlayerOpenLoot (player);
 			} else {
-				Debug.LogError ((object)(((object)this).GetType ().Name + ": No container component found."));
+				Debug.LogError (GetType ().Name + ": No container component found.");
 			}
 		}
 	}
@@ -307,12 +264,12 @@ public class VehicleModuleCamper : VehicleModuleSeating
 	public void RPC_OpenStorage (RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
-		if (!((Object)(object)player == (Object)null) && CanBeLooted (player)) {
+		if (!(player == null) && CanBeLooted (player)) {
 			IItemContainerEntity itemContainerEntity = activeStorage.Get (base.isServer);
 			if (!itemContainerEntity.IsUnityNull ()) {
 				itemContainerEntity.PlayerOpenLoot (player);
 			} else {
-				Debug.LogError ((object)(((object)this).GetType ().Name + ": No container component found."));
+				Debug.LogError (GetType ().Name + ": No container component found.");
 			}
 		}
 	}
@@ -336,15 +293,15 @@ public class VehicleModuleCamper : VehicleModuleSeating
 	public IItemContainerEntity GetContainer ()
 	{
 		Locker locker = activeLocker.Get (base.isServer);
-		if ((Object)(object)locker != (Object)null && locker.IsValid () && !locker.inventory.IsEmpty ()) {
+		if (locker != null && locker.IsValid () && !locker.inventory.IsEmpty ()) {
 			return locker;
 		}
 		BaseOven baseOven = activeBbq.Get (base.isServer);
-		if ((Object)(object)baseOven != (Object)null && baseOven.IsValid () && !baseOven.inventory.IsEmpty ()) {
+		if (baseOven != null && baseOven.IsValid () && !baseOven.inventory.IsEmpty ()) {
 			return baseOven;
 		}
 		StorageContainer storageContainer = activeStorage.Get (base.isServer);
-		if ((Object)(object)storageContainer != (Object)null && storageContainer.IsValid () && !storageContainer.inventory.IsEmpty ()) {
+		if (storageContainer != null && storageContainer.IsValid () && !storageContainer.inventory.IsEmpty ()) {
 			return storageContainer;
 		}
 		return null;
@@ -376,24 +333,17 @@ public class VehicleModuleCamper : VehicleModuleSeating
 
 	public override bool IsOnThisModule (BasePlayer player)
 	{
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
 		if (base.IsOnThisModule (player)) {
 			return true;
 		}
 		if (!player.isMounted) {
 			return false;
 		}
-		OBB val = default(OBB);
-		((OBB)(ref val))..ctor (((Component)this).transform, bounds);
-		return ((OBB)(ref val)).Contains (player.CenterPoint ());
+		return new OBB (base.transform, bounds).Contains (player.CenterPoint ());
 	}
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005b: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (info.msg.camperModule != null) {
 			activeBbq.uid = info.msg.camperModule.bbqId;

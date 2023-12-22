@@ -5,7 +5,7 @@ public class SocketMod : PrefabAttribute
 	[NonSerialized]
 	public Socket_Base baseSocket;
 
-	public Phrase FailedPhrase;
+	public Translate.Phrase FailedPhrase;
 
 	public virtual bool DoCheck (Construction.Placement place)
 	{

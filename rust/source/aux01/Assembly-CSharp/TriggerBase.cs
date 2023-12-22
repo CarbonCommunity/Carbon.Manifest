@@ -23,7 +23,7 @@ public class TriggerBase : BaseMonoBehaviour
 	internal virtual GameObject InterestedInObject (GameObject obj)
 	{
 		int num = 1 << obj.layer;
-		if ((((LayerMask)(ref interestLayers)).value & num) != num) {
+		if ((interestLayers.value & num) != num) {
 			return null;
 		}
 		return obj;
@@ -31,7 +31,7 @@ public class TriggerBase : BaseMonoBehaviour
 
 	protected virtual void OnDisable ()
 	{
-		if (!Application.isQuitting && contents != null) {
+		if (!Rust.Application.isQuitting && contents != null) {
 			GameObject[] array = contents.ToArray ();
 			foreach (GameObject targetObj in array) {
 				OnTriggerExit (targetObj);
@@ -42,7 +42,7 @@ public class TriggerBase : BaseMonoBehaviour
 
 	internal virtual void OnEntityEnter (BaseEntity ent)
 	{
-		if (!((Object)(object)ent == (Object)null)) {
+		if (!(ent == null)) {
 			if (entityContents == null) {
 				entityContents = new HashSet<BaseEntity> ();
 			}
@@ -59,9 +59,9 @@ public class TriggerBase : BaseMonoBehaviour
 
 	internal virtual void OnObjectAdded (GameObject obj, Collider col)
 	{
-		if (!((Object)(object)obj == (Object)null)) {
+		if (!(obj == null)) {
 			BaseEntity baseEntity = obj.ToBaseEntity ();
-			if (Object.op_Implicit ((Object)(object)baseEntity)) {
+			if ((bool)baseEntity) {
 				baseEntity.EnterTrigger (this);
 				OnEntityEnter (baseEntity);
 			}
@@ -70,18 +70,18 @@ public class TriggerBase : BaseMonoBehaviour
 
 	internal virtual void OnObjectRemoved (GameObject obj)
 	{
-		if ((Object)(object)obj == (Object)null) {
+		if (obj == null) {
 			return;
 		}
 		BaseEntity baseEntity = obj.ToBaseEntity ();
-		if (!Object.op_Implicit ((Object)(object)baseEntity)) {
+		if (!baseEntity) {
 			return;
 		}
 		bool flag = false;
 		foreach (GameObject content in contents) {
-			if ((Object)(object)content == (Object)null) {
-				Debug.LogWarning ((object)("Trigger " + ((object)this).ToString () + " contains null object."));
-			} else if ((Object)(object)content.ToBaseEntity () == (Object)(object)baseEntity) {
+			if (content == null) {
+				Debug.LogWarning ("Trigger " + ToString () + " contains null object.");
+			} else if (content.ToBaseEntity () == baseEntity) {
 				flag = true;
 				break;
 			}
@@ -94,64 +94,56 @@ public class TriggerBase : BaseMonoBehaviour
 
 	internal void RemoveInvalidEntities ()
 	{
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0096: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009b: Unknown result type (might be due to invalid IL or missing references)
 		if (entityContents.IsNullOrEmpty ()) {
 			return;
 		}
-		Collider component = ((Component)this).GetComponent<Collider> ();
-		if ((Object)(object)component == (Object)null) {
+		Collider component = GetComponent<Collider> ();
+		if (component == null) {
 			return;
 		}
 		Bounds bounds = component.bounds;
-		((Bounds)(ref bounds)).Expand (1f);
-		List<BaseEntity> list = null;
+		bounds.Expand (1f);
+		List<BaseEntity> obj = null;
 		foreach (BaseEntity entityContent in entityContents) {
-			if ((Object)(object)entityContent == (Object)null) {
+			if (entityContent == null) {
 				if (Debugging.checktriggers) {
-					Debug.LogWarning ((object)("Trigger " + ((object)this).ToString () + " contains destroyed entity."));
+					Debug.LogWarning ("Trigger " + ToString () + " contains destroyed entity.");
 				}
-				if (list == null) {
-					list = Pool.GetList<BaseEntity> ();
+				if (obj == null) {
+					obj = Facepunch.Pool.GetList<BaseEntity> ();
 				}
-				list.Add (entityContent);
-			} else if (!((Bounds)(ref bounds)).Contains (entityContent.ClosestPoint (((Component)this).transform.position))) {
+				obj.Add (entityContent);
+			} else if (!bounds.Contains (entityContent.ClosestPoint (base.transform.position))) {
 				if (Debugging.checktriggers) {
-					Debug.LogWarning ((object)("Trigger " + ((object)this).ToString () + " contains entity that is too far away: " + ((object)entityContent).ToString ()));
+					Debug.LogWarning ("Trigger " + ToString () + " contains entity that is too far away: " + entityContent.ToString ());
 				}
-				if (list == null) {
-					list = Pool.GetList<BaseEntity> ();
+				if (obj == null) {
+					obj = Facepunch.Pool.GetList<BaseEntity> ();
 				}
-				list.Add (entityContent);
+				obj.Add (entityContent);
 			}
 		}
-		if (list == null) {
+		if (obj == null) {
 			return;
 		}
-		foreach (BaseEntity item in list) {
+		foreach (BaseEntity item in obj) {
 			RemoveEntity (item);
 		}
-		Pool.FreeList<BaseEntity> (ref list);
+		Facepunch.Pool.FreeList (ref obj);
 	}
 
 	internal bool CheckEntity (BaseEntity ent)
 	{
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)ent == (Object)null) {
+		if (ent == null) {
 			return true;
 		}
-		Collider component = ((Component)this).GetComponent<Collider> ();
-		if ((Object)(object)component == (Object)null) {
+		Collider component = GetComponent<Collider> ();
+		if (component == null) {
 			return true;
 		}
 		Bounds bounds = component.bounds;
-		((Bounds)(ref bounds)).Expand (1f);
-		return ((Bounds)(ref bounds)).Contains (ent.ClosestPoint (((Component)this).transform.position));
+		bounds.Expand (1f);
+		return bounds.Contains (ent.ClosestPoint (base.transform.position));
 	}
 
 	internal virtual void OnObjects ()
@@ -166,9 +158,9 @@ public class TriggerBase : BaseMonoBehaviour
 
 	public void RemoveObject (GameObject obj)
 	{
-		if (!((Object)(object)obj == (Object)null)) {
+		if (!(obj == null)) {
 			Collider component = obj.GetComponent<Collider> ();
-			if (!((Object)(object)component == (Object)null)) {
+			if (!(component == null)) {
 				OnTriggerExit (component);
 			}
 		}
@@ -176,46 +168,43 @@ public class TriggerBase : BaseMonoBehaviour
 
 	public void RemoveEntity (BaseEntity ent)
 	{
-		if ((Object)(object)this == (Object)null || contents == null || (Object)(object)ent == (Object)null) {
+		if (this == null || contents == null || ent == null) {
 			return;
 		}
-		List<GameObject> list = Pool.GetList<GameObject> ();
+		List<GameObject> obj = Facepunch.Pool.GetList<GameObject> ();
 		foreach (GameObject content in contents) {
-			if ((Object)(object)content != (Object)null && (Object)(object)content.GetComponentInParent<BaseEntity> () == (Object)(object)ent) {
-				list.Add (content);
+			if (content != null && content.GetComponentInParent<BaseEntity> () == ent) {
+				obj.Add (content);
 			}
 		}
-		foreach (GameObject item in list) {
+		foreach (GameObject item in obj) {
 			OnTriggerExit (item);
 		}
-		Pool.FreeList<GameObject> (ref list);
+		Facepunch.Pool.FreeList (ref obj);
 	}
 
 	public void OnTriggerEnter (Collider collider)
 	{
-		if ((Object)(object)this == (Object)null || !((Behaviour)this).enabled) {
+		if (this == null || !base.enabled) {
 			return;
 		}
-		TimeWarning val = TimeWarning.New ("TriggerBase.OnTriggerEnter", 0);
-		try {
-			GameObject val2 = InterestedInObject (((Component)collider).gameObject);
-			if ((Object)(object)val2 == (Object)null) {
+		using (TimeWarning.New ("TriggerBase.OnTriggerEnter")) {
+			GameObject gameObject = InterestedInObject (collider.gameObject);
+			if (gameObject == null) {
 				return;
 			}
 			if (contents == null) {
 				contents = new HashSet<GameObject> ();
 			}
-			if (contents.Contains (val2)) {
+			if (contents.Contains (gameObject)) {
 				return;
 			}
 			int count = contents.Count;
-			contents.Add (val2);
-			OnObjectAdded (val2, collider);
+			contents.Add (gameObject);
+			OnObjectAdded (gameObject, collider);
 			if (count == 0 && contents.Count == 1) {
 				OnObjects ();
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		if (Debugging.checktriggers) {
 			RemoveInvalidEntities ();
@@ -229,12 +218,12 @@ public class TriggerBase : BaseMonoBehaviour
 
 	public void OnTriggerExit (Collider collider)
 	{
-		if ((Object)(object)this == (Object)null || (Object)(object)collider == (Object)null || SkipOnTriggerExit (collider)) {
+		if (this == null || collider == null || SkipOnTriggerExit (collider)) {
 			return;
 		}
-		GameObject val = InterestedInObject (((Component)collider).gameObject);
-		if (!((Object)(object)val == (Object)null)) {
-			OnTriggerExit (val);
+		GameObject gameObject = InterestedInObject (collider.gameObject);
+		if (!(gameObject == null)) {
+			OnTriggerExit (gameObject);
 			if (Debugging.checktriggers) {
 				RemoveInvalidEntities ();
 			}

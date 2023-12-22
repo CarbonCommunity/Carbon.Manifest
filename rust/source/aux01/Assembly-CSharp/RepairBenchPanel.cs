@@ -11,13 +11,13 @@ public class RepairBenchPanel : LootPanel
 
 	public Color notGotColor;
 
-	public Phrase phraseEmpty;
+	public Translate.Phrase phraseEmpty;
 
-	public Phrase phraseNotRepairable;
+	public Translate.Phrase phraseNotRepairable;
 
-	public Phrase phraseRepairNotNeeded;
+	public Translate.Phrase phraseRepairNotNeeded;
 
-	public Phrase phraseNoBlueprint;
+	public Translate.Phrase phraseNoBlueprint;
 
 	public GameObject skinsPanel;
 

@@ -39,5 +39,5 @@ public class SleepingBagButton : MonoBehaviour
 
 	public Image ConfirmSlider;
 
-	public static Phrase toastHoldToUnclaimBag = new Phrase ("hold_unclaim_bag", "Hold down the delete button to unclaim a sleeping bag");
+	public static Translate.Phrase toastHoldToUnclaimBag = new Translate.Phrase ("hold_unclaim_bag", "Hold down the delete button to unclaim a sleeping bag");
 }

@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class MapMarkerExplosion : MapMarker
@@ -8,18 +7,18 @@ public class MapMarkerExplosion : MapMarker
 	public void SetDuration (float newDuration)
 	{
 		duration = newDuration;
-		if (((FacepunchBehaviour)this).IsInvoking ((Action)DelayedDestroy)) {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)DelayedDestroy);
+		if (IsInvoking (DelayedDestroy)) {
+			CancelInvoke (DelayedDestroy);
 		}
-		((FacepunchBehaviour)this).Invoke ((Action)DelayedDestroy, duration * 60f);
+		Invoke (DelayedDestroy, duration * 60f);
 	}
 
 	public override void Load (LoadInfo info)
 	{
 		base.Load (info);
 		if (info.fromDisk) {
-			Debug.LogWarning ((object)"Loaded explosion marker from disk, cleaning up");
-			((FacepunchBehaviour)this).Invoke ((Action)DelayedDestroy, 3f);
+			Debug.LogWarning ("Loaded explosion marker from disk, cleaning up");
+			Invoke (DelayedDestroy, 3f);
 		}
 	}
 

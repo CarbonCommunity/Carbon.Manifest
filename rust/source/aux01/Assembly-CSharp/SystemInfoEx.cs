@@ -13,7 +13,6 @@ public static class SystemInfoEx
 
 	public static bool SupportsRenderTextureFormat (RenderTextureFormat format)
 	{
-		//IL_0070: Unknown result type (might be due to invalid IL or missing references)
 		if (supportedRenderTextureFormats == null) {
 			Array values = Enum.GetValues (typeof(RenderTextureFormat));
 			int num = (int)values.GetValue (values.Length - 1);
@@ -23,6 +22,6 @@ public static class SystemInfoEx
 				supportedRenderTextureFormats [i] = flag && SystemInfo.SupportsRenderTextureFormat ((RenderTextureFormat)i);
 			}
 		}
-		return supportedRenderTextureFormats [format];
+		return supportedRenderTextureFormats [(int)format];
 	}
 }

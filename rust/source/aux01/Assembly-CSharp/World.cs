@@ -22,30 +22,18 @@ public class World : ConsoleSystem
 	[ServerVar]
 	public static void monuments (Arg arg)
 	{
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Expected O, but got Unknown
-		//IL_0093: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0098: Unknown result type (might be due to invalid IL or missing references)
-		if (!Object.op_Implicit ((Object)(object)TerrainMeta.Path)) {
+		if (!TerrainMeta.Path) {
 			return;
 		}
-		TextTable val = new TextTable ();
-		val.AddColumn ("type");
-		val.AddColumn ("name");
-		val.AddColumn ("prefab");
-		val.AddColumn ("pos");
+		TextTable textTable = new TextTable ();
+		textTable.AddColumn ("type");
+		textTable.AddColumn ("name");
+		textTable.AddColumn ("prefab");
+		textTable.AddColumn ("pos");
 		foreach (MonumentInfo monument in TerrainMeta.Path.Monuments) {
-			string[] obj = new string[4] {
-				monument.Type.ToString (),
-				monument.displayPhrase.translated,
-				((Object)monument).name,
-				null
-			};
-			Vector3 position = ((Component)monument).transform.position;
-			obj [3] = ((object)(Vector3)(ref position)).ToString ();
-			val.AddRow (obj);
+			textTable.AddRow (monument.Type.ToString (), monument.displayPhrase.translated, monument.name, monument.transform.position.ToString ());
 		}
-		arg.ReplyWith (((object)val).ToString ());
+		arg.ReplyWith (textTable.ToString ());
 	}
 
 	[ServerVar (Clientside = true, Help = "Renders a high resolution PNG of the current map")]
@@ -75,7 +63,7 @@ public class World : ConsoleSystem
 	public static void renderlabs (Arg arg)
 	{
 		int underwaterLabFloorCount = MapLayerRenderer.GetOrCreate ().GetUnderwaterLabFloorCount ();
-		int @int = arg.GetInt (0, 0);
+		int @int = arg.GetInt (0);
 		if (@int < 0 || @int >= underwaterLabFloorCount) {
 			arg.ReplyWith ($"Floor number must be between 0 and {underwaterLabFloorCount}");
 		} else {
@@ -85,28 +73,25 @@ public class World : ConsoleSystem
 
 	private static void RenderMapLayerToFile (Arg arg, string name, MapLayer layer)
 	{
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0058: Expected O, but got Unknown
-		//IL_007d: Unknown result type (might be due to invalid IL or missing references)
 		try {
 			MapLayerRenderer orCreate = MapLayerRenderer.GetOrCreate ();
 			orCreate.Render (layer);
 			string fullPath = Path.GetFullPath (Path.Combine (Environment.CurrentDirectory, $"{name}_{World.Size}_{World.Seed}.png"));
 			RenderTexture targetTexture = orCreate.renderCamera.targetTexture;
-			Texture2D val = new Texture2D (((Texture)targetTexture).width, ((Texture)targetTexture).height);
+			Texture2D texture2D = new Texture2D (targetTexture.width, targetTexture.height);
 			RenderTexture active = RenderTexture.active;
 			try {
 				RenderTexture.active = targetTexture;
-				val.ReadPixels (new Rect (0f, 0f, (float)((Texture)targetTexture).width, (float)((Texture)targetTexture).height), 0, 0);
-				val.Apply ();
-				File.WriteAllBytes (fullPath, ImageConversion.EncodeToPNG (val));
+				texture2D.ReadPixels (new Rect (0f, 0f, targetTexture.width, targetTexture.height), 0, 0);
+				texture2D.Apply ();
+				File.WriteAllBytes (fullPath, texture2D.EncodeToPNG ());
 			} finally {
 				RenderTexture.active = active;
-				Object.DestroyImmediate ((Object)(object)val);
+				UnityEngine.Object.DestroyImmediate (texture2D);
 			}
 			arg.ReplyWith ("Saved " + name + " render to: " + fullPath);
-		} catch (Exception ex) {
-			Debug.LogWarning ((object)ex);
+		} catch (Exception message) {
+			Debug.LogWarning (message);
 			arg.ReplyWith ("Failed to render " + name);
 		}
 	}

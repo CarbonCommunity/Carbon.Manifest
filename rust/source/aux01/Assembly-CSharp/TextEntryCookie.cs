@@ -1,25 +1,24 @@
 using Rust;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class TextEntryCookie : MonoBehaviour
 {
-	public InputField control => ((Component)this).GetComponent<InputField> ();
+	public InputField control => GetComponent<InputField> ();
 
 	private void OnEnable ()
 	{
-		string @string = PlayerPrefs.GetString ("TextEntryCookie_" + ((Object)this).name);
+		string @string = PlayerPrefs.GetString ("TextEntryCookie_" + base.name);
 		if (!string.IsNullOrEmpty (@string)) {
 			control.text = @string;
 		}
-		((UnityEvent<string>)(object)control.onValueChanged).Invoke (control.text);
+		control.onValueChanged.Invoke (control.text);
 	}
 
 	private void OnDisable ()
 	{
-		if (!Application.isQuitting) {
-			PlayerPrefs.SetString ("TextEntryCookie_" + ((Object)this).name, control.text);
+		if (!Rust.Application.isQuitting) {
+			PlayerPrefs.SetString ("TextEntryCookie_" + base.name, control.text);
 		}
 	}
 }

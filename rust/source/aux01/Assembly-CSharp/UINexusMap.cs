@@ -1,4 +1,3 @@
-using System;
 using Rust.UI;
 using UnityEngine;
 using UnityEngine.Events;
@@ -7,7 +6,7 @@ using UnityEngine.UI;
 
 public class UINexusMap : BaseMonoBehaviour, IPointerDownHandler, IEventSystemHandler
 {
-	private static readonly Memoized<string, int> IntMemoized = new Memoized<string, int> ((Func<int, string>)((int i) => i.ToString ()));
+	private static readonly Memoized<string, int> IntMemoized = new Memoized<string, int> ((int i) => i.ToString ());
 
 	public RawImage BackdropImage;
 

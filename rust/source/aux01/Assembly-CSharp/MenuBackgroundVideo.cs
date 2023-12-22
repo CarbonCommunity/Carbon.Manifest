@@ -16,12 +16,10 @@ public class MenuBackgroundVideo : SingletonComponent<MenuBackgroundVideo>
 
 	protected override void Awake ()
 	{
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0029: Expected O, but got Unknown
-		((SingletonComponent)this).Awake ();
+		base.Awake ();
 		LoadVideoList ();
 		NextVideo ();
-		((Component)this).GetComponent<VideoPlayer> ().errorReceived += new ErrorEventHandler (OnVideoError);
+		GetComponent<VideoPlayer> ().errorReceived += OnVideoError;
 	}
 
 	private void OnVideoError (VideoPlayer source, string message)
@@ -31,7 +29,7 @@ public class MenuBackgroundVideo : SingletonComponent<MenuBackgroundVideo>
 
 	public void LoadVideoList ()
 	{
-		videos = (from x in Directory.EnumerateFiles (Application.streamingAssetsPath + "/MenuVideo/")
+		videos = (from x in Directory.EnumerateFiles (UnityEngine.Application.streamingAssetsPath + "/MenuVideo/")
 			where x.EndsWith (".mp4") || x.EndsWith (".webm")
 			orderby Guid.NewGuid ()
 			select x).ToArray ();
@@ -39,17 +37,17 @@ public class MenuBackgroundVideo : SingletonComponent<MenuBackgroundVideo>
 
 	public void Update ()
 	{
-		if (Input.GetKeyDown ((KeyCode)258)) {
+		if (Input.GetKeyDown (KeyCode.Keypad2)) {
 			LoadVideoList ();
 		}
-		if (Input.GetKeyDown ((KeyCode)257)) {
+		if (Input.GetKeyDown (KeyCode.Keypad1)) {
 			NextVideo ();
 		}
 	}
 
 	private void NextVideo ()
 	{
-		if (Application.isQuitting) {
+		if (Rust.Application.isQuitting) {
 			return;
 		}
 		string text = videos [index++ % videos.Length];
@@ -60,8 +58,8 @@ public class MenuBackgroundVideo : SingletonComponent<MenuBackgroundVideo>
 				text = text2;
 			}
 		}
-		Debug.Log ((object)("Playing Video " + text));
-		VideoPlayer component = ((Component)this).GetComponent<VideoPlayer> ();
+		Debug.Log ("Playing Video " + text);
+		VideoPlayer component = GetComponent<VideoPlayer> ();
 		component.url = text;
 		component.Play ();
 	}
@@ -69,7 +67,7 @@ public class MenuBackgroundVideo : SingletonComponent<MenuBackgroundVideo>
 	internal IEnumerator ReadyVideo ()
 	{
 		if (!errored) {
-			VideoPlayer player = ((Component)this).GetComponent<VideoPlayer> ();
+			VideoPlayer player = GetComponent<VideoPlayer> ();
 			while (!player.isPrepared && !errored) {
 				yield return null;
 			}

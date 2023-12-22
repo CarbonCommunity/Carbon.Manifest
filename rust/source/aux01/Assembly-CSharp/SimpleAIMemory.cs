@@ -32,32 +32,28 @@ public class SimpleAIMemory
 
 	public void SetKnown (BaseEntity ent, BaseEntity owner, AIBrainSenses brainSenses)
 	{
-		//IL_0076: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0138: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013d: Unknown result type (might be due to invalid IL or missing references)
 		IAISenses iAISenses = owner as IAISenses;
 		BasePlayer basePlayer = ent as BasePlayer;
-		if ((Object)(object)basePlayer != (Object)null && PlayerIgnoreList.Contains (basePlayer)) {
+		if (basePlayer != null && PlayerIgnoreList.Contains (basePlayer)) {
 			return;
 		}
 		bool flag = false;
 		if (iAISenses != null && iAISenses.IsThreat (ent)) {
 			flag = true;
 			if (brainSenses != null) {
-				brainSenses.LastThreatTimestamp = Time.realtimeSinceStartup;
+				brainSenses.LastThreatTimestamp = UnityEngine.Time.realtimeSinceStartup;
 			}
 		}
 		for (int i = 0; i < All.Count; i++) {
-			if ((Object)(object)All [i].Entity == (Object)(object)ent) {
+			if (All [i].Entity == ent) {
 				SeenInfo value = All [i];
-				value.Position = ((Component)ent).transform.position;
-				value.Timestamp = Mathf.Max (Time.realtimeSinceStartup, value.Timestamp);
+				value.Position = ent.transform.position;
+				value.Timestamp = Mathf.Max (UnityEngine.Time.realtimeSinceStartup, value.Timestamp);
 				All [i] = value;
 				return;
 			}
 		}
-		if ((Object)(object)basePlayer != (Object)null) {
+		if (basePlayer != null) {
 			if (AI.ignoreplayers && !basePlayer.IsNpc) {
 				return;
 			}
@@ -76,14 +72,14 @@ public class SimpleAIMemory
 		}
 		All.Add (new SeenInfo {
 			Entity = ent,
-			Position = ((Component)ent).transform.position,
-			Timestamp = Time.realtimeSinceStartup
+			Position = ent.transform.position,
+			Timestamp = UnityEngine.Time.realtimeSinceStartup
 		});
 	}
 
 	public void SetLOS (BaseEntity ent, bool flag)
 	{
-		if (!((Object)(object)ent == (Object)null)) {
+		if (!(ent == null)) {
 			if (flag) {
 				LOS.Add (ent);
 			} else {
@@ -105,11 +101,11 @@ public class SimpleAIMemory
 	public void Forget (float secondsOld)
 	{
 		for (int i = 0; i < All.Count; i++) {
-			if (!(Time.realtimeSinceStartup - All [i].Timestamp >= secondsOld)) {
+			if (!(UnityEngine.Time.realtimeSinceStartup - All [i].Timestamp >= secondsOld)) {
 				continue;
 			}
 			BaseEntity entity = All [i].Entity;
-			if ((Object)(object)entity != (Object)null) {
+			if (entity != null) {
 				if (entity is BasePlayer) {
 					Players.Remove (entity);
 				}
@@ -142,16 +138,11 @@ public class SimpleAIMemory
 
 	public static string GetIgnoredPlayers ()
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Expected O, but got Unknown
-		TextTable val = new TextTable ();
-		val.AddColumns (new string[2] { "Name", "Steam ID" });
+		TextTable textTable = new TextTable ();
+		textTable.AddColumns ("Name", "Steam ID");
 		foreach (BasePlayer playerIgnore in PlayerIgnoreList) {
-			val.AddRow (new string[2] {
-				playerIgnore.displayName,
-				playerIgnore.userID.ToString ()
-			});
+			textTable.AddRow (playerIgnore.displayName, playerIgnore.userID.ToString ());
 		}
-		return ((object)val).ToString ();
+		return textTable.ToString ();
 	}
 }

@@ -39,7 +39,7 @@ public class BaseArcadeGame : BaseMonoBehaviour
 
 	public BasePlayer GetHostPlayer ()
 	{
-		if (Object.op_Implicit ((Object)(object)ownerMachine)) {
+		if ((bool)ownerMachine) {
 			return ownerMachine.GetDriver ();
 		}
 		return null;

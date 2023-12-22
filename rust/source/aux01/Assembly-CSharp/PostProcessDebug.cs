@@ -26,9 +26,6 @@ public sealed class PostProcessDebug : MonoBehaviour
 
 	private void OnEnable ()
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Expected O, but got Unknown
 		m_CmdAfterEverything = new CommandBuffer {
 			name = "Post-processing Debug Overlay"
 		};
@@ -36,8 +33,8 @@ public sealed class PostProcessDebug : MonoBehaviour
 
 	private void OnDisable ()
 	{
-		if ((Object)(object)m_CurrentCamera != (Object)null) {
-			m_CurrentCamera.RemoveCommandBuffer ((CameraEvent)19, m_CmdAfterEverything);
+		if (m_CurrentCamera != null) {
+			m_CurrentCamera.RemoveCommandBuffer (CameraEvent.AfterImageEffects, m_CmdAfterEverything);
 		}
 		m_CurrentCamera = null;
 		m_PreviousPostProcessLayer = null;
@@ -50,23 +47,23 @@ public sealed class PostProcessDebug : MonoBehaviour
 
 	private void Reset ()
 	{
-		postProcessLayer = ((Component)this).GetComponent<PostProcessLayer> ();
+		postProcessLayer = GetComponent<PostProcessLayer> ();
 	}
 
 	private void UpdateStates ()
 	{
-		if ((Object)(object)m_PreviousPostProcessLayer != (Object)(object)postProcessLayer) {
-			if ((Object)(object)m_CurrentCamera != (Object)null) {
-				m_CurrentCamera.RemoveCommandBuffer ((CameraEvent)19, m_CmdAfterEverything);
+		if (m_PreviousPostProcessLayer != postProcessLayer) {
+			if (m_CurrentCamera != null) {
+				m_CurrentCamera.RemoveCommandBuffer (CameraEvent.AfterImageEffects, m_CmdAfterEverything);
 				m_CurrentCamera = null;
 			}
 			m_PreviousPostProcessLayer = postProcessLayer;
-			if ((Object)(object)postProcessLayer != (Object)null) {
-				m_CurrentCamera = ((Component)postProcessLayer).GetComponent<Camera> ();
-				m_CurrentCamera.AddCommandBuffer ((CameraEvent)19, m_CmdAfterEverything);
+			if (postProcessLayer != null) {
+				m_CurrentCamera = postProcessLayer.GetComponent<Camera> ();
+				m_CurrentCamera.AddCommandBuffer (CameraEvent.AfterImageEffects, m_CmdAfterEverything);
 			}
 		}
-		if (!((Object)(object)postProcessLayer == (Object)null) && ((Behaviour)postProcessLayer).enabled) {
+		if (!(postProcessLayer == null) && postProcessLayer.enabled) {
 			if (lightMeter) {
 				postProcessLayer.debugLayer.RequestMonitorPass (MonitorType.LightMeter);
 			}
@@ -85,19 +82,17 @@ public sealed class PostProcessDebug : MonoBehaviour
 
 	private void OnPostRender ()
 	{
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
 		m_CmdAfterEverything.Clear ();
-		if (!((Object)(object)postProcessLayer == (Object)null) && ((Behaviour)postProcessLayer).enabled && postProcessLayer.debugLayer.debugOverlayActive) {
-			m_CmdAfterEverything.Blit ((Texture)(object)postProcessLayer.debugLayer.debugOverlayTarget, RenderTargetIdentifier.op_Implicit ((BuiltinRenderTextureType)2));
+		if (!(postProcessLayer == null) && postProcessLayer.enabled && postProcessLayer.debugLayer.debugOverlayActive) {
+			m_CmdAfterEverything.Blit (postProcessLayer.debugLayer.debugOverlayTarget, BuiltinRenderTextureType.CameraTarget);
 		}
 	}
 
 	private void OnGUI ()
 	{
-		if (!((Object)(object)postProcessLayer == (Object)null) && ((Behaviour)postProcessLayer).enabled) {
+		if (!(postProcessLayer == null) && postProcessLayer.enabled) {
 			RenderTexture.active = null;
-			Rect rect = default(Rect);
-			((Rect)(ref rect))..ctor (5f, 5f, 0f, 0f);
+			Rect rect = new Rect (5f, 5f, 0f, 0f);
 			PostProcessDebugLayer debugLayer = postProcessLayer.debugLayer;
 			DrawMonitor (ref rect, debugLayer.lightMeter, lightMeter);
 			DrawMonitor (ref rect, debugLayer.histogram, histogram);
@@ -108,12 +103,11 @@ public sealed class PostProcessDebug : MonoBehaviour
 
 	private void DrawMonitor (ref Rect rect, Monitor monitor, bool enabled)
 	{
-		//IL_0037: Unknown result type (might be due to invalid IL or missing references)
-		if (enabled && !((Object)(object)monitor.output == (Object)null)) {
-			((Rect)(ref rect)).width = ((Texture)monitor.output).width;
-			((Rect)(ref rect)).height = ((Texture)monitor.output).height;
-			GUI.DrawTexture (rect, (Texture)(object)monitor.output);
-			((Rect)(ref rect)).x = ((Rect)(ref rect)).x + ((float)((Texture)monitor.output).width + 5f);
+		if (enabled && !(monitor.output == null)) {
+			rect.width = monitor.output.width;
+			rect.height = monitor.output.height;
+			GUI.DrawTexture (rect, monitor.output);
+			rect.x += (float)monitor.output.width + 5f;
 		}
 	}
 }

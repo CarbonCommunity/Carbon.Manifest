@@ -57,7 +57,7 @@ public class SpawnPopulation : BaseScriptableObject
 	{
 		if (Prefabs == null || Prefabs.Length == 0) {
 			if (!string.IsNullOrEmpty (ResourceFolder)) {
-				Prefabs = Prefab.Load<Spawnable> ("assets/bundled/prefabs/autospawn/" + ResourceFolder, GameManager.server, PrefabAttribute.server, useProbabilities: false, useWorldConfig: true);
+				Prefabs = Prefab.Load<Spawnable> ("assets/bundled/prefabs/autospawn/" + ResourceFolder, GameManager.server, PrefabAttribute.server, useProbabilities: false);
 			}
 			if (ResourceList != null && ResourceList.Length != 0) {
 				List<string> list = new List<string> ();
@@ -65,7 +65,7 @@ public class SpawnPopulation : BaseScriptableObject
 				foreach (GameObjectRef gameObjectRef in resourceList) {
 					string resourcePath = gameObjectRef.resourcePath;
 					if (string.IsNullOrEmpty (resourcePath)) {
-						Debug.LogWarning ((object)(((Object)this).name + " resource list contains invalid resource path for GUID " + gameObjectRef.guid), (Object)(object)this);
+						Debug.LogWarning (base.name + " resource list contains invalid resource path for GUID " + gameObjectRef.guid, this);
 					} else {
 						list.Add (resourcePath);
 					}
@@ -102,7 +102,7 @@ public class SpawnPopulation : BaseScriptableObject
 
 	protected virtual int GetPrefabWeight (Prefab<Spawnable> prefab)
 	{
-		if (!Object.op_Implicit ((Object)(object)prefab.Parameters)) {
+		if (!prefab.Parameters) {
 			return 1;
 		}
 		return prefab.Parameters.Count;

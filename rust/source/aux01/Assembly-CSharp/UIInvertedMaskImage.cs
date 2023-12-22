@@ -7,8 +7,8 @@ public class UIInvertedMaskImage : Image
 
 	public override Material materialForRendering {
 		get {
-			if ((Object)(object)cachedMaterial == (Object)null) {
-				cachedMaterial = Object.Instantiate<Material> (((Graphic)this).materialForRendering);
+			if (cachedMaterial == null) {
+				cachedMaterial = Object.Instantiate (base.materialForRendering);
 				cachedMaterial.SetInt ("_StencilComp", 6);
 			}
 			return cachedMaterial;

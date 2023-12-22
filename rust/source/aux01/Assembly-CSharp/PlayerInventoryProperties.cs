@@ -29,11 +29,11 @@ public class PlayerInventoryProperties : ScriptableObject
 
 	public void GiveToPlayer (BasePlayer player)
 	{
-		if ((Object)(object)player == (Object)null) {
+		if (player == null) {
 			return;
 		}
 		player.inventory.Strip ();
-		if ((Object)(object)giveBase != (Object)null) {
+		if (giveBase != null) {
 			giveBase.GiveToPlayer (player);
 		}
 		foreach (ItemAmountSkinned item2 in belt) {
@@ -50,7 +50,7 @@ public class PlayerInventoryProperties : ScriptableObject
 			Item item = null;
 			if (toCreate.blueprint) {
 				item = ItemManager.Create (ItemManager.blueprintBaseDef, 1, 0uL);
-				item.blueprintTarget = (((Object)(object)toCreate.itemDef.isRedirectOf != (Object)null) ? toCreate.itemDef.isRedirectOf.itemid : toCreate.itemDef.itemid);
+				item.blueprintTarget = ((toCreate.itemDef.isRedirectOf != null) ? toCreate.itemDef.isRedirectOf.itemid : toCreate.itemDef.itemid);
 			} else {
 				item = ItemManager.Create (toCreate.itemDef, (int)toCreate.amount, toCreate.skinOverride);
 			}
@@ -61,8 +61,8 @@ public class PlayerInventoryProperties : ScriptableObject
 	public static PlayerInventoryProperties GetInventoryConfig (string name)
 	{
 		if (allInventories == null) {
-			allInventories = FileSystem.LoadAll<PlayerInventoryProperties> ("assets/content/properties/playerinventory", "");
-			Debug.Log ((object)$"Found {allInventories.Length} inventories");
+			allInventories = FileSystem.LoadAll<PlayerInventoryProperties> ("assets/content/properties/playerinventory");
+			Debug.Log ($"Found {allInventories.Length} inventories");
 		}
 		if (allInventories != null) {
 			PlayerInventoryProperties[] array = allInventories;

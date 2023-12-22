@@ -18,7 +18,7 @@ public class UIGridRenderer : UILineRenderer
 		set {
 			if (m_GridColumns != value) {
 				m_GridColumns = value;
-				((Graphic)this).SetAllDirty ();
+				SetAllDirty ();
 			}
 		}
 	}
@@ -30,7 +30,7 @@ public class UIGridRenderer : UILineRenderer
 		set {
 			if (m_GridRows != value) {
 				m_GridRows = value;
-				((Graphic)this).SetAllDirty ();
+				SetAllDirty ();
 			}
 		}
 	}
@@ -43,7 +43,7 @@ public class UIGridRenderer : UILineRenderer
 			num++;
 		}
 		num += GridColumns * 3 + 1;
-		m_points = (Vector2[])(object)new Vector2[num];
+		m_points = new Vector2[num];
 		int num2 = 0;
 		for (int i = 0; i < GridRows; i++) {
 			float x = 1f;

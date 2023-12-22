@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -29,17 +30,17 @@ public class MicrophoneStand : BaseMountable
 
 	public AudioMixerGroup LowPitchMix;
 
-	public Phrase NormalPhrase = new Phrase ("microphone_normal", "Normal");
+	public Translate.Phrase NormalPhrase = new Translate.Phrase ("microphone_normal", "Normal");
 
-	public Phrase NormalDescPhrase = new Phrase ("microphone_normal_desc", "No voice effect");
+	public Translate.Phrase NormalDescPhrase = new Translate.Phrase ("microphone_normal_desc", "No voice effect");
 
-	public Phrase HighPitchPhrase = new Phrase ("microphone_high", "High Pitch");
+	public Translate.Phrase HighPitchPhrase = new Translate.Phrase ("microphone_high", "High Pitch");
 
-	public Phrase HighPitchDescPhrase = new Phrase ("microphone_high_desc", "High pitch voice");
+	public Translate.Phrase HighPitchDescPhrase = new Translate.Phrase ("microphone_high_desc", "High pitch voice");
 
-	public Phrase LowPitchPhrase = new Phrase ("microphone_low", "Low");
+	public Translate.Phrase LowPitchPhrase = new Translate.Phrase ("microphone_low", "Low");
 
-	public Phrase LowPitchDescPhrase = new Phrase ("microphone_low_desc", "Low pitch voice");
+	public Translate.Phrase LowPitchDescPhrase = new Translate.Phrase ("microphone_low_desc", "Low pitch voice");
 
 	public GameObjectRef IOSubEntity;
 
@@ -51,36 +52,29 @@ public class MicrophoneStand : BaseMountable
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("MicrophoneStand.OnRpcMessage", 0);
-		try {
-			if (rpc == 1420522459 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("MicrophoneStand.OnRpcMessage")) {
+			if (rpc == 1420522459 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - SetMode "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - SetMode "));
 				}
-				TimeWarning val2 = TimeWarning.New ("SetMode", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Call", 0);
+				using (TimeWarning.New ("SetMode")) {
 					try {
-						RPCMessage rPCMessage = default(RPCMessage);
-						rPCMessage.connection = msg.connection;
-						rPCMessage.player = player;
-						rPCMessage.read = msg.read;
-						RPCMessage mode = rPCMessage;
-						SetMode (mode);
-					} finally {
-						((IDisposable)val3)?.Dispose ();
+						using (TimeWarning.New ("Call")) {
+							RPCMessage rPCMessage = default(RPCMessage);
+							rPCMessage.connection = msg.connection;
+							rPCMessage.player = player;
+							rPCMessage.read = msg.read;
+							RPCMessage mode = rPCMessage;
+							SetMode (mode);
+						}
+					} catch (Exception exception) {
+						Debug.LogException (exception);
+						player.Kick ("RPC Error in SetMode");
 					}
-				} catch (Exception ex) {
-					Debug.LogException (ex);
-					player.Kick ("RPC Error in SetMode");
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -88,7 +82,7 @@ public class MicrophoneStand : BaseMountable
 	[RPC_Server]
 	public void SetMode (RPCMessage msg)
 	{
-		if (!((Object)(object)msg.player != (Object)(object)_mounted)) {
+		if (!(msg.player != _mounted)) {
 			SpeechMode speechMode = (SpeechMode)msg.read.Int32 ();
 			if (speechMode != currentSpeechMode) {
 				currentSpeechMode = speechMode;
@@ -99,11 +93,9 @@ public class MicrophoneStand : BaseMountable
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
 		if (info.msg.microphoneStand == null) {
-			info.msg.microphoneStand = Pool.Get<MicrophoneStand> ();
+			info.msg.microphoneStand = Facepunch.Pool.Get<ProtoBuf.MicrophoneStand> ();
 		}
 		info.msg.microphoneStand.microphoneMode = (int)currentSpeechMode;
 		info.msg.microphoneStand.IORef = ioEntity.uid;
@@ -111,8 +103,6 @@ public class MicrophoneStand : BaseMountable
 
 	public void SpawnChildEntity ()
 	{
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
 		MicrophoneStandIOEntity microphoneStandIOEntity = GameManager.server.CreateEntity (IOSubEntity.resourcePath, IOSubEntitySpawnPos.localPosition, IOSubEntitySpawnPos.localRotation) as MicrophoneStandIOEntity;
 		microphoneStandIOEntity.enableSaving = enableSaving;
 		microphoneStandIOEntity.SetParent (this);
@@ -129,27 +119,25 @@ public class MicrophoneStand : BaseMountable
 
 	public override void PostMapEntitySpawn ()
 	{
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0078: Unknown result type (might be due to invalid IL or missing references)
 		base.PostMapEntitySpawn ();
 		if (!IsStatic) {
 			return;
 		}
 		SpawnChildEntity ();
 		int num = 128;
-		List<ConnectedSpeaker> list = Pool.GetList<ConnectedSpeaker> ();
-		GamePhysics.OverlapSphere<ConnectedSpeaker> (((Component)this).transform.position, (float)num, list, 256, (QueryTriggerInteraction)1);
+		List<ConnectedSpeaker> obj = Facepunch.Pool.GetList<ConnectedSpeaker> ();
+		GamePhysics.OverlapSphere (base.transform.position, num, obj, 256);
 		IOEntity iOEntity = ioEntity.Get (serverside: true);
-		List<MicrophoneStand> list2 = Pool.GetList<MicrophoneStand> ();
+		List<MicrophoneStand> obj2 = Facepunch.Pool.GetList<MicrophoneStand> ();
 		int num2 = 0;
-		foreach (ConnectedSpeaker item in list) {
+		foreach (ConnectedSpeaker item in obj) {
 			bool flag = true;
-			list2.Clear ();
-			GamePhysics.OverlapSphere<MicrophoneStand> (((Component)item).transform.position, (float)num, list2, 256, (QueryTriggerInteraction)1);
-			if (list2.Count > 1) {
-				float num3 = Distance ((BaseEntity)item);
-				foreach (MicrophoneStand item2 in list2) {
-					if (!item2.isClient && item2.Distance ((BaseEntity)item) < num3) {
+			obj2.Clear ();
+			GamePhysics.OverlapSphere (item.transform.position, num, obj2, 256);
+			if (obj2.Count > 1) {
+				float num3 = Distance (item);
+				foreach (MicrophoneStand item2 in obj2) {
+					if (!item2.isClient && item2.Distance (item) < num3) {
 						flag = false;
 						break;
 					}
@@ -162,13 +150,12 @@ public class MicrophoneStand : BaseMountable
 				num2++;
 			}
 		}
-		Pool.FreeList<ConnectedSpeaker> (ref list);
-		Pool.FreeList<MicrophoneStand> (ref list2);
+		Facepunch.Pool.FreeList (ref obj);
+		Facepunch.Pool.FreeList (ref obj2);
 	}
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (info.msg.microphoneStand != null) {
 			currentSpeechMode = (SpeechMode)info.msg.microphoneStand.microphoneMode;

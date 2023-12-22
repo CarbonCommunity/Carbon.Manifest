@@ -25,7 +25,7 @@ public class DamageProperties : ScriptableObject
 				return hitAreaProperty.damage;
 			}
 		}
-		if (!Object.op_Implicit ((Object)(object)fallback)) {
+		if (!fallback) {
 			return 1f;
 		}
 		return fallback.GetMultiplier (area);

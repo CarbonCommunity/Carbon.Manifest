@@ -46,10 +46,10 @@ public class RustEmojiLibrary : BaseScriptableObject
 
 		public bool CanBeUsedBy (BasePlayer p)
 		{
-			if ((Object)(object)RequiredDLC != (Object)null && !RequiredDLC.CanUse (p)) {
+			if (RequiredDLC != null && !RequiredDLC.CanUse (p)) {
 				return false;
 			}
-			if ((Object)(object)RequiredItem != (Object)null && !RequiredItem.HasUnlocked (p.userID)) {
+			if (RequiredItem != null && !RequiredItem.HasUnlocked (p.userID)) {
 				return false;
 			}
 			return true;
@@ -101,7 +101,7 @@ public class RustEmojiLibrary : BaseScriptableObject
 	public static RustEmojiLibrary Instance {
 		get {
 			if (_instance == null) {
-				_instance = FileSystem.Load<RustEmojiLibrary> ("assets/content/ui/gameui/emoji/rustemojilibrary.asset", true);
+				_instance = FileSystem.Load<RustEmojiLibrary> ("assets/content/ui/gameui/emoji/rustemojilibrary.asset");
 				_instance.Prewarm ();
 			}
 			return _instance;
@@ -110,7 +110,6 @@ public class RustEmojiLibrary : BaseScriptableObject
 
 	public static void FindAllServerEmoji ()
 	{
-		//IL_0103: Unknown result type (might be due to invalid IL or missing references)
 		if (hasLoaded) {
 			return;
 		}
@@ -122,12 +121,12 @@ public class RustEmojiLibrary : BaseScriptableObject
 		foreach (string item in Directory.EnumerateFiles (serverFolder)) {
 			try {
 				if (!CheckByteArray (new FileInfo (item).Length)) {
-					Debug.Log ((object)$"{serverFolder} file size is too big for emoji, max file size is {250000L} bytes");
+					Debug.Log ($"{serverFolder} file size is too big for emoji, max file size is {250000L} bytes");
 					continue;
 				}
 				byte[] array = File.ReadAllBytes (item);
 				if (!CheckTextureSize (array, out var texWidth, out var texHeight)) {
-					Debug.Log ((object)$"{item} is too large, it's size is {texWidth}x{texHeight} and the maximum is {256}x{256}");
+					Debug.Log ($"{item} is too large, it's size is {texWidth}x{texHeight} and the maximum is {256}x{256}");
 				} else if (item.EndsWith (".png") || item.EndsWith (".jpg")) {
 					FileStorage.Type type = FileStorage.Type.jpg;
 					if (item.EndsWith (".png")) {
@@ -146,7 +145,7 @@ public class RustEmojiLibrary : BaseScriptableObject
 					}
 				}
 			} catch (Exception arg) {
-				Debug.Log ((object)$"Exception loading {item} - {arg}");
+				Debug.Log ($"Exception loading {item} - {arg}");
 			}
 		}
 	}
@@ -170,13 +169,11 @@ public class RustEmojiLibrary : BaseScriptableObject
 
 	public static bool CheckTextureSize (byte[] bytes, out int texWidth, out int texHeight)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0008: Expected O, but got Unknown
-		Texture2D val = new Texture2D (1, 1);
-		ImageConversion.LoadImage (val, bytes);
-		texWidth = ((Texture)val).width;
-		texHeight = ((Texture)val).height;
-		Object.Destroy ((Object)(object)val);
+		Texture2D texture2D = new Texture2D (1, 1);
+		texture2D.LoadImage (bytes);
+		texWidth = texture2D.width;
+		texHeight = texture2D.height;
+		UnityEngine.Object.Destroy (texture2D);
 		if (texWidth <= 256) {
 			return texHeight <= 256;
 		}
@@ -195,13 +192,13 @@ public class RustEmojiLibrary : BaseScriptableObject
 		foreach (RustEmojiConfig rustEmojiConfig in configs) {
 			if (!rustEmojiConfig.Hide) {
 				all.Add (rustEmojiConfig.Source);
-				if ((Object)(object)rustEmojiConfig.Source.RequiredItem != (Object)null || (Object)(object)rustEmojiConfig.Source.RequiredDLC != (Object)null) {
+				if (rustEmojiConfig.Source.RequiredItem != null || rustEmojiConfig.Source.RequiredDLC != null) {
 					conditionalAccessOnly.Add (rustEmojiConfig.Source);
 				}
 			}
 		}
 		foreach (ItemDefinition item in ItemManager.itemList) {
-			if (!item.hidden && !((Object)(object)item.iconSprite == (Object)null)) {
+			if (!item.hidden && !(item.iconSprite == null)) {
 				all.Add (new EmojiSource {
 					Name = item.shortname,
 					Type = EmojiType.Item,

@@ -19,7 +19,7 @@ public class ApplyTweakUIChanges : MonoBehaviour
 		}
 		TweakUIBase[] options = Options;
 		foreach (TweakUIBase tweakUIBase in options) {
-			if (!((Object)(object)tweakUIBase == (Object)null)) {
+			if (!(tweakUIBase == null)) {
 				tweakUIBase.OnApplyClicked ();
 			}
 		}
@@ -28,15 +28,15 @@ public class ApplyTweakUIChanges : MonoBehaviour
 
 	public void SetDirty ()
 	{
-		if ((Object)(object)ApplyButton != (Object)null) {
-			((Selectable)ApplyButton).interactable = true;
+		if (ApplyButton != null) {
+			ApplyButton.interactable = true;
 		}
 	}
 
 	public void SetClean ()
 	{
-		if ((Object)(object)ApplyButton != (Object)null) {
-			((Selectable)ApplyButton).interactable = false;
+		if (ApplyButton != null) {
+			ApplyButton.interactable = false;
 		}
 	}
 }

@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -143,9 +144,9 @@ public class MiniCopter : BaseHelicopterVehicle, IEngineControllerUser, IEntity,
 	public void RPC_OpenFuel (RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
-		if (!((Object)(object)player == (Object)null)) {
+		if (!(player == null)) {
 			BasePlayer driver = GetDriver ();
-			if ((!((Object)(object)driver != (Object)null) || !((Object)(object)driver != (Object)(object)player)) && (!IsSafe () || !((Object)(object)player != (Object)(object)creatorEntity))) {
+			if ((!(driver != null) || !(driver != player)) && (!IsSafe () || !(player != creatorEntity))) {
 				engineController.FuelSystem.LootFuel (player);
 			}
 		}
@@ -196,10 +197,6 @@ public class MiniCopter : BaseHelicopterVehicle, IEngineControllerUser, IEntity,
 
 	public override void SetDefaultInputState ()
 	{
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0056: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0061: Unknown result type (might be due to invalid IL or missing references)
 		currentInputState.Reset ();
 		cachedRoll = 0f;
 		cachedYaw = 0f;
@@ -208,8 +205,8 @@ public class MiniCopter : BaseHelicopterVehicle, IEngineControllerUser, IEntity,
 			return;
 		}
 		if (HasDriver ()) {
-			float num = Vector3.Dot (Vector3.up, ((Component)this).transform.right);
-			float num2 = Vector3.Dot (Vector3.up, ((Component)this).transform.forward);
+			float num = Vector3.Dot (Vector3.up, base.transform.right);
+			float num2 = Vector3.Dot (Vector3.up, base.transform.forward);
 			currentInputState.roll = ((num < 0f) ? 1f : 0f);
 			currentInputState.roll -= ((num > 0f) ? 1f : 0f);
 			if (num2 < -0f) {
@@ -224,7 +221,7 @@ public class MiniCopter : BaseHelicopterVehicle, IEngineControllerUser, IEntity,
 
 	private void ApplyForceAtWheels ()
 	{
-		if (!((Object)(object)rigidBody == (Object)null)) {
+		if (!(rigidBody == null)) {
 			float num = 50f;
 			float num2 = 0f;
 			float num3 = 0f;
@@ -279,18 +276,17 @@ public class MiniCopter : BaseHelicopterVehicle, IEngineControllerUser, IEntity,
 
 	public override void ServerInit ()
 	{
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
 		base.ServerInit ();
-		lastEngineOnTime = Time.realtimeSinceStartup;
+		lastEngineOnTime = UnityEngine.Time.realtimeSinceStartup;
 		rigidBody.inertiaTensor = rigidBody.inertiaTensor;
-		preventBuildingObject.SetActive (true);
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)UpdateNetwork, 0f, 0.2f, 0.05f);
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)DecayTick, Random.Range (30f, 60f), 60f, 6f);
+		preventBuildingObject.SetActive (value: true);
+		InvokeRandomized (UpdateNetwork, 0f, 0.2f, 0.05f);
+		InvokeRandomized (DecayTick, UnityEngine.Random.Range (30f, 60f), 60f, 6f);
 	}
 
 	public void DecayTick ()
 	{
-		if (base.healthFraction != 0f && !IsOn () && !(Time.time < lastEngineOnTime + 600f)) {
+		if (base.healthFraction != 0f && !IsOn () && !(UnityEngine.Time.time < lastEngineOnTime + 600f)) {
 			float num = 1f / (IsOutside () ? outsidedecayminutes : insidedecayminutes);
 			Hurt (MaxHealth () * num, DamageType.Decay, this, useProtection: false);
 		}
@@ -312,7 +308,7 @@ public class MiniCopter : BaseHelicopterVehicle, IEngineControllerUser, IEntity,
 			return HasDriver ();
 		}
 		if (!HasDriver ()) {
-			return Time.time <= lastPlayerInputTime + 1f;
+			return UnityEngine.Time.time <= lastPlayerInputTime + 1f;
 		}
 		return true;
 	}
@@ -326,9 +322,9 @@ public class MiniCopter : BaseHelicopterVehicle, IEngineControllerUser, IEntity,
 		base.OnFlagsChanged (old, next);
 		if (base.isServer) {
 			if (CurEngineState == VehicleEngineController<MiniCopter>.EngineState.Off) {
-				lastEngineOnTime = Time.time;
+				lastEngineOnTime = UnityEngine.Time.time;
 			}
-			if ((Object)(object)rigidBody != (Object)null) {
+			if (rigidBody != null) {
 				rigidBody.isKinematic = IsTransferProtected ();
 			}
 		}
@@ -358,16 +354,13 @@ public class MiniCopter : BaseHelicopterVehicle, IEngineControllerUser, IEntity,
 
 	public void UpdateCOM ()
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
 		rigidBody.centerOfMass = com.localPosition;
 	}
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0037: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
-		info.msg.miniCopter = Pool.Get<Minicopter> ();
+		info.msg.miniCopter = Facepunch.Pool.Get<Minicopter> ();
 		info.msg.miniCopter.fuelStorageID = engineController.FuelSystem.fuelStorageInstance.uid;
 		info.msg.miniCopter.fuelFraction = GetFuelFraction ();
 		info.msg.miniCopter.pitch = currentInputState.pitch;
@@ -378,9 +371,9 @@ public class MiniCopter : BaseHelicopterVehicle, IEngineControllerUser, IEntity,
 	public override void DismountAllPlayers ()
 	{
 		foreach (MountPointInfo mountPoint in mountPoints) {
-			if ((Object)(object)mountPoint.mountable != (Object)null) {
+			if (mountPoint.mountable != null) {
 				BasePlayer mounted = mountPoint.mountable.GetMounted ();
-				if (Object.op_Implicit ((Object)(object)mounted)) {
+				if ((bool)mounted) {
 					mounted.Hurt (10000f, DamageType.Explosion, this, useProtection: false);
 				}
 			}
@@ -389,31 +382,15 @@ public class MiniCopter : BaseHelicopterVehicle, IEngineControllerUser, IEntity,
 
 	protected override void DoPushAction (BasePlayer player)
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0086: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 val = Vector3Ex.Direction2D (((Component)player).transform.position, ((Component)this).transform.position);
-		Vector3 val2 = player.eyes.BodyForward ();
-		val2.y = 0.25f;
-		Vector3 val3 = ((Component)this).transform.position + val * 2f;
+		Vector3 vector = Vector3Ex.Direction2D (player.transform.position, base.transform.position);
+		Vector3 vector2 = player.eyes.BodyForward ();
+		vector2.y = 0.25f;
+		Vector3 position = base.transform.position + vector * 2f;
 		float num = rigidBody.mass * 2f;
-		rigidBody.AddForceAtPosition (val2 * num, val3, (ForceMode)1);
-		rigidBody.AddForce (Vector3.up * 3f, (ForceMode)1);
+		rigidBody.AddForceAtPosition (vector2 * num, position, ForceMode.Impulse);
+		rigidBody.AddForce (Vector3.up * 3f, ForceMode.Impulse);
 		isPushing = true;
-		((FacepunchBehaviour)this).Invoke ((Action)DisablePushing, 0.5f);
+		Invoke (DisablePushing, 0.5f);
 	}
 
 	private void DisablePushing ()
@@ -429,47 +406,40 @@ public class MiniCopter : BaseHelicopterVehicle, IEngineControllerUser, IEntity,
 	public override void DisableTransferProtection ()
 	{
 		SwapDriverIfInactive ();
-		if ((Object)(object)GetDriver () != (Object)null && IsOn ()) {
+		if (GetDriver () != null && IsOn ()) {
 			SetDefaultInputState ();
-			lastPlayerInputTime = Time.time;
+			lastPlayerInputTime = UnityEngine.Time.time;
 		}
 		base.DisableTransferProtection ();
 	}
 
 	private void SwapDriverIfInactive ()
 	{
-		//IL_006c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0071: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0079: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bb: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer driver = GetDriver ();
-		if ((Object)(object)driver == (Object)null || IsPlayerActive (driver)) {
+		if (driver == null || IsPlayerActive (driver)) {
 			return;
 		}
 		MountPointInfo mountPoint = GetMountPoint (GetPlayerSeat (driver));
 		if (mountPoint == null) {
-			Debug.LogError ((object)"Minicopter driver is inactive but the driver seat was not found");
+			Debug.LogError ("Minicopter driver is inactive but the driver seat was not found");
 			return;
 		}
 		BasePlayer basePlayer = FindActivePassenger ();
-		if ((Object)(object)basePlayer == (Object)null) {
-			Debug.LogError ((object)"Minicopter driver is inactive and there is no passenger we can swap in");
+		if (basePlayer == null) {
+			Debug.LogError ("Minicopter driver is inactive and there is no passenger we can swap in");
 			return;
 		}
 		MountPointInfo mountPoint2 = GetMountPoint (GetPlayerSeat (basePlayer));
 		BaseEntity entity = basePlayer.GetParentEntity ();
-		Vector3 position = ((Component)basePlayer).transform.position;
-		Quaternion rotation = ((Component)basePlayer).transform.rotation;
+		Vector3 position = basePlayer.transform.position;
+		Quaternion rotation = basePlayer.transform.rotation;
 		driver.EnsureDismounted ();
 		basePlayer.EnsureDismounted ();
 		mountPoint.mountable.MountPlayer (basePlayer);
 		if (mountPoint2 == null) {
 			driver.SetParent (entity);
 			driver.MovePosition (position);
-			((Component)driver).transform.rotation = rotation;
+			driver.transform.rotation = rotation;
 			driver.ServerRotation = rotation;
 		} else {
 			mountPoint2.mountable.MountPlayer (driver);
@@ -479,15 +449,15 @@ public class MiniCopter : BaseHelicopterVehicle, IEngineControllerUser, IEntity,
 		BasePlayer FindActivePassenger ()
 		{
 			foreach (MountPointInfo allMountPoint in base.allMountPoints) {
-				if (!allMountPoint.isDriver && !((Object)(object)allMountPoint.mountable == (Object)null)) {
+				if (!allMountPoint.isDriver && !(allMountPoint.mountable == null)) {
 					BasePlayer mounted = allMountPoint.mountable.GetMounted ();
-					if (!((Object)(object)mounted == (Object)null) && IsPlayerActive (mounted)) {
+					if (!(mounted == null) && IsPlayerActive (mounted)) {
 						return mounted;
 					}
 				}
 			}
 			foreach (BaseEntity child in children) {
-				if (!((Object)(object)child == (Object)null) && child is BasePlayer basePlayer2 && IsPlayerActive (basePlayer2)) {
+				if (!(child == null) && child is BasePlayer basePlayer2 && IsPlayerActive (basePlayer2)) {
 					return basePlayer2;
 				}
 			}
@@ -509,7 +479,6 @@ public class MiniCopter : BaseHelicopterVehicle, IEngineControllerUser, IEntity,
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (info.msg.miniCopter != null) {
 			engineController.FuelSystem.fuelStorageInstance.uid = info.msg.miniCopter.fuelStorageID;
@@ -540,57 +509,45 @@ public class MiniCopter : BaseHelicopterVehicle, IEngineControllerUser, IEntity,
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("MiniCopter.OnRpcMessage", 0);
-		try {
-			if (rpc == 1851540757 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("MiniCopter.OnRpcMessage")) {
+			if (rpc == 1851540757 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_OpenFuel "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_OpenFuel "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_OpenFuel", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_OpenFuel")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (1851540757u, "RPC_OpenFuel", this, player, 6f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							RPC_OpenFuel (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_OpenFuel");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
 
 	void IEngineControllerUser.Invoke (Action action, float time)
 	{
-		((FacepunchBehaviour)this).Invoke (action, time);
+		Invoke (action, time);
 	}
 
 	void IEngineControllerUser.CancelInvoke (Action action)
 	{
-		((FacepunchBehaviour)this).CancelInvoke (action);
+		CancelInvoke (action);
 	}
 }

@@ -15,7 +15,7 @@ public class PooledList<T>
 	public void Free ()
 	{
 		if (data != null) {
-			Pool.FreeList<T> (ref data);
+			Pool.FreeList (ref data);
 		}
 	}
 

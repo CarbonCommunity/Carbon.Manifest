@@ -19,36 +19,25 @@ public class BigWheelBettingTerminal : StorageContainer
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("BigWheelBettingTerminal.OnRpcMessage", 0);
-		try {
-		} finally {
-			((IDisposable)val)?.Dispose ();
+		using (TimeWarning.New ("BigWheelBettingTerminal.OnRpcMessage")) {
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
 
 	public new void OnDrawGizmos ()
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
 		Gizmos.color = Color.yellow;
-		Gizmos.DrawSphere (((Component)this).transform.TransformPoint (seatedPlayerOffset), offsetCheckRadius);
+		Gizmos.DrawSphere (base.transform.TransformPoint (seatedPlayerOffset), offsetCheckRadius);
 		base.OnDrawGizmos ();
 	}
 
 	public bool IsPlayerValid (BasePlayer player)
 	{
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
 		if (!player.isMounted || !(player.GetMounted () is BaseChair)) {
 			return false;
 		}
-		Vector3 val = ((Component)this).transform.TransformPoint (seatedPlayerOffset);
-		if (Vector3Ex.Distance2D (((Component)player).transform.position, val) > offsetCheckRadius) {
+		Vector3 b = base.transform.TransformPoint (seatedPlayerOffset);
+		if (Vector3Ex.Distance2D (player.transform.position, b) > offsetCheckRadius) {
 			return false;
 		}
 		return true;
@@ -68,18 +57,12 @@ public class BigWheelBettingTerminal : StorageContainer
 
 	public bool TrySetBigWheel (BigWheelGame newWheel)
 	{
-		//IL_0031: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0062: Unknown result type (might be due to invalid IL or missing references)
 		if (base.isClient) {
 			return false;
 		}
-		if ((Object)(object)bigWheel != (Object)null && (Object)(object)bigWheel != (Object)(object)newWheel) {
-			float num = Vector3.SqrMagnitude (((Component)bigWheel).transform.position - ((Component)this).transform.position);
-			if (Vector3.SqrMagnitude (((Component)newWheel).transform.position - ((Component)this).transform.position) >= num) {
+		if (bigWheel != null && bigWheel != newWheel) {
+			float num = Vector3.SqrMagnitude (bigWheel.transform.position - base.transform.position);
+			if (Vector3.SqrMagnitude (newWheel.transform.position - base.transform.position) >= num) {
 				return false;
 			}
 			bigWheel.RemoveTerminal (this);

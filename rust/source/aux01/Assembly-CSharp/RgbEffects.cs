@@ -33,13 +33,13 @@ public class RgbEffects : SingletonComponent<RgbEffects>
 
 	[ClientVar (Name = "static")]
 	[EditorBrowsable (EditorBrowsableState.Never)]
-	public static void ConVar_Static (Arg args)
+	public static void ConVar_Static (ConsoleSystem.Arg args)
 	{
 	}
 
 	[ClientVar (Name = "pulse")]
 	[EditorBrowsable (EditorBrowsableState.Never)]
-	public static void ConVar_Pulse (Arg args)
+	public static void ConVar_Pulse (ConsoleSystem.Arg args)
 	{
 	}
 }

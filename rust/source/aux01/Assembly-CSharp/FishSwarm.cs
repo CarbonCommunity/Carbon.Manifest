@@ -1,5 +1,4 @@
 using System.Collections;
-using Unity.Mathematics;
 using UnityEngine;
 
 public class FishSwarm : MonoBehaviour
@@ -16,22 +15,22 @@ public class FishSwarm : MonoBehaviour
 		for (int i = 0; i < fishTypes.Length; i++) {
 			fishShoals [i] = new FishShoal (fishTypes [i]);
 		}
-		((MonoBehaviour)this).StartCoroutine (SpawnFish ());
+		StartCoroutine (SpawnFish ());
 	}
 
 	private IEnumerator SpawnFish ()
 	{
 		while (true) {
-			if (!Object.op_Implicit ((Object)(object)TerrainMeta.WaterMap) || !Object.op_Implicit ((Object)(object)TerrainMeta.HeightMap)) {
+			if (!TerrainMeta.WaterMap || !TerrainMeta.HeightMap) {
 				yield return CoroutineEx.waitForEndOfFrame;
 				continue;
 			}
-			if (lastFishUpdatePosition.HasValue && Vector3.Distance (((Component)this).transform.position, lastFishUpdatePosition.Value) < 5f) {
+			if (lastFishUpdatePosition.HasValue && Vector3.Distance (base.transform.position, lastFishUpdatePosition.Value) < 5f) {
 				yield return CoroutineEx.waitForEndOfFrame;
 			}
 			FishShoal[] array = fishShoals;
 			for (int i = 0; i < array.Length; i++) {
-				array [i].TrySpawn (float3.op_Implicit (((Component)this).transform.position));
+				array [i].TrySpawn (base.transform.position);
 				yield return CoroutineEx.waitForEndOfFrame;
 			}
 		}
@@ -39,21 +38,17 @@ public class FishSwarm : MonoBehaviour
 
 	private void Update ()
 	{
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
 		FishShoal[] array = fishShoals;
 		for (int i = 0; i < array.Length; i++) {
-			array [i].OnUpdate (float3.op_Implicit (((Component)this).transform.position));
+			array [i].OnUpdate (base.transform.position);
 		}
 	}
 
 	private void LateUpdate ()
 	{
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
 		FishShoal[] array = fishShoals;
 		for (int i = 0; i < array.Length; i++) {
-			array [i].OnLateUpdate (float3.op_Implicit (((Component)this).transform.position));
+			array [i].OnLateUpdate (base.transform.position);
 		}
 	}
 
@@ -67,10 +62,8 @@ public class FishSwarm : MonoBehaviour
 
 	private void OnDrawGizmos ()
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		Gizmos.DrawWireSphere (((Component)this).transform.position, 15f);
-		Gizmos.DrawWireSphere (((Component)this).transform.position, 40f);
+		Gizmos.DrawWireSphere (base.transform.position, 15f);
+		Gizmos.DrawWireSphere (base.transform.position, 40f);
 		if (Application.isPlaying) {
 			FishShoal[] array = fishShoals;
 			for (int i = 0; i < array.Length; i++) {

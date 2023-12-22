@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Network;
@@ -8,82 +9,61 @@ public class CustomDoorManipulator : DoorManipulator
 {
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("CustomDoorManipulator.OnRpcMessage", 0);
-		try {
-			if (rpc == 1224330484 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("CustomDoorManipulator.OnRpcMessage")) {
+			if (rpc == 1224330484 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - DoPair "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - DoPair "));
 				}
-				TimeWarning val2 = TimeWarning.New ("DoPair", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("DoPair")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (1224330484u, "DoPair", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							DoPair (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in DoPair");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 3800726972u && (Object)(object)player != (Object)null) {
+			if (rpc == 3800726972u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - ServerActionChange "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - ServerActionChange "));
 				}
-				TimeWarning val2 = TimeWarning.New ("ServerActionChange", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("ServerActionChange")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (3800726972u, "ServerActionChange", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg3 = rPCMessage;
 							ServerActionChange (msg3);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in ServerActionChange");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -95,7 +75,7 @@ public class CustomDoorManipulator : DoorManipulator
 
 	public bool CanPlayerAdmin (BasePlayer player)
 	{
-		if ((Object)(object)player != (Object)null && player.CanBuild ()) {
+		if (player != null && player.CanBuild ()) {
 			return !IsOn ();
 		}
 		return false;
@@ -103,7 +83,7 @@ public class CustomDoorManipulator : DoorManipulator
 
 	public bool IsPaired ()
 	{
-		return (Object)(object)targetDoor != (Object)null;
+		return targetDoor != null;
 	}
 
 	public void RefreshDoor ()
@@ -114,13 +94,13 @@ public class CustomDoorManipulator : DoorManipulator
 	private void OnPhysicsNeighbourChanged ()
 	{
 		SetTargetDoor (targetDoor);
-		((FacepunchBehaviour)this).Invoke ((Action)RefreshDoor, 0.1f);
+		Invoke (RefreshDoor, 0.1f);
 	}
 
 	public override void SetupInitialDoorConnection ()
 	{
-		if (entityRef.IsValid (serverside: true) && (Object)(object)targetDoor == (Object)null) {
-			SetTargetDoor (((Component)entityRef.Get (serverside: true)).GetComponent<Door> ());
+		if (entityRef.IsValid (serverside: true) && targetDoor == null) {
+			SetTargetDoor (entityRef.Get (serverside: true).GetComponent<Door> ());
 		}
 	}
 
@@ -135,7 +115,7 @@ public class CustomDoorManipulator : DoorManipulator
 	{
 		Door door = targetDoor;
 		Door door2 = FindDoor (PairWithLockedDoors ());
-		if ((Object)(object)door2 != (Object)(object)door) {
+		if (door2 != door) {
 			SetTargetDoor (door2);
 		}
 	}

@@ -1,7 +1,7 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using ConVar;
 using Facepunch;
 using Network;
@@ -39,7 +39,7 @@ public class IndustrialConveyor : IndustrialEntity
 
 		public string TargetItemName {
 			get {
-				if (!((Object)(object)TargetItem != (Object)null)) {
+				if (!(TargetItem != null)) {
 					return string.Empty;
 				}
 				return TargetItem.shortname;
@@ -49,9 +49,9 @@ public class IndustrialConveyor : IndustrialEntity
 			}
 		}
 
-		public void CopyTo (ItemFilter target)
+		public void CopyTo (ProtoBuf.IndustrialConveyor.ItemFilter target)
 		{
-			if ((Object)(object)TargetItem != (Object)null) {
+			if (TargetItem != null) {
 				target.itemDef = TargetItem.itemid;
 			}
 			target.maxAmountInDestination = MaxAmountInOutput;
@@ -66,7 +66,7 @@ public class IndustrialConveyor : IndustrialEntity
 			target.bufferTransferRemaining = BufferTransferRemaining;
 		}
 
-		public ItemFilter (ItemFilter from)
+		public ItemFilter (ProtoBuf.IndustrialConveyor.ItemFilter from)
 		{
 			this = new ItemFilter {
 				TargetItem = ItemManager.FindItemDefinition (from.itemDef),
@@ -126,127 +126,97 @@ public class IndustrialConveyor : IndustrialEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("IndustrialConveyor.OnRpcMessage", 0);
-		try {
-			if (rpc == 617569194 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("IndustrialConveyor.OnRpcMessage")) {
+			if (rpc == 617569194 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_ChangeFilters "));
+					UnityEngine.Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_ChangeFilters "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_ChangeFilters", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_ChangeFilters")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (617569194u, "RPC_ChangeFilters", this, player, 1uL)) {
 							return true;
 						}
 						if (!RPC_Server.MaxDistance.Test (617569194u, "RPC_ChangeFilters", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							RPC_ChangeFilters (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						UnityEngine.Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_ChangeFilters");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 3731379386u && (Object)(object)player != (Object)null) {
+			if (rpc == 3731379386u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_RequestUpToDateFilters "));
+					UnityEngine.Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_RequestUpToDateFilters "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_RequestUpToDateFilters", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_RequestUpToDateFilters")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (3731379386u, "Server_RequestUpToDateFilters", this, player, 1uL)) {
 							return true;
 						}
 						if (!RPC_Server.IsVisible.Test (3731379386u, "Server_RequestUpToDateFilters", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg3 = rPCMessage;
 							Server_RequestUpToDateFilters (msg3);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						UnityEngine.Debug.LogException (exception2);
 						player.Kick ("RPC Error in Server_RequestUpToDateFilters");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 4167839872u && (Object)(object)player != (Object)null) {
+			if (rpc == 4167839872u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - SvSwitch "));
+					UnityEngine.Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - SvSwitch "));
 				}
-				TimeWarning val2 = TimeWarning.New ("SvSwitch", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("SvSwitch")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (4167839872u, "SvSwitch", this, player, 2uL)) {
 							return true;
 						}
 						if (!RPC_Server.IsVisible.Test (4167839872u, "SvSwitch", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg4 = rPCMessage;
 							SvSwitch (msg4);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex3) {
-						Debug.LogException (ex3);
+					} catch (Exception exception3) {
+						UnityEngine.Debug.LogException (exception3);
 						player.Kick ("RPC Error in SvSwitch");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -256,28 +226,22 @@ public class IndustrialConveyor : IndustrialEntity
 		base.OnFlagsChanged (old, next);
 		bool flag = next.HasFlag (Flags.On);
 		if (old.HasFlag (Flags.On) != flag && base.isServer) {
-			float conveyorMoveFrequency = Server.conveyorMoveFrequency;
+			float conveyorMoveFrequency = ConVar.Server.conveyorMoveFrequency;
 			if (flag && conveyorMoveFrequency > 0f) {
-				((FacepunchBehaviour)this).InvokeRandomized ((Action)ScheduleMove, conveyorMoveFrequency, conveyorMoveFrequency, conveyorMoveFrequency * 0.5f);
+				InvokeRandomized (ScheduleMove, conveyorMoveFrequency, conveyorMoveFrequency, conveyorMoveFrequency * 0.5f);
 			} else {
-				((FacepunchBehaviour)this).CancelInvoke ((Action)ScheduleMove);
+				CancelInvoke (ScheduleMove);
 			}
 		}
 	}
 
 	private void ScheduleMove ()
 	{
-		((ObjectWorkQueue<IndustrialEntity>)IndustrialEntity.Queue).Add ((IndustrialEntity)this);
+		IndustrialEntity.Queue.Add (this);
 	}
 
 	private Item GetItemToMove (IIndustrialStorage storage, out ItemFilter associatedFilter, int slot, ItemContainer targetContainer = null)
 	{
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0096: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009c: Unknown result type (might be due to invalid IL or missing references)
 		associatedFilter = default(ItemFilter);
 		(ItemFilter, int) tuple = default((ItemFilter, int));
 		if (storage == null || storage.Container == null) {
@@ -286,13 +250,13 @@ public class IndustrialConveyor : IndustrialEntity
 		if (storage.Container.IsEmpty ()) {
 			return null;
 		}
-		Vector2i val = storage.OutputSlotRange (slot);
-		for (int i = val.x; i <= val.y; i++) {
+		Vector2i vector2i = storage.OutputSlotRange (slot);
+		for (int i = vector2i.x; i <= vector2i.y; i++) {
 			Item slot2 = storage.Container.GetSlot (i);
 			tuple = default((ItemFilter, int));
 			if (slot2 != null && (filterItems.Count == 0 || FilterHasItem (slot2, out tuple))) {
 				(associatedFilter, _) = tuple;
-				if (targetContainer == null || !((Object)(object)associatedFilter.TargetItem != (Object)null) || associatedFilter.MaxAmountInOutput <= 0 || targetContainer.GetTotalItemAmount (slot2, val.x, val.y) < associatedFilter.MaxAmountInOutput) {
+				if (targetContainer == null || !(associatedFilter.TargetItem != null) || associatedFilter.MaxAmountInOutput <= 0 || targetContainer.GetTotalItemAmount (slot2, vector2i.x, vector2i.y) < associatedFilter.MaxAmountInOutput) {
 					return slot2;
 				}
 			}
@@ -315,13 +279,13 @@ public class IndustrialConveyor : IndustrialEntity
 
 	private bool FilterMatches (ItemFilter filter, Item item)
 	{
-		if (item.IsBlueprint () && filter.IsBlueprint && (Object)(object)item.blueprintTargetDef == (Object)(object)filter.TargetItem) {
+		if (item.IsBlueprint () && filter.IsBlueprint && item.blueprintTargetDef == filter.TargetItem) {
 			return true;
 		}
-		if ((Object)(object)filter.TargetItem == (Object)(object)item.info && !filter.IsBlueprint) {
+		if (filter.TargetItem == item.info && !filter.IsBlueprint) {
 			return true;
 		}
-		if ((Object)(object)filter.TargetItem != (Object)null && (Object)(object)item.info.isRedirectOf == (Object)(object)filter.TargetItem) {
+		if (filter.TargetItem != null && item.info.isRedirectOf == filter.TargetItem) {
 			return true;
 		}
 		if (filter.TargetCategory.HasValue && item.info.category == filter.TargetCategory) {
@@ -338,29 +302,8 @@ public class IndustrialConveyor : IndustrialEntity
 
 	protected override void RunJob ()
 	{
-		//IL_07ff: Unknown result type (might be due to invalid IL or missing references)
-		//IL_080e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0227: Unknown result type (might be due to invalid IL or missing references)
-		//IL_022c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_022e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0738: Unknown result type (might be due to invalid IL or missing references)
-		//IL_024a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_024f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0301: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0308: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03e1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03e8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_038a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0391: Unknown result type (might be due to invalid IL or missing references)
-		//IL_04f3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_04fa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_04a2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_04a9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0596: Unknown result type (might be due to invalid IL or missing references)
-		//IL_05c3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0626: Unknown result type (might be due to invalid IL or missing references)
 		base.RunJob ();
-		if (Server.conveyorMoveFrequency <= 0f) {
+		if (ConVar.Server.conveyorMoveFrequency <= 0f) {
 			return;
 		}
 		if (filterFunc == null) {
@@ -370,11 +313,11 @@ public class IndustrialConveyor : IndustrialEntity
 			refreshInputOutputs = false;
 			splitInputs.Clear ();
 			splitOutputs.Clear ();
-			List<IOEntity> list = Pool.GetList<IOEntity> ();
-			FindContainerSource (splitInputs, 32, input: true, list);
-			list.Clear ();
-			FindContainerSource (splitOutputs, 32, input: false, list, -1, MaxStackSizePerMove);
-			Pool.FreeList<IOEntity> (ref list);
+			List<IOEntity> obj = Facepunch.Pool.GetList<IOEntity> ();
+			FindContainerSource (splitInputs, 32, input: true, obj);
+			obj.Clear ();
+			FindContainerSource (splitOutputs, 32, input: false, obj, -1, MaxStackSizePerMove);
+			Facepunch.Pool.FreeList (ref obj);
 		}
 		bool hasItems = CheckIfAnyInputPassesFilters (splitInputs);
 		if ((!lastFilterState.HasValue || hasItems != lastFilterState) && !hasItems) {
@@ -384,13 +327,13 @@ public class IndustrialConveyor : IndustrialEntity
 			return;
 		}
 		transferStopWatch.Restart ();
-		IndustrialConveyorTransfer transfer = Pool.Get<IndustrialConveyorTransfer> ();
+		IndustrialConveyorTransfer transfer = Facepunch.Pool.Get<IndustrialConveyorTransfer> ();
 		try {
 			bool flag = false;
-			transfer.ItemTransfers = Pool.GetList<ItemTransfer> ();
-			transfer.inputEntities = Pool.GetList<NetworkableId> ();
-			transfer.outputEntities = Pool.GetList<NetworkableId> ();
-			List<int> list2 = Pool.GetList<int> ();
+			transfer.ItemTransfers = Facepunch.Pool.GetList<IndustrialConveyorTransfer.ItemTransfer> ();
+			transfer.inputEntities = Facepunch.Pool.GetList<NetworkableId> ();
+			transfer.outputEntities = Facepunch.Pool.GetList<NetworkableId> ();
+			List<int> obj2 = Facepunch.Pool.GetList<int> ();
 			int num = 0;
 			int count = splitOutputs.Count;
 			foreach (ContainerInputOutput splitOutput in splitOutputs) {
@@ -398,7 +341,7 @@ public class IndustrialConveyor : IndustrialEntity
 				foreach (ContainerInputOutput splitInput in splitInputs) {
 					int num2 = 0;
 					IIndustrialStorage storage = splitInput.Storage;
-					if (storage == null || splitOutput.Storage == null || (Object)(object)splitInput.Storage.IndustrialEntity == (Object)(object)splitOutput.Storage.IndustrialEntity) {
+					if (storage == null || splitOutput.Storage == null || splitInput.Storage.IndustrialEntity == splitOutput.Storage.IndustrialEntity) {
 						continue;
 					}
 					ItemContainer container = storage.Container;
@@ -407,9 +350,9 @@ public class IndustrialConveyor : IndustrialEntity
 						continue;
 					}
 					(ItemFilter, int) filter2 = default((ItemFilter, int));
-					Vector2i val = storage.OutputSlotRange (splitInput.SlotIndex);
-					for (int i = val.x; i <= val.y; i++) {
-						Vector2i val2 = splitOutput.Storage.InputSlotRange (splitOutput.SlotIndex);
+					Vector2i vector2i = storage.OutputSlotRange (splitInput.SlotIndex);
+					for (int i = vector2i.x; i <= vector2i.y; i++) {
+						Vector2i range = splitOutput.Storage.InputSlotRange (splitOutput.SlotIndex);
 						Item slot = storage.Container.GetSlot (i);
 						if (slot == null) {
 							continue;
@@ -427,17 +370,17 @@ public class IndustrialConveyor : IndustrialEntity
 							continue;
 						}
 						bool flag3 = mode == ConveyorMode.And || mode == ConveyorMode.Any;
-						if (flag3 && (Object)(object)filter2.Item1.TargetItem != (Object)null && filter2.Item1.MaxAmountInOutput > 0 && splitOutput.Storage.Container.GetTotalItemAmount (slot, val2.x, val2.y) >= filter2.Item1.MaxAmountInOutput) {
+						if (flag3 && filter2.Item1.TargetItem != null && filter2.Item1.MaxAmountInOutput > 0 && splitOutput.Storage.Container.GetTotalItemAmount (slot, range.x, range.y) >= filter2.Item1.MaxAmountInOutput) {
 							flag = true;
 							continue;
 						}
 						int num3 = (int)((float)Mathf.Min (MaxStackSizePerMove, slot.info.stackable) / (float)count);
 						if (flag3 && filter2.Item1.MinAmountInInput > 0) {
-							if ((Object)(object)filter2.Item1.TargetItem != (Object)null && FilterMatchItem (filter2.Item1, slot)) {
-								int totalItemAmount = container.GetTotalItemAmount (slot, val.x, val.y);
+							if (filter2.Item1.TargetItem != null && FilterMatchItem (filter2.Item1, slot)) {
+								int totalItemAmount = container.GetTotalItemAmount (slot, vector2i.x, vector2i.y);
 								num3 = Mathf.Min (num3, totalItemAmount - filter2.Item1.MinAmountInInput);
 							} else if (filter2.Item1.TargetCategory.HasValue) {
-								num3 = Mathf.Min (num3, container.GetTotalCategoryAmount (filter2.Item1.TargetCategory.Value, val2.x, val2.y) - filter2.Item1.MinAmountInInput);
+								num3 = Mathf.Min (num3, container.GetTotalCategoryAmount (filter2.Item1.TargetCategory.Value, range.x, range.y) - filter2.Item1.MinAmountInInput);
 							}
 							if (num3 == 0) {
 								continue;
@@ -450,10 +393,10 @@ public class IndustrialConveyor : IndustrialEntity
 							num3 = Mathf.Min (num3, filter2.Item1.BufferTransferRemaining);
 						}
 						if (flag3 && filter2.Item1.MaxAmountInOutput > 0) {
-							if ((Object)(object)filter2.Item1.TargetItem != (Object)null && FilterMatchItem (filter2.Item1, slot)) {
-								num3 = Mathf.Min (num3, filter2.Item1.MaxAmountInOutput - container2.GetTotalItemAmount (slot, val2.x, val2.y));
+							if (filter2.Item1.TargetItem != null && FilterMatchItem (filter2.Item1, slot)) {
+								num3 = Mathf.Min (num3, filter2.Item1.MaxAmountInOutput - container2.GetTotalItemAmount (slot, range.x, range.y));
 							} else if (filter2.Item1.TargetCategory.HasValue) {
-								num3 = Mathf.Min (num3, filter2.Item1.MaxAmountInOutput - container2.GetTotalCategoryAmount (filter2.Item1.TargetCategory.Value, val2.x, val2.y));
+								num3 = Mathf.Min (num3, filter2.Item1.MaxAmountInOutput - container2.GetTotalCategoryAmount (filter2.Item1.TargetCategory.Value, range.x, range.y));
 							}
 							if ((float)num3 <= 0f) {
 								flag = true;
@@ -475,14 +418,14 @@ public class IndustrialConveyor : IndustrialEntity
 						}
 						splitOutput.Storage.OnStorageItemTransferBegin ();
 						bool flag4 = false;
-						Item nonFullStackWithinRange = container2.GetNonFullStackWithinRange (item2 ?? slot, val2);
+						Item nonFullStackWithinRange = container2.GetNonFullStackWithinRange (item2 ?? slot, range);
 						if (nonFullStackWithinRange != null) {
 							flag4 = (item2 ?? slot).MoveToContainer (container2, nonFullStackWithinRange.position, allowStack: true, ignoreStackLimit: false, null, allowSwap: false);
 						}
 						if (!flag4) {
-							for (int j = val2.x; j <= val2.y; j++) {
+							for (int j = range.x; j <= range.y; j++) {
 								Item slot2 = container2.GetSlot (j);
-								if ((slot2 == null || ((Object)(object)slot2.info == (Object)(object)slot.info && slot2.condition == slot.condition)) && (item2 ?? slot).MoveToContainer (container2, j, allowStack: true, ignoreStackLimit: false, null, allowSwap: false)) {
+								if ((slot2 == null || (slot2.info == slot.info && slot2.condition == slot.condition)) && (item2 ?? slot).MoveToContainer (container2, j, allowStack: true, ignoreStackLimit: false, null, allowSwap: false)) {
 									flag4 = true;
 									break;
 								}
@@ -506,11 +449,11 @@ public class IndustrialConveyor : IndustrialEntity
 							} else {
 								AddTransfer (slot.info.itemid, amount2, splitInput.Storage.IndustrialEntity, splitOutput.Storage.IndustrialEntity);
 							}
-						} else if (!list2.Contains (num)) {
-							list2.Add (num);
+						} else if (!obj2.Contains (num)) {
+							obj2.Add (num);
 						}
 						splitOutput.Storage.OnStorageItemTransferEnd ();
-						if (num2 >= Server.maxItemStacksMovedPerTickIndustrial) {
+						if (num2 >= ConVar.Server.maxItemStacksMovedPerTickIndustrial) {
 							break;
 						}
 					}
@@ -523,9 +466,9 @@ public class IndustrialConveyor : IndustrialEntity
 			if (!lastFilterState.HasValue || hasItems != lastFilterState) {
 				UpdateFilterPassthroughs ();
 			}
-			Pool.FreeList<int> (ref list2);
+			Facepunch.Pool.FreeList (ref obj2);
 			if (transfer.ItemTransfers.Count > 0) {
-				ClientRPCEx<IndustrialConveyorTransfer> (new SendInfo (BaseNetworkable.GetConnectionsWithin (((Component)this).transform.position, 30f)), null, "ReceiveItemTransferDetails", transfer);
+				ClientRPCEx (new SendInfo (BaseNetworkable.GetConnectionsWithin (base.transform.position, 30f)), null, "ReceiveItemTransferDetails", transfer);
 			}
 		} finally {
 			if (transfer != null) {
@@ -534,43 +477,31 @@ public class IndustrialConveyor : IndustrialEntity
 		}
 		void AddTransfer (int itemId, int amount, BaseEntity fromEntity, BaseEntity toEntity)
 		{
-			//IL_0033: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0076: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0051: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0094: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00af: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00b4: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00b5: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00f8: Unknown result type (might be due to invalid IL or missing references)
-			//IL_010e: Unknown result type (might be due to invalid IL or missing references)
-			//IL_010f: Unknown result type (might be due to invalid IL or missing references)
-			//IL_011c: Unknown result type (might be due to invalid IL or missing references)
-			//IL_00d7: Unknown result type (might be due to invalid IL or missing references)
 			if (transfer != null && transfer.ItemTransfers != null) {
-				if ((Object)(object)fromEntity != (Object)null && !transfer.inputEntities.Contains (fromEntity.net.ID)) {
+				if (fromEntity != null && !transfer.inputEntities.Contains (fromEntity.net.ID)) {
 					transfer.inputEntities.Add (fromEntity.net.ID);
 				}
-				if ((Object)(object)toEntity != (Object)null && !transfer.outputEntities.Contains (toEntity.net.ID)) {
+				if (toEntity != null && !transfer.outputEntities.Contains (toEntity.net.ID)) {
 					transfer.outputEntities.Add (toEntity.net.ID);
 				}
 				for (int k = 0; k < transfer.ItemTransfers.Count; k++) {
-					ItemTransfer val3 = transfer.ItemTransfers [k];
-					if (val3.itemId == itemId) {
-						val3.amount += amount;
-						transfer.ItemTransfers [k] = val3;
+					IndustrialConveyorTransfer.ItemTransfer value2 = transfer.ItemTransfers [k];
+					if (value2.itemId == itemId) {
+						value2.amount += amount;
+						transfer.ItemTransfers [k] = value2;
 						return;
 					}
 				}
-				ItemTransfer val4 = default(ItemTransfer);
-				val4.itemId = itemId;
-				val4.amount = amount;
-				ItemTransfer item3 = val4;
+				IndustrialConveyorTransfer.ItemTransfer itemTransfer = default(IndustrialConveyorTransfer.ItemTransfer);
+				itemTransfer.itemId = itemId;
+				itemTransfer.amount = amount;
+				IndustrialConveyorTransfer.ItemTransfer item3 = itemTransfer;
 				transfer.ItemTransfers.Add (item3);
 			}
 		}
 		static bool FilterMatchItem (ItemFilter filter, Item item)
 		{
-			if ((Object)(object)filter.TargetItem != (Object)null && ((Object)(object)filter.TargetItem == (Object)(object)item.info || (item.IsBlueprint () == filter.IsBlueprint && (Object)(object)filter.TargetItem == (Object)(object)item.blueprintTargetDef))) {
+			if (filter.TargetItem != null && (filter.TargetItem == item.info || (item.IsBlueprint () == filter.IsBlueprint && filter.TargetItem == item.blueprintTargetDef))) {
 				return true;
 			}
 			return false;
@@ -599,10 +530,6 @@ public class IndustrialConveyor : IndustrialEntity
 
 	private bool CheckIfAnyInputPassesFilters (List<ContainerInputOutput> inputs)
 	{
-		//IL_00e4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00eb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f7: Unknown result type (might be due to invalid IL or missing references)
 		if (filterItems.Count == 0) {
 			foreach (ContainerInputOutput input in inputs) {
 				if (GetItemToMove (input.Storage, out var _, input.SlotIndex) != null) {
@@ -624,8 +551,8 @@ public class IndustrialConveyor : IndustrialEntity
 				int num3 = 0;
 				int num4 = 0;
 				foreach (ContainerInputOutput input2 in inputs) {
-					Vector2i val = input2.Storage.OutputSlotRange (input2.SlotIndex);
-					for (int j = val.x; j <= val.y; j++) {
+					Vector2i vector2i = input2.Storage.OutputSlotRange (input2.SlotIndex);
+					for (int j = vector2i.x; j <= vector2i.y; j++) {
 						Item slot = input2.Storage.Container.GetSlot (j);
 						if (slot == null) {
 							continue;
@@ -696,13 +623,13 @@ public class IndustrialConveyor : IndustrialEntity
 		if (filterItems.Count == 0) {
 			return;
 		}
-		info.msg.industrialConveyor = Pool.Get<IndustrialConveyor> ();
-		info.msg.industrialConveyor.filters = Pool.GetList<ItemFilter> ();
+		info.msg.industrialConveyor = Facepunch.Pool.Get<ProtoBuf.IndustrialConveyor> ();
+		info.msg.industrialConveyor.filters = Facepunch.Pool.GetList<ProtoBuf.IndustrialConveyor.ItemFilter> ();
 		info.msg.industrialConveyor.conveyorMode = (int)mode;
 		foreach (ItemFilter filterItem in filterItems) {
-			ItemFilter val = Pool.Get<ItemFilter> ();
-			filterItem.CopyTo (val);
-			info.msg.industrialConveyor.filters.Add (val);
+			ProtoBuf.IndustrialConveyor.ItemFilter itemFilter = Facepunch.Pool.Get<ProtoBuf.IndustrialConveyor.ItemFilter> ();
+			filterItem.CopyTo (itemFilter);
+			info.msg.industrialConveyor.filters.Add (itemFilter);
 		}
 	}
 
@@ -711,22 +638,22 @@ public class IndustrialConveyor : IndustrialEntity
 	[RPC_Server.CallsPerSecond (1uL)]
 	private void RPC_ChangeFilters (RPCMessage msg)
 	{
-		if ((Object)(object)msg.player == (Object)null || !msg.player.CanBuild ()) {
+		if (msg.player == null || !msg.player.CanBuild ()) {
 			return;
 		}
 		mode = (ConveyorMode)msg.read.Int32 ();
 		filterItems.Clear ();
-		ItemFilterList val = ItemFilterList.Deserialize ((Stream)(object)msg.read);
-		if (val.filters == null) {
+		ProtoBuf.IndustrialConveyor.ItemFilterList itemFilterList = ProtoBuf.IndustrialConveyor.ItemFilterList.Deserialize (msg.read);
+		if (itemFilterList.filters == null) {
 			return;
 		}
-		int num = Mathf.Min (val.filters.Count, 24);
+		int num = Mathf.Min (itemFilterList.filters.Count, 24);
 		for (int i = 0; i < num; i++) {
 			if (filterItems.Count >= 12) {
 				break;
 			}
-			ItemFilter item = new ItemFilter (val.filters [i]);
-			if ((Object)(object)item.TargetItem != (Object)null || item.TargetCategory.HasValue) {
+			ItemFilter item = new ItemFilter (itemFilterList.filters [i]);
+			if (item.TargetItem != null || item.TargetCategory.HasValue) {
 				filterItems.Add (item);
 			}
 		}
@@ -754,7 +681,7 @@ public class IndustrialConveyor : IndustrialEntity
 			lastFilterState = null;
 		}
 		ensureOutputsUpdated = true;
-		((FacepunchBehaviour)this).Invoke ((Action)Unbusy, 0.5f);
+		Invoke (Unbusy, 0.5f);
 		for (int i = 0; i < filterItems.Count; i++) {
 			ItemFilter value = filterItems [i];
 			if (value.BufferTransferRemaining > 0) {
@@ -840,18 +767,14 @@ public class IndustrialConveyor : IndustrialEntity
 		if (!IsOn ()) {
 			return;
 		}
-		ItemFilterList val = Pool.Get<ItemFilterList> ();
-		try {
-			val.filters = Pool.GetList<ItemFilter> ();
-			foreach (ItemFilter filterItem in filterItems) {
-				ItemFilter val2 = Pool.Get<ItemFilter> ();
-				filterItem.CopyTo (val2);
-				val.filters.Add (val2);
-			}
-			ClientRPCPlayer<ItemFilterList> (null, msg.player, "Client_ReceiveBufferInfo", val);
-		} finally {
-			((IDisposable)val)?.Dispose ();
+		using ProtoBuf.IndustrialConveyor.ItemFilterList itemFilterList = Facepunch.Pool.Get<ProtoBuf.IndustrialConveyor.ItemFilterList> ();
+		itemFilterList.filters = Facepunch.Pool.GetList<ProtoBuf.IndustrialConveyor.ItemFilter> ();
+		foreach (ItemFilter filterItem in filterItems) {
+			ProtoBuf.IndustrialConveyor.ItemFilter itemFilter = Facepunch.Pool.Get<ProtoBuf.IndustrialConveyor.ItemFilter> ();
+			filterItem.CopyTo (itemFilter);
+			itemFilterList.filters.Add (itemFilter);
 		}
+		ClientRPCPlayer (null, msg.player, "Client_ReceiveBufferInfo", itemFilterList);
 	}
 
 	public override void Load (LoadInfo info)
@@ -862,9 +785,9 @@ public class IndustrialConveyor : IndustrialEntity
 			return;
 		}
 		mode = (ConveyorMode)info.msg.industrialConveyor.conveyorMode;
-		foreach (ItemFilter filter in info.msg.industrialConveyor.filters) {
+		foreach (ProtoBuf.IndustrialConveyor.ItemFilter filter in info.msg.industrialConveyor.filters) {
 			ItemFilter item = new ItemFilter (filter);
-			if ((Object)(object)item.TargetItem != (Object)null || item.TargetCategory.HasValue) {
+			if (item.TargetItem != null || item.TargetCategory.HasValue) {
 				filterItems.Add (item);
 			}
 		}

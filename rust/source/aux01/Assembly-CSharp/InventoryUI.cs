@@ -6,7 +6,7 @@ public class InventoryUI : MonoBehaviour
 
 	private void Update ()
 	{
-		if ((Object)(object)ContactsButton != (Object)null && RelationshipManager.contacts != ContactsButton.activeSelf) {
+		if (ContactsButton != null && RelationshipManager.contacts != ContactsButton.activeSelf) {
 			ContactsButton.SetActive (RelationshipManager.contacts);
 		}
 	}

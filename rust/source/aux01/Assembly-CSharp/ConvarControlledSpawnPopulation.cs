@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -7,13 +8,13 @@ public class ConvarControlledSpawnPopulation : SpawnPopulation
 	[Header ("Convars")]
 	public string PopulationConvar;
 
-	private Command _command;
+	private ConsoleSystem.Command _command;
 
-	protected Command Command {
+	protected ConsoleSystem.Command Command {
 		get {
 			if (_command == null) {
-				_command = Server.Find (PopulationConvar);
-				Assert.IsNotNull<Command> (_command, $"{this} has missing convar {PopulationConvar}");
+				_command = ConsoleSystem.Index.Server.Find (PopulationConvar);
+				Assert.IsNotNull (_command, $"{this} has missing convar {PopulationConvar}");
 			}
 			return _command;
 		}

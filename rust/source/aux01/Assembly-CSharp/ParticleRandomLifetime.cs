@@ -10,7 +10,7 @@ public class ParticleRandomLifetime : MonoBehaviour
 
 	public void Awake ()
 	{
-		if (Object.op_Implicit ((Object)(object)mySystem)) {
+		if ((bool)mySystem) {
 			float startLifetime = Random.Range (minScale, maxScale);
 			mySystem.startLifetime = startLifetime;
 		}

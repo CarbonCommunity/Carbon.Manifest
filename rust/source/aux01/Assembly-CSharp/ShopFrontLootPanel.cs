@@ -19,7 +19,7 @@ public class ShopFrontLootPanel : LootPanel
 
 	public GameObject exchangeInProgressImage;
 
-	public Phrase acceptedPhrase;
+	public Translate.Phrase acceptedPhrase;
 
-	public Phrase noOnePhrase;
+	public Translate.Phrase noOnePhrase;
 }

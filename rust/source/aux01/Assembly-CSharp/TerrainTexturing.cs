@@ -1,7 +1,5 @@
-using System;
 using Rust;
 using Unity.Collections;
-using Unity.Jobs;
 using UnityEngine;
 
 [ExecuteInEditMode]
@@ -59,17 +57,13 @@ public class TerrainTexturing : TerrainExtension
 
 	private void InitializeShoreVector ()
 	{
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a5: Unknown result type (might be due to invalid IL or missing references)
 		int num = Mathf.ClosestPowerOfTwo (terrain.terrainData.heightmapResolution) >> 1;
 		int num2 = num * num;
 		terrainSize = Mathf.Max (terrain.terrainData.size.x, terrain.terrainData.size.z);
 		shoreMapSize = num;
 		shoreDistanceScale = terrainSize / (float)shoreMapSize;
 		shoreDistances = new float[num * num];
-		shoreVectors = (Vector3[])(object)new Vector3[num * num];
+		shoreVectors = new Vector3[num * num];
 		for (int i = 0; i < num2; i++) {
 			shoreDistances [i] = 10000f;
 			shoreVectors [i] = Vector3.one;
@@ -78,11 +72,8 @@ public class TerrainTexturing : TerrainExtension
 
 	private void GenerateShoreVector ()
 	{
-		TimeWarning val = TimeWarning.New ("GenerateShoreVector", 500);
-		try {
+		using (TimeWarning.New ("GenerateShoreVector", 500)) {
 			GenerateShoreVector (out shoreDistances, out shoreVectors);
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 	}
 
@@ -94,63 +85,38 @@ public class TerrainTexturing : TerrainExtension
 
 	private void GenerateShoreVector (out float[] distances, out Vector3[] vectors)
 	{
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fe: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0100: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0105: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0079: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0084: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0098: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0168: Unknown result type (might be due to invalid IL or missing references)
-		//IL_016d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_018b: Unknown result type (might be due to invalid IL or missing references)
 		float num = terrainSize / (float)shoreMapSize;
 		Vector3 position = terrain.GetPosition ();
 		int num2 = LayerMask.NameToLayer ("Terrain");
-		NativeArray<RaycastHit> val = default(NativeArray<RaycastHit>);
-		val..ctor (shoreMapSize * shoreMapSize, (Allocator)3, (NativeArrayOptions)1);
-		NativeArray<RaycastCommand> val2 = default(NativeArray<RaycastCommand>);
-		val2..ctor (shoreMapSize * shoreMapSize, (Allocator)3, (NativeArrayOptions)1);
+		NativeArray<RaycastHit> results = new NativeArray<RaycastHit> (shoreMapSize * shoreMapSize, Allocator.TempJob);
+		NativeArray<RaycastCommand> commands = new NativeArray<RaycastCommand> (shoreMapSize * shoreMapSize, Allocator.TempJob);
 		for (int i = 0; i < shoreMapSize; i++) {
 			for (int j = 0; j < shoreMapSize; j++) {
-				float num3 = ((float)j + 0.5f) * num;
-				float num4 = ((float)i + 0.5f) * num;
-				Vector3 val3 = new Vector3 (position.x, 0f, position.z) + new Vector3 (num3, 1000f, num4);
+				float x = ((float)j + 0.5f) * num;
+				float z = ((float)i + 0.5f) * num;
+				Vector3 from = new Vector3 (position.x, 0f, position.z) + new Vector3 (x, 1000f, z);
 				Vector3 down = Vector3.down;
-				val2 [i * shoreMapSize + j] = new RaycastCommand (val3, down, float.MaxValue, -5, 1);
+				commands [i * shoreMapSize + j] = new RaycastCommand (from, down);
 			}
 		}
-		JobHandle val4 = RaycastCommand.ScheduleBatch (val2, val, 1, default(JobHandle));
-		((JobHandle)(ref val4)).Complete ();
+		RaycastCommand.ScheduleBatch (commands, results, 1).Complete ();
 		byte[] image = new byte[shoreMapSize * shoreMapSize];
 		distances = new float[shoreMapSize * shoreMapSize];
-		vectors = (Vector3[])(object)new Vector3[shoreMapSize * shoreMapSize];
+		vectors = new Vector3[shoreMapSize * shoreMapSize];
 		int k = 0;
-		int num5 = 0;
+		int num3 = 0;
 		for (; k < shoreMapSize; k++) {
-			int num6 = 0;
-			while (num6 < shoreMapSize) {
-				RaycastHit val5 = val [k * shoreMapSize + num6];
-				bool flag = ((Component)((RaycastHit)(ref val5)).collider).gameObject.layer == num2;
-				if (flag && ((RaycastHit)(ref val5)).point.y <= 0f) {
+			int num4 = 0;
+			while (num4 < shoreMapSize) {
+				RaycastHit raycastHit = results [k * shoreMapSize + num4];
+				bool flag = raycastHit.collider.gameObject.layer == num2;
+				if (flag && raycastHit.point.y <= 0f) {
 					flag = false;
 				}
-				image [num5] = (byte)(flag ? 255u : 0u);
-				distances [num5] = (flag ? 256 : 0);
-				num6++;
-				num5++;
+				image [num3] = (byte)(flag ? 255u : 0u);
+				distances [num3] = (flag ? 256 : 0);
+				num4++;
+				num3++;
 			}
 		}
 		ref int size = ref shoreMapSize;
@@ -158,19 +124,12 @@ public class TerrainTexturing : TerrainExtension
 		DistanceField.Generate (in size, in threshold, in image, ref distances);
 		DistanceField.ApplyGaussianBlur (shoreMapSize, distances);
 		DistanceField.GenerateVectors (in shoreMapSize, in distances, ref vectors);
-		val.Dispose ();
-		val2.Dispose ();
+		results.Dispose ();
+		commands.Dispose ();
 	}
 
 	public float GetCoarseDistanceToShore (Vector3 pos)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
 		Vector2 uv = default(Vector2);
 		uv.x = (pos.x - TerrainMeta.Position.x) * TerrainMeta.OneOverSize.x;
 		uv.y = (pos.z - TerrainMeta.Position.z) * TerrainMeta.OneOverSize.z;
@@ -179,8 +138,6 @@ public class TerrainTexturing : TerrainExtension
 
 	public float GetCoarseDistanceToShore (Vector2 uv)
 	{
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
 		int num = shoreMapSize;
 		int num2 = num - 1;
 		float num3 = uv.x * (float)num2;
@@ -209,14 +166,6 @@ public class TerrainTexturing : TerrainExtension
 
 	public Vector3 GetCoarseVectorToShore (Vector3 pos)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
 		Vector2 uv = default(Vector2);
 		uv.x = (pos.x - TerrainMeta.Position.x) * TerrainMeta.OneOverSize.x;
 		uv.y = (pos.z - TerrainMeta.Position.z) * TerrainMeta.OneOverSize.z;
@@ -225,44 +174,6 @@ public class TerrainTexturing : TerrainExtension
 
 	public Vector3 GetCoarseVectorToShore (Vector2 uv)
 	{
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0096: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00aa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00de: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ed: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ff: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0115: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0120: Unknown result type (might be due to invalid IL or missing references)
-		//IL_012f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0136: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0141: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0150: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0157: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0162: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0171: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0178: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0183: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0190: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0197: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01aa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01bc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01c6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01cd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ed: Unknown result type (might be due to invalid IL or missing references)
 		int num = shoreMapSize;
 		int num2 = num - 1;
 		float num3 = uv.x * (float)num2;
@@ -281,27 +192,27 @@ public class TerrainTexturing : TerrainExtension
 		int num12 = num11 + num9;
 		int num13 = num11 + num10;
 		int num14 = num13 + num9;
-		Vector3 val = shoreVectors [num11];
-		Vector3 val2 = shoreVectors [num12];
-		Vector3 val3 = shoreVectors [num13];
-		Vector3 val4 = shoreVectors [num14];
-		Vector3 val5 = default(Vector3);
-		val5.x = (val2.x - val.x) * num7 + val.x;
-		val5.y = (val2.y - val.y) * num7 + val.y;
-		val5.z = (val2.z - val.z) * num7 + val.z;
-		Vector3 val6 = default(Vector3);
-		val6.x = (val4.x - val3.x) * num7 + val3.x;
-		val6.y = (val4.y - val3.y) * num7 + val3.y;
-		val6.z = (val4.z - val3.z) * num7 + val3.z;
-		float num15 = (val6.x - val5.x) * num8 + val5.x;
-		float num16 = (val6.y - val5.y) * num8 + val5.y;
-		float num17 = (val6.z - val5.z) * num8 + val5.z;
-		return new Vector3 (num15, num16, num17 * shoreDistanceScale);
+		Vector3 vector = shoreVectors [num11];
+		Vector3 vector2 = shoreVectors [num12];
+		Vector3 vector3 = shoreVectors [num13];
+		Vector3 vector4 = shoreVectors [num14];
+		Vector3 vector5 = default(Vector3);
+		vector5.x = (vector2.x - vector.x) * num7 + vector.x;
+		vector5.y = (vector2.y - vector.y) * num7 + vector.y;
+		vector5.z = (vector2.z - vector.z) * num7 + vector.z;
+		Vector3 vector6 = default(Vector3);
+		vector6.x = (vector4.x - vector3.x) * num7 + vector3.x;
+		vector6.y = (vector4.y - vector3.y) * num7 + vector3.y;
+		vector6.z = (vector4.z - vector3.z) * num7 + vector3.z;
+		float x = (vector6.x - vector5.x) * num8 + vector5.x;
+		float y = (vector6.y - vector5.y) * num8 + vector5.y;
+		float num15 = (vector6.z - vector5.z) * num8 + vector5.z;
+		return new Vector3 (x, y, num15 * shoreDistanceScale);
 	}
 
 	private void CheckInstance ()
 	{
-		instance = (((Object)(object)instance != (Object)null) ? instance : this);
+		instance = ((instance != null) ? instance : this);
 	}
 
 	private void Awake ()
@@ -316,9 +227,9 @@ public class TerrainTexturing : TerrainExtension
 
 	public override void PostSetup ()
 	{
-		TerrainMeta component = ((Component)this).GetComponent<TerrainMeta> ();
-		if ((Object)(object)component == (Object)null || (Object)(object)component.config == (Object)null) {
-			Debug.LogError ((object)"[TerrainTexturing] Missing TerrainMeta or TerrainConfig not assigned.");
+		TerrainMeta component = GetComponent<TerrainMeta> ();
+		if (component == null || component.config == null) {
+			Debug.LogError ("[TerrainTexturing] Missing TerrainMeta or TerrainConfig not assigned.");
 			return;
 		}
 		Shutdown ();
@@ -342,7 +253,7 @@ public class TerrainTexturing : TerrainExtension
 
 	private void OnDisable ()
 	{
-		if (!Application.isQuitting) {
+		if (!Rust.Application.isQuitting) {
 			Shutdown ();
 		}
 	}

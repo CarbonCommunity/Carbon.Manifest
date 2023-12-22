@@ -38,24 +38,15 @@ public class Memory
 
 	public SeenInfo Update (BaseEntity entity, float score, Vector3 direction, float dot, float distanceSqr, byte lineOfSight, bool updateLastHurtUsTime, float lastHurtUsTime, out ExtendedInfo extendedInfo)
 	{
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
 		return Update (entity, entity.ServerPosition, score, direction, dot, distanceSqr, lineOfSight, updateLastHurtUsTime, lastHurtUsTime, out extendedInfo);
 	}
 
 	public SeenInfo Update (BaseEntity entity, Vector3 position, float score, Vector3 direction, float dot, float distanceSqr, byte lineOfSight, bool updateLastHurtUsTime, float lastHurtUsTime, out ExtendedInfo extendedInfo)
 	{
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0143: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0105: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0107: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00af: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b1: Unknown result type (might be due to invalid IL or missing references)
 		extendedInfo = default(ExtendedInfo);
 		bool flag = false;
 		for (int i = 0; i < AllExtended.Count; i++) {
-			if ((Object)(object)AllExtended [i].Entity == (Object)(object)entity) {
+			if (AllExtended [i].Entity == entity) {
 				ExtendedInfo extendedInfo2 = AllExtended [i];
 				extendedInfo2.Direction = direction;
 				extendedInfo2.Dot = dot;
@@ -99,18 +90,13 @@ public class Memory
 
 	public SeenInfo Update (BaseEntity ent, float danger = 0f)
 	{
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
 		return Update (ent, ent.ServerPosition, danger);
 	}
 
 	public SeenInfo Update (BaseEntity ent, Vector3 position, float danger = 0f)
 	{
-		//IL_007d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
 		for (int i = 0; i < All.Count; i++) {
-			if ((Object)(object)All [i].Entity == (Object)(object)ent) {
+			if (All [i].Entity == ent) {
 				SeenInfo seenInfo = All [i];
 				seenInfo.Position = position;
 				seenInfo.Timestamp = Time.realtimeSinceStartup;
@@ -132,14 +118,6 @@ public class Memory
 
 	public void AddDanger (Vector3 position, float amount)
 	{
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0059: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0063: Unknown result type (might be due to invalid IL or missing references)
 		for (int i = 0; i < All.Count; i++) {
 			if (Mathf.Approximately (All [i].Position.x, position.x) && Mathf.Approximately (All [i].Position.y, position.y) && Mathf.Approximately (All [i].Position.z, position.z)) {
 				SeenInfo value = All [i];
@@ -158,7 +136,7 @@ public class Memory
 	public SeenInfo GetInfo (BaseEntity entity)
 	{
 		foreach (SeenInfo item in All) {
-			if ((Object)(object)item.Entity == (Object)(object)entity) {
+			if (item.Entity == entity) {
 				return item;
 			}
 		}
@@ -167,13 +145,8 @@ public class Memory
 
 	public SeenInfo GetInfo (Vector3 position)
 	{
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
 		foreach (SeenInfo item in All) {
-			Vector3 val = item.Position - position;
-			if (((Vector3)(ref val)).sqrMagnitude < 1f) {
+			if ((item.Position - position).sqrMagnitude < 1f) {
 				return item;
 			}
 		}
@@ -183,7 +156,7 @@ public class Memory
 	public ExtendedInfo GetExtendedInfo (BaseEntity entity)
 	{
 		foreach (ExtendedInfo item in AllExtended) {
-			if ((Object)(object)item.Entity == (Object)(object)entity) {
+			if (item.Entity == entity) {
 				return item;
 			}
 		}
@@ -195,10 +168,10 @@ public class Memory
 		for (int i = 0; i < All.Count; i++) {
 			float num = Time.realtimeSinceStartup - All [i].Timestamp;
 			if (num > maxSecondsOld) {
-				if ((Object)(object)All [i].Entity != (Object)null) {
+				if (All [i].Entity != null) {
 					Visible.Remove (All [i].Entity);
 					for (int j = 0; j < AllExtended.Count; j++) {
-						if ((Object)(object)AllExtended [j].Entity == (Object)(object)All [i].Entity) {
+						if (AllExtended [j].Entity == All [i].Entity) {
 							AllExtended.RemoveAt (j);
 							break;
 						}
@@ -220,7 +193,7 @@ public class Memory
 					continue;
 				}
 				for (int k = 0; k < AllExtended.Count; k++) {
-					if ((Object)(object)AllExtended [k].Entity == (Object)(object)All [i].Entity) {
+					if (AllExtended [k].Entity == All [i].Entity) {
 						ExtendedInfo value2 = AllExtended [k];
 						value2.LineOfSight = 0;
 						AllExtended [k] = value2;
@@ -230,13 +203,13 @@ public class Memory
 			}
 		}
 		for (int l = 0; l < Visible.Count; l++) {
-			if ((Object)(object)Visible [l] == (Object)null) {
+			if (Visible [l] == null) {
 				Visible.RemoveAt (l);
 				l--;
 			}
 		}
 		for (int m = 0; m < AllExtended.Count; m++) {
-			if ((Object)(object)AllExtended [m].Entity == (Object)null) {
+			if (AllExtended [m].Entity == null) {
 				AllExtended.RemoveAt (m);
 				m--;
 			}

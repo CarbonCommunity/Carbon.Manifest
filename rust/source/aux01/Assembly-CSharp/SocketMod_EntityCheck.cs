@@ -17,38 +17,28 @@ public class SocketMod_EntityCheck : SocketMod
 
 	private void OnDrawGizmosSelected ()
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
-		Gizmos.matrix = ((Component)this).transform.localToWorldMatrix;
+		Gizmos.matrix = base.transform.localToWorldMatrix;
 		Gizmos.color = (wantsCollide ? new Color (0f, 1f, 0f, 0.7f) : new Color (1f, 0f, 0f, 0.7f));
 		Gizmos.DrawSphere (Vector3.zero, sphereRadius);
 	}
 
 	public override bool DoCheck (Construction.Placement place)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
 		Vector3 position = place.position + place.rotation * worldPosition;
-		List<BaseEntity> list = Pool.GetList<BaseEntity> ();
-		Vis.Entities (position, sphereRadius, list, ((LayerMask)(ref layerMask)).value, queryTriggers);
-		foreach (BaseEntity ent in list) {
+		List<BaseEntity> obj = Pool.GetList<BaseEntity> ();
+		Vis.Entities (position, sphereRadius, obj, layerMask.value, queryTriggers);
+		foreach (BaseEntity ent in obj) {
 			bool flag = entityTypes.Any ((BaseEntity x) => x.prefabID == ent.prefabID);
 			if (flag && wantsCollide) {
-				Pool.FreeList<BaseEntity> (ref list);
+				Pool.FreeList (ref obj);
 				return true;
 			}
 			if (flag && !wantsCollide) {
-				Pool.FreeList<BaseEntity> (ref list);
+				Pool.FreeList (ref obj);
 				return false;
 			}
 		}
-		Pool.FreeList<BaseEntity> (ref list);
+		Pool.FreeList (ref obj);
 		return !wantsCollide;
 	}
 }

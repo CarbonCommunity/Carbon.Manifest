@@ -13,7 +13,7 @@ public class ConnectionAuth : MonoBehaviour
 
 	public bool IsAuthed (ulong iSteamID)
 	{
-		if (Object.op_Implicit ((Object)(object)BasePlayer.FindByID (iSteamID))) {
+		if ((bool)BasePlayer.FindByID (iSteamID)) {
 			return true;
 		}
 		if (SingletonComponent<ServerMgr>.Instance.connectionQueue.IsJoining (iSteamID)) {
@@ -27,8 +27,8 @@ public class ConnectionAuth : MonoBehaviour
 
 	public static void Reject (Connection connection, string strReason, string strReasonPrivate = null)
 	{
-		DebugEx.Log ((object)(((object)connection).ToString () + " Rejecting connection - " + (string.IsNullOrEmpty (strReasonPrivate) ? strReason : strReasonPrivate)), (StackTraceLogType)0);
-		Net.sv.Kick (connection, strReason, false);
+		DebugEx.Log (connection.ToString () + " Rejecting connection - " + (string.IsNullOrEmpty (strReasonPrivate) ? strReason : strReasonPrivate));
+		Net.sv.Kick (connection, strReason);
 		m_AuthConnection.Remove (connection);
 	}
 
@@ -59,37 +59,37 @@ public class ConnectionAuth : MonoBehaviour
 				Reject (connection, "Incompatible Version");
 				return;
 			}
-			DebugEx.Log ((object)("Not kicking " + connection.userid + " for incompatible protocol (is a developer)"), (StackTraceLogType)0);
+			DebugEx.Log ("Not kicking " + connection.userid + " for incompatible protocol (is a developer)");
 		}
 		if (ServerUsers.Is (connection.userid, ServerUsers.UserGroup.Banned)) {
 			ServerUsers.User user = ServerUsers.Get (connection.userid);
 			string text = user?.notes ?? "no reason given";
-			string text2 = ((user != null && user.expiry > 0) ? (" for " + NumberExtensions.FormatSecondsLong (user.expiry - Epoch.Current)) : "");
+			string text2 = ((user != null && user.expiry > 0) ? (" for " + (user.expiry - Epoch.Current).FormatSecondsLong ()) : "");
 			Reject (connection, "You are banned from this server" + text2 + " (" + text + ")");
 			return;
 		}
 		if (ServerUsers.Is (connection.userid, ServerUsers.UserGroup.Moderator)) {
-			DebugEx.Log ((object)(((object)connection).ToString () + " has auth level 1"), (StackTraceLogType)0);
+			DebugEx.Log (connection.ToString () + " has auth level 1");
 			connection.authLevel = 1u;
 		}
 		if (ServerUsers.Is (connection.userid, ServerUsers.UserGroup.Owner)) {
-			DebugEx.Log ((object)(((object)connection).ToString () + " has auth level 2"), (StackTraceLogType)0);
+			DebugEx.Log (connection.ToString () + " has auth level 2");
 			connection.authLevel = 2u;
 		}
 		if (DeveloperList.Contains (connection.userid)) {
-			DebugEx.Log ((object)(((object)connection).ToString () + " is a developer"), (StackTraceLogType)0);
+			DebugEx.Log (connection.ToString () + " is a developer");
 			connection.authLevel = 3u;
 		}
 		m_AuthConnection.Add (connection);
-		((MonoBehaviour)this).StartCoroutine (AuthorisationRoutine (connection));
+		StartCoroutine (AuthorisationRoutine (connection));
 	}
 
 	public IEnumerator AuthorisationRoutine (Connection connection)
 	{
-		yield return ((MonoBehaviour)this).StartCoroutine (Auth_Steam.Run (connection));
-		yield return ((MonoBehaviour)this).StartCoroutine (Auth_EAC.Run (connection));
-		yield return ((MonoBehaviour)this).StartCoroutine (Auth_CentralizedBans.Run (connection));
-		yield return ((MonoBehaviour)this).StartCoroutine (Auth_Nexus.Run (connection));
+		yield return StartCoroutine (Auth_Steam.Run (connection));
+		yield return StartCoroutine (Auth_EAC.Run (connection));
+		yield return StartCoroutine (Auth_CentralizedBans.Run (connection));
+		yield return StartCoroutine (Auth_Nexus.Run (connection));
 		if (!connection.rejected && connection.active) {
 			if (IsAuthed (connection.userid)) {
 				Reject (connection, "You are already connected as a player!");

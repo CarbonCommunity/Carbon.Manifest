@@ -17,7 +17,7 @@ public class ItemAmount : ISerializationCallbackReceiver
 
 	public int itemid {
 		get {
-			if ((Object)(object)itemDef == (Object)null) {
+			if (itemDef == null) {
 				return 0;
 			}
 			return itemDef.itemid;
@@ -47,14 +47,14 @@ public class ItemAmount : ISerializationCallbackReceiver
 
 	public static ItemAmountList SerialiseList (List<ItemAmount> list)
 	{
-		ItemAmountList val = Pool.Get<ItemAmountList> ();
-		val.amount = Pool.GetList<float> ();
-		val.itemID = Pool.GetList<int> ();
+		ItemAmountList itemAmountList = Pool.Get<ItemAmountList> ();
+		itemAmountList.amount = Pool.GetList<float> ();
+		itemAmountList.itemID = Pool.GetList<int> ();
 		foreach (ItemAmount item in list) {
-			val.amount.Add (item.amount);
-			val.itemID.Add (item.itemid);
+			itemAmountList.amount.Add (item.amount);
+			itemAmountList.itemID.Add (item.itemid);
 		}
-		return val;
+		return itemAmountList;
 	}
 
 	public static void DeserialiseList (List<ItemAmount> target, ItemAmountList source)

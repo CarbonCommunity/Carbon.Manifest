@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -30,82 +31,61 @@ public class WheelSwitch : IOEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("WheelSwitch.OnRpcMessage", 0);
-		try {
-			if (rpc == 2223603322u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("WheelSwitch.OnRpcMessage")) {
+			if (rpc == 2223603322u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - BeginRotate "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - BeginRotate "));
 				}
-				TimeWarning val2 = TimeWarning.New ("BeginRotate", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("BeginRotate")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (2223603322u, "BeginRotate", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							BeginRotate (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in BeginRotate");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 434251040 && (Object)(object)player != (Object)null) {
+			if (rpc == 434251040 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - CancelRotate "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - CancelRotate "));
 				}
-				TimeWarning val2 = TimeWarning.New ("CancelRotate", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("CancelRotate")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (434251040u, "CancelRotate", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg3 = rPCMessage;
 							CancelRotate (msg3);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in CancelRotate");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -122,17 +102,17 @@ public class WheelSwitch : IOEntity
 		if (!IsBeingRotated ()) {
 			SetFlag (BeingRotated, b: true);
 			rotatorPlayer = msg.player;
-			((FacepunchBehaviour)this).InvokeRepeating ((Action)RotateProgress, 0f, progressTickRate);
+			InvokeRepeating (RotateProgress, 0f, progressTickRate);
 		}
 	}
 
 	public void CancelPlayerRotation ()
 	{
-		((FacepunchBehaviour)this).CancelInvoke ((Action)RotateProgress);
+		CancelInvoke (RotateProgress);
 		SetFlag (BeingRotated, b: false);
 		IOSlot[] array = outputs;
 		foreach (IOSlot iOSlot in array) {
-			if ((Object)(object)iOSlot.connectedTo.Get () != (Object)null) {
+			if (iOSlot.connectedTo.Get () != null) {
 				iOSlot.connectedTo.Get ().IOInput (this, ioType, 0f, iOSlot.connectedToSlot);
 			}
 		}
@@ -141,16 +121,14 @@ public class WheelSwitch : IOEntity
 
 	public void RotateProgress ()
 	{
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
-		if (!Object.op_Implicit ((Object)(object)rotatorPlayer) || rotatorPlayer.IsDead () || rotatorPlayer.IsSleeping () || Vector3Ex.Distance2D (((Component)rotatorPlayer).transform.position, ((Component)this).transform.position) > 2f) {
+		if (!rotatorPlayer || rotatorPlayer.IsDead () || rotatorPlayer.IsSleeping () || Vector3Ex.Distance2D (rotatorPlayer.transform.position, base.transform.position) > 2f) {
 			CancelPlayerRotation ();
 			return;
 		}
 		float num = kineticEnergyPerSec * progressTickRate;
 		IOSlot[] array = outputs;
 		foreach (IOSlot iOSlot in array) {
-			if ((Object)(object)iOSlot.connectedTo.Get () != (Object)null) {
+			if (iOSlot.connectedTo.Get () != null) {
 				num = iOSlot.connectedTo.Get ().IOInput (this, ioType, num, iOSlot.connectedToSlot);
 			}
 		}
@@ -166,8 +144,8 @@ public class WheelSwitch : IOEntity
 		rotateProgress = newValue;
 		SetFlag (Flags.Reserved4, num != newValue);
 		SendNetworkUpdate ();
-		((FacepunchBehaviour)this).CancelInvoke ((Action)StoppedRotatingCheck);
-		((FacepunchBehaviour)this).Invoke ((Action)StoppedRotatingCheck, 0.25f);
+		CancelInvoke (StoppedRotatingCheck);
+		Invoke (StoppedRotatingCheck, 0.25f);
 	}
 
 	public void StoppedRotatingCheck ()
@@ -187,7 +165,7 @@ public class WheelSwitch : IOEntity
 		float inputAmount = kineticEnergyPerSec * progressTickRate;
 		IOSlot[] array = outputs;
 		foreach (IOSlot iOSlot in array) {
-			if ((Object)(object)iOSlot.connectedTo.Get () != (Object)null) {
+			if (iOSlot.connectedTo.Get () != null) {
 				inputAmount = iOSlot.connectedTo.Get ().IOInput (this, ioType, inputAmount, iOSlot.connectedToSlot);
 			}
 		}
@@ -202,9 +180,9 @@ public class WheelSwitch : IOEntity
 		}
 		if (inputType == IOType.Electric && slot == 1) {
 			if (inputAmount == 0f) {
-				((FacepunchBehaviour)this).CancelInvoke ((Action)Powered);
+				CancelInvoke (Powered);
 			} else {
-				((FacepunchBehaviour)this).InvokeRepeating ((Action)Powered, 0f, progressTickRate);
+				InvokeRepeating (Powered, 0f, progressTickRate);
 			}
 		}
 		return Mathf.Clamp (inputAmount - 1f, 0f, inputAmount);
@@ -226,7 +204,7 @@ public class WheelSwitch : IOEntity
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.sphereEntity = Pool.Get<SphereEntity> ();
+		info.msg.sphereEntity = Facepunch.Pool.Get<ProtoBuf.SphereEntity> ();
 		info.msg.sphereEntity.radius = rotateProgress;
 	}
 }

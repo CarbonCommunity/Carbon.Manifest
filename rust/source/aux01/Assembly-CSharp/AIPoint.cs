@@ -1,13 +1,10 @@
-using System;
-using UnityEngine;
-
 public class AIPoint : BaseMonoBehaviour
 {
 	private BaseEntity currentUser;
 
 	public bool InUse ()
 	{
-		return (Object)(object)currentUser != (Object)null;
+		return currentUser != null;
 	}
 
 	public bool IsUsedBy (BaseEntity user)
@@ -15,15 +12,15 @@ public class AIPoint : BaseMonoBehaviour
 		if (!InUse ()) {
 			return false;
 		}
-		if ((Object)(object)user == (Object)null) {
+		if (user == null) {
 			return false;
 		}
-		return (Object)(object)user == (Object)(object)currentUser;
+		return user == currentUser;
 	}
 
 	public bool CanBeUsedBy (BaseEntity user)
 	{
-		if ((Object)(object)user != (Object)null && (Object)(object)currentUser == (Object)(object)user) {
+		if (user != null && currentUser == user) {
 			return true;
 		}
 		return !InUse ();
@@ -32,8 +29,8 @@ public class AIPoint : BaseMonoBehaviour
 	public void SetUsedBy (BaseEntity user, float duration = 5f)
 	{
 		currentUser = user;
-		((FacepunchBehaviour)this).CancelInvoke ((Action)ClearUsed);
-		((FacepunchBehaviour)this).Invoke ((Action)ClearUsed, duration);
+		CancelInvoke (ClearUsed);
+		Invoke (ClearUsed, duration);
 	}
 
 	public void SetUsedBy (BaseEntity user)
@@ -48,7 +45,7 @@ public class AIPoint : BaseMonoBehaviour
 
 	public void ClearIfUsedBy (BaseEntity user)
 	{
-		if ((Object)(object)currentUser == (Object)(object)user) {
+		if (currentUser == user) {
 			ClearUsed ();
 		}
 	}

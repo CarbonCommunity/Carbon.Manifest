@@ -14,17 +14,17 @@ public class HalloweenHunt : EggHuntEvent
 			for (int i = 0; i < topHunters.Count; i++) {
 				EggHunter eggHunter2 = topHunters [i];
 				BasePlayer basePlayer = BasePlayer.FindByID (eggHunter2.userid);
-				if (Object.op_Implicit ((Object)(object)basePlayer)) {
+				if ((bool)basePlayer) {
 					basePlayer.ChatMessage ("You placed " + (i + 1) + " of " + topHunters.Count + " with " + topHunters [i].numEggs + " candies collected.");
 					Analytics.Server.ReportCandiesCollectedByPlayer (topHunters [i].numEggs);
 				} else {
-					Debug.LogWarning ((object)("EggHuntEvent Printwinners could not find player with id :" + eggHunter2.userid));
+					Debug.LogWarning ("EggHuntEvent Printwinners could not find player with id :" + eggHunter2.userid);
 				}
 			}
 			Analytics.Server.ReportPlayersParticipatedInHalloweenEvent (topHunters.Count);
 			for (int j = 0; j < placementAwards.Length && j < topHunters.Count; j++) {
 				BasePlayer basePlayer2 = BasePlayer.FindByID (topHunters [j].userid);
-				if (Object.op_Implicit ((Object)(object)basePlayer2)) {
+				if ((bool)basePlayer2) {
 					basePlayer2.inventory.GiveItem (ItemManager.Create (placementAwards [j].itemDef, (int)placementAwards [j].amount, 0uL), basePlayer2.inventory.containerMain);
 					basePlayer2.ChatMessage ("You received " + (int)placementAwards [j].amount + "x " + placementAwards [j].itemDef.displayName.english + " as an award!");
 				}

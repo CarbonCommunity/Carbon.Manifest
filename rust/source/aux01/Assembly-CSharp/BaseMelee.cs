@@ -1,6 +1,6 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
-using System.IO;
 using ConVar;
 using Facepunch;
 using Network;
@@ -62,93 +62,70 @@ public class BaseMelee : AttackEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("BaseMelee.OnRpcMessage", 0);
-		try {
-			if (rpc == 3168282921u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("BaseMelee.OnRpcMessage")) {
+			if (rpc == 3168282921u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - CLProject "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - CLProject "));
 				}
-				TimeWarning val2 = TimeWarning.New ("CLProject", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("CLProject")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.FromOwner.Test (3168282921u, "CLProject", this, player)) {
 							return true;
 						}
 						if (!RPC_Server.IsActiveItem.Test (3168282921u, "CLProject", this, player)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							CLProject (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in CLProject");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 4088326849u && (Object)(object)player != (Object)null) {
+			if (rpc == 4088326849u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - PlayerAttack "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - PlayerAttack "));
 				}
-				TimeWarning val2 = TimeWarning.New ("PlayerAttack", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("PlayerAttack")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsActiveItem.Test (4088326849u, "PlayerAttack", this, player)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg3 = rPCMessage;
 							PlayerAttack (msg3);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in PlayerAttack");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
 
 	public override Vector3 GetInheritedVelocity (BasePlayer player, Vector3 direction)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
 		return player.GetInheritedThrowVelocity (direction);
 	}
 
@@ -157,29 +134,11 @@ public class BaseMelee : AttackEntity
 	[RPC_Server.IsActiveItem]
 	private void CLProject (RPCMessage msg)
 	{
-		//IL_01b1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01fb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0211: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0218: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0226: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0237: Unknown result type (might be due to invalid IL or missing references)
-		//IL_023e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01da: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01dc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ea: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ee: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_034b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0350: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer player = msg.player;
 		if (!VerifyClientAttack (player)) {
 			SendNetworkUpdate ();
 		} else {
-			if ((Object)(object)player == (Object)null || player.IsHeadUnderwater ()) {
+			if (player == null || player.IsHeadUnderwater ()) {
 				return;
 			}
 			if (!canThrowAsProjectile) {
@@ -193,21 +152,21 @@ public class BaseMelee : AttackEntity
 				player.stats.combat.LogInvalid (player, this, "item_missing");
 				return;
 			}
-			ItemModProjectile component = ((Component)item.info).GetComponent<ItemModProjectile> ();
-			if ((Object)(object)component == (Object)null) {
+			ItemModProjectile component = item.info.GetComponent<ItemModProjectile> ();
+			if (component == null) {
 				AntiHack.Log (player, AntiHackType.ProjectileHack, "Item mod not found (" + base.ShortPrefabName + ")");
 				player.stats.combat.LogInvalid (player, this, "mod_missing");
 				return;
 			}
-			ProjectileShoot val = ProjectileShoot.Deserialize ((Stream)(object)msg.read);
-			if (val.projectiles.Count != 1) {
+			ProjectileShoot projectileShoot = ProjectileShoot.Deserialize (msg.read);
+			if (projectileShoot.projectiles.Count != 1) {
 				AntiHack.Log (player, AntiHackType.ProjectileHack, "Projectile count mismatch (" + base.ShortPrefabName + ")");
 				player.stats.combat.LogInvalid (player, this, "count_mismatch");
 				return;
 			}
 			player.CleanupExpiredProjectiles ();
 			Guid projectileGroupId = Guid.NewGuid ();
-			foreach (Projectile projectile in val.projectiles) {
+			foreach (ProjectileShoot.Projectile projectile in projectileShoot.projectiles) {
 				if (player.HasFiredProjectile (projectile.projectileID)) {
 					AntiHack.Log (player, AntiHackType.ProjectileHack, "Duplicate ID (" + projectile.projectileID + ")");
 					player.stats.combat.LogInvalid (player, this, "duplicate_id");
@@ -224,34 +183,32 @@ public class BaseMelee : AttackEntity
 				player.NoteFiredProjectile (projectile.projectileID, projectile.startPos, projectile.startVel, this, item.info, projectileGroupId, positionOffset, item);
 				Effect effect = new Effect ();
 				effect.Init (Effect.Type.Projectile, projectile.startPos, projectile.startVel, msg.connection);
-				((EffectData)effect).scale = 1f;
+				effect.scale = 1f;
 				effect.pooledString = component.projectileObject.resourcePath;
-				((EffectData)effect).number = projectile.seed;
+				effect.number = projectile.seed;
 				EffectNetwork.Send (effect);
 			}
-			if (val != null) {
-				val.Dispose ();
-			}
+			projectileShoot?.Dispose ();
 			item.SetParent (null);
 			if (!canAiHearIt) {
 				return;
 			}
 			float num = 0f;
 			if (component.projectileObject != null) {
-				GameObject val2 = component.projectileObject.Get ();
-				if ((Object)(object)val2 != (Object)null) {
-					Projectile component2 = val2.GetComponent<Projectile> ();
-					if ((Object)(object)component2 != (Object)null) {
+				GameObject gameObject = component.projectileObject.Get ();
+				if (gameObject != null) {
+					Projectile component2 = gameObject.GetComponent<Projectile> ();
+					if (component2 != null) {
 						foreach (DamageTypeEntry damageType in component2.damageTypes) {
 							num += damageType.amount;
 						}
 					}
 				}
 			}
-			if ((Object)(object)player != (Object)null) {
+			if (player != null) {
 				Sensation sensation = default(Sensation);
 				sensation.Type = SensationType.ThrownWeapon;
-				sensation.Position = ((Component)player).transform.position;
+				sensation.Position = player.transform.position;
 				sensation.Radius = 50f;
 				sensation.DamagePotential = num;
 				sensation.InitiatorPlayer = player;
@@ -270,37 +227,25 @@ public class BaseMelee : AttackEntity
 	public virtual void DoAttackShared (HitInfo info)
 	{
 		GetAttackStats (info);
-		if ((Object)(object)info.HitEntity != (Object)null) {
-			TimeWarning val = TimeWarning.New ("OnAttacked", 50);
-			try {
+		if (info.HitEntity != null) {
+			using (TimeWarning.New ("OnAttacked", 50)) {
 				info.HitEntity.OnAttacked (info);
-			} finally {
-				((IDisposable)val)?.Dispose ();
 			}
 		}
 		if (info.DoHitEffects) {
 			if (base.isServer) {
-				TimeWarning val = TimeWarning.New ("ImpactEffect", 20);
-				try {
+				using (TimeWarning.New ("ImpactEffect", 20)) {
 					Effect.server.ImpactEffect (info);
-				} finally {
-					((IDisposable)val)?.Dispose ();
 				}
 			} else {
-				TimeWarning val = TimeWarning.New ("ImpactEffect", 20);
-				try {
+				using (TimeWarning.New ("ImpactEffect", 20)) {
 					Effect.client.ImpactEffect (info);
-				} finally {
-					((IDisposable)val)?.Dispose ();
 				}
 			}
 		}
 		if (base.isServer && !base.IsDestroyed) {
-			TimeWarning val = TimeWarning.New ("UpdateItemCondition", 50);
-			try {
+			using (TimeWarning.New ("UpdateItemCondition", 50)) {
 				UpdateItemCondition (info);
-			} finally {
-				((IDisposable)val)?.Dispose ();
 			}
 			StartAttackCooldown (repeatDelay);
 		}
@@ -368,314 +313,192 @@ public class BaseMelee : AttackEntity
 	[RPC_Server.IsActiveItem]
 	public void PlayerAttack (RPCMessage msg)
 	{
-		//IL_0253: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0258: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0276: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0542: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0547: Unknown result type (might be due to invalid IL or missing references)
-		//IL_056d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_044f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0454: Unknown result type (might be due to invalid IL or missing references)
-		//IL_047f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_063c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0641: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0649: Unknown result type (might be due to invalid IL or missing references)
-		//IL_064e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0651: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0656: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0659: Unknown result type (might be due to invalid IL or missing references)
-		//IL_065e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0660: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0662: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0664: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0666: Unknown result type (might be due to invalid IL or missing references)
-		//IL_066b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_066f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0679: Unknown result type (might be due to invalid IL or missing references)
-		//IL_067e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0683: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0686: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0688: Unknown result type (might be due to invalid IL or missing references)
-		//IL_068d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_068f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0694: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0696: Unknown result type (might be due to invalid IL or missing references)
-		//IL_069b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_069d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_06a2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_070a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_070c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_070e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0713: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0715: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0717: Unknown result type (might be due to invalid IL or missing references)
-		//IL_06b0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_06b2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_06b4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_06b9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_06bd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_06c7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_06cc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_06ce: Unknown result type (might be due to invalid IL or missing references)
-		//IL_06d0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_06d2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_06d7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_06db: Unknown result type (might be due to invalid IL or missing references)
-		//IL_06e5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_06ea: Unknown result type (might be due to invalid IL or missing references)
-		//IL_06ec: Unknown result type (might be due to invalid IL or missing references)
-		//IL_06ee: Unknown result type (might be due to invalid IL or missing references)
-		//IL_06f0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_06f5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_06f9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0703: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0708: Unknown result type (might be due to invalid IL or missing references)
-		//IL_087e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0883: Unknown result type (might be due to invalid IL or missing references)
-		//IL_088c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0891: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0895: Unknown result type (might be due to invalid IL or missing references)
-		//IL_089a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_08a3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_08a5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0726: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0728: Unknown result type (might be due to invalid IL or missing references)
-		//IL_072a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_072f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0731: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0733: Unknown result type (might be due to invalid IL or missing references)
-		//IL_08b8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_08ba: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0742: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0744: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0746: Unknown result type (might be due to invalid IL or missing references)
-		//IL_074b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0757: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0759: Unknown result type (might be due to invalid IL or missing references)
-		//IL_035d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0362: Unknown result type (might be due to invalid IL or missing references)
-		//IL_038c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_08d4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_08d6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0946: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0958: Unknown result type (might be due to invalid IL or missing references)
-		//IL_096b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_097f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_08e9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_08eb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_07f4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0806: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0819: Unknown result type (might be due to invalid IL or missing references)
-		//IL_082d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0841: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer player = msg.player;
 		if (!VerifyClientAttack (player)) {
 			SendNetworkUpdate ();
 			return;
 		}
-		TimeWarning val = TimeWarning.New ("PlayerAttack", 50);
-		try {
-			PlayerAttack val2 = PlayerAttack.Deserialize ((Stream)(object)msg.read);
-			try {
-				if (val2 == null) {
-					return;
+		using (TimeWarning.New ("PlayerAttack", 50)) {
+			using PlayerAttack playerAttack = ProtoBuf.PlayerAttack.Deserialize (msg.read);
+			if (playerAttack == null) {
+				return;
+			}
+			HitInfo hitInfo = Facepunch.Pool.Get<HitInfo> ();
+			hitInfo.LoadFromAttack (playerAttack.attack, serverSide: true);
+			hitInfo.Initiator = player;
+			hitInfo.Weapon = this;
+			hitInfo.WeaponPrefab = this;
+			hitInfo.Predicted = msg.connection;
+			hitInfo.damageProperties = damageProperties;
+			if (hitInfo.IsNaNOrInfinity ()) {
+				string shortPrefabName = base.ShortPrefabName;
+				AntiHack.Log (player, AntiHackType.MeleeHack, "Contains NaN (" + shortPrefabName + ")");
+				player.stats.combat.LogInvalid (hitInfo, "melee_nan");
+				return;
+			}
+			BaseEntity hitEntity = hitInfo.HitEntity;
+			BasePlayer basePlayer = hitInfo.HitEntity as BasePlayer;
+			bool flag = basePlayer != null;
+			bool flag2 = flag && basePlayer.IsSleeping ();
+			bool flag3 = flag && basePlayer.IsWounded ();
+			bool flag4 = flag && basePlayer.isMounted;
+			bool flag5 = flag && basePlayer.HasParent ();
+			bool flag6 = hitEntity != null;
+			bool flag7 = flag6 && hitEntity.IsNpc;
+			bool flag8;
+			int num5;
+			Vector3 center;
+			Vector3 position;
+			Vector3 pointStart;
+			Vector3 hitPositionWorld;
+			Vector3 vector;
+			int num16;
+			if (ConVar.AntiHack.melee_protection > 0) {
+				flag8 = true;
+				float num = 1f + ConVar.AntiHack.melee_forgiveness;
+				float melee_clientframes = ConVar.AntiHack.melee_clientframes;
+				float melee_serverframes = ConVar.AntiHack.melee_serverframes;
+				float num2 = melee_clientframes / 60f;
+				float num3 = melee_serverframes * Mathx.Max (UnityEngine.Time.deltaTime, UnityEngine.Time.smoothDeltaTime, UnityEngine.Time.fixedDeltaTime);
+				float num4 = (player.desyncTimeClamped + num2 + num3) * num;
+				num5 = 2162688;
+				if (ConVar.AntiHack.melee_terraincheck) {
+					num5 |= 0x800000;
 				}
-				HitInfo hitInfo = Pool.Get<HitInfo> ();
-				hitInfo.LoadFromAttack (val2.attack, serverSide: true);
-				hitInfo.Initiator = player;
-				hitInfo.Weapon = this;
-				hitInfo.WeaponPrefab = this;
-				hitInfo.Predicted = msg.connection;
-				hitInfo.damageProperties = damageProperties;
-				if (hitInfo.IsNaNOrInfinity ()) {
-					string shortPrefabName = base.ShortPrefabName;
-					AntiHack.Log (player, AntiHackType.MeleeHack, "Contains NaN (" + shortPrefabName + ")");
-					player.stats.combat.LogInvalid (hitInfo, "melee_nan");
-					return;
+				if (ConVar.AntiHack.melee_vehiclecheck) {
+					num5 |= 0x8000000;
 				}
-				BaseEntity hitEntity = hitInfo.HitEntity;
-				BasePlayer basePlayer = hitInfo.HitEntity as BasePlayer;
-				bool flag = (Object)(object)basePlayer != (Object)null;
-				bool flag2 = flag && basePlayer.IsSleeping ();
-				bool flag3 = flag && basePlayer.IsWounded ();
-				bool flag4 = flag && basePlayer.isMounted;
-				bool flag5 = flag && basePlayer.HasParent ();
-				bool flag6 = (Object)(object)hitEntity != (Object)null;
-				bool flag7 = flag6 && hitEntity.IsNpc;
-				bool flag8;
-				int num5;
-				Vector3 center;
-				Vector3 position;
-				Vector3 pointStart;
-				Vector3 hitPositionWorld;
-				Vector3 val5;
-				int num18;
-				if (ConVar.AntiHack.melee_protection > 0) {
-					flag8 = true;
-					float num = 1f + ConVar.AntiHack.melee_forgiveness;
-					float melee_clientframes = ConVar.AntiHack.melee_clientframes;
-					float melee_serverframes = ConVar.AntiHack.melee_serverframes;
-					float num2 = melee_clientframes / 60f;
-					float num3 = melee_serverframes * Mathx.Max (Time.deltaTime, Time.smoothDeltaTime, Time.fixedDeltaTime);
-					float num4 = (player.desyncTimeClamped + num2 + num3) * num;
-					num5 = 2162688;
-					if (ConVar.AntiHack.melee_terraincheck) {
-						num5 |= 0x800000;
-					}
-					if (ConVar.AntiHack.melee_vehiclecheck) {
-						num5 |= 0x8000000;
-					}
-					if (flag && hitInfo.boneArea == (HitArea)(-1)) {
-						string shortPrefabName2 = base.ShortPrefabName;
-						string shortPrefabName3 = basePlayer.ShortPrefabName;
-						AntiHack.Log (player, AntiHackType.MeleeHack, "Bone is invalid  (" + shortPrefabName2 + " on " + shortPrefabName3 + " bone " + hitInfo.HitBone + ")");
-						player.stats.combat.LogInvalid (hitInfo, "melee_bone");
-						flag8 = false;
-					}
-					Vector3 val3;
-					if (ConVar.AntiHack.melee_protection >= 2) {
-						if (flag6) {
-							float num6 = hitEntity.MaxVelocity ();
-							val3 = hitEntity.GetParentVelocity ();
-							float num7 = num6 + ((Vector3)(ref val3)).magnitude;
-							float num8 = hitEntity.BoundsPadding () + num4 * num7;
-							float num9 = hitEntity.Distance (hitInfo.HitPositionWorld);
-							if (num9 > num8) {
-								string shortPrefabName4 = base.ShortPrefabName;
-								string shortPrefabName5 = hitEntity.ShortPrefabName;
-								AntiHack.Log (player, AntiHackType.MeleeHack, "Entity too far away (" + shortPrefabName4 + " on " + shortPrefabName5 + " with " + num9 + "m > " + num8 + "m in " + num4 + "s)");
-								player.stats.combat.LogInvalid (hitInfo, "melee_target");
-								flag8 = false;
-							}
-						}
-						if (ConVar.AntiHack.melee_protection >= 4 && flag8 && flag && !flag7 && !flag2 && !flag3 && !flag4 && !flag5) {
-							val3 = basePlayer.GetParentVelocity ();
-							float magnitude = ((Vector3)(ref val3)).magnitude;
-							float num10 = basePlayer.BoundsPadding () + num4 * magnitude + ConVar.AntiHack.tickhistoryforgiveness;
-							float num11 = basePlayer.tickHistory.Distance (basePlayer, hitInfo.HitPositionWorld);
-							if (num11 > num10) {
-								string shortPrefabName6 = base.ShortPrefabName;
-								string shortPrefabName7 = basePlayer.ShortPrefabName;
-								AntiHack.Log (player, AntiHackType.ProjectileHack, "Player too far away (" + shortPrefabName6 + " on " + shortPrefabName7 + " with " + num11 + "m > " + num10 + "m in " + num4 + "s)");
-								player.stats.combat.LogInvalid (hitInfo, "player_distance");
-								flag8 = false;
-							}
+				if (flag && hitInfo.boneArea == (HitArea)(-1)) {
+					string shortPrefabName2 = base.ShortPrefabName;
+					string shortPrefabName3 = basePlayer.ShortPrefabName;
+					AntiHack.Log (player, AntiHackType.MeleeHack, "Bone is invalid  (" + shortPrefabName2 + " on " + shortPrefabName3 + " bone " + hitInfo.HitBone + ")");
+					player.stats.combat.LogInvalid (hitInfo, "melee_bone");
+					flag8 = false;
+				}
+				if (ConVar.AntiHack.melee_protection >= 2) {
+					if (flag6) {
+						float num6 = hitEntity.MaxVelocity () + hitEntity.GetParentVelocity ().magnitude;
+						float num7 = hitEntity.BoundsPadding () + num4 * num6;
+						float num8 = hitEntity.Distance (hitInfo.HitPositionWorld);
+						if (num8 > num7) {
+							string shortPrefabName4 = base.ShortPrefabName;
+							string shortPrefabName5 = hitEntity.ShortPrefabName;
+							AntiHack.Log (player, AntiHackType.MeleeHack, "Entity too far away (" + shortPrefabName4 + " on " + shortPrefabName5 + " with " + num8 + "m > " + num7 + "m in " + num4 + "s)");
+							player.stats.combat.LogInvalid (hitInfo, "melee_target");
+							flag8 = false;
 						}
 					}
-					if (ConVar.AntiHack.melee_protection >= 1) {
-						if (ConVar.AntiHack.melee_protection >= 4) {
-							val3 = player.GetParentVelocity ();
-							float magnitude2 = ((Vector3)(ref val3)).magnitude;
-							float num12 = player.BoundsPadding () + num4 * magnitude2 + num * maxDistance;
-							float num13 = player.tickHistory.Distance (player, hitInfo.HitPositionWorld);
-							if (num13 > num12) {
-								string shortPrefabName8 = base.ShortPrefabName;
-								string text = (flag6 ? hitEntity.ShortPrefabName : "world");
-								AntiHack.Log (player, AntiHackType.MeleeHack, "Initiator too far away (" + shortPrefabName8 + " on " + text + " with " + num13 + "m > " + num12 + "m in " + num4 + "s)");
-								player.stats.combat.LogInvalid (hitInfo, "melee_initiator");
-								flag8 = false;
+					if (ConVar.AntiHack.melee_protection >= 4 && flag8 && flag && !flag7 && !flag2 && !flag3 && !flag4 && !flag5) {
+						float magnitude = basePlayer.GetParentVelocity ().magnitude;
+						float num9 = basePlayer.BoundsPadding () + num4 * magnitude + ConVar.AntiHack.tickhistoryforgiveness;
+						float num10 = basePlayer.tickHistory.Distance (basePlayer, hitInfo.HitPositionWorld);
+						if (num10 > num9) {
+							string shortPrefabName6 = base.ShortPrefabName;
+							string shortPrefabName7 = basePlayer.ShortPrefabName;
+							AntiHack.Log (player, AntiHackType.ProjectileHack, "Player too far away (" + shortPrefabName6 + " on " + shortPrefabName7 + " with " + num10 + "m > " + num9 + "m in " + num4 + "s)");
+							player.stats.combat.LogInvalid (hitInfo, "player_distance");
+							flag8 = false;
+						}
+					}
+				}
+				if (ConVar.AntiHack.melee_protection >= 1) {
+					if (ConVar.AntiHack.melee_protection >= 4) {
+						float magnitude2 = player.GetParentVelocity ().magnitude;
+						float num11 = player.BoundsPadding () + num4 * magnitude2 + num * maxDistance;
+						float num12 = player.tickHistory.Distance (player, hitInfo.HitPositionWorld);
+						if (num12 > num11) {
+							string shortPrefabName8 = base.ShortPrefabName;
+							string text = (flag6 ? hitEntity.ShortPrefabName : "world");
+							AntiHack.Log (player, AntiHackType.MeleeHack, "Initiator too far away (" + shortPrefabName8 + " on " + text + " with " + num12 + "m > " + num11 + "m in " + num4 + "s)");
+							player.stats.combat.LogInvalid (hitInfo, "melee_initiator");
+							flag8 = false;
+						}
+					} else {
+						float num13 = player.MaxVelocity () + player.GetParentVelocity ().magnitude;
+						float num14 = player.BoundsPadding () + num4 * num13 + num * maxDistance;
+						float num15 = player.Distance (hitInfo.HitPositionWorld);
+						if (num15 > num14) {
+							string shortPrefabName9 = base.ShortPrefabName;
+							string text2 = (flag6 ? hitEntity.ShortPrefabName : "world");
+							AntiHack.Log (player, AntiHackType.MeleeHack, "Initiator too far away (" + shortPrefabName9 + " on " + text2 + " with " + num15 + "m > " + num14 + "m in " + num4 + "s)");
+							player.stats.combat.LogInvalid (hitInfo, "melee_initiator");
+							flag8 = false;
+						}
+					}
+				}
+				if (ConVar.AntiHack.melee_protection >= 3) {
+					if (flag6) {
+						center = player.eyes.center;
+						position = player.eyes.position;
+						pointStart = hitInfo.PointStart;
+						hitPositionWorld = hitInfo.HitPositionWorld;
+						hitPositionWorld -= (hitPositionWorld - pointStart).normalized * 0.001f;
+						vector = hitInfo.PositionOnRay (hitPositionWorld);
+						Vector3 vector2 = Vector3.zero;
+						Vector3 vector3 = Vector3.zero;
+						Vector3 vector4 = Vector3.zero;
+						if (ConVar.AntiHack.melee_backtracking > 0f) {
+							vector2 = (position - center).normalized * ConVar.AntiHack.melee_backtracking;
+							vector3 = (pointStart - position).normalized * ConVar.AntiHack.melee_backtracking;
+							vector4 = (vector - pointStart).normalized * ConVar.AntiHack.melee_backtracking;
+						}
+						if (GamePhysics.LineOfSight (center - vector2, position + vector2, num5) && GamePhysics.LineOfSight (position - vector3, pointStart + vector3, num5) && GamePhysics.LineOfSight (pointStart - vector4, vector, num5)) {
+							num16 = (GamePhysics.LineOfSight (vector, hitPositionWorld, num5) ? 1 : 0);
+							if (num16 != 0) {
+								player.stats.Add ("hit_" + hitEntity.Categorize () + "_direct_los", 1, Stats.Server);
+								goto IL_07b1;
 							}
 						} else {
-							float num14 = player.MaxVelocity ();
-							val3 = player.GetParentVelocity ();
-							float num15 = num14 + ((Vector3)(ref val3)).magnitude;
-							float num16 = player.BoundsPadding () + num4 * num15 + num * maxDistance;
-							float num17 = player.Distance (hitInfo.HitPositionWorld);
-							if (num17 > num16) {
-								string shortPrefabName9 = base.ShortPrefabName;
-								string text2 = (flag6 ? hitEntity.ShortPrefabName : "world");
-								AntiHack.Log (player, AntiHackType.MeleeHack, "Initiator too far away (" + shortPrefabName9 + " on " + text2 + " with " + num17 + "m > " + num16 + "m in " + num4 + "s)");
-								player.stats.combat.LogInvalid (hitInfo, "melee_initiator");
-								flag8 = false;
-							}
+							num16 = 0;
 						}
+						player.stats.Add ("hit_" + hitEntity.Categorize () + "_indirect_los", 1, Stats.Server);
+						goto IL_07b1;
 					}
-					if (ConVar.AntiHack.melee_protection >= 3) {
-						if (flag6) {
-							center = player.eyes.center;
-							position = player.eyes.position;
-							pointStart = hitInfo.PointStart;
-							hitPositionWorld = hitInfo.HitPositionWorld;
-							Vector3 val4 = hitPositionWorld;
-							val3 = hitPositionWorld - pointStart;
-							hitPositionWorld = val4 - ((Vector3)(ref val3)).normalized * 0.001f;
-							val5 = hitInfo.PositionOnRay (hitPositionWorld);
-							Vector3 val6 = Vector3.zero;
-							Vector3 val7 = Vector3.zero;
-							Vector3 val8 = Vector3.zero;
-							if (ConVar.AntiHack.melee_backtracking > 0f) {
-								val3 = position - center;
-								val6 = ((Vector3)(ref val3)).normalized * ConVar.AntiHack.melee_backtracking;
-								val3 = pointStart - position;
-								val7 = ((Vector3)(ref val3)).normalized * ConVar.AntiHack.melee_backtracking;
-								val3 = val5 - pointStart;
-								val8 = ((Vector3)(ref val3)).normalized * ConVar.AntiHack.melee_backtracking;
-							}
-							if (GamePhysics.LineOfSight (center - val6, position + val6, num5) && GamePhysics.LineOfSight (position - val7, pointStart + val7, num5) && GamePhysics.LineOfSight (pointStart - val8, val5, num5)) {
-								num18 = (GamePhysics.LineOfSight (val5, hitPositionWorld, num5) ? 1 : 0);
-								if (num18 != 0) {
-									player.stats.Add ("hit_" + hitEntity.Categorize () + "_direct_los", 1, Stats.Server);
-									goto IL_07b1;
-								}
-							} else {
-								num18 = 0;
-							}
-							player.stats.Add ("hit_" + hitEntity.Categorize () + "_indirect_los", 1, Stats.Server);
-							goto IL_07b1;
-						}
-						goto IL_086c;
-					}
-					goto IL_09aa;
-				}
-				goto IL_09bc;
-				IL_09bc:
-				player.metabolism.UseHeart (heartStress * 0.2f);
-				TimeWarning val9 = TimeWarning.New ("DoAttackShared", 50);
-				try {
-					DoAttackShared (hitInfo);
-					return;
-				} finally {
-					((IDisposable)val9)?.Dispose ();
-				}
-				IL_09aa:
-				if (!flag8) {
-					AntiHack.AddViolation (player, AntiHackType.MeleeHack, ConVar.AntiHack.melee_penalty);
-					return;
-				}
-				goto IL_09bc;
-				IL_086c:
-				if (flag8 && flag && !flag7) {
-					Vector3 hitPositionWorld2 = hitInfo.HitPositionWorld;
-					Vector3 position2 = basePlayer.eyes.position;
-					Vector3 val10 = basePlayer.CenterPoint ();
-					float melee_losforgiveness = ConVar.AntiHack.melee_losforgiveness;
-					bool flag9 = GamePhysics.LineOfSight (hitPositionWorld2, position2, num5, 0f, melee_losforgiveness) && GamePhysics.LineOfSight (position2, hitPositionWorld2, num5, melee_losforgiveness, 0f);
-					if (!flag9) {
-						flag9 = GamePhysics.LineOfSight (hitPositionWorld2, val10, num5, 0f, melee_losforgiveness) && GamePhysics.LineOfSight (val10, hitPositionWorld2, num5, melee_losforgiveness, 0f);
-					}
-					if (!flag9) {
-						string shortPrefabName10 = base.ShortPrefabName;
-						string shortPrefabName11 = basePlayer.ShortPrefabName;
-						AntiHack.Log (player, AntiHackType.MeleeHack, string.Concat ("Line of sight (", shortPrefabName10, " on ", shortPrefabName11, ") ", hitPositionWorld2, " ", position2, " or ", hitPositionWorld2, " ", val10));
-						player.stats.combat.LogInvalid (hitInfo, "melee_los");
-						flag8 = false;
-					}
+					goto IL_086c;
 				}
 				goto IL_09aa;
-				IL_07b1:
-				if (num18 == 0) {
-					string shortPrefabName12 = base.ShortPrefabName;
-					string shortPrefabName13 = hitEntity.ShortPrefabName;
-					AntiHack.Log (player, AntiHackType.MeleeHack, string.Concat ("Line of sight (", shortPrefabName12, " on ", shortPrefabName13, ") ", center, " ", position, " ", pointStart, " ", val5, " ", hitPositionWorld));
+			}
+			goto IL_09bc;
+			IL_09bc:
+			player.metabolism.UseHeart (heartStress * 0.2f);
+			using (TimeWarning.New ("DoAttackShared", 50)) {
+				DoAttackShared (hitInfo);
+				return;
+			}
+			IL_09aa:
+			if (!flag8) {
+				AntiHack.AddViolation (player, AntiHackType.MeleeHack, ConVar.AntiHack.melee_penalty);
+				return;
+			}
+			goto IL_09bc;
+			IL_086c:
+			if (flag8 && flag && !flag7) {
+				Vector3 hitPositionWorld2 = hitInfo.HitPositionWorld;
+				Vector3 position2 = basePlayer.eyes.position;
+				Vector3 vector5 = basePlayer.CenterPoint ();
+				float melee_losforgiveness = ConVar.AntiHack.melee_losforgiveness;
+				bool flag9 = GamePhysics.LineOfSight (hitPositionWorld2, position2, num5, 0f, melee_losforgiveness) && GamePhysics.LineOfSight (position2, hitPositionWorld2, num5, melee_losforgiveness, 0f);
+				if (!flag9) {
+					flag9 = GamePhysics.LineOfSight (hitPositionWorld2, vector5, num5, 0f, melee_losforgiveness) && GamePhysics.LineOfSight (vector5, hitPositionWorld2, num5, melee_losforgiveness, 0f);
+				}
+				if (!flag9) {
+					string shortPrefabName10 = base.ShortPrefabName;
+					string shortPrefabName11 = basePlayer.ShortPrefabName;
+					AntiHack.Log (player, AntiHackType.MeleeHack, string.Concat ("Line of sight (", shortPrefabName10, " on ", shortPrefabName11, ") ", hitPositionWorld2, " ", position2, " or ", hitPositionWorld2, " ", vector5));
 					player.stats.combat.LogInvalid (hitInfo, "melee_los");
 					flag8 = false;
 				}
-				goto IL_086c;
-			} finally {
-				((IDisposable)val2)?.Dispose ();
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
+			goto IL_09aa;
+			IL_07b1:
+			if (num16 == 0) {
+				string shortPrefabName12 = base.ShortPrefabName;
+				string shortPrefabName13 = hitEntity.ShortPrefabName;
+				AntiHack.Log (player, AntiHackType.MeleeHack, string.Concat ("Line of sight (", shortPrefabName12, " on ", shortPrefabName13, ") ", center, " ", position, " ", pointStart, " ", vector, " ", hitPositionWorld));
+				player.stats.combat.LogInvalid (hitInfo, "melee_los");
+				flag8 = false;
+			}
+			goto IL_086c;
 		}
 	}
 
@@ -696,22 +519,20 @@ public class BaseMelee : AttackEntity
 
 	public override void ServerUse ()
 	{
-		//IL_0060: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
 		if (base.isClient || HasAttackCooldown ()) {
 			return;
 		}
 		BasePlayer ownerPlayer = GetOwnerPlayer ();
-		if (!((Object)(object)ownerPlayer == (Object)null)) {
+		if (!(ownerPlayer == null)) {
 			StartAttackCooldown (repeatDelay * 2f);
 			ownerPlayer.SignalBroadcast (Signal.Attack, string.Empty);
 			if (swingEffect.isValid) {
-				Effect.server.Run (swingEffect.resourcePath, ((Component)this).transform.position, Vector3.forward, ownerPlayer.net.connection);
+				Effect.server.Run (swingEffect.resourcePath, base.transform.position, Vector3.forward, ownerPlayer.net.connection);
 			}
-			if (((FacepunchBehaviour)this).IsInvoking ((Action)ServerUse_Strike)) {
-				((FacepunchBehaviour)this).CancelInvoke ((Action)ServerUse_Strike);
+			if (IsInvoking (ServerUse_Strike)) {
+				CancelInvoke (ServerUse_Strike);
 			}
-			((FacepunchBehaviour)this).Invoke ((Action)ServerUse_Strike, aiStrikeDelay);
+			Invoke (ServerUse_Strike, aiStrikeDelay);
 		}
 	}
 
@@ -721,40 +542,20 @@ public class BaseMelee : AttackEntity
 
 	public void ServerUse_Strike ()
 	{
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0037: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0091: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0096: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0098: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0171: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0176: Unknown result type (might be due to invalid IL or missing references)
-		//IL_017d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_017e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0183: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01af: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ca: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer ownerPlayer = GetOwnerPlayer ();
-		if ((Object)(object)ownerPlayer == (Object)null) {
+		if (ownerPlayer == null) {
 			return;
 		}
 		Vector3 position = ownerPlayer.eyes.position;
-		Vector3 val = ownerPlayer.eyes.BodyForward ();
+		Vector3 vector = ownerPlayer.eyes.BodyForward ();
 		for (int i = 0; i < 2; i++) {
-			List<RaycastHit> list = Pool.GetList<RaycastHit> ();
-			GamePhysics.TraceAll (new Ray (position - val * ((i == 0) ? 0f : 0.2f), val), (i == 0) ? 0f : attackRadius, list, effectiveRange + 0.2f, 1220225809, (QueryTriggerInteraction)0);
+			List<RaycastHit> obj = Facepunch.Pool.GetList<RaycastHit> ();
+			GamePhysics.TraceAll (new Ray (position - vector * ((i == 0) ? 0f : 0.2f), vector), (i == 0) ? 0f : attackRadius, obj, effectiveRange + 0.2f, 1220225809);
 			bool flag = false;
-			for (int j = 0; j < list.Count; j++) {
-				RaycastHit hit = list [j];
+			for (int j = 0; j < obj.Count; j++) {
+				RaycastHit hit = obj [j];
 				BaseEntity entity = hit.GetEntity ();
-				if ((Object)(object)entity == (Object)null || ((Object)(object)entity != (Object)null && ((Object)(object)entity == (Object)(object)ownerPlayer || entity.EqualNetID ((BaseNetworkable)ownerPlayer))) || ((Object)(object)entity != (Object)null && entity.isClient) || entity.Categorize () == ownerPlayer.Categorize ()) {
+				if (entity == null || (entity != null && (entity == ownerPlayer || entity.EqualNetID (ownerPlayer))) || (entity != null && entity.isClient) || entity.Categorize () == ownerPlayer.Categorize ()) {
 					continue;
 				}
 				float num = 0f;
@@ -762,24 +563,24 @@ public class BaseMelee : AttackEntity
 					num += damageType.amount;
 				}
 				entity.OnAttacked (new HitInfo (ownerPlayer, entity, DamageType.Slash, num * npcDamageScale));
-				HitInfo hitInfo = Pool.Get<HitInfo> ();
-				hitInfo.HitEntity = entity;
-				hitInfo.HitPositionWorld = ((RaycastHit)(ref hit)).point;
-				hitInfo.HitNormalWorld = -val;
+				HitInfo obj2 = Facepunch.Pool.Get<HitInfo> ();
+				obj2.HitEntity = entity;
+				obj2.HitPositionWorld = hit.point;
+				obj2.HitNormalWorld = -vector;
 				if (entity is BaseNpc || entity is BasePlayer) {
-					hitInfo.HitMaterial = StringPool.Get ("Flesh");
+					obj2.HitMaterial = StringPool.Get ("Flesh");
 				} else {
-					hitInfo.HitMaterial = StringPool.Get (((Object)(object)hit.GetCollider ().sharedMaterial != (Object)null) ? hit.GetCollider ().sharedMaterial.GetName () : "generic");
+					obj2.HitMaterial = StringPool.Get ((hit.GetCollider ().sharedMaterial != null) ? hit.GetCollider ().sharedMaterial.GetName () : "generic");
 				}
-				ServerUse_OnHit (hitInfo);
-				Effect.server.ImpactEffect (hitInfo);
-				Pool.Free<HitInfo> (ref hitInfo);
+				ServerUse_OnHit (obj2);
+				Effect.server.ImpactEffect (obj2);
+				Facepunch.Pool.Free (ref obj2);
 				flag = true;
-				if (!((Object)(object)entity != (Object)null) || entity.ShouldBlockProjectiles ()) {
+				if (!(entity != null) || entity.ShouldBlockProjectiles ()) {
 					break;
 				}
 			}
-			Pool.FreeList<RaycastHit> (ref list);
+			Facepunch.Pool.FreeList (ref obj);
 			if (flag) {
 				break;
 			}

@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using UnityEngine;
 using VLB;
@@ -23,31 +24,11 @@ public static class MeshGenerator
 
 	public static Mesh GenerateConeZ_Radius (float lengthZ, float radiusStart, float radiusEnd, int numSides, int numSegments, bool cap)
 	{
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Expected O, but got Unknown
-		//IL_0117: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0158: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ec: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01db: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0206: Unknown result type (might be due to invalid IL or missing references)
-		//IL_020b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_026d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0272: Unknown result type (might be due to invalid IL or missing references)
-		//IL_027d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0289: Unknown result type (might be due to invalid IL or missing references)
-		//IL_028e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0472: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0492: Unknown result type (might be due to invalid IL or missing references)
-		//IL_049d: Unknown result type (might be due to invalid IL or missing references)
 		Debug.Assert (lengthZ > 0f);
 		Debug.Assert (radiusStart >= 0f);
 		Debug.Assert (numSides >= 3);
 		Debug.Assert (numSegments >= 0);
-		Mesh val = new Mesh ();
+		Mesh mesh = new Mesh ();
 		bool flag = false;
 		flag = cap && radiusStart > 0f;
 		radiusStart = Mathf.Max (radiusStart, 0.001f);
@@ -56,112 +37,111 @@ public static class MeshGenerator
 		if (flag) {
 			num2 += numSides + 1;
 		}
-		Vector3[] array = (Vector3[])(object)new Vector3[num2];
+		Vector3[] array = new Vector3[num2];
 		for (int i = 0; i < numSides; i++) {
-			float num3 = (float)Math.PI * 2f * (float)i / (float)numSides;
-			float num4 = Mathf.Cos (num3);
-			float num5 = Mathf.Sin (num3);
+			float f = (float)Math.PI * 2f * (float)i / (float)numSides;
+			float num3 = Mathf.Cos (f);
+			float num4 = Mathf.Sin (f);
 			for (int j = 0; j < numSegments + 2; j++) {
-				float num6 = (float)j / (float)(numSegments + 1);
-				Debug.Assert (num6 >= 0f && num6 <= 1f);
-				float num7 = Mathf.Lerp (radiusStart, radiusEnd, num6);
-				array [i + j * numSides] = new Vector3 (num7 * num4, num7 * num5, num6 * lengthZ);
+				float num5 = (float)j / (float)(numSegments + 1);
+				Debug.Assert (num5 >= 0f && num5 <= 1f);
+				float num6 = Mathf.Lerp (radiusStart, radiusEnd, num5);
+				array [i + j * numSides] = new Vector3 (num6 * num3, num6 * num4, num5 * lengthZ);
 			}
 		}
 		if (flag) {
-			int num8 = num;
-			array [num8] = Vector3.zero;
-			num8++;
+			int num7 = num;
+			array [num7] = Vector3.zero;
+			num7++;
 			for (int k = 0; k < numSides; k++) {
-				float num9 = (float)Math.PI * 2f * (float)k / (float)numSides;
-				float num10 = Mathf.Cos (num9);
-				float num11 = Mathf.Sin (num9);
-				array [num8] = new Vector3 (radiusStart * num10, radiusStart * num11, 0f);
-				num8++;
+				float f2 = (float)Math.PI * 2f * (float)k / (float)numSides;
+				float num8 = Mathf.Cos (f2);
+				float num9 = Mathf.Sin (f2);
+				array [num7] = new Vector3 (radiusStart * num8, radiusStart * num9, 0f);
+				num7++;
 			}
-			Debug.Assert (num8 == array.Length);
+			Debug.Assert (num7 == array.Length);
 		}
 		if (!duplicateBackFaces) {
-			val.vertices = array;
+			mesh.vertices = array;
 		} else {
-			Vector3[] array2 = (Vector3[])(object)new Vector3[array.Length * 2];
+			Vector3[] array2 = new Vector3[array.Length * 2];
 			array.CopyTo (array2, 0);
 			array.CopyTo (array2, array.Length);
-			val.vertices = array2;
+			mesh.vertices = array2;
 		}
-		Vector2[] array3 = (Vector2[])(object)new Vector2[num2];
-		int num12 = 0;
+		Vector2[] array3 = new Vector2[num2];
+		int num10 = 0;
 		for (int l = 0; l < num; l++) {
-			array3 [num12++] = Vector2.zero;
+			array3 [num10++] = Vector2.zero;
 		}
 		if (flag) {
 			for (int m = 0; m < numSides + 1; m++) {
-				array3 [num12++] = new Vector2 (1f, 0f);
+				array3 [num10++] = new Vector2 (1f, 0f);
 			}
 		}
-		Debug.Assert (num12 == array3.Length);
+		Debug.Assert (num10 == array3.Length);
 		if (!duplicateBackFaces) {
-			val.uv = array3;
+			mesh.uv = array3;
 		} else {
-			Vector2[] array4 = (Vector2[])(object)new Vector2[array3.Length * 2];
+			Vector2[] array4 = new Vector2[array3.Length * 2];
 			array3.CopyTo (array4, 0);
 			array3.CopyTo (array4, array3.Length);
 			for (int n = 0; n < array3.Length; n++) {
-				Vector2 val2 = array4 [n + array3.Length];
-				array4 [n + array3.Length] = new Vector2 (val2.x, 1f);
+				Vector2 vector = array4 [n + array3.Length];
+				array4 [n + array3.Length] = new Vector2 (vector.x, 1f);
 			}
-			val.uv = array4;
+			mesh.uv = array4;
 		}
-		int num13 = numSides * 2 * Mathf.Max (numSegments + 1, 1) * 3;
+		int num11 = numSides * 2 * Mathf.Max (numSegments + 1, 1) * 3;
 		if (flag) {
-			num13 += numSides * 3;
+			num11 += numSides * 3;
 		}
-		int[] array5 = new int[num13];
-		int num14 = 0;
-		for (int num15 = 0; num15 < numSides; num15++) {
-			int num16 = num15 + 1;
-			if (num16 == numSides) {
-				num16 = 0;
+		int[] array5 = new int[num11];
+		int num12 = 0;
+		for (int num13 = 0; num13 < numSides; num13++) {
+			int num14 = num13 + 1;
+			if (num14 == numSides) {
+				num14 = 0;
 			}
-			for (int num17 = 0; num17 < numSegments + 1; num17++) {
-				int num18 = num17 * numSides;
-				array5 [num14++] = num18 + num15;
-				array5 [num14++] = num18 + num16;
-				array5 [num14++] = num18 + num15 + numSides;
-				array5 [num14++] = num18 + num16 + numSides;
-				array5 [num14++] = num18 + num15 + numSides;
-				array5 [num14++] = num18 + num16;
+			for (int num15 = 0; num15 < numSegments + 1; num15++) {
+				int num16 = num15 * numSides;
+				array5 [num12++] = num16 + num13;
+				array5 [num12++] = num16 + num14;
+				array5 [num12++] = num16 + num13 + numSides;
+				array5 [num12++] = num16 + num14 + numSides;
+				array5 [num12++] = num16 + num13 + numSides;
+				array5 [num12++] = num16 + num14;
 			}
 		}
 		if (flag) {
-			for (int num19 = 0; num19 < numSides - 1; num19++) {
-				array5 [num14++] = num;
-				array5 [num14++] = num + num19 + 2;
-				array5 [num14++] = num + num19 + 1;
+			for (int num17 = 0; num17 < numSides - 1; num17++) {
+				array5 [num12++] = num;
+				array5 [num12++] = num + num17 + 2;
+				array5 [num12++] = num + num17 + 1;
 			}
-			array5 [num14++] = num;
-			array5 [num14++] = num + 1;
-			array5 [num14++] = num + numSides;
+			array5 [num12++] = num;
+			array5 [num12++] = num + 1;
+			array5 [num12++] = num + numSides;
 		}
-		Debug.Assert (num14 == array5.Length);
+		Debug.Assert (num12 == array5.Length);
 		if (!duplicateBackFaces) {
-			val.triangles = array5;
+			mesh.triangles = array5;
 		} else {
 			int[] array6 = new int[array5.Length * 2];
 			array5.CopyTo (array6, 0);
-			for (int num20 = 0; num20 < array5.Length; num20 += 3) {
-				array6 [array5.Length + num20] = array5 [num20] + num2;
-				array6 [array5.Length + num20 + 1] = array5 [num20 + 2] + num2;
-				array6 [array5.Length + num20 + 2] = array5 [num20 + 1] + num2;
+			for (int num18 = 0; num18 < array5.Length; num18 += 3) {
+				array6 [array5.Length + num18] = array5 [num18] + num2;
+				array6 [array5.Length + num18 + 1] = array5 [num18 + 2] + num2;
+				array6 [array5.Length + num18 + 2] = array5 [num18 + 1] + num2;
 			}
-			val.triangles = array6;
+			mesh.triangles = array6;
 		}
-		Bounds bounds = default(Bounds);
-		((Bounds)(ref bounds))..ctor (new Vector3 (0f, 0f, lengthZ * 0.5f), new Vector3 (Mathf.Max (radiusStart, radiusEnd) * 2f, Mathf.Max (radiusStart, radiusEnd) * 2f, lengthZ));
-		val.bounds = bounds;
-		Debug.Assert (val.vertexCount == GetVertexCount (numSides, numSegments, flag));
-		Debug.Assert (val.triangles.Length == GetIndicesCount (numSides, numSegments, flag));
-		return val;
+		Bounds bounds = new Bounds (new Vector3 (0f, 0f, lengthZ * 0.5f), new Vector3 (Mathf.Max (radiusStart, radiusEnd) * 2f, Mathf.Max (radiusStart, radiusEnd) * 2f, lengthZ));
+		mesh.bounds = bounds;
+		Debug.Assert (mesh.vertexCount == GetVertexCount (numSides, numSegments, flag));
+		Debug.Assert (mesh.triangles.Length == GetIndicesCount (numSides, numSegments, flag));
+		return mesh;
 	}
 
 	public static int GetVertexCount (int numSides, int numSegments, bool geomCap)

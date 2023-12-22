@@ -1,11 +1,8 @@
-using System;
-using UnityEngine;
-
 public class Hammer : BaseMelee
 {
 	public override bool CanHit (HitTest info)
 	{
-		if ((Object)(object)info.HitEntity == (Object)null) {
+		if (info.HitEntity == null) {
 			return false;
 		}
 		if (info.HitEntity is BasePlayer) {
@@ -18,12 +15,9 @@ public class Hammer : BaseMelee
 	{
 		BasePlayer ownerPlayer = GetOwnerPlayer ();
 		BaseCombatEntity baseCombatEntity = info.HitEntity as BaseCombatEntity;
-		if ((Object)(object)baseCombatEntity != (Object)null && (Object)(object)ownerPlayer != (Object)null && base.isServer) {
-			TimeWarning val = TimeWarning.New ("DoRepair", 50);
-			try {
+		if (baseCombatEntity != null && ownerPlayer != null && base.isServer) {
+			using (TimeWarning.New ("DoRepair", 50)) {
 				baseCombatEntity.DoRepair (ownerPlayer);
-			} finally {
-				((IDisposable)val)?.Dispose ();
 			}
 		}
 		info.DoDecals = false;

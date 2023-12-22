@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch.Rust;
@@ -9,46 +10,34 @@ public class BaseLauncher : BaseProjectile
 {
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("BaseLauncher.OnRpcMessage", 0);
-		try {
-			if (rpc == 853319324 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("BaseLauncher.OnRpcMessage")) {
+			if (rpc == 853319324 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - SV_Launch "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - SV_Launch "));
 				}
-				TimeWarning val2 = TimeWarning.New ("SV_Launch", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("SV_Launch")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsActiveItem.Test (853319324u, "SV_Launch", this, player)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							SV_Launch (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in SV_Launch");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -65,25 +54,8 @@ public class BaseLauncher : BaseProjectile
 
 	public override void ServerUse (float damageModifier, Transform originOverride = null)
 	{
-		//IL_0094: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0099: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00aa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0102: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0103: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0106: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0112: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0118: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0167: Unknown result type (might be due to invalid IL or missing references)
-		ItemModProjectile component = ((Component)primaryMagazine.ammoType).GetComponent<ItemModProjectile> ();
-		if (!Object.op_Implicit ((Object)(object)component)) {
+		ItemModProjectile component = primaryMagazine.ammoType.GetComponent<ItemModProjectile> ();
+		if (!component) {
 			return;
 		}
 		if (primaryMagazine.contents <= 0) {
@@ -91,7 +63,7 @@ public class BaseLauncher : BaseProjectile
 			StartAttackCooldown (1f);
 			return;
 		}
-		if (!Object.op_Implicit ((Object)(object)component.projectileObject.Get ().GetComponent<ServerProjectile> ())) {
+		if (!component.projectileObject.Get ().GetComponent<ServerProjectile> ()) {
 			base.ServerUse (damageModifier, originOverride);
 			return;
 		}
@@ -99,30 +71,29 @@ public class BaseLauncher : BaseProjectile
 		if (primaryMagazine.contents < 0) {
 			primaryMagazine.contents = 0;
 		}
-		Vector3 val = ((Component)MuzzlePoint).transform.forward;
-		Vector3 position = ((Component)MuzzlePoint).transform.position;
+		Vector3 vector = MuzzlePoint.transform.forward;
+		Vector3 position = MuzzlePoint.transform.position;
 		float num = GetAimCone () + component.projectileSpread;
 		if (num > 0f) {
-			val = AimConeUtil.GetModifiedAimConeDirection (num, val);
+			vector = AimConeUtil.GetModifiedAimConeDirection (num, vector);
 		}
 		float num2 = 1f;
-		RaycastHit val2 = default(RaycastHit);
-		if (Physics.Raycast (position, val, ref val2, num2, 1237003025)) {
-			num2 = ((RaycastHit)(ref val2)).distance - 0.1f;
+		if (UnityEngine.Physics.Raycast (position, vector, out var hitInfo, num2, 1237003025)) {
+			num2 = hitInfo.distance - 0.1f;
 		}
-		BaseEntity baseEntity = GameManager.server.CreateEntity (component.projectileObject.resourcePath, position + val * num2);
-		if (!((Object)(object)baseEntity == (Object)null)) {
+		BaseEntity baseEntity = GameManager.server.CreateEntity (component.projectileObject.resourcePath, position + vector * num2);
+		if (!(baseEntity == null)) {
 			BasePlayer ownerPlayer = GetOwnerPlayer ();
-			bool flag = (Object)(object)ownerPlayer != (Object)null && ownerPlayer.IsNpc;
-			ServerProjectile component2 = ((Component)baseEntity).GetComponent<ServerProjectile> ();
-			if (Object.op_Implicit ((Object)(object)component2)) {
-				component2.InitializeVelocity (val * component2.speed);
+			bool flag = ownerPlayer != null && ownerPlayer.IsNpc;
+			ServerProjectile component2 = baseEntity.GetComponent<ServerProjectile> ();
+			if ((bool)component2) {
+				component2.InitializeVelocity (vector * component2.speed);
 			}
-			((Component)baseEntity).SendMessage ("SetDamageScale", (object)(flag ? npcDamageScale : turretDamageScale));
+			baseEntity.SendMessage ("SetDamageScale", flag ? npcDamageScale : turretDamageScale);
 			baseEntity.Spawn ();
 			StartAttackCooldown (ScaleRepeatDelay (repeatDelay));
 			SignalBroadcast (Signal.Attack, string.Empty);
-			GetOwnerItem ()?.LoseCondition (Random.Range (1f, 2f));
+			GetOwnerItem ()?.LoseCondition (UnityEngine.Random.Range (1f, 2f));
 		}
 	}
 
@@ -130,39 +101,6 @@ public class BaseLauncher : BaseProjectile
 	[RPC_Server.IsActiveItem]
 	private void SV_Launch (RPCMessage msg)
 	{
-		//IL_00e4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fe: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0162: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0153: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0132: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0133: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0138: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0140: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0145: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01dc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0216: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0217: Unknown result type (might be due to invalid IL or missing references)
-		//IL_021a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_021f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0226: Unknown result type (might be due to invalid IL or missing references)
-		//IL_022c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_025f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0260: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0265: Unknown result type (might be due to invalid IL or missing references)
-		//IL_026d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0272: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer player = msg.player;
 		if (!VerifyClientAttack (player)) {
 			SendNetworkUpdate ();
@@ -184,54 +122,52 @@ public class BaseLauncher : BaseProjectile
 			primaryMagazine.contents--;
 		}
 		SignalBroadcast (Signal.Attack, string.Empty, player.net.connection);
-		Vector3 val = msg.read.Vector3 ();
-		Vector3 val2 = msg.read.Vector3 ();
-		Vector3 val3 = ((Vector3)(ref val2)).normalized;
+		Vector3 vector = msg.read.Vector3 ();
+		Vector3 vector2 = msg.read.Vector3 ().normalized;
 		bool num = msg.read.Bit ();
 		BaseEntity mounted = player.GetParentEntity ();
-		if ((Object)(object)mounted == (Object)null) {
+		if (mounted == null) {
 			mounted = player.GetMounted ();
 		}
 		if (num) {
-			if ((Object)(object)mounted != (Object)null) {
-				val = ((Component)mounted).transform.TransformPoint (val);
-				val3 = ((Component)mounted).transform.TransformDirection (val3);
+			if (mounted != null) {
+				vector = mounted.transform.TransformPoint (vector);
+				vector2 = mounted.transform.TransformDirection (vector2);
 			} else {
-				val = player.eyes.position;
-				val3 = player.eyes.BodyForward ();
+				vector = player.eyes.position;
+				vector2 = player.eyes.BodyForward ();
 			}
 		}
-		if (!ValidateEyePos (player, val)) {
+		if (!ValidateEyePos (player, vector)) {
 			return;
 		}
-		ItemModProjectile component = ((Component)primaryMagazine.ammoType).GetComponent<ItemModProjectile> ();
-		if (!Object.op_Implicit ((Object)(object)component)) {
+		ItemModProjectile component = primaryMagazine.ammoType.GetComponent<ItemModProjectile> ();
+		if (!component) {
 			AntiHack.Log (player, AntiHackType.ProjectileHack, "Item mod not found (" + base.ShortPrefabName + ")");
 			player.stats.combat.LogInvalid (player, this, "mod_missing");
 			return;
 		}
 		float num2 = GetAimCone () + component.projectileSpread;
 		if (num2 > 0f) {
-			val3 = AimConeUtil.GetModifiedAimConeDirection (num2, val3);
+			vector2 = AimConeUtil.GetModifiedAimConeDirection (num2, vector2);
 		}
 		float num3 = 1f;
-		RaycastHit val4 = default(RaycastHit);
-		if (Physics.Raycast (val, val3, ref val4, num3, 1237003025)) {
-			num3 = ((RaycastHit)(ref val4)).distance - 0.1f;
+		if (UnityEngine.Physics.Raycast (vector, vector2, out var hitInfo, num3, 1237003025)) {
+			num3 = hitInfo.distance - 0.1f;
 		}
-		BaseEntity baseEntity = GameManager.server.CreateEntity (component.projectileObject.resourcePath, val + val3 * num3);
-		if (!((Object)(object)baseEntity == (Object)null)) {
+		BaseEntity baseEntity = GameManager.server.CreateEntity (component.projectileObject.resourcePath, vector + vector2 * num3);
+		if (!(baseEntity == null)) {
 			baseEntity.creatorEntity = player;
-			ServerProjectile component2 = ((Component)baseEntity).GetComponent<ServerProjectile> ();
-			if (Object.op_Implicit ((Object)(object)component2)) {
-				component2.InitializeVelocity (GetInheritedVelocity (player, val3) + val3 * component2.speed);
+			ServerProjectile component2 = baseEntity.GetComponent<ServerProjectile> ();
+			if ((bool)component2) {
+				component2.InitializeVelocity (GetInheritedVelocity (player, vector2) + vector2 * component2.speed);
 			}
 			baseEntity.Spawn ();
 			Analytics.Azure.OnExplosiveLaunched (player, baseEntity, this);
 			StartAttackCooldown (ScaleRepeatDelay (repeatDelay));
 			Item ownerItem = GetOwnerItem ();
 			if (ownerItem != null && !base.UsingInfiniteAmmoCheat) {
-				ownerItem.LoseCondition (Random.Range (1f, 2f));
+				ownerItem.LoseCondition (UnityEngine.Random.Range (1f, 2f));
 			}
 		}
 	}

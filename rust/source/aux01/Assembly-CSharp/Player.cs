@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Text;
 using ConVar;
@@ -25,16 +24,16 @@ public class Player : ConsoleSystem
 	[ClientVar (AllowRunFromServer = true)]
 	public static void cinematic_play (Arg arg)
 	{
-		if (!arg.HasArgs (1) || !arg.IsServerside) {
+		if (!arg.HasArgs () || !arg.IsServerside) {
 			return;
 		}
 		BasePlayer basePlayer = arg.Player ();
-		if (!((Object)(object)basePlayer == (Object)null)) {
+		if (!(basePlayer == null)) {
 			string strCommand = string.Empty;
 			if (basePlayer.IsAdmin || basePlayer.IsDeveloper) {
 				strCommand = arg.cmd.FullName + " " + arg.FullString + " " + basePlayer.UserIDString;
 			} else if (Server.cinematic) {
-				strCommand = arg.cmd.FullName + " " + arg.GetString (0, "") + " " + basePlayer.UserIDString;
+				strCommand = arg.cmd.FullName + " " + arg.GetString (0) + " " + basePlayer.UserIDString;
 			}
 			if (Server.cinematic) {
 				ConsoleNetwork.BroadcastToAllClients (strCommand);
@@ -52,7 +51,7 @@ public class Player : ConsoleSystem
 			return;
 		}
 		BasePlayer basePlayer = arg.Player ();
-		if (!((Object)(object)basePlayer == (Object)null)) {
+		if (!(basePlayer == null)) {
 			string strCommand = string.Empty;
 			if (basePlayer.IsAdmin || basePlayer.IsDeveloper) {
 				strCommand = arg.cmd.FullName + " " + arg.FullString + " " + basePlayer.UserIDString;
@@ -70,12 +69,10 @@ public class Player : ConsoleSystem
 	[ServerUserVar]
 	public static void cinematic_gesture (Arg arg)
 	{
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
 		if (Server.cinematic) {
-			string @string = arg.GetString (0, "");
+			string @string = arg.GetString (0);
 			BasePlayer basePlayer = arg.GetPlayer (1);
-			if ((Object)(object)basePlayer == (Object)null) {
+			if (basePlayer == null) {
 				basePlayer = arg.Player ();
 			}
 			basePlayer.UpdateActiveItem (default(ItemId));
@@ -88,14 +85,14 @@ public class Player : ConsoleSystem
 	{
 		BasePlayer basePlayer = arg.Player ();
 		if (basePlayer.IsAdmin || basePlayer.IsDeveloper || Server.cinematic) {
-			uint uInt = arg.GetUInt (0, 0u);
+			uint uInt = arg.GetUInt (0);
 			BasePlayer basePlayer2 = BasePlayer.FindByID (uInt);
-			if ((Object)(object)basePlayer2 == (Object)null) {
+			if (basePlayer2 == null) {
 				basePlayer2 = BasePlayer.FindBot (uInt);
 			}
-			if ((Object)(object)basePlayer2 != (Object)null) {
+			if (basePlayer2 != null) {
 				basePlayer2.CopyRotation (basePlayer);
-				Debug.Log ((object)("Copied rotation of " + basePlayer2.UserIDString));
+				Debug.Log ("Copied rotation of " + basePlayer2.UserIDString);
 			}
 		}
 	}
@@ -112,32 +109,26 @@ public class Player : ConsoleSystem
 	[ServerUserVar]
 	public static void mount (Arg arg)
 	{
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0077: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c4: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer basePlayer = arg.Player ();
 		if (!basePlayer.IsAdmin && !basePlayer.IsDeveloper && !Server.cinematic) {
 			return;
 		}
-		uint uInt = arg.GetUInt (0, 0u);
+		uint uInt = arg.GetUInt (0);
 		BasePlayer basePlayer2 = BasePlayer.FindByID (uInt);
-		if ((Object)(object)basePlayer2 == (Object)null) {
+		if (basePlayer2 == null) {
 			basePlayer2 = BasePlayer.FindBot (uInt);
 		}
-		RaycastHit hit = default(RaycastHit);
-		if (!Object.op_Implicit ((Object)(object)basePlayer2) || !Physics.Raycast (basePlayer.eyes.position, basePlayer.eyes.HeadForward (), ref hit, 5f, 10496, (QueryTriggerInteraction)1)) {
+		if (!basePlayer2 || !UnityEngine.Physics.Raycast (basePlayer.eyes.position, basePlayer.eyes.HeadForward (), out var hitInfo, 5f, 10496, QueryTriggerInteraction.Ignore)) {
 			return;
 		}
-		BaseEntity entity = hit.GetEntity ();
-		if (!Object.op_Implicit ((Object)(object)entity)) {
+		BaseEntity entity = hitInfo.GetEntity ();
+		if (!entity) {
 			return;
 		}
-		BaseMountable baseMountable = ((Component)entity).GetComponent<BaseMountable> ();
-		if (!Object.op_Implicit ((Object)(object)baseMountable)) {
-			BaseVehicle baseVehicle = ((Component)entity).GetComponentInParent<BaseVehicle> ();
-			if (Object.op_Implicit ((Object)(object)baseVehicle)) {
+		BaseMountable baseMountable = entity.GetComponent<BaseMountable> ();
+		if (!baseMountable) {
+			BaseVehicle baseVehicle = entity.GetComponentInParent<BaseVehicle> ();
+			if ((bool)baseVehicle) {
 				if (!baseVehicle.isServer) {
 					baseVehicle = BaseNetworkable.serverEntities.Find (baseVehicle.net.ID) as BaseVehicle;
 				}
@@ -145,10 +136,10 @@ public class Player : ConsoleSystem
 				return;
 			}
 		}
-		if (Object.op_Implicit ((Object)(object)baseMountable) && !baseMountable.isServer) {
+		if ((bool)baseMountable && !baseMountable.isServer) {
 			baseMountable = BaseNetworkable.serverEntities.Find (baseMountable.net.ID) as BaseMountable;
 		}
-		if (Object.op_Implicit ((Object)(object)baseMountable)) {
+		if ((bool)baseMountable) {
 			baseMountable.AttemptMount (basePlayer2);
 		}
 	}
@@ -160,15 +151,15 @@ public class Player : ConsoleSystem
 		if (!basePlayer.IsAdmin && !basePlayer.IsDeveloper && !Server.cinematic) {
 			return;
 		}
-		uint uInt = arg.GetUInt (0, 0u);
+		uint uInt = arg.GetUInt (0);
 		BasePlayer basePlayer2 = BasePlayer.FindSleeping (uInt.ToString ());
-		if (!Object.op_Implicit ((Object)(object)basePlayer2)) {
+		if (!basePlayer2) {
 			basePlayer2 = BasePlayer.FindBotClosestMatch (uInt.ToString ());
 			if (basePlayer2.IsSleeping ()) {
 				basePlayer2 = null;
 			}
 		}
-		if (Object.op_Implicit ((Object)(object)basePlayer2)) {
+		if ((bool)basePlayer2) {
 			basePlayer2.StartSleeping ();
 		}
 	}
@@ -178,12 +169,12 @@ public class Player : ConsoleSystem
 	{
 		BasePlayer basePlayer = arg.Player ();
 		if (basePlayer.IsAdmin || basePlayer.IsDeveloper || Server.cinematic) {
-			uint uInt = arg.GetUInt (0, 0u);
+			uint uInt = arg.GetUInt (0);
 			BasePlayer basePlayer2 = BasePlayer.FindByID (uInt);
-			if ((Object)(object)basePlayer2 == (Object)null) {
+			if (basePlayer2 == null) {
 				basePlayer2 = BasePlayer.FindBot (uInt);
 			}
-			if (Object.op_Implicit ((Object)(object)basePlayer2) && Object.op_Implicit ((Object)(object)basePlayer2) && basePlayer2.isMounted) {
+			if ((bool)basePlayer2 && (bool)basePlayer2 && basePlayer2.isMounted) {
 				basePlayer2.GetMounted ().DismountPlayer (basePlayer2);
 			}
 		}
@@ -196,14 +187,14 @@ public class Player : ConsoleSystem
 		if (!basePlayer.IsAdmin && !basePlayer.IsDeveloper && !Server.cinematic) {
 			return;
 		}
-		uint uInt = arg.GetUInt (0, 0u);
+		uint uInt = arg.GetUInt (0);
 		BasePlayer basePlayer2 = BasePlayer.FindByID (uInt);
-		if ((Object)(object)basePlayer2 == (Object)null) {
+		if (basePlayer2 == null) {
 			basePlayer2 = BasePlayer.FindBot (uInt);
 		}
-		if (Object.op_Implicit ((Object)(object)basePlayer2)) {
-			int @int = arg.GetInt (1, 0);
-			if (Object.op_Implicit ((Object)(object)basePlayer2) && basePlayer2.isMounted && Object.op_Implicit ((Object)(object)basePlayer2.GetMounted ().VehicleParent ())) {
+		if ((bool)basePlayer2) {
+			int @int = arg.GetInt (1);
+			if ((bool)basePlayer2 && basePlayer2.isMounted && (bool)basePlayer2.GetMounted ().VehicleParent ()) {
 				basePlayer2.GetMounted ().VehicleParent ().SwapSeats (basePlayer2, @int);
 			}
 		}
@@ -214,8 +205,8 @@ public class Player : ConsoleSystem
 	{
 		BasePlayer basePlayer = arg.Player ();
 		if (basePlayer.IsAdmin || basePlayer.IsDeveloper || Server.cinematic) {
-			BasePlayer basePlayer2 = BasePlayer.FindSleeping (arg.GetUInt (0, 0u).ToString ());
-			if (Object.op_Implicit ((Object)(object)basePlayer2)) {
+			BasePlayer basePlayer2 = BasePlayer.FindSleeping (arg.GetUInt (0).ToString ());
+			if ((bool)basePlayer2) {
 				basePlayer2.EndSleeping ();
 			}
 		}
@@ -224,33 +215,25 @@ public class Player : ConsoleSystem
 	[ServerVar]
 	public static void wakeupall (Arg arg)
 	{
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer basePlayer = arg.Player ();
 		if (!basePlayer.IsAdmin && !basePlayer.IsDeveloper && !Server.cinematic) {
 			return;
 		}
-		List<BasePlayer> list = Pool.GetList<BasePlayer> ();
-		Enumerator<BasePlayer> enumerator = BasePlayer.sleepingPlayerList.GetEnumerator ();
-		try {
-			while (enumerator.MoveNext ()) {
-				BasePlayer current = enumerator.Current;
-				list.Add (current);
-			}
-		} finally {
-			((IDisposable)enumerator).Dispose ();
+		List<BasePlayer> obj = Facepunch.Pool.GetList<BasePlayer> ();
+		foreach (BasePlayer sleepingPlayer in BasePlayer.sleepingPlayerList) {
+			obj.Add (sleepingPlayer);
 		}
-		foreach (BasePlayer item in list) {
+		foreach (BasePlayer item in obj) {
 			item.EndSleeping ();
 		}
-		Pool.FreeList<BasePlayer> (ref list);
+		Facepunch.Pool.FreeList (ref obj);
 	}
 
 	[ServerVar]
 	public static void printstats (Arg arg)
 	{
 		BasePlayer basePlayer = arg.Player ();
-		if (!Object.op_Implicit ((Object)(object)basePlayer)) {
+		if (!basePlayer) {
 			return;
 		}
 		StringBuilder stringBuilder = new StringBuilder ();
@@ -274,7 +257,7 @@ public class Player : ConsoleSystem
 		stringBuilder.AppendLine ("===");
 		stringBuilder.AppendLine ("Weapon stats:");
 		if (basePlayer.lifeStory.weaponStats != null) {
-			foreach (WeaponStats weaponStat in basePlayer.lifeStory.weaponStats) {
+			foreach (PlayerLifeStory.WeaponStats weaponStat in basePlayer.lifeStory.weaponStats) {
 				float num = (float)weaponStat.shotsHit / (float)weaponStat.shotsFired;
 				num *= 100f;
 				stringBuilder.AppendLine ($"{weaponStat.weaponName} - shots fired: {weaponStat.shotsFired} shots hit: {weaponStat.shotsHit} accuracy: {num:F1}%");
@@ -283,7 +266,7 @@ public class Player : ConsoleSystem
 		stringBuilder.AppendLine ("===");
 		stringBuilder.AppendLine ("Misc stats:");
 		if (basePlayer.lifeStory.genericStats != null) {
-			foreach (GenericStat genericStat in basePlayer.lifeStory.genericStats) {
+			foreach (PlayerLifeStory.GenericStat genericStat in basePlayer.lifeStory.genericStats) {
 				stringBuilder.AppendLine ($"{genericStat.key} = {genericStat.value}");
 			}
 		}
@@ -307,7 +290,7 @@ public class Player : ConsoleSystem
 	public static void resetstate (Arg args)
 	{
 		BasePlayer playerOrSleeper = args.GetPlayerOrSleeper (0);
-		if ((Object)(object)playerOrSleeper == (Object)null) {
+		if (playerOrSleeper == null) {
 			args.ReplyWith ("Player not found");
 			return;
 		}
@@ -318,16 +301,15 @@ public class Player : ConsoleSystem
 	[ServerVar (ServerAdmin = true)]
 	public static void fillwater (Arg arg)
 	{
-		bool num = arg.GetString (0, "").ToLower () == "salt";
+		bool num = arg.GetString (0).ToLower () == "salt";
 		BasePlayer basePlayer = arg.Player ();
 		ItemDefinition liquidType = ItemManager.FindItemDefinition (num ? "water.salt" : "water");
-		ItemModContainer itemModContainer = default(ItemModContainer);
 		for (int i = 0; i < PlayerBelt.MaxBeltSlots; i++) {
 			Item itemInSlot = basePlayer.Belt.GetItemInSlot (i);
 			if (itemInSlot != null && itemInSlot.GetHeldEntity () is BaseLiquidVessel { hasLid: not false } baseLiquidVessel) {
 				int amount = 999;
-				if (((Component)baseLiquidVessel.GetItem ().info).TryGetComponent<ItemModContainer> (ref itemModContainer)) {
-					amount = itemModContainer.maxStackSize;
+				if (baseLiquidVessel.GetItem ().info.TryGetComponent<ItemModContainer> (out var component)) {
+					amount = component.maxStackSize;
 				}
 				baseLiquidVessel.AddLiquid (liquidType, amount);
 			}
@@ -360,7 +342,7 @@ public class Player : ConsoleSystem
 	[ServerVar]
 	public static void createskull (Arg arg)
 	{
-		string text = arg.GetString (0, "");
+		string text = arg.GetString (0);
 		BasePlayer basePlayer = arg.Player ();
 		if (string.IsNullOrEmpty (text)) {
 			text = RandomUsernames.Get (Random.Range (0, 1000));
@@ -374,53 +356,51 @@ public class Player : ConsoleSystem
 	[ServerVar]
 	public static void gesture_radius (Arg arg)
 	{
-		//IL_0087: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer basePlayer = arg.Player ();
-		if ((Object)(object)basePlayer == (Object)null || !basePlayer.IsAdmin) {
+		if (basePlayer == null || !basePlayer.IsAdmin) {
 			return;
 		}
-		float @float = arg.GetFloat (0, 0f);
-		List<string> list = Pool.GetList<string> ();
+		float @float = arg.GetFloat (0);
+		List<string> list = Facepunch.Pool.GetList<string> ();
 		for (int i = 0; i < 5; i++) {
-			if (!string.IsNullOrEmpty (arg.GetString (i + 1, ""))) {
-				list.Add (arg.GetString (i + 1, ""));
+			if (!string.IsNullOrEmpty (arg.GetString (i + 1))) {
+				list.Add (arg.GetString (i + 1));
 			}
 		}
 		if (list.Count == 0) {
 			arg.ReplyWith ("No gestures provided. eg. player.gesture_radius 10f cabbagepatch raiseroof");
 			return;
 		}
-		List<BasePlayer> list2 = Pool.GetList<BasePlayer> ();
-		Vis.Entities (((Component)basePlayer).transform.position, @float, list2, 131072, (QueryTriggerInteraction)2);
-		foreach (BasePlayer item in list2) {
+		List<BasePlayer> obj = Facepunch.Pool.GetList<BasePlayer> ();
+		Vis.Entities (basePlayer.transform.position, @float, obj, 131072);
+		foreach (BasePlayer item in obj) {
 			GestureConfig toPlay = basePlayer.gestureList.StringToGesture (list [Random.Range (0, list.Count)]);
 			item.Server_StartGesture (toPlay);
 		}
-		Pool.FreeList<BasePlayer> (ref list2);
+		Facepunch.Pool.FreeList (ref obj);
 	}
 
 	[ServerVar]
 	public static void stopgesture_radius (Arg arg)
 	{
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer basePlayer = arg.Player ();
-		if ((Object)(object)basePlayer == (Object)null || !basePlayer.IsAdmin) {
+		if (basePlayer == null || !basePlayer.IsAdmin) {
 			return;
 		}
-		float @float = arg.GetFloat (0, 0f);
-		List<BasePlayer> list = Pool.GetList<BasePlayer> ();
-		Vis.Entities (((Component)basePlayer).transform.position, @float, list, 131072, (QueryTriggerInteraction)2);
-		foreach (BasePlayer item in list) {
+		float @float = arg.GetFloat (0);
+		List<BasePlayer> obj = Facepunch.Pool.GetList<BasePlayer> ();
+		Vis.Entities (basePlayer.transform.position, @float, obj, 131072);
+		foreach (BasePlayer item in obj) {
 			item.Server_CancelGesture ();
 		}
-		Pool.FreeList<BasePlayer> (ref list);
+		Facepunch.Pool.FreeList (ref obj);
 	}
 
 	[ServerVar]
 	public static void markhostile (Arg arg)
 	{
 		BasePlayer basePlayer = arg.Player ();
-		if ((Object)(object)basePlayer != (Object)null) {
+		if (basePlayer != null) {
 			basePlayer.MarkHostileFor ();
 		}
 	}

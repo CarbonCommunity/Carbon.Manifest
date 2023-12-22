@@ -51,7 +51,7 @@ public class GameManifest : ScriptableObject
 
 	internal static Dictionary<string, string> pathToGuid = new Dictionary<string, string> (StringComparer.OrdinalIgnoreCase);
 
-	internal static Dictionary<string, Object> guidToObject = new Dictionary<string, Object> ();
+	internal static Dictionary<string, UnityEngine.Object> guidToObject = new Dictionary<string, UnityEngine.Object> ();
 
 	public PooledString[] pooledStrings;
 
@@ -65,7 +65,7 @@ public class GameManifest : ScriptableObject
 
 	public static GameManifest Current {
 		get {
-			if ((Object)(object)loadedManifest != (Object)null) {
+			if (loadedManifest != null) {
 				return loadedManifest;
 			}
 			Load ();
@@ -75,10 +75,10 @@ public class GameManifest : ScriptableObject
 
 	public static void Load ()
 	{
-		if ((Object)(object)loadedManifest != (Object)null) {
+		if (loadedManifest != null) {
 			return;
 		}
-		loadedManifest = FileSystem.Load<GameManifest> ("Assets/manifest.asset", true);
+		loadedManifest = FileSystem.Load<GameManifest> ("Assets/manifest.asset");
 		PrefabProperties[] array = loadedManifest.prefabProperties;
 		foreach (PrefabProperties prefabProperties in array) {
 			guidToPath.Add (prefabProperties.guid, prefabProperties.name);
@@ -91,7 +91,7 @@ public class GameManifest : ScriptableObject
 				pathToGuid.Add (guidPath.name, guidPath.guid);
 			}
 		}
-		DebugEx.Log ((object)GetMetadataStatus (), (StackTraceLogType)0);
+		DebugEx.Log (GetMetadataStatus ());
 	}
 
 	public static void LoadAssets ()
@@ -101,7 +101,7 @@ public class GameManifest : ScriptableObject
 			if (Skinnable.All == null || Skinnable.All.Length == 0) {
 				throw new Exception ("Error loading skinnables");
 			}
-			DebugEx.Log ((object)GetAssetStatus (), (StackTraceLogType)0);
+			DebugEx.Log (GetAssetStatus ());
 		}
 	}
 
@@ -119,39 +119,39 @@ public class GameManifest : ScriptableObject
 	internal static string GUIDToPath (string guid)
 	{
 		if (string.IsNullOrEmpty (guid)) {
-			Debug.LogError ((object)"GUIDToPath: guid is empty");
+			Debug.LogError ("GUIDToPath: guid is empty");
 			return string.Empty;
 		}
 		Load ();
 		if (guidToPath.TryGetValue (guid, out var value)) {
 			return value;
 		}
-		Debug.LogWarning ((object)("GUIDToPath: no path found for guid " + guid));
+		Debug.LogWarning ("GUIDToPath: no path found for guid " + guid);
 		return string.Empty;
 	}
 
-	internal static Object GUIDToObject (string guid)
+	internal static UnityEngine.Object GUIDToObject (string guid)
 	{
-		Object value = null;
+		UnityEngine.Object value = null;
 		if (guidToObject.TryGetValue (guid, out value)) {
 			return value;
 		}
 		string text = GUIDToPath (guid);
 		if (string.IsNullOrEmpty (text)) {
-			Debug.LogWarning ((object)("Missing file for guid " + guid));
+			Debug.LogWarning ("Missing file for guid " + guid);
 			guidToObject.Add (guid, null);
 			return null;
 		}
-		Object val = FileSystem.Load<Object> (text, true);
-		guidToObject.Add (guid, val);
-		return val;
+		UnityEngine.Object @object = FileSystem.Load<UnityEngine.Object> (text);
+		guidToObject.Add (guid, @object);
+		return @object;
 	}
 
 	internal static void Invalidate (string path)
 	{
 		if (pathToGuid.TryGetValue (path, out var value) && guidToObject.TryGetValue (value, out var value2)) {
-			if (value2 != (Object)null) {
-				Object.DestroyImmediate (value2, true);
+			if (value2 != null) {
+				UnityEngine.Object.DestroyImmediate (value2, allowDestroyingAssets: true);
 			}
 			guidToObject.Remove (value);
 		}
@@ -160,7 +160,7 @@ public class GameManifest : ScriptableObject
 	private static string GetMetadataStatus ()
 	{
 		StringBuilder stringBuilder = new StringBuilder ();
-		if ((Object)(object)loadedManifest != (Object)null) {
+		if (loadedManifest != null) {
 			stringBuilder.Append ("Manifest Metadata Loaded");
 			stringBuilder.AppendLine ();
 			stringBuilder.Append ("\t");
@@ -188,7 +188,7 @@ public class GameManifest : ScriptableObject
 	private static string GetAssetStatus ()
 	{
 		StringBuilder stringBuilder = new StringBuilder ();
-		if ((Object)(object)loadedManifest != (Object)null) {
+		if (loadedManifest != null) {
 			stringBuilder.Append ("Manifest Assets Loaded");
 			stringBuilder.AppendLine ();
 			stringBuilder.Append ("\t");

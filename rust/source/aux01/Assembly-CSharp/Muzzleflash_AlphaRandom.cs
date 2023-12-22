@@ -6,9 +6,9 @@ public class Muzzleflash_AlphaRandom : MonoBehaviour
 
 	private Gradient grad = new Gradient ();
 
-	private GradientColorKey[] gck = (GradientColorKey[])(object)new GradientColorKey[3];
+	private GradientColorKey[] gck = new GradientColorKey[3];
 
-	private GradientAlphaKey[] gak = (GradientAlphaKey[])(object)new GradientAlphaKey[3];
+	private GradientAlphaKey[] gak = new GradientAlphaKey[3];
 
 	private void Start ()
 	{
@@ -16,15 +16,6 @@ public class Muzzleflash_AlphaRandom : MonoBehaviour
 
 	private void OnEnable ()
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0064: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0069: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0161: Unknown result type (might be due to invalid IL or missing references)
-		//IL_016b: Unknown result type (might be due to invalid IL or missing references)
 		gck [0].color = Color.white;
 		gck [0].time = 0f;
 		gck [1].color = Color.white;
@@ -40,13 +31,13 @@ public class Muzzleflash_AlphaRandom : MonoBehaviour
 		gak [2].time = 0.5f;
 		grad.SetKeys (gck, gak);
 		ParticleSystem[] array = muzzleflashParticles;
-		foreach (ParticleSystem val in array) {
-			if ((Object)(object)val == (Object)null) {
-				Debug.LogWarning ((object)("Muzzleflash_AlphaRandom : null particle system in " + ((Object)((Component)this).gameObject).name));
+		foreach (ParticleSystem particleSystem in array) {
+			if (particleSystem == null) {
+				Debug.LogWarning ("Muzzleflash_AlphaRandom : null particle system in " + base.gameObject.name);
 				continue;
 			}
-			ColorOverLifetimeModule colorOverLifetime = val.colorOverLifetime;
-			((ColorOverLifetimeModule)(ref colorOverLifetime)).color = MinMaxGradient.op_Implicit (grad);
+			ParticleSystem.ColorOverLifetimeModule colorOverLifetime = particleSystem.colorOverLifetime;
+			colorOverLifetime.color = grad;
 		}
 	}
 }

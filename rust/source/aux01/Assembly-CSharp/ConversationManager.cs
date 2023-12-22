@@ -12,7 +12,7 @@ public class ConversationManager : MonoBehaviour
 
 		public int GetSpeechNodeIndex (string name)
 		{
-			if ((Object)(object)data == (Object)null) {
+			if (data == null) {
 				return -1;
 			}
 			return data.GetSpeechNodeIndex (name);

@@ -7,13 +7,12 @@ public class TerrainTopologyMap : TerrainMap<int>
 
 	public override void Setup ()
 	{
-		//IL_009d: Unknown result type (might be due to invalid IL or missing references)
 		res = terrain.terrainData.alphamapResolution;
 		src = (dst = new int[res * res]);
-		if (!((Object)(object)TopologyTexture != (Object)null)) {
+		if (!(TopologyTexture != null)) {
 			return;
 		}
-		if (((Texture)TopologyTexture).width == ((Texture)TopologyTexture).height && ((Texture)TopologyTexture).width == res) {
+		if (TopologyTexture.width == TopologyTexture.height && TopologyTexture.width == res) {
 			Color32[] pixels = TopologyTexture.GetPixels32 ();
 			int i = 0;
 			int num = 0;
@@ -26,21 +25,17 @@ public class TerrainTopologyMap : TerrainMap<int>
 				}
 			}
 		} else {
-			Debug.LogError ((object)("Invalid topology texture: " + ((Object)TopologyTexture).name));
+			Debug.LogError ("Invalid topology texture: " + TopologyTexture.name);
 		}
 	}
 
 	public void GenerateTextures ()
 	{
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Expected O, but got Unknown
-		TopologyTexture = new Texture2D (res, res, (TextureFormat)4, false, true);
-		((Object)TopologyTexture).name = "TopologyTexture";
-		((Texture)TopologyTexture).wrapMode = (TextureWrapMode)1;
-		Color32[] col = (Color32[])(object)new Color32[res * res];
-		Parallel.For (0, res, (Action<int>)delegate(int z) {
-			//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0039: Unknown result type (might be due to invalid IL or missing references)
+		TopologyTexture = new Texture2D (res, res, TextureFormat.RGBA32, mipChain: false, linear: true);
+		TopologyTexture.name = "TopologyTexture";
+		TopologyTexture.wrapMode = TextureWrapMode.Clamp;
+		Color32[] col = new Color32[res * res];
+		Parallel.For (0, res, delegate(int z) {
 			for (int i = 0; i < res; i++) {
 				col [z * res + i] = BitUtility.EncodeInt (src [z * res + i]);
 			}
@@ -50,13 +45,11 @@ public class TerrainTopologyMap : TerrainMap<int>
 
 	public void ApplyTextures ()
 	{
-		TopologyTexture.Apply (false, true);
+		TopologyTexture.Apply (updateMipmaps: false, makeNoLongerReadable: true);
 	}
 
 	public bool GetTopology (Vector3 worldPos, int mask)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
 		float normX = TerrainMeta.NormalizeX (worldPos.x);
 		float normZ = TerrainMeta.NormalizeZ (worldPos.z);
 		return GetTopology (normX, normZ, mask);
@@ -76,8 +69,6 @@ public class TerrainTopologyMap : TerrainMap<int>
 
 	public int GetTopology (Vector3 worldPos)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
 		float normX = TerrainMeta.NormalizeX (worldPos.x);
 		float normZ = TerrainMeta.NormalizeZ (worldPos.z);
 		return GetTopology (normX, normZ);
@@ -92,8 +83,6 @@ public class TerrainTopologyMap : TerrainMap<int>
 
 	public int GetTopologyFast (Vector2 uv)
 	{
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
 		int num = res - 1;
 		int num2 = (int)(uv.x * (float)res);
 		int num3 = (int)(uv.y * (float)res);
@@ -111,8 +100,6 @@ public class TerrainTopologyMap : TerrainMap<int>
 
 	public void SetTopology (Vector3 worldPos, int mask)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
 		float normX = TerrainMeta.NormalizeX (worldPos.x);
 		float normZ = TerrainMeta.NormalizeZ (worldPos.z);
 		SetTopology (normX, normZ, mask);
@@ -132,8 +119,6 @@ public class TerrainTopologyMap : TerrainMap<int>
 
 	public void AddTopology (Vector3 worldPos, int mask)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
 		float normX = TerrainMeta.NormalizeX (worldPos.x);
 		float normZ = TerrainMeta.NormalizeZ (worldPos.z);
 		AddTopology (normX, normZ, mask);
@@ -153,8 +138,6 @@ public class TerrainTopologyMap : TerrainMap<int>
 
 	public void RemoveTopology (Vector3 worldPos, int mask)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
 		float normX = TerrainMeta.NormalizeX (worldPos.x);
 		float normZ = TerrainMeta.NormalizeZ (worldPos.z);
 		RemoveTopology (normX, normZ, mask);
@@ -174,8 +157,6 @@ public class TerrainTopologyMap : TerrainMap<int>
 
 	public int GetTopology (Vector3 worldPos, float radius)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
 		float normX = TerrainMeta.NormalizeX (worldPos.x);
 		float normZ = TerrainMeta.NormalizeZ (worldPos.z);
 		return GetTopology (normX, normZ, radius);
@@ -183,7 +164,6 @@ public class TerrainTopologyMap : TerrainMap<int>
 
 	public int GetTopology (float normX, float normZ, float radius)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
 		int num = 0;
 		float num2 = TerrainMeta.OneOverSize.x * radius;
 		int num3 = Index (normX - num2);
@@ -200,8 +180,6 @@ public class TerrainTopologyMap : TerrainMap<int>
 
 	public void SetTopology (Vector3 worldPos, int mask, float radius, float fade = 0f)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
 		float normX = TerrainMeta.NormalizeX (worldPos.x);
 		float normZ = TerrainMeta.NormalizeZ (worldPos.z);
 		SetTopology (normX, normZ, mask, radius, fade);
@@ -219,8 +197,6 @@ public class TerrainTopologyMap : TerrainMap<int>
 
 	public void AddTopology (Vector3 worldPos, int mask, float radius, float fade = 0f)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
 		float normX = TerrainMeta.NormalizeX (worldPos.x);
 		float normZ = TerrainMeta.NormalizeZ (worldPos.z);
 		AddTopology (normX, normZ, mask, radius, fade);

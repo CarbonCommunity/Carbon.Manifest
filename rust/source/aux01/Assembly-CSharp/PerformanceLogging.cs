@@ -159,18 +159,18 @@ public class PerformanceLogging
 			.AddField ("ram_managed", System.GC.GetTotalMemory (forceFullCollection: false))
 			.AddField ("ram_total", SystemInfoEx.systemMemoryUsed)
 			.AddField ("total_session_id", totalSessionId.ToString ("N"))
-			.AddField ("uptime", (int)Time.realtimeSinceStartup)
+			.AddField ("uptime", (int)UnityEngine.Time.realtimeSinceStartup)
 			.AddField ("map_url", World.Url)
 			.AddField ("world_size", World.Size)
 			.AddField ("world_seed", World.Seed)
 			.AddField ("active_scene", LevelManager.CurrentLevelName);
 		if (!isClient && !isClient) {
-			int value = (int)((Net.sv != null) ? ((BaseNetwork)Net.sv).GetStat ((Connection)null, (StatTypeLong)3) : 0);
-			int value2 = (int)((Net.sv != null) ? ((BaseNetwork)Net.sv).GetStat ((Connection)null, (StatTypeLong)1) : 0);
-			record.AddField ("is_official", Server.official && Server.stats).AddField ("bot_count", BasePlayer.bots.Count).AddField ("player_count", BasePlayer.activePlayerList.Count)
-				.AddField ("max_players", Server.maxplayers)
+			int value = (int)((Network.Net.sv != null) ? Network.Net.sv.GetStat (null, BaseNetwork.StatTypeLong.BytesReceived_LastSecond) : 0);
+			int value2 = (int)((Network.Net.sv != null) ? Network.Net.sv.GetStat (null, BaseNetwork.StatTypeLong.BytesSent_LastSecond) : 0);
+			record.AddField ("is_official", ConVar.Server.official && ConVar.Server.stats).AddField ("bot_count", BasePlayer.bots.Count).AddField ("player_count", BasePlayer.activePlayerList.Count)
+				.AddField ("max_players", ConVar.Server.maxplayers)
 				.AddField ("ent_count", BaseNetworkable.serverEntities.Count)
-				.AddField ("hostname", Server.hostname)
+				.AddField ("hostname", ConVar.Server.hostname)
 				.AddField ("net_in", value)
 				.AddField ("net_out", value2);
 		}
@@ -205,7 +205,7 @@ public class PerformanceLogging
 					}
 				}
 			} catch (Exception arg) {
-				Debug.LogError ((object)$"Failed to get oxide when flushing server performance: {arg}");
+				UnityEngine.Debug.LogError ($"Failed to get oxide when flushing server performance: {arg}");
 			}
 			try {
 				List<ProcessInfo> list2 = new List<ProcessInfo> ();
@@ -222,7 +222,7 @@ public class PerformanceLogging
 						}
 					} catch (Exception ex) {
 						if (!(ex is InvalidOperationException)) {
-							Debug.LogWarning ((object)$"Failed to get memory from process when flushing performance info: {ex}");
+							UnityEngine.Debug.LogWarning ($"Failed to get memory from process when flushing performance info: {ex}");
 							list2.Add (new ProcessInfo {
 								Name = process.ProcessName,
 								WorkingSet = -1L
@@ -233,7 +233,7 @@ public class PerformanceLogging
 				record.AddObject ("other_servers", list2);
 				record.AddField ("other_server_count", list2.Count);
 			} catch (Exception arg2) {
-				Debug.LogError ((object)$"Failed to log processes when flushing performance info: {arg2}");
+				UnityEngine.Debug.LogError ($"Failed to log processes when flushing performance info: {arg2}");
 			}
 		}
 		if (!isClient) {
@@ -258,14 +258,13 @@ public class PerformanceLogging
 			 ["system_memory"] = SystemInfo.systemMemorySize.ToString (),
 			 ["os"] = SystemInfo.operatingSystem
 		};
-		Dictionary<string, string> obj3 = new Dictionary<string, string> { ["unity"] = Application.unityVersion ?? "editor" };
-		BuildInfo current2 = BuildInfo.Current;
-		obj3 ["changeset"] = ((current2 != null) ? current2.Scm.ChangeId : null) ?? "editor";
-		BuildInfo current3 = BuildInfo.Current;
-		obj3 ["branch"] = ((current3 != null) ? current3.Scm.Branch : null) ?? "editor";
-		obj3 ["network_version"] = 2403.ToString ();
-		Dictionary<string, string> dictionary = obj3;
-		dictionary ["eos_sdk"] = ((object)VersionInterface.GetVersion ())?.ToString () ?? "disabled";
+		Dictionary<string, string> dictionary = new Dictionary<string, string> {
+			 ["unity"] = UnityEngine.Application.unityVersion ?? "editor",
+			 ["changeset"] = BuildInfo.Current?.Scm.ChangeId ?? "editor",
+			 ["branch"] = BuildInfo.Current?.Scm.Branch ?? "editor",
+			 ["network_version"] = 2403.ToString ()
+		};
+		dictionary ["eos_sdk"] = VersionInterface.GetVersion ()?.ToString () ?? "disabled";
 		record.AddObject ("hardware", data).AddObject ("application", dictionary);
 		stopwatch.Stop ();
 		record.AddField ("flush_ms", stopwatch.ElapsedMilliseconds);
@@ -274,8 +273,8 @@ public class PerformanceLogging
 		Task.Run (async delegate {
 			try {
 				await ProcessPerformanceData (record, frametimes, ping);
-			} catch (Exception ex2) {
-				Debug.LogException (ex2);
+			} catch (Exception exception) {
+				UnityEngine.Debug.LogException (exception);
 			}
 		});
 		ResetMeasurements ();
@@ -298,11 +297,11 @@ public class PerformanceLogging
 		if (Frametimes.Count != 0) {
 			PerformancePool result;
 			while (pool.TryDequeue (out result)) {
-				Pool.FreeList<TimeSpan> (ref result.Frametimes);
-				Pool.FreeList<int> (ref result.Ping);
+				Facepunch.Pool.FreeList (ref result.Frametimes);
+				Facepunch.Pool.FreeList (ref result.Ping);
 			}
-			Frametimes = Pool.GetList<TimeSpan> ();
-			PingHistory = Pool.GetList<int> ();
+			Frametimes = Facepunch.Pool.GetList<TimeSpan> ();
+			PingHistory = Facepunch.Pool.GetList<int> ();
 			garbageCollections.Clear ();
 		}
 	}

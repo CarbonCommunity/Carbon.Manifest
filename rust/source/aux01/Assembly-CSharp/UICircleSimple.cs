@@ -25,147 +25,63 @@ public class UICircleSimple : UIPrimitiveBase
 
 	protected override void OnPopulateMesh (VertexHelper vh)
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0078: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0063: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0110: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0115: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0124: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0133: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0138: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0144: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0146: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0158: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_016c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0171: Unknown result type (might be due to invalid IL or missing references)
-		//IL_017c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01aa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_019a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_019f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01bb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01cd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01cf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ee: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0226: Unknown result type (might be due to invalid IL or missing references)
-		//IL_022b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0230: Unknown result type (might be due to invalid IL or missing references)
-		//IL_023f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0244: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0249: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0250: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0252: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0264: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0266: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0278: Unknown result type (might be due to invalid IL or missing references)
-		//IL_027d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0288: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02a4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02a9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02ae: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02b5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02b7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02c9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02cb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02dd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02e2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02ed: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03a4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03a6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03ab: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03b3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03b8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03bd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03c5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03ca: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03d5: Unknown result type (might be due to invalid IL or missing references)
-		Rect rect = ((Graphic)this).rectTransform.rect;
-		float width = ((Rect)(ref rect)).width;
-		rect = ((Graphic)this).rectTransform.rect;
-		float num;
-		if (!(width < ((Rect)(ref rect)).height)) {
-			rect = ((Graphic)this).rectTransform.rect;
-			num = ((Rect)(ref rect)).height;
-		} else {
-			rect = ((Graphic)this).rectTransform.rect;
-			num = ((Rect)(ref rect)).width;
-		}
-		float num2 = num;
-		float num3 = (ThicknessIsOutside ? ((0f - ((Graphic)this).rectTransform.pivot.x) * num2 - Thickness) : ((0f - ((Graphic)this).rectTransform.pivot.x) * num2));
-		float num4 = (ThicknessIsOutside ? ((0f - ((Graphic)this).rectTransform.pivot.x) * num2) : ((0f - ((Graphic)this).rectTransform.pivot.x) * num2 + Thickness));
+		float num = ((base.rectTransform.rect.width < base.rectTransform.rect.height) ? base.rectTransform.rect.width : base.rectTransform.rect.height);
+		float num2 = (ThicknessIsOutside ? ((0f - base.rectTransform.pivot.x) * num - Thickness) : ((0f - base.rectTransform.pivot.x) * num));
+		float num3 = (ThicknessIsOutside ? ((0f - base.rectTransform.pivot.x) * num) : ((0f - base.rectTransform.pivot.x) * num + Thickness));
 		vh.Clear ();
 		indices.Clear ();
 		vertices.Clear ();
 		int item = 0;
-		int num5 = 1;
-		int num6 = 0;
-		float num7 = 360f / (float)ArcSteps;
-		float num8 = Mathf.Cos (0f);
-		float num9 = Mathf.Sin (0f);
+		int num4 = 1;
+		int num5 = 0;
+		float num6 = 360f / (float)ArcSteps;
+		float num7 = Mathf.Cos (0f);
+		float num8 = Mathf.Sin (0f);
 		UIVertex simpleVert = UIVertex.simpleVert;
-		simpleVert.color = Color32.op_Implicit (((Graphic)this).color);
-		simpleVert.position = Vector2.op_Implicit (new Vector2 (num3 * num8, num3 * num9));
-		simpleVert.uv0 = new Vector2 (simpleVert.position.x / num2 + 0.5f, simpleVert.position.y / num2 + 0.5f);
+		simpleVert.color = color;
+		simpleVert.position = new Vector2 (num2 * num7, num2 * num8);
+		simpleVert.uv0 = new Vector2 (simpleVert.position.x / num + 0.5f, simpleVert.position.y / num + 0.5f);
 		vertices.Add (simpleVert);
-		Vector2 zero = default(Vector2);
-		((Vector2)(ref zero))..ctor (num4 * num8, num4 * num9);
+		Vector2 vector = new Vector2 (num3 * num7, num3 * num8);
 		if (Fill) {
-			zero = Vector2.zero;
+			vector = Vector2.zero;
 		}
-		simpleVert.position = Vector2.op_Implicit (zero);
-		simpleVert.uv0 = (Vector2)(Fill ? uvCenter : new Vector2 (simpleVert.position.x / num2 + 0.5f, simpleVert.position.y / num2 + 0.5f));
+		simpleVert.position = vector;
+		simpleVert.uv0 = (Fill ? uvCenter : new Vector2 (simpleVert.position.x / num + 0.5f, simpleVert.position.y / num + 0.5f));
 		vertices.Add (simpleVert);
 		for (int i = 1; i <= ArcSteps; i++) {
-			float num10 = (float)Math.PI / 180f * ((float)i * num7);
-			num8 = Mathf.Cos (num10);
-			num9 = Mathf.Sin (num10);
-			simpleVert.color = Color32.op_Implicit (((Graphic)this).color);
-			simpleVert.position = Vector2.op_Implicit (new Vector2 (num3 * num8, num3 * num9));
-			simpleVert.uv0 = new Vector2 (simpleVert.position.x / num2 + 0.5f, simpleVert.position.y / num2 + 0.5f);
+			float f = (float)Math.PI / 180f * ((float)i * num6);
+			num7 = Mathf.Cos (f);
+			num8 = Mathf.Sin (f);
+			simpleVert.color = color;
+			simpleVert.position = new Vector2 (num2 * num7, num2 * num8);
+			simpleVert.uv0 = new Vector2 (simpleVert.position.x / num + 0.5f, simpleVert.position.y / num + 0.5f);
 			vertices.Add (simpleVert);
 			if (!Fill) {
-				simpleVert.position = Vector2.op_Implicit (new Vector2 (num4 * num8, num4 * num9));
-				simpleVert.uv0 = new Vector2 (simpleVert.position.x / num2 + 0.5f, simpleVert.position.y / num2 + 0.5f);
+				simpleVert.position = new Vector2 (num3 * num7, num3 * num8);
+				simpleVert.uv0 = new Vector2 (simpleVert.position.x / num + 0.5f, simpleVert.position.y / num + 0.5f);
 				vertices.Add (simpleVert);
-				num6 = num5;
+				num5 = num4;
 				indices.Add (item);
-				indices.Add (num5 + 1);
-				indices.Add (num5);
-				num5++;
-				item = num5;
-				num5++;
+				indices.Add (num4 + 1);
+				indices.Add (num4);
+				num4++;
+				item = num4;
+				num4++;
 				indices.Add (item);
+				indices.Add (num4);
 				indices.Add (num5);
-				indices.Add (num6);
 			} else {
 				indices.Add (item);
-				indices.Add (num5 + 1);
+				indices.Add (num4 + 1);
 				indices.Add (1);
-				num5++;
-				item = num5;
+				num4++;
+				item = num4;
 			}
 		}
 		if (Fill) {
-			simpleVert.position = Vector2.op_Implicit (zero);
-			simpleVert.color = Color32.op_Implicit (((Graphic)this).color);
+			simpleVert.position = vector;
+			simpleVert.color = color;
 			simpleVert.uv0 = uvCenter;
 			vertices.Add (simpleVert);
 		}
@@ -175,36 +91,32 @@ public class UICircleSimple : UIPrimitiveBase
 	public void SetArcSteps (int steps)
 	{
 		ArcSteps = steps;
-		((Graphic)this).SetVerticesDirty ();
+		SetVerticesDirty ();
 	}
 
 	public void SetFill (bool fill)
 	{
 		Fill = fill;
-		((Graphic)this).SetVerticesDirty ();
+		SetVerticesDirty ();
 	}
 
 	public void SetBaseColor (Color color)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		((Graphic)this).color = color;
-		((Graphic)this).SetVerticesDirty ();
+		this.color = color;
+		SetVerticesDirty ();
 	}
 
 	public void UpdateBaseAlpha (float value)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		Color color = ((Graphic)this).color;
+		Color color = this.color;
 		color.a = value;
-		((Graphic)this).color = color;
-		((Graphic)this).SetVerticesDirty ();
+		this.color = color;
+		SetVerticesDirty ();
 	}
 
 	public void SetThickness (int thickness)
 	{
 		Thickness = thickness;
-		((Graphic)this).SetVerticesDirty ();
+		SetVerticesDirty ();
 	}
 }

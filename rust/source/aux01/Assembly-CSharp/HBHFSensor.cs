@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Network;
@@ -18,82 +19,61 @@ public class HBHFSensor : BaseDetector
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("HBHFSensor.OnRpcMessage", 0);
-		try {
-			if (rpc == 3206885720u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("HBHFSensor.OnRpcMessage")) {
+			if (rpc == 3206885720u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - SetIncludeAuth "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - SetIncludeAuth "));
 				}
-				TimeWarning val2 = TimeWarning.New ("SetIncludeAuth", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("SetIncludeAuth")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (3206885720u, "SetIncludeAuth", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage includeAuth = rPCMessage;
 							SetIncludeAuth (includeAuth);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in SetIncludeAuth");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 2223203375u && (Object)(object)player != (Object)null) {
+			if (rpc == 2223203375u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - SetIncludeOthers "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - SetIncludeOthers "));
 				}
-				TimeWarning val2 = TimeWarning.New ("SetIncludeOthers", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("SetIncludeOthers")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (2223203375u, "SetIncludeOthers", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage includeOthers = rPCMessage;
 							SetIncludeOthers (includeOthers);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in SetIncludeOthers");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -107,26 +87,18 @@ public class HBHFSensor : BaseDetector
 	{
 		base.OnObjects ();
 		UpdatePassthroughAmount ();
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)UpdatePassthroughAmount, 0f, 1f, 0.1f);
+		InvokeRandomized (UpdatePassthroughAmount, 0f, 1f, 0.1f);
 	}
 
 	public override void OnEmpty ()
 	{
 		base.OnEmpty ();
 		UpdatePassthroughAmount ();
-		((FacepunchBehaviour)this).CancelInvoke ((Action)UpdatePassthroughAmount);
+		CancelInvoke (UpdatePassthroughAmount);
 	}
 
 	public void UpdatePassthroughAmount ()
 	{
-		//IL_0126: Unknown result type (might be due to invalid IL or missing references)
-		//IL_012b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0152: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0157: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0063: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0072: Unknown result type (might be due to invalid IL or missing references)
 		if (base.isClient) {
 			return;
 		}
@@ -134,10 +106,10 @@ public class HBHFSensor : BaseDetector
 		detectedPlayers = 0;
 		if (myTrigger.entityContents != null) {
 			foreach (BaseEntity entityContent in myTrigger.entityContents) {
-				if (!((Object)(object)entityContent == (Object)null) && entityContent.IsVisible (((Component)this).transform.position + ((Component)this).transform.forward * 0.1f, 10f)) {
-					BasePlayer component = ((Component)entityContent).GetComponent<BasePlayer> ();
+				if (!(entityContent == null) && entityContent.IsVisible (base.transform.position + base.transform.forward * 0.1f, 10f)) {
+					BasePlayer component = entityContent.GetComponent<BasePlayer> ();
 					bool flag = component.CanBuild ();
-					if ((!flag || ShouldIncludeAuthorized ()) && (flag || ShouldIncludeOthers ()) && (Object)(object)component != (Object)null && component.IsAlive () && !component.IsSleeping () && component.isServer) {
+					if ((!flag || ShouldIncludeAuthorized ()) && (flag || ShouldIncludeOthers ()) && component != null && component.IsAlive () && !component.IsSleeping () && component.isServer) {
 						detectedPlayers++;
 					}
 				}
@@ -146,9 +118,9 @@ public class HBHFSensor : BaseDetector
 		if (num != detectedPlayers && IsPowered ()) {
 			MarkDirty ();
 			if (detectedPlayers > num) {
-				Effect.server.Run (detectUp.resourcePath, ((Component)this).transform.position, Vector3.up);
+				Effect.server.Run (detectUp.resourcePath, base.transform.position, Vector3.up);
 			} else if (detectedPlayers < num) {
-				Effect.server.Run (detectDown.resourcePath, ((Component)this).transform.position, Vector3.up);
+				Effect.server.Run (detectDown.resourcePath, base.transform.position, Vector3.up);
 			}
 		}
 	}

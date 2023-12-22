@@ -64,7 +64,7 @@ public class TrainWagonLootData : ScriptableObject
 			foreach (LootOption lootOption in array) {
 				num += lootOption.spawnWeighting;
 			}
-			float num2 = Random.value * num;
+			float num2 = UnityEngine.Random.value * num;
 			for (index = 0; index < oreOptions.Length; index++) {
 				if ((num2 -= oreOptions [index].spawnWeighting) < 0f) {
 					return oreOptions [index];

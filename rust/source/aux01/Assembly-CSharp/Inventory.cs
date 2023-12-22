@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -143,7 +142,7 @@ public class Inventory : ConsoleSystem
 	public static void lighttoggle (Arg arg)
 	{
 		BasePlayer basePlayer = arg.Player ();
-		if (Object.op_Implicit ((Object)(object)basePlayer) && !basePlayer.IsDead () && !basePlayer.IsSleeping () && !basePlayer.InGesture) {
+		if ((bool)basePlayer && !basePlayer.IsDead () && !basePlayer.IsSleeping () && !basePlayer.InGesture) {
 			basePlayer.LightToggle ();
 		}
 	}
@@ -152,7 +151,7 @@ public class Inventory : ConsoleSystem
 	public static void endloot (Arg arg)
 	{
 		BasePlayer basePlayer = arg.Player ();
-		if (Object.op_Implicit ((Object)(object)basePlayer) && !basePlayer.IsDead () && !basePlayer.IsSleeping ()) {
+		if ((bool)basePlayer && !basePlayer.IsDead () && !basePlayer.IsSleeping ()) {
 			basePlayer.inventory.loot.Clear ();
 		}
 	}
@@ -161,10 +160,10 @@ public class Inventory : ConsoleSystem
 	public static void give (Arg arg)
 	{
 		BasePlayer basePlayer = arg.Player ();
-		if (!Object.op_Implicit ((Object)(object)basePlayer)) {
+		if (!basePlayer) {
 			return;
 		}
-		Item item = ItemManager.CreateByPartialName (arg.GetString (0, ""), 1, arg.GetULong (3, 0uL));
+		Item item = ItemManager.CreateByPartialName (arg.GetString (0), 1, arg.GetULong (3, 0uL));
 		if (item == null) {
 			arg.ReplyWith ("Invalid Item!");
 			return;
@@ -179,7 +178,7 @@ public class Inventory : ConsoleSystem
 			return;
 		}
 		basePlayer.Command ("note.inv", item.info.itemid, num);
-		Debug.Log ((object)("giving " + basePlayer.displayName + " " + num + " x " + item.info.displayName.english));
+		Debug.Log ("giving " + basePlayer.displayName + " " + num + " x " + item.info.displayName.english);
 		if (basePlayer.IsDeveloper) {
 			basePlayer.ChatMessage ("you silently gave yourself " + num + " x " + item.info.displayName.english);
 		} else {
@@ -191,8 +190,8 @@ public class Inventory : ConsoleSystem
 	public static void resetbp (Arg arg)
 	{
 		BasePlayer basePlayer = arg.GetPlayer (0);
-		if ((Object)(object)basePlayer == (Object)null) {
-			if (arg.HasArgs (1)) {
+		if (basePlayer == null) {
+			if (arg.HasArgs ()) {
 				arg.ReplyWith ("Can't find player");
 				return;
 			}
@@ -205,8 +204,8 @@ public class Inventory : ConsoleSystem
 	public static void unlockall (Arg arg)
 	{
 		BasePlayer basePlayer = arg.GetPlayer (0);
-		if ((Object)(object)basePlayer == (Object)null) {
-			if (arg.HasArgs (1)) {
+		if (basePlayer == null) {
+			if (arg.HasArgs ()) {
 				arg.ReplyWith ("Can't find player");
 				return;
 			}
@@ -218,34 +217,26 @@ public class Inventory : ConsoleSystem
 	[ServerVar]
 	public static void giveall (Arg arg)
 	{
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
 		Item item = null;
 		string text = "SERVER";
-		if ((Object)(object)arg.Player () != (Object)null) {
+		if (arg.Player () != null) {
 			text = arg.Player ().displayName;
 		}
-		Enumerator<BasePlayer> enumerator = BasePlayer.activePlayerList.GetEnumerator ();
-		try {
-			while (enumerator.MoveNext ()) {
-				BasePlayer current = enumerator.Current;
-				item = ItemManager.CreateByPartialName (arg.GetString (0, ""), 1, 0uL);
-				if (item == null) {
-					arg.ReplyWith ("Invalid Item!");
-					return;
-				}
-				int num = (item.amount = arg.GetInt (1, 1));
-				item.OnVirginSpawn ();
-				if (!current.inventory.GiveItem (item)) {
-					item.Remove ();
-					arg.ReplyWith ("Couldn't give item (inventory full?)");
-					continue;
-				}
-				current.Command ("note.inv", item.info.itemid, num);
-				Debug.Log ((object)(" [ServerVar] giving " + current.displayName + " " + item.amount + " x " + item.info.displayName.english));
+		foreach (BasePlayer activePlayer in BasePlayer.activePlayerList) {
+			item = ItemManager.CreateByPartialName (arg.GetString (0), 1, 0uL);
+			if (item == null) {
+				arg.ReplyWith ("Invalid Item!");
+				return;
 			}
-		} finally {
-			((IDisposable)enumerator).Dispose ();
+			int num = (item.amount = arg.GetInt (1, 1));
+			item.OnVirginSpawn ();
+			if (!activePlayer.inventory.GiveItem (item)) {
+				item.Remove ();
+				arg.ReplyWith ("Couldn't give item (inventory full?)");
+				continue;
+			}
+			activePlayer.Command ("note.inv", item.info.itemid, num);
+			Debug.Log (" [ServerVar] giving " + activePlayer.displayName + " " + item.amount + " x " + item.info.displayName.english);
 		}
 		if (item != null) {
 			Chat.Broadcast (text + " gave everyone " + item.amount + " x " + item.info.displayName.english, "SERVER", "#eee", 0uL);
@@ -256,15 +247,15 @@ public class Inventory : ConsoleSystem
 	public static void giveto (Arg arg)
 	{
 		string text = "SERVER";
-		if ((Object)(object)arg.Player () != (Object)null) {
+		if (arg.Player () != null) {
 			text = arg.Player ().displayName;
 		}
-		BasePlayer basePlayer = BasePlayer.Find (arg.GetString (0, ""));
-		if ((Object)(object)basePlayer == (Object)null) {
+		BasePlayer basePlayer = BasePlayer.Find (arg.GetString (0));
+		if (basePlayer == null) {
 			arg.ReplyWith ("Couldn't find player!");
 			return;
 		}
-		Item item = ItemManager.CreateByPartialName (arg.GetString (1, ""), 1, arg.GetULong (3, 0uL));
+		Item item = ItemManager.CreateByPartialName (arg.GetString (1), 1, arg.GetULong (3, 0uL));
 		if (item == null) {
 			arg.ReplyWith ("Invalid Item!");
 			return;
@@ -277,7 +268,7 @@ public class Inventory : ConsoleSystem
 			return;
 		}
 		basePlayer.Command ("note.inv", item.info.itemid, num);
-		Debug.Log ((object)(" [ServerVar] giving " + basePlayer.displayName + " " + num + " x " + item.info.displayName.english));
+		Debug.Log (" [ServerVar] giving " + basePlayer.displayName + " " + num + " x " + item.info.displayName.english);
 		Chat.Broadcast (text + " gave " + basePlayer.displayName + " " + num + " x " + item.info.displayName.english, "SERVER", "#eee", 0uL);
 	}
 
@@ -285,10 +276,10 @@ public class Inventory : ConsoleSystem
 	public static void giveid (Arg arg)
 	{
 		BasePlayer basePlayer = arg.Player ();
-		if (!Object.op_Implicit ((Object)(object)basePlayer)) {
+		if (!basePlayer) {
 			return;
 		}
-		Item item = ItemManager.CreateByItemID (arg.GetInt (0, 0), 1, 0uL);
+		Item item = ItemManager.CreateByItemID (arg.GetInt (0), 1, 0uL);
 		if (item == null) {
 			arg.ReplyWith ("Invalid Item!");
 			return;
@@ -301,7 +292,7 @@ public class Inventory : ConsoleSystem
 			return;
 		}
 		basePlayer.Command ("note.inv", item.info.itemid, num);
-		Debug.Log ((object)(" [ServerVar] giving " + basePlayer.displayName + " " + num + " x " + item.info.displayName.english));
+		Debug.Log (" [ServerVar] giving " + basePlayer.displayName + " " + num + " x " + item.info.displayName.english);
 		if (basePlayer.IsDeveloper) {
 			basePlayer.ChatMessage ("you silently gave yourself " + num + " x " + item.info.displayName.english);
 		} else {
@@ -313,10 +304,10 @@ public class Inventory : ConsoleSystem
 	public static void givearm (Arg arg)
 	{
 		BasePlayer basePlayer = arg.Player ();
-		if (!Object.op_Implicit ((Object)(object)basePlayer)) {
+		if (!basePlayer) {
 			return;
 		}
-		Item item = ItemManager.CreateByItemID (arg.GetInt (0, 0), 1, 0uL);
+		Item item = ItemManager.CreateByItemID (arg.GetInt (0), 1, 0uL);
 		if (item == null) {
 			arg.ReplyWith ("Invalid Item!");
 			return;
@@ -329,7 +320,7 @@ public class Inventory : ConsoleSystem
 			return;
 		}
 		basePlayer.Command ("note.inv", item.info.itemid, num);
-		Debug.Log ((object)(" [ServerVar] giving " + basePlayer.displayName + " " + item.amount + " x " + item.info.displayName.english));
+		Debug.Log (" [ServerVar] giving " + basePlayer.displayName + " " + item.amount + " x " + item.info.displayName.english);
 		if (basePlayer.IsDeveloper) {
 			basePlayer.ChatMessage ("you silently gave yourself " + item.amount + " x " + item.info.displayName.english);
 		} else {
@@ -341,23 +332,23 @@ public class Inventory : ConsoleSystem
 	public static void copyTo (Arg arg)
 	{
 		BasePlayer basePlayer = arg.Player ();
-		if ((!basePlayer.IsAdmin && !basePlayer.IsDeveloper && !Server.cinematic) || (Object)(object)basePlayer == (Object)null) {
+		if ((!basePlayer.IsAdmin && !basePlayer.IsDeveloper && !Server.cinematic) || basePlayer == null) {
 			return;
 		}
 		BasePlayer basePlayer2 = null;
-		if (arg.HasArgs (1) && arg.GetString (0, "").ToLower () != "true") {
+		if (arg.HasArgs () && arg.GetString (0).ToLower () != "true") {
 			basePlayer2 = arg.GetPlayer (0);
-			if ((Object)(object)basePlayer2 == (Object)null) {
-				uint uInt = arg.GetUInt (0, 0u);
+			if (basePlayer2 == null) {
+				uint uInt = arg.GetUInt (0);
 				basePlayer2 = BasePlayer.FindByID (uInt);
-				if ((Object)(object)basePlayer2 == (Object)null) {
+				if (basePlayer2 == null) {
 					basePlayer2 = BasePlayer.FindBot (uInt);
 				}
 			}
 		} else {
 			basePlayer2 = RelationshipManager.GetLookingAtPlayer (basePlayer);
 		}
-		if ((Object)(object)basePlayer2 == (Object)null) {
+		if (basePlayer2 == null) {
 			return;
 		}
 		basePlayer2.inventory.containerBelt.Clear ();
@@ -386,43 +377,42 @@ public class Inventory : ConsoleSystem
 	[ServerVar (Help = "Deploys a loadout to players in a radius eg. inventory.deployLoadoutInRange testloadout 30")]
 	public static void deployLoadoutInRange (Arg arg)
 	{
-		//IL_006c: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer basePlayer = arg.Player ();
-		if ((!basePlayer.IsAdmin && !basePlayer.IsDeveloper && !Server.cinematic) || (Object)(object)basePlayer == (Object)null) {
+		if ((!basePlayer.IsAdmin && !basePlayer.IsDeveloper && !Server.cinematic) || basePlayer == null) {
 			return;
 		}
-		string @string = arg.GetString (0, "");
+		string @string = arg.GetString (0);
 		if (!LoadLoadout (@string, out var so)) {
 			arg.ReplyWith ("Can't find loadout: " + @string);
 			return;
 		}
-		float @float = arg.GetFloat (1, 0f);
-		List<BasePlayer> list = Pool.GetList<BasePlayer> ();
-		Vis.Entities (((Component)basePlayer).transform.position, @float, list, 131072, (QueryTriggerInteraction)2);
+		float @float = arg.GetFloat (1);
+		List<BasePlayer> obj = Facepunch.Pool.GetList<BasePlayer> ();
+		Vis.Entities (basePlayer.transform.position, @float, obj, 131072);
 		int num = 0;
-		foreach (BasePlayer item in list) {
-			if (!((Object)(object)item == (Object)(object)basePlayer) && !item.isClient) {
+		foreach (BasePlayer item in obj) {
+			if (!(item == basePlayer) && !item.isClient) {
 				so.LoadItemsOnTo (item);
 				num++;
 			}
 		}
 		arg.ReplyWith ($"Applied loadout {@string} to {num} players");
-		Pool.FreeList<BasePlayer> (ref list);
+		Facepunch.Pool.FreeList (ref obj);
 	}
 
 	[ServerVar (Help = "Deploys the given loadout to a target player. eg. inventory.deployLoadout testloadout jim")]
 	public static void deployLoadout (Arg arg)
 	{
 		BasePlayer basePlayer = arg.Player ();
-		if (!((Object)(object)basePlayer == (Object)null) && (basePlayer.IsAdmin || basePlayer.IsDeveloper || Server.cinematic)) {
-			string @string = arg.GetString (0, "");
-			BasePlayer basePlayer2 = (string.IsNullOrEmpty (arg.GetString (1, "")) ? null : arg.GetPlayerOrSleeperOrBot (1));
-			if ((Object)(object)basePlayer2 == (Object)null) {
+		if (!(basePlayer == null) && (basePlayer.IsAdmin || basePlayer.IsDeveloper || Server.cinematic)) {
+			string @string = arg.GetString (0);
+			BasePlayer basePlayer2 = (string.IsNullOrEmpty (arg.GetString (1)) ? null : arg.GetPlayerOrSleeperOrBot (1));
+			if (basePlayer2 == null) {
 				basePlayer2 = basePlayer;
 			}
 			SavedLoadout so;
-			if ((Object)(object)basePlayer2 == (Object)null) {
-				arg.ReplyWith ("Could not find player " + arg.GetString (1, "") + " and no local player available");
+			if (basePlayer2 == null) {
+				arg.ReplyWith ("Could not find player " + arg.GetString (1) + " and no local player available");
 			} else if (LoadLoadout (@string, out so)) {
 				so.LoadItemsOnTo (basePlayer2);
 				arg.ReplyWith ("Deployed loadout " + @string + " to " + basePlayer2.displayName);
@@ -436,13 +426,13 @@ public class Inventory : ConsoleSystem
 	public static void clearInventory (Arg arg)
 	{
 		BasePlayer basePlayer = arg.Player ();
-		if (!((Object)(object)basePlayer == (Object)null) && (basePlayer.IsAdmin || basePlayer.IsDeveloper || Server.cinematic)) {
-			BasePlayer basePlayer2 = (string.IsNullOrEmpty (arg.GetString (1, "")) ? null : arg.GetPlayerOrSleeperOrBot (1));
-			if ((Object)(object)basePlayer2 == (Object)null) {
+		if (!(basePlayer == null) && (basePlayer.IsAdmin || basePlayer.IsDeveloper || Server.cinematic)) {
+			BasePlayer basePlayer2 = (string.IsNullOrEmpty (arg.GetString (1)) ? null : arg.GetPlayerOrSleeperOrBot (1));
+			if (basePlayer2 == null) {
 				basePlayer2 = basePlayer;
 			}
-			if ((Object)(object)basePlayer2 == (Object)null) {
-				arg.ReplyWith ("Could not find player " + arg.GetString (1, "") + " and no local player available");
+			if (basePlayer2 == null) {
+				arg.ReplyWith ("Could not find player " + arg.GetString (1) + " and no local player available");
 				return;
 			}
 			basePlayer2.inventory.containerBelt.Clear ();
@@ -460,9 +450,9 @@ public class Inventory : ConsoleSystem
 	public static void saveloadout (Arg arg)
 	{
 		BasePlayer basePlayer = arg.Player ();
-		if (!((Object)(object)basePlayer == (Object)null) && (basePlayer.IsAdmin || basePlayer.IsDeveloper || Server.cinematic)) {
-			string @string = arg.GetString (0, "");
-			string contents = JsonConvert.SerializeObject ((object)new SavedLoadout (basePlayer), (Formatting)1);
+		if (!(basePlayer == null) && (basePlayer.IsAdmin || basePlayer.IsDeveloper || Server.cinematic)) {
+			string @string = arg.GetString (0);
+			string contents = JsonConvert.SerializeObject (new SavedLoadout (basePlayer), Formatting.Indented);
 			string loadoutPath = GetLoadoutPath (@string);
 			File.WriteAllText (loadoutPath, contents);
 			arg.ReplyWith ("Saved loadout to " + loadoutPath);
@@ -472,8 +462,8 @@ public class Inventory : ConsoleSystem
 	public static bool LoadLoadout (string name, out SavedLoadout so)
 	{
 		PlayerInventoryProperties inventoryConfig = PlayerInventoryProperties.GetInventoryConfig (name);
-		if ((Object)(object)inventoryConfig != (Object)null) {
-			Debug.Log ((object)"Found builtin config!");
+		if (inventoryConfig != null) {
+			Debug.Log ("Found builtin config!");
 			so = new SavedLoadout (inventoryConfig);
 			return true;
 		}
@@ -493,7 +483,7 @@ public class Inventory : ConsoleSystem
 	public static void listloadouts (Arg arg)
 	{
 		BasePlayer basePlayer = arg.Player ();
-		if ((Object)(object)basePlayer == (Object)null || (!basePlayer.IsAdmin && !basePlayer.IsDeveloper && !Server.cinematic)) {
+		if (basePlayer == null || (!basePlayer.IsAdmin && !basePlayer.IsDeveloper && !Server.cinematic)) {
 			return;
 		}
 		string serverFolder = Server.GetServerFolder ("loadouts");
@@ -508,33 +498,33 @@ public class Inventory : ConsoleSystem
 	[ServerVar]
 	public static void defs (Arg arg)
 	{
-		if (SteamInventory.Definitions == null) {
+		if (Steamworks.SteamInventory.Definitions == null) {
 			arg.ReplyWith ("no definitions");
 			return;
 		}
-		if (SteamInventory.Definitions.Length == 0) {
+		if (Steamworks.SteamInventory.Definitions.Length == 0) {
 			arg.ReplyWith ("0 definitions");
 			return;
 		}
-		string[] array = SteamInventory.Definitions.Select ((InventoryDef x) => x.Name).ToArray ();
-		arg.ReplyWith ((object)array);
+		string[] obj = Steamworks.SteamInventory.Definitions.Select ((InventoryDef x) => x.Name).ToArray ();
+		arg.ReplyWith (obj);
 	}
 
 	[ClientVar]
 	[ServerVar]
 	public static void reloaddefs (Arg arg)
 	{
-		SteamInventory.LoadItemDefinitions ();
+		Steamworks.SteamInventory.LoadItemDefinitions ();
 	}
 
 	[ServerVar]
 	public static void equipslottarget (Arg arg)
 	{
 		BasePlayer basePlayer = arg.Player ();
-		if ((basePlayer.IsAdmin || basePlayer.IsDeveloper || Server.cinematic) && !((Object)(object)basePlayer == (Object)null)) {
+		if ((basePlayer.IsAdmin || basePlayer.IsDeveloper || Server.cinematic) && !(basePlayer == null)) {
 			BasePlayer lookingAtPlayer = RelationshipManager.GetLookingAtPlayer (basePlayer);
-			if (!((Object)(object)lookingAtPlayer == (Object)null)) {
-				int @int = arg.GetInt (0, 0);
+			if (!(lookingAtPlayer == null)) {
+				int @int = arg.GetInt (0);
 				EquipItemInSlot (lookingAtPlayer, @int);
 				arg.ReplyWith ($"Equipped slot {@int} on player {lookingAtPlayer.displayName}");
 			}
@@ -545,33 +535,29 @@ public class Inventory : ConsoleSystem
 	public static void equipslot (Arg arg)
 	{
 		BasePlayer basePlayer = arg.Player ();
-		if ((!basePlayer.IsAdmin && !basePlayer.IsDeveloper && !Server.cinematic) || (Object)(object)basePlayer == (Object)null) {
+		if ((!basePlayer.IsAdmin && !basePlayer.IsDeveloper && !Server.cinematic) || basePlayer == null) {
 			return;
 		}
 		BasePlayer basePlayer2 = null;
 		if (arg.HasArgs (2)) {
 			basePlayer2 = arg.GetPlayer (1);
-			if ((Object)(object)basePlayer2 == (Object)null) {
-				uint uInt = arg.GetUInt (1, 0u);
+			if (basePlayer2 == null) {
+				uint uInt = arg.GetUInt (1);
 				basePlayer2 = BasePlayer.FindByID (uInt);
-				if ((Object)(object)basePlayer2 == (Object)null) {
+				if (basePlayer2 == null) {
 					basePlayer2 = BasePlayer.FindBot (uInt);
 				}
 			}
 		}
-		if (!((Object)(object)basePlayer2 == (Object)null)) {
-			int @int = arg.GetInt (0, 0);
+		if (!(basePlayer2 == null)) {
+			int @int = arg.GetInt (0);
 			EquipItemInSlot (basePlayer2, @int);
-			Debug.Log ((object)$"Equipped slot {@int} on player {basePlayer2.displayName}");
+			Debug.Log ($"Equipped slot {@int} on player {basePlayer2.displayName}");
 		}
 	}
 
 	private static void EquipItemInSlot (BasePlayer player, int slot)
 	{
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
 		ItemId itemID = default(ItemId);
 		for (int i = 0; i < player.inventory.containerBelt.itemList.Count; i++) {
 			if (player.inventory.containerBelt.itemList [i] != null && i == slot) {
@@ -584,10 +570,6 @@ public class Inventory : ConsoleSystem
 
 	private static int GetSlotIndex (BasePlayer player)
 	{
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
 		if (player.GetActiveItem () == null) {
 			return -1;
 		}
@@ -604,15 +586,15 @@ public class Inventory : ConsoleSystem
 	public static void giveBp (Arg arg)
 	{
 		BasePlayer basePlayer = arg.Player ();
-		if (!Object.op_Implicit ((Object)(object)basePlayer)) {
+		if (!basePlayer) {
 			return;
 		}
-		ItemDefinition itemDefinition = ItemManager.FindDefinitionByPartialName (arg.GetString (0, ""), 1, 0uL);
-		if ((Object)(object)itemDefinition == (Object)null) {
-			arg.ReplyWith ("Could not find item: " + arg.GetString (0, ""));
+		ItemDefinition itemDefinition = ItemManager.FindDefinitionByPartialName (arg.GetString (0), 1, 0uL);
+		if (itemDefinition == null) {
+			arg.ReplyWith ("Could not find item: " + arg.GetString (0));
 			return;
 		}
-		if ((Object)(object)itemDefinition.Blueprint == (Object)null) {
+		if (itemDefinition.Blueprint == null) {
 			arg.ReplyWith (itemDefinition.shortname + " has no blueprint!");
 			return;
 		}
@@ -625,7 +607,7 @@ public class Inventory : ConsoleSystem
 			return;
 		}
 		basePlayer.Command ("note.inv", item.info.itemid, 1);
-		Debug.Log ((object)("giving " + basePlayer.displayName + " 1 x " + item.blueprintTargetDef.shortname + " blueprint"));
+		Debug.Log ("giving " + basePlayer.displayName + " 1 x " + item.blueprintTargetDef.shortname + " blueprint");
 		if (basePlayer.IsDeveloper) {
 			basePlayer.ChatMessage ("you silently gave yourself 1 x " + item.blueprintTargetDef.shortname + " blueprint");
 		} else {

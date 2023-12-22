@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -33,56 +34,42 @@ public class ProceduralLift : BaseEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("ProceduralLift.OnRpcMessage", 0);
-		try {
-			if (rpc == 2657791441u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("ProceduralLift.OnRpcMessage")) {
+			if (rpc == 2657791441u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_UseLift "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_UseLift "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_UseLift", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_UseLift")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (2657791441u, "RPC_UseLift", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage rpc2 = rPCMessage;
 							RPC_UseLift (rpc2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_UseLift");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
 
 	public override void Spawn ()
 	{
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
 		base.Spawn ();
-		if (!Application.isLoadingSave) {
+		if (!Rust.Application.isLoadingSave) {
 			BaseEntity baseEntity = GameManager.server.CreateEntity (triggerPrefab.resourcePath, Vector3.zero, Quaternion.identity);
 			baseEntity.Spawn ();
 			baseEntity.SetParent (this, triggerBone);
@@ -107,7 +94,7 @@ public class ProceduralLift : BaseEntity
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.lift = Pool.Get<Lift> ();
+		info.msg.lift = Facepunch.Pool.Get<ProtoBuf.Lift> ();
 		info.msg.lift.floor = floorIndex;
 	}
 
@@ -134,20 +121,19 @@ public class ProceduralLift : BaseEntity
 		if (base.isServer) {
 			SetFlag (Flags.Busy, b: true);
 			SendNetworkUpdateImmediate ();
-			((FacepunchBehaviour)this).CancelInvoke ((Action)ResetLift);
+			CancelInvoke (ResetLift);
 		}
 	}
 
 	private void SnapToFloor (int floor)
 	{
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
 		floorIndex = Mathf.Clamp (floor, 0, stops.Length - 1);
 		ProceduralLiftStop proceduralLiftStop = stops [floorIndex];
-		((Component)cabin).transform.position = ((Component)proceduralLiftStop).transform.position;
+		cabin.transform.position = proceduralLiftStop.transform.position;
 		if (base.isServer) {
 			SetFlag (Flags.Busy, b: false);
 			SendNetworkUpdateImmediate ();
-			((FacepunchBehaviour)this).CancelInvoke ((Action)ResetLift);
+			CancelInvoke (ResetLift);
 		}
 	}
 
@@ -157,27 +143,20 @@ public class ProceduralLift : BaseEntity
 			SetFlag (Flags.Busy, b: false);
 			SendNetworkUpdateImmediate ();
 			if (floorIndex != 0) {
-				((FacepunchBehaviour)this).Invoke ((Action)ResetLift, resetDelay);
+				Invoke (ResetLift, resetDelay);
 			}
 		}
 	}
 
 	protected void Update ()
 	{
-		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0063: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0094: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009f: Unknown result type (might be due to invalid IL or missing references)
 		if (floorIndex < 0 || floorIndex > stops.Length - 1) {
 			return;
 		}
 		ProceduralLiftStop proceduralLiftStop = stops [floorIndex];
-		if (!(((Component)cabin).transform.position == ((Component)proceduralLiftStop).transform.position)) {
-			((Component)cabin).transform.position = Vector3.MoveTowards (((Component)cabin).transform.position, ((Component)proceduralLiftStop).transform.position, movementSpeed * Time.deltaTime);
-			if (((Component)cabin).transform.position == ((Component)proceduralLiftStop).transform.position) {
+		if (!(cabin.transform.position == proceduralLiftStop.transform.position)) {
+			cabin.transform.position = Vector3.MoveTowards (cabin.transform.position, proceduralLiftStop.transform.position, movementSpeed * UnityEngine.Time.deltaTime);
+			if (cabin.transform.position == proceduralLiftStop.transform.position) {
 				OnFinishedMoving ();
 			}
 		}

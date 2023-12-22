@@ -52,7 +52,7 @@ public class ConversationData : ScriptableObject
 	[Serializable]
 	public class ResponseNode
 	{
-		public Phrase responseTextLocalized;
+		public Translate.Phrase responseTextLocalized;
 
 		public ConversationCondition[] conditions;
 
@@ -90,7 +90,7 @@ public class ConversationData : ScriptableObject
 	{
 		public string shortname;
 
-		public Phrase statementLocalized;
+		public Translate.Phrase statementLocalized;
 
 		public ResponseNode[] responses;
 
@@ -101,7 +101,7 @@ public class ConversationData : ScriptableObject
 
 	public string shortname;
 
-	public Phrase providerNameTranslated;
+	public Translate.Phrase providerNameTranslated;
 
 	public SpeechNode[] speeches;
 

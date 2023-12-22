@@ -23,24 +23,20 @@ public class ItemTextValue : MonoBehaviour
 
 	public void SetValue (float val, int numDecimals = 0, string overrideText = "")
 	{
-		//IL_00ee: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e6: Unknown result type (might be due to invalid IL or missing references)
 		val *= multiplier;
 		text.text = ((overrideText == "") ? string.Format ("{0}{1:n" + numDecimals + "}", (val > 0f && signed) ? "+" : "", val) : overrideText);
 		if (asPercentage) {
-			Text obj = text;
-			obj.text += " %";
+			text.text += " %";
 		}
 		if (suffix != "" && !float.IsPositiveInfinity (val)) {
-			Text obj2 = text;
-			obj2.text += suffix;
+			text.text += suffix;
 		}
 		bool flag = val > 0f;
 		if (negativestat) {
 			flag = !flag;
 		}
 		if (useColors) {
-			((Graphic)text).color = (flag ? good : bad);
+			text.color = (flag ? good : bad);
 		}
 	}
 }

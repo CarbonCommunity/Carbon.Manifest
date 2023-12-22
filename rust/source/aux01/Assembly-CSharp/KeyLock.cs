@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -17,118 +18,88 @@ public class KeyLock : BaseLock
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("KeyLock.OnRpcMessage", 0);
-		try {
-			if (rpc == 4135414453u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("KeyLock.OnRpcMessage")) {
+			if (rpc == 4135414453u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_CreateKey "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_CreateKey "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_CreateKey", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_CreateKey")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (4135414453u, "RPC_CreateKey", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage rpc2 = rPCMessage;
 							RPC_CreateKey (rpc2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_CreateKey");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 954115386 && (Object)(object)player != (Object)null) {
+			if (rpc == 954115386 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_Lock "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_Lock "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_Lock", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_Lock")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (954115386u, "RPC_Lock", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage rpc3 = rPCMessage;
 							RPC_Lock (rpc3);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in RPC_Lock");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 1663222372 && (Object)(object)player != (Object)null) {
+			if (rpc == 1663222372 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_Unlock "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_Unlock "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_Unlock", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_Unlock")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (1663222372u, "RPC_Unlock", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage rpc4 = rPCMessage;
 							RPC_Unlock (rpc4);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex3) {
-						Debug.LogException (ex3);
+					} catch (Exception exception3) {
+						Debug.LogException (exception3);
 						player.Kick ("RPC Error in RPC_Unlock");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -176,7 +147,7 @@ public class KeyLock : BaseLock
 	public override void PostServerLoad ()
 	{
 		base.PostServerLoad ();
-		if (base.OwnerID == 0L && Object.op_Implicit ((Object)(object)GetParentEntity ())) {
+		if (base.OwnerID == 0L && (bool)GetParentEntity ()) {
 			base.OwnerID = GetParentEntity ().OwnerID;
 		}
 	}
@@ -185,7 +156,7 @@ public class KeyLock : BaseLock
 	{
 		base.Save (info);
 		if (info.forDisk) {
-			info.msg.keyLock = Pool.Get<KeyLock> ();
+			info.msg.keyLock = Facepunch.Pool.Get<ProtoBuf.KeyLock> ();
 			info.msg.keyLock.code = keyCode;
 		}
 	}
@@ -193,7 +164,7 @@ public class KeyLock : BaseLock
 	public override void OnDeployed (BaseEntity parent, BasePlayer deployedBy, Item fromItem)
 	{
 		base.OnDeployed (parent, deployedBy, fromItem);
-		keyCode = Random.Range (1, 100000);
+		keyCode = UnityEngine.Random.Range (1, 100000);
 		Lock (deployedBy);
 	}
 
@@ -232,7 +203,7 @@ public class KeyLock : BaseLock
 
 	private void Lock (BasePlayer player)
 	{
-		if (!((Object)(object)player == (Object)null) && player.CanInteract () && !IsLocked () && HasLockPermission (player)) {
+		if (!(player == null) && player.CanInteract () && !IsLocked () && HasLockPermission (player)) {
 			LockLock (player);
 			SendNetworkUpdate ();
 		}
@@ -246,15 +217,15 @@ public class KeyLock : BaseLock
 			return;
 		}
 		ItemDefinition itemDefinition = ItemManager.FindItemDefinition (keyItemType.itemid);
-		if ((Object)(object)itemDefinition == (Object)null) {
-			Debug.LogWarning ((object)("RPC_CreateKey: Itemdef is missing! " + keyItemType));
+		if (itemDefinition == null) {
+			Debug.LogWarning ("RPC_CreateKey: Itemdef is missing! " + keyItemType);
 			return;
 		}
 		ItemBlueprint bp = ItemManager.FindBlueprint (itemDefinition);
 		if (rpc.player.inventory.crafting.CanCraft (bp)) {
-			InstanceData val = Pool.Get<InstanceData> ();
-			val.dataInt = keyCode;
-			rpc.player.inventory.crafting.CraftItem (bp, rpc.player, val);
+			ProtoBuf.Item.InstanceData instanceData = Facepunch.Pool.Get<ProtoBuf.Item.InstanceData> ();
+			instanceData.dataInt = keyCode;
+			rpc.player.inventory.crafting.CraftItem (bp, rpc.player, instanceData);
 			if (!firstKeyCreated) {
 				LockLock (rpc.player);
 				SendNetworkUpdate ();

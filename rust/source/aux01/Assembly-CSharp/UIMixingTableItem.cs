@@ -1,5 +1,4 @@
 using Rust.UI;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,11 +14,11 @@ public class UIMixingTableItem : MonoBehaviour
 
 	public void Init (Recipe recipe)
 	{
-		if ((Object)(object)recipe == (Object)null) {
+		if (recipe == null) {
 			return;
 		}
 		ItemIcon.sprite = recipe.DisplayIcon;
-		((TMP_Text)TextItemNameAndQuantity).text = recipe.ProducedItemCount + " x " + recipe.DisplayName;
+		TextItemNameAndQuantity.text = recipe.ProducedItemCount + " x " + recipe.DisplayName;
 		ItemTooltip.Text = recipe.DisplayDescription;
 		for (int i = 0; i < Ingredients.Length; i++) {
 			if (i >= recipe.Ingredients.Length) {

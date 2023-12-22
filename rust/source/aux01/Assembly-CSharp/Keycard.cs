@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public class Keycard : AttackEntity
 {
 	public int accessLevel {
@@ -8,8 +6,8 @@ public class Keycard : AttackEntity
 			if (item == null) {
 				return 0;
 			}
-			ItemModKeycard component = ((Component)item.info).GetComponent<ItemModKeycard> ();
-			if ((Object)(object)component == (Object)null) {
+			ItemModKeycard component = item.info.GetComponent<ItemModKeycard> ();
+			if (component == null) {
 				return 0;
 			}
 			return component.accessLevel;

@@ -22,31 +22,21 @@ public class AIMovePoint : AIPoint
 
 	public void OnDrawGizmos ()
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0005: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
 		Color color = Gizmos.color;
 		Gizmos.color = Color.green;
-		GizmosUtil.DrawWireCircleY (((Component)this).transform.position, radius);
+		GizmosUtil.DrawWireCircleY (base.transform.position, radius);
 		Gizmos.color = color;
 	}
 
 	public void DrawLookAtPoints ()
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0005: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0076: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
 		Color color = Gizmos.color;
 		Gizmos.color = Color.gray;
 		if (LookAtPoints != null) {
 			foreach (Transform lookAtPoint in LookAtPoints) {
-				if (!((Object)(object)lookAtPoint == (Object)null)) {
+				if (!(lookAtPoint == null)) {
 					Gizmos.DrawSphere (lookAtPoint.position, 0.2f);
-					Gizmos.DrawLine (((Component)this).transform.position, lookAtPoint.position);
+					Gizmos.DrawLine (base.transform.position, lookAtPoint.position);
 				}
 			}
 		}

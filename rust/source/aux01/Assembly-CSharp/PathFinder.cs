@@ -144,7 +144,6 @@ public class PathFinder
 
 	private Node FindPathReversed (Point start, Point end, int depth = int.MaxValue)
 	{
-		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
 		if (visited == null) {
 			visited = new int[costmap.GetLength (0), costmap.GetLength (1)];
 		} else {
@@ -154,13 +153,13 @@ public class PathFinder
 		int num2 = costmap.GetLength (0) - 1;
 		int num3 = 0;
 		int num4 = costmap.GetLength (1) - 1;
-		IntrusiveMinHeap<Node> val = default(IntrusiveMinHeap<Node>);
+		IntrusiveMinHeap<Node> intrusiveMinHeap = default(IntrusiveMinHeap<Node>);
 		int num5 = Cost (start);
 		int heuristic = Heuristic (start, end);
-		val.Add (new Node (start, num5, heuristic));
+		intrusiveMinHeap.Add (new Node (start, num5, heuristic));
 		visited [start.x, start.y] = num5;
-		while (!val.Empty && depth-- > 0) {
-			Node node = val.Pop ();
+		while (!intrusiveMinHeap.Empty && depth-- > 0) {
+			Node node = intrusiveMinHeap.Pop ();
 			if (node.heuristic == 0) {
 				return node;
 			}
@@ -175,7 +174,7 @@ public class PathFinder
 					if (num7 == 0 || num6 < num7) {
 						int cost = node.cost + num6;
 						int heuristic2 = Heuristic (point, end);
-						val.Add (new Node (point, cost, heuristic2, node));
+						intrusiveMinHeap.Add (new Node (point, cost, heuristic2, node));
 						visited [point.x, point.y] = num6;
 					}
 				} else {
@@ -207,7 +206,6 @@ public class PathFinder
 
 	private Node FindPathReversed (List<Point> startList, List<Point> endList, int depth = int.MaxValue)
 	{
-		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
 		if (visited == null) {
 			visited = new int[costmap.GetLength (0), costmap.GetLength (1)];
 		} else {
@@ -217,15 +215,15 @@ public class PathFinder
 		int num2 = costmap.GetLength (0) - 1;
 		int num3 = 0;
 		int num4 = costmap.GetLength (1) - 1;
-		IntrusiveMinHeap<Node> val = default(IntrusiveMinHeap<Node>);
+		IntrusiveMinHeap<Node> intrusiveMinHeap = default(IntrusiveMinHeap<Node>);
 		foreach (Point start in startList) {
 			int num5 = Cost (start);
 			int heuristic = Heuristic (start, endList);
-			val.Add (new Node (start, num5, heuristic));
+			intrusiveMinHeap.Add (new Node (start, num5, heuristic));
 			visited [start.x, start.y] = num5;
 		}
-		while (!val.Empty && depth-- > 0) {
-			Node node = val.Pop ();
+		while (!intrusiveMinHeap.Empty && depth-- > 0) {
+			Node node = intrusiveMinHeap.Pop ();
 			if (node.heuristic == 0) {
 				return node;
 			}
@@ -240,7 +238,7 @@ public class PathFinder
 					if (num7 == 0 || num6 < num7) {
 						int cost = node.cost + num6;
 						int heuristic2 = Heuristic (point, endList);
-						val.Add (new Node (point, cost, heuristic2, node));
+						intrusiveMinHeap.Add (new Node (point, cost, heuristic2, node));
 						visited [point.x, point.y] = num6;
 					}
 				} else {
@@ -253,7 +251,6 @@ public class PathFinder
 
 	public Node FindClosestWalkable (Point start, int depth = int.MaxValue)
 	{
-		//IL_0094: Unknown result type (might be due to invalid IL or missing references)
 		if (visited == null) {
 			visited = new int[costmap.GetLength (0), costmap.GetLength (1)];
 		} else {
@@ -275,13 +272,13 @@ public class PathFinder
 		if (start.y > num4) {
 			return null;
 		}
-		IntrusiveMinHeap<Node> val = default(IntrusiveMinHeap<Node>);
+		IntrusiveMinHeap<Node> intrusiveMinHeap = default(IntrusiveMinHeap<Node>);
 		int num5 = 1;
 		int heuristic = Heuristic (start);
-		val.Add (new Node (start, num5, heuristic));
+		intrusiveMinHeap.Add (new Node (start, num5, heuristic));
 		visited [start.x, start.y] = num5;
-		while (!val.Empty && depth-- > 0) {
-			Node node = val.Pop ();
+		while (!intrusiveMinHeap.Empty && depth-- > 0) {
+			Node node = intrusiveMinHeap.Pop ();
 			if (node.heuristic == 0) {
 				return node;
 			}
@@ -292,7 +289,7 @@ public class PathFinder
 					if (visited [point.x, point.y] == 0) {
 						int cost = node.cost + num6;
 						int heuristic2 = Heuristic (point);
-						val.Add (new Node (point, cost, heuristic2, node));
+						intrusiveMinHeap.Add (new Node (point, cost, heuristic2, node));
 						visited [point.x, point.y] = num6;
 					}
 				}
@@ -397,6 +394,6 @@ public class PathFinder
 	{
 		int num = a.x - b.x;
 		int num2 = a.y - b.y;
-		return Mathf.Sqrt ((float)(num * num + num2 * num2));
+		return Mathf.Sqrt (num * num + num2 * num2);
 	}
 }

@@ -25,7 +25,6 @@ public class RandomItemDispenser : PrefabAttribute, IServerComponent
 
 	public void DistributeItems (BasePlayer forPlayer, Vector3 distributorPosition)
 	{
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
 		RandomItemChance[] chances = Chances;
 		foreach (RandomItemChance itemChance in chances) {
 			bool flag = TryAward (itemChance, forPlayer, distributorPosition);
@@ -37,18 +36,11 @@ public class RandomItemDispenser : PrefabAttribute, IServerComponent
 
 	private bool TryAward (RandomItemChance itemChance, BasePlayer forPlayer, Vector3 distributorPosition)
 	{
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
-		float num = Random.Range (0f, 1f);
+		float num = UnityEngine.Random.Range (0f, 1f);
 		if (itemChance.Chance >= num) {
 			Item item = ItemManager.Create (itemChance.Item, itemChance.Amount, 0uL);
 			if (item != null) {
-				if (Object.op_Implicit ((Object)(object)forPlayer)) {
+				if ((bool)forPlayer) {
 					forPlayer.GiveItem (item, BaseEntity.GiveItemReason.ResourceHarvested);
 				} else {
 					item.Drop (distributorPosition + Vector3.up * 0.5f, Vector3.up);

@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public class InAttackRangeAIEvent : BaseAIEvent
 {
 	public InAttackRangeAIEvent ()
@@ -12,7 +10,7 @@ public class InAttackRangeAIEvent : BaseAIEvent
 	{
 		BaseEntity baseEntity = memory.Entity.Get (base.InputEntityMemorySlot);
 		base.Result = false;
-		if (!((Object)(object)baseEntity == (Object)null) && base.Owner is IAIAttack iAIAttack) {
+		if (!(baseEntity == null) && base.Owner is IAIAttack iAIAttack) {
 			float dist;
 			bool flag = iAIAttack.IsTargetInRange (baseEntity, out dist);
 			base.Result = (base.Inverted ? (!flag) : flag);

@@ -49,10 +49,10 @@ public class WildlifeTrap : StorageContainer
 	public void SetTrapActive (bool trapOn)
 	{
 		if (trapOn != IsTrapActive ()) {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)TrapThink);
+			CancelInvoke (TrapThink);
 			SetFlag (Flags.On, trapOn);
 			if (trapOn) {
-				((FacepunchBehaviour)this).InvokeRepeating ((Action)TrapThink, tickRate * 0.8f + tickRate * Random.Range (0f, 0.4f), tickRate);
+				InvokeRepeating (TrapThink, tickRate * 0.8f + tickRate * UnityEngine.Random.Range (0f, 0.4f), tickRate);
 			}
 		}
 	}
@@ -61,8 +61,8 @@ public class WildlifeTrap : StorageContainer
 	{
 		int num = 0;
 		foreach (Item item in base.inventory.itemList) {
-			ItemModConsumable component = ((Component)item.info).GetComponent<ItemModConsumable> ();
-			if ((Object)(object)component == (Object)null || ignoreBait.Contains (item.info)) {
+			ItemModConsumable component = item.info.GetComponent<ItemModConsumable> ();
+			if (component == null || ignoreBait.Contains (item.info)) {
 				continue;
 			}
 			foreach (ItemModConsumable.ConsumableEffect effect in component.effects) {
@@ -77,14 +77,14 @@ public class WildlifeTrap : StorageContainer
 	public void DestroyRandomFoodItem ()
 	{
 		int count = base.inventory.itemList.Count;
-		int num = Random.Range (0, count);
+		int num = UnityEngine.Random.Range (0, count);
 		for (int i = 0; i < count; i++) {
 			int num2 = num + i;
 			if (num2 >= count) {
 				num2 -= count;
 			}
 			Item item = base.inventory.itemList [num2];
-			if (item != null && !((Object)(object)((Component)item.info).GetComponent<ItemModConsumable> () == (Object)null)) {
+			if (item != null && !(item.info.GetComponent<ItemModConsumable> () == null)) {
 				item.UseItem ();
 				break;
 			}
@@ -107,8 +107,8 @@ public class WildlifeTrap : StorageContainer
 
 	public int GetItemCalories (Item item)
 	{
-		ItemModConsumable component = ((Component)item.info).GetComponent<ItemModConsumable> ();
-		if ((Object)(object)component == (Object)null) {
+		ItemModConsumable component = item.info.GetComponent<ItemModConsumable> ();
+		if (component == null) {
 			return 0;
 		}
 		foreach (ItemModConsumable.ConsumableEffect effect in component.effects) {
@@ -126,9 +126,9 @@ public class WildlifeTrap : StorageContainer
 			return;
 		}
 		TrappableWildlife randomWildlife = GetRandomWildlife ();
-		if (baitCalories >= randomWildlife.caloriesForInterest && Random.Range (0f, 1f) <= randomWildlife.successRate) {
+		if (baitCalories >= randomWildlife.caloriesForInterest && UnityEngine.Random.Range (0f, 1f) <= randomWildlife.successRate) {
 			UseBaitCalories (randomWildlife.caloriesForInterest);
-			if (Random.Range (0f, 1f) <= trapSuccessRate) {
+			if (UnityEngine.Random.Range (0f, 1f) <= trapSuccessRate) {
 				TrapWildlife (randomWildlife);
 			}
 		}
@@ -136,7 +136,7 @@ public class WildlifeTrap : StorageContainer
 
 	public void TrapWildlife (TrappableWildlife trapped)
 	{
-		Item item = ItemManager.Create (trapped.inventoryObject, Random.Range (trapped.minToCatch, trapped.maxToCatch + 1), 0uL);
+		Item item = ItemManager.Create (trapped.inventoryObject, UnityEngine.Random.Range (trapped.minToCatch, trapped.maxToCatch + 1), 0uL);
 		if (!item.MoveToContainer (base.inventory)) {
 			item.Remove ();
 		} else {
@@ -172,7 +172,7 @@ public class WildlifeTrap : StorageContainer
 	public TrappableWildlife GetRandomWildlife ()
 	{
 		int num = targetWildlife.Sum ((WildlifeWeight x) => x.weight);
-		int num2 = Random.Range (0, num);
+		int num2 = UnityEngine.Random.Range (0, num);
 		for (int i = 0; i < targetWildlife.Count; i++) {
 			num -= targetWildlife [i].weight;
 			if (num2 >= num) {

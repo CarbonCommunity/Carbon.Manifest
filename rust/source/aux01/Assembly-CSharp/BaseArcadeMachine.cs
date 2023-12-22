@@ -1,6 +1,6 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
-using System.IO;
 using ConVar;
 using Facepunch;
 using Network;
@@ -50,160 +50,121 @@ public class BaseArcadeMachine : BaseVehicle
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("BaseArcadeMachine.OnRpcMessage", 0);
-		try {
-			if (rpc == 271542211 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("BaseArcadeMachine.OnRpcMessage")) {
+			if (rpc == 271542211 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - BroadcastEntityMessage "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - BroadcastEntityMessage "));
 				}
-				TimeWarning val2 = TimeWarning.New ("BroadcastEntityMessage", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("BroadcastEntityMessage")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (271542211u, "BroadcastEntityMessage", this, player, 7uL)) {
 							return true;
 						}
 						if (!RPC_Server.IsVisible.Test (271542211u, "BroadcastEntityMessage", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							BroadcastEntityMessage (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in BroadcastEntityMessage");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 1365277306 && (Object)(object)player != (Object)null) {
+			if (rpc == 1365277306 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - DestroyMessageFromHost "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - DestroyMessageFromHost "));
 				}
-				TimeWarning val2 = TimeWarning.New ("DestroyMessageFromHost", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("DestroyMessageFromHost")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (1365277306u, "DestroyMessageFromHost", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg3 = rPCMessage;
 							DestroyMessageFromHost (msg3);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in DestroyMessageFromHost");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 2467852388u && (Object)(object)player != (Object)null) {
+			if (rpc == 2467852388u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - GetSnapshotFromClient "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - GetSnapshotFromClient "));
 				}
-				TimeWarning val2 = TimeWarning.New ("GetSnapshotFromClient", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("GetSnapshotFromClient")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (2467852388u, "GetSnapshotFromClient", this, player, 30uL)) {
 							return true;
 						}
 						if (!RPC_Server.IsVisible.Test (2467852388u, "GetSnapshotFromClient", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg4 = rPCMessage;
 							GetSnapshotFromClient (msg4);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex3) {
-						Debug.LogException (ex3);
+					} catch (Exception exception3) {
+						Debug.LogException (exception3);
 						player.Kick ("RPC Error in GetSnapshotFromClient");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 2990871635u && (Object)(object)player != (Object)null) {
+			if (rpc == 2990871635u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RequestAddScore "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RequestAddScore "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RequestAddScore", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RequestAddScore")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (2990871635u, "RequestAddScore", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg5 = rPCMessage;
 							RequestAddScore (msg5);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex4) {
-						Debug.LogException (ex4);
+					} catch (Exception exception4) {
+						Debug.LogException (exception4);
 						player.Kick ("RPC Error in RequestAddScore");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -225,7 +186,7 @@ public class BaseArcadeMachine : BaseVehicle
 	public void RequestAddScore (RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
-		if (!((Object)(object)player == (Object)null) && PlayerIsMounted (player)) {
+		if (!(player == null) && PlayerIsMounted (player)) {
 			int score = msg.read.Int32 ();
 			AddScore (player, score);
 		}
@@ -251,14 +212,14 @@ public class BaseArcadeMachine : BaseVehicle
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.arcadeMachine = Pool.Get<ArcadeMachine> ();
-		info.msg.arcadeMachine.scores = Pool.GetList<ScoreEntry> ();
+		info.msg.arcadeMachine = Facepunch.Pool.Get<ArcadeMachine> ();
+		info.msg.arcadeMachine.scores = Facepunch.Pool.GetList<ArcadeMachine.ScoreEntry> ();
 		for (int i = 0; i < scores.Count; i++) {
-			ScoreEntry val = Pool.Get<ScoreEntry> ();
-			val.displayName = scores [i].displayName;
-			val.playerID = scores [i].playerID;
-			val.score = scores [i].score;
-			info.msg.arcadeMachine.scores.Add (val);
+			ArcadeMachine.ScoreEntry scoreEntry = Facepunch.Pool.Get<ArcadeMachine.ScoreEntry> ();
+			scoreEntry.displayName = scores [i].displayName;
+			scoreEntry.playerID = scores [i].playerID;
+			scoreEntry.score = scores [i].score;
+			info.msg.arcadeMachine.scores.Add (scoreEntry);
 		}
 	}
 
@@ -292,7 +253,7 @@ public class BaseArcadeMachine : BaseVehicle
 			return;
 		}
 		foreach (BaseEntity entityContent in networkTrigger.entityContents) {
-			BasePlayer component = ((Component)entityContent).GetComponent<BasePlayer> ();
+			BasePlayer component = entityContent.GetComponent<BasePlayer> ();
 			ClientRPCPlayer (null, component, msg);
 		}
 	}
@@ -302,12 +263,12 @@ public class BaseArcadeMachine : BaseVehicle
 	public void DestroyMessageFromHost (RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
-		if ((Object)(object)player == (Object)null || (Object)(object)GetDriver () != (Object)(object)player || networkTrigger.entityContents == null) {
+		if (player == null || GetDriver () != player || networkTrigger.entityContents == null) {
 			return;
 		}
 		uint arg = msg.read.UInt32 ();
 		foreach (BaseEntity entityContent in networkTrigger.entityContents) {
-			BasePlayer component = ((Component)entityContent).GetComponent<BasePlayer> ();
+			BasePlayer component = entityContent.GetComponent<BasePlayer> ();
 			ClientRPCPlayer (null, component, "DestroyEntity", arg);
 		}
 	}
@@ -318,13 +279,13 @@ public class BaseArcadeMachine : BaseVehicle
 	public void BroadcastEntityMessage (RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
-		if ((Object)(object)player == (Object)null || (Object)(object)GetDriver () != (Object)(object)player || networkTrigger.entityContents == null) {
+		if (player == null || GetDriver () != player || networkTrigger.entityContents == null) {
 			return;
 		}
 		uint arg = msg.read.UInt32 ();
-		string arg2 = msg.read.String (256);
+		string arg2 = msg.read.String ();
 		foreach (BaseEntity entityContent in networkTrigger.entityContents) {
-			BasePlayer component = ((Component)entityContent).GetComponent<BasePlayer> ();
+			BasePlayer component = entityContent.GetComponent<BasePlayer> ();
 			ClientRPCPlayer (null, component, "GetEntityMessage", arg, arg2);
 		}
 	}
@@ -335,18 +296,18 @@ public class BaseArcadeMachine : BaseVehicle
 	public void GetSnapshotFromClient (RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
-		if ((Object)(object)player == (Object)null || (Object)(object)player != (Object)(object)GetDriver ()) {
+		if (player == null || player != GetDriver ()) {
 			return;
 		}
-		ArcadeGame val = Pool.Get<ArcadeGame> ();
-		val = ArcadeGame.Deserialize ((Stream)(object)msg.read);
+		ArcadeGame arcadeGame = Facepunch.Pool.Get<ArcadeGame> ();
+		arcadeGame = ArcadeGame.Deserialize (msg.read);
 		Connection sourceConnection = null;
 		if (networkTrigger.entityContents == null) {
 			return;
 		}
 		foreach (BaseEntity entityContent in networkTrigger.entityContents) {
-			BasePlayer component = ((Component)entityContent).GetComponent<BasePlayer> ();
-			ClientRPCPlayer<ArcadeGame> (sourceConnection, component, "GetSnapshotFromServer", val);
+			BasePlayer component = entityContent.GetComponent<BasePlayer> ();
+			ClientRPCPlayer (sourceConnection, component, "GetSnapshotFromServer", arcadeGame);
 		}
 	}
 }

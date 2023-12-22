@@ -1,6 +1,6 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using ConVar;
 using Facepunch;
@@ -34,694 +34,520 @@ public class ClanManager : BaseEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("ClanManager.OnRpcMessage", 0);
-		try {
-			if (rpc == 3593616087u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("ClanManager.OnRpcMessage")) {
+			if (rpc == 3593616087u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_AcceptInvitation "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_AcceptInvitation "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_AcceptInvitation", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_AcceptInvitation")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (3593616087u, "Server_AcceptInvitation", this, player, 3uL)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							Server_AcceptInvitation (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in Server_AcceptInvitation");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 73135447 && (Object)(object)player != (Object)null) {
+			if (rpc == 73135447 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_CancelInvitation "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_CancelInvitation "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_CancelInvitation", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_CancelInvitation")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (73135447u, "Server_CancelInvitation", this, player, 3uL)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg3 = rPCMessage;
 							Server_CancelInvitation (msg3);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in Server_CancelInvitation");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 785874715 && (Object)(object)player != (Object)null) {
+			if (rpc == 785874715 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_CancelInvite "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_CancelInvite "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_CancelInvite", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_CancelInvite")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (785874715u, "Server_CancelInvite", this, player, 3uL)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg4 = rPCMessage;
 							Server_CancelInvite (msg4);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex3) {
-						Debug.LogException (ex3);
+					} catch (Exception exception3) {
+						Debug.LogException (exception3);
 						player.Kick ("RPC Error in Server_CancelInvite");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 4017901233u && (Object)(object)player != (Object)null) {
+			if (rpc == 4017901233u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_CreateClan "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_CreateClan "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_CreateClan", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_CreateClan")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (4017901233u, "Server_CreateClan", this, player, 3uL)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg5 = rPCMessage;
 							Server_CreateClan (msg5);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex4) {
-						Debug.LogException (ex4);
+					} catch (Exception exception4) {
+						Debug.LogException (exception4);
 						player.Kick ("RPC Error in Server_CreateClan");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 835697933 && (Object)(object)player != (Object)null) {
+			if (rpc == 835697933 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_CreateRole "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_CreateRole "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_CreateRole", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_CreateRole")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (835697933u, "Server_CreateRole", this, player, 3uL)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg6 = rPCMessage;
 							Server_CreateRole (msg6);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex5) {
-						Debug.LogException (ex5);
+					} catch (Exception exception5) {
+						Debug.LogException (exception5);
 						player.Kick ("RPC Error in Server_CreateRole");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 3966624879u && (Object)(object)player != (Object)null) {
+			if (rpc == 3966624879u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_DeleteRole "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_DeleteRole "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_DeleteRole", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_DeleteRole")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (3966624879u, "Server_DeleteRole", this, player, 3uL)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg7 = rPCMessage;
 							Server_DeleteRole (msg7);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex6) {
-						Debug.LogException (ex6);
+					} catch (Exception exception6) {
+						Debug.LogException (exception6);
 						player.Kick ("RPC Error in Server_DeleteRole");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 4071826018u && (Object)(object)player != (Object)null) {
+			if (rpc == 4071826018u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_GetClan "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_GetClan "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_GetClan", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_GetClan")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (4071826018u, "Server_GetClan", this, player, 3uL)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg8 = rPCMessage;
 							Server_GetClan (msg8);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex7) {
-						Debug.LogException (ex7);
+					} catch (Exception exception7) {
+						Debug.LogException (exception7);
 						player.Kick ("RPC Error in Server_GetClan");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 2338234158u && (Object)(object)player != (Object)null) {
+			if (rpc == 2338234158u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_GetClanMetadata "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_GetClanMetadata "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_GetClanMetadata", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_GetClanMetadata")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (2338234158u, "Server_GetClanMetadata", this, player, 3uL)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg9 = rPCMessage;
 							Server_GetClanMetadata (msg9);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex8) {
-						Debug.LogException (ex8);
+					} catch (Exception exception8) {
+						Debug.LogException (exception8);
 						player.Kick ("RPC Error in Server_GetClanMetadata");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 507204008 && (Object)(object)player != (Object)null) {
+			if (rpc == 507204008 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_GetInvitations "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_GetInvitations "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_GetInvitations", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_GetInvitations")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (507204008u, "Server_GetInvitations", this, player, 3uL)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg10 = rPCMessage;
 							Server_GetInvitations (msg10);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex9) {
-						Debug.LogException (ex9);
+					} catch (Exception exception9) {
+						Debug.LogException (exception9);
 						player.Kick ("RPC Error in Server_GetInvitations");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 3858074978u && (Object)(object)player != (Object)null) {
+			if (rpc == 3858074978u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_GetLogs "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_GetLogs "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_GetLogs", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_GetLogs")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (3858074978u, "Server_GetLogs", this, player, 3uL)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg11 = rPCMessage;
 							Server_GetLogs (msg11);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex10) {
-						Debug.LogException (ex10);
+					} catch (Exception exception10) {
+						Debug.LogException (exception10);
 						player.Kick ("RPC Error in Server_GetLogs");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 1782867876 && (Object)(object)player != (Object)null) {
+			if (rpc == 1782867876 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_Invite "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_Invite "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_Invite", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_Invite")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (1782867876u, "Server_Invite", this, player, 3uL)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg12 = rPCMessage;
 							Server_Invite (msg12);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex11) {
-						Debug.LogException (ex11);
+					} catch (Exception exception11) {
+						Debug.LogException (exception11);
 						player.Kick ("RPC Error in Server_Invite");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 3093528332u && (Object)(object)player != (Object)null) {
+			if (rpc == 3093528332u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_Kick "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_Kick "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_Kick", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_Kick")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (3093528332u, "Server_Kick", this, player, 3uL)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg13 = rPCMessage;
 							Server_Kick (msg13);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex12) {
-						Debug.LogException (ex12);
+					} catch (Exception exception12) {
+						Debug.LogException (exception12);
 						player.Kick ("RPC Error in Server_Kick");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 2235419116u && (Object)(object)player != (Object)null) {
+			if (rpc == 2235419116u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_SetColor "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_SetColor "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_SetColor", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_SetColor")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (2235419116u, "Server_SetColor", this, player, 3uL)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg14 = rPCMessage;
 							Server_SetColor (msg14);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex13) {
-						Debug.LogException (ex13);
+					} catch (Exception exception13) {
+						Debug.LogException (exception13);
 						player.Kick ("RPC Error in Server_SetColor");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 1189444132 && (Object)(object)player != (Object)null) {
+			if (rpc == 1189444132 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_SetLogo "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_SetLogo "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_SetLogo", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_SetLogo")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (1189444132u, "Server_SetLogo", this, player, 3uL)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg15 = rPCMessage;
 							Server_SetLogo (msg15);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex14) {
-						Debug.LogException (ex14);
+					} catch (Exception exception14) {
+						Debug.LogException (exception14);
 						player.Kick ("RPC Error in Server_SetLogo");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 4088477037u && (Object)(object)player != (Object)null) {
+			if (rpc == 4088477037u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_SetMotd "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_SetMotd "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_SetMotd", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_SetMotd")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (4088477037u, "Server_SetMotd", this, player, 3uL)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg16 = rPCMessage;
 							Server_SetMotd (msg16);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex15) {
-						Debug.LogException (ex15);
+					} catch (Exception exception15) {
+						Debug.LogException (exception15);
 						player.Kick ("RPC Error in Server_SetMotd");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 285489852 && (Object)(object)player != (Object)null) {
+			if (rpc == 285489852 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_SetPlayerNotes "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_SetPlayerNotes "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_SetPlayerNotes", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_SetPlayerNotes")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (285489852u, "Server_SetPlayerNotes", this, player, 3uL)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg17 = rPCMessage;
 							Server_SetPlayerNotes (msg17);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex16) {
-						Debug.LogException (ex16);
+					} catch (Exception exception16) {
+						Debug.LogException (exception16);
 						player.Kick ("RPC Error in Server_SetPlayerNotes");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 3232449870u && (Object)(object)player != (Object)null) {
+			if (rpc == 3232449870u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_SetPlayerRole "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_SetPlayerRole "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_SetPlayerRole", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_SetPlayerRole")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (3232449870u, "Server_SetPlayerRole", this, player, 3uL)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg18 = rPCMessage;
 							Server_SetPlayerRole (msg18);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex17) {
-						Debug.LogException (ex17);
+					} catch (Exception exception17) {
+						Debug.LogException (exception17);
 						player.Kick ("RPC Error in Server_SetPlayerRole");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 738181899 && (Object)(object)player != (Object)null) {
+			if (rpc == 738181899 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_SwapRoles "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_SwapRoles "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_SwapRoles", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_SwapRoles")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (738181899u, "Server_SwapRoles", this, player, 3uL)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg19 = rPCMessage;
 							Server_SwapRoles (msg19);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex18) {
-						Debug.LogException (ex18);
+					} catch (Exception exception18) {
+						Debug.LogException (exception18);
 						player.Kick ("RPC Error in Server_SwapRoles");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 1548667516 && (Object)(object)player != (Object)null) {
+			if (rpc == 1548667516 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_UpdateRole "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_UpdateRole "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_UpdateRole", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_UpdateRole")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (1548667516u, "Server_UpdateRole", this, player, 3uL)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg20 = rPCMessage;
 							Server_UpdateRole (msg20);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex19) {
-						Debug.LogException (ex19);
+					} catch (Exception exception19) {
+						Debug.LogException (exception19);
 						player.Kick ("RPC Error in Server_UpdateRole");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -731,14 +557,13 @@ public class ClanManager : BaseEntity
 	public async void Server_CreateClan (RPCMessage msg)
 	{
 		int requestId = msg.read.Int32 ();
-		string text = default(string);
-		if (!ClanValidator.ValidateClanName (msg.read.String (256), ref text)) {
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, (ClanResult)6, null, hasClanInfo: false));
+		if (!ClanValidator.ValidateClanName (msg.read.String (), out var validated)) {
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, ClanResult.InvalidText, null, hasClanInfo: false));
 			return;
 		}
-		ClanValueResult<IClan> result = await Backend.Create (msg.player.userID, text);
+		ClanValueResult<IClan> result = await Backend.Create (msg.player.userID, validated);
 		if (CheckClanResult (requestId, msg.player, result, out var clan)) {
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, (ClanResult)1, clan));
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, ClanResult.Success, clan));
 		}
 	}
 
@@ -749,7 +574,7 @@ public class ClanManager : BaseEntity
 		int requestId = msg.read.Int32 ();
 		ClanValueResult<IClan> result = await Backend.Get (msg.player.clanId);
 		if (CheckClanResult (requestId, msg.player, result, out var clan)) {
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, (ClanResult)1, clan));
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, ClanResult.Success, clan));
 		}
 	}
 
@@ -760,11 +585,11 @@ public class ClanManager : BaseEntity
 		int requestId = msg.read.Int32 ();
 		ClanValueResult<IClan> result = await Backend.Get (msg.player.clanId);
 		if (CheckClanResult (requestId, msg.player, result, out var clan)) {
-			ClanValueResult<ClanLogs> val = await clan.GetLogs (100, msg.player.userID);
-			if (val.IsSuccess) {
-				ClientRPCPlayer<ClanLog> (null, msg.player, "Client_ReceiveClanLogs", val.Value.ToProto ());
+			ClanValueResult<ClanLogs> clanValueResult = await clan.GetLogs (100, msg.player.userID);
+			if (clanValueResult.IsSuccess) {
+				ClientRPCPlayer (null, msg.player, "Client_ReceiveClanLogs", clanValueResult.Value.ToProto ());
 			}
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, val.Result, clan));
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, clanValueResult.Result, clan));
 		}
 	}
 
@@ -773,11 +598,11 @@ public class ClanManager : BaseEntity
 	public async void Server_GetInvitations (RPCMessage msg)
 	{
 		int requestId = msg.read.Int32 ();
-		ClanValueResult<List<ClanInvitation>> val = await Backend.ListInvitations (msg.player.userID);
-		if (val.IsSuccess) {
-			ClientRPCPlayer<ClanInvitations> (null, msg.player, "Client_ReceiveClanInvitations", val.Value.ToProto ());
+		ClanValueResult<List<ClanInvitation>> clanValueResult = await Backend.ListInvitations (msg.player.userID);
+		if (clanValueResult.IsSuccess) {
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveClanInvitations", clanValueResult.Value.ToProto ());
 		}
-		ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, val.Result, null, hasClanInfo: false));
+		ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, clanValueResult.Result, null, hasClanInfo: false));
 	}
 
 	[RPC_Server]
@@ -785,19 +610,19 @@ public class ClanManager : BaseEntity
 	public async void Server_SetLogo (RPCMessage msg)
 	{
 		int requestId = msg.read.Int32 ();
-		byte[] newLogo = msg.read.BytesWithSize (10485760u);
+		byte[] newLogo = msg.read.BytesWithSize ();
 		if (!msg.player.CanModifyClan ()) {
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, (ClanResult)16, null, hasClanInfo: false));
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, ClanResult.CantModifyClanHere, null, hasClanInfo: false));
 			return;
 		}
 		if (!ImageProcessing.IsValidPNG (newLogo, 512, 512)) {
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, (ClanResult)7, null, hasClanInfo: false));
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, ClanResult.InvalidLogo, null, hasClanInfo: false));
 			return;
 		}
 		ClanValueResult<IClan> result = await Backend.Get (msg.player.clanId);
 		if (CheckClanResult (requestId, msg.player, result, out var clan)) {
 			ClanResult result2 = await clan.SetLogo (newLogo, msg.player.userID);
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, result2, clan));
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, result2, clan));
 		}
 	}
 
@@ -808,17 +633,17 @@ public class ClanManager : BaseEntity
 		int requestId = msg.read.Int32 ();
 		Color32 newColor = msg.read.Color32 ();
 		if (!msg.player.CanModifyClan ()) {
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, (ClanResult)16, null, hasClanInfo: false));
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, ClanResult.CantModifyClanHere, null, hasClanInfo: false));
 			return;
 		}
 		if (newColor.a != byte.MaxValue) {
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, (ClanResult)8, null, hasClanInfo: false));
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, ClanResult.InvalidColor, null, hasClanInfo: false));
 			return;
 		}
 		ClanValueResult<IClan> result = await Backend.Get (msg.player.clanId);
 		if (CheckClanResult (requestId, msg.player, result, out var clan)) {
 			ClanResult result2 = await clan.SetColor (newColor, msg.player.userID);
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, result2, clan));
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, result2, clan));
 		}
 	}
 
@@ -827,21 +652,20 @@ public class ClanManager : BaseEntity
 	public async void Server_SetMotd (RPCMessage msg)
 	{
 		int requestId = msg.read.Int32 ();
-		string text = msg.read.StringMultiLine (2048);
+		string motd = msg.read.StringMultiLine ();
 		if (!msg.player.CanModifyClan ()) {
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, (ClanResult)16, null, hasClanInfo: false));
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, ClanResult.CantModifyClanHere, null, hasClanInfo: false));
 			return;
 		}
-		string validatedMotd = default(string);
-		if (!ClanValidator.ValidateMotd (text, ref validatedMotd)) {
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, (ClanResult)6, null, hasClanInfo: false));
+		if (!ClanValidator.ValidateMotd (motd, out var validatedMotd)) {
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, ClanResult.InvalidText, null, hasClanInfo: false));
 			return;
 		}
 		ClanValueResult<IClan> result = await Backend.Get (msg.player.clanId);
 		if (CheckClanResult (requestId, msg.player, result, out var clan)) {
-			ClanResult val = await clan.SetMotd (validatedMotd, msg.player.userID);
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, val, clan));
-			if ((int)val == 1) {
+			ClanResult clanResult = await clan.SetMotd (validatedMotd, msg.player.userID);
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, clanResult, clan));
+			if (clanResult == ClanResult.Success) {
 				ClanPushNotifications.SendClanAnnouncement (clan, msg.player.userID);
 			}
 		}
@@ -854,13 +678,13 @@ public class ClanManager : BaseEntity
 		int requestId = msg.read.Int32 ();
 		ulong steamId = msg.read.UInt64 ();
 		if (!msg.player.CanModifyClan ()) {
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, (ClanResult)16, null, hasClanInfo: false));
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, ClanResult.CantModifyClanHere, null, hasClanInfo: false));
 			return;
 		}
 		ClanValueResult<IClan> result = await Backend.Get (msg.player.clanId);
 		if (CheckClanResult (requestId, msg.player, result, out var clan)) {
 			ClanResult result2 = await clan.Invite (steamId, msg.player.userID);
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, result2, clan));
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, result2, clan));
 		}
 	}
 
@@ -871,13 +695,13 @@ public class ClanManager : BaseEntity
 		int requestId = msg.read.Int32 ();
 		ulong steamId = msg.read.UInt64 ();
 		if (!msg.player.CanModifyClan ()) {
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, (ClanResult)16, null, hasClanInfo: false));
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, ClanResult.CantModifyClanHere, null, hasClanInfo: false));
 			return;
 		}
 		ClanValueResult<IClan> result = await Backend.Get (msg.player.clanId);
 		if (CheckClanResult (requestId, msg.player, result, out var clan)) {
 			ClanResult result2 = await clan.CancelInvite (steamId, msg.player.userID);
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, result2, clan));
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, result2, clan));
 		}
 	}
 
@@ -886,15 +710,15 @@ public class ClanManager : BaseEntity
 	public async void Server_AcceptInvitation (RPCMessage msg)
 	{
 		int requestId = msg.read.Int32 ();
-		long num = msg.read.Int64 ();
+		long clanId = msg.read.Int64 ();
 		if (!msg.player.CanModifyClan ()) {
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, (ClanResult)16, null, hasClanInfo: false));
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, ClanResult.CantModifyClanHere, null, hasClanInfo: false));
 			return;
 		}
-		ClanValueResult<IClan> result = await Backend.Get (num);
+		ClanValueResult<IClan> result = await Backend.Get (clanId);
 		if (CheckClanResult (requestId, msg.player, result, out var clan)) {
 			ClanResult result2 = await clan.AcceptInvite (msg.player.userID);
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, result2, null));
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, result2, null));
 		}
 	}
 
@@ -903,15 +727,15 @@ public class ClanManager : BaseEntity
 	public async void Server_CancelInvitation (RPCMessage msg)
 	{
 		int requestId = msg.read.Int32 ();
-		long num = msg.read.Int64 ();
+		long clanId = msg.read.Int64 ();
 		if (!msg.player.CanModifyClan ()) {
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, (ClanResult)16, null, hasClanInfo: false));
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, ClanResult.CantModifyClanHere, null, hasClanInfo: false));
 			return;
 		}
-		ClanValueResult<IClan> result = await Backend.Get (num);
+		ClanValueResult<IClan> result = await Backend.Get (clanId);
 		if (CheckClanResult (requestId, msg.player, result, out var clan)) {
 			ClanResult result2 = await clan.CancelInvite (msg.player.userID, msg.player.userID);
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, result2, null));
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, result2, null));
 		}
 	}
 
@@ -922,13 +746,13 @@ public class ClanManager : BaseEntity
 		int requestId = msg.read.Int32 ();
 		ulong steamId = msg.read.UInt64 ();
 		if (!msg.player.CanModifyClan ()) {
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, (ClanResult)16, null, hasClanInfo: false));
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, ClanResult.CantModifyClanHere, null, hasClanInfo: false));
 			return;
 		}
 		ClanValueResult<IClan> result = await Backend.Get (msg.player.clanId);
 		if (CheckClanResult (requestId, msg.player, result, out var clan)) {
 			ClanResult result2 = await clan.Kick (steamId, msg.player.userID);
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, result2, clan));
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, result2, clan));
 		}
 	}
 
@@ -940,13 +764,13 @@ public class ClanManager : BaseEntity
 		ulong steamId = msg.read.UInt64 ();
 		int newRoleId = msg.read.Int32 ();
 		if (!msg.player.CanModifyClan ()) {
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, (ClanResult)16, null, hasClanInfo: false));
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, ClanResult.CantModifyClanHere, null, hasClanInfo: false));
 			return;
 		}
 		ClanValueResult<IClan> result = await Backend.Get (msg.player.clanId);
 		if (CheckClanResult (requestId, msg.player, result, out var clan)) {
 			ClanResult result2 = await clan.SetPlayerRole (steamId, newRoleId, msg.player.userID);
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, result2, clan));
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, result2, clan));
 		}
 	}
 
@@ -958,18 +782,17 @@ public class ClanManager : BaseEntity
 		ulong steamId = msg.read.UInt64 ();
 		string text = msg.read.StringMultiLine (1024);
 		if (!msg.player.CanModifyClan ()) {
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, (ClanResult)16, null, hasClanInfo: false));
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, ClanResult.CantModifyClanHere, null, hasClanInfo: false));
 			return;
 		}
-		string validatedNotes = default(string);
-		if (!ClanValidator.ValidatePlayerNote (text, ref validatedNotes)) {
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, (ClanResult)6, null, hasClanInfo: false));
+		if (!ClanValidator.ValidatePlayerNote (text, out var validatedNotes)) {
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, ClanResult.InvalidText, null, hasClanInfo: false));
 			return;
 		}
 		ClanValueResult<IClan> result = await Backend.Get (msg.player.clanId);
 		if (CheckClanResult (requestId, msg.player, result, out var clan)) {
 			ClanResult result2 = await clan.SetPlayerNotes (steamId, validatedNotes, msg.player.userID);
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, result2, clan));
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, result2, clan));
 		}
 	}
 
@@ -980,21 +803,20 @@ public class ClanManager : BaseEntity
 		int requestId = msg.read.Int32 ();
 		string text = msg.read.String (128);
 		if (!msg.player.CanModifyClan ()) {
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, (ClanResult)16, null, hasClanInfo: false));
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, ClanResult.CantModifyClanHere, null, hasClanInfo: false));
 			return;
 		}
-		string name = default(string);
-		if (!ClanValidator.ValidateRoleName (text, ref name)) {
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, (ClanResult)6, null, hasClanInfo: false));
+		if (!ClanValidator.ValidateRoleName (text, out var validated)) {
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, ClanResult.InvalidText, null, hasClanInfo: false));
 			return;
 		}
 		ClanRole role = new ClanRole {
-			Name = name
+			Name = validated
 		};
 		ClanValueResult<IClan> result = await Backend.Get (msg.player.clanId);
 		if (CheckClanResult (requestId, msg.player, result, out var clan)) {
 			ClanResult result2 = await clan.CreateRole (role, msg.player.userID);
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, result2, clan));
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, result2, clan));
 		}
 	}
 
@@ -1004,26 +826,21 @@ public class ClanManager : BaseEntity
 	{
 		int requestId = msg.read.Int32 ();
 		if (!msg.player.CanModifyClan ()) {
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, (ClanResult)16, null, hasClanInfo: false));
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, ClanResult.CantModifyClanHere, null, hasClanInfo: false));
 			return;
 		}
-		Role role = Role.Deserialize ((Stream)(object)msg.read);
-		try {
-			string name = default(string);
-			if (!ClanValidator.ValidateRoleName (role.name, ref name)) {
-				ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, (ClanResult)6, null, hasClanInfo: false));
-				return;
-			}
-			role.name = name;
-			ClanValueResult<IClan> result = await Backend.Get (msg.player.clanId);
-			if (!CheckClanResult (requestId, msg.player, result, out var clan)) {
-				return;
-			}
-			ClanResult result2 = await clan.UpdateRole (role.FromProto (), msg.player.userID);
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, result2, clan));
-		} finally {
-			((IDisposable)role)?.Dispose ();
+		using ClanInfo.Role role = ClanInfo.Role.Deserialize (msg.read);
+		if (!ClanValidator.ValidateRoleName (role.name, out var validated)) {
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, ClanResult.InvalidText, null, hasClanInfo: false));
+			return;
 		}
+		role.name = validated;
+		ClanValueResult<IClan> result = await Backend.Get (msg.player.clanId);
+		if (!CheckClanResult (requestId, msg.player, result, out var clan)) {
+			return;
+		}
+		ClanResult result2 = await clan.UpdateRole (role.FromProto (), msg.player.userID);
+		ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, result2, clan));
 	}
 
 	[RPC_Server]
@@ -1033,13 +850,13 @@ public class ClanManager : BaseEntity
 		int requestId = msg.read.Int32 ();
 		int roleId = msg.read.Int32 ();
 		if (!msg.player.CanModifyClan ()) {
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, (ClanResult)16, null, hasClanInfo: false));
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, ClanResult.CantModifyClanHere, null, hasClanInfo: false));
 			return;
 		}
 		ClanValueResult<IClan> result = await Backend.Get (msg.player.clanId);
 		if (CheckClanResult (requestId, msg.player, result, out var clan)) {
 			ClanResult result2 = await clan.DeleteRole (roleId, msg.player.userID);
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, result2, clan));
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, result2, clan));
 		}
 	}
 
@@ -1051,39 +868,35 @@ public class ClanManager : BaseEntity
 		int roleIdA = msg.read.Int32 ();
 		int roleIdB = msg.read.Int32 ();
 		if (!msg.player.CanModifyClan ()) {
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, (ClanResult)16, null, hasClanInfo: false));
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, ClanResult.CantModifyClanHere, null, hasClanInfo: false));
 			return;
 		}
 		ClanValueResult<IClan> result = await Backend.Get (msg.player.clanId);
 		if (CheckClanResult (requestId, msg.player, result, out var clan)) {
 			ClanResult result2 = await clan.SwapRoleRanks (roleIdA, roleIdB, msg.player.userID);
-			ClientRPCPlayer<ClanActionResult> (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, result2, clan));
+			ClientRPCPlayer (null, msg.player, "Client_ReceiveActionResult", BuildActionResult (requestId, result2, clan));
 		}
 	}
 
 	private bool CheckClanResult (int requestId, BasePlayer player, ClanValueResult<IClan> result, out IClan clan)
 	{
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
 		if (result.IsSuccess) {
 			clan = result.Value;
 			return true;
 		}
-		ClientRPCPlayer<ClanActionResult> (null, player, "Client_ReceiveActionResult", BuildActionResult (requestId, result.Result, null));
+		ClientRPCPlayer (null, player, "Client_ReceiveActionResult", BuildActionResult (requestId, result.Result, null));
 		clan = null;
 		return false;
 	}
 
 	private static ClanActionResult BuildActionResult (int requestId, ClanResult result, IClan clan, bool hasClanInfo = true)
 	{
-		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Expected I4, but got Unknown
-		ClanActionResult obj = Pool.Get<ClanActionResult> ();
-		obj.requestId = requestId;
-		obj.result = (int)result;
-		obj.hasClanInfo = hasClanInfo;
-		obj.clanInfo = clan.ToProto ();
-		return obj;
+		ClanActionResult clanActionResult = Facepunch.Pool.Get<ClanActionResult> ();
+		clanActionResult.requestId = requestId;
+		clanActionResult.result = (int)result;
+		clanActionResult.hasClanInfo = hasClanInfo;
+		clanActionResult.clanInfo = clan.ToProto ();
+		return clanActionResult;
 	}
 
 	[RPC_Server]
@@ -1091,58 +904,51 @@ public class ClanManager : BaseEntity
 	public async void Server_GetClanMetadata (RPCMessage msg)
 	{
 		long clanId = msg.read.Int64 ();
-		ClanValueResult<IClan> val = await Backend.Get (clanId);
-		if (val.IsSuccess) {
-			IClan value = val.Value;
-			ClientRPCPlayer<long, string, int, Color32> (null, msg.player, "Client_GetClanMetadataResponse", clanId, value.Name ?? "", value.Members?.Count ?? 0, value.Color);
+		ClanValueResult<IClan> clanValueResult = await Backend.Get (clanId);
+		if (clanValueResult.IsSuccess) {
+			IClan value = clanValueResult.Value;
+			ClientRPCPlayer (null, msg.player, "Client_GetClanMetadataResponse", clanId, value.Name ?? "", value.Members?.Count ?? 0, value.Color);
 		} else {
-			ClientRPCPlayer<long, string, int, Color32> (null, msg.player, "Client_GetClanMetadataResponse", clanId, "[unknown]", 0, Color32.op_Implicit (Color.white));
+			ClientRPCPlayer ((Connection)null, msg.player, "Client_GetClanMetadataResponse", clanId, "[unknown]", 0, (Color32)Color.white);
 		}
 	}
 
 	public void SendClanChanged (IClan clan)
 	{
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005d: Unknown result type (might be due to invalid IL or missing references)
-		List<Connection> list = Pool.GetList<Connection> ();
+		List<Connection> obj = Facepunch.Pool.GetList<Connection> ();
 		foreach (ClanMember member in clan.Members) {
 			BasePlayer basePlayer = BasePlayer.FindByID (member.SteamId);
-			if ((Object)(object)basePlayer != (Object)null && basePlayer.IsConnected) {
-				list.Add (basePlayer.net.connection);
+			if (basePlayer != null && basePlayer.IsConnected) {
+				obj.Add (basePlayer.net.connection);
 			}
 		}
-		ClientRPCEx (new SendInfo (list), null, "Client_CurrentClanChanged");
-		Pool.FreeList<Connection> (ref list);
+		ClientRPCEx (new SendInfo (obj), null, "Client_CurrentClanChanged");
+		Facepunch.Pool.FreeList (ref obj);
 	}
 
 	public void SendClanInvitation (ulong steamId, long clanId)
 	{
 		BasePlayer basePlayer = BasePlayer.FindByID (steamId);
-		if (!((Object)(object)basePlayer == (Object)null) && basePlayer.IsConnected) {
+		if (!(basePlayer == null) && basePlayer.IsConnected) {
 			ClientRPCPlayer (null, basePlayer, "Client_ReceiveClanInvitation", clanId);
 		}
 	}
 
 	public bool TryGetClanMemberConnections (long clanId, out List<Connection> connections)
 	{
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
 		if (_clanMemberConnections.TryGetValue (clanId, out connections)) {
 			return true;
 		}
-		IClan val = default(IClan);
-		if (!Backend.TryGet (clanId, ref val)) {
+		if (!Backend.TryGet (clanId, out var clan)) {
 			return false;
 		}
-		connections = Pool.GetList<Connection> ();
-		foreach (ClanMember member in val.Members) {
+		connections = Facepunch.Pool.GetList<Connection> ();
+		foreach (ClanMember member in clan.Members) {
 			BasePlayer basePlayer = BasePlayer.FindByID (member.SteamId);
-			if ((Object)(object)basePlayer == (Object)null) {
+			if (basePlayer == null) {
 				basePlayer = BasePlayer.FindSleeping (member.SteamId);
 			}
-			if (!((Object)(object)basePlayer == (Object)null) && basePlayer.IsConnected) {
+			if (!(basePlayer == null) && basePlayer.IsConnected) {
 				connections.Add (basePlayer.Connection);
 			}
 		}
@@ -1154,7 +960,7 @@ public class ClanManager : BaseEntity
 	{
 		if (_clanMemberConnections.TryGetValue (clanId, out var value)) {
 			_clanMemberConnections.Remove (clanId);
-			Pool.FreeList<Connection> (ref value);
+			Facepunch.Pool.FreeList (ref value);
 		}
 	}
 
@@ -1169,9 +975,9 @@ public class ClanManager : BaseEntity
 		}
 		try {
 			_changeTracker = new ClanChangeTracker (this);
-			await backend.Initialize ((IClanChangeSink)(object)_changeTracker);
+			await backend.Initialize (_changeTracker);
 			Backend = backend;
-			((FacepunchBehaviour)this).InvokeRandomized ((Action)delegate {
+			InvokeRandomized (delegate {
 				_changeTracker.HandleEvents ();
 			}, 1f, 0.25f, 0.1f);
 		} catch (Exception innerException) {
@@ -1185,7 +991,7 @@ public class ClanManager : BaseEntity
 			return;
 		}
 		try {
-			((IDisposable)Backend).Dispose ();
+			Backend.Dispose ();
 			Backend = null;
 		} catch (Exception innerException) {
 			throw new InvalidOperationException ("Clan backend failed to shutdown (threw exception)", innerException);
@@ -1195,12 +1001,12 @@ public class ClanManager : BaseEntity
 	public override void Spawn ()
 	{
 		base.Spawn ();
-		if (base.isServer && !Application.isLoadingSave) {
+		if (base.isServer && !Rust.Application.isLoadingSave) {
 			_backendType = ChooseBackendType ();
 			if (string.IsNullOrWhiteSpace (_backendType)) {
-				Debug.LogError ((object)"Clan manager did not choose a backend type!");
+				Debug.LogError ("Clan manager did not choose a backend type!");
 			} else {
-				Debug.Log ((object)("Clan manager will use backend type: " + _backendType));
+				Debug.Log ("Clan manager will use backend type: " + _backendType);
 			}
 		}
 	}
@@ -1209,7 +1015,7 @@ public class ClanManager : BaseEntity
 	{
 		base.Save (info);
 		if (info.forDisk) {
-			info.msg.clanManager = Pool.Get<ClanManager> ();
+			info.msg.clanManager = Facepunch.Pool.Get<ProtoBuf.ClanManager> ();
 			info.msg.clanManager.backendType = _backendType;
 		}
 	}
@@ -1232,24 +1038,22 @@ public class ClanManager : BaseEntity
 
 	private static IClanBackend CreateBackendInstance (string type)
 	{
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Expected O, but got Unknown
 		if (!(type == "local")) {
 			if (type == "nexus") {
-				return (IClanBackend)(object)new NexusClanBackend ();
+				return new NexusClanBackend ();
 			}
 			throw new NotSupportedException ("Clan backend '" + type + "' is not supported");
 		}
-		return (IClanBackend)new LocalClanBackend (ConVar.Server.rootFolder, Clan.maxMemberCount);
+		return new LocalClanBackend (ConVar.Server.rootFolder, Clan.maxMemberCount);
 	}
 
 	public override void InitShared ()
 	{
 		base.InitShared ();
 		if (base.isServer) {
-			if ((Object)(object)ServerInstance != (Object)null) {
-				Debug.LogError ((object)"Major fuckup! Server ClanManager spawned twice, contact Developers!");
-				Object.Destroy ((Object)(object)((Component)this).gameObject);
+			if (ServerInstance != null) {
+				Debug.LogError ("Major fuckup! Server ClanManager spawned twice, contact Developers!");
+				UnityEngine.Object.Destroy (base.gameObject);
 			} else {
 				ServerInstance = this;
 			}
@@ -1259,7 +1063,7 @@ public class ClanManager : BaseEntity
 	public void OnDestroy ()
 	{
 		if (base.isServer) {
-			if ((Object)(object)ServerInstance == (Object)(object)this) {
+			if (ServerInstance == this) {
 				ServerInstance = null;
 			}
 			Shutdown ();

@@ -2,7 +2,7 @@ using Facepunch;
 using Unity.Collections;
 using UnityEngine;
 
-public class FPNativeList<T> : IPooled where T : unmanaged
+public class FPNativeList<T> : Pool.IPooled where T : unmanaged
 {
 	private NativeArray<T> _array;
 
@@ -37,24 +37,18 @@ public class FPNativeList<T> : IPooled where T : unmanaged
 
 	public void Resize (int count)
 	{
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
 		if (_array.IsCreated) {
 			_array.Dispose ();
 		}
-		_array = new NativeArray<T> (count, (Allocator)4, (NativeArrayOptions)1);
+		_array = new NativeArray<T> (count, Allocator.Persistent);
 		_length = count;
 	}
 
 	public void EnsureCapacity (int requiredCapacity)
 	{
-		//IL_0070: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0071: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005a: Unknown result type (might be due to invalid IL or missing references)
 		if (!_array.IsCreated || _array.Length < requiredCapacity) {
-			int num = Mathf.Max (_array.Length * 2, requiredCapacity);
-			NativeArray<T> array = default(NativeArray<T>);
-			array..ctor (num, (Allocator)4, (NativeArrayOptions)1);
+			int length = Mathf.Max (_array.Length * 2, requiredCapacity);
+			NativeArray<T> array = new NativeArray<T> (length, Allocator.Persistent);
 			if (_array.IsCreated) {
 				_array.CopyTo (array.GetSubArray (0, _array.Length));
 				_array.Dispose ();
@@ -65,7 +59,6 @@ public class FPNativeList<T> : IPooled where T : unmanaged
 
 	public void EnterPool ()
 	{
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
 		if (_array.IsCreated) {
 			_array.Dispose ();
 		}

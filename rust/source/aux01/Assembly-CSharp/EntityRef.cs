@@ -6,18 +6,15 @@ public struct EntityRef<T> where T : BaseEntity
 
 	public NetworkableId uid {
 		get {
-			//IL_0006: Unknown result type (might be due to invalid IL or missing references)
 			return entityRef.uid;
 		}
 		set {
-			//IL_0006: Unknown result type (might be due to invalid IL or missing references)
 			entityRef.uid = value;
 		}
 	}
 
 	public EntityRef (NetworkableId uid)
 	{
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
 		entityRef = new EntityRef {
 			uid = uid
 		};
@@ -36,7 +33,7 @@ public struct EntityRef<T> where T : BaseEntity
 	public T Get (bool serverside)
 	{
 		BaseEntity baseEntity = entityRef.Get (serverside);
-		if (baseEntity == null) {
+		if ((object)baseEntity == null) {
 			return null;
 		}
 		if (!(baseEntity is T result)) {
@@ -49,6 +46,6 @@ public struct EntityRef<T> where T : BaseEntity
 	public bool TryGet (bool serverside, out T entity)
 	{
 		entity = Get (serverside);
-		return entity != null;
+		return (object)entity != null;
 	}
 }

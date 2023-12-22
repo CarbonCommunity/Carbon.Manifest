@@ -29,9 +29,9 @@ public class FPS : ConsoleSystem
 		}
 		set {
 			m_graph = value;
-			if (Object.op_Implicit ((Object)(object)MainCamera.mainCamera)) {
-				FPSGraph component = ((Component)MainCamera.mainCamera).GetComponent<FPSGraph> ();
-				if (Object.op_Implicit ((Object)(object)component)) {
+			if ((bool)MainCamera.mainCamera) {
+				FPSGraph component = MainCamera.mainCamera.GetComponent<FPSGraph> ();
+				if ((bool)component) {
 					component.Refresh ();
 				}
 			}

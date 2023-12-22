@@ -10,9 +10,9 @@ public abstract class UIRoot : MonoBehaviour
 	private void ToggleRaycasters (bool state)
 	{
 		for (int i = 0; i < graphicRaycasters.Length; i++) {
-			GraphicRaycaster val = graphicRaycasters [i];
-			if (((Behaviour)val).enabled != state) {
-				((Behaviour)val).enabled = state;
+			GraphicRaycaster graphicRaycaster = graphicRaycasters [i];
+			if (graphicRaycaster.enabled != state) {
+				graphicRaycaster.enabled = state;
 			}
 		}
 	}
@@ -23,7 +23,7 @@ public abstract class UIRoot : MonoBehaviour
 
 	protected virtual void Start ()
 	{
-		graphicRaycasters = ((Component)this).GetComponentsInChildren<GraphicRaycaster> (true);
+		graphicRaycasters = GetComponentsInChildren<GraphicRaycaster> (includeInactive: true);
 	}
 
 	protected void Update ()

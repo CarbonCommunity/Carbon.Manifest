@@ -15,8 +15,7 @@ public struct RaycastColliderProcessingJob : IJob
 			return;
 		}
 		SortAscending (ref foundColliders, 0, num - 1);
-		NativeArray<int> counts = default(NativeArray<int>);
-		counts..ctor (num, (Allocator)2, (NativeArrayOptions)0);
+		NativeArray<int> counts = new NativeArray<int> (num, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
 		int num2 = 0;
 		int i = 0;
 		while (i < num) {
@@ -31,8 +30,8 @@ public struct RaycastColliderProcessingJob : IJob
 		}
 		SortByDescending (ref foundColliders, ref counts, 0, num2 - 1);
 		counts.Dispose ();
-		int num5 = math.min (num2, 512);
-		foundCollidersLength [0] = num5;
+		int value = math.min (num2, 512);
+		foundCollidersLength [0] = value;
 	}
 
 	private static void SortByDescending (ref NativeArray<int> colliders, ref NativeArray<int> counts, int leftIndex, int rightIndex)
@@ -47,20 +46,20 @@ public struct RaycastColliderProcessingJob : IJob
 				num--;
 			}
 			if (i <= num) {
-				int num3 = i;
+				int index = i;
 				ref NativeArray<int> reference = ref colliders;
-				int num4 = num;
-				int num5 = colliders [num];
-				int num6 = colliders [i];
-				int num8 = (colliders [num3] = num5);
-				num8 = (reference [num4] = num6);
-				num6 = i;
+				int index2 = num;
+				int num3 = colliders [num];
+				int num4 = colliders [i];
+				int num6 = (colliders [index] = num3);
+				num6 = (reference [index2] = num4);
+				num4 = i;
 				reference = ref counts;
-				num5 = num;
-				num4 = counts [num];
-				num3 = counts [i];
-				num8 = (counts [num6] = num4);
-				num8 = (reference [num5] = num3);
+				num3 = num;
+				index2 = counts [num];
+				index = counts [i];
+				num6 = (counts [num4] = index2);
+				num6 = (reference [num3] = index);
 				i++;
 				num--;
 			}
@@ -85,12 +84,12 @@ public struct RaycastColliderProcessingJob : IJob
 				num--;
 			}
 			if (i <= num) {
-				int num3 = i;
-				int num4 = num;
-				int num5 = array [num];
-				int num6 = array [i];
-				int num8 = (array [num3] = num5);
-				num8 = (array [num4] = num6);
+				int index = i;
+				int index2 = num;
+				int num3 = array [num];
+				int num4 = array [i];
+				int num6 = (array [index] = num3);
+				num6 = (array [index2] = num4);
 				i++;
 				num--;
 			}

@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -34,66 +35,50 @@ public class BasePortal : BaseCombatEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("BasePortal.OnRpcMessage", 0);
-		try {
-			if (rpc == 561762999 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("BasePortal.OnRpcMessage")) {
+			if (rpc == 561762999 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_UsePortal "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_UsePortal "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_UsePortal", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_UsePortal")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (561762999u, "RPC_UsePortal", this, player, 1uL)) {
 							return true;
 						}
 						if (!RPC_Server.IsVisible.Test (561762999u, "RPC_UsePortal", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							RPC_UsePortal (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_UsePortal");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
-		info.msg.ioEntity = Pool.Get<IOEntity> ();
+		info.msg.ioEntity = Facepunch.Pool.Get<ProtoBuf.IOEntity> ();
 		info.msg.ioEntity.genericEntRef1 = targetID;
 	}
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (info.msg.ioEntity != null) {
 			targetID = info.msg.ioEntity.genericEntRef1;
@@ -107,16 +92,13 @@ public class BasePortal : BaseCombatEntity
 
 	public void LinkPortal ()
 	{
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)targetPortal != (Object)null) {
+		if (targetPortal != null) {
 			targetID = targetPortal.net.ID;
 		}
-		if ((Object)(object)targetPortal == (Object)null && ((NetworkableId)(ref targetID)).IsValid) {
+		if (targetPortal == null && targetID.IsValid) {
 			BaseNetworkable baseNetworkable = BaseNetworkable.serverEntities.Find (targetID);
-			if ((Object)(object)baseNetworkable != (Object)null) {
-				targetPortal = ((Component)baseNetworkable).GetComponent<BasePortal> ();
+			if (baseNetworkable != null) {
+				targetPortal = baseNetworkable.GetComponent<BasePortal> ();
 			}
 		}
 	}
@@ -124,30 +106,24 @@ public class BasePortal : BaseCombatEntity
 	public override void PostServerLoad ()
 	{
 		base.PostServerLoad ();
-		Debug.Log ((object)"Post server load");
+		Debug.Log ("Post server load");
 		LinkPortal ();
 	}
 
 	public void SetDestination (Vector3 destPos, Quaternion destRot)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
 		destination_pos = destPos;
 		destination_rot = destRot;
 	}
 
 	public Vector3 GetLocalEntryExitPosition ()
 	{
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		return ((Component)localEntryExitPos).transform.position;
+		return localEntryExitPos.transform.position;
 	}
 
 	public Quaternion GetLocalEntryExitRotation ()
 	{
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		return ((Component)localEntryExitPos).transform.rotation;
+		return localEntryExitPos.transform.rotation;
 	}
 
 	public BasePortal GetPortal ()
@@ -158,70 +134,40 @@ public class BasePortal : BaseCombatEntity
 
 	public virtual void UsePortal (BasePlayer player)
 	{
-		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0056: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ba: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0072: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0077: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0090: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0095: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ac: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00dd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00de: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0119: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0130: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0102: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0103: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0163: Unknown result type (might be due to invalid IL or missing references)
 		LinkPortal ();
-		if ((Object)(object)targetPortal != (Object)null) {
+		if (targetPortal != null) {
 			player.PauseFlyHackDetection ();
 			player.PauseSpeedHackDetection ();
-			Vector3 position = ((Component)player).transform.position;
-			Vector3 val = targetPortal.GetLocalEntryExitPosition ();
-			Vector3 val2 = ((Component)this).transform.InverseTransformDirection (player.eyes.BodyForward ());
-			Vector3 val3 = val2;
+			Vector3 position = player.transform.position;
+			Vector3 vector = targetPortal.GetLocalEntryExitPosition ();
+			Vector3 vector2 = base.transform.InverseTransformDirection (player.eyes.BodyForward ());
+			Vector3 vector3 = vector2;
 			if (isMirrored) {
-				Vector3 val4 = ((Component)this).transform.InverseTransformPoint (((Component)player).transform.position);
-				val = ((Component)targetPortal.relativeAnchor).transform.TransformPoint (val4);
-				val3 = ((Component)targetPortal.relativeAnchor).transform.TransformDirection (val2);
+				Vector3 position2 = base.transform.InverseTransformPoint (player.transform.position);
+				vector = targetPortal.relativeAnchor.transform.TransformPoint (position2);
+				vector3 = targetPortal.relativeAnchor.transform.TransformDirection (vector2);
 			} else {
-				val3 = targetPortal.GetLocalEntryExitRotation () * Vector3.forward;
+				vector3 = targetPortal.GetLocalEntryExitRotation () * Vector3.forward;
 			}
 			if (disappearEffect.isValid) {
 				Effect.server.Run (disappearEffect.resourcePath, position, Vector3.up);
 			}
 			if (appearEffect.isValid) {
-				Effect.server.Run (appearEffect.resourcePath, val, Vector3.up);
+				Effect.server.Run (appearEffect.resourcePath, vector, Vector3.up);
 			}
 			player.SetParent (null, worldPositionStays: true);
-			player.Teleport (val);
+			player.Teleport (vector);
 			player.ForceUpdateTriggers ();
-			player.ClientRPCPlayer<Vector3> (null, player, "ForceViewAnglesTo", val3);
+			player.ClientRPCPlayer (null, player, "ForceViewAnglesTo", vector3);
 			if (transitionSoundEffect.isValid) {
-				Effect.server.Run (transitionSoundEffect.resourcePath, ((Component)targetPortal.relativeAnchor).transform.position, Vector3.up);
+				Effect.server.Run (transitionSoundEffect.resourcePath, targetPortal.relativeAnchor.transform.position, Vector3.up);
 			}
 			player.UpdateNetworkGroup ();
 			player.SetPlayerFlag (BasePlayer.PlayerFlags.ReceivingSnapshot, b: true);
 			SendNetworkUpdateImmediate ();
 			player.ClientRPCPlayer (null, player, "StartLoading_Quick", arg1: true);
 		} else {
-			Debug.Log ((object)"No portal...");
+			Debug.Log ("No portal...");
 		}
 	}
 

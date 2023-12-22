@@ -6,11 +6,11 @@ using UnityEngine.Serialization;
 
 public class ItemStore : SingletonComponent<ItemStore>, VirtualScroll.IDataSource
 {
-	public static readonly Phrase CartEmptyPhrase = new Phrase ("store.cart.empty", "Cart");
+	public static readonly Translate.Phrase CartEmptyPhrase = new Translate.Phrase ("store.cart.empty", "Cart");
 
-	public static readonly Phrase CartSingularPhrase = new Phrase ("store.cart.singular", "1 item");
+	public static readonly Translate.Phrase CartSingularPhrase = new Translate.Phrase ("store.cart.singular", "1 item");
 
-	public static readonly Phrase CartPluralPhrase = new Phrase ("store.cart.plural", "{amount} items");
+	public static readonly Translate.Phrase CartPluralPhrase = new Translate.Phrase ("store.cart.plural", "{amount} items");
 
 	public GameObject ItemPrefab;
 

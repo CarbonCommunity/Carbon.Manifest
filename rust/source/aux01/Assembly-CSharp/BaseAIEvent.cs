@@ -73,14 +73,6 @@ public class BaseAIEvent
 
 	public virtual AIEventData ToProto ()
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0005: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Expected O, but got Unknown
 		return new AIEventData {
 			id = ID,
 			eventType = (int)EventType,
@@ -183,7 +175,7 @@ public class BaseAIEvent
 		case AIEventType.IsBlinded:
 			return new IsBlindedAIEvent ();
 		default:
-			Debug.LogWarning ((object)string.Concat ("No case for ", eventType, " event in BaseAIEvent.CreateEvent()!"));
+			Debug.LogWarning (string.Concat ("No case for ", eventType, " event in BaseAIEvent.CreateEvent()!"));
 			return null;
 		}
 	}

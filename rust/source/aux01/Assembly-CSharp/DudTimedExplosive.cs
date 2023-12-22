@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -28,46 +29,34 @@ public class DudTimedExplosive : TimedExplosive, IIgniteable, ISplashable
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("DudTimedExplosive.OnRpcMessage", 0);
-		try {
-			if (rpc == 2436818324u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("DudTimedExplosive.OnRpcMessage")) {
+			if (rpc == 2436818324u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_Pickup "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_Pickup "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_Pickup", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_Pickup")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (2436818324u, "RPC_Pickup", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							RPC_Pickup (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_Pickup");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -80,16 +69,16 @@ public class DudTimedExplosive : TimedExplosive, IIgniteable, ISplashable
 	public override void WaterCheck ()
 	{
 		if (becomeDudInWater && WaterFactor () >= 0.5f) {
-			if ((Object)(object)creatorEntity != (Object)null && creatorEntity.IsNpc) {
+			if (creatorEntity != null && creatorEntity.IsNpc) {
 				base.Explode ();
 				return;
 			}
 			BecomeDud ();
-			if (((FacepunchBehaviour)this).IsInvoking ((Action)WaterCheck)) {
-				((FacepunchBehaviour)this).CancelInvoke ((Action)WaterCheck);
+			if (IsInvoking (WaterCheck)) {
+				CancelInvoke (WaterCheck);
 			}
-			if (((FacepunchBehaviour)this).IsInvoking ((Action)Explode)) {
-				((FacepunchBehaviour)this).CancelInvoke ((Action)Explode);
+			if (IsInvoking (Explode)) {
+				CancelInvoke (Explode);
 			}
 		} else {
 			base.WaterCheck ();
@@ -100,9 +89,9 @@ public class DudTimedExplosive : TimedExplosive, IIgniteable, ISplashable
 	{
 		float randomTimerTime = base.GetRandomTimerTime ();
 		float num = 1f;
-		if (Random.Range (0f, 1f) <= 0.15f) {
+		if (UnityEngine.Random.Range (0f, 1f) <= 0.15f) {
 			num = 0.334f;
-		} else if (Random.Range (0f, 1f) <= 0.15f) {
+		} else if (UnityEngine.Random.Range (0f, 1f) <= 0.15f) {
 			num = 3f;
 		}
 		return randomTimerTime * num;
@@ -114,8 +103,8 @@ public class DudTimedExplosive : TimedExplosive, IIgniteable, ISplashable
 	{
 		if (!IsWickBurning ()) {
 			BasePlayer player = msg.player;
-			if (Random.Range (0f, 1f) >= 0.5f && HasParent ()) {
-				SetFuse (Random.Range (2.5f, 3f));
+			if (UnityEngine.Random.Range (0f, 1f) >= 0.5f && HasParent ()) {
+				SetFuse (UnityEngine.Random.Range (2.5f, 3f));
 				return;
 			}
 			player.GiveItem (ItemManager.Create (itemToGive, 1, skinID));
@@ -126,17 +115,17 @@ public class DudTimedExplosive : TimedExplosive, IIgniteable, ISplashable
 	public override void SetFuse (float fuseLength)
 	{
 		base.SetFuse (fuseLength);
-		explodeTime = Time.realtimeSinceStartup + fuseLength;
+		explodeTime = UnityEngine.Time.realtimeSinceStartup + fuseLength;
 		SetFlag (Flags.On, b: true);
 		SendNetworkUpdate ();
-		((FacepunchBehaviour)this).CancelInvoke ((Action)base.KillMessage);
+		CancelInvoke (base.KillMessage);
 	}
 
 	public override void Explode ()
 	{
-		if ((Object)(object)creatorEntity != (Object)null && creatorEntity.IsNpc) {
+		if (creatorEntity != null && creatorEntity.IsNpc) {
 			base.Explode ();
-		} else if (Random.Range (0f, 1f) < dudChance) {
+		} else if (UnityEngine.Random.Range (0f, 1f) < dudChance) {
 			BecomeDud ();
 		} else {
 			base.Explode ();
@@ -153,8 +142,6 @@ public class DudTimedExplosive : TimedExplosive, IIgniteable, ISplashable
 
 	public virtual void BecomeDud ()
 	{
-		//IL_0061: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0066: Unknown result type (might be due to invalid IL or missing references)
 		bool flag = false;
 		EntityRef entityRef = parentEntity;
 		while (entityRef.IsValid (base.isServer) && !flag) {
@@ -173,15 +160,15 @@ public class DudTimedExplosive : TimedExplosive, IIgniteable, ISplashable
 		}
 		Effect.server.Run ("assets/bundled/prefabs/fx/impacts/blunt/concrete/concrete1.prefab", this, 0u, Vector3.zero, Vector3.zero);
 		SendNetworkUpdate ();
-		((FacepunchBehaviour)this).CancelInvoke ((Action)base.KillMessage);
-		((FacepunchBehaviour)this).Invoke ((Action)base.KillMessage, 1200f);
+		CancelInvoke (base.KillMessage);
+		Invoke (base.KillMessage, 1200f);
 	}
 
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.dudExplosive = Pool.Get<DudExplosive> ();
-		info.msg.dudExplosive.fuseTimeLeft = explodeTime - Time.realtimeSinceStartup;
+		info.msg.dudExplosive = Facepunch.Pool.Get<DudExplosive> ();
+		info.msg.dudExplosive.fuseTimeLeft = explodeTime - UnityEngine.Time.realtimeSinceStartup;
 	}
 
 	public void Ignite (Vector3 fromPos)
@@ -189,7 +176,7 @@ public class DudTimedExplosive : TimedExplosive, IIgniteable, ISplashable
 		SetFuse (GetRandomTimerTime ());
 		ReceiveCollisionMessages (b: true);
 		if (waterCausesExplosion) {
-			((FacepunchBehaviour)this).InvokeRepeating ((Action)WaterCheck, 0f, 0.5f);
+			InvokeRepeating (WaterCheck, 0f, 0.5f);
 		}
 	}
 
@@ -209,8 +196,8 @@ public class DudTimedExplosive : TimedExplosive, IIgniteable, ISplashable
 	public int DoSplash (ItemDefinition splashType, int amount)
 	{
 		BecomeDud ();
-		if (((FacepunchBehaviour)this).IsInvoking ((Action)Explode)) {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)Explode);
+		if (IsInvoking (Explode)) {
+			CancelInvoke (Explode);
 		}
 		return 1;
 	}
@@ -219,7 +206,7 @@ public class DudTimedExplosive : TimedExplosive, IIgniteable, ISplashable
 	{
 		base.Load (info);
 		if (info.msg.dudExplosive != null) {
-			explodeTime = Time.realtimeSinceStartup + info.msg.dudExplosive.fuseTimeLeft;
+			explodeTime = UnityEngine.Time.realtimeSinceStartup + info.msg.dudExplosive.fuseTimeLeft;
 		}
 	}
 }

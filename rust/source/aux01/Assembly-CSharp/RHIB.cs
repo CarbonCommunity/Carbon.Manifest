@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Network;
@@ -17,46 +18,34 @@ public class RHIB : MotorRowboat
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("RHIB.OnRpcMessage", 0);
-		try {
-			if (rpc == 1382282393 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("RHIB.OnRpcMessage")) {
+			if (rpc == 1382282393 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_Release "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_Release "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_Release", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_Release")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (1382282393u, "Server_Release", this, player, 6f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							Server_Release (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in Server_Release");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -65,7 +54,7 @@ public class RHIB : MotorRowboat
 	[RPC_Server.IsVisible (6f)]
 	public void Server_Release (RPCMessage msg)
 	{
-		if (!((Object)(object)GetParentEntity () == (Object)null)) {
+		if (!(GetParentEntity () == null)) {
 			SetParent (null, worldPositionStays: true, sendImmediate: true);
 			SetToNonKinematic ();
 		}
@@ -73,7 +62,7 @@ public class RHIB : MotorRowboat
 
 	public override void VehicleFixedUpdate ()
 	{
-		gasPedal = Mathf.MoveTowards (gasPedal, targetGasPedal, Time.fixedDeltaTime * 1f);
+		gasPedal = Mathf.MoveTowards (gasPedal, targetGasPedal, UnityEngine.Time.fixedDeltaTime * 1f);
 		base.VehicleFixedUpdate ();
 	}
 
@@ -104,8 +93,8 @@ public class RHIB : MotorRowboat
 	public void AddFuel (int amount)
 	{
 		StorageContainer storageContainer = fuelSystem.fuelStorageInstance.Get (serverside: true);
-		if (Object.op_Implicit ((Object)(object)storageContainer)) {
-			((Component)storageContainer).GetComponent<StorageContainer> ().inventory.AddItem (ItemManager.FindItemDefinition ("lowgradefuel"), amount, 0uL);
+		if ((bool)storageContainer) {
+			storageContainer.GetComponent<StorageContainer> ().inventory.AddItem (ItemManager.FindItemDefinition ("lowgradefuel"), amount, 0uL);
 		}
 	}
 }

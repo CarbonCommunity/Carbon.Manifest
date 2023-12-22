@@ -1,4 +1,3 @@
-using System.IO;
 using Network;
 using SilentOrbit.ProtocolBuffers;
 using UnityEngine;
@@ -7,25 +6,14 @@ public static class NetworkWriteEx
 {
 	public static void WriteObject<T> (this NetWrite write, T obj)
 	{
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0253: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0258: Unknown result type (might be due to invalid IL or missing references)
-		//IL_027e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0283: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02aa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02d2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02fa: Unknown result type (might be due to invalid IL or missing references)
 		if (typeof(T) == typeof(Vector3)) {
-			Vector3 val = GenericsUtil.Cast<T, Vector3> (obj);
-			write.Vector3 (ref val);
+			Vector3 obj2 = GenericsUtil.Cast<T, Vector3> (obj);
+			write.Vector3 (in obj2);
 			return;
 		}
 		if (typeof(T) == typeof(Ray)) {
-			Ray val2 = GenericsUtil.Cast<T, Ray> (obj);
-			write.Ray (ref val2);
+			Ray obj3 = GenericsUtil.Cast<T, Ray> (obj);
+			write.Ray (in obj3);
 			return;
 		}
 		if (typeof(T) == typeof(float)) {
@@ -77,13 +65,13 @@ public static class NetworkWriteEx
 			return;
 		}
 		if (typeof(T) == typeof(Color)) {
-			Color val3 = GenericsUtil.Cast<T, Color> (obj);
-			write.Color (ref val3);
+			Color obj4 = GenericsUtil.Cast<T, Color> (obj);
+			write.Color (in obj4);
 			return;
 		}
 		if (typeof(T) == typeof(Color32)) {
-			Color32 val4 = GenericsUtil.Cast<T, Color32> (obj);
-			write.Color32 (ref val4);
+			Color32 obj5 = GenericsUtil.Cast<T, Color32> (obj);
+			write.Color32 (in obj5);
 			return;
 		}
 		if (typeof(T) == typeof(NetworkableId)) {
@@ -98,12 +86,10 @@ public static class NetworkWriteEx
 			write.ItemID (GenericsUtil.Cast<T, ItemId> (obj));
 			return;
 		}
-		object obj2 = obj;
-		IProto val5;
-		if ((val5 = (IProto)((obj2 is IProto) ? obj2 : null)) != null) {
-			val5.WriteToStream ((Stream)(object)write);
+		if (obj is IProto proto) {
+			proto.WriteToStream (write);
 			return;
 		}
-		Debug.LogError ((object)string.Concat ("NetworkData.Write - no handler to write ", obj, " -> ", obj.GetType ()));
+		Debug.LogError (string.Concat ("NetworkData.Write - no handler to write ", obj, " -> ", obj.GetType ()));
 	}
 }

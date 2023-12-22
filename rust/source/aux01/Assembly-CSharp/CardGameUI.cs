@@ -71,42 +71,42 @@ public class CardGameUI : UIDialog
 	private RustSlider dismountProgressSlider;
 
 	[SerializeField]
-	private Phrase phraseLoading;
+	private Translate.Phrase phraseLoading;
 
 	[SerializeField]
-	private Phrase phraseWaitingForNextRound;
+	private Translate.Phrase phraseWaitingForNextRound;
 
 	[SerializeField]
-	private Phrase phraseNotEnoughPlayers;
+	private Translate.Phrase phraseNotEnoughPlayers;
 
 	[SerializeField]
-	private Phrase phrasePlayerLeftGame;
+	private Translate.Phrase phrasePlayerLeftGame;
 
 	[SerializeField]
-	private Phrase phraseNotEnoughBuyIn;
+	private Translate.Phrase phraseNotEnoughBuyIn;
 
 	[SerializeField]
-	private Phrase phraseTooMuchBuyIn;
+	private Translate.Phrase phraseTooMuchBuyIn;
 
-	public Phrase phraseYourTurn;
+	public Translate.Phrase phraseYourTurn;
 
-	public Phrase phraseYouWinTheRound;
+	public Translate.Phrase phraseYouWinTheRound;
 
-	public Phrase phraseRoundWinner;
+	public Translate.Phrase phraseRoundWinner;
 
-	public Phrase phraseRoundWinners;
+	public Translate.Phrase phraseRoundWinners;
 
-	public Phrase phraseScrapWon;
+	public Translate.Phrase phraseScrapWon;
 
-	public Phrase phraseScrapReturned;
+	public Translate.Phrase phraseScrapReturned;
 
-	public Phrase phraseChangeBetAmount;
+	public Translate.Phrase phraseChangeBetAmount;
 
-	public Phrase phraseBet;
+	public Translate.Phrase phraseBet;
 
-	public Phrase phraseBetAdd;
+	public Translate.Phrase phraseBetAdd;
 
-	public Phrase phraseAllIn;
+	public Translate.Phrase phraseAllIn;
 
 	public GameObject amountChangeRoot;
 

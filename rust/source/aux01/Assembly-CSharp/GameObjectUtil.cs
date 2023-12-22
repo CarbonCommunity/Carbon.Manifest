@@ -6,7 +6,7 @@ public static class GameObjectUtil
 	{
 		Transform[] rootObjects = TransformUtil.GetRootObjects ();
 		for (int i = 0; i < rootObjects.Length; i++) {
-			((Component)rootObjects [i]).BroadcastMessage (messageName, param, (SendMessageOptions)1);
+			rootObjects [i].BroadcastMessage (messageName, param, SendMessageOptions.DontRequireReceiver);
 		}
 	}
 }

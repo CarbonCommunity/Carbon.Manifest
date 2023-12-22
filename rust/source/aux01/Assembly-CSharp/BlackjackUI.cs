@@ -38,46 +38,46 @@ public class BlackjackUI : MonoBehaviour
 	private RustText yourValueText;
 
 	[SerializeField]
-	private Phrase phrasePlaceYourBet;
+	private Translate.Phrase phrasePlaceYourBet;
 
 	[SerializeField]
-	private Phrase phraseHit;
+	private Translate.Phrase phraseHit;
 
 	[SerializeField]
-	private Phrase phraseStand;
+	private Translate.Phrase phraseStand;
 
 	[SerializeField]
-	private Phrase phraseSplit;
+	private Translate.Phrase phraseSplit;
 
 	[SerializeField]
-	private Phrase phraseDouble;
+	private Translate.Phrase phraseDouble;
 
 	[SerializeField]
-	private Phrase phraseInsurance;
+	private Translate.Phrase phraseInsurance;
 
 	[SerializeField]
-	private Phrase phraseBust;
+	private Translate.Phrase phraseBust;
 
 	[SerializeField]
-	private Phrase phraseBlackjack;
+	private Translate.Phrase phraseBlackjack;
 
 	[SerializeField]
-	private Phrase phraseStandoff;
+	private Translate.Phrase phraseStandoff;
 
 	[SerializeField]
-	private Phrase phraseYouWin;
+	private Translate.Phrase phraseYouWin;
 
 	[SerializeField]
-	private Phrase phraseYouLose;
+	private Translate.Phrase phraseYouLose;
 
 	[SerializeField]
-	private Phrase phraseWaitingForOtherPlayers;
+	private Translate.Phrase phraseWaitingForOtherPlayers;
 
 	[SerializeField]
-	private Phrase phraseHand;
+	private Translate.Phrase phraseHand;
 
 	[SerializeField]
-	private Phrase phraseInsurancePaidOut;
+	private Translate.Phrase phraseInsurancePaidOut;
 
 	[SerializeField]
 	private Sprite insuranceIcon;

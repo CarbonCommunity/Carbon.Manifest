@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class UICameraOverlay : SingletonComponent<UICameraOverlay>
 {
-	public static readonly Phrase FocusOffText = new Phrase ("camera.infinite_focus", "Infinite Focus");
+	public static readonly Translate.Phrase FocusOffText = new Translate.Phrase ("camera.infinite_focus", "Infinite Focus");
 
-	public static readonly Phrase FocusAutoText = new Phrase ("camera.auto_focus", "Auto Focus");
+	public static readonly Translate.Phrase FocusAutoText = new Translate.Phrase ("camera.auto_focus", "Auto Focus");
 
-	public static readonly Phrase FocusManualText = new Phrase ("camera.manual_focus", "Manual Focus");
+	public static readonly Translate.Phrase FocusManualText = new Translate.Phrase ("camera.manual_focus", "Manual Focus");
 
 	public CanvasGroup CanvasGroup;
 

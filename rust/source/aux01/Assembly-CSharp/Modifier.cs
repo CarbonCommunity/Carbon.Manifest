@@ -48,17 +48,17 @@ public class Modifier
 		Expired = TimeRemaining <= 0f;
 	}
 
-	public Modifier Save ()
+	public ProtoBuf.Modifier Save ()
 	{
-		Modifier obj = Pool.Get<Modifier> ();
-		obj.type = (int)Type;
-		obj.source = (int)Source;
-		obj.value = Value;
-		obj.timeRemaing = TimeRemaining;
-		return obj;
+		ProtoBuf.Modifier modifier = Pool.Get<ProtoBuf.Modifier> ();
+		modifier.type = (int)Type;
+		modifier.source = (int)Source;
+		modifier.value = Value;
+		modifier.timeRemaing = TimeRemaining;
+		return modifier;
 	}
 
-	public void Load (Modifier m)
+	public void Load (ProtoBuf.Modifier m)
 	{
 		Type = (ModifierType)m.type;
 		Source = (ModifierSource)m.source;

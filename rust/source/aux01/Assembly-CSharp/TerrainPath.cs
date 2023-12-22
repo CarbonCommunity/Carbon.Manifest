@@ -65,12 +65,10 @@ public class TerrainPath : TerrainExtension
 
 	public T FindClosest<T> (List<T> list, Vector3 pos) where T : MonoBehaviour
 	{
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		T result = default(T);
+		T result = null;
 		float num = float.MaxValue;
 		foreach (T item in list) {
-			float num2 = Vector3Ex.Distance2D (((Component)(object)item).transform.position, pos);
+			float num2 = Vector3Ex.Distance2D (item.transform.position, pos);
 			if (!(num2 >= num)) {
 				result = item;
 				num = num2;
@@ -192,45 +190,35 @@ public class TerrainPath : TerrainExtension
 
 	public void AddWire (PowerlineNode node)
 	{
-		string name = ((Object)((Component)node).transform.root).name;
-		if (!wires.ContainsKey (name)) {
-			wires.Add (name, new List<PowerlineNode> ());
+		string key = node.transform.root.name;
+		if (!wires.ContainsKey (key)) {
+			wires.Add (key, new List<PowerlineNode> ());
 		}
-		wires [name].Add (node);
+		wires [key].Add (node);
 	}
 
 	public void CreateWires ()
 	{
-		//IL_00bc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d2: Unknown result type (might be due to invalid IL or missing references)
 		List<GameObject> list = new List<GameObject> ();
 		int num = 0;
 		GameObjectRef gameObjectRef = null;
 		foreach (KeyValuePair<string, List<PowerlineNode>> wire in wires) {
 			foreach (PowerlineNode item in wire.Value) {
-				PowerLineWireConnectionHelper component = ((Component)item).GetComponent<PowerLineWireConnectionHelper> ();
-				if (!Object.op_Implicit ((Object)(object)component)) {
+				PowerLineWireConnectionHelper component = item.GetComponent<PowerLineWireConnectionHelper> ();
+				if (!component) {
 					continue;
 				}
 				if (list.Count == 0) {
 					gameObjectRef = item.WirePrefab;
 					num = component.connections.Count;
 				} else {
-					GameObject val = list [list.Count - 1];
-					if (!(item.WirePrefab.guid != gameObjectRef?.guid) && component.connections.Count == num) {
-						Vector3 val2 = val.transform.position - ((Component)item).transform.position;
-						if (!(((Vector3)(ref val2)).sqrMagnitude > item.MaxDistance * item.MaxDistance)) {
-							goto IL_0101;
-						}
+					GameObject gameObject = list [list.Count - 1];
+					if (item.WirePrefab.guid != gameObjectRef?.guid || component.connections.Count != num || (gameObject.transform.position - item.transform.position).sqrMagnitude > item.MaxDistance * item.MaxDistance) {
+						CreateWire (wire.Key, list, gameObjectRef);
+						list.Clear ();
 					}
-					CreateWire (wire.Key, list, gameObjectRef);
-					list.Clear ();
 				}
-				goto IL_0101;
-				IL_0101:
-				list.Add (((Component)item).gameObject);
+				list.Add (item.gameObject);
 			}
 			CreateWire (wire.Key, list, gameObjectRef);
 			list.Clear ();
@@ -241,21 +229,20 @@ public class TerrainPath : TerrainExtension
 	{
 		if (objects.Count >= 3 && wirePrefab != null && wirePrefab.isValid) {
 			PowerLineWire powerLineWire = PowerLineWire.Create (null, objects, wirePrefab, "Powerline Wires", null, 1f, 0.1f);
-			if (Object.op_Implicit ((Object)(object)powerLineWire)) {
-				((Behaviour)powerLineWire).enabled = false;
-				((Component)powerLineWire).gameObject.SetHierarchyGroup (name);
+			if ((bool)powerLineWire) {
+				powerLineWire.enabled = false;
+				powerLineWire.gameObject.SetHierarchyGroup (name);
 			}
 		}
 	}
 
 	public MonumentInfo FindMonumentWithBoundsOverlap (Vector3 position)
 	{
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
 		if (TerrainMeta.Path.Monuments == null) {
 			return null;
 		}
 		foreach (MonumentInfo monument in TerrainMeta.Path.Monuments) {
-			if ((Object)(object)monument != (Object)null && monument.IsInBounds (position)) {
+			if (monument != null && monument.IsInBounds (position)) {
 				return monument;
 			}
 		}

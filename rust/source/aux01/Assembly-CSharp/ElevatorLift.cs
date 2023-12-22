@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Network;
@@ -46,46 +47,34 @@ public class ElevatorLift : BaseCombatEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("ElevatorLift.OnRpcMessage", 0);
-		try {
-			if (rpc == 4061236510u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("ElevatorLift.OnRpcMessage")) {
+			if (rpc == 4061236510u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_RaiseLowerFloor "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_RaiseLowerFloor "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_RaiseLowerFloor", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_RaiseLowerFloor")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (4061236510u, "Server_RaiseLowerFloor", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							Server_RaiseLowerFloor (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in Server_RaiseLowerFloor");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -98,7 +87,7 @@ public class ElevatorLift : BaseCombatEntity
 
 	public void ToggleHurtTrigger (bool state)
 	{
-		if ((Object)(object)DescendingHurtTrigger != (Object)null) {
+		if (DescendingHurtTrigger != null) {
 			DescendingHurtTrigger.SetActive (state);
 		}
 	}
@@ -107,16 +96,14 @@ public class ElevatorLift : BaseCombatEntity
 	[RPC_Server.IsVisible (3f)]
 	public void Server_RaiseLowerFloor (RPCMessage msg)
 	{
-		//IL_007b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0080: Unknown result type (might be due to invalid IL or missing references)
 		if (CanMove ()) {
 			Elevator.Direction direction = (Elevator.Direction)msg.read.Int32 ();
 			bool goTopBottom = msg.read.Bit ();
 			SetFlag ((direction == Elevator.Direction.Up) ? Flags.Reserved1 : Flags.Reserved2, b: true);
 			owner.Server_RaiseLowerElevator (direction, goTopBottom);
-			((FacepunchBehaviour)this).Invoke ((Action)ClearDirection, 0.7f);
+			Invoke (ClearDirection, 0.7f);
 			if (liftButtonPressedEffect.isValid) {
-				Effect.server.Run (liftButtonPressedEffect.resourcePath, ((Component)this).transform.position, Vector3.up);
+				Effect.server.Run (liftButtonPressedEffect.resourcePath, base.transform.position, Vector3.up);
 			}
 		}
 	}
@@ -167,7 +154,7 @@ public class ElevatorLift : BaseCombatEntity
 
 	public void ToggleMovementCollider (bool state)
 	{
-		if ((Object)(object)MovementCollider != (Object)null) {
+		if (MovementCollider != null) {
 			MovementCollider.SetActive (state);
 		}
 	}

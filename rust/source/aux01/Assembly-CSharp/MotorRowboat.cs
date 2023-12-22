@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -140,62 +141,51 @@ public class MotorRowboat : BaseBoat
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("MotorRowboat.OnRpcMessage", 0);
-		try {
-			if (rpc == 1873751172 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("MotorRowboat.OnRpcMessage")) {
+			if (rpc == 1873751172 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_EngineToggle "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_EngineToggle "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_EngineToggle", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Call", 0);
+				using (TimeWarning.New ("RPC_EngineToggle")) {
 					try {
-						RPCMessage rPCMessage = default(RPCMessage);
-						rPCMessage.connection = msg.connection;
-						rPCMessage.player = player;
-						rPCMessage.read = msg.read;
-						RPCMessage msg2 = rPCMessage;
-						RPC_EngineToggle (msg2);
-					} finally {
-						((IDisposable)val3)?.Dispose ();
+						using (TimeWarning.New ("Call")) {
+							RPCMessage rPCMessage = default(RPCMessage);
+							rPCMessage.connection = msg.connection;
+							rPCMessage.player = player;
+							rPCMessage.read = msg.read;
+							RPCMessage msg2 = rPCMessage;
+							RPC_EngineToggle (msg2);
+						}
+					} catch (Exception exception) {
+						Debug.LogException (exception);
+						player.Kick ("RPC Error in RPC_EngineToggle");
 					}
-				} catch (Exception ex) {
-					Debug.LogException (ex);
-					player.Kick ("RPC Error in RPC_EngineToggle");
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 1851540757 && (Object)(object)player != (Object)null) {
+			if (rpc == 1851540757 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_OpenFuel "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_OpenFuel "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_OpenFuel", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Call", 0);
+				using (TimeWarning.New ("RPC_OpenFuel")) {
 					try {
-						RPCMessage rPCMessage = default(RPCMessage);
-						rPCMessage.connection = msg.connection;
-						rPCMessage.player = player;
-						rPCMessage.read = msg.read;
-						RPCMessage msg3 = rPCMessage;
-						RPC_OpenFuel (msg3);
-					} finally {
-						((IDisposable)val3)?.Dispose ();
+						using (TimeWarning.New ("Call")) {
+							RPCMessage rPCMessage = default(RPCMessage);
+							rPCMessage.connection = msg.connection;
+							rPCMessage.player = player;
+							rPCMessage.read = msg.read;
+							RPCMessage msg3 = rPCMessage;
+							RPC_OpenFuel (msg3);
+						}
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
+						player.Kick ("RPC Error in RPC_OpenFuel");
 					}
-				} catch (Exception ex2) {
-					Debug.LogException (ex2);
-					player.Kick ("RPC Error in RPC_OpenFuel");
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -208,11 +198,9 @@ public class MotorRowboat : BaseBoat
 
 	public override void ServerInit ()
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
 		base.ServerInit ();
-		timeSinceLastUsedFuel = TimeSince.op_Implicit (0f);
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)BoatDecay, Random.Range (30f, 60f), 60f, 6f);
+		timeSinceLastUsedFuel = 0f;
+		InvokeRandomized (BoatDecay, UnityEngine.Random.Range (30f, 60f), 60f, 6f);
 	}
 
 	protected override void OnChildAdded (BaseEntity child)
@@ -248,74 +236,32 @@ public class MotorRowboat : BaseBoat
 
 	public virtual void BoatDecay ()
 	{
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
 		if (!IsDying) {
-			BaseBoat.WaterVehicleDecay (this, 60f, TimeSince.op_Implicit (timeSinceLastUsedFuel), outsidedecayminutes, deepwaterdecayminutes, decaystartdelayminutes, preventDecayIndoors);
+			BaseBoat.WaterVehicleDecay (this, 60f, timeSinceLastUsedFuel, outsidedecayminutes, deepwaterdecayminutes, decaystartdelayminutes, preventDecayIndoors);
 		}
 	}
 
 	protected override void DoPushAction (BasePlayer player)
 	{
-		//IL_0095: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00aa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00db: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00eb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ff: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0106: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0111: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0116: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0129: Unknown result type (might be due to invalid IL or missing references)
-		//IL_012e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0158: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0160: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0073: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01bb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01c0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_018e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0193: Unknown result type (might be due to invalid IL or missing references)
 		if (IsFlipped ()) {
-			Vector3 val = ((Component)this).transform.InverseTransformPoint (((Component)player).transform.position);
+			Vector3 vector = base.transform.InverseTransformPoint (player.transform.position);
 			float num = 4f;
-			if (val.x > 0f) {
+			if (vector.x > 0f) {
 				num = 0f - num;
 			}
-			rigidBody.AddRelativeTorque (Vector3.forward * num, (ForceMode)2);
-			rigidBody.AddForce (Vector3.up * 4f, (ForceMode)2);
-			startedFlip = TimeSince.op_Implicit (0f);
-			((FacepunchBehaviour)this).InvokeRepeatingFixedTime ((Action)FlipMonitor);
+			rigidBody.AddRelativeTorque (Vector3.forward * num, ForceMode.VelocityChange);
+			rigidBody.AddForce (Vector3.up * 4f, ForceMode.VelocityChange);
+			startedFlip = 0f;
+			InvokeRepeatingFixedTime (FlipMonitor);
 		} else {
-			Vector3 val2 = Vector3Ex.Direction2D (((Component)player).transform.position, ((Component)this).transform.position);
-			Vector3 val3 = Vector3Ex.Direction2D (((Component)player).transform.position + player.eyes.BodyForward () * 3f, ((Component)player).transform.position);
-			Vector3 val4 = Vector3.up * 0.1f + val3;
-			val3 = ((Vector3)(ref val4)).normalized;
-			Vector3 val5 = ((Component)this).transform.position + val2 * 2f;
+			Vector3 vector2 = Vector3Ex.Direction2D (player.transform.position, base.transform.position);
+			Vector3 vector3 = Vector3Ex.Direction2D (player.transform.position + player.eyes.BodyForward () * 3f, player.transform.position);
+			vector3 = (Vector3.up * 0.1f + vector3).normalized;
+			Vector3 position = base.transform.position + vector2 * 2f;
 			float num2 = 3f;
-			float num3 = Vector3.Dot (((Component)this).transform.forward, val3);
-			num2 += Mathf.InverseLerp (0.8f, 1f, num3) * 3f;
-			rigidBody.AddForceAtPosition (val3 * num2, val5, (ForceMode)2);
+			float value = Vector3.Dot (base.transform.forward, vector3);
+			num2 += Mathf.InverseLerp (0.8f, 1f, value) * 3f;
+			rigidBody.AddForceAtPosition (vector3 * num2, position, ForceMode.VelocityChange);
 		}
 		if (HasFlag (Flags.Reserved9)) {
 			if (pushWaterEffect.isValid) {
@@ -329,16 +275,10 @@ public class MotorRowboat : BaseBoat
 
 	private void FlipMonitor ()
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
-		float num = Vector3.Dot (Vector3.up, ((Component)this).transform.up);
-		rigidBody.angularVelocity = Vector3.Lerp (rigidBody.angularVelocity, Vector3.zero, Time.fixedDeltaTime * 8f * num);
-		if (TimeSince.op_Implicit (startedFlip) > 3f) {
-			((FacepunchBehaviour)this).CancelInvokeFixedTime ((Action)FlipMonitor);
+		float num = Vector3.Dot (Vector3.up, base.transform.up);
+		rigidBody.angularVelocity = Vector3.Lerp (rigidBody.angularVelocity, Vector3.zero, UnityEngine.Time.fixedDeltaTime * 8f * num);
+		if ((float)startedFlip > 3f) {
+			CancelInvokeFixedTime (FlipMonitor);
 		}
 	}
 
@@ -346,7 +286,7 @@ public class MotorRowboat : BaseBoat
 	public void RPC_OpenFuel (RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
-		if (!((Object)(object)player == (Object)null) && IsDriver (player)) {
+		if (!(player == null) && IsDriver (player)) {
 			fuelSystem.LootFuel (player);
 		}
 	}
@@ -355,7 +295,7 @@ public class MotorRowboat : BaseBoat
 	public void RPC_EngineToggle (RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
-		if (!((Object)(object)player == (Object)null)) {
+		if (!(player == null)) {
 			bool flag = msg.read.Bit ();
 			if (InDryDock ()) {
 				flag = false;
@@ -376,7 +316,7 @@ public class MotorRowboat : BaseBoat
 	public override void PostServerLoad ()
 	{
 		base.PostServerLoad ();
-		((FacepunchBehaviour)this).Invoke ((Action)CheckInvalidBoat, 1f);
+		Invoke (CheckInvalidBoat, 1f);
 		if (base.health <= 0f) {
 			EnterCorpseState ();
 			buoyancy.buoyancyScale = 0f;
@@ -389,8 +329,8 @@ public class MotorRowboat : BaseBoat
 		bool num = fuelStoragePrefab.isValid && !fuelSystem.fuelStorageInstance.IsValid (base.isServer);
 		bool flag = storageUnitPrefab.isValid && !storageUnitInstance.IsValid (base.isServer);
 		if (num || flag) {
-			Debug.Log ((object)"Destroying invalid boat ");
-			((FacepunchBehaviour)this).Invoke ((Action)ActualDeath, 1f);
+			Debug.Log ("Destroying invalid boat ");
+			Invoke (ActualDeath, 1f);
 		}
 	}
 
@@ -406,20 +346,17 @@ public class MotorRowboat : BaseBoat
 
 	public float TimeSinceDriver ()
 	{
-		return Time.time - lastHadDriverTime;
+		return UnityEngine.Time.time - lastHadDriverTime;
 	}
 
 	public override void DriverInput (InputState inputState, BasePlayer player)
 	{
 		base.DriverInput (inputState, player);
-		lastHadDriverTime = Time.time;
+		lastHadDriverTime = UnityEngine.Time.time;
 	}
 
 	public override void VehicleFixedUpdate ()
 	{
-		//IL_00b6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_015b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0160: Unknown result type (might be due to invalid IL or missing references)
 		if (IsTransferProtected ()) {
 			return;
 		}
@@ -435,28 +372,27 @@ public class MotorRowboat : BaseBoat
 		SetFlags ();
 		UpdateDrag ();
 		if (IsDying) {
-			buoyancy.buoyancyScale = Mathf.Lerp (buoyancy.buoyancyScale, 0f, Time.fixedDeltaTime * 0.1f);
+			buoyancy.buoyancyScale = Mathf.Lerp (buoyancy.buoyancyScale, 0f, UnityEngine.Time.fixedDeltaTime * 0.1f);
 		} else {
 			float num2 = 1f;
-			float num3 = Vector3Ex.Magnitude2D (rigidBody.velocity);
-			float num4 = Mathf.InverseLerp (1f, 10f, num3) * 0.5f * base.healthFraction;
+			float value = rigidBody.velocity.Magnitude2D ();
+			float num3 = Mathf.InverseLerp (1f, 10f, value) * 0.5f * base.healthFraction;
 			if (!EngineOn ()) {
-				num4 = 0f;
+				num3 = 0f;
 			}
-			float num5 = 1f - 0.3f * (1f - base.healthFraction);
-			buoyancy.buoyancyScale = (num2 + num4) * num5;
+			float num4 = 1f - 0.3f * (1f - base.healthFraction);
+			buoyancy.buoyancyScale = (num2 + num3) * num4;
 		}
 		if (EngineOn ()) {
-			float num6 = (HasFlag (Flags.Reserved2) ? 1f : 0.0333f);
-			fuelSystem.TryUseFuel (Time.fixedDeltaTime * num6, fuelPerSec);
-			timeSinceLastUsedFuel = TimeSince.op_Implicit (0f);
+			float num5 = (HasFlag (Flags.Reserved2) ? 1f : 0.0333f);
+			fuelSystem.TryUseFuel (UnityEngine.Time.fixedDeltaTime * num5, fuelPerSec);
+			timeSinceLastUsedFuel = 0f;
 		}
 	}
 
 	private void SetFlags ()
 	{
-		TimeWarning val = TimeWarning.New ("SetFlag", 0);
-		try {
+		using (TimeWarning.New ("SetFlag")) {
 			bool b = EngineOn () && !IsFlipped () && base.healthFraction > 0f && fuelSystem.HasFuel () && TimeSinceDriver () < 75f;
 			Flags num = flags;
 			SetFlag (Flags.Reserved3, steering > 0f, recursive: false, networkupdate: false);
@@ -467,19 +403,14 @@ public class MotorRowboat : BaseBoat
 			SetFlag (Flags.Reserved6, fuelSystem.HasFuel (), recursive: false, networkupdate: false);
 			SetFlag (Flags.Reserved8, base.RecentlyPushed, recursive: false, networkupdate: false);
 			if (num != flags) {
-				((FacepunchBehaviour)this).Invoke ((Action)base.SendNetworkUpdate_Flags, 0f);
+				Invoke (base.SendNetworkUpdate_Flags, 0f);
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 	}
 
 	protected override bool DetermineIfStationary ()
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 localVelocity = GetLocalVelocity ();
-		if (((Vector3)(ref localVelocity)).sqrMagnitude < 0.5f) {
+		if (GetLocalVelocity ().sqrMagnitude < 0.5f) {
 			return !AnyMounted ();
 		}
 		return false;
@@ -487,20 +418,17 @@ public class MotorRowboat : BaseBoat
 
 	public override void SeatClippedWorld (BaseMountable mountable)
 	{
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer mounted = mountable.GetMounted ();
-		if (!((Object)(object)mounted == (Object)null)) {
+		if (!(mounted == null)) {
 			if (IsDriver (mounted)) {
 				steering = 0f;
 				gasPedal = 0f;
 			}
-			Vector3 velocity = rigidBody.velocity;
-			float num = Mathf.InverseLerp (4f, 20f, ((Vector3)(ref velocity)).magnitude);
+			float num = Mathf.InverseLerp (4f, 20f, rigidBody.velocity.magnitude);
 			if (num > 0f) {
 				mounted.Hurt (num * 100f, DamageType.Blunt, this, useProtection: false);
 			}
-			if ((Object)(object)mounted != (Object)null && mounted.isMounted) {
+			if (mounted != null && mounted.isMounted) {
 				base.SeatClippedWorld (mountable);
 			}
 		}
@@ -508,24 +436,16 @@ public class MotorRowboat : BaseBoat
 
 	public void UpdateDrag ()
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ac: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b5: Unknown result type (might be due to invalid IL or missing references)
-		float num = Vector3Ex.SqrMagnitude2D (rigidBody.velocity);
-		float num2 = Mathf.InverseLerp (0f, 2f, num);
+		float value = rigidBody.velocity.SqrMagnitude2D ();
+		float num = Mathf.InverseLerp (0f, 2f, value);
 		bool flag = HasFlag (Flags.Reserved1);
-		float num3 = angularDragBase * (flag ? 1f : engineOffAngularDragMultiplier);
-		rigidBody.angularDrag = num3 + angularDragVelocity * num2;
+		float num2 = angularDragBase * (flag ? 1f : engineOffAngularDragMultiplier);
+		rigidBody.angularDrag = num2 + angularDragVelocity * num;
 		rigidBody.drag = landDrag + waterDrag * Mathf.InverseLerp (0f, 1f, buoyancy.submergedFraction);
 		if (offAxisDrag > 0f) {
-			Vector3 forward = ((Component)this).transform.forward;
-			Vector3 velocity = rigidBody.velocity;
-			float num4 = Vector3.Dot (forward, ((Vector3)(ref velocity)).normalized);
-			float num5 = Mathf.InverseLerp (0.98f, 0.92f, num4);
-			Rigidbody obj = rigidBody;
-			obj.drag += num5 * offAxisDrag * buoyancy.submergedFraction;
+			float value2 = Vector3.Dot (base.transform.forward, rigidBody.velocity.normalized);
+			float num3 = Mathf.InverseLerp (0.98f, 0.92f, value2);
+			rigidBody.drag += num3 * offAxisDrag * buoyancy.submergedFraction;
 		}
 	}
 
@@ -534,14 +454,14 @@ public class MotorRowboat : BaseBoat
 		if (!IsDying) {
 			SetFlag (Flags.Broken, b: true);
 			repair.enabled = false;
-			((FacepunchBehaviour)this).Invoke ((Action)DismountAllPlayers, 10f);
+			Invoke (DismountAllPlayers, 10f);
 			EnterCorpseState ();
 		}
 	}
 
 	protected virtual void EnterCorpseState ()
 	{
-		((FacepunchBehaviour)this).Invoke ((Action)ActualDeath, vehicle.boat_corpse_seconds);
+		Invoke (ActualDeath, vehicle.boat_corpse_seconds);
 	}
 
 	public void ActualDeath ()
@@ -551,13 +471,10 @@ public class MotorRowboat : BaseBoat
 
 	public override bool MountEligable (BasePlayer player)
 	{
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
 		if (IsDying) {
 			return false;
 		}
-		Vector3 velocity = rigidBody.velocity;
-		if (((Vector3)(ref velocity)).magnitude >= 5f && HasDriver ()) {
+		if (rigidBody.velocity.magnitude >= 5f && HasDriver ()) {
 			return false;
 		}
 		return base.MountEligable (player);
@@ -565,14 +482,10 @@ public class MotorRowboat : BaseBoat
 
 	public override bool HasValidDismountPosition (BasePlayer player)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 worldVelocity = GetWorldVelocity ();
-		if (((Vector3)(ref worldVelocity)).magnitude <= 4f) {
+		if (GetWorldVelocity ().magnitude <= 4f) {
 			Transform[] array = stationaryDismounts;
-			foreach (Transform val in array) {
-				if (ValidDismountPosition (player, ((Component)val).transform.position)) {
+			foreach (Transform transform in array) {
+				if (ValidDismountPosition (player, transform.transform.position)) {
 					return true;
 				}
 			}
@@ -582,61 +495,46 @@ public class MotorRowboat : BaseBoat
 
 	public override bool GetDismountPosition (BasePlayer player, out Vector3 res)
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0081: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a1: Unknown result type (might be due to invalid IL or missing references)
-		Vector3 velocity = rigidBody.velocity;
-		if (((Vector3)(ref velocity)).magnitude <= 4f) {
-			List<Vector3> list = Pool.GetList<Vector3> ();
+		if (rigidBody.velocity.magnitude <= 4f) {
+			List<Vector3> obj = Facepunch.Pool.GetList<Vector3> ();
 			Transform[] array = stationaryDismounts;
-			foreach (Transform val in array) {
-				if (ValidDismountPosition (player, ((Component)val).transform.position)) {
-					list.Add (((Component)val).transform.position);
+			foreach (Transform transform in array) {
+				if (ValidDismountPosition (player, transform.transform.position)) {
+					obj.Add (transform.transform.position);
 				}
 			}
-			if (list.Count > 0) {
-				Vector3 pos = ((Component)player).transform.position;
-				list.Sort ((Vector3 a, Vector3 b) => Vector3.Distance (a, pos).CompareTo (Vector3.Distance (b, pos)));
-				res = list [0];
-				Pool.FreeList<Vector3> (ref list);
+			if (obj.Count > 0) {
+				Vector3 pos = player.transform.position;
+				obj.Sort ((Vector3 a, Vector3 b) => Vector3.Distance (a, pos).CompareTo (Vector3.Distance (b, pos)));
+				res = obj [0];
+				Facepunch.Pool.FreeList (ref obj);
 				return true;
 			}
-			Pool.FreeList<Vector3> (ref list);
+			Facepunch.Pool.FreeList (ref obj);
 		}
 		return base.GetDismountPosition (player, out res);
 	}
 
 	public override void DisableTransferProtection ()
 	{
-		if ((Object)(object)GetDriver () != (Object)null && HasFlag (Flags.Reserved1)) {
+		if (GetDriver () != null && HasFlag (Flags.Reserved1)) {
 			gasPedal = 0f;
 			steering = 0f;
-			lastHadDriverTime = Time.time;
+			lastHadDriverTime = UnityEngine.Time.time;
 		}
 		base.DisableTransferProtection ();
 	}
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
-		info.msg.motorBoat = Pool.Get<Motorboat> ();
+		info.msg.motorBoat = Facepunch.Pool.Get<Motorboat> ();
 		info.msg.motorBoat.storageid = storageUnitInstance.uid;
 		info.msg.motorBoat.fuelStorageID = fuelSystem.fuelStorageInstance.uid;
 	}
 
 	protected override bool CanPushNow (BasePlayer pusher)
 	{
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
 		if (!base.CanPushNow (pusher)) {
 			return false;
 		}
@@ -646,7 +544,7 @@ public class MotorRowboat : BaseBoat
 		if (!IsFlipped () && pusher.IsStandingOnEntity (this, 8192)) {
 			return false;
 		}
-		if (Vector3.Distance (((Component)pusher).transform.position, ((Component)this).transform.position) > 5f) {
+		if (Vector3.Distance (pusher.transform.position, base.transform.position) > 5f) {
 			return false;
 		}
 		if (IsDying) {
@@ -674,8 +572,6 @@ public class MotorRowboat : BaseBoat
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (info.msg.motorBoat != null) {
 			fuelSystem.fuelStorageInstance.uid = info.msg.motorBoat.fuelStorageID;

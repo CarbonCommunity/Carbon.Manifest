@@ -17,7 +17,7 @@ public class Music : ConsoleSystem
 	public static void info (Arg arg)
 	{
 		StringBuilder stringBuilder = new StringBuilder ();
-		if ((Object)(object)SingletonComponent<MusicManager>.Instance == (Object)null) {
+		if (SingletonComponent<MusicManager>.Instance == null) {
 			stringBuilder.Append ("No music manager was found");
 		} else {
 			stringBuilder.Append ("Current music info: ");

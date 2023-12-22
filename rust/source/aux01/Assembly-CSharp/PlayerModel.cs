@@ -227,9 +227,8 @@ public class PlayerModel : ListComponent<PlayerModel>
 
 	private static Vector3 GetFlat (Vector3 dir)
 	{
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
 		dir.y = 0f;
-		return ((Vector3)(ref dir)).normalized;
+		return dir.normalized;
 	}
 
 	public static void RebuildAll ()

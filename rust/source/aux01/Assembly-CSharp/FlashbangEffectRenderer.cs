@@ -18,13 +18,6 @@ public class FlashbangEffectRenderer : PostProcessEffectRenderer<FlashbangEffect
 
 	public override void Render (PostProcessRenderContext context)
 	{
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0066: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0071: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0108: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010e: Unknown result type (might be due to invalid IL or missing references)
 		if (!Application.isPlaying) {
 			context.command.BlitFullscreenTriangle (context.source, context.destination);
 			return;
@@ -33,15 +26,15 @@ public class FlashbangEffectRenderer : PostProcessEffectRenderer<FlashbangEffect
 		CheckCreateRenderTexture (ref screenRT, "Flashbang", context.width, context.height, context.sourceFormat);
 		command.BeginSample ("FlashbangEffect");
 		if (needsCapture) {
-			command.CopyTexture (context.source, RenderTargetIdentifier.op_Implicit ((Texture)(object)screenRT));
+			command.CopyTexture (context.source, screenRT);
 			needsCapture = false;
 		}
 		PropertySheet propertySheet = context.propertySheets.Get (flashbangEffectShader);
 		propertySheet.properties.Clear ();
 		propertySheet.properties.SetFloat ("_BurnIntensity", base.settings.burnIntensity.value);
 		propertySheet.properties.SetFloat ("_WhiteoutIntensity", base.settings.whiteoutIntensity.value);
-		if (Object.op_Implicit ((Object)(object)screenRT)) {
-			propertySheet.properties.SetTexture ("_BurnOverlay", (Texture)(object)screenRT);
+		if ((bool)screenRT) {
+			propertySheet.properties.SetTexture ("_BurnOverlay", screenRT);
 		}
 		context.command.BlitFullscreenTriangle (context.source, context.destination, propertySheet, 0);
 		command.EndSample ("FlashbangEffect");
@@ -55,26 +48,22 @@ public class FlashbangEffectRenderer : PostProcessEffectRenderer<FlashbangEffect
 
 	private static void CheckCreateRenderTexture (ref RenderTexture rt, string name, int width, int height, RenderTextureFormat format)
 	{
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0038: Expected O, but got Unknown
-		if ((Object)(object)rt == (Object)null || ((Texture)rt).width != width || ((Texture)rt).height != height) {
+		if (rt == null || rt.width != width || rt.height != height) {
 			SafeDestroyRenderTexture (ref rt);
 			rt = new RenderTexture (width, height, 0, format) {
-				hideFlags = (HideFlags)52
+				hideFlags = HideFlags.DontSave
 			};
-			((Object)rt).name = name;
-			((Texture)rt).wrapMode = (TextureWrapMode)1;
+			rt.name = name;
+			rt.wrapMode = TextureWrapMode.Clamp;
 			rt.Create ();
 		}
 	}
 
 	private static void SafeDestroyRenderTexture (ref RenderTexture rt)
 	{
-		if ((Object)(object)rt != (Object)null) {
+		if (rt != null) {
 			rt.Release ();
-			Object.DestroyImmediate ((Object)(object)rt);
+			Object.DestroyImmediate (rt);
 			rt = null;
 		}
 	}

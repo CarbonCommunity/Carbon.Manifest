@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -12,46 +13,34 @@ public class SleepingBagCamper : SleepingBag
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("SleepingBagCamper.OnRpcMessage", 0);
-		try {
-			if (rpc == 2177887503u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("SleepingBagCamper.OnRpcMessage")) {
+			if (rpc == 2177887503u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - ServerClearBed "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - ServerClearBed "));
 				}
-				TimeWarning val2 = TimeWarning.New ("ServerClearBed", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("ServerClearBed")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (2177887503u, "ServerClearBed", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							ServerClearBed (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in ServerClearBed");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -66,7 +55,7 @@ public class SleepingBagCamper : SleepingBag
 	{
 		base.PostPlayerSpawn (p);
 		BaseVehicleSeat baseVehicleSeat = AssociatedSeat.Get (base.isServer);
-		if ((Object)(object)baseVehicleSeat != (Object)null) {
+		if (baseVehicleSeat != null) {
 			if (p.IsConnected) {
 				p.EndSleeping ();
 			}
@@ -84,11 +73,9 @@ public class SleepingBagCamper : SleepingBag
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
 		if (!info.forDisk) {
-			info.msg.sleepingBagCamper = Pool.Get<SleepingBagCamper> ();
+			info.msg.sleepingBagCamper = Facepunch.Pool.Get<ProtoBuf.SleepingBagCamper> ();
 			info.msg.sleepingBagCamper.seatID = AssociatedSeat.uid;
 		}
 	}
@@ -100,7 +87,7 @@ public class SleepingBagCamper : SleepingBag
 		}
 		if (AssociatedSeat.IsValid (base.isServer)) {
 			BasePlayer mounted = AssociatedSeat.Get (base.isServer).GetMounted ();
-			if ((Object)(object)mounted != (Object)null) {
+			if (mounted != null) {
 				return mounted.userID != userID;
 			}
 		}
@@ -112,7 +99,7 @@ public class SleepingBagCamper : SleepingBag
 	public void ServerClearBed (RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
-		if (!((Object)(object)player == (Object)null) && AssociatedSeat.IsValid (base.isServer) && !((Object)(object)AssociatedSeat.Get (base.isServer).GetMounted () != (Object)(object)player)) {
+		if (!(player == null) && AssociatedSeat.IsValid (base.isServer) && !(AssociatedSeat.Get (base.isServer).GetMounted () != player)) {
 			SleepingBag.RemoveBagForPlayer (this, deployerUserID);
 			deployerUserID = 0uL;
 			SendNetworkUpdate ();

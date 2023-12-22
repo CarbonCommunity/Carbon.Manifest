@@ -12,28 +12,26 @@ public class ToggleLayer : MonoBehaviour, IClientComponent
 
 	protected void OnEnable ()
 	{
-		if (Object.op_Implicit ((Object)(object)MainCamera.mainCamera)) {
+		if ((bool)MainCamera.mainCamera) {
 			toggleControl.isOn = (MainCamera.mainCamera.cullingMask & layer.Mask) != 0;
 		}
 	}
 
 	public void OnToggleChanged ()
 	{
-		if (Object.op_Implicit ((Object)(object)MainCamera.mainCamera)) {
+		if ((bool)MainCamera.mainCamera) {
 			if (toggleControl.isOn) {
-				Camera mainCamera = MainCamera.mainCamera;
-				mainCamera.cullingMask |= layer.Mask;
+				MainCamera.mainCamera.cullingMask |= layer.Mask;
 			} else {
-				Camera mainCamera2 = MainCamera.mainCamera;
-				mainCamera2.cullingMask &= ~layer.Mask;
+				MainCamera.mainCamera.cullingMask &= ~layer.Mask;
 			}
 		}
 	}
 
 	protected void OnValidate ()
 	{
-		if (Object.op_Implicit ((Object)(object)textControl)) {
-			((TMP_Text)textControl).text = layer.Name;
+		if ((bool)textControl) {
+			textControl.text = layer.Name;
 		}
 	}
 }

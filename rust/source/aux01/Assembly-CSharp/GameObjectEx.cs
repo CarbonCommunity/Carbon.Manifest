@@ -13,28 +13,26 @@ public static class GameObjectEx
 
 	public static BaseEntity ToBaseEntity (this Collider collider)
 	{
-		return ((Component)collider).transform.ToBaseEntity ();
+		return collider.transform.ToBaseEntity ();
 	}
 
 	public static BaseEntity ToBaseEntity (this Transform transform)
 	{
-		IEntity val = GetEntityFromRegistry (transform);
-		if (val == null && !((Component)transform).gameObject.activeInHierarchy) {
-			val = GetEntityFromComponent (transform);
+		IEntity entity = GetEntityFromRegistry (transform);
+		if (entity == null && !transform.gameObject.activeInHierarchy) {
+			entity = GetEntityFromComponent (transform);
 		}
-		return val as BaseEntity;
+		return entity as BaseEntity;
 	}
 
 	public static bool IsOnLayer (this GameObject go, Layer rustLayer)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Expected I4, but got Unknown
 		return go.IsOnLayer ((int)rustLayer);
 	}
 
 	public static bool IsOnLayer (this GameObject go, int layer)
 	{
-		if ((Object)(object)go != (Object)null) {
+		if (go != null) {
 			return go.layer == layer;
 		}
 		return false;
@@ -42,25 +40,25 @@ public static class GameObjectEx
 
 	private static IEntity GetEntityFromRegistry (Transform transform)
 	{
-		Transform val = transform;
-		IEntity val2 = Entity.Get (val);
-		while (val2 == null && (Object)(object)val.parent != (Object)null) {
-			val = val.parent;
-			val2 = Entity.Get (val);
+		Transform transform2 = transform;
+		IEntity entity = Entity.Get (transform2);
+		while (entity == null && transform2.parent != null) {
+			transform2 = transform2.parent;
+			entity = Entity.Get (transform2);
 		}
-		if (val2 != null && !val2.IsDestroyed) {
-			return val2;
+		if (entity != null && !entity.IsDestroyed) {
+			return entity;
 		}
 		return null;
 	}
 
 	private static IEntity GetEntityFromComponent (Transform transform)
 	{
-		Transform val = transform;
-		IEntity component = ((Component)val).GetComponent<IEntity> ();
-		while (component == null && (Object)(object)val.parent != (Object)null) {
-			val = val.parent;
-			component = ((Component)val).GetComponent<IEntity> ();
+		Transform transform2 = transform;
+		IEntity component = transform2.GetComponent<IEntity> ();
+		while (component == null && transform2.parent != null) {
+			transform2 = transform2.parent;
+			component = transform2.GetComponent<IEntity> ();
 		}
 		if (component != null && !component.IsDestroyed) {
 			return component;
@@ -70,21 +68,21 @@ public static class GameObjectEx
 
 	public static void SetHierarchyGroup (this GameObject obj, string strRoot, bool groupActive = true, bool persistant = false)
 	{
-		obj.transform.SetParent (HierarchyUtil.GetRoot (strRoot, groupActive, persistant).transform, true);
+		obj.transform.SetParent (HierarchyUtil.GetRoot (strRoot, groupActive, persistant).transform, worldPositionStays: true);
 	}
 
 	public static bool HasComponent<T> (this GameObject obj) where T : Component
 	{
-		return (Object)(object)obj.GetComponent<T> () != (Object)null;
+		return obj.GetComponent<T> () != null;
 	}
 
 	public static void SetChildComponentsEnabled<T> (this GameObject gameObject, bool enabled) where T : MonoBehaviour
 	{
-		List<T> list = Pool.GetList<T> ();
-		gameObject.GetComponentsInChildren<T> (true, list);
-		foreach (T item in list) {
-			((Behaviour)(object)item).enabled = enabled;
+		List<T> obj = Pool.GetList<T> ();
+		gameObject.GetComponentsInChildren (includeInactive: true, obj);
+		foreach (T item in obj) {
+			item.enabled = enabled;
 		}
-		Pool.FreeList<T> (ref list);
+		Pool.FreeList (ref obj);
 	}
 }

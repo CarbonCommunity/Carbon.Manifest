@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using UnityEngine;
 using VLB;
 
@@ -16,21 +17,20 @@ public class TriggerZone : MonoBehaviour
 
 	private void Update ()
 	{
-		//IL_006b: Unknown result type (might be due to invalid IL or missing references)
-		VolumetricLightBeam component = ((Component)this).GetComponent<VolumetricLightBeam> ();
-		if (Object.op_Implicit ((Object)(object)component)) {
-			MeshCollider orAddComponent = ((Component)this).gameObject.GetOrAddComponent<MeshCollider> ();
-			Debug.Assert (Object.op_Implicit ((Object)(object)orAddComponent));
+		VolumetricLightBeam component = GetComponent<VolumetricLightBeam> ();
+		if ((bool)component) {
+			MeshCollider orAddComponent = base.gameObject.GetOrAddComponent<MeshCollider> ();
+			Debug.Assert (orAddComponent);
 			float lengthZ = component.fadeEnd * rangeMultiplier;
 			float radiusEnd = Mathf.LerpUnclamped (component.coneRadiusStart, component.coneRadiusEnd, rangeMultiplier);
 			m_Mesh = MeshGenerator.GenerateConeZ_Radius (lengthZ, component.coneRadiusStart, radiusEnd, 8, 0, cap: false);
-			((Object)m_Mesh).hideFlags = Consts.ProceduralObjectsHideFlags;
+			m_Mesh.hideFlags = Consts.ProceduralObjectsHideFlags;
 			orAddComponent.sharedMesh = m_Mesh;
 			if (setIsTrigger) {
 				orAddComponent.convex = true;
-				((Collider)orAddComponent).isTrigger = true;
+				orAddComponent.isTrigger = true;
 			}
-			Object.Destroy ((Object)(object)this);
+			Object.Destroy (this);
 		}
 	}
 }

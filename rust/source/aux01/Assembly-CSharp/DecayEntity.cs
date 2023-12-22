@@ -34,7 +34,7 @@ public class DecayEntity : BaseCombatEntity
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.decayEntity = Pool.Get<DecayEntity> ();
+		info.msg.decayEntity = Facepunch.Pool.Get<ProtoBuf.DecayEntity> ();
 		info.msg.decayEntity.buildingID = buildingID;
 		if (info.forDisk) {
 			info.msg.decayEntity.decayTimer = decayTimer;
@@ -114,7 +114,7 @@ public class DecayEntity : BaseCombatEntity
 			float num2 = item.amount * num;
 			bool flag = false;
 			foreach (ItemAmount itemAmount in itemAmounts) {
-				if ((Object)(object)itemAmount.itemDef == (Object)(object)item.itemDef) {
+				if (itemAmount.itemDef == item.itemDef) {
 					itemAmount.amount += num2;
 					flag = true;
 					break;
@@ -129,15 +129,15 @@ public class DecayEntity : BaseCombatEntity
 	public override void ServerInit ()
 	{
 		base.ServerInit ();
-		decayVariance = Random.Range (0.95f, 1f);
+		decayVariance = UnityEngine.Random.Range (0.95f, 1f);
 		decay = PrefabAttribute.server.Find<Decay> (prefabID);
 		decayPoints = PrefabAttribute.server.FindAll<DecayPoint> (prefabID);
 		upkeep = PrefabAttribute.server.Find<Upkeep> (prefabID);
 		BuildingManager.server.Add (this);
-		if (!Application.isLoadingSave) {
+		if (!Rust.Application.isLoadingSave) {
 			BuildingManager.server.CheckMerge (this);
 		}
-		lastDecayTick = Time.time;
+		lastDecayTick = UnityEngine.Time.time;
 	}
 
 	internal override void DoServerDestroy ()
@@ -149,30 +149,26 @@ public class DecayEntity : BaseCombatEntity
 
 	public virtual void AttachToBuilding (DecayEntity other)
 	{
-		if ((Object)(object)other != (Object)null) {
+		if (other != null) {
 			AttachToBuilding (other.buildingID);
 			BuildingManager.server.CheckMerge (this);
 			return;
 		}
 		BuildingBlock nearbyBuildingBlock = GetNearbyBuildingBlock ();
-		if (Object.op_Implicit ((Object)(object)nearbyBuildingBlock)) {
+		if ((bool)nearbyBuildingBlock) {
 			AttachToBuilding (nearbyBuildingBlock.buildingID);
 		}
 	}
 
 	public BuildingBlock GetNearbyBuildingBlock ()
 	{
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
 		float num = float.MaxValue;
 		BuildingBlock result = null;
 		Vector3 position = PivotPoint ();
-		List<BuildingBlock> list = Pool.GetList<BuildingBlock> ();
-		Vis.Entities (position, 1.5f, list, 2097152, (QueryTriggerInteraction)2);
-		for (int i = 0; i < list.Count; i++) {
-			BuildingBlock buildingBlock = list [i];
+		List<BuildingBlock> obj = Facepunch.Pool.GetList<BuildingBlock> ();
+		Vis.Entities (position, 1.5f, obj, 2097152);
+		for (int i = 0; i < obj.Count; i++) {
+			BuildingBlock buildingBlock = obj [i];
 			if (buildingBlock.isServer == base.isServer) {
 				float num2 = buildingBlock.SqrDistance (position);
 				if (!buildingBlock.grounded) {
@@ -184,7 +180,7 @@ public class DecayEntity : BaseCombatEntity
 				}
 			}
 		}
-		Pool.FreeList<BuildingBlock> (ref list);
+		Facepunch.Pool.FreeList (ref obj);
 		return result;
 	}
 
@@ -213,11 +209,11 @@ public class DecayEntity : BaseCombatEntity
 		if (decay == null) {
 			return;
 		}
-		float num = Time.time - lastDecayTick;
+		float num = UnityEngine.Time.time - lastDecayTick;
 		if (num < ConVar.Decay.tick) {
 			return;
 		}
-		lastDecayTick = Time.time;
+		lastDecayTick = UnityEngine.Time.time;
 		if (HasParent () || !decay.ShouldDecay (this)) {
 			return;
 		}
@@ -226,7 +222,7 @@ public class DecayEntity : BaseCombatEntity
 			upkeepTimer += num2;
 			if (upkeepTimer > 0f) {
 				BuildingPrivlidge buildingPrivilege = GetBuildingPrivilege ();
-				if ((Object)(object)buildingPrivilege != (Object)null) {
+				if (buildingPrivilege != null) {
 					upkeepTimer -= buildingPrivilege.PurchaseUpkeepTime (this, Mathf.Max (upkeepTimer, 600f));
 				}
 			}
@@ -243,8 +239,7 @@ public class DecayEntity : BaseCombatEntity
 		if (decayTimer < decay.GetDecayDelay (this)) {
 			return;
 		}
-		TimeWarning val = TimeWarning.New ("DecayTick", 0);
-		try {
+		using (TimeWarning.New ("DecayTick")) {
 			float num4 = 1f;
 			if (ConVar.Decay.upkeep) {
 				if (!BypassInsideDecayMultiplier && !IsOutside ()) {
@@ -262,8 +257,6 @@ public class DecayEntity : BaseCombatEntity
 				float num5 = num2 / decay.GetDecayDuration (this) * MaxHealth ();
 				Hurt (num5 * num4 * decayVariance, DamageType.Decay);
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 	}
 
@@ -275,14 +268,9 @@ public class DecayEntity : BaseCombatEntity
 
 	public override void OnKilled (HitInfo info)
 	{
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
 		if (debrisPrefab.isValid) {
-			BaseEntity baseEntity = GameManager.server.CreateEntity (debrisPrefab.resourcePath, ((Component)this).transform.position, ((Component)this).transform.rotation * Quaternion.Euler (debrisRotationOffset));
-			if (Object.op_Implicit ((Object)(object)baseEntity)) {
+			BaseEntity baseEntity = GameManager.server.CreateEntity (debrisPrefab.resourcePath, base.transform.position, base.transform.rotation * Quaternion.Euler (debrisRotationOffset));
+			if ((bool)baseEntity) {
 				baseEntity.SetParent (parentEntity.Get (serverside: true), worldPositionStays: true);
 				baseEntity.Spawn ();
 			}

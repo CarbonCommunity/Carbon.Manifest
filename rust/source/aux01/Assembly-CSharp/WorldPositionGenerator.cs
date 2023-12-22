@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Facepunch;
 using UnityEngine;
@@ -28,46 +27,6 @@ public class WorldPositionGenerator : ScriptableObject
 
 	public bool TrySample (Vector3 origin, float minDist, float maxDist, out Vector3 position, List<Vector3> blocked = null)
 	{
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0060: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0191: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0192: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0091: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0095: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01e0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ef: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01fe: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0203: Unknown result type (might be due to invalid IL or missing references)
-		//IL_024b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0250: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0254: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0259: Unknown result type (might be due to invalid IL or missing references)
-		//IL_025e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0267: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0273: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0218: Unknown result type (might be due to invalid IL or missing references)
-		//IL_021d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02a4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_029f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02a1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02bf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02b2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02c5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02ca: Unknown result type (might be due to invalid IL or missing references)
 		if (_quadtree == null) {
 			PrecalculatePositions ();
 		}
@@ -76,9 +35,8 @@ public class WorldPositionGenerator : ScriptableObject
 		List<Rect> blockedRects = Pool.GetList<Rect> ();
 		if (blocked != null) {
 			float num = 10f;
-			Rect item = default(Rect);
 			foreach (Vector3 item2 in blocked) {
-				((Rect)(ref item))..ctor (item2.x - num, item2.z - num, num * 2f, num * 2f);
+				Rect item = new Rect (item2.x - num, item2.z - num, num * 2f, num * 2f);
 				blockedRects.Add (item);
 			}
 		}
@@ -87,7 +45,7 @@ public class WorldPositionGenerator : ScriptableObject
 		for (int i = 0; i < candidates.Count; i++) {
 			ByteQuadtree.Element element2 = candidates [i];
 			if (!element2.IsLeaf) {
-				ListEx.RemoveUnordered<ByteQuadtree.Element> (candidates, i--);
+				candidates.RemoveUnordered (i--);
 				EvaluateCandidate (element2.Child1);
 				EvaluateCandidate (element2.Child2);
 				EvaluateCandidate (element2.Child3);
@@ -96,17 +54,17 @@ public class WorldPositionGenerator : ScriptableObject
 		}
 		if (candidates.Count == 0) {
 			position = origin;
-			Pool.FreeList<ByteQuadtree.Element> (ref candidates);
-			Pool.FreeList<Rect> (ref blockedRects);
+			Pool.FreeList (ref candidates);
+			Pool.FreeList (ref blockedRects);
 			return false;
 		}
-		Vector3 val2;
+		Vector3 vector;
 		if (CheckSphereRadius <= float.Epsilon) {
-			ByteQuadtree.Element random = ListEx.GetRandom<ByteQuadtree.Element> (candidates);
-			Rect val = GetElementRect (random);
-			val2 = Vector3Ex.XZ3D (((Rect)(ref val)).min + ((Rect)(ref val)).size * new Vector2 (Random.value, Random.value));
+			ByteQuadtree.Element random = candidates.GetRandom ();
+			Rect rect = GetElementRect (random);
+			vector = (rect.min + rect.size * new Vector2 (Random.value, Random.value)).XZ3D ();
 		} else {
-			Vector3 val4;
+			Vector3 vector2;
 			while (true) {
 				if (candidates.Count == 0) {
 					position = Vector3.zero;
@@ -114,38 +72,27 @@ public class WorldPositionGenerator : ScriptableObject
 				}
 				int index = Random.Range (0, candidates.Count);
 				ByteQuadtree.Element element3 = candidates [index];
-				Rect val3 = GetElementRect (element3);
-				val4 = Vector3Ex.XZ3D (((Rect)(ref val3)).center);
-				val4.y = TerrainMeta.HeightMap.GetHeight (val4);
-				if (!Physics.CheckSphere (val4, CheckSphereRadius, ((LayerMask)(ref CheckSphereMask)).value)) {
+				vector2 = GetElementRect (element3).center.XZ3D ();
+				vector2.y = TerrainMeta.HeightMap.GetHeight (vector2);
+				if (!Physics.CheckSphere (vector2, CheckSphereRadius, CheckSphereMask.value)) {
 					break;
 				}
 				candidates.RemoveAt (index);
 			}
-			val2 = val4;
+			vector = vector2;
 		}
-		position = Vector3Ex.WithY (val2, aboveWater ? TerrainMeta.WaterMap.GetHeight (val2) : TerrainMeta.HeightMap.GetHeight (val2));
-		Pool.FreeList<ByteQuadtree.Element> (ref candidates);
-		Pool.FreeList<Rect> (ref blockedRects);
+		position = vector.WithY (aboveWater ? TerrainMeta.WaterMap.GetHeight (vector) : TerrainMeta.HeightMap.GetHeight (vector));
+		Pool.FreeList (ref candidates);
+		Pool.FreeList (ref blockedRects);
 		return true;
 		void EvaluateCandidate (ByteQuadtree.Element child)
 		{
-			//IL_000d: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-			//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-			//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-			//IL_006a: Unknown result type (might be due to invalid IL or missing references)
-			//IL_006f: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0074: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0084: Unknown result type (might be due to invalid IL or missing references)
 			if (child.Value != 0) {
 				Rect elementRect = GetElementRect (child);
-				if (((Rect)(ref elementRect)).Overlaps (inclusion) && (!((Rect)(ref exclusion)).Contains (((Rect)(ref elementRect)).min) || !((Rect)(ref exclusion)).Contains (((Rect)(ref elementRect)).max))) {
+				if (elementRect.Overlaps (inclusion) && (!exclusion.Contains (elementRect.min) || !exclusion.Contains (elementRect.max))) {
 					if (blockedRects.Count > 0) {
 						foreach (Rect item3 in blockedRects) {
-							Rect current2 = item3;
-							if (((Rect)(ref current2)).Contains (((Rect)(ref elementRect)).min) && ((Rect)(ref current2)).Contains (((Rect)(ref elementRect)).max)) {
+							if (item3.Contains (elementRect.min) && item3.Contains (elementRect.max)) {
 								return;
 							}
 						}
@@ -156,28 +103,18 @@ public class WorldPositionGenerator : ScriptableObject
 		}
 		Rect GetElementRect (ByteQuadtree.Element element)
 		{
-			//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-			//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-			//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-			//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-			//IL_007a: Unknown result type (might be due to invalid IL or missing references)
 			int num2 = 1 << element.Depth;
 			float num3 = 1f / (float)num2;
-			Vector2 val5 = element.Coords * num3;
-			return new Rect (_origin.x + val5.x * _area.x, _origin.z + val5.y * _area.z, _area.x * num3, _area.z * num3);
+			Vector2 vector3 = element.Coords * num3;
+			return new Rect (_origin.x + vector3.x * _area.x, _origin.z + vector3.y * _area.z, _area.x * num3, _area.z * num3);
 		}
 	}
 
 	public void PrecalculatePositions ()
 	{
-		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0062: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0067: Unknown result type (might be due to invalid IL or missing references)
 		int res = Mathf.NextPowerOfTwo ((int)((float)World.Size * 0.25f));
 		byte[] map = new byte[res * res];
-		Parallel.For (0, res, (Action<int>)delegate(int z) {
+		Parallel.For (0, res, delegate(int z) {
 			for (int i = 0; i < res; i++) {
 				float normX = ((float)i + 0.5f) / (float)res;
 				float normZ = ((float)z + 0.5f) / (float)res;

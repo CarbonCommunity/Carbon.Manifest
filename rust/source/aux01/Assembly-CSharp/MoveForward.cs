@@ -6,8 +6,6 @@ public class MoveForward : MonoBehaviour
 
 	protected void Update ()
 	{
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		((Component)this).GetComponent<Rigidbody> ().velocity = Speed * ((Component)this).transform.forward;
+		GetComponent<Rigidbody> ().velocity = Speed * base.transform.forward;
 	}
 }

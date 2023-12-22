@@ -9,17 +9,17 @@ public class UIPrefab : MonoBehaviour
 
 	private void Awake ()
 	{
-		if (!((Object)(object)prefabSource == (Object)null) && !((Object)(object)createdGameObject != (Object)null)) {
-			createdGameObject = Instantiate.GameObject (prefabSource, (Transform)null);
-			((Object)createdGameObject).name = ((Object)prefabSource).name;
-			createdGameObject.transform.SetParent (((Component)this).transform, false);
+		if (!(prefabSource == null) && !(createdGameObject != null)) {
+			createdGameObject = Facepunch.Instantiate.GameObject (prefabSource);
+			createdGameObject.name = prefabSource.name;
+			createdGameObject.transform.SetParent (base.transform, worldPositionStays: false);
 			createdGameObject.Identity ();
 		}
 	}
 
 	public void SetVisible (bool visible)
 	{
-		if (!((Object)(object)createdGameObject == (Object)null) && createdGameObject.activeSelf != visible) {
+		if (!(createdGameObject == null) && createdGameObject.activeSelf != visible) {
 			createdGameObject.SetActive (visible);
 		}
 	}

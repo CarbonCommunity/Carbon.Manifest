@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -29,7 +30,7 @@ public class DroppedItemContainer : BaseCombatEntity, LootPanel.IHasLootPanel, I
 
 	public ItemContainer inventory;
 
-	public Phrase LootPanelTitle => Phrase.op_Implicit (playerName);
+	public Translate.Phrase LootPanelTitle => playerName;
 
 	public string playerName {
 		get {
@@ -44,46 +45,34 @@ public class DroppedItemContainer : BaseCombatEntity, LootPanel.IHasLootPanel, I
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("DroppedItemContainer.OnRpcMessage", 0);
-		try {
-			if (rpc == 331989034 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("DroppedItemContainer.OnRpcMessage")) {
+			if (rpc == 331989034 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_OpenLoot "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_OpenLoot "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_OpenLoot", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_OpenLoot")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (331989034u, "RPC_OpenLoot", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage rpc2 = rPCMessage;
 							RPC_OpenLoot (rpc2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_OpenLoot");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -116,11 +105,8 @@ public class DroppedItemContainer : BaseCombatEntity, LootPanel.IHasLootPanel, I
 
 	public void ResetRemovalTime (float dur)
 	{
-		TimeWarning val = TimeWarning.New ("ResetRemovalTime", 0);
-		try {
-			((FacepunchBehaviour)this).Invoke ((Action)RemoveMe, dur);
-		} finally {
-			((IDisposable)val)?.Dispose ();
+		using (TimeWarning.New ("ResetRemovalTime")) {
+			Invoke (RemoveMe, dur);
 		}
 	}
 
@@ -132,9 +118,9 @@ public class DroppedItemContainer : BaseCombatEntity, LootPanel.IHasLootPanel, I
 	public float CalculateRemovalTime ()
 	{
 		if (!ItemBasedDespawn) {
-			return Server.itemdespawn * 16f * Server.itemdespawn_container_scale;
+			return ConVar.Server.itemdespawn * 16f * ConVar.Server.itemdespawn_container_scale;
 		}
-		float num = Server.itemdespawn_quick;
+		float num = ConVar.Server.itemdespawn_quick;
 		if (inventory != null) {
 			foreach (Item item in inventory.itemList) {
 				num = Mathf.Max (num, item.GetDespawnDuration ());
@@ -154,11 +140,8 @@ public class DroppedItemContainer : BaseCombatEntity, LootPanel.IHasLootPanel, I
 
 	public void TakeFrom (ItemContainer[] source, float destroyPercent = 0f)
 	{
-		//IL_0115: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a9: Unknown result type (might be due to invalid IL or missing references)
 		Assert.IsTrue (inventory == null, "Initializing Twice");
-		TimeWarning val = TimeWarning.New ("DroppedItemContainer.TakeFrom", 0);
-		try {
+		using (TimeWarning.New ("DroppedItemContainer.TakeFrom")) {
 			int num = 0;
 			ItemContainer[] array = source;
 			foreach (ItemContainer itemContainer in array) {
@@ -169,38 +152,36 @@ public class DroppedItemContainer : BaseCombatEntity, LootPanel.IHasLootPanel, I
 			inventory.GiveUID ();
 			inventory.entityOwner = this;
 			inventory.SetFlag (ItemContainer.Flag.NoItemInput, b: true);
-			List<Item> list = Pool.GetList<Item> ();
+			List<Item> obj = Facepunch.Pool.GetList<Item> ();
 			array = source;
 			for (int i = 0; i < array.Length; i++) {
 				Item[] array2 = array [i].itemList.ToArray ();
 				foreach (Item item in array2) {
 					if (destroyPercent > 0f) {
 						if (item.amount == 1) {
-							list.Add (item);
+							obj.Add (item);
 							continue;
 						}
 						item.amount = Mathf.CeilToInt ((float)item.amount * (1f - destroyPercent));
 					}
 					if (!item.MoveToContainer (inventory)) {
-						item.DropAndTossUpwards (((Component)this).transform.position);
+						item.DropAndTossUpwards (base.transform.position);
 					}
 				}
 			}
-			if (list.Count > 0) {
-				int num2 = Mathf.FloorToInt ((float)list.Count * destroyPercent);
-				int num3 = Mathf.Max (0, list.Count - num2);
-				ListEx.Shuffle<Item> (list, (uint)Random.Range (0, int.MaxValue));
+			if (obj.Count > 0) {
+				int num2 = Mathf.FloorToInt ((float)obj.Count * destroyPercent);
+				int num3 = Mathf.Max (0, obj.Count - num2);
+				obj.Shuffle ((uint)UnityEngine.Random.Range (0, int.MaxValue));
 				for (int k = 0; k < num3; k++) {
-					Item item2 = list [k];
+					Item item2 = obj [k];
 					if (!item2.MoveToContainer (inventory)) {
-						item2.DropAndTossUpwards (((Component)this).transform.position);
+						item2.DropAndTossUpwards (base.transform.position);
 					}
 				}
 			}
-			Pool.FreeList<Item> (ref list);
+			Facepunch.Pool.FreeList (ref obj);
 			ResetRemovalTime ();
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 	}
 
@@ -210,7 +191,7 @@ public class DroppedItemContainer : BaseCombatEntity, LootPanel.IHasLootPanel, I
 	{
 		if (inventory != null) {
 			BasePlayer player = rpc.player;
-			if (Object.op_Implicit ((Object)(object)player) && player.CanInteract () && player.inventory.loot.StartLootingEntity (this)) {
+			if ((bool)player && player.CanInteract () && player.inventory.loot.StartLootingEntity (this)) {
 				SetFlag (Flags.Open, b: true);
 				player.inventory.loot.AddContainer (inventory);
 				player.inventory.loot.SendImmediate ();
@@ -243,15 +224,15 @@ public class DroppedItemContainer : BaseCombatEntity, LootPanel.IHasLootPanel, I
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.lootableCorpse = Pool.Get<LootableCorpse> ();
+		info.msg.lootableCorpse = Facepunch.Pool.Get<ProtoBuf.LootableCorpse> ();
 		info.msg.lootableCorpse.playerName = playerName;
 		info.msg.lootableCorpse.playerID = playerSteamID;
 		if (info.forDisk) {
 			if (inventory != null) {
-				info.msg.storageBox = Pool.Get<StorageBox> ();
+				info.msg.storageBox = Facepunch.Pool.Get<StorageBox> ();
 				info.msg.storageBox.contents = inventory.Save ();
 			} else {
-				Debug.LogWarning ((object)("Dropped item container without inventory: " + ((object)this).ToString ()));
+				Debug.LogWarning ("Dropped item container without inventory: " + ToString ());
 			}
 		}
 	}
@@ -267,7 +248,7 @@ public class DroppedItemContainer : BaseCombatEntity, LootPanel.IHasLootPanel, I
 			if (inventory != null) {
 				inventory.Load (info.msg.storageBox.contents);
 			} else {
-				Debug.LogWarning ((object)("Dropped item container without inventory: " + ((object)this).ToString ()));
+				Debug.LogWarning ("Dropped item container without inventory: " + ToString ());
 			}
 		}
 	}

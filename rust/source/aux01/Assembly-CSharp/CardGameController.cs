@@ -29,7 +29,7 @@ public abstract class CardGameController : IDisposable
 
 	public const int IDLE_KICK_SECONDS = 240;
 
-	private CardList localPlayerCards;
+	private CardGame.CardList localPlayerCards;
 
 	protected int activePlayerIndex;
 
@@ -78,15 +78,15 @@ public abstract class CardGameController : IDisposable
 
 	protected bool IsClient => Owner.isClient;
 
-	public RoundResults resultInfo { get; private set; }
+	public CardGame.RoundResults resultInfo { get; private set; }
 
 	public CardGameController (BaseCardGameEntity owner)
 	{
 		Owner = owner;
 		PlayerData = new CardPlayerData[MaxPlayersAtTable ()];
-		resultInfo = Pool.Get<RoundResults> ();
-		resultInfo.results = Pool.GetList<Result> ();
-		localPlayerCards = Pool.Get<CardList> ();
+		resultInfo = Pool.Get<CardGame.RoundResults> ();
+		resultInfo.results = Pool.GetList<CardGame.RoundResults.Result> ();
+		localPlayerCards = Pool.Get<CardGame.CardList> ();
 		localPlayerCards.cards = Pool.GetList<int> ();
 		for (int i = 0; i < PlayerData.Length; i++) {
 			PlayerData [i] = GetNewCardPlayerData (i);
@@ -155,7 +155,7 @@ public abstract class CardGameController : IDisposable
 	protected bool ToCardPlayerData (int relIndex, bool includeOutOfRound, out CardPlayerData result)
 	{
 		if (!HasRoundInProgressOrEnding) {
-			Debug.LogWarning ((object)(GetType ().Name + ": Tried to call ToCardPlayerData while no round was in progress. Returning null."));
+			Debug.LogWarning (GetType ().Name + ": Tried to call ToCardPlayerData while no round was in progress. Returning null.");
 			result = null;
 			return false;
 		}
@@ -167,7 +167,7 @@ public abstract class CardGameController : IDisposable
 	public int RelToAbsIndex (int relIndex, bool includeFolded)
 	{
 		if (!HasRoundInProgressOrEnding) {
-			Debug.LogError ((object)(GetType ().Name + ": Called RelToAbsIndex outside of a round. No-one is playing. Returning -1."));
+			Debug.LogError (GetType ().Name + ": Called RelToAbsIndex outside of a round. No-one is playing. Returning -1.");
 			return -1;
 		}
 		int num = 0;
@@ -179,14 +179,14 @@ public abstract class CardGameController : IDisposable
 				num++;
 			}
 		}
-		Debug.LogError ((object)$"{GetType ().Name}: No absolute index found for relative index {relIndex}. Only {NumPlayersInCurrentRound ()} total players are in the round. Returning -1.");
+		Debug.LogError ($"{GetType ().Name}: No absolute index found for relative index {relIndex}. Only {NumPlayersInCurrentRound ()} total players are in the round. Returning -1.");
 		return -1;
 	}
 
 	public int GameToRoundIndex (int gameRelIndex)
 	{
 		if (!HasRoundInProgressOrEnding) {
-			Debug.LogError ((object)(GetType ().Name + ": Called GameToRoundIndex outside of a round. No-one is playing. Returning 0."));
+			Debug.LogError (GetType ().Name + ": Called GameToRoundIndex outside of a round. No-one is playing. Returning 0.");
 			return 0;
 		}
 		int num = 0;
@@ -205,7 +205,7 @@ public abstract class CardGameController : IDisposable
 				num++;
 			}
 		}
-		Debug.LogError ((object)$"{GetType ().Name}: No round index found for game index {gameRelIndex}. Only {NumPlayersInCurrentRound ()} total players are in the round. Returning 0.");
+		Debug.LogError ($"{GetType ().Name}: No round index found for game index {gameRelIndex}. Only {NumPlayersInCurrentRound ()} total players are in the round. Returning 0.");
 		return 0;
 	}
 
@@ -270,7 +270,7 @@ public abstract class CardGameController : IDisposable
 	{
 		if (IsServer) {
 			StorageContainer pot = Owner.GetPot ();
-			if ((Object)(object)pot != (Object)null) {
+			if (pot != null) {
 				return pot.inventory.GetAmount (ScrapItemID, onlyUsableAmounts: true);
 			}
 			return 0;
@@ -323,10 +323,8 @@ public abstract class CardGameController : IDisposable
 		if (resultInfo.results == null) {
 			return;
 		}
-		foreach (Result result in resultInfo.results) {
-			if (result != null) {
-				result.Dispose ();
-			}
+		foreach (CardGame.RoundResults.Result result in resultInfo.results) {
+			result?.Dispose ();
 		}
 		resultInfo.results.Clear ();
 	}
@@ -371,14 +369,14 @@ public abstract class CardGameController : IDisposable
 	protected void SyncLocalPlayerCards (CardPlayerData pData)
 	{
 		BasePlayer basePlayer = BasePlayer.FindByID (pData.UserID);
-		if ((Object)(object)basePlayer == (Object)null) {
+		if (basePlayer == null) {
 			return;
 		}
 		localPlayerCards.cards.Clear ();
 		foreach (PlayingCard card in pData.Cards) {
 			localPlayerCards.cards.Add (card.GetIndex ());
 		}
-		Owner.ClientRPCPlayer<CardList> (null, basePlayer, "ReceiveCardsForPlayer", localPlayerCards);
+		Owner.ClientRPCPlayer (null, basePlayer, "ReceiveCardsForPlayer", localPlayerCards);
 	}
 
 	private void JoinTable (ulong userID)
@@ -447,19 +445,19 @@ public abstract class CardGameController : IDisposable
 		int num = 0;
 		StorageContainer storage = playerData.GetStorage ();
 		StorageContainer pot = Owner.GetPot ();
-		if ((Object)(object)storage != (Object)null && (Object)(object)pot != (Object)null) {
-			List<Item> list = Pool.GetList<Item> ();
-			num = storage.inventory.Take (list, ScrapItemID, maxAmount);
+		if (storage != null && pot != null) {
+			List<Item> obj = Pool.GetList<Item> ();
+			num = storage.inventory.Take (obj, ScrapItemID, maxAmount);
 			if (num > 0) {
-				foreach (Item item in list) {
+				foreach (Item item in obj) {
 					if (!item.MoveToContainer (pot.inventory, -1, allowStack: true, ignoreStackLimit: true)) {
 						item.MoveToContainer (storage.inventory);
 					}
 				}
 			}
-			Pool.FreeList<Item> (ref list);
+			Pool.FreeList (ref obj);
 		} else {
-			Debug.LogError ((object)(GetType ().Name + ": TryAddToPot: Null storage."));
+			Debug.LogError (GetType ().Name + ": TryAddToPot: Null storage.");
 		}
 		return num;
 	}
@@ -469,19 +467,19 @@ public abstract class CardGameController : IDisposable
 		int num = 0;
 		StorageContainer storage = playerData.GetStorage ();
 		StorageContainer pot = Owner.GetPot ();
-		if ((Object)(object)storage != (Object)null && (Object)(object)pot != (Object)null) {
-			List<Item> list = Pool.GetList<Item> ();
-			num = pot.inventory.Take (list, ScrapItemID, maxAmount);
+		if (storage != null && pot != null) {
+			List<Item> obj = Pool.GetList<Item> ();
+			num = pot.inventory.Take (obj, ScrapItemID, maxAmount);
 			if (num > 0) {
-				foreach (Item item in list) {
+				foreach (Item item in obj) {
 					if (!item.MoveToContainer (storage.inventory, -1, allowStack: true, ignoreStackLimit: true)) {
 						item.MoveToContainer (pot.inventory);
 					}
 				}
 			}
-			Pool.FreeList<Item> (ref list);
+			Pool.FreeList (ref obj);
 		} else {
-			Debug.LogError ((object)(GetType ().Name + ": PayOut: Null storage."));
+			Debug.LogError (GetType ().Name + ": PayOut: Null storage.");
 		}
 		return num;
 	}
@@ -494,7 +492,7 @@ public abstract class CardGameController : IDisposable
 	protected void ClearPot ()
 	{
 		StorageContainer pot = Owner.GetPot ();
-		if ((Object)(object)pot != (Object)null) {
+		if (pot != null) {
 			pot.inventory.Clear ();
 		}
 	}
@@ -504,24 +502,24 @@ public abstract class CardGameController : IDisposable
 		StorageContainer storage = data.GetStorage ();
 		BasePlayer basePlayer = BasePlayer.FindByID (data.UserID);
 		int num = 0;
-		if ((Object)(object)basePlayer != (Object)null) {
-			List<Item> list = Pool.GetList<Item> ();
-			num = storage.inventory.Take (list, ScrapItemID, int.MaxValue);
+		if (basePlayer != null) {
+			List<Item> obj = Pool.GetList<Item> ();
+			num = storage.inventory.Take (obj, ScrapItemID, int.MaxValue);
 			if (num > 0) {
-				foreach (Item item in list) {
+				foreach (Item item in obj) {
 					if (!item.MoveToContainer (basePlayer.inventory.containerMain, -1, allowStack: true, ignoreStackLimit: true)) {
 						item.MoveToContainer (storage.inventory);
 					}
 				}
 			}
-			Pool.FreeList<Item> (ref list);
+			Pool.FreeList (ref obj);
 		}
 		return num;
 	}
 
 	public virtual void Save (CardGame syncData)
 	{
-		syncData.players = Pool.GetList<CardPlayer> ();
+		syncData.players = Pool.GetList<CardGame.CardPlayer> ();
 		syncData.state = (int)State;
 		syncData.activePlayerIndex = activePlayerIndex;
 		CardPlayerData[] playerData = PlayerData;
@@ -580,7 +578,7 @@ public abstract class CardGameController : IDisposable
 		State = CardGameState.InGameRoundEnding;
 		CancelNextCycleInvoke ();
 		Owner.SendNetworkUpdate ();
-		((FacepunchBehaviour)Owner).Invoke ((Action)EndRound, (float)EndRoundDelay);
+		Owner.Invoke (EndRound, EndRoundDelay);
 	}
 
 	private void EndRound ()
@@ -591,7 +589,7 @@ public abstract class CardGameController : IDisposable
 		SubEndRound ();
 		foreach (CardPlayerData item in PlayersInRound ()) {
 			BasePlayer basePlayer = BasePlayer.FindByID (item.UserID);
-			if ((Object)(object)basePlayer != (Object)null && basePlayer.metabolism.CanConsume ()) {
+			if (basePlayer != null && basePlayer.metabolism.CanConsume ()) {
 				basePlayer.metabolism.MarkConsumption ();
 				basePlayer.metabolism.ApplyChange (MetabolismAttribute.Type.Calories, 2f, 0f);
 				basePlayer.metabolism.ApplyChange (MetabolismAttribute.Type.Hydration, 2f, 0f);
@@ -600,22 +598,22 @@ public abstract class CardGameController : IDisposable
 		}
 		UpdateAllAvailableInputs ();
 		Owner.SendNetworkUpdate ();
-		((FacepunchBehaviour)Owner).Invoke ((Action)InvokeStartNewRound, (float)TimeBetweenRounds);
+		Owner.Invoke (InvokeStartNewRound, TimeBetweenRounds);
 	}
 
 	protected virtual void AddRoundResult (CardPlayerData pData, int winnings, int resultCode)
 	{
-		foreach (Result result in resultInfo.results) {
-			if (result.ID == pData.UserID) {
-				result.winnings += winnings;
+		foreach (CardGame.RoundResults.Result result2 in resultInfo.results) {
+			if (result2.ID == pData.UserID) {
+				result2.winnings += winnings;
 				return;
 			}
 		}
-		Result val = Pool.Get<Result> ();
-		val.ID = pData.UserID;
-		val.winnings = winnings;
-		val.resultCode = resultCode;
-		resultInfo.results.Add (val);
+		CardGame.RoundResults.Result result = Pool.Get<CardGame.RoundResults.Result> ();
+		result.ID = pData.UserID;
+		result.winnings = winnings;
+		result.resultCode = resultCode;
+		resultInfo.results.Add (result);
 	}
 
 	protected void EndGameplay ()
@@ -635,7 +633,7 @@ public abstract class CardGameController : IDisposable
 
 	public void ReceivedInputFromPlayer (BasePlayer player, int input, bool countAsAction, int value = 0)
 	{
-		if (!((Object)(object)player == (Object)null)) {
+		if (!(player == null)) {
 			player.ResetInputIdleTime ();
 			if (TryGetCardPlayerData (player, out var cardPlayer)) {
 				ReceivedInputFromPlayer (cardPlayer, input, countAsAction, value);
@@ -739,14 +737,14 @@ public abstract class CardGameController : IDisposable
 
 	protected void QueueNextCycleInvoke ()
 	{
-		((FacepunchBehaviour)SingletonComponent<InvokeHandler>.Instance).Invoke ((Action)StartNextCycle, TimeBetweenTurns);
+		SingletonComponent<InvokeHandler>.Instance.Invoke (StartNextCycle, TimeBetweenTurns);
 		isWaitingBetweenTurns = true;
 		Owner.SendNetworkUpdate ();
 	}
 
 	private void CancelNextCycleInvoke ()
 	{
-		((FacepunchBehaviour)SingletonComponent<InvokeHandler>.Instance).CancelInvoke ((Action)StartNextCycle);
+		SingletonComponent<InvokeHandler>.Instance.CancelInvoke (StartNextCycle);
 		isWaitingBetweenTurns = false;
 	}
 }

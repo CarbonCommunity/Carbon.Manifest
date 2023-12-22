@@ -86,7 +86,7 @@ public sealed class PostProcessDebugLayer
 
 	private void DestroyDebugOverlayTarget ()
 	{
-		RuntimeUtilities.Destroy ((Object)(object)debugOverlayTarget);
+		RuntimeUtilities.Destroy (debugOverlayTarget);
 		debugOverlayTarget = null;
 	}
 
@@ -109,49 +109,37 @@ public sealed class PostProcessDebugLayer
 
 	public void PushDebugOverlay (CommandBuffer cmd, RenderTargetIdentifier source, PropertySheet sheet, int pass)
 	{
-		//IL_005b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0060: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0072: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0079: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0080: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008d: Expected O, but got Unknown
-		//IL_009a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a1: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)debugOverlayTarget == (Object)null || !debugOverlayTarget.IsCreated () || ((Texture)debugOverlayTarget).width != frameWidth || ((Texture)debugOverlayTarget).height != frameHeight) {
-			RuntimeUtilities.Destroy ((Object)(object)debugOverlayTarget);
-			debugOverlayTarget = new RenderTexture (frameWidth, frameHeight, 0, (RenderTextureFormat)0) {
+		if (debugOverlayTarget == null || !debugOverlayTarget.IsCreated () || debugOverlayTarget.width != frameWidth || debugOverlayTarget.height != frameHeight) {
+			RuntimeUtilities.Destroy (debugOverlayTarget);
+			debugOverlayTarget = new RenderTexture (frameWidth, frameHeight, 0, RenderTextureFormat.ARGB32) {
 				name = "Debug Overlay Target",
 				anisoLevel = 1,
-				filterMode = (FilterMode)1,
-				wrapMode = (TextureWrapMode)1,
-				hideFlags = (HideFlags)61
+				filterMode = FilterMode.Bilinear,
+				wrapMode = TextureWrapMode.Clamp,
+				hideFlags = HideFlags.HideAndDontSave
 			};
 			debugOverlayTarget.Create ();
 		}
-		cmd.BlitFullscreenTriangle (source, RenderTargetIdentifier.op_Implicit ((Texture)(object)debugOverlayTarget), sheet, pass);
+		cmd.BlitFullscreenTriangle (source, debugOverlayTarget, sheet, pass);
 		debugOverlayActive = true;
 	}
 
 	internal DepthTextureMode GetCameraFlags ()
 	{
-		if (debugOverlay != DebugOverlay.Depth) {
-			if (debugOverlay != DebugOverlay.Normals) {
-				if (debugOverlay != DebugOverlay.MotionVectors) {
-					return (DepthTextureMode)0;
-				}
-				return (DepthTextureMode)5;
-			}
-			return (DepthTextureMode)2;
+		if (debugOverlay == DebugOverlay.Depth) {
+			return DepthTextureMode.Depth;
 		}
-		return (DepthTextureMode)1;
+		if (debugOverlay == DebugOverlay.Normals) {
+			return DepthTextureMode.DepthNormals;
+		}
+		if (debugOverlay == DebugOverlay.MotionVectors) {
+			return DepthTextureMode.Depth | DepthTextureMode.MotionVectors;
+		}
+		return DepthTextureMode.None;
 	}
 
 	internal void RenderMonitors (PostProcessRenderContext context)
 	{
-		//IL_0090: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a6: Unknown result type (might be due to invalid IL or missing references)
 		bool flag = false;
 		bool flag2 = false;
 		foreach (KeyValuePair<MonitorType, Monitor> monitor in m_Monitors) {
@@ -165,8 +153,8 @@ public sealed class PostProcessDebugLayer
 		CommandBuffer command = context.command;
 		command.BeginSample ("Monitors");
 		if (flag2) {
-			command.GetTemporaryRT (ShaderIDs.HalfResFinalCopy, context.width / 2, context.height / 2, 0, (FilterMode)1, context.sourceFormat);
-			command.Blit (context.destination, RenderTargetIdentifier.op_Implicit (ShaderIDs.HalfResFinalCopy));
+			command.GetTemporaryRT (ShaderIDs.HalfResFinalCopy, context.width / 2, context.height / 2, 0, FilterMode.Bilinear, context.sourceFormat);
+			command.Blit (context.destination, ShaderIDs.HalfResFinalCopy);
 		}
 		foreach (KeyValuePair<MonitorType, Monitor> monitor2 in m_Monitors) {
 			Monitor value = monitor2.Value;
@@ -182,30 +170,20 @@ public sealed class PostProcessDebugLayer
 
 	internal void RenderSpecialOverlays (PostProcessRenderContext context)
 	{
-		//IL_00a8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ae: Invalid comparison between Unknown and I4
-		//IL_0121: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0133: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_016d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01c6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d8: Unknown result type (might be due to invalid IL or missing references)
 		if (debugOverlay == DebugOverlay.Depth) {
 			PropertySheet propertySheet = context.propertySheets.Get (context.resources.shaders.debugOverlays);
 			propertySheet.properties.SetVector (ShaderIDs.Params, new Vector4 (overlaySettings.linearDepth ? 1f : 0f, 0f, 0f, 0f));
-			PushDebugOverlay (context.command, RenderTargetIdentifier.op_Implicit ((BuiltinRenderTextureType)0), propertySheet, 0);
+			PushDebugOverlay (context.command, BuiltinRenderTextureType.None, propertySheet, 0);
 		} else if (debugOverlay == DebugOverlay.Normals) {
 			PropertySheet propertySheet2 = context.propertySheets.Get (context.resources.shaders.debugOverlays);
 			propertySheet2.ClearKeywords ();
-			if ((int)context.camera.actualRenderingPath == 2) {
+			if (context.camera.actualRenderingPath == RenderingPath.DeferredLighting) {
 				propertySheet2.EnableKeyword ("SOURCE_GBUFFER");
 			}
-			PushDebugOverlay (context.command, RenderTargetIdentifier.op_Implicit ((BuiltinRenderTextureType)0), propertySheet2, 1);
+			PushDebugOverlay (context.command, BuiltinRenderTextureType.None, propertySheet2, 1);
 		} else if (debugOverlay == DebugOverlay.MotionVectors) {
 			PropertySheet propertySheet3 = context.propertySheets.Get (context.resources.shaders.debugOverlays);
-			propertySheet3.properties.SetVector (ShaderIDs.Params, new Vector4 (overlaySettings.motionColorIntensity, (float)overlaySettings.motionGridSize, 0f, 0f));
+			propertySheet3.properties.SetVector (ShaderIDs.Params, new Vector4 (overlaySettings.motionColorIntensity, overlaySettings.motionGridSize, 0f, 0f));
 			PushDebugOverlay (context.command, context.source, propertySheet3, 2);
 		} else if (debugOverlay == DebugOverlay.NANTracker) {
 			PropertySheet sheet = context.propertySheets.Get (context.resources.shaders.debugOverlays);

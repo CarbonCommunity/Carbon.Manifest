@@ -8,7 +8,7 @@ public class EntityComponent<T> : EntityComponentBase where T : BaseEntity
 
 	protected T baseEntity {
 		get {
-			if ((Object)(object)_baseEntity == (Object)null) {
+			if (_baseEntity == null) {
 				UpdateBaseEntity ();
 			}
 			return _baseEntity;
@@ -17,8 +17,8 @@ public class EntityComponent<T> : EntityComponentBase where T : BaseEntity
 
 	protected void UpdateBaseEntity ()
 	{
-		if (Object.op_Implicit ((Object)(object)this) && Object.op_Implicit ((Object)(object)((Component)this).gameObject)) {
-			_baseEntity = ((Component)this).gameObject.ToBaseEntity () as T;
+		if ((bool)this && (bool)base.gameObject) {
+			_baseEntity = base.gameObject.ToBaseEntity () as T;
 		}
 	}
 

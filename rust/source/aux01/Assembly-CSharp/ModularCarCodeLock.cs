@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Facepunch;
 using Rust;
@@ -37,7 +36,7 @@ public class ModularCarCodeLock
 
 	public bool CentralLockingIsOn {
 		get {
-			if ((Object)(object)owner != (Object)null) {
+			if (owner != null) {
 				return owner.HasFlag (BaseEntity.Flags.Reserved2);
 			}
 			return false;
@@ -72,7 +71,7 @@ public class ModularCarCodeLock
 		if (HasLockPermission (player)) {
 			return false;
 		}
-		if ((Object)(object)owner != (Object)null) {
+		if (owner != null) {
 			return owner.HasFlag (BaseEntity.Flags.Reserved10);
 		}
 		return false;
@@ -136,7 +135,7 @@ public class ModularCarCodeLock
 	public bool IsValidLockCode (string code)
 	{
 		if (code != null && code.Length == 4) {
-			return StringEx.IsNumeric (code);
+			return code.IsNumeric ();
 		}
 		return false;
 	}
@@ -177,7 +176,7 @@ public class ModularCarCodeLock
 			}
 			if ((float)wrongCodes >= CodeLock.maxFailedAttempts) {
 				owner.SetFlag (BaseEntity.Flags.Reserved10, b: true);
-				((FacepunchBehaviour)owner).Invoke ((Action)ClearCodeEntryBlocked, CodeLock.lockoutCooldown);
+				owner.Invoke (ClearCodeEntryBlocked, CodeLock.lockoutCooldown);
 			}
 			lastWrongTime = Time.realtimeSinceStartup;
 			return false;

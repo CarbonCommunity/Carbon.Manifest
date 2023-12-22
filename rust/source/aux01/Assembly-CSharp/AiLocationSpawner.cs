@@ -56,8 +56,6 @@ public class AiLocationSpawner : SpawnGroup
 
 	protected override void Spawn (int numToSpawn)
 	{
-		//IL_0157: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0158: Unknown result type (might be due to invalid IL or missing references)
 		if (!AI.npc_enable) {
 			maxPopulation = 0;
 			numToSpawnPerTickMax = 0;
@@ -102,11 +100,11 @@ public class AiLocationSpawner : SpawnGroup
 			Vector3 pos;
 			Quaternion rot;
 			BaseSpawnPoint spawnPoint = GetSpawnPoint (prefab, out pos, out rot);
-			if (Object.op_Implicit ((Object)(object)spawnPoint)) {
+			if ((bool)spawnPoint) {
 				BaseEntity baseEntity = GameManager.server.CreateEntity (prefab.resourcePath, pos, rot);
-				if (Object.op_Implicit ((Object)(object)baseEntity)) {
+				if ((bool)baseEntity) {
 					baseEntity.Spawn ();
-					SpawnPointInstance spawnPointInstance = ((Component)baseEntity).gameObject.AddComponent<SpawnPointInstance> ();
+					SpawnPointInstance spawnPointInstance = baseEntity.gameObject.AddComponent<SpawnPointInstance> ();
 					spawnPointInstance.parentSpawnPointUser = this;
 					spawnPointInstance.parentSpawnPoint = spawnPoint;
 					spawnPointInstance.Notify ();

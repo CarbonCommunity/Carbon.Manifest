@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -23,8 +24,6 @@ public class CarvablePumpkin : BaseOven, ILOD, ISignage, IUGCBrowserEntity
 
 	public Vector2i TextureSize {
 		get {
-			//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-			//IL_002c: Unknown result type (might be due to invalid IL or missing references)
 			if (paintableSources == null || paintableSources.Length == 0) {
 				return Vector2i.zero;
 			}
@@ -57,121 +56,91 @@ public class CarvablePumpkin : BaseOven, ILOD, ISignage, IUGCBrowserEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("CarvablePumpkin.OnRpcMessage", 0);
-		try {
-			if (rpc == 1455609404 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("CarvablePumpkin.OnRpcMessage")) {
+			if (rpc == 1455609404 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - LockSign "));
+					UnityEngine.Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - LockSign "));
 				}
-				TimeWarning val2 = TimeWarning.New ("LockSign", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("LockSign")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (1455609404u, "LockSign", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							LockSign (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						UnityEngine.Debug.LogException (exception);
 						player.Kick ("RPC Error in LockSign");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 4149904254u && (Object)(object)player != (Object)null) {
+			if (rpc == 4149904254u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - UnLockSign "));
+					UnityEngine.Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - UnLockSign "));
 				}
-				TimeWarning val2 = TimeWarning.New ("UnLockSign", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("UnLockSign")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (4149904254u, "UnLockSign", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg3 = rPCMessage;
 							UnLockSign (msg3);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						UnityEngine.Debug.LogException (exception2);
 						player.Kick ("RPC Error in UnLockSign");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 1255380462 && (Object)(object)player != (Object)null) {
+			if (rpc == 1255380462 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - UpdateSign "));
+					UnityEngine.Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - UpdateSign "));
 				}
-				TimeWarning val2 = TimeWarning.New ("UpdateSign", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("UpdateSign")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (1255380462u, "UpdateSign", this, player, 5uL)) {
 							return true;
 						}
 						if (!RPC_Server.MaxDistance.Test (1255380462u, "UpdateSign", this, player, 5f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg4 = rPCMessage;
 							UpdateSign (msg4);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex3) {
-						Debug.LogException (ex3);
+					} catch (Exception exception3) {
+						UnityEngine.Debug.LogException (exception3);
 						player.Kick ("RPC Error in UpdateSign");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -194,19 +163,16 @@ public class CarvablePumpkin : BaseOven, ILOD, ISignage, IUGCBrowserEntity
 	[RPC_Server.MaxDistance (5f)]
 	public void UpdateSign (RPCMessage msg)
 	{
-		//IL_00b3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0119: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fa: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)msg.player == (Object)null || !CanUpdateSign (msg.player)) {
+		if (msg.player == null || !CanUpdateSign (msg.player)) {
 			return;
 		}
 		int num = msg.read.Int32 ();
 		if (num < 0 || num >= paintableSources.Length) {
 			return;
 		}
-		byte[] array = msg.read.BytesWithSize (10485760u);
+		byte[] array = msg.read.BytesWithSize ();
 		if (msg.read.Unread > 0 && msg.read.Bit () && !msg.player.IsAdmin) {
-			Debug.LogWarning ((object)$"{msg.player} tried to upload a sign from a file but they aren't admin, ignoring");
+			UnityEngine.Debug.LogWarning ($"{msg.player} tried to upload a sign from a file but they aren't admin, ignoring");
 			return;
 		}
 		EnsureInitialized ();
@@ -239,7 +205,7 @@ public class CarvablePumpkin : BaseOven, ILOD, ISignage, IUGCBrowserEntity
 	[Conditional ("SIGN_DEBUG")]
 	private static void SignDebugLog (string str)
 	{
-		Debug.Log ((object)str);
+		UnityEngine.Debug.Log (str);
 	}
 
 	public uint[] GetTextureCRCs ()
@@ -279,7 +245,6 @@ public class CarvablePumpkin : BaseOven, ILOD, ISignage, IUGCBrowserEntity
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_011d: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		EnsureInitialized ();
 		bool flag = false;
@@ -321,7 +286,7 @@ public class CarvablePumpkin : BaseOven, ILOD, ISignage, IUGCBrowserEntity
 		}
 		if (info.msg.sign.editHistory != null) {
 			if (editHistory == null) {
-				editHistory = Pool.GetList<ulong> ();
+				editHistory = Facepunch.Pool.GetList<ulong> ();
 			}
 			editHistory.Clear ();
 			{
@@ -332,7 +297,7 @@ public class CarvablePumpkin : BaseOven, ILOD, ISignage, IUGCBrowserEntity
 			}
 		}
 		if (editHistory != null) {
-			Pool.FreeList<ulong> (ref editHistory);
+			Facepunch.Pool.FreeList (ref editHistory);
 		}
 	}
 
@@ -361,18 +326,18 @@ public class CarvablePumpkin : BaseOven, ILOD, ISignage, IUGCBrowserEntity
 	{
 		base.Save (info);
 		EnsureInitialized ();
-		List<uint> list = Pool.GetList<uint> ();
+		List<uint> list = Facepunch.Pool.GetList<uint> ();
 		uint[] array = textureIDs;
 		foreach (uint item in array) {
 			list.Add (item);
 		}
-		info.msg.sign = Pool.Get<Sign> ();
+		info.msg.sign = Facepunch.Pool.Get<Sign> ();
 		info.msg.sign.imageid = 0u;
 		info.msg.sign.imageIds = list;
 		if (editHistory.Count <= 0) {
 			return;
 		}
-		info.msg.sign.editHistory = Pool.GetList<ulong> ();
+		info.msg.sign.editHistory = Facepunch.Pool.GetList<ulong> ();
 		foreach (ulong item2 in editHistory) {
 			info.msg.sign.editHistory.Add (item2);
 		}
@@ -380,7 +345,6 @@ public class CarvablePumpkin : BaseOven, ILOD, ISignage, IUGCBrowserEntity
 
 	public override void OnKilled (HitInfo info)
 	{
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
 		if (net != null) {
 			FileStorage.server.RemoveAllByEntity (net.ID);
 		}
@@ -401,19 +365,17 @@ public class CarvablePumpkin : BaseOven, ILOD, ISignage, IUGCBrowserEntity
 				break;
 			}
 		}
-		ItemModSign itemModSign = default(ItemModSign);
-		if (flag && ((Component)createdItem.info).TryGetComponent<ItemModSign> (ref itemModSign)) {
-			itemModSign.OnSignPickedUp (this, this, createdItem);
+		if (flag && createdItem.info.TryGetComponent<ItemModSign> (out var component)) {
+			component.OnSignPickedUp (this, this, createdItem);
 		}
 	}
 
 	public override void OnDeployed (BaseEntity parent, BasePlayer deployedBy, Item fromItem)
 	{
 		base.OnDeployed (parent, deployedBy, fromItem);
-		ItemModSign itemModSign = default(ItemModSign);
-		if (((Component)fromItem.info).TryGetComponent<ItemModSign> (ref itemModSign)) {
+		if (fromItem.info.TryGetComponent<ItemModSign> (out var _)) {
 			SignContent associatedEntity = ItemModAssociatedEntity<SignContent>.GetAssociatedEntity (fromItem);
-			if ((Object)(object)associatedEntity != (Object)null) {
+			if (associatedEntity != null) {
 				associatedEntity.CopyInfoToSign (this, this);
 			}
 		}

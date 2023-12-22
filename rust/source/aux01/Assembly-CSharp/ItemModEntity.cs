@@ -9,7 +9,7 @@ public class ItemModEntity : ItemMod
 	public override void OnChanged (Item item)
 	{
 		HeldEntity heldEntity = item.GetHeldEntity () as HeldEntity;
-		if ((Object)(object)heldEntity != (Object)null) {
+		if (heldEntity != null) {
 			heldEntity.OnItemChanged (item);
 		}
 		base.OnChanged (item);
@@ -17,14 +17,10 @@ public class ItemModEntity : ItemMod
 
 	public override void OnItemCreated (Item item)
 	{
-		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)item.GetHeldEntity () == (Object)null) {
+		if (item.GetHeldEntity () == null) {
 			BaseEntity baseEntity = GameManager.server.CreateEntity (entityPrefab.resourcePath);
-			if ((Object)(object)baseEntity == (Object)null) {
-				Debug.LogWarning ((object)("Couldn't create item entity " + item.info.displayName.english + " (" + entityPrefab.resourcePath + ")"));
+			if (baseEntity == null) {
+				Debug.LogWarning ("Couldn't create item entity " + item.info.displayName.english + " (" + entityPrefab.resourcePath + ")");
 			} else {
 				baseEntity.skinID = item.skin;
 				baseEntity.Spawn ();
@@ -36,7 +32,7 @@ public class ItemModEntity : ItemMod
 	public override void OnRemove (Item item)
 	{
 		BaseEntity heldEntity = item.GetHeldEntity ();
-		if (!((Object)(object)heldEntity == (Object)null)) {
+		if (!(heldEntity == null)) {
 			heldEntity.Kill ();
 			item.SetHeldEntity (null);
 		}
@@ -48,7 +44,7 @@ public class ItemModEntity : ItemMod
 			return false;
 		}
 		BaseEntity baseEntity = item.parentItem.GetWorldEntity ();
-		if ((Object)(object)baseEntity == (Object)null) {
+		if (baseEntity == null) {
 			baseEntity = item.parentItem.GetHeldEntity ();
 		}
 		ourEntity.SetFlag (BaseEntity.Flags.Disabled, b: false);
@@ -60,11 +56,11 @@ public class ItemModEntity : ItemMod
 	private bool ParentToPlayer (Item item, BaseEntity ourEntity)
 	{
 		HeldEntity heldEntity = ourEntity as HeldEntity;
-		if ((Object)(object)heldEntity == (Object)null) {
+		if (heldEntity == null) {
 			return false;
 		}
 		BasePlayer ownerPlayer = item.GetOwnerPlayer ();
-		if (Object.op_Implicit ((Object)(object)ownerPlayer)) {
+		if ((bool)ownerPlayer) {
 			heldEntity.SetOwnerPlayer (ownerPlayer);
 			return true;
 		}
@@ -75,7 +71,7 @@ public class ItemModEntity : ItemMod
 	public override void OnParentChanged (Item item)
 	{
 		BaseEntity heldEntity = item.GetHeldEntity ();
-		if (!((Object)(object)heldEntity == (Object)null) && !ParentToParent (item, heldEntity) && !ParentToPlayer (item, heldEntity)) {
+		if (!(heldEntity == null) && !ParentToParent (item, heldEntity) && !ParentToPlayer (item, heldEntity)) {
 			heldEntity.SetParent (null);
 			heldEntity.limitNetworking = true;
 			heldEntity.SetFlag (BaseEntity.Flags.Disabled, b: true);
@@ -85,9 +81,9 @@ public class ItemModEntity : ItemMod
 	public override void CollectedForCrafting (Item item, BasePlayer crafter)
 	{
 		BaseEntity heldEntity = item.GetHeldEntity ();
-		if (!((Object)(object)heldEntity == (Object)null)) {
+		if (!(heldEntity == null)) {
 			HeldEntity heldEntity2 = heldEntity as HeldEntity;
-			if (!((Object)(object)heldEntity2 == (Object)null)) {
+			if (!(heldEntity2 == null)) {
 				heldEntity2.CollectedForCrafting (item, crafter);
 			}
 		}
@@ -96,9 +92,9 @@ public class ItemModEntity : ItemMod
 	public override void ReturnedFromCancelledCraft (Item item, BasePlayer crafter)
 	{
 		BaseEntity heldEntity = item.GetHeldEntity ();
-		if (!((Object)(object)heldEntity == (Object)null)) {
+		if (!(heldEntity == null)) {
 			HeldEntity heldEntity2 = heldEntity as HeldEntity;
-			if (!((Object)(object)heldEntity2 == (Object)null)) {
+			if (!(heldEntity2 == null)) {
 				heldEntity2.ReturnedFromCancelledCraft (item, crafter);
 			}
 		}

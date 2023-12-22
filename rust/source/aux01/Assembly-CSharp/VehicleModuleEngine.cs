@@ -73,7 +73,7 @@ public class VehicleModuleEngine : VehicleModuleStorage
 
 	private bool EngineIsOn {
 		get {
-			if ((Object)(object)base.Car != (Object)null) {
+			if (base.Car != null) {
 				return base.Car.CurEngineState == VehicleEngineController<GroundVehicle>.EngineState.On;
 			}
 			return false;
@@ -102,7 +102,7 @@ public class VehicleModuleEngine : VehicleModuleStorage
 
 	public void RefreshPerformanceStats (EngineStorage engineStorage)
 	{
-		if ((Object)(object)engineStorage == (Object)null) {
+		if (engineStorage == null) {
 			IsUsable = false;
 			PerformanceFractionAcceleration = 0f;
 			PerformanceFractionTopSpeed = 0f;
@@ -144,7 +144,7 @@ public class VehicleModuleEngine : VehicleModuleStorage
 	{
 		if (isSpawned && base.IsOnAVehicle) {
 			base.VehicleFixedUpdate ();
-			if (base.Vehicle.IsMovingOrOn && !((Object)(object)base.Car == (Object)null) && base.Car.CurEngineState == VehicleEngineController<GroundVehicle>.EngineState.On && IsUsable) {
+			if (base.Vehicle.IsMovingOrOn && !(base.Car == null) && base.Car.CurEngineState == VehicleEngineController<GroundVehicle>.EngineState.On && IsUsable) {
 				float num = Mathf.Lerp (engine.idleFuelPerSec, engine.maxFuelPerSec, Mathf.Abs (base.Car.GetThrottleInput ()));
 				num /= PerformanceFractionFuelEconomy;
 				base.Car.TickFuel (num);
@@ -155,9 +155,8 @@ public class VehicleModuleEngine : VehicleModuleStorage
 	public override float GetAdjustedDriveForce (float absSpeed, float topSpeed)
 	{
 		float maxDriveForce = GetMaxDriveForce ();
-		float num = Mathf.Lerp (0.0002f, 0.7f, PerformanceFractionAcceleration);
-		float num2 = MathEx.BiasedLerp (1f - absSpeed / topSpeed, num);
-		return maxDriveForce * num2;
+		float num = MathEx.BiasedLerp (bias: Mathf.Lerp (0.0002f, 0.7f, PerformanceFractionAcceleration), x: 1f - absSpeed / topSpeed);
+		return maxDriveForce * num;
 	}
 
 	public override void Hurt (HitInfo info)
@@ -166,7 +165,7 @@ public class VehicleModuleEngine : VehicleModuleStorage
 		if (!IsTransferProtected () && info.damageTypes.GetMajorityDamageType () != DamageType.Decay) {
 			float num = info.damageTypes.Total ();
 			EngineStorage engineStorage = GetContainer () as EngineStorage;
-			if ((Object)(object)engineStorage != (Object)null && num > 0f) {
+			if (engineStorage != null && num > 0f) {
 				engineStorage.OnModuleDamaged (num);
 			}
 		}

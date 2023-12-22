@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class GenerateCliffSplat : ProceduralComponent
@@ -22,7 +21,7 @@ public class GenerateCliffSplat : ProceduralComponent
 	{
 		TerrainSplatMap splatMap = TerrainMeta.SplatMap;
 		int splatres = splatMap.res;
-		Parallel.For (0, splatres, (Action<int>)delegate(int z) {
+		Parallel.For (0, splatres, delegate(int z) {
 			for (int i = 0; i < splatres; i++) {
 				Process (i, z);
 			}

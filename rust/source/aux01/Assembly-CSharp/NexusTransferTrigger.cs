@@ -14,7 +14,7 @@ public class NexusTransferTrigger : BaseMonoBehaviour, IServerComponent
 	{
 		_controller = Controller as INexusTransferTriggerController;
 		if (_controller == null) {
-			Debug.LogError ((object)"NexusTransferTrigger doesn't have a valid controller assigned!", (Object)(object)this);
+			Debug.LogError ("NexusTransferTrigger doesn't have a valid controller assigned!", this);
 		}
 	}
 
@@ -27,8 +27,8 @@ public class NexusTransferTrigger : BaseMonoBehaviour, IServerComponent
 		if (string.IsNullOrEmpty (zoneKey)) {
 			return;
 		}
-		BaseEntity entity = ((Component)other).gameObject.ToBaseEntity ();
-		if (!((Object)(object)entity == (Object)null)) {
+		BaseEntity entity = other.gameObject.ToBaseEntity ();
+		if (!(entity == null)) {
 			BaseEntity baseEntity = NexusServer.FindRootEntity (entity);
 			if (_controller.CanTransfer (baseEntity) && PendingEntities.Add (baseEntity)) {
 				TransferAndWait ();

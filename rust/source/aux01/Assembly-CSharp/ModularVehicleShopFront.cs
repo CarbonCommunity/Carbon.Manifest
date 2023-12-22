@@ -15,7 +15,6 @@ public class ModularVehicleShopFront : ShopFront
 
 	private bool WithinUseDistance (BasePlayer player)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
 		return Distance (player.eyes.position) <= maxUseDistance;
 	}
 }

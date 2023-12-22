@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -26,46 +27,34 @@ public class DieselEngine : StorageContainer
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("DieselEngine.OnRpcMessage", 0);
-		try {
-			if (rpc == 578721460 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("DieselEngine.OnRpcMessage")) {
+			if (rpc == 578721460 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - EngineSwitch "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - EngineSwitch "));
 				}
-				TimeWarning val2 = TimeWarning.New ("EngineSwitch", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("EngineSwitch")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (578721460u, "EngineSwitch", this, player, 6f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							EngineSwitch (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in EngineSwitch");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -78,10 +67,10 @@ public class DieselEngine : StorageContainer
 	public void FixedUpdate ()
 	{
 		if (!base.isClient && IsOn ()) {
-			if (cachedFuelTime <= Time.fixedDeltaTime && ConsumeFuelItem ()) {
+			if (cachedFuelTime <= UnityEngine.Time.fixedDeltaTime && ConsumeFuelItem ()) {
 				cachedFuelTime += runningTimePerFuelUnit;
 			}
-			cachedFuelTime -= Time.fixedDeltaTime;
+			cachedFuelTime -= UnityEngine.Time.fixedDeltaTime;
 			if (cachedFuelTime <= 0f) {
 				cachedFuelTime = 0f;
 				EngineOff ();
@@ -96,7 +85,7 @@ public class DieselEngine : StorageContainer
 		if (msg.read.Bit ()) {
 			if (GetFuelAmount () > 0) {
 				EngineOn ();
-				if (GameInfo.HasAchievements && (Object)(object)msg.player != (Object)null) {
+				if (GameInfo.HasAchievements && msg.player != null) {
 					msg.player.stats.Add ("excavator_activated", 1, Stats.All);
 					msg.player.stats.Save (forceSteamSave: true);
 				}
@@ -157,8 +146,8 @@ public class DieselEngine : StorageContainer
 
 	public void RescheduleEngineShutdown ()
 	{
-		float num = 120f;
-		((FacepunchBehaviour)this).Invoke ((Action)TimedShutdown, num);
+		float time = 120f;
+		Invoke (TimedShutdown, time);
 	}
 
 	public override void PostServerLoad ()
@@ -174,7 +163,7 @@ public class DieselEngine : StorageContainer
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.ioEntity = Pool.Get<IOEntity> ();
+		info.msg.ioEntity = Facepunch.Pool.Get<ProtoBuf.IOEntity> ();
 		info.msg.ioEntity.genericFloat1 = cachedFuelTime;
 	}
 

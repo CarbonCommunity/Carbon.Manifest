@@ -26,11 +26,11 @@ public class PlayerCorpse : LootableCorpse
 	public override void ServerInit ()
 	{
 		base.ServerInit ();
-		if ((Object)(object)buoyancy == (Object)null) {
-			Debug.LogWarning ((object)("Player corpse has no buoyancy assigned, searching at runtime :" + ((Object)this).name));
-			buoyancy = ((Component)this).GetComponent<Buoyancy> ();
+		if (buoyancy == null) {
+			Debug.LogWarning ("Player corpse has no buoyancy assigned, searching at runtime :" + base.name);
+			buoyancy = GetComponent<Buoyancy> ();
 		}
-		if ((Object)(object)buoyancy != (Object)null) {
+		if (buoyancy != null) {
 			buoyancy.SubmergedChanged = BuoyancyChanged;
 			buoyancy.forEntity = this;
 		}

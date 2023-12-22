@@ -23,21 +23,14 @@ public abstract class ItemModAssociatedEntity<T> : ItemMod where T : BaseEntity
 
 	public T CreateAssociatedEntity (Item item)
 	{
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0056: Expected O, but got Unknown
-		//IL_006e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0073: Unknown result type (might be due to invalid IL or missing references)
 		if (item.instanceData != null) {
 			return null;
 		}
 		BaseEntity baseEntity = GameManager.server.CreateEntity (entityPrefab.resourcePath, Vector3.zero);
-		T component = ((Component)baseEntity).GetComponent<T> ();
+		T component = baseEntity.GetComponent<T> ();
 		OnAssociatedItemCreated (component);
 		baseEntity.Spawn ();
-		item.instanceData = new InstanceData ();
+		item.instanceData = new ProtoBuf.Item.InstanceData ();
 		item.instanceData.ShouldPool = false;
 		item.instanceData.subEntity = baseEntity.net.ID;
 		item.MarkDirty ();
@@ -52,7 +45,7 @@ public abstract class ItemModAssociatedEntity<T> : ItemMod where T : BaseEntity
 	{
 		base.OnRemove (item);
 		T associatedEntity = GetAssociatedEntity (item);
-		if (Object.op_Implicit ((Object)(object)associatedEntity)) {
+		if ((bool)associatedEntity) {
 			associatedEntity.Kill ();
 		}
 	}
@@ -72,11 +65,11 @@ public abstract class ItemModAssociatedEntity<T> : ItemMod where T : BaseEntity
 	public void UpdateParent (Item item)
 	{
 		T associatedEntity = GetAssociatedEntity (item);
-		if ((Object)(object)associatedEntity == (Object)null) {
+		if (associatedEntity == null) {
 			return;
 		}
 		BaseEntity entityForParenting = GetEntityForParenting (item);
-		if ((Object)(object)entityForParenting == (Object)null) {
+		if (entityForParenting == null) {
 			if (AllowNullParenting) {
 				associatedEntity.SetParent (null, worldPositionStays: false, sendImmediate: true);
 			}
@@ -101,18 +94,18 @@ public abstract class ItemModAssociatedEntity<T> : ItemMod where T : BaseEntity
 	{
 		if (item != null) {
 			BasePlayer ownerPlayer = item.GetOwnerPlayer ();
-			if (Object.op_Implicit ((Object)(object)ownerPlayer)) {
+			if ((bool)ownerPlayer) {
 				return ownerPlayer;
 			}
 			BaseEntity baseEntity = ((item.parent == null) ? null : item.parent.entityOwner);
-			if ((Object)(object)baseEntity != (Object)null) {
+			if (baseEntity != null) {
 				return baseEntity;
 			}
 			BaseEntity worldEntity = item.GetWorldEntity ();
-			if (Object.op_Implicit ((Object)(object)worldEntity)) {
+			if ((bool)worldEntity) {
 				return worldEntity;
 			}
-			if (AllowHeldEntityParenting && item.parentItem != null && (Object)(object)item.parentItem.GetHeldEntity () != (Object)null) {
+			if (AllowHeldEntityParenting && item.parentItem != null && item.parentItem.GetHeldEntity () != null) {
 				return item.parentItem.GetHeldEntity ();
 			}
 			return null;
@@ -122,7 +115,6 @@ public abstract class ItemModAssociatedEntity<T> : ItemMod where T : BaseEntity
 
 	public static T GetAssociatedEntity (Item item, bool isServer = true)
 	{
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
 		if (item?.instanceData == null) {
 			return null;
 		}
@@ -130,8 +122,8 @@ public abstract class ItemModAssociatedEntity<T> : ItemMod where T : BaseEntity
 		if (isServer) {
 			baseNetworkable = BaseNetworkable.serverEntities.Find (item.instanceData.subEntity);
 		}
-		if (Object.op_Implicit ((Object)(object)baseNetworkable)) {
-			return ((Component)baseNetworkable).GetComponent<T> ();
+		if ((bool)baseNetworkable) {
+			return baseNetworkable.GetComponent<T> ();
 		}
 		return null;
 	}

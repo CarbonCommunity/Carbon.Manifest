@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Network;
@@ -13,46 +14,34 @@ public class DoorCloser : BaseEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("DoorCloser.OnRpcMessage", 0);
-		try {
-			if (rpc == 342802563 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("DoorCloser.OnRpcMessage")) {
+			if (rpc == 342802563 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_Take "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_Take "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_Take", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_Take")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (342802563u, "RPC_Take", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage rpc2 = rPCMessage;
 							RPC_Take (rpc2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_Take");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -64,7 +53,7 @@ public class DoorCloser : BaseEntity
 
 	public void Think ()
 	{
-		((FacepunchBehaviour)this).Invoke ((Action)SendClose, delay);
+		Invoke (SendClose, delay);
 	}
 
 	public void SendClose ()
@@ -72,14 +61,14 @@ public class DoorCloser : BaseEntity
 		BaseEntity baseEntity = GetParentEntity ();
 		if (children != null) {
 			foreach (BaseEntity child in children) {
-				if ((Object)(object)child != (Object)null) {
-					((FacepunchBehaviour)this).Invoke ((Action)SendClose, delay);
+				if (child != null) {
+					Invoke (SendClose, delay);
 					return;
 				}
 			}
 		}
-		if (Object.op_Implicit ((Object)(object)baseEntity)) {
-			((Component)baseEntity).SendMessage ("CloseRequest");
+		if ((bool)baseEntity) {
+			baseEntity.SendMessage ("CloseRequest");
 		}
 	}
 
@@ -91,7 +80,7 @@ public class DoorCloser : BaseEntity
 			return;
 		}
 		Door door = GetDoor ();
-		if (!((Object)(object)door == (Object)null) && door.GetPlayerLockPermission (rpc.player)) {
+		if (!(door == null) && door.GetPlayerLockPermission (rpc.player)) {
 			Item item = ItemManager.Create (itemType, 1, skinID);
 			if (item != null) {
 				rpc.player.GiveItem (item);

@@ -7,12 +7,12 @@ public class NPCVendingOrderManifest : ScriptableObject
 
 	public int GetIndex (NPCVendingOrder sample)
 	{
-		if ((Object)(object)sample == (Object)null) {
+		if (sample == null) {
 			return -1;
 		}
 		for (int i = 0; i < orderList.Length; i++) {
 			NPCVendingOrder nPCVendingOrder = orderList [i];
-			if ((Object)(object)sample == (Object)(object)nPCVendingOrder) {
+			if (sample == nPCVendingOrder) {
 				return i;
 			}
 		}

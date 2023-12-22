@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -92,72 +93,56 @@ public class HotAirBalloon : BaseCombatEntity, SamSite.ISamSiteTarget
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("HotAirBalloon.OnRpcMessage", 0);
-		try {
-			if (rpc == 578721460 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("HotAirBalloon.OnRpcMessage")) {
+			if (rpc == 578721460 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - EngineSwitch "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - EngineSwitch "));
 				}
-				TimeWarning val2 = TimeWarning.New ("EngineSwitch", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("EngineSwitch")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.IsVisible.Test (578721460u, "EngineSwitch", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							EngineSwitch (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in EngineSwitch");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 1851540757 && (Object)(object)player != (Object)null) {
+			if (rpc == 1851540757 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_OpenFuel "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_OpenFuel "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_OpenFuel", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Call", 0);
+				using (TimeWarning.New ("RPC_OpenFuel")) {
 					try {
-						RPCMessage rPCMessage = default(RPCMessage);
-						rPCMessage.connection = msg.connection;
-						rPCMessage.player = player;
-						rPCMessage.read = msg.read;
-						RPCMessage msg3 = rPCMessage;
-						RPC_OpenFuel (msg3);
-					} finally {
-						((IDisposable)val3)?.Dispose ();
+						using (TimeWarning.New ("Call")) {
+							RPCMessage rPCMessage = default(RPCMessage);
+							rPCMessage.connection = msg.connection;
+							rPCMessage.player = player;
+							rPCMessage.read = msg.read;
+							RPCMessage msg3 = rPCMessage;
+							RPC_OpenFuel (msg3);
+						}
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
+						player.Kick ("RPC Error in RPC_OpenFuel");
 					}
-				} catch (Exception ex2) {
-					Debug.LogException (ex2);
-					player.Kick ("RPC Error in RPC_OpenFuel");
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -169,13 +154,10 @@ public class HotAirBalloon : BaseCombatEntity, SamSite.ISamSiteTarget
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_007d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0098: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (info.msg.hotAirBalloon != null) {
 			inflationLevel = info.msg.hotAirBalloon.inflationAmount;
-			if (info.fromDisk && Object.op_Implicit ((Object)(object)myRigidbody)) {
+			if (info.fromDisk && (bool)myRigidbody) {
 				myRigidbody.velocity = info.msg.hotAirBalloon.velocity;
 			}
 		}
@@ -187,7 +169,6 @@ public class HotAirBalloon : BaseCombatEntity, SamSite.ISamSiteTarget
 
 	public bool WaterLogged ()
 	{
-		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
 		return WaterLevel.Test (engineHeight.position, waves: true, volumes: true, this);
 	}
 
@@ -214,19 +195,18 @@ public class HotAirBalloon : BaseCombatEntity, SamSite.ISamSiteTarget
 
 	public bool IsValidSAMTarget (bool staticRespawn)
 	{
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
 		if (staticRespawn) {
 			return IsFullyInflated;
 		}
 		if (IsFullyInflated) {
-			return !BaseVehicle.InSafeZone (triggers, ((Component)this).transform.position);
+			return !BaseVehicle.InSafeZone (triggers, base.transform.position);
 		}
 		return false;
 	}
 
 	public override float GetNetworkTime ()
 	{
-		return Time.fixedTime;
+		return UnityEngine.Time.fixedTime;
 	}
 
 	public override void PostServerLoad ()
@@ -239,48 +219,38 @@ public class HotAirBalloon : BaseCombatEntity, SamSite.ISamSiteTarget
 	public void RPC_OpenFuel (RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
-		if (!((Object)(object)player == (Object)null)) {
+		if (!(player == null)) {
 			fuelSystem.LootFuel (player);
 		}
 	}
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_007e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0083: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
-		info.msg.hotAirBalloon = Pool.Get<HotAirBalloon> ();
+		info.msg.hotAirBalloon = Facepunch.Pool.Get<ProtoBuf.HotAirBalloon> ();
 		info.msg.hotAirBalloon.inflationAmount = inflationLevel;
-		if (info.forDisk && Object.op_Implicit ((Object)(object)myRigidbody)) {
+		if (info.forDisk && (bool)myRigidbody) {
 			info.msg.hotAirBalloon.velocity = myRigidbody.velocity;
 		}
-		info.msg.motorBoat = Pool.Get<Motorboat> ();
+		info.msg.motorBoat = Facepunch.Pool.Get<Motorboat> ();
 		info.msg.motorBoat.storageid = storageUnitInstance.uid;
 		info.msg.motorBoat.fuelStorageID = fuelSystem.fuelStorageInstance.uid;
 	}
 
 	public override void ServerInit ()
 	{
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
 		myRigidbody.centerOfMass = centerOfMass.localPosition;
 		myRigidbody.isKinematic = false;
-		avgTerrainHeight = TerrainMeta.HeightMap.GetHeight (((Component)this).transform.position);
+		avgTerrainHeight = TerrainMeta.HeightMap.GetHeight (base.transform.position);
 		base.ServerInit ();
 		bounds = collapsedBounds;
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)DecayTick, Random.Range (30f, 60f), 60f, 6f);
-		((FacepunchBehaviour)this).InvokeRandomized ((Action)UpdateIsGrounded, 0f, 3f, 0.2f);
+		InvokeRandomized (DecayTick, UnityEngine.Random.Range (30f, 60f), 60f, 6f);
+		InvokeRandomized (UpdateIsGrounded, 0f, 3f, 0.2f);
 	}
 
 	public void DecayTick ()
 	{
-		if (base.healthFraction != 0f && !IsFullyInflated && !(Time.time < lastBlastTime + 600f)) {
+		if (base.healthFraction != 0f && !IsFullyInflated && !(UnityEngine.Time.time < lastBlastTime + 600f)) {
 			float num = 1f / outsidedecayminutes;
 			if (IsOutside ()) {
 				Hurt (MaxHealth () * num, DamageType.Decay, this, useProtection: false);
@@ -295,9 +265,9 @@ public class HotAirBalloon : BaseCombatEntity, SamSite.ISamSiteTarget
 		bool b = msg.read.Bit ();
 		SetFlag (Flags.On, b);
 		if (IsOn ()) {
-			((FacepunchBehaviour)this).Invoke ((Action)ScheduleOff, 60f);
+			Invoke (ScheduleOff, 60f);
 		} else {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)ScheduleOff);
+			CancelInvoke (ScheduleOff);
 		}
 	}
 
@@ -308,13 +278,12 @@ public class HotAirBalloon : BaseCombatEntity, SamSite.ISamSiteTarget
 
 	public void UpdateIsGrounded ()
 	{
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		if (!(lastBlastTime + 5f > Time.time)) {
-			List<Collider> list = Pool.GetList<Collider> ();
-			GamePhysics.OverlapSphere (((Component)groundSample).transform.position, 1.25f, list, 1218511105, (QueryTriggerInteraction)1);
-			grounded = list.Count > 0;
+		if (!(lastBlastTime + 5f > UnityEngine.Time.time)) {
+			List<Collider> obj = Facepunch.Pool.GetList<Collider> ();
+			GamePhysics.OverlapSphere (groundSample.transform.position, 1.25f, obj, 1218511105);
+			grounded = obj.Count > 0;
 			CheckGlobal (flags);
-			Pool.FreeList<Collider> (ref list);
+			Facepunch.Pool.FreeList (ref obj);
 		}
 	}
 
@@ -334,51 +303,6 @@ public class HotAirBalloon : BaseCombatEntity, SamSite.ISamSiteTarget
 
 	protected void FixedUpdate ()
 	{
-		//IL_008f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0078: Unknown result type (might be due to invalid IL or missing references)
-		//IL_016c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0171: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0187: Unknown result type (might be due to invalid IL or missing references)
-		//IL_018c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02b7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02f9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0311: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0316: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0321: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0331: Unknown result type (might be due to invalid IL or missing references)
-		//IL_033b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0346: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0351: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0362: Unknown result type (might be due to invalid IL or missing references)
-		//IL_036d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0378: Unknown result type (might be due to invalid IL or missing references)
-		//IL_037f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_038a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_039c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03a1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03a6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03c2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03d7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03fe: Unknown result type (might be due to invalid IL or missing references)
-		//IL_041c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0421: Unknown result type (might be due to invalid IL or missing references)
-		//IL_042b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0430: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0435: Unknown result type (might be due to invalid IL or missing references)
-		//IL_043a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0491: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0498: Unknown result type (might be due to invalid IL or missing references)
-		//IL_04a3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_04a8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_04ac: Unknown result type (might be due to invalid IL or missing references)
-		//IL_04b1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_04be: Unknown result type (might be due to invalid IL or missing references)
-		//IL_04c3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_04ce: Unknown result type (might be due to invalid IL or missing references)
-		//IL_04d5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_04e0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_04f1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_04f8: Unknown result type (might be due to invalid IL or missing references)
 		if (!isSpawned || base.isClient) {
 			return;
 		}
@@ -386,21 +310,21 @@ public class HotAirBalloon : BaseCombatEntity, SamSite.ISamSiteTarget
 			SetFlag (Flags.On, b: false);
 		}
 		if (IsOn ()) {
-			fuelSystem.TryUseFuel (Time.fixedDeltaTime, fuelPerSec);
+			fuelSystem.TryUseFuel (UnityEngine.Time.fixedDeltaTime, fuelPerSec);
 		}
 		SetFlag (Flags.Reserved6, fuelSystem.HasFuel ());
 		bool flag = (IsFullyInflated && myRigidbody.velocity.y < 0f) || myRigidbody.velocity.y < 0.75f;
 		GameObject[] array = killTriggers;
-		foreach (GameObject val in array) {
-			if (val.activeSelf != flag) {
-				val.SetActive (flag);
+		foreach (GameObject gameObject in array) {
+			if (gameObject.activeSelf != flag) {
+				gameObject.SetActive (flag);
 			}
 		}
 		float num = inflationLevel;
 		if (IsOn () && !IsFullyInflated) {
-			inflationLevel = Mathf.Clamp01 (inflationLevel + Time.fixedDeltaTime / 10f);
-		} else if (grounded && inflationLevel > 0f && !IsOn () && (Time.time > lastBlastTime + 30f || WaterLogged ())) {
-			inflationLevel = Mathf.Clamp01 (inflationLevel - Time.fixedDeltaTime / 10f);
+			inflationLevel = Mathf.Clamp01 (inflationLevel + UnityEngine.Time.fixedDeltaTime / 10f);
+		} else if (grounded && inflationLevel > 0f && !IsOn () && (UnityEngine.Time.time > lastBlastTime + 30f || WaterLogged ())) {
+			inflationLevel = Mathf.Clamp01 (inflationLevel - UnityEngine.Time.fixedDeltaTime / 10f);
 		}
 		if (num != inflationLevel) {
 			if (IsFullyInflated) {
@@ -415,49 +339,46 @@ public class HotAirBalloon : BaseCombatEntity, SamSite.ISamSiteTarget
 		}
 		bool flag2 = !myRigidbody.IsSleeping () || inflationLevel > 0f;
 		array = balloonColliders;
-		foreach (GameObject val2 in array) {
-			if (val2.activeSelf != flag2) {
-				val2.SetActive (flag2);
+		foreach (GameObject gameObject2 in array) {
+			if (gameObject2.activeSelf != flag2) {
+				gameObject2.SetActive (flag2);
 			}
 		}
 		if (IsOn ()) {
 			if (IsFullyInflated) {
-				currentBuoyancy += Time.fixedDeltaTime * 0.2f;
-				lastBlastTime = Time.time;
+				currentBuoyancy += UnityEngine.Time.fixedDeltaTime * 0.2f;
+				lastBlastTime = UnityEngine.Time.time;
 			}
 		} else {
-			currentBuoyancy -= Time.fixedDeltaTime * 0.1f;
+			currentBuoyancy -= UnityEngine.Time.fixedDeltaTime * 0.1f;
 		}
 		currentBuoyancy = Mathf.Clamp (currentBuoyancy, 0f, 0.8f + 0.2f * base.healthFraction);
 		if (inflationLevel > 0f) {
-			avgTerrainHeight = Mathf.Lerp (avgTerrainHeight, TerrainMeta.HeightMap.GetHeight (((Component)this).transform.position), Time.deltaTime);
+			avgTerrainHeight = Mathf.Lerp (avgTerrainHeight, TerrainMeta.HeightMap.GetHeight (base.transform.position), UnityEngine.Time.deltaTime);
 			float num2 = 1f - Mathf.InverseLerp (avgTerrainHeight + serviceCeiling - 20f, avgTerrainHeight + serviceCeiling, buoyancyPoint.position.y);
-			myRigidbody.AddForceAtPosition (Vector3.up * (0f - Physics.gravity.y) * myRigidbody.mass * 0.5f * inflationLevel, buoyancyPoint.position, (ForceMode)0);
-			myRigidbody.AddForceAtPosition (Vector3.up * liftAmount * currentBuoyancy * num2, buoyancyPoint.position, (ForceMode)0);
+			myRigidbody.AddForceAtPosition (Vector3.up * (0f - UnityEngine.Physics.gravity.y) * myRigidbody.mass * 0.5f * inflationLevel, buoyancyPoint.position, ForceMode.Force);
+			myRigidbody.AddForceAtPosition (Vector3.up * liftAmount * currentBuoyancy * num2, buoyancyPoint.position, ForceMode.Force);
 			Vector3 windAtPos = GetWindAtPos (buoyancyPoint.position);
-			_ = ((Vector3)(ref windAtPos)).magnitude;
+			_ = windAtPos.magnitude;
 			float num3 = 1f;
 			float num4 = Mathf.Max (TerrainMeta.HeightMap.GetHeight (buoyancyPoint.position), TerrainMeta.WaterMap.GetHeight (buoyancyPoint.position));
 			float num5 = Mathf.InverseLerp (num4 + 20f, num4 + 60f, buoyancyPoint.position.y);
 			float num6 = 1f;
-			RaycastHit val3 = default(RaycastHit);
-			if (Physics.SphereCast (new Ray (((Component)this).transform.position + Vector3.up * 2f, Vector3.down), 1.5f, ref val3, 5f, 1218511105)) {
-				num6 = Mathf.Clamp01 (((RaycastHit)(ref val3)).distance / 5f);
+			if (UnityEngine.Physics.SphereCast (new Ray (base.transform.position + Vector3.up * 2f, Vector3.down), 1.5f, out var hitInfo, 5f, 1218511105)) {
+				num6 = Mathf.Clamp01 (hitInfo.distance / 5f);
 			}
 			num3 *= num5 * num2 * num6;
 			num3 *= 0.2f + 0.8f * base.healthFraction;
-			Vector3 val4 = ((Vector3)(ref windAtPos)).normalized * num3 * windForce;
-			currentWindVec = Vector3.Lerp (currentWindVec, val4, Time.fixedDeltaTime * 0.25f);
-			myRigidbody.AddForceAtPosition (val4 * 0.1f, buoyancyPoint.position, (ForceMode)0);
-			myRigidbody.AddForce (val4 * 0.9f, (ForceMode)0);
+			Vector3 vector = windAtPos.normalized * num3 * windForce;
+			currentWindVec = Vector3.Lerp (currentWindVec, vector, UnityEngine.Time.fixedDeltaTime * 0.25f);
+			myRigidbody.AddForceAtPosition (vector * 0.1f, buoyancyPoint.position, ForceMode.Force);
+			myRigidbody.AddForce (vector * 0.9f, ForceMode.Force);
 		}
 	}
 
 	public override Vector3 GetLocalVelocityServer ()
 	{
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)myRigidbody == (Object)null) {
+		if (myRigidbody == null) {
 			return Vector3.zero;
 		}
 		return myRigidbody.velocity;
@@ -465,11 +386,7 @@ public class HotAirBalloon : BaseCombatEntity, SamSite.ISamSiteTarget
 
 	public override Quaternion GetAngularVelocityServer ()
 	{
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)myRigidbody == (Object)null) {
+		if (myRigidbody == null) {
 			return Quaternion.identity;
 		}
 		return Quaternion.Euler (myRigidbody.angularVelocity * 57.29578f);
@@ -477,12 +394,7 @@ public class HotAirBalloon : BaseCombatEntity, SamSite.ISamSiteTarget
 
 	public Vector3 GetWindAtPos (Vector3 pos)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
 		float num = pos.y * 6f;
-		Vector3 val = default(Vector3);
-		((Vector3)(ref val))..ctor (Mathf.Sin (num * ((float)Math.PI / 180f)), 0f, Mathf.Cos (num * ((float)Math.PI / 180f)));
-		return ((Vector3)(ref val)).normalized * 1f;
+		return new Vector3 (Mathf.Sin (num * ((float)Math.PI / 180f)), 0f, Mathf.Cos (num * ((float)Math.PI / 180f))).normalized * 1f;
 	}
 }

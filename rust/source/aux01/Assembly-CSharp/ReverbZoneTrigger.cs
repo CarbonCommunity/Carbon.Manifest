@@ -14,10 +14,10 @@ public class ReverbZoneTrigger : TriggerBase, IClientComponentEx, ILOD
 
 	public virtual void PreClientComponentCull (IPrefabProcessor p)
 	{
-		p.RemoveComponent ((Component)(object)trigger);
-		p.RemoveComponent ((Component)(object)reverbZone);
-		p.RemoveComponent ((Component)(object)this);
-		p.NominateForDeletion (((Component)this).gameObject);
+		p.RemoveComponent (trigger);
+		p.RemoveComponent (reverbZone);
+		p.RemoveComponent (this);
+		p.NominateForDeletion (base.gameObject);
 	}
 
 	public bool IsSyncedToParent ()

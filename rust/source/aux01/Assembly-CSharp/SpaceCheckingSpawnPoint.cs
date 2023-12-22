@@ -10,21 +10,12 @@ public class SpaceCheckingSpawnPoint : GenericSpawnPoint
 
 	public override bool IsAvailableTo (GameObjectRef prefabRef)
 	{
-		//IL_005c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0067: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0077: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
 		if (!base.IsAvailableTo (prefabRef)) {
 			return false;
 		}
 		if (useCustomBoundsCheckMask) {
-			return SpawnHandler.CheckBounds (prefabRef.Get (), ((Component)this).transform.position, ((Component)this).transform.rotation, Vector3.one * customBoundsCheckScale, customBoundsCheckMask);
+			return SpawnHandler.CheckBounds (prefabRef.Get (), base.transform.position, base.transform.rotation, Vector3.one * customBoundsCheckScale, customBoundsCheckMask);
 		}
-		return SingletonComponent<SpawnHandler>.Instance.CheckBounds (prefabRef.Get (), ((Component)this).transform.position, ((Component)this).transform.rotation, Vector3.one * customBoundsCheckScale);
+		return SingletonComponent<SpawnHandler>.Instance.CheckBounds (prefabRef.Get (), base.transform.position, base.transform.rotation, Vector3.one * customBoundsCheckScale);
 	}
 }

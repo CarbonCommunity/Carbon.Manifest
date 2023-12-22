@@ -19,12 +19,10 @@ public class ChanceAIEvent : BaseAIEvent
 
 	public override AIEventData ToProto ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Expected O, but got Unknown
-		AIEventData obj = base.ToProto ();
-		obj.chanceData = new ChanceAIEventData ();
-		obj.chanceData.value = Chance;
-		return obj;
+		AIEventData aIEventData = base.ToProto ();
+		aIEventData.chanceData = new ChanceAIEventData ();
+		aIEventData.chanceData.value = Chance;
+		return aIEventData;
 	}
 
 	public override void Execute (AIMemory memory, AIBrainSenses senses, StateStatus stateStatus)

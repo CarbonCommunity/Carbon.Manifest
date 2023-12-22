@@ -12,8 +12,8 @@ public class ConvarControlledSpawnPopulationRail : ConvarControlledSpawnPopulati
 			return false;
 		}
 		TrainCar component = prefab.Object.GetComponent<TrainCar> ();
-		if ((Object)(object)component == (Object)null) {
-			Debug.LogError ((object)(((object)this).GetType ().Name + ": Train prefab has no TrainCar component: " + ((Object)prefab.Object).name));
+		if (component == null) {
+			Debug.LogError (GetType ().Name + ": Train prefab has no TrainCar component: " + prefab.Object.name);
 			return false;
 		}
 		int num = 0;
@@ -35,11 +35,11 @@ public class ConvarControlledSpawnPopulationRail : ConvarControlledSpawnPopulati
 					}
 				}
 			}
-			if ((Object)(object)trainTrackSpline == (Object)null) {
+			if (trainTrackSpline == null) {
 				int index = Random.Range (0, TrainTrackSpline.SidingSplines.Count);
 				trainTrackSpline = TrainTrackSpline.SidingSplines [index];
 			}
-			if ((Object)(object)trainTrackSpline != (Object)null && TryGetRandomPointOnSpline (trainTrackSpline, component, out newPos, out newRot)) {
+			if (trainTrackSpline != null && TryGetRandomPointOnSpline (trainTrackSpline, component, out newPos, out newRot)) {
 				return true;
 			}
 		}
@@ -48,24 +48,22 @@ public class ConvarControlledSpawnPopulationRail : ConvarControlledSpawnPopulati
 
 	public override void OnPostFill (SpawnHandler spawnHandler)
 	{
-		//IL_00b8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ba: Unknown result type (might be due to invalid IL or missing references)
-		List<Prefab<Spawnable>> list = Pool.GetList<Prefab<Spawnable>> ();
+		List<Prefab<Spawnable>> obj = Pool.GetList<Prefab<Spawnable>> ();
 		Prefab<Spawnable>[] prefabs = Prefabs;
 		foreach (Prefab<Spawnable> prefab in prefabs) {
 			TrainCar component = prefab.Object.GetComponent<TrainCar> ();
-			if ((Object)(object)component != (Object)null && component.CarType == TrainCar.TrainCarType.Engine) {
-				list.Add (prefab);
+			if (component != null && component.CarType == TrainCar.TrainCarType.Engine) {
+				obj.Add (prefab);
 			}
 		}
 		foreach (TrainTrackSpline sidingSpline in TrainTrackSpline.SidingSplines) {
 			if (sidingSpline.HasAnyUsersOfType (TrainCar.TrainCarType.Engine)) {
 				continue;
 			}
-			int num = Random.Range (0, list.Count);
+			int num = Random.Range (0, obj.Count);
 			Prefab<Spawnable> prefab2 = Prefabs [num];
 			TrainCar component2 = prefab2.Object.GetComponent<TrainCar> ();
-			if ((Object)(object)component2 == (Object)null) {
+			if (component2 == null) {
 				continue;
 			}
 			int num2 = 0;
@@ -77,39 +75,25 @@ public class ConvarControlledSpawnPopulationRail : ConvarControlledSpawnPopulati
 				}
 			}
 		}
-		Pool.FreeList<Prefab<Spawnable>> (ref list);
+		Pool.FreeList (ref obj);
 	}
 
 	protected override int GetPrefabWeight (Prefab<Spawnable> prefab)
 	{
-		int num = ((!Object.op_Implicit ((Object)(object)prefab.Parameters)) ? 1 : prefab.Parameters.Count);
+		int num = ((!prefab.Parameters) ? 1 : prefab.Parameters.Count);
 		TrainCar component = prefab.Object.GetComponent<TrainCar> ();
-		if ((Object)(object)component != (Object)null) {
+		if (component != null) {
 			if (component.CarType == TrainCar.TrainCarType.Wagon) {
 				num *= TrainCar.wagons_per_engine;
 			}
 		} else {
-			Debug.LogError ((object)(((object)this).GetType ().Name + ": No TrainCar script on train prefab " + ((Object)prefab.Object).name));
+			Debug.LogError (GetType ().Name + ": No TrainCar script on train prefab " + prefab.Object.name);
 		}
 		return num;
 	}
 
 	private bool TryGetRandomPointOnSpline (TrainTrackSpline spline, TrainCar trainCar, out Vector3 pos, out Quaternion rot)
 	{
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0060: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0070: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0083: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
 		float length = spline.GetLength ();
 		if (length < 65f) {
 			pos = Vector3.zero;
@@ -119,17 +103,17 @@ public class ConvarControlledSpawnPopulationRail : ConvarControlledSpawnPopulati
 		float distance = Random.Range (60f, length - 60f);
 		pos = spline.GetPointAndTangentCubicHermiteWorld (distance, out var tangent) + Vector3.up * 0.5f;
 		rot = Quaternion.LookRotation (tangent);
-		float radius = Vector3Ex.Max (((Bounds)(ref trainCar.bounds)).extents);
-		List<Collider> list = Pool.GetList<Collider> ();
-		GamePhysics.OverlapSphere (pos, radius, list, 32768, (QueryTriggerInteraction)1);
+		float radius = trainCar.bounds.extents.Max ();
+		List<Collider> obj = Pool.GetList<Collider> ();
+		GamePhysics.OverlapSphere (pos, radius, obj, 32768);
 		bool result = true;
-		foreach (Collider item in list) {
+		foreach (Collider item in obj) {
 			if (!trainCar.ColliderIsPartOfTrain (item)) {
 				result = false;
 				break;
 			}
 		}
-		Pool.FreeList<Collider> (ref list);
+		Pool.FreeList (ref obj);
 		return result;
 	}
 }

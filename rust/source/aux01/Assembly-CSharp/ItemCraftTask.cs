@@ -13,7 +13,7 @@ public class ItemCraftTask
 
 	public bool cancelled;
 
-	public InstanceData instanceData;
+	public ProtoBuf.Item.InstanceData instanceData;
 
 	public int amount = 1;
 

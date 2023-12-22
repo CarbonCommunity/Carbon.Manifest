@@ -1,4 +1,3 @@
-using System;
 using Network;
 using UnityEngine;
 
@@ -50,10 +49,7 @@ public class SantaSleigh : BaseEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("SantaSleigh.OnRpcMessage", 0);
-		try {
-		} finally {
-			((IDisposable)val)?.Dispose ();
+		using (TimeWarning.New ("SantaSleigh.OnRpcMessage")) {
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -65,42 +61,28 @@ public class SantaSleigh : BaseEntity
 
 	public void InitDropPosition (Vector3 newDropPosition)
 	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
 		dropPosition = newDropPosition;
 		dropPosition.y = 0f;
 	}
 
 	public override void ServerInit ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
 		base.ServerInit ();
 		if (dropPosition == Vector3.zero) {
 			dropPosition = RandomDropPosition ();
 		}
 		UpdateDropPosition (dropPosition);
-		((FacepunchBehaviour)this).Invoke ((Action)SendHoHoHo, 0f);
+		Invoke (SendHoHoHo, 0f);
 	}
 
 	public void SendHoHoHo ()
 	{
-		((FacepunchBehaviour)this).Invoke ((Action)SendHoHoHo, hohohospacing + Random.Range (0f, hohoho_additional_spacing));
+		Invoke (SendHoHoHo, hohohospacing + Random.Range (0f, hohoho_additional_spacing));
 		ClientRPC (null, "ClientPlayHoHoHo");
 	}
 
 	public Vector3 RandomDropPosition ()
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0005: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005c: Unknown result type (might be due to invalid IL or missing references)
 		Vector3 zero = Vector3.zero;
 		float num = 100f;
 		float x = TerrainMeta.Size.x;
@@ -113,37 +95,11 @@ public class SantaSleigh : BaseEntity
 
 	public void UpdateDropPosition (Vector3 newDropPosition)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0067: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0071: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0076: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0093: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0098: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0099: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00aa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ab: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0101: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0106: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0116: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0117: Unknown result type (might be due to invalid IL or missing references)
 		float x = TerrainMeta.Size.x;
 		float y = altitudeAboveTerrain;
 		startPos = Vector3Ex.Range (-1f, 1f);
 		startPos.y = 0f;
-		((Vector3)(ref startPos)).Normalize ();
+		startPos.Normalize ();
 		startPos *= x * 1.25f;
 		startPos.y = y;
 		endPos = startPos * -1f;
@@ -152,115 +108,63 @@ public class SantaSleigh : BaseEntity
 		endPos += newDropPosition;
 		secondsToTake = Vector3.Distance (startPos, endPos) / 25f;
 		secondsToTake *= Random.Range (0.95f, 1.05f);
-		((Component)this).transform.SetPositionAndRotation (startPos, Quaternion.LookRotation (endPos - startPos));
+		base.transform.SetPositionAndRotation (startPos, Quaternion.LookRotation (endPos - startPos));
 		dropPosition = newDropPosition;
 	}
 
 	private void FixedUpdate ()
 	{
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ac: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ca: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00dd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00df: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01eb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01fe: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0206: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0210: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0215: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0224: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0252: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0273: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0275: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0083: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0089: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0297: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0298: Unknown result type (might be due to invalid IL or missing references)
-		//IL_018d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_018e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0193: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0194: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0195: Unknown result type (might be due to invalid IL or missing references)
-		//IL_019c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a6: Unknown result type (might be due to invalid IL or missing references)
 		if (!base.isServer) {
 			return;
 		}
-		Vector3 position = ((Component)this).transform.position;
-		Quaternion rotation = ((Component)this).transform.rotation;
+		Vector3 position = base.transform.position;
+		Quaternion rotation = base.transform.rotation;
 		secondsTaken += Time.deltaTime;
 		float num = Mathf.InverseLerp (0f, secondsToTake, secondsTaken);
 		if (!dropped && num >= 0.5f) {
 			dropped = true;
-			BaseEntity baseEntity = GameManager.server.CreateEntity (prefabDrop.resourcePath, ((Component)dropOrigin).transform.position);
-			if (Object.op_Implicit ((Object)(object)baseEntity)) {
+			BaseEntity baseEntity = GameManager.server.CreateEntity (prefabDrop.resourcePath, dropOrigin.transform.position);
+			if ((bool)baseEntity) {
 				baseEntity.globalBroadcast = true;
 				baseEntity.Spawn ();
 			}
 		}
 		position = Vector3.Lerp (startPos, endPos, num);
-		Vector3 val = endPos - startPos;
-		Vector3 normalized = ((Vector3)(ref val)).normalized;
-		Vector3 val2 = Vector3.zero;
+		Vector3 normalized = (endPos - startPos).normalized;
+		Vector3 zero = Vector3.zero;
 		if (swimScale != Vector3.zero) {
 			if (swimRandom == 0f) {
 				swimRandom = Random.Range (0f, 20f);
 			}
 			float num2 = Time.time + swimRandom;
-			((Vector3)(ref val2))..ctor (Mathf.Sin (num2 * swimSpeed.x) * swimScale.x, Mathf.Cos (num2 * swimSpeed.y) * swimScale.y, Mathf.Sin (num2 * swimSpeed.z) * swimScale.z);
-			val2 = ((Component)this).transform.InverseTransformDirection (val2);
-			position += val2 * appliedSwimScale;
+			zero = new Vector3 (Mathf.Sin (num2 * swimSpeed.x) * swimScale.x, Mathf.Cos (num2 * swimSpeed.y) * swimScale.y, Mathf.Sin (num2 * swimSpeed.z) * swimScale.z);
+			zero = base.transform.InverseTransformDirection (zero);
+			position += zero * appliedSwimScale;
 		}
 		rotation = Quaternion.LookRotation (normalized) * Quaternion.Euler (Mathf.Cos (Time.time * swimSpeed.y) * appliedSwimRotation, 0f, Mathf.Sin (Time.time * swimSpeed.x) * appliedSwimRotation);
-		Vector3 val3 = position;
-		float height = TerrainMeta.HeightMap.GetHeight (val3 + ((Component)this).transform.forward * 30f);
-		float height2 = TerrainMeta.HeightMap.GetHeight (val3);
+		Vector3 vector = position;
+		float height = TerrainMeta.HeightMap.GetHeight (vector + base.transform.forward * 30f);
+		float height2 = TerrainMeta.HeightMap.GetHeight (vector);
 		float num3 = Mathf.Max (height, height2);
-		float num4 = Mathf.Max (desiredAltitude, num3 + altitudeAboveTerrain);
-		val3.y = Mathf.Lerp (((Component)this).transform.position.y, num4, Time.fixedDeltaTime * 0.5f);
-		position = val3;
-		((Component)this).transform.hasChanged = true;
+		float b = Mathf.Max (desiredAltitude, num3 + altitudeAboveTerrain);
+		vector.y = Mathf.Lerp (base.transform.position.y, b, Time.fixedDeltaTime * 0.5f);
+		position = vector;
+		base.transform.hasChanged = true;
 		if (num >= 1f) {
 			Kill ();
 		}
-		((Component)this).transform.SetPositionAndRotation (position, rotation);
+		base.transform.SetPositionAndRotation (position, rotation);
 	}
 
 	[ServerVar]
-	public static void drop (Arg arg)
+	public static void drop (ConsoleSystem.Arg arg)
 	{
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006a: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer basePlayer = arg.Player ();
-		if (Object.op_Implicit ((Object)(object)basePlayer)) {
-			Debug.Log ((object)"Santa Inbound");
+		if ((bool)basePlayer) {
+			Debug.Log ("Santa Inbound");
 			BaseEntity baseEntity = GameManager.server.CreateEntity ("assets/prefabs/misc/xmas/sleigh/santasleigh.prefab");
-			if (Object.op_Implicit ((Object)(object)baseEntity)) {
-				((Component)baseEntity).GetComponent<SantaSleigh> ().InitDropPosition (((Component)basePlayer).transform.position + new Vector3 (0f, 10f, 0f));
+			if ((bool)baseEntity) {
+				baseEntity.GetComponent<SantaSleigh> ().InitDropPosition (basePlayer.transform.position + new Vector3 (0f, 10f, 0f));
 				baseEntity.Spawn ();
 			}
 		}

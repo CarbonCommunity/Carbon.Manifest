@@ -9,17 +9,17 @@ using UnityEngine;
 
 public class NexusDockTerminal : BaseEntity
 {
-	public static readonly Phrase ScheduleSoonPhrase = new Phrase ("nexus.dock.schedule.soon", "{0} - Now");
+	public static readonly Translate.Phrase ScheduleSoonPhrase = new Translate.Phrase ("nexus.dock.schedule.soon", "{0} - Now");
 
-	public static readonly Phrase ScheduleMinutesPhrase = new Phrase ("nexus.dock.schedule.minutes", "{0} - {1} min");
+	public static readonly Translate.Phrase ScheduleMinutesPhrase = new Translate.Phrase ("nexus.dock.schedule.minutes", "{0} - {1} min");
 
-	public static readonly Phrase ScheduleUnknownPhrase = new Phrase ("nexus.dock.schedule.unknown", "{0} - Unknown");
+	public static readonly Translate.Phrase ScheduleUnknownPhrase = new Translate.Phrase ("nexus.dock.schedule.unknown", "{0} - Unknown");
 
 	public float TravelTime = 90f;
 
 	public RustText[] ScheduleLabels;
 
-	private List<ScheduleEntry> _scheduleEntries;
+	private List<ProtoBuf.NexusDockTerminal.ScheduleEntry> _scheduleEntries;
 
 	private static readonly HashSet<string> SeenFerries = new HashSet<string> (StringComparer.InvariantCultureIgnoreCase);
 
@@ -27,36 +27,36 @@ public class NexusDockTerminal : BaseEntity
 	{
 		base.InitShared ();
 		if (base.isServer) {
-			((FacepunchBehaviour)this).InvokeRandomized ((Action)UpdateFerrySchedule, 0f, 10f, 5f);
+			InvokeRandomized (UpdateFerrySchedule, 0f, 10f, 5f);
 		}
 	}
 
 	public override void AdminKill ()
 	{
 		if (!HasFlag (Flags.Debugging)) {
-			Debug.LogWarning ((object)"Prevented killing NexusDock, set debugging flag to override");
+			Debug.LogWarning ("Prevented killing NexusDock, set debugging flag to override");
 		}
 	}
 
 	private void UpdateFerrySchedule ()
 	{
 		if (_scheduleEntries == null) {
-			_scheduleEntries = Pool.GetList<ScheduleEntry> ();
+			_scheduleEntries = Pool.GetList<ProtoBuf.NexusDockTerminal.ScheduleEntry> ();
 		}
-		foreach (ScheduleEntry scheduleEntry in _scheduleEntries) {
-			ScheduleEntry current = scheduleEntry;
-			Pool.Free<ScheduleEntry> (ref current);
+		foreach (ProtoBuf.NexusDockTerminal.ScheduleEntry scheduleEntry2 in _scheduleEntries) {
+			ProtoBuf.NexusDockTerminal.ScheduleEntry obj = scheduleEntry2;
+			Pool.Free (ref obj);
 		}
 		_scheduleEntries.Clear ();
 		List<(string, float?)> list = Pool.GetList<(string, float?)> ();
 		CalculateFerryEstimates (list);
 		foreach (var item in list) {
-			NexusZoneDetails val = NexusServer.FindZone (item.Item1);
-			if (val != null) {
-				ScheduleEntry val2 = Pool.Get<ScheduleEntry> ();
-				val2.nextZoneId = val.Id;
-				val2.estimate = (int)Mathf.Round (item.Item2 ?? (-1f));
-				_scheduleEntries.Add (val2);
+			NexusZoneDetails nexusZoneDetails = NexusServer.FindZone (item.Item1);
+			if (nexusZoneDetails != null) {
+				ProtoBuf.NexusDockTerminal.ScheduleEntry scheduleEntry = Pool.Get<ProtoBuf.NexusDockTerminal.ScheduleEntry> ();
+				scheduleEntry.nextZoneId = nexusZoneDetails.Id;
+				scheduleEntry.estimate = (int)Mathf.Round (item.Item2 ?? (-1f));
+				_scheduleEntries.Add (scheduleEntry);
 			}
 		}
 		SendNetworkUpdate ();
@@ -64,26 +64,24 @@ public class NexusDockTerminal : BaseEntity
 
 	private void CalculateFerryEstimates (List<(string NextZone, float? Estimate)> estimates)
 	{
-		//IL_014a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0150: Invalid comparison between Unknown and I4
 		if (estimates == null) {
 			throw new ArgumentNullException ("estimates");
 		}
 		estimates.Clear ();
 		SeenFerries.Clear ();
 		NexusDock instance = SingletonComponent<NexusDock>.Instance;
-		if ((Object)(object)instance == (Object)null || !NexusServer.Started || NexusServer.Zones == null) {
+		if (instance == null || !NexusServer.Started || NexusServer.Zones == null) {
 			return;
 		}
 		instance.CleanupQueuedFerries ();
 		float num = 0f;
-		if ((Object)(object)instance.CurrentFerry != (Object)null && !instance.CurrentFerry.IsRetiring) {
+		if (instance.CurrentFerry != null && !instance.CurrentFerry.IsRetiring) {
 			estimates.Add ((instance.CurrentFerry.NextZone, num));
 			SeenFerries.Add (instance.CurrentFerry.OwnerZone);
 		}
 		NexusFerry[] queuedFerries = instance.QueuedFerries;
 		foreach (NexusFerry nexusFerry in queuedFerries) {
-			if (!((Object)(object)nexusFerry == (Object)null) && !nexusFerry.IsRetiring) {
+			if (!(nexusFerry == null) && !nexusFerry.IsRetiring) {
 				estimates.Add ((nexusFerry.NextZone, num));
 				num += instance.WaitTime;
 				SeenFerries.Add (nexusFerry.OwnerZone);
@@ -91,10 +89,10 @@ public class NexusDockTerminal : BaseEntity
 		}
 		string zoneKey = NexusServer.ZoneKey;
 		foreach (NexusZoneDetails zone in NexusServer.Zones) {
-			if (SeenFerries.Contains (zone.Key) || !((Dictionary<string, VariableData>)(object)zone.Variables).TryGetValue ("ferry", out VariableData value) || (int)((VariableData)(ref value)).Type != 1 || string.IsNullOrWhiteSpace (((VariableData)(ref value)).Value) || !StringExtensions.Contains (((VariableData)(ref value)).Value, zoneKey, StringComparison.InvariantCultureIgnoreCase) || !NexusUtil.TryParseFerrySchedule (zone.Key, ((VariableData)(ref value)).Value, out var schedule)) {
+			if (SeenFerries.Contains (zone.Key) || !zone.Variables.TryGetValue ("ferry", out var value) || value.Type != VariableType.String || string.IsNullOrWhiteSpace (value.Value) || !value.Value.Contains (zoneKey, StringComparison.InvariantCultureIgnoreCase) || !NexusUtil.TryParseFerrySchedule (zone.Key, value.Value, out var schedule)) {
 				continue;
 			}
-			int num2 = List.FindIndex<string> ((IReadOnlyList<string>)schedule, zoneKey, (IEqualityComparer<string>)StringComparer.InvariantCultureIgnoreCase);
+			int num2 = schedule.FindIndex (zoneKey, StringComparer.InvariantCultureIgnoreCase);
 			if (num2 < 0) {
 				continue;
 			}
@@ -104,7 +102,7 @@ public class NexusDockTerminal : BaseEntity
 				SeenFerries.Add (zone.Key);
 				continue;
 			}
-			int num3 = List.FindIndex<string> ((IReadOnlyList<string>)schedule, currentZone, (IEqualityComparer<string>)StringComparer.InvariantCultureIgnoreCase);
+			int num3 = schedule.FindIndex (currentZone, StringComparer.InvariantCultureIgnoreCase);
 			if (num3 < 0) {
 				estimates.Add ((item, null));
 				SeenFerries.Add (zone.Key);
@@ -166,12 +164,12 @@ public class NexusDockTerminal : BaseEntity
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.nexusDockTerminal = Pool.Get<NexusDockTerminal> ();
-		info.msg.nexusDockTerminal.schedule = Pool.GetList<ScheduleEntry> ();
+		info.msg.nexusDockTerminal = Pool.Get<ProtoBuf.NexusDockTerminal> ();
+		info.msg.nexusDockTerminal.schedule = Pool.GetList<ProtoBuf.NexusDockTerminal.ScheduleEntry> ();
 		if (_scheduleEntries == null) {
 			return;
 		}
-		foreach (ScheduleEntry scheduleEntry in _scheduleEntries) {
+		foreach (ProtoBuf.NexusDockTerminal.ScheduleEntry scheduleEntry in _scheduleEntries) {
 			info.msg.nexusDockTerminal.schedule.Add (scheduleEntry.Copy ());
 		}
 	}
@@ -183,11 +181,11 @@ public class NexusDockTerminal : BaseEntity
 			return;
 		}
 		if (_scheduleEntries != null) {
-			foreach (ScheduleEntry scheduleEntry in _scheduleEntries) {
-				ScheduleEntry current = scheduleEntry;
-				Pool.Free<ScheduleEntry> (ref current);
+			foreach (ProtoBuf.NexusDockTerminal.ScheduleEntry scheduleEntry in _scheduleEntries) {
+				ProtoBuf.NexusDockTerminal.ScheduleEntry obj = scheduleEntry;
+				Pool.Free (ref obj);
 			}
-			Pool.FreeList<ScheduleEntry> (ref _scheduleEntries);
+			Pool.FreeList (ref _scheduleEntries);
 		}
 		_scheduleEntries = info.msg.nexusDockTerminal.schedule;
 		info.msg.nexusDockTerminal.schedule = null;

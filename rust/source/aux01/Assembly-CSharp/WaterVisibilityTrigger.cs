@@ -22,7 +22,7 @@ public class WaterVisibilityTrigger : EnvironmentVolumeTrigger
 
 	protected void OnDestroy ()
 	{
-		if (!Application.isQuitting) {
+		if (!Rust.Application.isQuitting) {
 			tracker.Remove (enteredTick);
 		}
 	}
@@ -37,22 +37,22 @@ public class WaterVisibilityTrigger : EnvironmentVolumeTrigger
 
 	private void ToggleCollision (Collider other)
 	{
-		if (togglePhysics && (Object)(object)WaterSystem.Collision != (Object)null) {
+		if (togglePhysics && WaterSystem.Collision != null) {
 			WaterSystem.Collision.SetIgnore (other, base.volume.trigger);
 		}
 	}
 
 	private void ResetCollision (Collider other)
 	{
-		if (togglePhysics && (Object)(object)WaterSystem.Collision != (Object)null) {
+		if (togglePhysics && WaterSystem.Collision != null) {
 			WaterSystem.Collision.SetIgnore (other, base.volume.trigger, ignore: false);
 		}
 	}
 
 	protected void OnTriggerEnter (Collider other)
 	{
-		bool num = (Object)(object)((Component)other).gameObject.GetComponent<PlayerWalkMovement> () != (Object)null;
-		bool flag = ((Component)other).gameObject.CompareTag ("MainCamera");
+		bool num = other.gameObject.GetComponent<PlayerWalkMovement> () != null;
+		bool flag = other.gameObject.CompareTag ("MainCamera");
 		if ((num || flag) && !tracker.ContainsValue (this)) {
 			enteredTick = ticks++;
 			tracker.Add (enteredTick, this);
@@ -65,8 +65,8 @@ public class WaterVisibilityTrigger : EnvironmentVolumeTrigger
 
 	protected void OnTriggerExit (Collider other)
 	{
-		bool num = (Object)(object)((Component)other).gameObject.GetComponent<PlayerWalkMovement> () != (Object)null;
-		bool flag = ((Component)other).gameObject.CompareTag ("MainCamera");
+		bool num = other.gameObject.GetComponent<PlayerWalkMovement> () != null;
+		bool flag = other.gameObject.CompareTag ("MainCamera");
 		if ((num || flag) && tracker.ContainsValue (this)) {
 			tracker.Remove (enteredTick);
 			if (tracker.Count > 0) {

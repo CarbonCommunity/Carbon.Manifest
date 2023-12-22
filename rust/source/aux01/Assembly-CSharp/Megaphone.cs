@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Network;
@@ -25,46 +26,34 @@ public class Megaphone : HeldEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("Megaphone.OnRpcMessage", 0);
-		try {
-			if (rpc == 4196056309u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("Megaphone.OnRpcMessage")) {
+			if (rpc == 4196056309u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_ToggleBroadcasting "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_ToggleBroadcasting "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_ToggleBroadcasting", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_ToggleBroadcasting")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.FromOwner.Test (4196056309u, "Server_ToggleBroadcasting", this, player)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							Server_ToggleBroadcasting (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in Server_ToggleBroadcasting");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -84,11 +73,11 @@ public class Megaphone : HeldEntity
 		bool flag = msg.read.Int8 () == 1;
 		SetFlag (Flags.On, flag);
 		if (flag) {
-			if (!((FacepunchBehaviour)this).IsInvoking ((Action)UpdateItemCondition)) {
-				((FacepunchBehaviour)this).InvokeRepeating ((Action)UpdateItemCondition, 0f, VoiceDamageMinFrequency);
+			if (!IsInvoking (UpdateItemCondition)) {
+				InvokeRepeating (UpdateItemCondition, 0f, VoiceDamageMinFrequency);
 			}
-		} else if (((FacepunchBehaviour)this).IsInvoking ((Action)UpdateItemCondition)) {
-			((FacepunchBehaviour)this).CancelInvoke ((Action)UpdateItemCondition);
+		} else if (IsInvoking (UpdateItemCondition)) {
+			CancelInvoke (UpdateItemCondition);
 		}
 	}
 }

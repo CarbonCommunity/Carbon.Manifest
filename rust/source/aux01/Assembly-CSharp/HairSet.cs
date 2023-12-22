@@ -26,24 +26,24 @@ public class HairSet : ScriptableObject
 
 	public void Process (PlayerModelHair playerModelHair, HairDyeCollection dyeCollection, HairDye dye, MaterialPropertyBlock block)
 	{
-		List<SkinnedMeshRenderer> list = Pool.GetList<SkinnedMeshRenderer> ();
-		((Component)playerModelHair).gameObject.GetComponentsInChildren<SkinnedMeshRenderer> (true, list);
-		foreach (SkinnedMeshRenderer item in list) {
-			if (!((Object)(object)item.sharedMesh == (Object)null) && !((Object)(object)((Renderer)item).sharedMaterial == (Object)null)) {
-				string name = ((Object)item.sharedMesh).name;
-				_ = ((Object)((Renderer)item).sharedMaterial).name;
-				if (!((Component)item).gameObject.activeSelf) {
-					((Component)item).gameObject.SetActive (true);
+		List<SkinnedMeshRenderer> obj = Pool.GetList<SkinnedMeshRenderer> ();
+		playerModelHair.gameObject.GetComponentsInChildren (includeInactive: true, obj);
+		foreach (SkinnedMeshRenderer item in obj) {
+			if (!(item.sharedMesh == null) && !(item.sharedMaterial == null)) {
+				string materialName = item.sharedMesh.name;
+				_ = item.sharedMaterial.name;
+				if (!item.gameObject.activeSelf) {
+					item.gameObject.SetActive (value: true);
 				}
 				for (int i = 0; i < MeshReplacements.Length; i++) {
-					MeshReplacements [i].Test (name);
+					MeshReplacements [i].Test (materialName);
 				}
-				if (dye != null && ((Component)item).gameObject.activeSelf) {
+				if (dye != null && item.gameObject.activeSelf) {
 					dye.Apply (dyeCollection, block);
 				}
 			}
 		}
-		Pool.FreeList<SkinnedMeshRenderer> (ref list);
+		Pool.FreeList (ref obj);
 	}
 
 	public void ProcessMorphs (GameObject obj, int blendShapeIndex = -1)

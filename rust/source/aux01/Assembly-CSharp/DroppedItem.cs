@@ -30,14 +30,14 @@ public class DroppedItem : WorldItem
 
 	public override float GetNetworkTime ()
 	{
-		return Time.fixedTime;
+		return UnityEngine.Time.fixedTime;
 	}
 
 	public override void ServerInit ()
 	{
 		base.ServerInit ();
 		if (GetDespawnDuration () < float.PositiveInfinity) {
-			((FacepunchBehaviour)this).Invoke ((Action)IdleDestroy, GetDespawnDuration ());
+			Invoke (IdleDestroy, GetDespawnDuration ());
 		}
 		ReceiveCollisionMessages (b: true);
 	}
@@ -58,7 +58,7 @@ public class DroppedItem : WorldItem
 	{
 		if (item != null && item.MaxStackable () > 1) {
 			DroppedItem droppedItem = hitEntity as DroppedItem;
-			if (!((Object)(object)droppedItem == (Object)null) && droppedItem.item != null && !((Object)(object)droppedItem.item.info != (Object)(object)item.info)) {
+			if (!(droppedItem == null) && droppedItem.item != null && !(droppedItem.item.info != item.info)) {
 				droppedItem.OnDroppedOn (this);
 			}
 		}
@@ -66,12 +66,10 @@ public class DroppedItem : WorldItem
 
 	public void OnDroppedOn (DroppedItem di)
 	{
-		//IL_0207: Unknown result type (might be due to invalid IL or missing references)
-		//IL_020c: Unknown result type (might be due to invalid IL or missing references)
-		if (item == null || di.item == null || (Object)(object)di.item.info != (Object)(object)item.info || (di.item.IsBlueprint () && di.item.blueprintTarget != item.blueprintTarget) || (di.item.hasCondition && di.item.condition != di.item.maxCondition) || (item.hasCondition && item.condition != item.maxCondition)) {
+		if (item == null || di.item == null || di.item.info != item.info || (di.item.IsBlueprint () && di.item.blueprintTarget != item.blueprintTarget) || (di.item.hasCondition && di.item.condition != di.item.maxCondition) || (item.hasCondition && item.condition != item.maxCondition)) {
 			return;
 		}
-		if ((Object)(object)di.item.info != (Object)null) {
+		if (di.item.info != null) {
 			if (di.item.info.amountType == ItemDefinition.AmountType.Genetics) {
 				int num = ((di.item.instanceData != null) ? di.item.instanceData.dataInt : (-1));
 				int num2 = ((item.instanceData != null) ? item.instanceData.dataInt : (-1));
@@ -79,7 +77,7 @@ public class DroppedItem : WorldItem
 					return;
 				}
 			}
-			if (((Object)(object)((Component)di.item.info).GetComponent<ItemModSign> () != (Object)null && (Object)(object)ItemModAssociatedEntity<SignContent>.GetAssociatedEntity (di.item) != (Object)null) || ((Object)(object)item.info != (Object)null && (Object)(object)((Component)item.info).GetComponent<ItemModSign> () != (Object)null && (Object)(object)ItemModAssociatedEntity<SignContent>.GetAssociatedEntity (item) != (Object)null)) {
+			if ((di.item.info.GetComponent<ItemModSign> () != null && ItemModAssociatedEntity<SignContent>.GetAssociatedEntity (di.item) != null) || (item.info != null && item.info.GetComponent<ItemModSign> () != null && ItemModAssociatedEntity<SignContent>.GetAssociatedEntity (item) != null)) {
 				return;
 			}
 		}
@@ -93,7 +91,7 @@ public class DroppedItem : WorldItem
 			item.amount = num3;
 			item.MarkDirty ();
 			if (GetDespawnDuration () < float.PositiveInfinity) {
-				((FacepunchBehaviour)this).Invoke ((Action)IdleDestroy, GetDespawnDuration ());
+				Invoke (IdleDestroy, GetDespawnDuration ());
 			}
 			Effect.server.Run ("assets/bundled/prefabs/fx/notice/stack.world.fx.prefab", this, 0u, Vector3.zero, Vector3.zero);
 		}
@@ -102,7 +100,7 @@ public class DroppedItem : WorldItem
 	public override void OnParentChanging (BaseEntity oldParent, BaseEntity newParent)
 	{
 		base.OnParentChanging (oldParent, newParent);
-		if ((Object)(object)newParent != (Object)null) {
+		if (newParent != null) {
 			OnParented ();
 		}
 		SetCollisionForParent (newParent);
@@ -110,63 +108,44 @@ public class DroppedItem : WorldItem
 
 	private void SetCollisionForParent (BaseEntity parent)
 	{
-		if (!((Object)(object)rB == (Object)null)) {
-			if (parent.IsValid () && (Object)(object)((Component)parent).GetComponent<Rigidbody> () != (Object)null) {
-				rB.collisionDetectionMode = (CollisionDetectionMode)3;
+		if (!(rB == null)) {
+			if (parent.IsValid () && parent.GetComponent<Rigidbody> () != null) {
+				rB.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
 			} else {
-				rB.collisionDetectionMode = (CollisionDetectionMode)2;
+				rB.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
 			}
 		}
 	}
 
 	internal override void OnParentRemoved ()
 	{
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0037: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0093: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0063: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0077: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0078: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0082: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0087: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008c: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)rB == (Object)null) {
+		if (rB == null) {
 			base.OnParentRemoved ();
 			return;
 		}
-		Vector3 val = ((Component)this).transform.position;
-		Quaternion rotation = ((Component)this).transform.rotation;
+		Vector3 position = base.transform.position;
+		Quaternion rotation = base.transform.rotation;
 		SetParent (null);
-		RaycastHit val2 = default(RaycastHit);
-		if (Physics.Raycast (val + Vector3.up * 2f, Vector3.down, ref val2, 2f, 161546240) && val.y < ((RaycastHit)(ref val2)).point.y) {
-			val += Vector3.up * 1.5f;
+		if (UnityEngine.Physics.Raycast (position + Vector3.up * 2f, Vector3.down, out var hitInfo, 2f, 161546240) && position.y < hitInfo.point.y) {
+			position += Vector3.up * 1.5f;
 		}
-		((Component)this).transform.position = val;
-		((Component)this).transform.rotation = rotation;
-		((Component)childCollider).gameObject.layer = ((Component)this).gameObject.layer;
+		base.transform.position = position;
+		base.transform.rotation = rotation;
+		childCollider.gameObject.layer = base.gameObject.layer;
 		rB.isKinematic = false;
 		rB.useGravity = true;
-		rB.collisionDetectionMode = (CollisionDetectionMode)2;
+		rB.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
 		rB.WakeUp ();
 		if (GetDespawnDuration () < float.PositiveInfinity) {
-			((FacepunchBehaviour)this).Invoke ((Action)IdleDestroy, GetDespawnDuration ());
+			Invoke (IdleDestroy, GetDespawnDuration ());
 		}
 	}
 
 	public void GoKinematic ()
 	{
 		rB.isKinematic = true;
-		if (Object.op_Implicit ((Object)(object)childCollider)) {
-			((Component)childCollider).gameObject.layer = 19;
+		if ((bool)childCollider) {
+			childCollider.gameObject.layer = 19;
 		}
 	}
 
@@ -180,17 +159,15 @@ public class DroppedItem : WorldItem
 
 	public override void PostInitShared ()
 	{
-		//IL_0064: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0074: Unknown result type (might be due to invalid IL or missing references)
 		base.PostInitShared ();
-		GameObject val = null;
-		val = ((item == null || !item.info.worldModelPrefab.isValid) ? Object.Instantiate<GameObject> (itemModel) : item.info.worldModelPrefab.Instantiate ());
-		val.transform.SetParent (((Component)this).transform, false);
-		val.transform.localPosition = Vector3.zero;
-		val.transform.localRotation = Quaternion.identity;
-		val.SetLayerRecursive (((Component)this).gameObject.layer);
-		childCollider = val.GetComponentInChildren<Collider> ();
-		if (Object.op_Implicit ((Object)(object)childCollider)) {
+		GameObject gameObject = null;
+		gameObject = ((item == null || !item.info.worldModelPrefab.isValid) ? UnityEngine.Object.Instantiate (itemModel) : item.info.worldModelPrefab.Instantiate ());
+		gameObject.transform.SetParent (base.transform, worldPositionStays: false);
+		gameObject.transform.localPosition = Vector3.zero;
+		gameObject.transform.localRotation = Quaternion.identity;
+		gameObject.SetLayerRecursive (base.gameObject.layer);
+		childCollider = gameObject.GetComponentInChildren<Collider> ();
+		if ((bool)childCollider) {
 			childCollider.enabled = false;
 			if (HasParent ()) {
 				OnParented ();
@@ -199,44 +176,44 @@ public class DroppedItem : WorldItem
 			}
 		}
 		if (base.isServer) {
-			WorldModel component = val.GetComponent<WorldModel> ();
-			float mass = (Object.op_Implicit ((Object)(object)component) ? component.mass : 1f);
+			WorldModel component = gameObject.GetComponent<WorldModel> ();
+			float mass = (component ? component.mass : 1f);
 			float drag = 0.1f;
 			float angularDrag = 0.1f;
-			rB = ((Component)this).gameObject.AddComponent<Rigidbody> ();
+			rB = base.gameObject.AddComponent<Rigidbody> ();
 			rB.mass = mass;
 			rB.drag = drag;
 			rB.angularDrag = angularDrag;
 			SetCollisionForParent (GetParentEntity ());
-			rB.interpolation = (RigidbodyInterpolation)0;
-			Renderer[] componentsInChildren = val.GetComponentsInChildren<Renderer> (true);
+			rB.interpolation = RigidbodyInterpolation.None;
+			Renderer[] componentsInChildren = gameObject.GetComponentsInChildren<Renderer> (includeInactive: true);
 			for (int i = 0; i < componentsInChildren.Length; i++) {
 				componentsInChildren [i].enabled = false;
 			}
 		}
 		if (item != null) {
-			PhysicsEffects component2 = ((Component)this).gameObject.GetComponent<PhysicsEffects> ();
-			if ((Object)(object)component2 != (Object)null) {
+			PhysicsEffects component2 = base.gameObject.GetComponent<PhysicsEffects> ();
+			if (component2 != null) {
 				component2.entity = this;
-				if ((Object)(object)item.info.physImpactSoundDef != (Object)null) {
+				if (item.info.physImpactSoundDef != null) {
 					component2.physImpactSoundDef = item.info.physImpactSoundDef;
 				}
 			}
 		}
-		val.SetActive (true);
+		gameObject.SetActive (value: true);
 	}
 
 	private void OnParented ()
 	{
-		if (!((Object)(object)childCollider == (Object)null) && Object.op_Implicit ((Object)(object)childCollider)) {
+		if (!(childCollider == null) && (bool)childCollider) {
 			childCollider.enabled = false;
-			((FacepunchBehaviour)this).Invoke ((Action)EnableCollider, 0.1f);
+			Invoke (EnableCollider, 0.1f);
 		}
 	}
 
 	private void EnableCollider ()
 	{
-		if (Object.op_Implicit ((Object)(object)childCollider)) {
+		if ((bool)childCollider) {
 			childCollider.enabled = true;
 		}
 	}

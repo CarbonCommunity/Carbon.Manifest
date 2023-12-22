@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Buttons
 {
-	public class ConButton : IConsoleButton
+	public class ConButton : ConsoleSystem.IConsoleButton
 	{
 		private int frame;
 
@@ -38,7 +38,7 @@ public class Buttons
 			}
 		}
 
-		public void Call (Arg arg)
+		public void Call (ConsoleSystem.Arg arg)
 		{
 		}
 	}

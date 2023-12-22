@@ -1,5 +1,4 @@
 using Rust.UI;
-using TMPro;
 using UnityEngine;
 
 public class CopyText : MonoBehaviour
@@ -8,8 +7,8 @@ public class CopyText : MonoBehaviour
 
 	public void TriggerCopy ()
 	{
-		if ((Object)(object)TargetText != (Object)null) {
-			GUIUtility.systemCopyBuffer = ((TMP_Text)TargetText).text;
+		if (TargetText != null) {
+			GUIUtility.systemCopyBuffer = TargetText.text;
 		}
 	}
 }

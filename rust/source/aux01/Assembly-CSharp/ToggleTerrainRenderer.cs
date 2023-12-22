@@ -9,21 +9,21 @@ public class ToggleTerrainRenderer : MonoBehaviour
 
 	protected void OnEnable ()
 	{
-		if (Object.op_Implicit ((Object)(object)Terrain.activeTerrain)) {
+		if ((bool)Terrain.activeTerrain) {
 			toggleControl.isOn = Terrain.activeTerrain.drawHeightmap;
 		}
 	}
 
 	public void OnToggleChanged ()
 	{
-		if (Object.op_Implicit ((Object)(object)Terrain.activeTerrain)) {
+		if ((bool)Terrain.activeTerrain) {
 			Terrain.activeTerrain.drawHeightmap = toggleControl.isOn;
 		}
 	}
 
 	protected void OnValidate ()
 	{
-		if (Object.op_Implicit ((Object)(object)textControl)) {
+		if ((bool)textControl) {
 			textControl.text = "Terrain Renderer";
 		}
 	}

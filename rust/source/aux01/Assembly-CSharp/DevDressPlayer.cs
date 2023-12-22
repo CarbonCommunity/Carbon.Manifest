@@ -11,12 +11,12 @@ public class DevDressPlayer : MonoBehaviour
 
 	private void ServerInitComponent ()
 	{
-		BasePlayer component = ((Component)this).GetComponent<BasePlayer> ();
+		BasePlayer component = GetComponent<BasePlayer> ();
 		if (DressRandomly) {
 			DoRandomClothes (component);
 		}
 		foreach (ItemAmount item in clothesToWear) {
-			if (!((Object)(object)item.itemDef == (Object)null)) {
+			if (!(item.itemDef == null)) {
 				ItemManager.Create (item.itemDef, 1, 0uL).MoveToContainer (component.inventory.containerWear);
 			}
 		}
@@ -26,9 +26,9 @@ public class DevDressPlayer : MonoBehaviour
 	{
 		string text = "";
 		foreach (ItemDefinition item in (from x in ItemManager.GetItemDefinitions ()
-			where Object.op_Implicit ((Object)(object)((Component)x).GetComponent<ItemModWearable> ())
+			where x.GetComponent<ItemModWearable> ()
 			orderby Guid.NewGuid ()
-			select x).Take (Random.Range (0, 4))) {
+			select x).Take (UnityEngine.Random.Range (0, 4))) {
 			ItemManager.Create (item, 1, 0uL).MoveToContainer (player.inventory.containerWear);
 			text = text + item.shortname + " ";
 		}

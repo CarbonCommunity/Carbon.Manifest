@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -25,82 +26,61 @@ public class VehicleModuleStorage : VehicleModuleSeating
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("VehicleModuleStorage.OnRpcMessage", 0);
-		try {
-			if (rpc == 4254195175u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("VehicleModuleStorage.OnRpcMessage")) {
+			if (rpc == 4254195175u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_Open "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_Open "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_Open", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_Open")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (4254195175u, "RPC_Open", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							RPC_Open (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_Open");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 425471188 && (Object)(object)player != (Object)null) {
+			if (rpc == 425471188 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_TryOpenWithKeycode "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_TryOpenWithKeycode "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_TryOpenWithKeycode", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_TryOpenWithKeycode")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (425471188u, "RPC_TryOpenWithKeycode", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg3 = rPCMessage;
 							RPC_TryOpenWithKeycode (msg3);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in RPC_TryOpenWithKeycode");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
@@ -108,7 +88,7 @@ public class VehicleModuleStorage : VehicleModuleSeating
 	public IItemContainerEntity GetContainer ()
 	{
 		BaseEntity baseEntity = storageUnitInstance.Get (base.isServer);
-		if ((Object)(object)baseEntity != (Object)null && baseEntity.IsValid ()) {
+		if (baseEntity != null && baseEntity.IsValid ()) {
 			return baseEntity as IItemContainerEntity;
 		}
 		return null;
@@ -116,7 +96,6 @@ public class VehicleModuleStorage : VehicleModuleSeating
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		storageUnitInstance.uid = info.msg.simpleUID.uid;
 	}
@@ -124,7 +103,7 @@ public class VehicleModuleStorage : VehicleModuleSeating
 	public override void Spawn ()
 	{
 		base.Spawn ();
-		if (!Application.isLoadingSave && ((Component)storage.storageUnitPoint).gameObject.activeSelf) {
+		if (!Rust.Application.isLoadingSave && storage.storageUnitPoint.gameObject.activeSelf) {
 			CreateStorageEntity ();
 		}
 	}
@@ -146,8 +125,8 @@ public class VehicleModuleStorage : VehicleModuleSeating
 
 	public override void NonUserSpawn ()
 	{
-		EngineStorage engineStorage = GetContainer () as EngineStorage;
-		if ((Object)(object)engineStorage != (Object)null) {
+		Rust.Modular.EngineStorage engineStorage = GetContainer () as Rust.Modular.EngineStorage;
+		if (engineStorage != null) {
 			engineStorage.NonUserSpawn ();
 		}
 	}
@@ -165,17 +144,13 @@ public class VehicleModuleStorage : VehicleModuleSeating
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
-		info.msg.simpleUID = Pool.Get<SimpleUID> ();
+		info.msg.simpleUID = Facepunch.Pool.Get<SimpleUID> ();
 		info.msg.simpleUID.uid = storageUnitInstance.uid;
 	}
 
 	public void CreateStorageEntity ()
 	{
-		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
 		if (IsFullySpawned () && base.isServer && !storageUnitInstance.IsValid (base.isServer)) {
 			BaseEntity baseEntity = GameManager.server.CreateEntity (storage.storageUnitPrefab.resourcePath, storage.storageUnitPoint.localPosition, storage.storageUnitPoint.localRotation);
 			storageUnitInstance.Set (baseEntity);
@@ -217,7 +192,7 @@ public class VehicleModuleStorage : VehicleModuleSeating
 		if (!container.IsUnityNull ()) {
 			container.PlayerOpenLoot (player);
 		} else {
-			Debug.LogError ((object)(((object)this).GetType ().Name + ": No container component found."));
+			Debug.LogError (GetType ().Name + ": No container component found.");
 		}
 		return true;
 	}
@@ -239,8 +214,8 @@ public class VehicleModuleStorage : VehicleModuleSeating
 			return;
 		}
 		BasePlayer player = msg.player;
-		if (!((Object)(object)player == (Object)null)) {
-			string codeEntered = msg.read.String (256);
+		if (!(player == null)) {
+			string codeEntered = msg.read.String ();
 			if (base.Car.CarLock.TryOpenWithCode (player, codeEntered)) {
 				TryOpen (player);
 			} else {

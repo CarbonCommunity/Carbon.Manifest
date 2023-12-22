@@ -22,8 +22,6 @@ public class GeneratePowerlineLayout : ProceduralComponent
 
 	public override void Process (uint seed)
 	{
-		//IL_03df: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03e4: Unknown result type (might be due to invalid IL or missing references)
 		if (World.Networked) {
 			TerrainMeta.Path.Powerlines.Clear ();
 			TerrainMeta.Path.Powerlines.AddRange (World.GetPaths ("Powerline"));
@@ -55,7 +53,7 @@ public class GeneratePowerlineLayout : ProceduralComponent
 				}
 			}
 			foreach (MonumentInfo item in monuments) {
-				TerrainPathConnect[] componentsInChildren = ((Component)item).GetComponentsInChildren<TerrainPathConnect> (true);
+				TerrainPathConnect[] componentsInChildren = item.GetComponentsInChildren<TerrainPathConnect> (includeInactive: true);
 				foreach (TerrainPathConnect terrainPathConnect in componentsInChildren) {
 					if (terrainPathConnect.Type == InfrastructureType.Power) {
 						PathFinder.Point pathFinderPoint = terrainPathConnect.GetPathFinderPoint (length);
@@ -78,8 +76,8 @@ public class GeneratePowerlineLayout : ProceduralComponent
 				PathFinder.Node node3 = pathFinder.FindPathUndirected (list6, list7, 100000);
 				if (node3 == null) {
 					PathNode copy2 = list4 [0];
-					list3.AddRange (list4.Where ((PathNode x) => (Object)(object)x.monument == (Object)(object)copy2.monument));
-					list4.RemoveAll ((PathNode x) => (Object)(object)x.monument == (Object)(object)copy2.monument);
+					list3.AddRange (list4.Where ((PathNode x) => x.monument == copy2.monument));
+					list4.RemoveAll ((PathNode x) => x.monument == copy2.monument);
 					continue;
 				}
 				PathSegment segment = new PathSegment ();
@@ -93,8 +91,8 @@ public class GeneratePowerlineLayout : ProceduralComponent
 				}
 				list2.Add (segment);
 				PathNode copy = list4.Find ((PathNode x) => x.node.point == segment.start.point || x.node.point == segment.end.point);
-				list3.AddRange (list4.Where ((PathNode x) => (Object)(object)x.monument == (Object)(object)copy.monument));
-				list4.RemoveAll ((PathNode x) => (Object)(object)x.monument == (Object)(object)copy.monument);
+				list3.AddRange (list4.Where ((PathNode x) => x.monument == copy.monument));
+				list4.RemoveAll ((PathNode x) => x.monument == copy.monument);
 				int num2 = 1;
 				for (PathFinder.Node node5 = node3; node5 != null; node5 = node5.next) {
 					if (num2 % 8 == 0) {

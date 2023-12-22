@@ -22,11 +22,11 @@ public class Voice : ConsoleSystem
 	public static void ToggleVoiceRangeBoost (Arg arg)
 	{
 		BasePlayer player = arg.GetPlayer (0);
-		if ((Object)(object)player == (Object)null) {
-			arg.ReplyWith ("Invalid player: " + arg.GetString (0, ""));
+		if (player == null) {
+			arg.ReplyWith ("Invalid player: " + arg.GetString (0));
 			return;
 		}
-		bool @bool = arg.GetBool (1, false);
+		bool @bool = arg.GetBool (1);
 		player.SetPlayerFlag (BasePlayer.PlayerFlags.VoiceRangeBoost, @bool);
 		arg.ReplyWith ($"Set {player.displayName} volume boost to {@bool}");
 	}

@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public class SnowMachine : FogMachine
 {
 	public AdaptMeshToTerrain snowMesh;
@@ -14,12 +12,12 @@ public class SnowMachine : FogMachine
 	public override void EnableFogField ()
 	{
 		base.EnableFogField ();
-		((Component)tempTrigger).gameObject.SetActive (true);
+		tempTrigger.gameObject.SetActive (value: true);
 	}
 
 	public override void FinishFogging ()
 	{
 		base.FinishFogging ();
-		((Component)tempTrigger).gameObject.SetActive (false);
+		tempTrigger.gameObject.SetActive (value: false);
 	}
 }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using ConVar;
 using Network;
@@ -28,9 +27,8 @@ public class GameSetup : MonoBehaviour
 
 	protected void Awake ()
 	{
-		//IL_006b: Unknown result type (might be due to invalid IL or missing references)
 		if (RunOnce) {
-			GameManager.Destroy (((Component)this).gameObject);
+			GameManager.Destroy (base.gameObject);
 			return;
 		}
 		GameManifest.Load ();
@@ -44,34 +42,33 @@ public class GameSetup : MonoBehaviour
 		if (initializationCommands.Length > 0) {
 			string[] array = initializationCommands.Split (';');
 			foreach (string text in array) {
-				ConsoleSystem.Run (Option.Server, text.Trim (), Array.Empty<object> ());
+				ConsoleSystem.Run (ConsoleSystem.Option.Server, text.Trim ());
 			}
 		}
-		((MonoBehaviour)this).StartCoroutine (DoGameSetup ());
+		StartCoroutine (DoGameSetup ());
 	}
 
 	private IEnumerator DoGameSetup ()
 	{
-		Application.isLoading = true;
+		Rust.Application.isLoading = true;
 		TerrainMeta.InitNoTerrain ();
 		ItemManager.Initialize ();
-		Scene activeScene = SceneManager.GetActiveScene ();
-		LevelManager.CurrentLevelName = ((Scene)(ref activeScene)).name;
+		LevelManager.CurrentLevelName = SceneManager.GetActiveScene ().name;
 		if (startServer) {
-			yield return ((MonoBehaviour)this).StartCoroutine (Bootstrap.StartNexusServer ());
+			yield return StartCoroutine (Bootstrap.StartNexusServer ());
 		}
 		if (loadLevel && !string.IsNullOrEmpty (loadLevelScene)) {
-			Net.sv.Reset ();
+			Network.Net.sv.Reset ();
 			ConVar.Server.level = loadLevelScene;
 			LoadingScreen.Update ("LOADING SCENE");
-			Application.LoadLevelAdditive (loadLevelScene);
+			UnityEngine.Application.LoadLevelAdditive (loadLevelScene);
 			LoadingScreen.Update (loadLevelScene.ToUpper () + " LOADED");
 		}
 		if (startServer) {
-			yield return ((MonoBehaviour)this).StartCoroutine (StartServer ());
+			yield return StartCoroutine (StartServer ());
 		}
 		yield return null;
-		Application.isLoading = false;
+		Rust.Application.isLoading = false;
 	}
 
 	private IEnumerator StartServer ()
@@ -80,6 +77,6 @@ public class GameSetup : MonoBehaviour
 		ConVar.GC.unload ();
 		yield return CoroutineEx.waitForEndOfFrame;
 		yield return CoroutineEx.waitForEndOfFrame;
-		yield return ((MonoBehaviour)this).StartCoroutine (Bootstrap.StartServer (loadSave, loadSaveFile, allowOutOfDateSaves: true));
+		yield return StartCoroutine (Bootstrap.StartServer (loadSave, loadSaveFile, allowOutOfDateSaves: true));
 	}
 }

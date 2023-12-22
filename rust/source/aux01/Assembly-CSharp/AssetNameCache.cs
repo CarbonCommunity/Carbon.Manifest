@@ -11,7 +11,7 @@ public static class AssetNameCache
 
 	private static string LookupName (Object obj)
 	{
-		if (obj == (Object)null) {
+		if (obj == null) {
 			return string.Empty;
 		}
 		if (!mixed.TryGetValue (obj, out var value)) {
@@ -23,7 +23,7 @@ public static class AssetNameCache
 
 	private static string LookupNameLower (Object obj)
 	{
-		if (obj == (Object)null) {
+		if (obj == null) {
 			return string.Empty;
 		}
 		if (!lower.TryGetValue (obj, out var value)) {
@@ -35,7 +35,7 @@ public static class AssetNameCache
 
 	private static string LookupNameUpper (Object obj)
 	{
-		if (obj == (Object)null) {
+		if (obj == null) {
 			return string.Empty;
 		}
 		if (!upper.TryGetValue (obj, out var value)) {
@@ -47,31 +47,31 @@ public static class AssetNameCache
 
 	public static string GetName (this PhysicMaterial mat)
 	{
-		return LookupName ((Object)(object)mat);
+		return LookupName (mat);
 	}
 
 	public static string GetNameLower (this PhysicMaterial mat)
 	{
-		return LookupNameLower ((Object)(object)mat);
+		return LookupNameLower (mat);
 	}
 
 	public static string GetNameUpper (this PhysicMaterial mat)
 	{
-		return LookupNameUpper ((Object)(object)mat);
+		return LookupNameUpper (mat);
 	}
 
 	public static string GetName (this Material mat)
 	{
-		return LookupName ((Object)(object)mat);
+		return LookupName (mat);
 	}
 
 	public static string GetNameLower (this Material mat)
 	{
-		return LookupNameLower ((Object)(object)mat);
+		return LookupNameLower (mat);
 	}
 
 	public static string GetNameUpper (this Material mat)
 	{
-		return LookupNameUpper ((Object)(object)mat);
+		return LookupNameUpper (mat);
 	}
 }

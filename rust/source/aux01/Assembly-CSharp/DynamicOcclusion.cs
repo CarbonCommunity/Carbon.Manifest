@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using UnityEngine;
 using VLB;
@@ -16,7 +17,7 @@ public class DynamicOcclusion : MonoBehaviour
 		Left
 	}
 
-	public LayerMask layerMask = LayerMask.op_Implicit (-1);
+	public LayerMask layerMask = -1;
 
 	public float minOccluderArea;
 
@@ -46,8 +47,8 @@ public class DynamicOcclusion : MonoBehaviour
 
 	private void OnEnable ()
 	{
-		m_Master = ((Component)this).GetComponent<VolumetricLightBeam> ();
-		Debug.Assert (Object.op_Implicit ((Object)(object)m_Master));
+		m_Master = GetComponent<VolumetricLightBeam> ();
+		Debug.Assert (m_Master);
 	}
 
 	private void OnDisable ()
@@ -58,8 +59,8 @@ public class DynamicOcclusion : MonoBehaviour
 	private void Start ()
 	{
 		if (Application.isPlaying) {
-			TriggerZone component = ((Component)this).GetComponent<TriggerZone> ();
-			if (Object.op_Implicit ((Object)(object)component)) {
+			TriggerZone component = GetComponent<TriggerZone> ();
+			if ((bool)component) {
 				m_RangeMultiplier = Mathf.Max (1f, component.rangeMultiplier);
 			}
 		}
@@ -76,27 +77,18 @@ public class DynamicOcclusion : MonoBehaviour
 
 	private Vector3 GetRandomVectorAround (Vector3 direction, float angleDiff)
 	{
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
 		float num = angleDiff * 0.5f;
-		return Quaternion.Euler (Random.Range (0f - num, num), Random.Range (0f - num, num), Random.Range (0f - num, num)) * direction;
+		return Quaternion.Euler (UnityEngine.Random.Range (0f - num, num), UnityEngine.Random.Range (0f - num, num), UnityEngine.Random.Range (0f - num, num)) * direction;
 	}
 
 	private RaycastHit GetBestHit (Vector3 rayPos, Vector3 rayDir)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0098: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0090: Unknown result type (might be due to invalid IL or missing references)
-		RaycastHit[] array = Physics.RaycastAll (rayPos, rayDir, m_Master.fadeEnd * m_RangeMultiplier, ((LayerMask)(ref layerMask)).value);
+		RaycastHit[] array = Physics.RaycastAll (rayPos, rayDir, m_Master.fadeEnd * m_RangeMultiplier, layerMask.value);
 		int num = -1;
 		float num2 = float.MaxValue;
 		for (int i = 0; i < array.Length; i++) {
-			if (!((RaycastHit)(ref array [i])).collider.isTrigger && ((RaycastHit)(ref array [i])).collider.bounds.GetMaxArea2D () >= minOccluderArea && ((RaycastHit)(ref array [i])).distance < num2) {
-				num2 = ((RaycastHit)(ref array [i])).distance;
+			if (!array [i].collider.isTrigger && array [i].collider.bounds.GetMaxArea2D () >= minOccluderArea && array [i].distance < num2) {
+				num2 = array [i].distance;
 				num = i;
 			}
 		}
@@ -108,78 +100,36 @@ public class DynamicOcclusion : MonoBehaviour
 
 	private Vector3 GetDirection (uint dirInt)
 	{
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0064: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006a: Unknown result type (might be due to invalid IL or missing references)
 		dirInt %= (uint)Enum.GetValues (typeof(Direction)).Length;
-		return (Vector3)(dirInt switch {
-			0u => ((Component)this).transform.up, 
-			1u => ((Component)this).transform.right, 
-			2u => -((Component)this).transform.up, 
-			3u => -((Component)this).transform.right, 
+		return dirInt switch {
+			0u => base.transform.up, 
+			1u => base.transform.right, 
+			2u => -base.transform.up, 
+			3u => -base.transform.right, 
 			_ => Vector3.zero, 
-		});
+		};
 	}
 
 	private bool IsHitValid (RaycastHit hit)
 	{
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		if (Object.op_Implicit ((Object)(object)((RaycastHit)(ref hit)).collider)) {
-			return Vector3.Dot (((RaycastHit)(ref hit)).normal, -((Component)this).transform.forward) >= maxSurfaceDot;
+		if ((bool)hit.collider) {
+			return Vector3.Dot (hit.normal, -base.transform.forward) >= maxSurfaceDot;
 		}
 		return false;
 	}
 
 	private void ProcessRaycasts ()
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0066: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0082: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0087: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0099: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ae: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00db: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ec: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010f: Unknown result type (might be due to invalid IL or missing references)
-		RaycastHit hit = GetBestHit (((Component)this).transform.position, ((Component)this).transform.forward);
+		RaycastHit hit = GetBestHit (base.transform.position, base.transform.forward);
 		if (IsHitValid (hit)) {
 			if (minSurfaceRatio > 0.5f) {
 				for (uint num = 0u; num < (uint)Enum.GetValues (typeof(Direction)).Length; num++) {
 					Vector3 direction = GetDirection (num + m_PrevNonSubHitDirectionId);
-					Vector3 val = ((Component)this).transform.position + direction * m_Master.coneRadiusStart * (minSurfaceRatio * 2f - 1f);
-					Vector3 val2 = ((Component)this).transform.position + ((Component)this).transform.forward * m_Master.fadeEnd + direction * m_Master.coneRadiusEnd * (minSurfaceRatio * 2f - 1f);
-					RaycastHit bestHit = GetBestHit (val, val2 - val);
+					Vector3 vector = base.transform.position + direction * m_Master.coneRadiusStart * (minSurfaceRatio * 2f - 1f);
+					Vector3 vector2 = base.transform.position + base.transform.forward * m_Master.fadeEnd + direction * m_Master.coneRadiusEnd * (minSurfaceRatio * 2f - 1f);
+					RaycastHit bestHit = GetBestHit (vector, vector2 - vector);
 					if (IsHitValid (bestHit)) {
-						if (((RaycastHit)(ref bestHit)).distance > ((RaycastHit)(ref hit)).distance) {
+						if (bestHit.distance > hit.distance) {
 							hit = bestHit;
 						}
 						continue;
@@ -197,18 +147,11 @@ public class DynamicOcclusion : MonoBehaviour
 
 	private void SetHit (RaycastHit hit)
 	{
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0040: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
 		PlaneAlignment planeAlignment = this.planeAlignment;
 		if (planeAlignment != 0 && planeAlignment == PlaneAlignment.Beam) {
-			SetClippingPlane (new Plane (-((Component)this).transform.forward, ((RaycastHit)(ref hit)).point));
+			SetClippingPlane (new Plane (-base.transform.forward, hit.point));
 		} else {
-			SetClippingPlane (new Plane (((RaycastHit)(ref hit)).normal, ((RaycastHit)(ref hit)).point));
+			SetClippingPlane (new Plane (hit.normal, hit.point));
 		}
 	}
 
@@ -219,13 +162,7 @@ public class DynamicOcclusion : MonoBehaviour
 
 	private void SetClippingPlane (Plane planeWS)
 	{
-		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		planeWS = planeWS.TranslateCustom (((Plane)(ref planeWS)).normal * planeOffset);
+		planeWS = planeWS.TranslateCustom (planeWS.normal * planeOffset);
 		m_Master.SetClippingPlane (planeWS);
 	}
 

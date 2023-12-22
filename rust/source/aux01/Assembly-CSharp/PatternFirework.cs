@@ -1,6 +1,6 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
-using System.IO;
 using ConVar;
 using Facepunch;
 using Network;
@@ -32,7 +32,7 @@ public class PatternFirework : MortarFirework, IUGCBrowserEntity
 	public float ShellFuseLengthLong = 8f;
 
 	[NonSerialized]
-	public Design Design;
+	public ProtoBuf.PatternFirework.Design Design;
 
 	[NonSerialized]
 	public FuseLength ShellFuseLength;
@@ -62,10 +62,7 @@ public class PatternFirework : MortarFirework, IUGCBrowserEntity
 	public override void DestroyShared ()
 	{
 		base.DestroyShared ();
-		Design design = Design;
-		if (design != null) {
-			design.Dispose ();
-		}
+		Design?.Dispose ();
 		Design = null;
 	}
 
@@ -90,31 +87,24 @@ public class PatternFirework : MortarFirework, IUGCBrowserEntity
 	[RPC_Server.CallsPerSecond (5uL)]
 	private void ServerSetFireworkDesign (RPCMessage rpc)
 	{
-		//IL_00ba: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ff: Unknown result type (might be due to invalid IL or missing references)
 		if (!PlayerCanModify (rpc.player)) {
 			return;
 		}
-		Design val = Design.Deserialize ((Stream)(object)rpc.read);
-		if (val?.stars != null) {
-			while (val.stars.Count > MaxStars) {
-				int index = val.stars.Count - 1;
-				val.stars [index].Dispose ();
-				val.stars.RemoveAt (index);
+		ProtoBuf.PatternFirework.Design design = ProtoBuf.PatternFirework.Design.Deserialize (rpc.read);
+		if (design?.stars != null) {
+			while (design.stars.Count > MaxStars) {
+				int index = design.stars.Count - 1;
+				design.stars [index].Dispose ();
+				design.stars.RemoveAt (index);
 			}
-			foreach (Star star in val.stars) {
+			foreach (ProtoBuf.PatternFirework.Star star in design.stars) {
 				star.position = new Vector2 (Mathf.Clamp (star.position.x, -1f, 1f), Mathf.Clamp (star.position.y, -1f, 1f));
 				star.color = new Color (Mathf.Clamp01 (star.color.r), Mathf.Clamp01 (star.color.g), Mathf.Clamp01 (star.color.b), 1f);
 			}
-			val.editedBy = rpc.player.userID;
+			design.editedBy = rpc.player.userID;
 		}
-		Design design = Design;
-		if (design != null) {
-			design.Dispose ();
-		}
-		Design = val;
+		Design?.Dispose ();
+		Design = design;
 		SendNetworkUpdateImmediate ();
 	}
 
@@ -131,11 +121,11 @@ public class PatternFirework : MortarFirework, IUGCBrowserEntity
 
 	private bool PlayerCanModify (BasePlayer player)
 	{
-		if ((Object)(object)player == (Object)null || !player.CanInteract ()) {
+		if (player == null || !player.CanInteract ()) {
 			return false;
 		}
 		BuildingPrivlidge buildingPrivilege = GetBuildingPrivilege ();
-		if ((Object)(object)buildingPrivilege != (Object)null && !buildingPrivilege.CanAdministrate (player)) {
+		if (buildingPrivilege != null && !buildingPrivilege.CanAdministrate (player)) {
 			return false;
 		}
 		return true;
@@ -144,19 +134,14 @@ public class PatternFirework : MortarFirework, IUGCBrowserEntity
 	public override void Save (SaveInfo info)
 	{
 		base.Save (info);
-		info.msg.patternFirework = Pool.Get<PatternFirework> ();
-		PatternFirework patternFirework = info.msg.patternFirework;
-		Design design = Design;
-		patternFirework.design = ((design != null) ? design.Copy () : null);
+		info.msg.patternFirework = Facepunch.Pool.Get<ProtoBuf.PatternFirework> ();
+		info.msg.patternFirework.design = Design?.Copy ();
 		info.msg.patternFirework.shellFuseLength = (int)ShellFuseLength;
 	}
 
 	public void ClearContent ()
 	{
-		Design design = Design;
-		if (design != null) {
-			design.Dispose ();
-		}
+		Design?.Dispose ();
 		Design = null;
 		SendNetworkUpdateImmediate ();
 	}
@@ -165,12 +150,8 @@ public class PatternFirework : MortarFirework, IUGCBrowserEntity
 	{
 		base.Load (info);
 		if (info.msg.patternFirework != null) {
-			Design design = Design;
-			if (design != null) {
-				design.Dispose ();
-			}
-			Design design2 = info.msg.patternFirework.design;
-			Design = ((design2 != null) ? design2.Copy () : null);
+			Design?.Dispose ();
+			Design = info.msg.patternFirework.design?.Copy ();
 			ShellFuseLength = (FuseLength)info.msg.patternFirework.shellFuseLength;
 		}
 	}
@@ -187,127 +168,97 @@ public class PatternFirework : MortarFirework, IUGCBrowserEntity
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("PatternFirework.OnRpcMessage", 0);
-		try {
-			if (rpc == 3850129568u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("PatternFirework.OnRpcMessage")) {
+			if (rpc == 3850129568u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - ServerSetFireworkDesign "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - ServerSetFireworkDesign "));
 				}
-				TimeWarning val2 = TimeWarning.New ("ServerSetFireworkDesign", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("ServerSetFireworkDesign")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (3850129568u, "ServerSetFireworkDesign", this, player, 5uL)) {
 							return true;
 						}
 						if (!RPC_Server.IsVisible.Test (3850129568u, "ServerSetFireworkDesign", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage rpc2 = rPCMessage;
 							ServerSetFireworkDesign (rpc2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in ServerSetFireworkDesign");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 2132764204 && (Object)(object)player != (Object)null) {
+			if (rpc == 2132764204 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - SetShellFuseLength "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - SetShellFuseLength "));
 				}
-				TimeWarning val2 = TimeWarning.New ("SetShellFuseLength", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("SetShellFuseLength")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (2132764204u, "SetShellFuseLength", this, player, 5uL)) {
 							return true;
 						}
 						if (!RPC_Server.IsVisible.Test (2132764204u, "SetShellFuseLength", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage shellFuseLength = rPCMessage;
 							SetShellFuseLength (shellFuseLength);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in SetShellFuseLength");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 2760408151u && (Object)(object)player != (Object)null) {
+			if (rpc == 2760408151u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - StartOpenDesigner "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - StartOpenDesigner "));
 				}
-				TimeWarning val2 = TimeWarning.New ("StartOpenDesigner", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("StartOpenDesigner")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (2760408151u, "StartOpenDesigner", this, player, 5uL)) {
 							return true;
 						}
 						if (!RPC_Server.IsVisible.Test (2760408151u, "StartOpenDesigner", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage rpc3 = rPCMessage;
 							StartOpenDesigner (rpc3);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex3) {
-						Debug.LogException (ex3);
+					} catch (Exception exception3) {
+						Debug.LogException (exception3);
 						player.Kick ("RPC Error in StartOpenDesigner");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}

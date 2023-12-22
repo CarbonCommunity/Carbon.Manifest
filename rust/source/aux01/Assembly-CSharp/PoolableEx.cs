@@ -5,7 +5,7 @@ public static class PoolableEx
 	public static bool SupportsPoolingInParent (this GameObject gameObject)
 	{
 		Poolable componentInParent = gameObject.GetComponentInParent<Poolable> ();
-		if ((Object)(object)componentInParent != (Object)null) {
+		if (componentInParent != null) {
 			return componentInParent.prefabID != 0;
 		}
 		return false;
@@ -14,7 +14,7 @@ public static class PoolableEx
 	public static bool SupportsPooling (this GameObject gameObject)
 	{
 		Poolable component = gameObject.GetComponent<Poolable> ();
-		if ((Object)(object)component != (Object)null) {
+		if (component != null) {
 			return component.prefabID != 0;
 		}
 		return false;
@@ -25,7 +25,7 @@ public static class PoolableEx
 		if (gameObject.activeSelf) {
 			gameObject.GetComponent<Poolable> ().SetBehaviourEnabled (state: true);
 		} else {
-			gameObject.SetActive (true);
+			gameObject.SetActive (value: true);
 		}
 	}
 }

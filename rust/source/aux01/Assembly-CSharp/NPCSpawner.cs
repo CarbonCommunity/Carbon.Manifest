@@ -1,4 +1,3 @@
-using System;
 using ConVar;
 using UnityEngine;
 
@@ -40,7 +39,7 @@ public class NPCSpawner : SpawnGroup
 	{
 		fillOnSpawn = shouldFillOnSpawn;
 		if (WaitingForNavMesh ()) {
-			((FacepunchBehaviour)this).Invoke ((Action)LateSpawn, 10f);
+			Invoke (LateSpawn, 10f);
 		} else {
 			base.SpawnInitial ();
 		}
@@ -48,7 +47,7 @@ public class NPCSpawner : SpawnGroup
 
 	public bool WaitingForNavMesh ()
 	{
-		if ((Object)(object)monumentNavMesh != (Object)null) {
+		if (monumentNavMesh != null) {
 			return monumentNavMesh.IsBuilding;
 		}
 		if (!DungeonNavmesh.NavReady ()) {
@@ -61,40 +60,40 @@ public class NPCSpawner : SpawnGroup
 	{
 		if (!WaitingForNavMesh ()) {
 			SpawnInitial ();
-			Debug.Log ((object)"Navmesh complete, spawning");
+			Debug.Log ("Navmesh complete, spawning");
 		} else {
-			((FacepunchBehaviour)this).Invoke ((Action)LateSpawn, 5f);
+			Invoke (LateSpawn, 5f);
 		}
 	}
 
 	protected override void PostSpawnProcess (BaseEntity entity, BaseSpawnPoint spawnPoint)
 	{
 		base.PostSpawnProcess (entity, spawnPoint);
-		BaseNavigator component = ((Component)entity).GetComponent<BaseNavigator> ();
-		if (AdditionalLOSBlockingLayer != 0 && (Object)(object)entity != (Object)null && entity is HumanNPC humanNPC) {
+		BaseNavigator component = entity.GetComponent<BaseNavigator> ();
+		if (AdditionalLOSBlockingLayer != 0 && entity != null && entity is HumanNPC humanNPC) {
 			humanNPC.AdditionalLosBlockingLayer = AdditionalLOSBlockingLayer;
 		}
 		HumanNPC humanNPC2 = entity as HumanNPC;
-		if ((Object)(object)humanNPC2 != (Object)null) {
+		if (humanNPC2 != null) {
 			if (Loadouts != null && Loadouts.Length != 0) {
 				humanNPC2.EquipLoadout (Loadouts);
 			}
 			ModifyHumanBrainStats (humanNPC2.Brain);
 		}
-		if ((Object)(object)VirtualInfoZone != (Object)null) {
+		if (VirtualInfoZone != null) {
 			if (VirtualInfoZone.Virtual) {
 				NPCPlayer nPCPlayer = entity as NPCPlayer;
-				if ((Object)(object)nPCPlayer != (Object)null) {
+				if (nPCPlayer != null) {
 					nPCPlayer.VirtualInfoZone = VirtualInfoZone;
-					if ((Object)(object)humanNPC2 != (Object)null) {
+					if (humanNPC2 != null) {
 						humanNPC2.VirtualInfoZone.RegisterSleepableEntity (humanNPC2.Brain);
 					}
 				}
 			} else {
-				Debug.LogError ((object)"NPCSpawner trying to set a virtual info zone without the Virtual property!");
+				Debug.LogError ("NPCSpawner trying to set a virtual info zone without the Virtual property!");
 			}
 		}
-		if ((Object)(object)component != (Object)null) {
+		if (component != null) {
 			component.Path = Path;
 			component.AStarGraph = AStarGraph;
 		}
@@ -102,7 +101,7 @@ public class NPCSpawner : SpawnGroup
 
 	private void ModifyHumanBrainStats (BaseAIBrain brain)
 	{
-		if (UseStatModifiers && !((Object)(object)brain == (Object)null)) {
+		if (UseStatModifiers && !(brain == null)) {
 			brain.SenseRange = SenseRange;
 			brain.TargetLostRange *= TargetLostRange;
 			brain.AttackRangeMultiplier = AttackRangeMultiplier;

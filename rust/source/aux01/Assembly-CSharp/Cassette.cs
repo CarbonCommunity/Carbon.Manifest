@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using System.Collections.Generic;
 using ConVar;
@@ -55,93 +56,66 @@ public class Cassette : BaseEntity, IUGCBrowserEntity, IServerFileReceiver
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("Cassette.OnRpcMessage", 0);
-		try {
-			if (rpc == 4031457637u && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("Cassette.OnRpcMessage")) {
+			if (rpc == 4031457637u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
 				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_MakeNewFile "));
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_MakeNewFile "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_MakeNewFile", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_MakeNewFile")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (4031457637u, "Server_MakeNewFile", this, player, 1uL)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							Server_MakeNewFile (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in Server_MakeNewFile");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
 
 	[ServerVar]
-	public static void ClearCassettes (Arg arg)
+	public static void ClearCassettes (ConsoleSystem.Arg arg)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
 		int num = 0;
-		Enumerator<BaseNetworkable> enumerator = BaseNetworkable.serverEntities.GetEnumerator ();
-		try {
-			while (enumerator.MoveNext ()) {
-				if (enumerator.Current is Cassette cassette && cassette.ClearSavedAudio ()) {
-					num++;
-				}
+		foreach (BaseNetworkable serverEntity in BaseNetworkable.serverEntities) {
+			if (serverEntity is Cassette cassette && cassette.ClearSavedAudio ()) {
+				num++;
 			}
-		} finally {
-			((IDisposable)enumerator).Dispose ();
 		}
 		arg.ReplyWith ($"Deleted the contents of {num} cassettes");
 	}
 
 	[ServerVar]
-	public static void ClearCassettesByUser (Arg arg)
+	public static void ClearCassettesByUser (ConsoleSystem.Arg arg)
 	{
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
 		ulong uInt = arg.GetUInt64 (0, 0uL);
 		int num = 0;
-		Enumerator<BaseNetworkable> enumerator = BaseNetworkable.serverEntities.GetEnumerator ();
-		try {
-			while (enumerator.MoveNext ()) {
-				if (enumerator.Current is Cassette cassette && cassette.CreatorSteamId == uInt) {
-					cassette.ClearSavedAudio ();
-					num++;
-				}
+		foreach (BaseNetworkable serverEntity in BaseNetworkable.serverEntities) {
+			if (serverEntity is Cassette cassette && cassette.CreatorSteamId == uInt) {
+				cassette.ClearSavedAudio ();
+				num++;
 			}
-		} finally {
-			((IDisposable)enumerator).Dispose ();
 		}
 		arg.ReplyWith ($"Deleted {num} cassettes recorded by {uInt}");
 	}
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_008f: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (info.msg.cassette == null) {
 			return;
@@ -150,9 +124,9 @@ public class Cassette : BaseEntity, IUGCBrowserEntity, IServerFileReceiver
 		AudioId = info.msg.cassette.audioId;
 		CreatorSteamId = info.msg.cassette.creatorSteamId;
 		preloadedAudioId = info.msg.cassette.preloadAudioId;
-		if (base.isServer && ((NetworkableId)(ref info.msg.cassette.holder)).IsValid) {
+		if (base.isServer && info.msg.cassette.holder.IsValid) {
 			BaseNetworkable baseNetworkable = BaseNetworkable.serverEntities.Find (info.msg.cassette.holder);
-			if ((Object)(object)baseNetworkable != (Object)null && baseNetworkable is ICassettePlayer cassettePlayer) {
+			if (baseNetworkable != null && baseNetworkable is ICassettePlayer cassettePlayer) {
 				currentCassettePlayer = cassettePlayer;
 			}
 		}
@@ -162,13 +136,13 @@ public class Cassette : BaseEntity, IUGCBrowserEntity, IServerFileReceiver
 	{
 		switch (PreloadType) {
 		case PreloadedCassetteContent.PreloadType.Short:
-			preloadedAudioId = Random.Range (0, PreloadContent.ShortTapeContent.Length);
+			preloadedAudioId = UnityEngine.Random.Range (0, PreloadContent.ShortTapeContent.Length);
 			break;
 		case PreloadedCassetteContent.PreloadType.Medium:
-			preloadedAudioId = Random.Range (0, PreloadContent.MediumTapeContent.Length);
+			preloadedAudioId = UnityEngine.Random.Range (0, PreloadContent.MediumTapeContent.Length);
 			break;
 		case PreloadedCassetteContent.PreloadType.Long:
-			preloadedAudioId = Random.Range (0, PreloadContent.LongTapeContent.Length);
+			preloadedAudioId = UnityEngine.Random.Range (0, PreloadContent.LongTapeContent.Length);
 			break;
 		default:
 			throw new ArgumentOutOfRangeException ();
@@ -177,10 +151,8 @@ public class Cassette : BaseEntity, IUGCBrowserEntity, IServerFileReceiver
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_0093: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0098: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
-		info.msg.cassette = Pool.Get<Cassette> ();
+		info.msg.cassette = Facepunch.Pool.Get<ProtoBuf.Cassette> ();
 		info.msg.cassette.audioId = AudioId;
 		info.msg.cassette.creatorSteamId = CreatorSteamId;
 		info.msg.cassette.preloadAudioId = preloadedAudioId;
@@ -194,8 +166,8 @@ public class Cassette : BaseEntity, IUGCBrowserEntity, IServerFileReceiver
 		base.OnParentChanging (oldParent, newParent);
 		currentCassettePlayer?.OnCassetteRemoved (this);
 		currentCassettePlayer = null;
-		if ((Object)(object)newParent != (Object)null && newParent is ICassettePlayer cassettePlayer) {
-			((FacepunchBehaviour)this).Invoke ((Action)DelayedCassetteInserted, 0.1f);
+		if (newParent != null && newParent is ICassettePlayer cassettePlayer) {
+			Invoke (DelayedCassetteInserted, 0.1f);
 			currentCassettePlayer = cassettePlayer;
 		}
 	}
@@ -218,16 +190,14 @@ public class Cassette : BaseEntity, IUGCBrowserEntity, IServerFileReceiver
 	[RPC_Server.CallsPerSecond (1uL)]
 	public void Server_MakeNewFile (RPCMessage msg)
 	{
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0093: Unknown result type (might be due to invalid IL or missing references)
-		if ((Object)(object)msg.player == (Object)null) {
+		if (msg.player == null) {
 			return;
 		}
-		if ((Object)(object)GetParentEntity () != (Object)null && GetParentEntity () is HeldEntity heldEntity && (Object)(object)heldEntity.GetOwnerPlayer () != (Object)(object)msg.player) {
-			Debug.Log ((object)"Player mismatch!");
+		if (GetParentEntity () != null && GetParentEntity () is HeldEntity heldEntity && heldEntity.GetOwnerPlayer () != msg.player) {
+			Debug.Log ("Player mismatch!");
 			return;
 		}
-		byte[] data = msg.read.BytesWithSize (10485760u);
+		byte[] data = msg.read.BytesWithSize ();
 		ulong userId = msg.read.UInt64 ();
 		if (IsOggValid (data, this)) {
 			FileStorage.server.RemoveAllByEntity (net.ID);
@@ -238,7 +208,6 @@ public class Cassette : BaseEntity, IUGCBrowserEntity, IServerFileReceiver
 
 	private bool ClearSavedAudio ()
 	{
-		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
 		if (AudioId == 0) {
 			return false;
 		}
@@ -272,12 +241,12 @@ public class Cassette : BaseEntity, IUGCBrowserEntity, IServerFileReceiver
 			return false;
 		}
 		if (ByteToMegabyte (data.Length) >= MaxCassetteFileSizeMB) {
-			Debug.Log ((object)"Audio file is too large! Aborting");
+			Debug.Log ("Audio file is too large! Aborting");
 			return false;
 		}
 		double oggLength = GetOggLength (data);
 		if (oggLength > (double)(maxLength * 1.2f)) {
-			Debug.Log ((object)$"Audio duration is longer than cassette limit! {oggLength} > {maxLength * 1.2f}");
+			Debug.Log ($"Audio duration is longer than cassette limit! {oggLength} > {maxLength * 1.2f}");
 			return false;
 		}
 		return true;
@@ -320,7 +289,7 @@ public class Cassette : BaseEntity, IUGCBrowserEntity, IServerFileReceiver
 			}
 		}
 		if (RecorderTool.debugRecording) {
-			Debug.Log ((object)$"{num2} / {num3}");
+			Debug.Log ($"{num2} / {num3}");
 		}
 		return (double)num2 / (double)num3;
 	}

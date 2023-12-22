@@ -1,3 +1,4 @@
+#define UNITY_ASSERTIONS
 using System;
 using ConVar;
 using Facepunch;
@@ -107,131 +108,99 @@ public class SlotMachine : BaseMountable
 
 	public override bool OnRpcMessage (BasePlayer player, uint rpc, Message msg)
 	{
-		TimeWarning val = TimeWarning.New ("SlotMachine.OnRpcMessage", 0);
-		try {
-			if (rpc == 1251063754 && (Object)(object)player != (Object)null) {
+		using (TimeWarning.New ("SlotMachine.OnRpcMessage")) {
+			if (rpc == 1251063754 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_Deposit "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_Deposit "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_Deposit", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_Deposit")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (1251063754u, "RPC_Deposit", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage rpc2 = rPCMessage;
 							RPC_Deposit (rpc2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex) {
-						Debug.LogException (ex);
+					} catch (Exception exception) {
+						Debug.LogException (exception);
 						player.Kick ("RPC Error in RPC_Deposit");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 1455840454 && (Object)(object)player != (Object)null) {
+			if (rpc == 1455840454 && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - RPC_Spin "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - RPC_Spin "));
 				}
-				TimeWarning val2 = TimeWarning.New ("RPC_Spin", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("RPC_Spin")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.MaxDistance.Test (1455840454u, "RPC_Spin", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage rpc3 = rPCMessage;
 							RPC_Spin (rpc3);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex2) {
-						Debug.LogException (ex2);
+					} catch (Exception exception2) {
+						Debug.LogException (exception2);
 						player.Kick ("RPC Error in RPC_Spin");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-			if (rpc == 3942337446u && (Object)(object)player != (Object)null) {
+			if (rpc == 3942337446u && player != null) {
 				Assert.IsTrue (player.isServer, "SV_RPC Message is using a clientside player!");
-				if (Global.developer > 2) {
-					Debug.Log ((object)string.Concat ("SV_RPCMessage: ", player, " - Server_RequestMultiplierChange "));
+				if (ConVar.Global.developer > 2) {
+					Debug.Log (string.Concat ("SV_RPCMessage: ", player, " - Server_RequestMultiplierChange "));
 				}
-				TimeWarning val2 = TimeWarning.New ("Server_RequestMultiplierChange", 0);
-				try {
-					TimeWarning val3 = TimeWarning.New ("Conditions", 0);
-					try {
+				using (TimeWarning.New ("Server_RequestMultiplierChange")) {
+					using (TimeWarning.New ("Conditions")) {
 						if (!RPC_Server.CallsPerSecond.Test (3942337446u, "Server_RequestMultiplierChange", this, player, 5uL)) {
 							return true;
 						}
 						if (!RPC_Server.MaxDistance.Test (3942337446u, "Server_RequestMultiplierChange", this, player, 3f)) {
 							return true;
 						}
-					} finally {
-						((IDisposable)val3)?.Dispose ();
 					}
 					try {
-						val3 = TimeWarning.New ("Call", 0);
-						try {
+						using (TimeWarning.New ("Call")) {
 							RPCMessage rPCMessage = default(RPCMessage);
 							rPCMessage.connection = msg.connection;
 							rPCMessage.player = player;
 							rPCMessage.read = msg.read;
 							RPCMessage msg2 = rPCMessage;
 							Server_RequestMultiplierChange (msg2);
-						} finally {
-							((IDisposable)val3)?.Dispose ();
 						}
-					} catch (Exception ex3) {
-						Debug.LogException (ex3);
+					} catch (Exception exception3) {
+						Debug.LogException (exception3);
 						player.Kick ("RPC Error in Server_RequestMultiplierChange");
 					}
-				} finally {
-					((IDisposable)val2)?.Dispose ();
 				}
 				return true;
 			}
-		} finally {
-			((IDisposable)val)?.Dispose ();
 		}
 		return base.OnRpcMessage (player, rpc, msg);
 	}
 
 	public override void Save (SaveInfo info)
 	{
-		//IL_00d8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00dd: Unknown result type (might be due to invalid IL or missing references)
 		base.Save (info);
-		info.msg.slotMachine = Pool.Get<SlotMachine> ();
+		info.msg.slotMachine = Facepunch.Pool.Get<ProtoBuf.SlotMachine> ();
 		info.msg.slotMachine.oldResult1 = SpinResultPrevious1;
 		info.msg.slotMachine.oldResult2 = SpinResultPrevious2;
 		info.msg.slotMachine.oldResult3 = SpinResultPrevious3;
@@ -246,7 +215,6 @@ public class SlotMachine : BaseMountable
 
 	public override void Load (LoadInfo info)
 	{
-		//IL_00e0: Unknown result type (might be due to invalid IL or missing references)
 		base.Load (info);
 		if (info.msg.slotMachine != null) {
 			SpinResultPrevious1 = info.msg.slotMachine.oldResult1;
@@ -273,12 +241,8 @@ public class SlotMachine : BaseMountable
 
 	public override void Spawn ()
 	{
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
 		base.Spawn ();
-		if (!Application.isLoadingSave) {
+		if (!Rust.Application.isLoadingSave) {
 			BaseEntity baseEntity = GameManager.server.CreateEntity (StoragePrefab.resourcePath);
 			baseEntity.Spawn ();
 			baseEntity.SetParent (this);
@@ -297,8 +261,8 @@ public class SlotMachine : BaseMountable
 
 	private int GetBettingAmount ()
 	{
-		SlotMachineStorage component = ((Component)StorageInstance.Get (base.isServer)).GetComponent<SlotMachineStorage> ();
-		if ((Object)(object)component == (Object)null) {
+		SlotMachineStorage component = StorageInstance.Get (base.isServer).GetComponent<SlotMachineStorage> ();
+		if (component == null) {
 			return 0;
 		}
 		return component.inventory.GetSlot (0)?.amount ?? 0;
@@ -308,12 +272,12 @@ public class SlotMachine : BaseMountable
 	[RPC_Server.MaxDistance (3f)]
 	private void RPC_Spin (RPCMessage rpc)
 	{
-		if (IsSpinning || (Object)(object)rpc.player != (Object)(object)GetMounted ()) {
+		if (IsSpinning || rpc.player != GetMounted ()) {
 			return;
 		}
-		SlotMachineStorage component = ((Component)StorageInstance.Get (base.isServer)).GetComponent<SlotMachineStorage> ();
+		SlotMachineStorage component = StorageInstance.Get (base.isServer).GetComponent<SlotMachineStorage> ();
 		int num = (int)PayoutSettings.SpinCost.amount * CurrentMultiplier;
-		if (GetBettingAmount () < num || (Object)(object)rpc.player == (Object)null) {
+		if (GetBettingAmount () < num || rpc.player == null) {
 			return;
 		}
 		(CurrentSpinPlayer = rpc.player).inventory.loot.Clear ();
@@ -335,9 +299,9 @@ public class SlotMachine : BaseMountable
 		SpinResultPrevious2 = SpinResult2;
 		SpinResultPrevious3 = SpinResult3;
 		CalculateSpinResults ();
-		SpinTime = Time.time;
+		SpinTime = UnityEngine.Time.time;
 		ClientRPC (null, "RPC_OnSpin", (sbyte)SpinResult1, (sbyte)SpinResult2, (sbyte)SpinResult3);
-		((FacepunchBehaviour)this).Invoke ((Action)CheckPayout, SpinDuration);
+		Invoke (CheckPayout, SpinDuration);
 	}
 
 	[RPC_Server]
@@ -345,23 +309,19 @@ public class SlotMachine : BaseMountable
 	private void RPC_Deposit (RPCMessage rpc)
 	{
 		BasePlayer player = rpc.player;
-		if (!((Object)(object)player == (Object)null) && !HasFlag (Flags.Reserved2) && StorageInstance.IsValid (base.isServer)) {
-			((Component)StorageInstance.Get (base.isServer)).GetComponent<StorageContainer> ().PlayerOpenLoot (player, "", doPositionChecks: false);
+		if (!(player == null) && !HasFlag (Flags.Reserved2) && StorageInstance.IsValid (base.isServer)) {
+			StorageInstance.Get (base.isServer).GetComponent<StorageContainer> ().PlayerOpenLoot (player, "", doPositionChecks: false);
 		}
 	}
 
 	private void CheckPayout ()
 	{
-		//IL_0164: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0169: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ad: Unknown result type (might be due to invalid IL or missing references)
 		bool flag = false;
-		if ((Object)(object)PayoutSettings != (Object)null) {
+		if (PayoutSettings != null) {
 			if (CalculatePayout (out var info, out var bonus)) {
 				int num = ((int)info.Item.amount + bonus) * CurrentMultiplier;
 				BaseEntity baseEntity = StorageInstance.Get (serverside: true);
-				if ((Object)(object)baseEntity != (Object)null && baseEntity is SlotMachineStorage slotMachineStorage) {
+				if (baseEntity != null && baseEntity is SlotMachineStorage slotMachineStorage) {
 					Item slot = slotMachineStorage.inventory.GetSlot (1);
 					if (slot != null) {
 						slot.amount += num;
@@ -370,7 +330,7 @@ public class SlotMachine : BaseMountable
 						ItemManager.Create (info.Item.itemDef, num, 0uL).MoveToContainer (slotMachineStorage.inventory, 1);
 					}
 				}
-				if (CurrentSpinPlayer.IsValid () && (Object)(object)CurrentSpinPlayer == (Object)(object)_mounted) {
+				if (CurrentSpinPlayer.IsValid () && CurrentSpinPlayer == _mounted) {
 					CurrentSpinPlayer.ChatMessage ($"You received {num}x {info.Item.itemDef.displayName.english} for slots payout!");
 				}
 				Analytics.Server.SlotMachineTransaction ((int)PayoutSettings.SpinCost.amount * CurrentMultiplier, num);
@@ -388,12 +348,12 @@ public class SlotMachine : BaseMountable
 				Analytics.Azure.OnGamblingResult (CurrentSpinPlayer, this, (int)PayoutSettings.SpinCost.amount * CurrentMultiplier, 0);
 			}
 		} else {
-			Debug.LogError ((object)$"Failed to process spin results: PayoutSettings != null {(Object)(object)PayoutSettings != (Object)null} CurrentSpinPlayer.IsValid {CurrentSpinPlayer.IsValid ()} CurrentSpinPlayer == mounted {(Object)(object)CurrentSpinPlayer == (Object)(object)_mounted}");
+			Debug.LogError ($"Failed to process spin results: PayoutSettings != null {PayoutSettings != null} CurrentSpinPlayer.IsValid {CurrentSpinPlayer.IsValid ()} CurrentSpinPlayer == mounted {CurrentSpinPlayer == _mounted}");
 		}
 		if (!flag) {
 			SetFlag (Flags.Reserved2, b: false);
 		} else {
-			((FacepunchBehaviour)this).Invoke ((Action)DelayedSpinningReset, 4f);
+			Invoke (DelayedSpinningReset, 4f);
 		}
 		CurrentSpinPlayer = null;
 	}
@@ -418,7 +378,7 @@ public class SlotMachine : BaseMountable
 
 	private int RandomSpinResult ()
 	{
-		int num = new Random (Random.Range (0, 1000)).Next (0, PayoutSettings.TotalStops);
+		int num = new System.Random (UnityEngine.Random.Range (0, 1000)).Next (0, PayoutSettings.TotalStops);
 		int num2 = 0;
 		int num3 = 0;
 		int[] virtualFaces = PayoutSettings.VirtualFaces;
@@ -436,7 +396,7 @@ public class SlotMachine : BaseMountable
 	{
 		base.OnPlayerDismounted (player);
 		BaseEntity baseEntity = StorageInstance.Get (serverside: true);
-		if ((Object)(object)baseEntity != (Object)null && baseEntity is SlotMachineStorage slotMachineStorage) {
+		if (baseEntity != null && baseEntity is SlotMachineStorage slotMachineStorage) {
 			slotMachineStorage.inventory.GetSlot (1)?.MoveToContainer (player.inventory.containerMain);
 		}
 	}
@@ -446,7 +406,7 @@ public class SlotMachine : BaseMountable
 	[RPC_Server.CallsPerSecond (5uL)]
 	private void Server_RequestMultiplierChange (RPCMessage msg)
 	{
-		if (!((Object)(object)msg.player != (Object)(object)_mounted) && !HasFlag (Flags.Reserved2)) {
+		if (!(msg.player != _mounted) && !HasFlag (Flags.Reserved2)) {
 			CurrentMultiplier = Mathf.Clamp (msg.read.Int32 (), 1, 5);
 			OnBettingScrapUpdated (GetBettingAmount ());
 			SendNetworkUpdate ();
