@@ -5615,7 +5615,7 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel, IIdealSlotE
 		}
 	}
 
-	public virtual BaseCorpse CreateCorpse (PlayerFlags flagsOnDeath, Vector3 posOnDeath, Quaternion rotOnDeath, BaseEntity parentOnDeath)
+	public virtual BaseCorpse CreateCorpse (PlayerFlags flagsOnDeath, Vector3 posOnDeath, Quaternion rotOnDeath, List<TriggerBase> triggersOnDeath)
 	{
 		using (TimeWarning.New ("Create corpse")) {
 			string strCorpsePrefab = ((!ConVar.Physics.serversideragdolls) ? "assets/prefabs/player/player_corpse.prefab" : "assets/prefabs/player/player_corpse_new.prefab");
@@ -5639,8 +5639,12 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel, IIdealSlotE
 				playerCorpse.streamerName = RandomUsernames.Get (userID);
 				playerCorpse.playerSteamID = userID;
 				playerCorpse.underwearSkin = GetUnderwearSkin ();
-				if (parentOnDeath != null) {
-					playerCorpse.SetParent (parentOnDeath, worldPositionStays: true, sendImmediate: true);
+				if (!triggersOnDeath.IsNullOrEmpty ()) {
+					foreach (TriggerBase item2 in triggersOnDeath) {
+						if (item2 is TriggerParent triggerParent) {
+							triggerParent.OnEntityEnter (playerCorpse);
+						}
+					}
 				}
 				playerCorpse.Spawn ();
 				playerCorpse.TakeChildren (this);
@@ -5668,7 +5672,7 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel, IIdealSlotE
 	{
 		PlayerFlags flagsOnDeath = playerFlags;
 		Vector3 position = base.transform.position;
-		BaseEntity parentOnDeath = GetParentEntity ();
+		List<TriggerBase> triggersOnDeath = ((triggers == null) ? new List<TriggerBase> () : new List<TriggerBase> (triggers));
 		BaseMountable baseMountable = GetMounted ();
 		Quaternion rotOnDeath = ((!baseMountable.IsValid ()) ? Quaternion.Euler (base.transform.eulerAngles.x, eyes.bodyRotation.eulerAngles.y, base.transform.eulerAngles.z) : baseMountable.mountAnchor.rotation);
 		SetPlayerFlag (PlayerFlags.Unused2, b: false);
@@ -5703,7 +5707,7 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel, IIdealSlotE
 			inventory.crafting.CancelAll (returnItems: true);
 		}
 		EACServer.LogPlayerDespawn (this);
-		BaseCorpse baseCorpse = CreateCorpse (flagsOnDeath, position, rotOnDeath, parentOnDeath);
+		BaseCorpse baseCorpse = CreateCorpse (flagsOnDeath, position, rotOnDeath, triggersOnDeath);
 		if (baseCorpse != null) {
 			if (info != null) {
 				Rigidbody component = baseCorpse.GetComponent<Rigidbody> ();
