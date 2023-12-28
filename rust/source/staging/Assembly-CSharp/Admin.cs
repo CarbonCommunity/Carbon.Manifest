@@ -153,7 +153,7 @@ public class Admin : ConsoleSystem
 		string text = string.Empty;
 		if (!flag && @string.Length == 0) {
 			text = text + "hostname: " + ConVar.Server.hostname + "\n";
-			text = text + "version : " + 2515 + " secure (secure mode enabled, connected to Steam3)\n";
+			text = text + "version : " + 2516 + " secure (secure mode enabled, connected to Steam3)\n";
 			text = text + "map     : " + ConVar.Server.level + "\n";
 			text += $"players : {BasePlayer.activePlayerList.Count ()} ({ConVar.Server.maxplayers} max) ({SingletonComponent<ServerMgr>.Instance.connectionQueue.Queued} queued) ({SingletonComponent<ServerMgr>.Instance.connectionQueue.Joining} joining)\n\n";
 		}
@@ -1265,7 +1265,7 @@ public class Admin : ConsoleSystem
 		result.NetworkOut = (int)((Network.Net.sv != null) ? Network.Net.sv.GetStat (null, BaseNetwork.StatTypeLong.BytesSent_LastSecond) : 0);
 		result.Restarting = SingletonComponent<ServerMgr>.Instance.Restarting;
 		result.SaveCreatedTime = SaveRestore.SaveCreatedTime.ToString ();
-		result.Version = 2515;
+		result.Version = 2516;
 		result.Protocol = Protocol.printable;
 		return result;
 	}

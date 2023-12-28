@@ -52,7 +52,7 @@ public class ServerBrowserList : ServerBrowserListBase, VirtualScroll.IDataSourc
 
 	public QueryType queryType;
 
-	public static string VersionTag = "v" + 2515;
+	public static string VersionTag = "v" + 2516;
 
 	public ServerKeyvalues[] keyValues = new ServerKeyvalues[0];
 

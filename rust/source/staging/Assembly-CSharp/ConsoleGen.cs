@@ -7433,7 +7433,7 @@ public class ConsoleGen
 			FullName = "server.corpseinfo",
 			ServerAdmin = true,
 			ServerUser = true,
-			Description = "Get info on player corpses in the world",
+			Description = "Get info on player corpses on the server",
 			Variable = false,
 			Call = delegate(ConsoleSystem.Arg arg) {
 				ConVar.Server.corpseinfo (arg);

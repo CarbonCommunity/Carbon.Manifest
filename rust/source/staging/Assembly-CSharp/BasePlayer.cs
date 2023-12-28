@@ -2996,7 +2996,7 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel, IIdealSlotE
 		Missions missions = Facepunch.Pool.Get<Missions> ();
 		missions.missions = Facepunch.Pool.GetList<MissionInstance> ();
 		missions.activeMission = GetActiveMission ();
-		missions.protocol = 244;
+		missions.protocol = 245;
 		missions.seed = World.Seed;
 		missions.saveCreatedTime = Epoch.FromDateTime (SaveRestore.SaveCreatedTime);
 		foreach (BaseMission.MissionInstance mission in this.missions) {
@@ -3083,7 +3083,7 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel, IIdealSlotE
 			uint seed = loadedMissions.seed;
 			int saveCreatedTime = loadedMissions.saveCreatedTime;
 			int num2 = Epoch.FromDateTime (SaveRestore.SaveCreatedTime);
-			if (244 != protocol || World.Seed != seed || num2 != saveCreatedTime) {
+			if (245 != protocol || World.Seed != seed || num2 != saveCreatedTime) {
 				Debug.Log ("Missions were from old protocol or different seed, or not from a loaded save. Clearing");
 				loadedMissions.activeMission = -1;
 				SetActiveMission (-1);
