@@ -50,6 +50,8 @@ public class ServerBrowserList : ServerBrowserListBase, VirtualScroll.IDataSourc
 
 	public bool clampPlayerCountsToTrustedValues;
 
+	private static string[] pingStrings = new string[3] { ".", "..", "..." };
+
 	public QueryType queryType;
 
 	public static string VersionTag = "v" + 2516;

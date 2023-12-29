@@ -40,7 +40,7 @@ public class FishingBobber : BaseCombatEntity
 		base.ServerInit ();
 	}
 
-	public void InitialiseBobber (BasePlayer forPlayer, WaterBody forBody, Vector3 targetPos)
+	public void InitialiseBobber (BasePlayer forPlayer, WaterBody forBody, Vector3 targetPos, float maxDuration)
 	{
 		initialDirection = forPlayer.eyes.HeadForward ().WithY (0f);
 		spawnPosition = base.transform.position;
@@ -48,6 +48,7 @@ public class FishingBobber : BaseCombatEntity
 		initialCastTime = 0f;
 		initialDistance = Vector3.Distance (targetPos, forPlayer.transform.position.WithY (targetPos.y));
 		InvokeRepeating (ProcessInitialCast, 0f, 0f);
+		Invoke (TimeOutBobber, maxDuration);
 	}
 
 	private void ProcessInitialCast ()
@@ -116,5 +117,10 @@ public class FishingBobber : BaseCombatEntity
 			return false;
 		}
 		return true;
+	}
+
+	private void TimeOutBobber ()
+	{
+		Kill ();
 	}
 }

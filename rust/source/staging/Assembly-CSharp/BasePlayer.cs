@@ -4751,6 +4751,7 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel, IIdealSlotE
 	{
 		base.Save (info);
 		bool flag = net != null && net.connection == info.forConnection;
+		bool flag2 = !info.forDisk && info.forConnection.player != null && info.forConnection.player is BasePlayer basePlayer && basePlayer.IsAdmin;
 		info.msg.basePlayer = Facepunch.Pool.Get<ProtoBuf.BasePlayer> ();
 		info.msg.basePlayer.userid = userID;
 		info.msg.basePlayer.name = displayName;
@@ -4781,7 +4782,7 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel, IIdealSlotE
 		if (!info.forDisk && !flag) {
 			info.msg.basePlayer.playerFlags &= -5;
 			info.msg.basePlayer.playerFlags &= -129;
-			if (info.msg.baseCombat != null) {
+			if (info.msg.baseCombat != null && !flag2) {
 				info.msg.baseCombat.health = 100f;
 			}
 		}
