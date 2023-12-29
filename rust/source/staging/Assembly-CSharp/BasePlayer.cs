@@ -3951,7 +3951,7 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel, IIdealSlotE
 			return;
 		}
 		if (!firedProjectiles.TryGetValue (playerAttack.projectileID, out var value)) {
-			AntiHack.Log (this, AntiHackType.ProjectileHack, "Missing ID (" + playerAttack.projectileID + ")");
+			AntiHack.Log (this, AntiHackType.ProjectileHack, "Missing ID (" + playerAttack.projectileID + ")", logToAnalytics: false);
 			playerProjectileAttack.ResetToPool ();
 			playerProjectileAttack = null;
 			stats.combat.LogInvalid (hitInfo, "projectile_invalid");
@@ -4201,26 +4201,26 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel, IIdealSlotE
 					num32 = (GamePhysics.LineOfSight (vector, hitPositionWorld, num15, value.lastEntityHit) ? 1 : 0);
 					if (num32 != 0) {
 						stats.Add ("hit_" + (flag6 ? hitEntity.Categorize () : "world") + "_direct_los", 1, Stats.Server);
-						goto IL_10b0;
+						goto IL_10c2;
 					}
 				} else {
 					num32 = 0;
 				}
 				stats.Add ("hit_" + (flag6 ? hitEntity.Categorize () : "world") + "_indirect_los", 1, Stats.Server);
-				goto IL_10b0;
+				goto IL_10c2;
 			}
-			goto IL_1311;
+			goto IL_1325;
 		}
-		goto IL_132a;
-		IL_1311:
+		goto IL_133e;
+		IL_1325:
 		if (!flag9) {
 			AntiHack.AddViolation (this, AntiHackType.ProjectileHack, ConVar.AntiHack.projectile_penalty);
 			playerProjectileAttack.ResetToPool ();
 			playerProjectileAttack = null;
 			return;
 		}
-		goto IL_132a;
-		IL_10b0:
+		goto IL_133e;
+		IL_10c2:
 		if (num32 == 0) {
 			string text25 = hitInfo.ProjectilePrefab.name;
 			string text26 = (flag6 ? hitEntity.ShortPrefabName : "world");
@@ -4277,8 +4277,8 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel, IIdealSlotE
 				flag9 = false;
 			}
 		}
-		goto IL_1311;
-		IL_132a:
+		goto IL_1325;
+		IL_133e:
 		value.position = hitInfo.HitPositionWorld;
 		value.velocity = playerProjectileAttack.hitVelocity;
 		value.travelTime = num;
@@ -4333,7 +4333,7 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel, IIdealSlotE
 				playerProjectileRicochet.ResetToPool ();
 				playerProjectileRicochet = null;
 			} else if (!firedProjectiles.TryGetValue (playerProjectileRicochet.projectileID, out value)) {
-				AntiHack.Log (this, AntiHackType.ProjectileHack, "Missing ID (" + playerProjectileRicochet.projectileID + ")");
+				AntiHack.Log (this, AntiHackType.ProjectileHack, "Missing ID (" + playerProjectileRicochet.projectileID + ")", logToAnalytics: false);
 				playerProjectileRicochet.ResetToPool ();
 				playerProjectileRicochet = null;
 			} else if (value.firedTime < UnityEngine.Time.realtimeSinceStartup - 8f) {
@@ -4364,7 +4364,7 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel, IIdealSlotE
 			return;
 		}
 		if (!firedProjectiles.TryGetValue (playerProjectileUpdate.projectileID, out var value)) {
-			AntiHack.Log (this, AntiHackType.ProjectileHack, "Missing ID (" + playerProjectileUpdate.projectileID + ")");
+			AntiHack.Log (this, AntiHackType.ProjectileHack, "Missing ID (" + playerProjectileUpdate.projectileID + ")", logToAnalytics: false);
 			playerProjectileUpdate.ResetToPool ();
 			playerProjectileUpdate = null;
 			return;

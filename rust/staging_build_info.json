@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "91308",
+    "ChangeId": "91314",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "merge from qol_map_focus_button",
+    "Comment": "merge from gingerbread_building_skin_fixes",
     "Author": "alistair",
-    "Date": "29/12/2023 11:11:00",
-    "Items": "C cfg\\keys_default.cfg \r\n C Assets\\Plugins\\Facepunch.Input\\Input.cs"
+    "Date": "29/12/2023 14:06:43",
+    "Items": "C Assets\\Prefabs\\Building Core\\roof.triangle\\roof.triangle.gingerbread.prefab"
   },
   "Build": {
-    "Id": "5428",
-    "Number": "5428",
-    "Tag": "jenkins-RustServer-5428",
-    "Url": "https://build.facepunch.com/job/RustServer/5428/",
+    "Id": "5429",
+    "Number": "5429",
+    "Tag": "jenkins-RustServer-5429",
+    "Url": "https://build.facepunch.com/job/RustServer/5429/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1703850155,
+  "Date": 1703859166,
   "DateString": "29 12 2023",
-  "TimeString": "11:42"
+  "TimeString": "14:12"
 }
