@@ -1,5 +1,5 @@
 using Epic.OnlineServices;
-using Epic.OnlineServices.Lobby;
+using Epic.OnlineServices.Sessions;
 
 public struct QueryInvitesCallbackInfo : ICallbackInfo
 {

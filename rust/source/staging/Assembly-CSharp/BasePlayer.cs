@@ -5709,6 +5709,12 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel, IIdealSlotE
 		EACServer.LogPlayerDespawn (this);
 		BaseCorpse baseCorpse = CreateCorpse (flagsOnDeath, position, rotOnDeath, triggersOnDeath);
 		if (baseCorpse != null) {
+			if (baseCorpse.CorpseIsRagdoll && baseMountable != null) {
+				BaseVehicle baseVehicle = baseMountable.VehicleParent ();
+				if (baseVehicle != null && baseVehicle.mountedPlayerRagdolls == BaseVehicle.RagdollMode.FallThrough) {
+					baseCorpse.gameObject.SetIgnoreCollisions (baseVehicle.gameObject, ignore: true);
+				}
+			}
 			if (info != null) {
 				Rigidbody component = baseCorpse.GetComponent<Rigidbody> ();
 				if (component != null) {

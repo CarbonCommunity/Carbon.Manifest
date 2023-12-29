@@ -1,3 +1,3 @@
-using Epic.OnlineServices.Lobby;
+using Epic.OnlineServices.Sessions;
 
 public delegate void OnQueryInvitesCallback (ref QueryInvitesCallbackInfo data);

@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using Epic.OnlineServices;
-using Epic.OnlineServices.Lobby;
+using Epic.OnlineServices.Sessions;
 
 [StructLayout (LayoutKind.Sequential, Pack = 8)]
 internal struct QueryInvitesCallbackInfoInternal : ICallbackInfoInternal, IGettable<QueryInvitesCallbackInfo>, ISettable<QueryInvitesCallbackInfo>, IDisposable

@@ -1,5 +1,5 @@
 using System.Runtime.InteropServices;
-using Epic.OnlineServices.Friends;
+using Epic.OnlineServices.Sessions;
 
 [UnmanagedFunctionPointer (CallingConvention.Cdecl)]
 internal delegate void OnSendInviteCallbackInternal (ref SendInviteCallbackInfoInternal data);

@@ -1,3 +1,3 @@
-using Epic.OnlineServices.Friends;
+using Epic.OnlineServices.Sessions;
 
 public delegate void OnSendInviteCallback (ref SendInviteCallbackInfo data);

@@ -2,7 +2,7 @@ using Epic.OnlineServices;
 
 public struct RejectInviteOptions
 {
-	public EpicAccountId LocalUserId { get; set; }
+	public ProductUserId LocalUserId { get; set; }
 
-	public EpicAccountId TargetUserId { get; set; }
+	public Utf8String InviteId { get; set; }
 }

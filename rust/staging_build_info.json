@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "91296",
+    "ChangeId": "91303",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "merge from hostile_countdown_tooltip",
-    "Author": "alistair",
-    "Date": "28/12/2023 15:32:54",
-    "Items": "C Assets\\Content\\UI\\GameUI\\GameUI.Hud.Warnings.prefab \r\n C Assets\\Scripts\\UI\\HostileNote.cs \r\n A Assets\\Content\\UI\\Fonts\\RobotoCondensed-Bold SDF - Outline.mat \r\n A Assets\\Content\\UI\\Fonts\\RobotoCondensed-Bold SDF - Outline.mat.meta"
+    "Comment": "Merge MinicopterFreezeFix -> Main",
+    "Author": "BillBorman",
+    "Date": "28/12/2023 23:38:38",
+    "Items": "C Assets\\Content\\Vehicles\\ModularCar\\Module_Entities\\1module_cockpit_armored.prefab \r\n C Assets\\Content\\Vehicles\\ModularCar\\Module_Entities\\1module_cockpit_with_engine.prefab \r\n C Assets\\Content\\Vehicles\\ModularCar\\Module_Entities\\1module_cockpit.prefab \r\n C Assets\\Content\\Vehicles\\ModularCar\\Module_Entities\\1module_engine.prefab \r\n C Assets\\Content\\Vehicles\\ModularCar\\Module_Entities\\1module_flatbed.prefab \r\n C Assets\\Content\\Vehicles\\ModularCar\\Module_Entities\\1module_passengers_armored.prefab \r\n C Assets\\Content\\Vehicles\\ModularCar\\Module_Entities\\1module_rear_seats.prefab \r\n C Assets\\Content\\Vehicles\\ModularCar\\Module_Entities\\1module_storage.prefab \r\n C Assets\\Content\\Vehicles\\ModularCar\\Module_Entities\\1module_taxi.prefab \r\n C Assets\\Content\\Vehicles\\ModularCar\\Module_Entities\\2module_camper.prefab \r\n C Assets\\Content\\Vehicles\\ModularCar\\Module_Entities\\2module_flatbed.prefab \r\n C Assets\\Content\\Vehicles\\ModularCar\\Module_Entities\\2module_fuel_tank.prefab \r\n C Assets\\Content\\Vehicles\\ModularCar\\Module_Entities\\2module_passengers.prefab"
   },
   "Build": {
-    "Id": "5424",
-    "Number": "5424",
-    "Tag": "jenkins-RustServer-5424",
-    "Url": "https://build.facepunch.com/job/RustServer/5424/",
+    "Id": "5425",
+    "Number": "5425",
+    "Tag": "jenkins-RustServer-5425",
+    "Url": "https://build.facepunch.com/job/RustServer/5425/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1703779686,
-  "DateString": "28 12 2023",
-  "TimeString": "16:08"
+  "Date": 1703808390,
+  "DateString": "29 12 2023",
+  "TimeString": "00:06"
 }

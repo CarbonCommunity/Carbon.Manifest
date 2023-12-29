@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using Epic.OnlineServices;
-using Epic.OnlineServices.Friends;
+using Epic.OnlineServices.Sessions;
 
 [StructLayout (LayoutKind.Sequential, Pack = 8)]
 internal struct RejectInviteOptionsInternal : ISettable<RejectInviteOptions>, IDisposable
@@ -10,17 +10,17 @@ internal struct RejectInviteOptionsInternal : ISettable<RejectInviteOptions>, ID
 
 	private IntPtr m_LocalUserId;
 
-	private IntPtr m_TargetUserId;
+	private IntPtr m_InviteId;
 
-	public EpicAccountId LocalUserId {
+	public ProductUserId LocalUserId {
 		set {
 			Helper.Set (value, ref m_LocalUserId);
 		}
 	}
 
-	public EpicAccountId TargetUserId {
+	public Utf8String InviteId {
 		set {
-			Helper.Set (value, ref m_TargetUserId);
+			Helper.Set (value, ref m_InviteId);
 		}
 	}
 
@@ -28,7 +28,7 @@ internal struct RejectInviteOptionsInternal : ISettable<RejectInviteOptions>, ID
 	{
 		m_ApiVersion = 1;
 		LocalUserId = other.LocalUserId;
-		TargetUserId = other.TargetUserId;
+		InviteId = other.InviteId;
 	}
 
 	public void Set (ref RejectInviteOptions? other)
@@ -36,13 +36,13 @@ internal struct RejectInviteOptionsInternal : ISettable<RejectInviteOptions>, ID
 		if (other.HasValue) {
 			m_ApiVersion = 1;
 			LocalUserId = other.Value.LocalUserId;
-			TargetUserId = other.Value.TargetUserId;
+			InviteId = other.Value.InviteId;
 		}
 	}
 
 	public void Dispose ()
 	{
 		Helper.Dispose (ref m_LocalUserId);
-		Helper.Dispose (ref m_TargetUserId);
+		Helper.Dispose (ref m_InviteId);
 	}
 }

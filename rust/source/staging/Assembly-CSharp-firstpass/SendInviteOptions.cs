@@ -2,7 +2,9 @@ using Epic.OnlineServices;
 
 public struct SendInviteOptions
 {
-	public EpicAccountId LocalUserId { get; set; }
+	public Utf8String SessionName { get; set; }
 
-	public EpicAccountId TargetUserId { get; set; }
+	public ProductUserId LocalUserId { get; set; }
+
+	public ProductUserId TargetUserId { get; set; }
 }
