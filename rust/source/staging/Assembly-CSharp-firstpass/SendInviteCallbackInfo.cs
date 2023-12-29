@@ -1,11 +1,15 @@
 using Epic.OnlineServices;
-using Epic.OnlineServices.Sessions;
+using Epic.OnlineServices.Friends;
 
 public struct SendInviteCallbackInfo : ICallbackInfo
 {
 	public Result ResultCode { get; set; }
 
 	public object ClientData { get; set; }
+
+	public EpicAccountId LocalUserId { get; set; }
+
+	public EpicAccountId TargetUserId { get; set; }
 
 	public Result? GetResultCode ()
 	{
@@ -16,5 +20,7 @@ public struct SendInviteCallbackInfo : ICallbackInfo
 	{
 		ResultCode = other.ResultCode;
 		ClientData = other.ClientData;
+		LocalUserId = other.LocalUserId;
+		TargetUserId = other.TargetUserId;
 	}
 }

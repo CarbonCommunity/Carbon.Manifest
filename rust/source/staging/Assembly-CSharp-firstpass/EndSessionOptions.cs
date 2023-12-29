@@ -1,6 +1,6 @@
-using Epic.OnlineServices;
+using System.Runtime.InteropServices;
 
+[StructLayout (LayoutKind.Sequential, Size = 1)]
 public struct EndSessionOptions
 {
-	public Utf8String SessionName { get; set; }
 }

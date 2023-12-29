@@ -1,5 +1,5 @@
 using System.Runtime.InteropServices;
-using Epic.OnlineServices.Sessions;
+using Epic.OnlineServices.Lobby;
 
 [UnmanagedFunctionPointer (CallingConvention.Cdecl)]
 internal delegate void OnQueryInvitesCallbackInternal (ref QueryInvitesCallbackInfoInternal data);

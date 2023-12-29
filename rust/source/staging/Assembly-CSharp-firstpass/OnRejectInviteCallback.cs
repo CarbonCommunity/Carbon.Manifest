@@ -1,3 +1,3 @@
-using Epic.OnlineServices.Sessions;
+using Epic.OnlineServices.Friends;
 
 public delegate void OnRejectInviteCallback (ref RejectInviteCallbackInfo data);
