@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "91314",
+    "ChangeId": "91318",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "merge from gingerbread_building_skin_fixes",
+    "Comment": "subtracting hostile_countdown_tooltip - UI Scaling issues",
     "Author": "alistair",
-    "Date": "29/12/2023 14:06:43",
-    "Items": "C Assets\\Prefabs\\Building Core\\roof.triangle\\roof.triangle.gingerbread.prefab"
+    "Date": "30/12/2023 20:22:08",
+    "Items": "C Assets\\Content\\UI\\GameUI\\GameUI.Hud.Warnings.prefab \r\n C Assets\\Scripts\\UI\\HostileNote.cs \r\n D Assets\\Content\\UI\\Fonts\\RobotoCondensed-Bold SDF - Outline.mat \r\n D Assets\\Content\\UI\\Fonts\\RobotoCondensed-Bold SDF - Outline.mat.meta"
   },
   "Build": {
-    "Id": "5430",
-    "Number": "5430",
-    "Tag": "jenkins-RustServer-5430",
-    "Url": "https://build.facepunch.com/job/RustServer/5430/",
+    "Id": "5431",
+    "Number": "5431",
+    "Tag": "jenkins-RustServer-5431",
+    "Url": "https://build.facepunch.com/job/RustServer/5431/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1703861583,
-  "DateString": "29 12 2023",
-  "TimeString": "14:53"
+  "Date": 1703970096,
+  "DateString": "30 12 2023",
+  "TimeString": "21:01"
 }

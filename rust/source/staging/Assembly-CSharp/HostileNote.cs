@@ -1,4 +1,3 @@
-using Rust.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,7 +13,7 @@ public class HostileNote : MonoBehaviour, IClientComponent
 
 	public Text timerText;
 
-	public RustText smallWarningText;
+	public Text smallWarningText;
 
 	public static float unhostileTime;
 
