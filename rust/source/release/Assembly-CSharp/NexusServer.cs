@@ -171,7 +171,7 @@ public static class NexusServer
 		UnityEngine.Object.DontDestroyOnLoad (gameObject);
 		try {
 			_database = new NexusDB ();
-			_database.Open ($"{ConVar.Server.rootFolder}/nexus.{244}.db", fastMode: true);
+			_database.Open ($"{ConVar.Server.rootFolder}/nexus.{245}.db", fastMode: true);
 			_database.Initialize ();
 		} catch (Exception exception) {
 			Debug.LogException (exception);
@@ -676,7 +676,7 @@ public static class NexusServer
 		_ = 1;
 		try {
 			int valueOrDefault = (World.Config?.JsonString?.GetHashCode ()).GetValueOrDefault ();
-			string key = $"{2515}##{244}##{World.Name}##{World.Size}##{World.Seed}##{World.Salt}##{ConVar.Nexus.mapImageScale}##{valueOrDefault}##{5}";
+			string key = $"{2516}##{245}##{World.Name}##{World.Size}##{World.Seed}##{World.Salt}##{ConVar.Nexus.mapImageScale}##{valueOrDefault}##{5}";
 			if (!force && (await ZoneClient.CheckUploadedMap ()).Key == key) {
 				Debug.Log ("Nexus already has this map's image uploaded, will not render and upload again");
 				return;
@@ -698,7 +698,7 @@ public static class NexusServer
 	private static void HandleMessage (Uuid id, Packet packet)
 	{
 		try {
-			if (packet.protocol != 244) {
+			if (packet.protocol != 245) {
 				Debug.LogWarning ("Received a nexus message with wrong protocol, ignoring");
 				return;
 			}
@@ -728,7 +728,7 @@ public static class NexusServer
 	private static Task SendRequestImpl (Uuid id, Request request, string toZoneKey, int? ttl = null)
 	{
 		Packet packet = Facepunch.Pool.Get<Packet> ();
-		packet.protocol = 244u;
+		packet.protocol = 245u;
 		packet.sourceZone = ZoneClient.Zone.ZoneId;
 		packet.request = request;
 		return SendPacket (id, packet, toZoneKey, ttl);
@@ -738,7 +738,7 @@ public static class NexusServer
 	{
 		try {
 			Packet packet = Facepunch.Pool.Get<Packet> ();
-			packet.protocol = 244u;
+			packet.protocol = 245u;
 			packet.sourceZone = ZoneClient.Zone.ZoneId;
 			packet.response = response;
 			await SendPacket (Uuid.Generate (), packet, toZoneKey, ttl);

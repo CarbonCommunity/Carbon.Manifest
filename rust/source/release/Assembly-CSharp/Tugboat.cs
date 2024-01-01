@@ -153,7 +153,7 @@ public class Tugboat : MotorRowboat
 		return false;
 	}
 
-	public override bool BuoyancySleep ()
+	public override bool BuoyancySleep (bool inWater)
 	{
 		SetToKinematic ();
 		return true;

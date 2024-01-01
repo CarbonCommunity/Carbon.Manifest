@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using ConVar;
 using Facepunch;
 using ProtoBuf;
@@ -19,6 +20,12 @@ public class BaseCorpse : BaseCombatEntity
 
 	[NonSerialized]
 	public SpawnGroup spawnGroup;
+
+	private const float RAGDOLL_PUSH_DIST = 0.5f;
+
+	private const float RAGDOLL_PUSH_FORCE = 2.5f;
+
+	public virtual bool CorpseIsRagdoll => false;
 
 	public override TraitFlag Traits => base.Traits | TraitFlag.Food | TraitFlag.Meat;
 
@@ -189,6 +196,31 @@ public class BaseCorpse : BaseCombatEntity
 			}
 			if (!info.DidGather) {
 				base.OnAttacked (info);
+			}
+			if (CorpseIsRagdoll) {
+				PushRagdoll (info);
+			}
+		}
+	}
+
+	protected virtual void PushRagdoll (HitInfo info)
+	{
+		List<Rigidbody> obj = Facepunch.Pool.GetList<Rigidbody> ();
+		Vis.Components (info.HitPositionWorld, 0.5f, obj, 512);
+		PushRigidbodies (obj, info.HitPositionWorld, info.attackNormal);
+		Facepunch.Pool.FreeList (ref obj);
+	}
+
+	protected void PushRigidbodies (List<Rigidbody> rbs, Vector3 hitPos, Vector3 hitNormal)
+	{
+		foreach (Rigidbody rb in rbs) {
+			float value = Vector3.Distance (hitPos, rb.position);
+			float num = 1f - Mathf.InverseLerp (0f, 0.5f, value);
+			if (!(num <= 0f)) {
+				if (num < 0.5f) {
+					num = 0.5f;
+				}
+				rb.AddForceAtPosition (hitNormal * 2.5f * num, hitPos, ForceMode.Impulse);
 			}
 		}
 	}

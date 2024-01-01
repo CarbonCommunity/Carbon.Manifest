@@ -549,7 +549,7 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 			string text5 = ConVar.Server.tags?.Trim (',') ?? "";
 			string text6 = ((!string.IsNullOrWhiteSpace (text5)) ? ("," + text5) : "");
 			string text7 = BuildInfo.Current?.Scm?.ChangeId ?? "0";
-			SteamServer.GameTags = $"mp{ConVar.Server.maxplayers},cp{BasePlayer.activePlayerList.Count},pt{Network.Net.sv.ProtocolId},qp{SingletonComponent<ServerMgr>.Instance.connectionQueue.Queued},v{2515}{text4}{text6},h{AssemblyHash},{text},{text2},{text3},cs{text7}";
+			SteamServer.GameTags = $"mp{ConVar.Server.maxplayers},cp{BasePlayer.activePlayerList.Count},pt{Network.Net.sv.ProtocolId},qp{SingletonComponent<ServerMgr>.Instance.connectionQueue.Queued},v{2516}{text4}{text6},h{AssemblyHash},{text},{text2},{text3},cs{text7}";
 			if (ConVar.Server.description != null && ConVar.Server.description.Length > 100) {
 				string[] array = ConVar.Server.description.SplitToChunks (100).ToArray ();
 				for (int i = 0; i < 16; i++) {
@@ -1152,11 +1152,11 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 		if (branch != string.Empty && branch != text) {
 			DebugEx.Log ("Kicking " + packet.connection?.ToString () + " - their branch is '" + text + "' not '" + branch + "'");
 			Network.Net.sv.Kick (packet.connection, "Wrong Steam Beta: Requires '" + branch + "' branch!");
-		} else if (packet.connection.protocol > 2515) {
-			DebugEx.Log ("Kicking " + packet.connection?.ToString () + " - their protocol is " + packet.connection.protocol + " not " + 2515);
+		} else if (packet.connection.protocol > 2516) {
+			DebugEx.Log ("Kicking " + packet.connection?.ToString () + " - their protocol is " + packet.connection.protocol + " not " + 2516);
 			Network.Net.sv.Kick (packet.connection, "Wrong Connection Protocol: Server update required!");
-		} else if (packet.connection.protocol < 2515) {
-			DebugEx.Log ("Kicking " + packet.connection?.ToString () + " - their protocol is " + packet.connection.protocol + " not " + 2515);
+		} else if (packet.connection.protocol < 2516) {
+			DebugEx.Log ("Kicking " + packet.connection?.ToString () + " - their protocol is " + packet.connection.protocol + " not " + 2516);
 			Network.Net.sv.Kick (packet.connection, "Wrong Connection Protocol: Client update required!");
 		} else {
 			packet.connection.token = packet.read.BytesWithSize (512u);

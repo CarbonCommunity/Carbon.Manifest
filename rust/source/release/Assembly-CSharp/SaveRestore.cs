@@ -80,7 +80,7 @@ public class SaveRestore : SingletonComponent<SaveRestore>
 			writer.Write (JsonConvert.SerializeObject (saveExtraData));
 			writer.Write ((sbyte)68);
 			writer.Write (Epoch.FromDateTime (SaveCreatedTime));
-			writer.Write (244u);
+			writer.Write (245u);
 			BaseNetworkable.SaveInfo saveInfo = default(BaseNetworkable.SaveInfo);
 			saveInfo.forDisk = true;
 			if (!AndWait) {
@@ -286,7 +286,7 @@ public class SaveRestore : SingletonComponent<SaveRestore>
 					binaryReader.ReadChar ();
 					SaveCreatedTime = Epoch.ToDateTime (binaryReader.ReadInt32 ());
 				}
-				if (binaryReader.ReadUInt32 () != 244) {
+				if (binaryReader.ReadUInt32 () != 245) {
 					if (allowOutOfDateSaves) {
 						UnityEngine.Debug.LogWarning ("This save is from an older (possibly incompatible) version!");
 					} else {

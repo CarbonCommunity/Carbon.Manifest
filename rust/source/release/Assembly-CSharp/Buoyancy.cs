@@ -71,6 +71,8 @@ public class Buoyancy : ListComponent<Buoyancy>, IServerComponent
 
 	public float timeOutOfWater { get; private set; }
 
+	public bool InWater => submergedFraction > requiredSubmergedFraction;
+
 	public static string DefaultWaterImpact ()
 	{
 		return "assets/bundled/prefabs/fx/impacts/physics/water-enter-exit.prefab";
@@ -84,7 +86,7 @@ public class Buoyancy : ListComponent<Buoyancy>, IServerComponent
 
 	public void Sleep ()
 	{
-		if ((forEntity == null || !forEntity.BuoyancySleep ()) && rigidBody != null) {
+		if ((forEntity == null || !forEntity.BuoyancySleep (InWater)) && rigidBody != null) {
 			rigidBody.Sleep ();
 		}
 		base.enabled = false;
@@ -103,8 +105,7 @@ public class Buoyancy : ListComponent<Buoyancy>, IServerComponent
 		if (base.transform == null || rigidBody == null) {
 			return;
 		}
-		Vector3 position = base.transform.position;
-		hasLocalPlayers = BaseNetworkable.HasCloseConnections (position, 100f);
+		hasLocalPlayers = HasLocalPlayers ();
 		bool flag = rigidBody.IsSleeping () || rigidBody.isKinematic;
 		bool flag2 = flag || (!hasLocalPlayers && timeInWater > 6f);
 		if (forVehicle != null && forVehicle.IsOn ()) {
@@ -117,11 +118,29 @@ public class Buoyancy : ListComponent<Buoyancy>, IServerComponent
 		if (!base.enabled && hasLocalPlayers && !hadLocalPlayers) {
 			DoCycle (forced: true);
 		}
-		bool flag3 = !flag || (hasLocalPlayers && submergedFraction > 0f);
+		bool flag3 = !flag || ShouldWake (hasLocalPlayers);
 		if (!base.enabled && flag3) {
 			Invoke (Wake, 0f);
 		}
 		hadLocalPlayers = hasLocalPlayers;
+	}
+
+	public bool ShouldWake ()
+	{
+		return ShouldWake (HasLocalPlayers ());
+	}
+
+	public bool ShouldWake (bool hasLocalPlayers)
+	{
+		if (hasLocalPlayers) {
+			return submergedFraction > 0f;
+		}
+		return false;
+	}
+
+	private bool HasLocalPlayers ()
+	{
+		return BaseNetworkable.HasCloseConnections (base.transform.position, 100f);
 	}
 
 	protected void DoCycle (bool forced = false)
@@ -277,7 +296,7 @@ public class Buoyancy : ListComponent<Buoyancy>, IServerComponent
 		if (points.Length != 0) {
 			submergedFraction = (float)num / (float)points.Length;
 		}
-		if (submergedFraction > requiredSubmergedFraction) {
+		if (InWater) {
 			timeInWater += UnityEngine.Time.fixedDeltaTime;
 			timeOutOfWater = 0f;
 		} else {

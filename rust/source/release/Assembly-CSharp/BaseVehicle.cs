@@ -43,6 +43,12 @@ public class BaseVehicle : BaseMountable, VehicleSpawner.IVehicleSpawnUser
 		public BaseMountable mountable;
 	}
 
+	public enum RagdollMode
+	{
+		Collide,
+		FallThrough
+	}
+
 	public readonly struct Enumerable : IEnumerable<MountPointInfo>, IEnumerable
 	{
 		private readonly BaseVehicle _vehicle;
@@ -194,6 +200,8 @@ public class BaseVehicle : BaseMountable, VehicleSpawner.IVehicleSpawnUser
 	public List<MountPointInfo> mountPoints;
 
 	public bool doClippingAndVisChecks = true;
+
+	public RagdollMode mountedPlayerRagdolls;
 
 	[Header ("Damage")]
 	public DamageRenderer damageRenderer;

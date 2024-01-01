@@ -378,8 +378,8 @@ public static class Analytics
 					.AddField ("ip_convar", Network.Net.sv.ip)
 					.AddField ("port_convar", Network.Net.sv.port)
 					.AddField ("net_protocol", Network.Net.sv.ProtocolId)
-					.AddField ("protocol_network", 2515)
-					.AddField ("protocol_save", 244)
+					.AddField ("protocol_network", 2516)
+					.AddField ("protocol_save", 245)
 					.AddField ("changeset", BuildInfo.Current?.Scm.ChangeId ?? "0")
 					.AddField ("unity_version", UnityEngine.Application.unityVersion)
 					.AddField ("branch", BuildInfo.Current?.Scm.Branch ?? "empty")
@@ -940,15 +940,91 @@ public static class Analytics
 			}
 		}
 
-		public static void OnAntihackViolation (BasePlayer player, int type, string message)
+		public static void OnAntihackViolation (BasePlayer player, AntiHackType type, string message)
 		{
 			if (!Stats) {
 				return;
 			}
 			try {
-				EventRecord.New ("antihack_violation").AddField ("player", player).AddField ("violation_type", type)
-					.AddField ("message", message)
-					.Submit ();
+				EventRecord eventRecord = EventRecord.New ("antihack_violation").AddField ("player", player).AddField ("violation_type", (int)type)
+					.AddField ("violation", type.ToString ())
+					.AddField ("message", message);
+				if (BuildInfo.Current != null) {
+					eventRecord.AddField ("changeset", BuildInfo.Current.Scm.ChangeId).AddField ("network", 2516);
+				}
+				switch (type) {
+				case AntiHackType.SpeedHack:
+					eventRecord.AddField ("speedhack_protection", ConVar.AntiHack.speedhack_protection).AddField ("speedhack_forgiveness", ConVar.AntiHack.speedhack_forgiveness).AddField ("speedhack_forgiveness_inertia", ConVar.AntiHack.speedhack_forgiveness_inertia)
+						.AddField ("speedhack_penalty", ConVar.AntiHack.speedhack_penalty)
+						.AddField ("speedhack_penalty", ConVar.AntiHack.speedhack_reject)
+						.AddField ("speedhack_slopespeed", ConVar.AntiHack.speedhack_slopespeed);
+					break;
+				case AntiHackType.NoClip:
+					eventRecord.AddField ("noclip_protection", ConVar.AntiHack.noclip_protection).AddField ("noclip_penalty", ConVar.AntiHack.noclip_penalty).AddField ("noclip_maxsteps", ConVar.AntiHack.noclip_maxsteps)
+						.AddField ("noclip_margin_dismount", ConVar.AntiHack.noclip_margin_dismount)
+						.AddField ("noclip_margin", ConVar.AntiHack.noclip_margin)
+						.AddField ("noclip_backtracking", ConVar.AntiHack.noclip_backtracking)
+						.AddField ("noclip_reject", ConVar.AntiHack.noclip_reject)
+						.AddField ("noclip_stepsize", ConVar.AntiHack.noclip_stepsize);
+					break;
+				case AntiHackType.ProjectileHack:
+					eventRecord.AddField ("projectile_anglechange", ConVar.AntiHack.projectile_anglechange).AddField ("projectile_backtracking", ConVar.AntiHack.projectile_backtracking).AddField ("projectile_clientframes", ConVar.AntiHack.projectile_clientframes)
+						.AddField ("projectile_damagedepth", ConVar.AntiHack.projectile_damagedepth)
+						.AddField ("projectile_desync", ConVar.AntiHack.projectile_desync)
+						.AddField ("projectile_forgiveness", ConVar.AntiHack.projectile_forgiveness)
+						.AddField ("projectile_impactspawndepth", ConVar.AntiHack.projectile_impactspawndepth)
+						.AddField ("projectile_losforgiveness", ConVar.AntiHack.projectile_losforgiveness)
+						.AddField ("projectile_penalty", ConVar.AntiHack.projectile_penalty)
+						.AddField ("projectile_positionoffset", ConVar.AntiHack.projectile_positionoffset)
+						.AddField ("projectile_protection", ConVar.AntiHack.projectile_protection)
+						.AddField ("projectile_serverframes", ConVar.AntiHack.projectile_serverframes)
+						.AddField ("projectile_terraincheck", ConVar.AntiHack.projectile_terraincheck)
+						.AddField ("projectile_trajectory", ConVar.AntiHack.projectile_trajectory)
+						.AddField ("projectile_vehiclecheck", ConVar.AntiHack.projectile_vehiclecheck)
+						.AddField ("projectile_velocitychange", ConVar.AntiHack.projectile_velocitychange);
+					break;
+				case AntiHackType.InsideTerrain:
+					eventRecord.AddField ("terrain_check_geometry", ConVar.AntiHack.terrain_check_geometry).AddField ("terrain_kill", ConVar.AntiHack.terrain_kill).AddField ("terrain_padding", ConVar.AntiHack.terrain_padding)
+						.AddField ("terrain_penalty", ConVar.AntiHack.terrain_penalty)
+						.AddField ("terrain_protection", ConVar.AntiHack.terrain_protection)
+						.AddField ("terrain_timeslice", ConVar.AntiHack.terrain_timeslice);
+					break;
+				case AntiHackType.MeleeHack:
+					eventRecord.AddField ("melee_backtracking", ConVar.AntiHack.melee_backtracking).AddField ("melee_clientframes", ConVar.AntiHack.melee_clientframes).AddField ("melee_forgiveness", ConVar.AntiHack.melee_forgiveness)
+						.AddField ("melee_losforgiveness", ConVar.AntiHack.melee_losforgiveness)
+						.AddField ("melee_penalty", ConVar.AntiHack.melee_penalty)
+						.AddField ("melee_protection", ConVar.AntiHack.melee_protection)
+						.AddField ("melee_serverframes", ConVar.AntiHack.melee_serverframes)
+						.AddField ("melee_terraincheck", ConVar.AntiHack.melee_terraincheck)
+						.AddField ("melee_vehiclecheck", ConVar.AntiHack.melee_vehiclecheck);
+					break;
+				case AntiHackType.FlyHack:
+					eventRecord.AddField ("flyhack_extrusion", ConVar.AntiHack.flyhack_extrusion).AddField ("flyhack_forgiveness_horizontal", ConVar.AntiHack.flyhack_forgiveness_horizontal).AddField ("flyhack_forgiveness_horizontal_inertia", ConVar.AntiHack.flyhack_forgiveness_horizontal_inertia)
+						.AddField ("flyhack_forgiveness_vertical", ConVar.AntiHack.flyhack_forgiveness_vertical)
+						.AddField ("flyhack_forgiveness_vertical_inertia", ConVar.AntiHack.flyhack_forgiveness_vertical_inertia)
+						.AddField ("flyhack_margin", ConVar.AntiHack.flyhack_margin)
+						.AddField ("flyhack_maxsteps", ConVar.AntiHack.flyhack_maxsteps)
+						.AddField ("flyhack_penalty", ConVar.AntiHack.flyhack_penalty)
+						.AddField ("flyhack_protection", ConVar.AntiHack.flyhack_protection)
+						.AddField ("flyhack_reject", ConVar.AntiHack.flyhack_reject);
+					break;
+				case AntiHackType.EyeHack:
+					eventRecord.AddField ("eye_clientframes", ConVar.AntiHack.eye_clientframes).AddField ("eye_forgiveness", ConVar.AntiHack.eye_forgiveness).AddField ("eye_history_forgiveness", ConVar.AntiHack.eye_history_forgiveness)
+						.AddField ("eye_history_penalty", ConVar.AntiHack.eye_history_penalty)
+						.AddField ("eye_losradius", ConVar.AntiHack.eye_losradius)
+						.AddField ("eye_noclip_backtracking", ConVar.AntiHack.eye_noclip_backtracking)
+						.AddField ("eye_noclip_cutoff", ConVar.AntiHack.eye_noclip_cutoff)
+						.AddField ("eye_penalty", ConVar.AntiHack.eye_penalty)
+						.AddField ("eye_protection", ConVar.AntiHack.eye_protection)
+						.AddField ("eye_serverframes", ConVar.AntiHack.eye_serverframes)
+						.AddField ("eye_terraincheck", ConVar.AntiHack.eye_terraincheck)
+						.AddField ("eye_vehiclecheck", ConVar.AntiHack.eye_vehiclecheck);
+					break;
+				case AntiHackType.AttackHack:
+					eventRecord.AddField ("maxdesync", ConVar.AntiHack.maxdesync);
+					break;
+				}
+				eventRecord.Submit ();
 			} catch (Exception exception) {
 				UnityEngine.Debug.LogException (exception);
 			}

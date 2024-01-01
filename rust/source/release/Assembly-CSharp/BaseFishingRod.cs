@@ -316,7 +316,7 @@ public class BaseFishingRod : HeldEntity
 		FishingBobber component = base.gameManager.CreateEntity (FishingBobberRef.resourcePath, base.transform.position + Vector3.up * 2.8f + ownerPlayer.eyes.BodyForward () * 1.8f, GetOwnerPlayer ().ServerRotation).GetComponent<FishingBobber> ();
 		component.transform.forward = GetOwnerPlayer ().eyes.BodyForward ();
 		component.Spawn ();
-		component.InitialiseBobber (ownerPlayer, surfaceBody, pos);
+		component.InitialiseBobber (ownerPlayer, surfaceBody, pos, 150f);
 		lureUsed = currentLure.info;
 		currentLure.UseItem ();
 		if (fishLookup == null) {
