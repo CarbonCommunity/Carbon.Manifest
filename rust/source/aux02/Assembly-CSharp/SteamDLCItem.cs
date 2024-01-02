@@ -3,8 +3,6 @@ using UnityEngine;
 [CreateAssetMenu (menuName = "Rust/Steam DLC Item")]
 public class SteamDLCItem : ScriptableObject
 {
-	public int id;
-
 	public Translate.Phrase dlcName;
 
 	public int dlcAppID;

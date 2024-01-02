@@ -354,32 +354,32 @@ public class BaseMelee : AttackEntity
 							num16 = (GamePhysics.LineOfSight (vector, hitPositionWorld, num5) ? 1 : 0);
 							if (num16 != 0) {
 								player.stats.Add ("hit_" + hitEntity.Categorize () + "_direct_los", 1, Stats.Server);
-								goto IL_07b1;
+								goto IL_07b7;
 							}
 						} else {
 							num16 = 0;
 						}
 						player.stats.Add ("hit_" + hitEntity.Categorize () + "_indirect_los", 1, Stats.Server);
-						goto IL_07b1;
+						goto IL_07b7;
 					}
-					goto IL_089e;
+					goto IL_08a5;
 				}
-				goto IL_0a04;
+				goto IL_0a0c;
 			}
-			goto IL_0a16;
-			IL_0a16:
+			goto IL_0a1e;
+			IL_0a1e:
 			player.metabolism.UseHeart (heartStress * 0.2f);
 			using (TimeWarning.New ("DoAttackShared", 50)) {
 				DoAttackShared (hitInfo);
 				return;
 			}
-			IL_0a04:
+			IL_0a0c:
 			if (!flag8) {
 				AntiHack.AddViolation (player, AntiHackType.MeleeHack, ConVar.AntiHack.melee_penalty);
 				return;
 			}
-			goto IL_0a16;
-			IL_089e:
+			goto IL_0a1e;
+			IL_08a5:
 			if (flag8 && flag && !flag7) {
 				Vector3 hitPositionWorld2 = hitInfo.HitPositionWorld;
 				Vector3 position2 = basePlayer.eyes.position;
@@ -412,8 +412,8 @@ public class BaseMelee : AttackEntity
 					flag8 = false;
 				}
 			}
-			goto IL_0a04;
-			IL_07b1:
+			goto IL_0a0c;
+			IL_07b7:
 			if (num16 == 0) {
 				string shortPrefabName12 = base.ShortPrefabName;
 				string shortPrefabName13 = hitEntity.ShortPrefabName;
@@ -439,7 +439,7 @@ public class BaseMelee : AttackEntity
 				player.stats.combat.LogInvalid (hitInfo, "melee_los");
 				flag8 = false;
 			}
-			goto IL_089e;
+			goto IL_08a5;
 		}
 	}
 

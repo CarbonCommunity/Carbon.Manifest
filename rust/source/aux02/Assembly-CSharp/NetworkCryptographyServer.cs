@@ -8,7 +8,7 @@ public class NetworkCryptographyServer : NetworkCryptography
 		if (connection.encryptionLevel > 1) {
 			EACServer.Encrypt (connection, src, ref dst);
 		} else {
-			Craptography.XOR (2515u, src, ref dst);
+			Craptography.XOR (2516u, src, ref dst);
 		}
 	}
 
@@ -17,7 +17,7 @@ public class NetworkCryptographyServer : NetworkCryptography
 		if (connection.encryptionLevel > 1) {
 			EACServer.Decrypt (connection, src, ref dst);
 		} else {
-			Craptography.XOR (2515u, src, ref dst);
+			Craptography.XOR (2516u, src, ref dst);
 		}
 	}
 }

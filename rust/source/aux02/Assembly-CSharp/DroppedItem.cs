@@ -16,8 +16,6 @@ public class DroppedItem : WorldItem
 	[Header ("DroppedItem")]
 	public GameObject itemModel;
 
-	public const int INTERACTION_ONLY_LAYER = 19;
-
 	private Collider childCollider;
 
 	private const Flags FLAG_STUCK = Flags.Reserved1;
@@ -206,7 +204,7 @@ public class DroppedItem : WorldItem
 			Vector3 center = childCollider.bounds.center;
 			Vector3 vector = center - lastGoodColliderCentre;
 			Ray ray = new Ray (lastGoodColliderCentre, vector.normalized);
-			if (hasLastPos && GamePhysics.Trace (ray, 0f, out var _, vector.magnitude, 1084293377, QueryTriggerInteraction.Ignore, this)) {
+			if (hasLastPos && GamePhysics.Trace (ray, 0f, out var _, vector.magnitude, 1218511105, QueryTriggerInteraction.Ignore, this)) {
 				base.transform.position = lastGoodPos;
 				base.transform.rotation = lastGoodRot;
 				rB.velocity = Vector3.zero;

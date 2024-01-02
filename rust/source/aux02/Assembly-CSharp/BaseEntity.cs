@@ -2804,7 +2804,7 @@ public class BaseEntity : BaseNetworkable, IOnParentSpawning, IPrefabPreProcess
 		return false;
 	}
 
-	public virtual bool BuoyancySleep ()
+	public virtual bool BuoyancySleep (bool inWater)
 	{
 		return false;
 	}

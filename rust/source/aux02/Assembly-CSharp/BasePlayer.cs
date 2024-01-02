@@ -3101,7 +3101,7 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel, IIdealSlotE
 		Missions missions = Facepunch.Pool.Get<Missions> ();
 		missions.missions = Facepunch.Pool.GetList<MissionInstance> ();
 		missions.activeMission = GetActiveMission ();
-		missions.protocol = 244;
+		missions.protocol = 245;
 		missions.seed = World.Seed;
 		missions.saveCreatedTime = Epoch.FromDateTime (SaveRestore.SaveCreatedTime);
 		foreach (BaseMission.MissionInstance mission in this.missions) {
@@ -3193,7 +3193,7 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel, IIdealSlotE
 			uint seed = loadedMissions.seed;
 			int saveCreatedTime = loadedMissions.saveCreatedTime;
 			int num2 = Epoch.FromDateTime (SaveRestore.SaveCreatedTime);
-			if (244 != protocol || World.Seed != seed || num2 != saveCreatedTime) {
+			if (245 != protocol || World.Seed != seed || num2 != saveCreatedTime) {
 				Debug.Log ("Missions were from old protocol or different seed, or not from a loaded save. Clearing");
 				loadedMissions.activeMission = -1;
 				SetActiveMission (-1);
@@ -4288,7 +4288,7 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel, IIdealSlotE
 			return;
 		}
 		if (!firedProjectiles.TryGetValue (playerAttack.projectileID, out var value)) {
-			AntiHack.Log (this, AntiHackType.ProjectileHack, "Missing ID (" + playerAttack.projectileID + ")");
+			AntiHack.Log (this, AntiHackType.ProjectileHack, "Missing ID (" + playerAttack.projectileID + ")", logToAnalytics: false);
 			playerProjectileAttack.ResetToPool ();
 			playerProjectileAttack = null;
 			stats.combat.LogInvalid (hitInfo, "projectile_invalid");
@@ -4538,26 +4538,26 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel, IIdealSlotE
 					num32 = (GamePhysics.LineOfSight (vector, hitPositionWorld, num15, value.lastEntityHit) ? 1 : 0);
 					if (num32 != 0) {
 						stats.Add ("hit_" + (flag6 ? hitEntity.Categorize () : "world") + "_direct_los", 1, Stats.Server);
-						goto IL_10b0;
+						goto IL_10c2;
 					}
 				} else {
 					num32 = 0;
 				}
 				stats.Add ("hit_" + (flag6 ? hitEntity.Categorize () : "world") + "_indirect_los", 1, Stats.Server);
-				goto IL_10b0;
+				goto IL_10c2;
 			}
-			goto IL_1311;
+			goto IL_1325;
 		}
-		goto IL_132a;
-		IL_1311:
+		goto IL_133e;
+		IL_1325:
 		if (!flag9) {
 			AntiHack.AddViolation (this, AntiHackType.ProjectileHack, ConVar.AntiHack.projectile_penalty);
 			playerProjectileAttack.ResetToPool ();
 			playerProjectileAttack = null;
 			return;
 		}
-		goto IL_132a;
-		IL_10b0:
+		goto IL_133e;
+		IL_10c2:
 		if (num32 == 0) {
 			string text25 = hitInfo.ProjectilePrefab.name;
 			string text26 = (flag6 ? hitEntity.ShortPrefabName : "world");
@@ -4614,8 +4614,8 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel, IIdealSlotE
 				flag9 = false;
 			}
 		}
-		goto IL_1311;
-		IL_132a:
+		goto IL_1325;
+		IL_133e:
 		value.position = hitInfo.HitPositionWorld;
 		value.velocity = playerProjectileAttack.hitVelocity;
 		value.travelTime = num;
@@ -4670,7 +4670,7 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel, IIdealSlotE
 				playerProjectileRicochet.ResetToPool ();
 				playerProjectileRicochet = null;
 			} else if (!firedProjectiles.TryGetValue (playerProjectileRicochet.projectileID, out value)) {
-				AntiHack.Log (this, AntiHackType.ProjectileHack, "Missing ID (" + playerProjectileRicochet.projectileID + ")");
+				AntiHack.Log (this, AntiHackType.ProjectileHack, "Missing ID (" + playerProjectileRicochet.projectileID + ")", logToAnalytics: false);
 				playerProjectileRicochet.ResetToPool ();
 				playerProjectileRicochet = null;
 			} else if (value.firedTime < UnityEngine.Time.realtimeSinceStartup - 8f) {
@@ -4701,7 +4701,7 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel, IIdealSlotE
 			return;
 		}
 		if (!firedProjectiles.TryGetValue (playerProjectileUpdate.projectileID, out var value)) {
-			AntiHack.Log (this, AntiHackType.ProjectileHack, "Missing ID (" + playerProjectileUpdate.projectileID + ")");
+			AntiHack.Log (this, AntiHackType.ProjectileHack, "Missing ID (" + playerProjectileUpdate.projectileID + ")", logToAnalytics: false);
 			playerProjectileUpdate.ResetToPool ();
 			playerProjectileUpdate = null;
 			return;
@@ -5088,6 +5088,7 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel, IIdealSlotE
 	{
 		base.Save (info);
 		bool flag = net != null && net.connection == info.forConnection;
+		bool flag2 = !info.forDisk && info.forConnection.player != null && info.forConnection.player is BasePlayer basePlayer && basePlayer.IsAdmin;
 		info.msg.basePlayer = Facepunch.Pool.Get<ProtoBuf.BasePlayer> ();
 		info.msg.basePlayer.userid = userID;
 		info.msg.basePlayer.name = displayName;
@@ -5118,7 +5119,7 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel, IIdealSlotE
 		if (!info.forDisk && !flag) {
 			info.msg.basePlayer.playerFlags &= -5;
 			info.msg.basePlayer.playerFlags &= -129;
-			if (info.msg.baseCombat != null) {
+			if (info.msg.baseCombat != null && !flag2) {
 				info.msg.baseCombat.health = 100f;
 			}
 		}
@@ -5967,7 +5968,7 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel, IIdealSlotE
 		}
 	}
 
-	public virtual BaseCorpse CreateCorpse (PlayerFlags flagsOnDeath, Vector3 posOnDeath, Quaternion rotOnDeath, BaseEntity parentOnDeath)
+	public virtual BaseCorpse CreateCorpse (PlayerFlags flagsOnDeath, Vector3 posOnDeath, Quaternion rotOnDeath, List<TriggerBase> triggersOnDeath)
 	{
 		using (TimeWarning.New ("Create corpse")) {
 			string strCorpsePrefab = ((!ConVar.Physics.serversideragdolls) ? "assets/prefabs/player/player_corpse.prefab" : "assets/prefabs/player/player_corpse_new.prefab");
@@ -5991,8 +5992,12 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel, IIdealSlotE
 				playerCorpse.streamerName = RandomUsernames.Get (userID);
 				playerCorpse.playerSteamID = userID;
 				playerCorpse.underwearSkin = GetUnderwearSkin ();
-				if (parentOnDeath != null) {
-					playerCorpse.SetParent (parentOnDeath, worldPositionStays: true, sendImmediate: true);
+				if (!triggersOnDeath.IsNullOrEmpty ()) {
+					foreach (TriggerBase item2 in triggersOnDeath) {
+						if (item2 is TriggerParent triggerParent) {
+							triggerParent.OnEntityEnter (playerCorpse);
+						}
+					}
 				}
 				playerCorpse.Spawn ();
 				playerCorpse.TakeChildren (this);
@@ -6020,7 +6025,7 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel, IIdealSlotE
 	{
 		PlayerFlags flagsOnDeath = playerFlags;
 		Vector3 position = base.transform.position;
-		BaseEntity parentOnDeath = GetParentEntity ();
+		List<TriggerBase> triggersOnDeath = ((triggers == null) ? new List<TriggerBase> () : new List<TriggerBase> (triggers));
 		BaseMountable baseMountable = GetMounted ();
 		Quaternion rotOnDeath = ((!baseMountable.IsValid ()) ? Quaternion.Euler (base.transform.eulerAngles.x, eyes.bodyRotation.eulerAngles.y, base.transform.eulerAngles.z) : baseMountable.mountAnchor.rotation);
 		SetPlayerFlag (PlayerFlags.Unused2, b: false);
@@ -6055,12 +6060,19 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel, IIdealSlotE
 			inventory.crafting.CancelAll (returnItems: true);
 		}
 		EACServer.LogPlayerDespawn (this);
-		BaseCorpse baseCorpse = CreateCorpse (flagsOnDeath, position, rotOnDeath, parentOnDeath);
+		BaseCorpse baseCorpse = CreateCorpse (flagsOnDeath, position, rotOnDeath, triggersOnDeath);
 		if (baseCorpse != null) {
+			if (baseCorpse.CorpseIsRagdoll && baseMountable != null) {
+				BaseVehicle baseVehicle = baseMountable.VehicleParent ();
+				if (baseVehicle != null && baseVehicle.mountedPlayerRagdolls == BaseVehicle.RagdollMode.FallThrough) {
+					baseCorpse.gameObject.SetIgnoreCollisions (baseVehicle.gameObject, ignore: true);
+				}
+			}
 			if (info != null) {
 				Rigidbody component = baseCorpse.GetComponent<Rigidbody> ();
 				if (component != null) {
-					component.AddForce ((info.attackNormal + Vector3.up * 0.5f).normalized * 1f, ForceMode.VelocityChange);
+					float num = (baseCorpse.CorpseIsRagdoll ? 5f : 1f);
+					component.AddForce ((info.attackNormal + Vector3.up * 0.5f).normalized * num, ForceMode.VelocityChange);
 				}
 			}
 			if (baseCorpse is PlayerCorpse { containers: not null } playerCorpse) {

@@ -476,7 +476,7 @@ public class BuildingBlock : StabilityEntity
 			return;
 		}
 		ConstructionGrade constructionGrade = blockDefinition.GetGrade ((BuildingGrade.Enum)msg.read.Int32 (), msg.read.UInt64 ());
-		if (!(constructionGrade == null) && CanChangeToGrade (constructionGrade.gradeBase.type, constructionGrade.gradeBase.skin, msg.player) && CanAffordUpgrade (constructionGrade.gradeBase.type, constructionGrade.gradeBase.skin, msg.player) && !(base.SecondsSinceAttacked < 30f) && (constructionGrade.gradeBase.skin == 0L || msg.player.blueprints.steamInventory.HasItem ((int)constructionGrade.gradeBase.skin))) {
+		if (!(constructionGrade == null) && CanChangeToGrade (constructionGrade.gradeBase.type, constructionGrade.gradeBase.skin, msg.player) && CanAffordUpgrade (constructionGrade.gradeBase.type, constructionGrade.gradeBase.skin, msg.player) && !(base.SecondsSinceAttacked < 30f) && (constructionGrade.gradeBase.alwaysUnlock || constructionGrade.gradeBase.skin == 0L || msg.player.blueprints.steamInventory.HasItem ((int)constructionGrade.gradeBase.skin))) {
 			PayForUpgrade (constructionGrade, msg.player);
 			if (msg.player != null) {
 				playerCustomColourToApply = msg.player.LastBlockColourChangeId;

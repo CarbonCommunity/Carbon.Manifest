@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using ProtoBuf;
 using UnityEngine;
 
@@ -251,7 +252,7 @@ public class HumanNPC : NPCPlayer, IAISenses, IAIAttack, IThinker
 		return false;
 	}
 
-	public override BaseCorpse CreateCorpse (PlayerFlags flagsOnDeath, Vector3 posOnDeath, Quaternion rotOnDeath, BaseEntity parentOnDeath)
+	public override BaseCorpse CreateCorpse (PlayerFlags flagsOnDeath, Vector3 posOnDeath, Quaternion rotOnDeath, List<TriggerBase> triggersOnDeath)
 	{
 		using (TimeWarning.New ("Create corpse")) {
 			NPCPlayerCorpse nPCPlayerCorpse = DropCorpse ("assets/prefabs/npc/scientist/scientist_corpse.prefab", flagsOnDeath, modelState) as NPCPlayerCorpse;
