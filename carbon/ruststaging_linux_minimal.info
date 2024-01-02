@@ -1,1 +1,5 @@
-Not Found
+{
+	"Version": "1.2024.1002.4158-MinimalUnix",
+	"Protocol": "2024.01.04.1",
+	"Platform": "Linux"
+}
