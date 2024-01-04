@@ -3092,7 +3092,7 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel, IIdealSlotE
 		followupMission = targetMission;
 		followupMissionProvider = provider;
 		if (followupMission != null && followupMissionProvider != null) {
-			Invoke (AssignFollowUpMission, 3f);
+			Invoke (AssignFollowUpMission, 1.5f);
 		}
 	}
 

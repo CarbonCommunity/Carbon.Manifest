@@ -485,6 +485,9 @@ public class BuildingBlock : StabilityEntity
 			Analytics.Azure.OnBuildingBlockUpgraded (msg.player, this, constructionGrade.gradeBase.type, playerCustomColourToApply, constructionGrade.gradeBase.skin);
 			OnSkinChanged (skinID, constructionGrade.gradeBase.skin);
 			ChangeGrade (constructionGrade.gradeBase.type, playEffect: true);
+			if (msg.player != null) {
+				msg.player.ProcessMissionEvent (BaseMission.MissionEventType.UPGRADE_BUILDING_GRADE, (int)constructionGrade.gradeBase.type, 0f);
+			}
 		}
 	}
 

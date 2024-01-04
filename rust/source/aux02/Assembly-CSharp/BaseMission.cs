@@ -58,7 +58,8 @@ public class BaseMission : BaseScriptableObject
 		ACQUITE_ITEM_STACK,
 		OPEN_STORAGE,
 		COOK,
-		ENTER_TRIGGER
+		ENTER_TRIGGER,
+		UPGRADE_BUILDING_GRADE
 	}
 
 	[Serializable]
