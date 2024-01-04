@@ -219,7 +219,9 @@ public class LootContainer : StorageContainer
 
 	public override void OnKilled (HitInfo info)
 	{
-		Analytics.Azure.OnLootContainerDestroyed (this, info.InitiatorPlayer, info.Weapon);
+		if (info != null) {
+			Analytics.Azure.OnLootContainerDestroyed (this, info.InitiatorPlayer, info.Weapon);
+		}
 		base.OnKilled (info);
 		if (info != null && info.InitiatorPlayer != null && !string.IsNullOrEmpty (deathStat)) {
 			info.InitiatorPlayer.stats.Add (deathStat, 1, Stats.Life);

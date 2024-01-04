@@ -1,4 +1,3 @@
-using System;
 using Facepunch;
 using ProtoBuf;
 using Rust;
@@ -14,15 +13,13 @@ public class PlayerCorpse : LootableCorpse
 
 	public PlayerBonePosData bonePosData;
 
-	private Action cachedSleepCheck;
-
 	private Vector3 prevLocalPos;
 
 	private const float SLEEP_CHECK_FREQUENCY = 10f;
 
 	public Ragdoll CorpseRagdollScript { get; private set; }
 
-	public bool CorpseIsRagdoll => CorpseRagdollScript != null;
+	public override bool CorpseIsRagdoll => CorpseRagdollScript != null;
 
 	protected override float PositionTickRate => 0.05f;
 
@@ -58,12 +55,10 @@ public class PlayerCorpse : LootableCorpse
 		if (CorpseIsRagdoll) {
 			CorpseRagdollScript.simOnServer = true;
 			CorpseRagdollScript.ServerInit ();
-			if (HasParent ()) {
-				OnParented ();
-			}
 			if (buoyancy != null && Rust.Application.isLoadingSave) {
 				buoyancy.EnsurePointsInitialized ();
 			}
+			InvokeRandomized (SleepCheck, 5f, 10f, Random.Range (-1f, 1f));
 		}
 	}
 
@@ -148,55 +143,40 @@ public class PlayerCorpse : LootableCorpse
 		}
 	}
 
-	public override void OnParentChanging (BaseEntity oldParent, BaseEntity newParent)
-	{
-		base.OnParentChanging (oldParent, newParent);
-		if (newParent != null && newParent != oldParent) {
-			OnParented ();
-		} else if (newParent == null && oldParent != null) {
-			OnUnparented ();
-		}
-	}
-
-	private void OnParented ()
+	protected override void PushRagdoll (HitInfo info)
 	{
 		if (CorpseIsRagdoll) {
-			if (cachedSleepCheck == null) {
-				cachedSleepCheck = SleepCheck;
-			}
-			InvokeRandomized (cachedSleepCheck, 5f, 10f, UnityEngine.Random.Range (-1f, 1f));
-		}
-	}
-
-	private void OnUnparented ()
-	{
-		if (CorpseIsRagdoll && cachedSleepCheck != null) {
-			CancelInvoke (cachedSleepCheck);
+			BecomeActive ();
+			PushRigidbodies (CorpseRagdollScript.rigidbodies, info.HitPositionWorld, info.attackNormal);
+		} else {
+			base.PushRagdoll (info);
 		}
 	}
 
 	private void SleepCheck ()
 	{
-		if (!CorpseIsRagdoll || !HasParent ()) {
+		if (!CorpseIsRagdoll) {
 			return;
 		}
 		if (CorpseRagdollScript.IsKinematic) {
-			if (!GamePhysics.Trace (new Ray (CenterPoint (), Vector3.down), 0f, out var _, 0.25f, -928830719, QueryTriggerInteraction.Ignore, this)) {
+			if (!GamePhysics.Trace (new Ray (CenterPoint (), Vector3.down), 0f, out var _, 0.25f, -928830701, QueryTriggerInteraction.Ignore, this)) {
 				BecomeActive ();
 			}
-		} else if (Vector3.SqrMagnitude (base.transform.localPosition - prevLocalPos) < 0.1f) {
+		} else if (!rigidBody.IsSleeping () && !buoyancy.ShouldWake () && Vector3.SqrMagnitude (base.transform.localPosition - prevLocalPos) < 0.1f) {
 			BecomeInactive ();
 		}
 		prevLocalPos = base.transform.localPosition;
 	}
 
-	public override bool BuoyancySleep ()
+	public override bool BuoyancySleep (bool inWater)
 	{
 		if (CorpseIsRagdoll) {
-			BecomeInactive ();
+			if (!rigidBody.IsSleeping ()) {
+				BecomeInactive ();
+			}
 			return true;
 		}
-		return base.BuoyancySleep ();
+		return base.BuoyancySleep (inWater);
 	}
 
 	public override bool BuoyancyWake ()
@@ -206,6 +186,11 @@ public class PlayerCorpse : LootableCorpse
 			return true;
 		}
 		return base.BuoyancyWake ();
+	}
+
+	private void OnPhysicsNeighbourChanged ()
+	{
+		BecomeActive ();
 	}
 
 	public override void Save (SaveInfo info)

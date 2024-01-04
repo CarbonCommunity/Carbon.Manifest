@@ -25,7 +25,7 @@ public class RustPlatformHooks : IPlatformHooks
 			if (ConVar.Server.queryport <= 0 || ConVar.Server.queryport == ConVar.Server.port) {
 				ConVar.Server.queryport = Math.Max (ConVar.Server.port, RCon.Port) + 1;
 			}
-			return new ServerParameters ("rust", "Rust", 2515.ToString (), ConVar.Server.secure, CommandLine.HasSwitch ("-sdrnet"), address, (ushort)Network.Net.sv.port, (ushort)ConVar.Server.queryport);
+			return new ServerParameters ("rust", "Rust", 2516.ToString (), ConVar.Server.secure, CommandLine.HasSwitch ("-sdrnet"), address, (ushort)Network.Net.sv.port, (ushort)ConVar.Server.queryport);
 		}
 	}
 

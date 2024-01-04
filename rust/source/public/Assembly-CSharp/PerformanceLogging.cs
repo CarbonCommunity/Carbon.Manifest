@@ -267,7 +267,7 @@ public class PerformanceLogging
 			 ["unity"] = UnityEngine.Application.unityVersion ?? "editor",
 			 ["changeset"] = BuildInfo.Current?.Scm.ChangeId ?? "editor",
 			 ["branch"] = BuildInfo.Current?.Scm.Branch ?? "editor",
-			 ["network_version"] = 2515.ToString ()
+			 ["network_version"] = 2516.ToString ()
 		};
 		dictionary ["eos_sdk"] = VersionInterface.GetVersion ()?.ToString () ?? "disabled";
 		record.AddObject ("hardware", data).AddObject ("application", dictionary);

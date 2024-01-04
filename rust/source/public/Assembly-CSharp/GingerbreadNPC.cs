@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using ConVar;
 using ProtoBuf;
 using UnityEngine;
@@ -49,7 +50,7 @@ public class GingerbreadNPC : HumanNPC, IClientBrainStateListener
 		return false;
 	}
 
-	public override BaseCorpse CreateCorpse (PlayerFlags flagsOnDeath, Vector3 posOnDeath, Quaternion rotOnDeath, BaseEntity parentOnDeath)
+	public override BaseCorpse CreateCorpse (PlayerFlags flagsOnDeath, Vector3 posOnDeath, Quaternion rotOnDeath, List<TriggerBase> triggersOnDeath)
 	{
 		using (TimeWarning.New ("Create corpse")) {
 			string corpseResourcePath = CorpseResourcePath;

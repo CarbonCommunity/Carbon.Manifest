@@ -334,6 +334,9 @@ public class Ragdoll : EntityComponent<BaseEntity>, IPrefabPreProcess
 
 	public void BecomeActive ()
 	{
+		if (!IsKinematic) {
+			return;
+		}
 		foreach (Rigidbody rigidbody in rigidbodies) {
 			rigidbody.isKinematic = false;
 			SetCollisionMode (rigidbody);
@@ -353,6 +356,9 @@ public class Ragdoll : EntityComponent<BaseEntity>, IPrefabPreProcess
 
 	public void BecomeInactive ()
 	{
+		if (IsKinematic) {
+			return;
+		}
 		foreach (Rigidbody rigidbody in rigidbodies) {
 			rigidbody.collisionDetectionMode = CollisionDetectionMode.Discrete;
 			rigidbody.isKinematic = true;
