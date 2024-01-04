@@ -1,23 +1,23 @@
 {
   "Scm": {
     "Type": "PlasticScm",
-    "ChangeId": "91318",
+    "ChangeId": "91339",
     "Branch": "main",
     "Repo": "rust_reboot",
-    "Comment": "subtracting hostile_countdown_tooltip - UI Scaling issues",
+    "Comment": "Disable Rust birthday items (confetti and pinata)",
     "Author": "alistair",
-    "Date": "30/12/2023 20:22:08",
-    "Items": "C Assets\\Content\\UI\\GameUI\\GameUI.Hud.Warnings.prefab \r\n C Assets\\Scripts\\UI\\HostileNote.cs \r\n D Assets\\Content\\UI\\Fonts\\RobotoCondensed-Bold SDF - Outline.mat \r\n D Assets\\Content\\UI\\Fonts\\RobotoCondensed-Bold SDF - Outline.mat.meta"
+    "Date": "04/01/2024 09:42:49",
+    "Items": "C Assets\\Prefabs\\Misc\\Pinata\\pinata.item.prefab \r\n C Assets\\Prefabs\\Misc\\ConfettiCannon\\confetticannon.item.prefab"
   },
   "Build": {
-    "Id": "5431",
-    "Number": "5431",
-    "Tag": "jenkins-RustServer-5431",
-    "Url": "https://build.facepunch.com/job/RustServer/5431/",
+    "Id": "5432",
+    "Number": "5432",
+    "Tag": "jenkins-RustServer-5432",
+    "Url": "https://build.facepunch.com/job/RustServer/5432/",
     "Name": "RustServer",
     "Node": "Win4"
   },
-  "Date": 1703970096,
-  "DateString": "30 12 2023",
-  "TimeString": "21:01"
+  "Date": 1704363783,
+  "DateString": "4 01 2024",
+  "TimeString": "10:23"
 }
